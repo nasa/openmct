@@ -26,6 +26,8 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 const { test, expect } = require('@playwright/test');
 
+const TEST_FOLDER = 'test folder';
+
 test.describe('forms set', () => {
     test('New folder form has title as required field', async ({ page }) => {
         //Go to baseURL
@@ -52,7 +54,7 @@ test.describe('forms set', () => {
         // Click text=Properties Title Notes >> input[type="text"]
         await page.click('text=Properties Title Notes >> input[type="text"]');
         // Fill text=Properties Title Notes >> input[type="text"]
-        await page.fill('text=Properties Title Notes >> input[type="text"]', 'test folder');
+        await page.fill('text=Properties Title Notes >> input[type="text"]', TEST_FOLDER);
         // Press Tab
         await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
 
@@ -60,10 +62,10 @@ test.describe('forms set', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/617c17fc-30ea-4f94-96a9-ef7ce00e40af?tc.mode=fixed&tc.startBound=1643673151453&tc.endBound=1643674951453&tc.timeSystem=utc&view=grid' }*/),
+            page.waitForNavigation(),
             page.click('text=OK')
         ]);
 
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('test folder');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(TEST_FOLDER);
     });
 });

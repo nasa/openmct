@@ -39,7 +39,7 @@ test.describe('condition set', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/dab945d4-5a84-480e-8180-222b4aa730fa?tc.mode=fixed&tc.startBound=1639696164435&tc.endBound=1639697964435&tc.timeSystem=utc&view=conditionSet.view' }*/),
+            page.waitForNavigation(),
             page.click('text=OK')
         ]);
 

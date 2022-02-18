@@ -85,9 +85,7 @@ describe ('The Menu API', () => {
         });
 
         it('creates an instance of Menu when invoked', (done) => {
-            menuOptions.onDestroy = () => {
-                done();
-            };
+            menuOptions.onDestroy = done;
 
             menuAPI.showMenu(x, y, actionsArray, menuOptions);
 
@@ -228,28 +226,6 @@ describe ('The Menu API', () => {
             expect(top).toEqual(y);
 
             document.body.click();
-        });
-
-        // does not work as expected due to menu element width and height 100% of document
-        xit('renders a menu component at given x and y position', (done) => {
-            menuOptions.onDestroy = done;
-
-            const xPosition = 100;
-            const yPosition = 100;
-            menuAPI.showMenu(xPosition, yPosition, actionsArray, menuOptions);
-
-            menuAPI.menuComponent.component.$nextTick(() => {
-                menuElement = document.querySelector('.c-menu');
-
-                let boundingClientRect = menuElement.getBoundingClientRect();
-                let left = boundingClientRect.left;
-                let top = boundingClientRect.top;
-
-                expect(left).toEqual(xPosition);
-                expect(top).toEqual(yPosition);
-
-                document.body.click();
-            });
         });
     });
 });

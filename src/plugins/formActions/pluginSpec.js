@@ -48,9 +48,6 @@ describe('EditPropertiesAction plugin', () => {
     afterEach(() => {
         editPropertiesAction = null;
 
-        const activeOverlays = openmct.overlays.activeOverlays;
-        activeOverlays.forEach(overlay => overlay.dismiss());
-
         return resetApplicationState(openmct);
     });
 
@@ -70,11 +67,11 @@ describe('EditPropertiesAction plugin', () => {
             },
             composition: []
         };
-        const isAppliesTo = editPropertiesAction.appliesTo([domainObject]);
-        expect(isAppliesTo).toBe(true);
+        const isApplicableTo = editPropertiesAction.appliesTo([domainObject]);
+        expect(isApplicableTo).toBe(true);
     });
 
-    it('edit properties action does not applies to non persistable objects', () => {
+    it('edit properties action does not apply to non persistable objects', () => {
         spyOn(openmct.objects, 'isPersistable').and.returnValue(false);
 
         const domainObject = {
@@ -86,8 +83,8 @@ describe('EditPropertiesAction plugin', () => {
             },
             composition: []
         };
-        const isAppliesTo = editPropertiesAction.appliesTo([domainObject]);
-        expect(isAppliesTo).toBe(false);
+        const isApplicableTo = editPropertiesAction.appliesTo([domainObject]);
+        expect(isApplicableTo).toBe(false);
     });
 
     it('edit properties action when invoked shows form', (done) => {
@@ -110,7 +107,7 @@ describe('EditPropertiesAction plugin', () => {
             });
 
         setTimeout(() => {
-            const form = document.querySelector('.c-form');
+            const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             expect(title.value).toEqual(domainObject.name);
 
@@ -141,22 +138,24 @@ describe('EditPropertiesAction plugin', () => {
             persisted: 1643065068600,
             composition: []
         };
+        let unObserve;
 
         function callback(newObject) {
             expect(newObject.name).not.toEqual(oldName);
             expect(newObject.name).toEqual(newName);
 
+            unObserve();
             done();
         }
 
         const deBouncedCallback = debounce(callback, 300);
-        openmct.objects.observe(domainObject, '*', deBouncedCallback);
+        unObserve = openmct.objects.observe(domainObject, '*', deBouncedCallback);
 
         editPropertiesAction.invoke([domainObject]);
 
         setTimeout(() => {
-            // wait for vue to assign  given values
-            const form = document.querySelector('.c-form');
+            // wait for vue to assign given values
+            const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             expect(title.value).toEqual(domainObject.name);
 
@@ -204,7 +203,7 @@ describe('EditPropertiesAction plugin', () => {
                 done();
             });
 
-        const form = document.querySelector('.c-form');
+        const form = document.querySelector('.js-form');
         const buttons = form.querySelectorAll('button');
         const clickEvent = createMouseEvent('click');
         buttons[1].dispatchEvent(clickEvent);

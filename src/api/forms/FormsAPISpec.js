@@ -41,54 +41,58 @@ describe('The Forms API', () => {
         return resetApplicationState(openmct);
     });
 
-    it('form API exists', () => {
-        expect(openmct.forms.showForm).not.toBe(null);
+    it('openmct supports form API', () => {
+        expect(openmct.forms).not.toBe(null);
     });
 
     describe('check default form controls exists', () => {
         it('autocomplete', () => {
             const control = openmct.forms.getFormControl('autocomplete');
-            expect(control.show).not.toBe(null);
+            expect(control).not.toBe(null);
         });
 
         it('clock', () => {
             const control = openmct.forms.getFormControl('composite');
-            expect(control.show).not.toBe(null);
+            expect(control).not.toBe(null);
         });
 
         it('datetime', () => {
             const control = openmct.forms.getFormControl('datetime');
-            expect(control.show).not.toBe(null);
+            expect(control).not.toBe(null);
         });
 
         it('file-input', () => {
             const control = openmct.forms.getFormControl('file-input');
-            expect(control.show).not.toBe(null);
+            expect(control).not.toBe(null);
         });
 
         it('locator', () => {
-            const control = openmct.forms.getFormControl('datetime');
-            expect(control.show).not.toBe(null);
+            const control = openmct.forms.getFormControl('locator');
+            expect(control).not.toBe(null);
         });
+
         it('numberfield', () => {
-            const control = openmct.forms.getFormControl('datetime');
-            expect(control.show).not.toBe(null);
+            const control = openmct.forms.getFormControl('numberfield');
+            expect(control).not.toBe(null);
         });
+
         it('select', () => {
-            const control = openmct.forms.getFormControl('datetime');
-            expect(control.show).not.toBe(null);
+            const control = openmct.forms.getFormControl('select');
+            expect(control).not.toBe(null);
         });
+
         it('textarea', () => {
-            const control = openmct.forms.getFormControl('datetime');
-            expect(control.show).not.toBe(null);
+            const control = openmct.forms.getFormControl('textarea');
+            expect(control).not.toBe(null);
         });
+
         it('textfield', () => {
-            const control = openmct.forms.getFormControl('datetime');
-            expect(control.show).not.toBe(null);
+            const control = openmct.forms.getFormControl('textfield');
+            expect(control).not.toBe(null);
         });
     });
 
-    it('addNewFormControl', () => {
+    it('supports user defined form controls', () => {
         const newFormControl = {
             show: () => {
                 console.log('show new control');
@@ -99,11 +103,12 @@ describe('The Forms API', () => {
         };
         openmct.forms.addNewFormControl('newFormControl', newFormControl);
         const control = openmct.forms.getFormControl('newFormControl');
+        expect(control).not.toBe(null);
         expect(control.show).not.toBe(null);
         expect(control.destroy).not.toBe(null);
     });
 
-    describe('show form', () => {
+    describe('show form on UI', () => {
         let formStructure;
 
         beforeEach(() => {
@@ -127,17 +132,17 @@ describe('The Forms API', () => {
             };
         });
 
-        it('providing element', (done) => {
+        it('when container element is provided', (done) => {
             openmct.forms.showForm(formStructure, { element }).catch(() => {
                 done();
             });
             const titleElement = element.querySelector('.c-overlay__dialog-title');
             expect(titleElement.textContent).toBe(formStructure.title);
 
-            element.querySelectorAll('.c-form__bottom-bar button')[1].click();
+            element.querySelector('.js-cancel-button').click();
         });
 
-        it('without providing element', (done) => {
+        it('when container element is not provided', (done) => {
             openmct.forms.showForm(formStructure).catch(() => {
                 done();
             });
@@ -146,7 +151,7 @@ describe('The Forms API', () => {
             const title = titleElement.textContent;
 
             expect(title).toBe(formStructure.title);
-            document.querySelectorAll('.c-form__bottom-bar button')[1].click();
+            document.querySelector('.js-cancel-button').click();
         });
     });
 });
