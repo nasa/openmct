@@ -1,6 +1,6 @@
 import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../ScatterPlotConstants';
 import Vue from 'vue';
-import ScatterPlotOptions from "./ScatterPlotOptions.vue";
+import PlotOptions from "./PlotOptions.vue";
 
 export default function ScatterPlotInspectorViewProvider(openmct) {
     return {
@@ -24,13 +24,13 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            ScatterPlotOptions
+                            PlotOptions
                         },
                         provide: {
                             openmct,
                             domainObject: selection[0][0].context.item
                         },
-                        template: '<scatter-plot-options></scatter-plot-options>'
+                        template: '<plot-options></plot-options>'
                     });
                 },
                 destroy: function () {
