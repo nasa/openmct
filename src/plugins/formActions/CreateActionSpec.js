@@ -144,29 +144,6 @@ describe("The create action plugin", () => {
             createAction.invoke();
         });
 
-        it('type conditionWidget', (done) => {
-            const type = 'conditionWidget';
-
-            function callback(newObject) {
-                const composition = newObject.composition;
-
-                openmct.objects.get(composition[0])
-                    .then(object => {
-                        expect(object.type).toEqual(type);
-                        expect(object.location).toEqual(openmct.objects.makeKeyString(parentObject.identifier));
-
-                        done();
-                    });
-            }
-
-            const deBouncedCallback = debounce(callback, 300);
-
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
-
-            const createAction = new CreateAction(openmct, type, parentObject);
-            createAction.invoke();
-        });
-
         it('type example.imagery', (done) => {
             const type = 'example.imagery';
 
