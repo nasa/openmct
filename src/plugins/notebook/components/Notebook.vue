@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -142,7 +142,6 @@ import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaul
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
-import objectUtils from 'objectUtils';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
@@ -323,7 +322,7 @@ export default {
         cleanupDefaultNotebook() {
             this.defaultPageId = undefined;
             this.defaultSectionId = undefined;
-            this.removeDefaultClass(this.domainObject);
+            this.removeDefaultClass(this.domainObject.identifier);
             clearDefaultNotebook();
         },
         setSectionAndPageFromUrl() {
@@ -460,11 +459,6 @@ export default {
             return this.isDefaultNotebook()
                 ? getDefaultNotebook().defaultSectionId
                 : undefined;
-        },
-        getDefaultNotebookObject() {
-            const defaultNotebook = getDefaultNotebook();
-
-            return defaultNotebook && this.openmct.objects.get(defaultNotebook.identifier);
         },
         getLinktoNotebook() {
             const objectPath = this.openmct.router.path;
@@ -625,12 +619,8 @@ export default {
 
             this.sectionsChanged({ sections });
         },
-        removeDefaultClass(domainObject) {
-            if (!domainObject) {
-                return;
-            }
-
-            this.openmct.status.delete(domainObject.identifier);
+        removeDefaultClass(identifier) {
+            this.openmct.status.delete(identifier);
         },
         resetSearch() {
             this.search = '';
@@ -639,26 +629,25 @@ export default {
         toggleNav() {
             this.showNav = !this.showNav;
         },
-        async updateDefaultNotebook(notebookStorage) {
-            const defaultNotebookObject = await this.getDefaultNotebookObject();
-            const isSameNotebook = defaultNotebookObject
-                && objectUtils.makeKeyString(defaultNotebookObject.identifier) === objectUtils.makeKeyString(notebookStorage.identifier);
-            if (!isSameNotebook) {
-                this.removeDefaultClass(defaultNotebookObject);
+        updateDefaultNotebook(updatedNotebookStorageObject) {
+            if (!this.isDefaultNotebook()) {
+                const persistedNotebookStorageObject = getDefaultNotebook();
+                if (persistedNotebookStorageObject
+                    && persistedNotebookStorageObject.identifier !== undefined) {
+                    this.removeDefaultClass(persistedNotebookStorageObject.identifier);
+                }
+
+                setDefaultNotebook(this.openmct, updatedNotebookStorageObject, this.domainObject);
             }
 
-            if (!defaultNotebookObject || !isSameNotebook) {
-                setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
+            if (this.defaultSectionId !== updatedNotebookStorageObject.defaultSectionId) {
+                setDefaultNotebookSectionId(updatedNotebookStorageObject.defaultSectionId);
+                this.defaultSectionId = updatedNotebookStorageObject.defaultSectionId;
             }
 
-            if (this.defaultSectionId !== notebookStorage.defaultSectionId) {
-                setDefaultNotebookSectionId(notebookStorage.defaultSectionId);
-                this.defaultSectionId = notebookStorage.defaultSectionId;
-            }
-
-            if (this.defaultPageId !== notebookStorage.defaultPageId) {
-                setDefaultNotebookPageId(notebookStorage.defaultPageId);
-                this.defaultPageId = notebookStorage.defaultPageId;
+            if (this.defaultPageId !== updatedNotebookStorageObject.defaultPageId) {
+                setDefaultNotebookPageId(updatedNotebookStorageObject.defaultPageId);
+                this.defaultPageId = updatedNotebookStorageObject.defaultPageId;
             }
         },
         updateDefaultNotebookSection(sections, id) {
@@ -676,7 +665,7 @@ export default {
             if (defaultNotebookSectionId === id) {
                 const section = sections.find(s => s.id === id);
                 if (!section) {
-                    this.removeDefaultClass(this.domainObject);
+                    this.removeDefaultClass(this.domainObject.identifier);
                     clearDefaultNotebook();
 
                     return;
