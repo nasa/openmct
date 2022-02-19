@@ -91,6 +91,7 @@ describe("The Move Action plugin", () => {
     });
 
     describe("when moving an object to a new parent and removing from the old parent", () => {
+        let unObserve;
         beforeEach((done) => {
             openmct.router.path = [];
 
@@ -104,13 +105,17 @@ describe("The Move Action plugin", () => {
                 });
             });
 
-            openmct.objects.observe(parentObject, '*', (newObject) => {
+            unObserve = openmct.objects.observe(parentObject, '*', (newObject) => {
                 done();
             });
 
             moveAction.inNavigationPath = () => false;
 
             moveAction.invoke([childObject, parentObject]);
+        });
+
+        afterEach(() => {
+            unObserve();
         });
 
         it("the child object's identifier should be in the new parent's composition", () => {

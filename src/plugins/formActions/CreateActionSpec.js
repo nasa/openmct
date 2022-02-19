@@ -30,6 +30,7 @@ import { debounce } from 'lodash';
 
 let parentObject;
 let parentObjectPath;
+let unObserve;
 
 describe("The create action plugin", () => {
     let openmct;
@@ -60,7 +61,6 @@ describe("The create action plugin", () => {
 
             spyOn(openmct.objects, 'save');
             openmct.objects.save.and.callThrough();
-
             spyOn(openmct.forms, 'showForm');
             openmct.forms.showForm.and.callFake(formStructure => {
                 return Promise.resolve({
@@ -73,6 +73,7 @@ describe("The create action plugin", () => {
 
         afterEach(() => {
             parentObject = null;
+            unObserve();
         });
 
         it('type clock', (done) => {
@@ -92,7 +93,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -115,7 +116,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -138,7 +139,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -161,7 +162,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -184,7 +185,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -207,7 +208,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -230,7 +231,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -253,7 +254,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -276,7 +277,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -299,7 +300,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -322,7 +323,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -345,7 +346,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -368,7 +369,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -391,7 +392,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -414,7 +415,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -437,7 +438,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -460,7 +461,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -483,7 +484,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -506,7 +507,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -529,7 +530,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -552,7 +553,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -575,7 +576,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -598,7 +599,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
@@ -621,7 +622,7 @@ describe("The create action plugin", () => {
 
             const deBouncedCallback = debounce(callback, 300);
 
-            openmct.objects.observe(parentObject, '*', deBouncedCallback);
+            unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
             const createAction = new CreateAction(openmct, type, parentObject);
             createAction.invoke();
