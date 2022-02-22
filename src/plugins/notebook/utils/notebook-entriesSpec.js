@@ -127,7 +127,7 @@ describe('Notebook Entries:', () => {
         expect(entries.length).toEqual(0);
     });
 
-    it('addNotebookEntry adds entry', () => {
+    it('addNotebookEntry adds entry', async () => {
         const unlisten = openmct.objects.observe(notebookDomainObject, '*', (object) => {
             const entries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
 
@@ -135,17 +135,38 @@ describe('Notebook Entries:', () => {
             unlisten();
         });
 
-        NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+        await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
     });
 
-    it('getEntryPosById returns valid position', () => {
-        const entryId1 = NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+    it('addNotebookEntry adds active user to entry', async () => {
+        const USER = 'Timmy';
+        openmct.user.hasProvider = () => true;
+        openmct.user.getCurrentUser = () => {
+            return Promise.resolve({
+                getName: () => {
+                    return USER;
+                }
+            });
+        };
+
+        const unlisten = openmct.objects.observe(notebookDomainObject, '*', (object) => {
+            const entries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
+
+            expect(entries[0].createdBy).toEqual(USER);
+            unlisten();
+        });
+
+        await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+    });
+
+    it('getEntryPosById returns valid position', async () => {
+        const entryId1 = await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
         const position1 = NotebookEntries.getEntryPosById(entryId1, notebookDomainObject, selectedSection, selectedPage);
 
-        const entryId2 = NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+        const entryId2 = await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
         const position2 = NotebookEntries.getEntryPosById(entryId2, notebookDomainObject, selectedSection, selectedPage);
 
-        const entryId3 = NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+        const entryId3 = await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
         const position3 = NotebookEntries.getEntryPosById(entryId3, notebookDomainObject, selectedSection, selectedPage);
 
         const success = position1 === 0
@@ -155,9 +176,9 @@ describe('Notebook Entries:', () => {
         expect(success).toBe(true);
     });
 
-    it('deleteNotebookEntries deletes correct page entries', () => {
-        NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
-        NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+    it('deleteNotebookEntries deletes correct page entries', async () => {
+        await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+        await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
 
         NotebookEntries.deleteNotebookEntries(openmct, notebookDomainObject, selectedSection, selectedPage);
         const afterEntries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
