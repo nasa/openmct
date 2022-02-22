@@ -11,6 +11,8 @@ updates:
       - "dependencies"
       - "pr:e2e"
       - "pr:daveit"
+      - "pr:visual"
+      - "pr:platform"
 
   - package-ecosystem: "github-actions"
     directory: "/"
