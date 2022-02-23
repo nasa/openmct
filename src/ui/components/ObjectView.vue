@@ -9,8 +9,7 @@
         />
     </div>
     <div ref="objectViewWrapper"
-         class="c-object-view"
-         :class="objectTypeClass"
+         :class="objectViewStyle"
     ></div>
 </div>
 </template>
@@ -71,6 +70,14 @@ export default {
         },
         font() {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
+        },
+        },
+        objectViewStyle() {
+            if (this.domainObject && this.domainObject.type === 'time-strip') {
+                return 'l-shell__main-object-view';
+            } else {
+                return 'u-contents';
+            }
         },
         supportsIndependentTime() {
             const viewKey = this.getViewKey();

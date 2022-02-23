@@ -243,7 +243,7 @@
             margin-top: $interiorMargin;
         }
 
-        > .c-object-view {
+        &__main-object-view {
             flex: 1 1 auto;
             overflow: auto;
         }
@@ -314,12 +314,6 @@
             pointer-events: none;
         }
     }
-}
-
-.c-object-view {
-    display: block;
-    height: 100%;
-    overflow: auto;
 }
 
 .is-editing {
