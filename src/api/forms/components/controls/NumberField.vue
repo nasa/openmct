@@ -30,7 +30,7 @@
                :min="model.min"
                :max="model.max"
                :step="model.step"
-               @blur="blur()"
+               @change="onChange()"
         >
     </span>
 </span>
@@ -50,7 +50,7 @@ export default {
         };
     },
     methods: {
-        blur() {
+        onChange() {
             const data = {
                 model: this.model,
                 value: this.field
