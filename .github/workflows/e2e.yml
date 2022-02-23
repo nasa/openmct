@@ -15,7 +15,7 @@ jobs:
           ref: ${{ github.event.inputs.version }}
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - run: npm install
       - name: Run the e2e tests
         run: npm run test:e2e:ci

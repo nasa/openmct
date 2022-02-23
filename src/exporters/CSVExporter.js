@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import CSV from 'comma-separated-values';
-import {saveAs} from 'file-saver/FileSaver';
+import {saveAs} from 'saveAs';
 
 class CSVExporter {
     export(rows, options) {

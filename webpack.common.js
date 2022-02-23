@@ -1,10 +1,12 @@
+/* global __dirname */
+
 const path = require('path');
 const packageDefinition = require('./package.json');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const {VueLoaderPlugin} = require('vue-loader');
 const gitRevision = require('child_process')
     .execSync('git rev-parse HEAD')
     .toString().trim();
@@ -12,7 +14,8 @@ const gitBranch = require('child_process')
     .execSync('git rev-parse --abbrev-ref HEAD')
     .toString().trim();
 
-module.exports = {
+/** @type {import('webpack').Configuration} */
+const config = {
     entry: {
         openmct: './openmct.js',
         couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
@@ -27,13 +30,14 @@ module.exports = {
         library: '[name]',
         libraryTarget: 'umd',
         publicPath: '',
+        hashFunction: 'xxhash64',
         clean: true
     },
     resolve: {
         alias: {
             "@": path.join(__dirname, "src"),
             "legacyRegistry": path.join(__dirname, "src/legacyRegistry"),
-            "saveAs": "file-saver",
+            "saveAs": "file-saver/src/FileSaver.js",
             "csv": "comma-separated-values",
             "EventEmitter": "eventemitter3",
             "bourbon": "bourbon.scss",
@@ -129,3 +133,5 @@ module.exports = {
     },
     stats: 'errors-warnings'
 };
+
+module.exports = config;
