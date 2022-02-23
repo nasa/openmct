@@ -9,7 +9,12 @@ on:
 jobs:
   e2e-full:
     if: ${{ github.event.label.name == 'pr:e2e' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
     steps:
       - name: Trigger Success
         uses: actions/github-script@v6
