@@ -1,9 +1,7 @@
 define([
-    'objectUtils',
-    'uuid'
+    'objectUtils'
 ], function (
-    objectUtils,
-    uuid
+    objectUtils
 ) {
     /**
      * Transforms an import json blob into a object map that can be used to
