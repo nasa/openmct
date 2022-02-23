@@ -11,49 +11,89 @@ define([
      * rootIdentifier, and rewrites all child object identifiers so that they
      * exist in the same namespace as the rootIdentifier.
      */
+    function parseObjectLeaf(objectLeaf, idMap, namespace) {
+        Object.keys(objectLeaf).forEach((nodeKey) => {
+            if (idMap.get(nodeKey)) {
+                const newIdentifier = objectUtils.makeKeyString({
+                    namespace,
+                    key: idMap.get(nodeKey)
+                });
+                objectLeaf[newIdentifier] = { ...objectLeaf[nodeKey] };
+                delete objectLeaf[nodeKey];
+                objectLeaf[newIdentifier] = parseTreeLeaf(newIdentifier, objectLeaf[newIdentifier], idMap, namespace);
+            } else {
+                objectLeaf[nodeKey] = parseTreeLeaf(nodeKey, objectLeaf[nodeKey], idMap, namespace);
+            }
+        });
+
+        return objectLeaf;
+    }
+
+    function parseArrayLeaf(arrayLeaf, idMap, namespace) {
+        arrayLeaf.forEach((leafValue, index) => {
+            arrayLeaf[index] = parseTreeLeaf(null, leafValue, idMap, namespace);
+        });
+
+        return arrayLeaf;
+    }
+
+    function parseBranchedLeaf(branchedLeafValue, idMap, namespace) {
+        if (Array.isArray(branchedLeafValue)) {
+            return parseArrayLeaf(branchedLeafValue, idMap, namespace);
+        } else {
+            return parseObjectLeaf(branchedLeafValue, idMap, namespace);
+        }
+    }
+
+    function parseTreeLeaf(leafKey, leafValue, idMap, namespace) {
+        const hasChild = typeof leafValue === 'object';
+        if (hasChild) {
+            return parseBranchedLeaf(leafValue, idMap, namespace);
+        }
+
+        if (leafKey === 'key') {
+            return idMap.get(leafValue);
+        } else if (leafKey === 'namespace') {
+            return namespace;
+        } else if (leafKey === 'location') {
+            if (idMap.get(leafValue)) {
+                const newLocationIdentifier = objectUtils.makeKeyString({
+                    namespace,
+                    key: idMap.get(leafValue)
+                });
+
+                return newLocationIdentifier;
+            }
+
+            return null;
+        } else if (idMap.get(leafValue)) {
+            const newIdentifier = objectUtils.makeKeyString({
+                namespace,
+                key: idMap.get(leafValue)
+            });
+
+            return newIdentifier;
+        } else {
+            return leafValue;
+        }
+    }
+
     function rewriteObjectIdentifiers(importData, rootIdentifier) {
         const namespace = rootIdentifier.namespace;
         const idMap = new Map();
+        const objectTree = importData.openmct;
 
-        Object.keys(importData.openmct).forEach((originalId) => {
+        Object.keys(objectTree).forEach((originalId, index) => {
             if (originalId === importData.rootId) {
                 idMap.set(originalId, rootIdentifier.key);
             } else {
-                idMap.set(originalId, uuid());
+                idMap.set(originalId, index.toString());
             }
         });
 
-        Object.keys(importData.openmct).forEach((originalId) => {
-            const newUUID = idMap.get(originalId);
-            if (importData.openmct[originalId] && importData.openmct[originalId].identifier) {
-                importData.openmct[originalId].identifier.key = newUUID;
-                importData.openmct[originalId].identifier.namespace = namespace;
-            }
+        const newTree = parseTreeLeaf(null, objectTree, idMap, namespace);
 
-            if (importData.openmct[originalId] && importData.openmct[originalId].composition) {
-                importData.openmct[originalId].composition.forEach((compositionObject) => {
-                    const childObjectKey = objectUtils.makeKeyString({
-                        namespace: compositionObject.namespace,
-                        key: compositionObject.key
-                    });
-                    importData.openmct[childObjectKey].location = objectUtils.makeKeyString({
-                        namespace,
-                        key: newUUID
-                    });
-                    compositionObject.key = idMap.get(compositionObject.key);
-                    compositionObject.namespace = namespace;
-                });
-            }
-
-            const objectId = objectUtils.makeKeyString({
-                namespace,
-                key: newUUID
-            });
-            importData.openmct[objectId] = importData.openmct[originalId];
-            delete importData.openmct[originalId];
-        });
-
-        return importData.openmct;
+        return newTree;
     }
 
     /**
