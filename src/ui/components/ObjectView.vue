@@ -71,7 +71,6 @@ export default {
         font() {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         },
-        },
         objectViewStyle() {
             if (this.domainObject && this.domainObject.type === 'time-strip') {
                 return 'l-shell__main-object-view';
