@@ -866,7 +866,7 @@ export default {
                 this.thumbnailClicked(--index);
             }
         },
-        resetImage(overrideLock) {
+        resetImage(overrideLock = false) {
             if (this.panZoomLocked && !overrideLock) {
                 return false;
             }
