@@ -29,60 +29,15 @@
     @mouseover="focusElement"
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
-        <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
-            <div class="c-image-controls__control c-image-controls__zoom icon-magnify">
-                <div class="c-button-set c-button-set--strip-h">
-                    <button class="c-button t-btn-zoom-out icon-minus"
-                            title="Zoom out"
-                            @click="handleZoomButton(-1)"
-                    ></button>
-
-                    <button class="c-button t-btn-zoom-in icon-plus"
-                            title="Zoom in"
-                            @click="handleZoomButton(1)"
-                    ></button>
-                </div>
-
-                <button class="c-button t-btn-zoom-lock"
-                        title="Lock current zoom and pan across all images"
-                        :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
-                        @click="lockPanZoomPosition"
-                ></button>
-
-                <button class="c-button icon-reset t-btn-zoom-reset"
-                        title="Remove zoom and pan"
-                        @click="resetImage(true)"
-                ></button>
-
-                <span class="c-image-controls__zoom-factor">x{{formattedZoomFactor}}</span>
-            </div>
-            <div class="c-image-controls__control c-image-controls__brightness-contrast">
-                <span class="c-image-controls__sliders"
-                      draggable="true"
-                      @dragstart="startDrag"
-                >
-                    <div class="c-image-controls__input icon-brightness">
-                        <input v-model="filters.brightness"
-                               type="range"
-                               min="0"
-                               max="500"
-                        >
-                    </div>
-                    <div class="c-image-controls__input icon-contrast">
-                        <input v-model="filters.contrast"
-                               type="range"
-                               min="0"
-                               max="500"
-                        >
-                    </div>
-                </span>
-                <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
-                    <button class="c-icon-link icon-reset t-btn-reset"
-                            @click="filters={brightness: 100, contrast: 100}"
-                    ></button>
-                </span>
-            </div>
-        </div>
+        <ImageControls
+            :filters="filters"
+            :pan-zoom-locked="panZoomLocked"
+            :zoom-factor="formattedZoomFactor"
+            @resetImage="resetImage"
+            @incrementZoomFactor="incrementZoomFactor"
+            @togglePanZoomLock="togglePanZoomLock"
+            @setFilters="setFilters"
+        />
 
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
@@ -240,7 +195,7 @@ import moment from 'moment';
 
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
-
+import ImageControls from './ImageControls.vue';
 import imageryData from "../../imagery/mixins/imageryData";
 
 const REFRESH_CSS_MS = 500;
@@ -265,7 +220,8 @@ const ZOOM_LIMITS_MIN_DEFAULT = 1;
 
 export default {
     components: {
-        Compass
+        Compass,
+        ImageControls
     },
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
@@ -303,6 +259,8 @@ export default {
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
+            sizedImageWidth: 0,
+            sizedImageHeight: 0,
             lockCompass: true,
             resizingWindow: false,
             timeContext: undefined,
@@ -316,9 +274,7 @@ export default {
             animateZoom: true,
             imagePanned: false,
             wheelZooming: false,
-            panZoomLocked: false,
-            sizedImageWidth: 0,
-            sizedImageHeight: 0
+            panZoomLocked: false
         };
     },
     computed: {
@@ -964,13 +920,7 @@ export default {
             this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
         },
-        handleZoomButton(stepValue) {
-            this.incrementZoomFactor(stepValue);
-        },
-        lockPanZoomPosition() {
-            if (!this.panZoomLocked && this.zoomFactor === 1) {
-                return;
-            }
+        togglePanZoomLock() {
 
             this.panZoomLocked = !this.panZoomLocked;
         },
@@ -986,10 +936,6 @@ export default {
 
             const newZoomFactor = this.zoomFactor + (this.shiftPressed ? -step : step);
             this.zoomImage(newZoomFactor, e.clientX, e.clientY);
-        },
-        startDrag(e) {
-            e.preventDefault();
-            e.stopPropagation();
         },
         arrowDownHandler(event) {
             let key = event.keyCode;
@@ -1179,6 +1125,10 @@ export default {
             if (this.pan) {
                 return this.endPan(event);
             }
+        },
+        setFilters(filtersObj) {
+            this.filters = filtersObj;
+
         }
     }
 };
