@@ -1,0 +1,84 @@
+.c-gauge {
+  @include abs();
+  overflow: hidden;
+
+  &__wrapper {
+    position: absolute;
+    width: 100%;
+    padding-bottom: 100%;
+    overflow: hidden;
+  }
+
+  &__value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3vw;
+  }
+
+  &__range {
+    $o: 21%;
+    position: absolute;
+    fill: rgba(#fff, 0.8);
+  }
+
+  &__curval {
+    font-family: $heroFont;
+    font-size: 170px;
+  }
+}
+
+.c-dial {
+  // Dial elements
+  @include abs();
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
+
+  svg,
+  &__ticks,
+  &__bg,
+  &__limit,
+  &__value {
+    @include abs();
+  }
+
+  svg {
+    path {
+      transform-origin: center;
+    }
+  }
+
+  &__limit {
+    &.c-limit-clip--90 {
+      clip-path: polygon(0 0, 100% 0, 100% 100%);
+    }
+
+    &.c-limit-clip--180 {
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+
+    path {
+      fill: rgba(orange, 0.4);
+    }
+  }
+
+  &__value {
+    &.c-dial-clip--90 {
+      clip-path: polygon(0 0, 50% 50%, 0 100%);
+    }
+
+    &.c-dial-clip--180 {
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    path {
+      fill: rgba(#fff, 0.8);
+    }
+  }
+
+  &__bg {
+    g {
+      fill: rgba(#fff, 0.1);
+    }
+  }
+}
