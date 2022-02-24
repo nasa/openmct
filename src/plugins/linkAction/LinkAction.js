@@ -97,7 +97,7 @@ export default class LinkAction {
             const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
             const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
-            console.log(parentCandidate.name, this.openmct.objects.isPersistable(parentCandidate.identifier));
+
             if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
                 return false;
             }

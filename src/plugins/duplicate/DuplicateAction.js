@@ -97,12 +97,15 @@ export default class DuplicateAction {
 
     validate(currentParent) {
         return (data) => {
-            const parentCandidatePath = data.value;
-            const parentCandidate = parentCandidatePath[0];
+            const parentCandidate = data.value[0];
 
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
             let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+
+            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+                return false;
+            }
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
