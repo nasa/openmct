@@ -77,6 +77,7 @@ export default class LinkAction {
                         {
                             name: "location",
                             control: "locator",
+                            parent: parentDomainObject,
                             required: true,
                             validate: this.validate(parentDomainObject),
                             key: 'location'

@@ -126,6 +126,7 @@ export default class MoveAction {
                         {
                             name: "Location",
                             control: "locator",
+                            parent: parentDomainObject,
                             required: true,
                             validate: this.validate(parentDomainObject),
                             key: 'location'
