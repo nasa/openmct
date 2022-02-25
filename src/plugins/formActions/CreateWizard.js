@@ -102,7 +102,7 @@ export default class CreateWizard {
         if (includeLocation) {
             function validateLocation(data) {
                 const policyCheck = self.openmct.composition.checkPolicy(data.value[0], domainObject);
-                const parentIsPersistable = self.openmct.objects.isPersistable(self.parent.identifier);
+                const parentIsPersistable = self.openmct.objects.isPersistable(data.value[0].identifier);
 
                 return policyCheck && parentIsPersistable;
             }
