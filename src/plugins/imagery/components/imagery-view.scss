@@ -32,7 +32,7 @@
             justify-content: center;
             flex: 1 1 auto;
             height: 0;
-
+            overflow: hidden;
             &.unnsynced{
                 @include sUnsynced();
             }
