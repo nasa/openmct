@@ -31,7 +31,7 @@ function replaceDotsWithUnderscores(filename) {
     return filename.replace(regex, '_');
 }
 
-import {saveAs} from 'saveAs';
+import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
 import uuid from 'uuid';
 
