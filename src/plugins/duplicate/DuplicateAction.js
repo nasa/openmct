@@ -130,8 +130,9 @@ export default class DuplicateAction {
         let child = objectPath[0];
         let childType = child && this.openmct.types.get(child.type);
         let locked = child.locked ? child.locked : parent && parent.locked;
+        let isPersistable = this.openmct.objects.isPersistable(child.identifier);
 
-        if (locked) {
+        if (locked || !isPersistable) {
             return false;
         }
 

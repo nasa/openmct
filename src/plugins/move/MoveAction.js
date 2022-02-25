@@ -179,8 +179,9 @@ export default class MoveAction {
         let parentType = parent && this.openmct.types.get(parent.type);
         let child = objectPath[0];
         let childType = child && this.openmct.types.get(child.type);
+        let isPersistable = this.openmct.objects.isPersistable(child.identifier);
 
-        if (child.locked || (parent && parent.locked)) {
+        if (child.locked || (parent && parent.locked) || !isPersistable) {
             return false;
         }
 
