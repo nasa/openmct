@@ -1,15 +1,52 @@
-define([
-    'objectUtils'
-], function (
-    objectUtils
-) {
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/**
+ * Transforms an import json blob into a object map that can be used to
+ * provide objects.  Rewrites root identifier in import data with provided
+ * rootIdentifier, and rewrites all child object identifiers so that they
+ * exist in the same namespace as the rootIdentifier.
+ */
+import objectUtils from 'objectUtils';
+
+class StaticModelProvider {
+    constructor(importData, rootIdentifier) {
+        this.objectMap = {};
+        this.rewriteModel(importData, rootIdentifier);
+    }
+
     /**
-     * Transforms an import json blob into a object map that can be used to
-     * provide objects.  Rewrites root identifier in import data with provided
-     * rootIdentifier, and rewrites all child object identifiers so that they
-     * exist in the same namespace as the rootIdentifier.
+     * Standard "Get".
      */
-    function parseObjectLeaf(objectLeaf, idMap, namespace) {
+    get(identifier) {
+        const keyString = objectUtils.makeKeyString(identifier);
+        if (this.objectMap[keyString]) {
+            return this.objectMap[keyString];
+        }
+
+        throw new Error(keyString + ' not found in import models.');
+    }
+
+    parseObjectLeaf(objectLeaf, idMap, namespace) {
         Object.keys(objectLeaf).forEach((nodeKey) => {
             if (idMap.get(nodeKey)) {
                 const newIdentifier = objectUtils.makeKeyString({
@@ -18,35 +55,32 @@ define([
                 });
                 objectLeaf[newIdentifier] = { ...objectLeaf[nodeKey] };
                 delete objectLeaf[nodeKey];
-                objectLeaf[newIdentifier] = parseTreeLeaf(newIdentifier, objectLeaf[newIdentifier], idMap, namespace);
+                objectLeaf[newIdentifier] = this.parseTreeLeaf(newIdentifier, objectLeaf[newIdentifier], idMap, namespace);
             } else {
-                objectLeaf[nodeKey] = parseTreeLeaf(nodeKey, objectLeaf[nodeKey], idMap, namespace);
+                objectLeaf[nodeKey] = this.parseTreeLeaf(nodeKey, objectLeaf[nodeKey], idMap, namespace);
             }
         });
 
         return objectLeaf;
     }
 
-    function parseArrayLeaf(arrayLeaf, idMap, namespace) {
-        arrayLeaf.forEach((leafValue, index) => {
-            arrayLeaf[index] = parseTreeLeaf(null, leafValue, idMap, namespace);
-        });
-
-        return arrayLeaf;
+    parseArrayLeaf(arrayLeaf, idMap, namespace) {
+        return arrayLeaf.map((leafValue, index) => this.parseTreeLeaf(
+            null, leafValue, idMap, namespace));
     }
 
-    function parseBranchedLeaf(branchedLeafValue, idMap, namespace) {
+    parseBranchedLeaf(branchedLeafValue, idMap, namespace) {
         if (Array.isArray(branchedLeafValue)) {
-            return parseArrayLeaf(branchedLeafValue, idMap, namespace);
+            return this.parseArrayLeaf(branchedLeafValue, idMap, namespace);
         } else {
-            return parseObjectLeaf(branchedLeafValue, idMap, namespace);
+            return this.parseObjectLeaf(branchedLeafValue, idMap, namespace);
         }
     }
 
-    function parseTreeLeaf(leafKey, leafValue, idMap, namespace) {
+    parseTreeLeaf(leafKey, leafValue, idMap, namespace) {
         const hasChild = typeof leafValue === 'object';
         if (hasChild) {
-            return parseBranchedLeaf(leafValue, idMap, namespace);
+            return this.parseBranchedLeaf(leafValue, idMap, namespace);
         }
 
         if (leafKey === 'key') {
@@ -76,20 +110,21 @@ define([
         }
     }
 
-    function rewriteObjectIdentifiers(importData, rootIdentifier) {
+    rewriteObjectIdentifiers(importData, rootIdentifier) {
         const namespace = rootIdentifier.namespace;
         const idMap = new Map();
         const objectTree = importData.openmct;
 
         Object.keys(objectTree).forEach((originalId, index) => {
+            let newId = index.toString();
             if (originalId === importData.rootId) {
-                idMap.set(originalId, rootIdentifier.key);
-            } else {
-                idMap.set(originalId, index.toString());
+                newId = rootIdentifier.key;
             }
+
+            idMap.set(originalId, newId);
         });
 
-        const newTree = parseTreeLeaf(null, objectTree, idMap, namespace);
+        const newTree = this.parseTreeLeaf(null, objectTree, idMap, namespace);
 
         return newTree;
     }
@@ -98,7 +133,7 @@ define([
      * Converts all objects in an object make from old format objects to new
      * format objects.
      */
-    function convertToNewObjects(oldObjectMap) {
+    convertToNewObjects(oldObjectMap) {
         return Object.keys(oldObjectMap)
             .reduce(function (newObjectMap, key) {
                 newObjectMap[key] = objectUtils.toNewFormat(oldObjectMap[key], key);
@@ -108,7 +143,7 @@ define([
     }
 
     /* Set the root location correctly for a top-level object */
-    function setRootLocation(objectMap, rootIdentifier) {
+    setRootLocation(objectMap, rootIdentifier) {
         objectMap[objectUtils.makeKeyString(rootIdentifier)].location = 'ROOT';
 
         return objectMap;
@@ -118,24 +153,11 @@ define([
      * Takes importData (as provided by the ImportExport plugin) and exposes
      * an object provider to fetch those objects.
      */
-    function StaticModelProvider(importData, rootIdentifier) {
-        const oldFormatObjectMap = rewriteObjectIdentifiers(importData, rootIdentifier);
-        const newFormatObjectMap = convertToNewObjects(oldFormatObjectMap);
-        this.objectMap = setRootLocation(newFormatObjectMap, rootIdentifier);
+    rewriteModel(importData, rootIdentifier) {
+        const oldFormatObjectMap = this.rewriteObjectIdentifiers(importData, rootIdentifier);
+        const newFormatObjectMap = this.convertToNewObjects(oldFormatObjectMap);
+        this.objectMap = this.setRootLocation(newFormatObjectMap, rootIdentifier);
     }
+}
 
-    /**
-     * Standard "Get".
-     */
-    StaticModelProvider.prototype.get = function (identifier) {
-        const keyString = objectUtils.makeKeyString(identifier);
-        if (this.objectMap[keyString]) {
-            return this.objectMap[keyString];
-        }
-
-        throw new Error(keyString + ' not found in import models.');
-    };
-
-    return StaticModelProvider;
-
-});
+export default StaticModelProvider;
