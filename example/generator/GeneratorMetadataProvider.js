@@ -21,17 +21,8 @@ define([
                     }
                 },
                 {
-                    key: "yesterday",
-                    name: "Yesterday",
-                    format: "utc",
-                    hints: {
-                        domain: 2
-                    }
-                },
-                {
                     key: "cos",
-                    name: "Cosine",
-                    unit: "deg",
+                    name: "Value",
                     formatString: '%0.2f',
                     hints: {
                         domain: 3
@@ -49,8 +40,7 @@ define([
                 // },
                 {
                     key: "sin",
-                    name: "Sine",
-                    unit: "Hz",
+                    name: "Value",
                     formatString: '%0.2f',
                     hints: {
                         range: 1
@@ -58,8 +48,7 @@ define([
                 },
                 {
                     key: "cos",
-                    name: "Cosine",
-                    unit: "deg",
+                    name: "Value",
                     formatString: '%0.2f',
                     hints: {
                         range: 2

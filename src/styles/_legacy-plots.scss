@@ -68,6 +68,7 @@ mct-plot {
     flex-direction: column;
     overflow: hidden;
     min-height: $plotMinH;
+    bottom: 30px;
 
     .c-control-bar {
         flex: 0 0 auto;

@@ -26,25 +26,13 @@ define([
 
 ) {
 
-    var PURPLE = {
-            sin: 2.2,
-            cos: 2.2
-        },
-        RED = {
-            sin: 0.9,
-            cos: 0.9
-        },
-        ORANGE = {
-            sin: 0.7,
-            cos: 0.7
+    var RED = {
+            sin: 12,
+            cos: 12
         },
         YELLOW = {
-            sin: 0.5,
-            cos: 0.5
-        },
-        CYAN = {
-            sin: 0.45,
-            cos: 0.45
+            sin: 10,
+            cos: 10
         },
         LIMITS = {
             rh: {
@@ -110,17 +98,6 @@ define([
         return {
             limits: function () {
                 return Promise.resolve({
-                    WATCH: {
-                        low: {
-                            color: "cyan",
-                            sin: -CYAN.sin,
-                            cos: -CYAN.cos
-                        },
-                        high: {
-                            color: "cyan",
-                            ...CYAN
-                        }
-                    },
                     WARNING: {
                         low: {
                             color: "yellow",
@@ -132,17 +109,6 @@ define([
                             ...YELLOW
                         }
                     },
-                    DISTRESS: {
-                        low: {
-                            color: "orange",
-                            sin: -ORANGE.sin,
-                            cos: -ORANGE.cos
-                        },
-                        high: {
-                            color: "orange",
-                            ...ORANGE
-                        }
-                    },
                     CRITICAL: {
                         low: {
                             color: "red",
@@ -152,17 +118,6 @@ define([
                         high: {
                             color: "red",
                             ...RED
-                        }
-                    },
-                    SEVERE: {
-                        low: {
-                            color: "purple",
-                            sin: -PURPLE.sin,
-                            cos: -PURPLE.cos
-                        },
-                        high: {
-                            color: "purple",
-                            ...PURPLE
                         }
                     }
                 });
