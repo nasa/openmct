@@ -109,5 +109,11 @@
   },
   "author": "",
   "license": "Apache-2.0",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@opentelemetry/api": "^1.0.4",
+    "@opentelemetry/auto-instrumentations-node": "^0.27.3",
+    "@opentelemetry/instrumentation-long-task": "^0.27.0",
+    "@opentelemetry/sdk-node": "^0.27.0"
+  }
 }
