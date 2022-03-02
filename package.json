@@ -6,7 +6,7 @@
     "@braintree/sanitize-url": "5.0.2",
     "@percy/cli": "1.0.0-beta.75",
     "@percy/playwright": "1.0.1",
-    "@playwright/test": "1.19.1",
+    "@playwright/test": "1.19.2",
     "allure-playwright": "2.0.0-beta.15",
     "babel-eslint": "10.1.0",
     "comma-separated-values": "3.6.4",
