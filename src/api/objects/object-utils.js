@@ -55,6 +55,11 @@ define([
      */
     function parseKeyString(keyString) {
         if (isIdentifier(keyString)) {
+            // hack to workaround a bug mashing keyString into identifier.key
+            if (!keyString.namespace && keyString.key.includes(':')) {
+                return parseKeyString(keyString.key);
+            }
+
             return keyString;
         }
 
