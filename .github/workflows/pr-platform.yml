@@ -31,4 +31,4 @@ jobs:
           architecture: ${{ matrix.architecture }}
       - run: npm install
       - run: npm test
-      - run: npm run lint
+      - run: npm run lint -- --quiet
