@@ -33,6 +33,8 @@
                    ref="searchResults"
                    :domain-object="domainObject"
                    :results="searchResults"
+                   @cancelEdit="cancelTransaction"
+                   @editingEntry="startTransaction"
                    @changeSectionPage="changeSelectedSection"
                    @updateEntries="updateEntries"
     />
@@ -124,6 +126,8 @@
                                :selected-page="selectedPage"
                                :selected-section="selectedSection"
                                :read-only="false"
+                               @cancelEdit="cancelTransaction"
+                               @editingEntry="startTransaction"
                                @deleteEntry="deleteEntry"
                                @updateEntry="updateEntry"
                 />
@@ -692,6 +696,8 @@ export default {
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
             mutateObject(this.openmct, this.domainObject, 'configuration.entries', notebookEntries);
+
+            this.saveTransaction();
         },
         getPageIdFromUrl() {
             return this.openmct.router.getParams().pageId;
@@ -728,6 +734,42 @@ export default {
             this.selectPage(pageId);
 
             this.syncUrlWithPageAndSection();
+        },
+        activeTransaction() {
+            return this.openmct.objects.getActiveTransaction();
+        },
+        startTransaction() {
+            console.log('start transaction');
+            this.openmct.objects.startTransaction();
+        },
+        saveTransaction() {
+            const transaction = this.activeTransaction();
+
+            if (!transaction) {
+                return;
+            }
+
+            return transaction.commit()
+                .then(() => {
+                // committed
+                }).catch(error => {
+                    throw error;
+                }).finally(() => {
+                    console.log('ending transaction after save');
+                    this.openmct.objects.endTransaction();
+                });
+        },
+        cancelTransaction() {
+            return new Promise((resolve, reject) => {
+                const transaction = this.activeTransaction();
+                transaction.cancel()
+                    .then(resolve)
+                    .catch(reject)
+                    .finally(() => {
+                        console.log('ending transaction after cancel');
+                        this.openmct.objects.endTransaction();
+                    });
+            });
         }
     }
 };

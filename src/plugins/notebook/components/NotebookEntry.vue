@@ -54,6 +54,7 @@
                     class="c-ne__text c-ne__input"
                     tabindex="0"
                     contenteditable
+                    @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
@@ -279,11 +280,16 @@ export default {
 
             this.$emit('updateEntry', this.entry);
         },
+        editingEntry() {
+            this.$emit('editingEntry');
+        },
         updateEntryValue($event) {
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;
                 this.$emit('updateEntry', this.entry);
+            } else {
+                this.$emit('cancelEdit');
             }
         }
     }
