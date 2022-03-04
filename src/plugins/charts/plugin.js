@@ -54,7 +54,8 @@ export default function () {
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
-                    styles: {}
+                    styles: {},
+                    axes: {}
                 };
             },
             form: [

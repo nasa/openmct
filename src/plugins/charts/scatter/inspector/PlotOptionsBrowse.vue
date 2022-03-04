@@ -20,78 +20,102 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded"
-     class="js-plot-options-browse"
->
-    <ul class="c-tree">
-        <h2 title="Plot series display properties in this object">Plot Series</h2>
-        <plot-options-item v-for="series in plotSeries"
-                           :key="series.key"
-                           :series="series"
-        />
+<div class="js-plot-options-browse grid-properties">
+    <ul class="l-inspector-part">
+        <h2 title="Y axis settings for this object">X Axis</h2>
+        <li class="grid-row">
+            <div class="grid-cell label"
+                 title="X axis selection."
+            >X Axis</div>
+            <div class="grid-cell value">{{ xKeyLabel }}</div>
+        </li>
     </ul>
-    <div v-if="plotSeries.length"
-         class="grid-properties"
-    >
-        <ul class="l-inspector-part">
-            <h2 title="Y axis settings for this object">X and Y Axes</h2>
-            <li class="grid-row">
-                <div class="grid-cell label"
-                     title="X and Y axes selections."
-                >Label</div>
-                <div class="grid-cell value">TO DO</div>
-            </li>
-        </ul>
-    </div>
+    <ul class="l-inspector-part">
+        <h2 title="Y axis settings for this object">Y Axis</h2>
+        <li class="grid-row">
+            <div class="grid-cell label"
+                 title="Y axis selection."
+            >Y Axis</div>
+            <div class="grid-cell value">{{ yKeyLabel }}</div>
+        </li>
+    </ul>
 </div>
 </template>
 
 <script>
-import PlotOptionsItem from "./PlotOptionsItem.vue";
-import eventHelpers from "../lib/eventHelpers";
-
 export default {
-    components: {
-        PlotOptionsItem
-    },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            config: {},
-            plotSeries: []
+            xKeyLabel: '',
+            yKeyLabel: ''
         };
     },
     mounted() {
-        eventHelpers.extend(this);
-        this.config = this.getConfig();
+        this.plotSeries = [];
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.registerListeners();
-        this.initConfiguration();
-        this.loaded = true;
+        this.composition.load();
     },
     beforeDestroy() {
         this.stopListening();
     },
     methods: {
-        initConfiguration() {
-        },
-        getConfig() {
-            return {};
-        },
         registerListeners() {
-            this.config.series.forEach(this.addSeries, this);
-
-            this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+            this.composition.on('add', this.addSeries);
+            this.composition.on('remove', this.removeSeries);
+            this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.setAxesLabels);
         },
-
+        stopListening() {
+            this.composition.off('add', this.addSeries);
+            this.composition.off('remove', this.removeSeries);
+            if (this.unobserve) {
+                this.unobserve();
+            }
+        },
         addSeries(series, index) {
-            this.$set(this.plotSeries, index, series);
-            this.initConfiguration();
+            this.$set(this.plotSeries, this.plotSeries.length, series);
+            this.setAxesLabels();
         },
+        removeSeries(series) {
+            const index = this.plotSeries.find(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
+            if (index !== undefined) {
+                this.$delete(this.plotSeries, index);
+                this.setAxesLabels();
+            }
+        },
+        setAxesLabels() {
+            let xKeyOptions = [];
+            let yKeyOptions = [];
+            this.plotSeries.forEach((series) => {
+                const id = this.openmct.objects.makeKeyString(series.identifier);
+                xKeyOptions.push({
+                    name: series.name,
+                    value: id
+                });
+                yKeyOptions.push({
+                    name: series.name,
+                    value: id
+                });
+            });
+            if (this.plotSeries.length) {
+                let xKeyOptionIndex;
+                let yKeyOptionIndex;
 
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
+                if (this.domainObject.configuration.axes.xKey) {
+                    xKeyOptionIndex = xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
+                    if (xKeyOptionIndex > -1) {
+                        this.xKeyLabel = xKeyOptions[xKeyOptionIndex].name;
+                    }
+                }
+
+                if (this.plotSeries.length > 1 && this.domainObject.configuration.axes.yKey) {
+                    yKeyOptionIndex = yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
+                    if (yKeyOptionIndex > -1) {
+                        this.yKeyLabel = yKeyOptions[yKeyOptionIndex].name;
+                    }
+                }
+            }
         }
     }
 };

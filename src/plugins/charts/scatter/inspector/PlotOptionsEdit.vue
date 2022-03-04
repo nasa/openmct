@@ -20,68 +20,195 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded"
-     class="js-plot-options-edit"
->
-    <ul class="c-tree">
-        <h2 title="Display properties for this object">Plot Series</h2>
-        <li v-for="series in plotSeries"
-            :key="series.key"
-        >
-            <series-form :series="series" />
+<div class="js-plot-options-edit grid-properties">
+    <ul class="l-inspector-part">
+        <h2 title="Y axis settings for this object">X Axis</h2>
+        <li class="grid-row">
+            <div class="grid-cell label"
+                 title="X axis selection."
+            >X Axis</div>
+            <div class="grid-cell value">
+                <select v-model="xKey"
+                        @change="updateForm('xKey')"
+                >
+                    <option v-for="option in xKeyOptions"
+                            :key="`xKey-${option.value}`"
+                            :value="option.value"
+                            :selected="option.value == xKey"
+                    >
+                        {{ option.name }}
+                    </option>
+                </select>
+            </div>
         </li>
     </ul>
-    <axes-form v-if="plotSeries.length"
-               class="grid-properties"
-               :y-axis="config.yAxis"
-    />
+    <ul class="l-inspector-part">
+        <h2 title="Y axis settings for this object">Y Axis</h2>
+        <li class="grid-row">
+            <div class="grid-cell label"
+                 title="Y axis selection."
+            >Y Axis</div>
+            <div class="grid-cell value">
+                <select v-model="yKey"
+                        @change="updateForm('yKey')"
+                >
+                    <option v-for="option in yKeyOptions"
+                            :key="`yKey-${option.value}`"
+                            :value="option.value"
+                            :selected="option.value == yKey"
+                    >
+                        {{ option.name }}
+                    </option>
+                </select>
+            </div>
+        </li>
+    </ul>
 </div>
 </template>
 <script>
-import SeriesForm from "./forms/SeriesForm.vue";
-import AxesForm from "./forms/AxesForm.vue";
-import eventHelpers from "../lib/eventHelpers";
 
 export default {
-    components: {
-        SeriesForm,
-        AxesForm
-    },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            config: {},
-            plotSeries: [],
-            loaded: false
+            xKey: undefined,
+            yKey: undefined,
+            xKeyOptions: [],
+            yKeyOptions: []
         };
     },
     mounted() {
-        eventHelpers.extend(this);
-        this.config = this.getConfig();
+        this.plotSeries = [];
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.registerListeners();
-        this.loaded = true;
+        this.composition.load();
     },
     beforeDestroy() {
         this.stopListening();
     },
     methods: {
-        getConfig() {
-            return {};
-        },
         registerListeners() {
-            this.config.series.forEach(this.addSeries, this);
-
-            this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+            this.composition.on('add', this.addSeries);
+            this.composition.on('remove', this.removeSeries);
+            this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.setupOptions);
         },
-
+        stopListening() {
+            this.composition.off('add', this.addSeries);
+            this.composition.off('remove', this.removeSeries);
+            if (this.unobserve) {
+                this.unobserve();
+            }
+        },
         addSeries(series, index) {
-            this.$set(this.plotSeries, index, series);
+            this.$set(this.plotSeries, this.plotSeries.length, series);
+            this.setupOptions();
         },
+        removeSeries(series) {
+            const index = this.plotSeries.find(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
+            if (index !== undefined) {
+                this.$delete(this.plotSeries, index);
+                this.setupOptions();
+            }
+        },
+        setupOptions() {
+            this.xKeyOptions = [];
+            this.yKeyOptions = [];
+            let update = false;
+            this.plotSeries.forEach((series) => {
+                const id = this.openmct.objects.makeKeyString(series.identifier);
+                this.xKeyOptions.push({
+                    name: series.name,
+                    value: id
+                });
+                this.yKeyOptions.push({
+                    name: series.name,
+                    value: id
+                });
+            });
+            if (this.plotSeries.length) {
+                let xKeyOptionIndex;
+                let yKeyOptionIndex;
 
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
+                if (this.domainObject.configuration.axes.xKey) {
+                    xKeyOptionIndex = this.xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
+                    if (xKeyOptionIndex > -1) {
+                        this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                    }
+                } else {
+                    if (this.xKey === undefined) {
+                        update = true;
+                        xKeyOptionIndex = 0;
+                        this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                    }
+                }
+
+                if (this.plotSeries.length > 1) {
+                    if (this.domainObject.configuration.axes.yKey) {
+                        yKeyOptionIndex = this.yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
+                        if (yKeyOptionIndex > -1 && yKeyOptionIndex !== xKeyOptionIndex) {
+                            this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
+                        }
+                    } else {
+                        if (this.yKey === undefined) {
+                            update = true;
+                            yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
+                            this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
+                        }
+                    }
+
+                    this.yKeyOptions = this.yKeyOptions.map((option, index) => {
+                        if (index === xKeyOptionIndex) {
+                            option.name = `${option.name} (swap)`;
+                            option.swap = yKeyOptionIndex;
+                        } else {
+                            option.name = option.name.replace(' (swap)', '');
+                            option.swap = undefined;
+                        }
+
+                        return option;
+                    });
+                }
+
+                this.xKeyOptions = this.xKeyOptions.map((option, index) => {
+                    if (index === yKeyOptionIndex) {
+                        option.name = `${option.name} (swap)`;
+                        option.swap = xKeyOptionIndex;
+                    } else {
+                        option.name = option.name.replace(' (swap)', '');
+                        option.swap = undefined;
+                    }
+
+                    return option;
+                });
+
+            }
+
+            if (update === true) {
+                this.saveConfiguration();
+            }
+        },
+        updateForm(property) {
+            if (property === 'xKey') {
+                const xKeyOption = this.xKeyOptions.find(option => option.value === this.xKey);
+                if (xKeyOption.swap !== undefined) {
+                    //swap
+                    this.yKey = this.xKeyOptions[xKeyOption.swap].value;
+                }
+            } else if (property === 'yKey') {
+                const yKeyOption = this.yKeyOptions.find(option => option.value === this.yKey);
+                if (yKeyOption.swap !== undefined) {
+                //swap
+                    this.xKey = this.yKeyOptions[yKeyOption.swap].value;
+                }
+            }
+
+            this.saveConfiguration();
+        },
+        saveConfiguration() {
+            this.openmct.objects.mutate(this.domainObject, `configuration.axes`, {
+                xKey: this.xKey,
+                yKey: this.yKey
+            });
         }
     }
 };

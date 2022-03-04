@@ -25,14 +25,11 @@
           class="c-plot c-bar-chart-view"
           :data="trace"
           :plot-axis-title="plotAxisTitle"
-          @subscribe="subscribeToAll"
-          @unsubscribe="removeAllSubscriptions"
 />
 </template>
 
 <script>
 import BarGraph from '../BarGraphPlot.vue';
-import _ from 'lodash';
 
 const MAX_INTERPOLATE = 5;
 
@@ -42,11 +39,6 @@ export default {
     },
     inject: ['openmct', 'domainObject', 'path'],
     data() {
-        this.telemetryObjects = {};
-        this.telemetryObjectFormats = {};
-        this.subscriptions = [];
-        this.composition = {};
-
         return {
             trace: []
         };
@@ -64,81 +56,39 @@ export default {
         }
     },
     mounted() {
+        this.telemetryObjects = {};
+        this.telemetryObjectFormats = {};
         this.telemetryCollections = {};
         this.valuesByTimestamp = {};
-        this.refreshData = this.refreshData.bind(this);
         this.setTimeContext();
-
         this.loadComposition();
-
+        this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.reloadTelemetry);
     },
     beforeDestroy() {
-        this.stopFollowingTimeContext();
-
-        this.removeAllSubscriptions();
-
         Object.keys(this.telemetryCollections).forEach(this.removeTelemetryCollection);
-
         if (!this.composition) {
             return;
         }
 
         this.composition.off('add', this.addTelemetryObject);
         this.composition.off('remove', this.removeTelemetryObject);
+        if (this.unobserve) {
+            this.unobserve();
+        }
     },
     methods: {
         setTimeContext() {
-            this.stopFollowingTimeContext();
-
             this.timeContext = this.openmct.time.getContextForView(this.path);
-            this.followTimeContext();
-
-        },
-        followTimeContext() {
-            this.timeContext.on('bounds', this.refreshData);
-        },
-        stopFollowingTimeContext() {
-            if (this.timeContext) {
-                this.timeContext.off('bounds', this.refreshData);
-            }
         },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            if (!this.domainObject.configuration.xKey) {
-                this.domainObject.configuration.xKey = key;
-            } else if (!this.domainObject.configuration.yKey && this.domainObject.configuration.xKey !== key) {
-                this.domainObject.configuration.yKey = key;
-            }
-
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
-
-            // make an update object that's a clone of the existing styles object so we preserve existing choices
-            let stylesUpdate = {};
-            if (this.domainObject.configuration.styles) {
-                stylesUpdate = _.clone(this.domainObject.configuration.styles);
+            if (key === this.domainObject.configuration.axes.xKey || key === this.domainObject.configuration.axes.yKey) {
+                this.addTelemetryCollection(key);
             }
-
-            // if something has changed, mutate and notify listeners
-            if (!_.isEqual(stylesUpdate, this.domainObject.configuration.styles)) {
-                this.openmct.objects.mutate(
-                    this.domainObject,
-                    'configuration.styles',
-                    stylesUpdate
-                );
-            }
-
-            // ask for the current telemetry data, then subcribe for changes
-            this.telemetryCollections[key] = this.openmct.telemetry
-                .requestCollection(telemetryObject);
-
-            const telemetryProcessor = this.getTelemetryProcessor(key);
-            // this.telemetryCollections[key].on('remove', telemetryRemover);
-            this.telemetryCollections[key].on('add', telemetryProcessor);
-            // this.telemetryCollections[key].on('clear', this.clearData);
-            this.telemetryCollections[key].load();
         },
         getTelemetryProcessor(keyString) {
             return (telemetry) => {
@@ -148,8 +98,8 @@ export default {
                     return;
                 }
 
+                const axisMetadata = this.getAxisMetadata(telemetryObject);
                 telemetry.forEach(datum => {
-                    const axisMetadata = this.getAxisMetadata(telemetryObject);
                     this.addDataToGraph(telemetryObject, datum, axisMetadata);
                 });
             };
@@ -160,65 +110,49 @@ export default {
                 return {};
             }
 
-            const yAxisMetadata = metadata.valuesForHints(['range'])[0];
-            const xAxisMetadata = metadata.valuesForHints(['range'])[0];
+            const axisMetadata = metadata.valuesForHints(['range'])[0];
 
-            return {
-                xAxisMetadata,
-                yAxisMetadata
-            };
-        },
-        getOptions() {
-            const { start, end } = this.timeContext.bounds();
-
-            return {
-                end,
-                start
-            };
+            return axisMetadata;
         },
         loadComposition() {
             this.composition = this.openmct.composition.get(this.domainObject);
-
-            if (!this.composition) {
-                this.addTelemetryObject(this.domainObject);
-
-                return;
-            }
-
             this.composition.on('add', this.addTelemetryObject);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
         },
-        refreshData(bounds, isTick) {
-            this.purgeRecordsOutsideRange(bounds);
-            if (!isTick) {
-                const telemetryKeys = Object.keys(this.telemetryCollections);
-                telemetryKeys.forEach(key => this.telemetryCollections[key].load());
-            }
-        },
-        purgeRecordsOutsideRange(bounds) {
-            Object.keys(this.valuesByTimestamp).forEach(timestamp => {
-                if (!this.isTimeInBounds(timestamp, bounds)) {
-                    delete this.valuesByTimestamp[timestamp];
-                }
+        reloadTelemetry() {
+            const axes = this.domainObject.configuration.axes;
+            const xKey = axes.xKey;
+            const yKey = axes.yKey;
+            Object.keys(this.telemetryCollections).forEach(key => {
+                this.removeTelemetryCollection(key);
             });
+
+            this.valuesByTimestamp = {};
+
+            this.addTelemetryCollection(xKey);
+            this.addTelemetryCollection(yKey);
+        },
+        addTelemetryCollection(key) {
+            const telemetryObject = this.telemetryObjects[key];
+            if (!telemetryObject) {
+                return;
+            }
+
+            this.telemetryCollections[key] = this.openmct.telemetry
+                .requestCollection(telemetryObject);
+
+            const telemetryProcessor = this.getTelemetryProcessor(key);
+            // this.telemetryCollections[key].on('remove', telemetryRemover);
+            this.telemetryCollections[key].on('add', telemetryProcessor);
+            // this.telemetryCollections[key].on('clear', this.clearData);
+            this.telemetryCollections[key].load();
         },
         removeTelemetryCollection(keyString) {
             if (this.telemetryCollections[keyString]) {
                 this.telemetryCollections[keyString].destroy();
                 this.telemetryCollections[keyString] = undefined;
                 delete this.telemetryCollections[keyString];
-            }
-        },
-        removeAllSubscriptions() {
-            this.subscriptions.forEach(subscription => subscription.unsubscribe());
-            this.subscriptions = [];
-        },
-        removeSubscription(key) {
-            const found = this.subscriptions.findIndex(subscription => subscription.key === key);
-            if (found > -1) {
-                this.subscriptions[found].unsubscribe();
-                this.subscriptions.splice(found, 1);
             }
         },
         removeTelemetryObject(identifier) {
@@ -228,18 +162,10 @@ export default {
                 delete this.telemetryObjectFormats[key];
             }
 
-            if (this.domainObject.configuration.styles) {
-                delete this.domainObject.configuration.styles;
-                this.openmct.objects.mutate(
-                    this.domainObject,
-                    'configuration.styles',
-                    undefined
-                );
+            this.removeTelemetryCollection(key);
+            if (this.domainObject.configuration.axes.xKey === key || this.domainObject.configuration.axes.yKey === key) {
+                this.reloadTelemetry();
             }
-
-            this.removeSubscription(key);
-
-            this.trace = this.trace.filter(t => t.key !== key);
         },
         addDataToGraph(telemetryObject, data, axisMetadata) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -248,40 +174,36 @@ export default {
                 this.openmct.notifications.alert(data.message);
             }
 
-            if (!this.isDataInTimeRange(data, key)) {
-                return;
-            }
-
-            if (!this.domainObject.configuration.xKey || !this.domainObject.configuration.yKey) {
+            if (!this.domainObject.configuration.axes.xKey || !this.domainObject.configuration.axes.yKey) {
                 return;
             }
 
             const timestamp = this.getTimestampForDatum(data, key);
             let valueForTimestamp = this.valuesByTimestamp[timestamp] || {};
 
-            if (this.domainObject.configuration.xKey === key) {
+            if (this.domainObject.configuration.axes.xKey === key) {
                 //populate x values
-                const metadataKey = axisMetadata.xAxisMetadata.key;
+                const metadataKey = axisMetadata.source;
                 if (data[metadataKey]) {
                     valueForTimestamp.x = this.format(key, metadataKey, data);
                     valueForTimestamp.xInterpolated = false;
-                    // this.adjustInterpolatedValues(timestamp, 'x', valueForTimestamp.x);
+                    this.adjustInterpolatedValues(timestamp, 'x', valueForTimestamp.x);
                     if (valueForTimestamp.y === undefined) {
                         //find nearest y
-                        // valueForTimestamp.y = this.getInterpolatedValue(timestamp, 'y');
+                        valueForTimestamp.y = this.getInterpolatedValue(timestamp, 'y');
                         valueForTimestamp.y = null;
                         valueForTimestamp.yInterpolated = true;
                     }
                 }
-            } else if (this.domainObject.configuration.yKey === key) {
-                const metadataKey = axisMetadata.yAxisMetadata.key;
+            } else if (this.domainObject.configuration.axes.yKey === key) {
+                const metadataKey = axisMetadata.source;
                 if (data[metadataKey]) {
                     valueForTimestamp.y = this.format(key, metadataKey, data);
                     valueForTimestamp.yInterpolated = false;
-                    // this.adjustInterpolatedValues(timestamp, 'y', valueForTimestamp.y);
+                    this.adjustInterpolatedValues(timestamp, 'y', valueForTimestamp.y);
                     if (valueForTimestamp.x === undefined) {
                         //find nearest x
-                        // valueForTimestamp.x = this.getInterpolatedValue(timestamp, 'x');
+                        valueForTimestamp.x = this.getInterpolatedValue(timestamp, 'x');
                         valueForTimestamp.x = null;
                         valueForTimestamp.xInterpolated = true;
                     }
@@ -289,18 +211,23 @@ export default {
             }
 
             this.valuesByTimestamp[timestamp] = valueForTimestamp;
+            this.updateTrace();
+        },
+        updateTrace() {
             const xAndyValues = Object.values(this.valuesByTimestamp);
             const xValues = xAndyValues.map(value => value.x);
             const yValues = xAndyValues.map(value => value.y);
+            const xAxisMetadata = this.getAxisMetadata(this.telemetryObjects[this.domainObject.configuration.axes.xKey]);
+            const yAxisMetadata = this.getAxisMetadata(this.telemetryObjects[this.domainObject.configuration.axes.yKey]);
 
             let trace = {
-                key,
-                name: telemetryObject.name,
+                key: this.openmct.objects.makeKeyString(this.domainObject.identifier),
+                name: this.domainObject.name,
                 x: xValues,
                 y: yValues,
                 text: yValues.map(String),
-                xAxisMetadata: axisMetadata.xAxisMetadata,
-                yAxisMetadata: axisMetadata.yAxisMetadata,
+                xAxisMetadata: xAxisMetadata,
+                yAxisMetadata: yAxisMetadata,
                 type: 'scatter',
                 mode: 'markers',
                 marker: {
@@ -309,19 +236,19 @@ export default {
                 hoverinfo: 'x+y'
             };
 
-            if (this.domainObject.configuration.domainMin !== undefined && this.domainObject.configuration.domainMax !== undefined) {
-                trace.xaxis = {
-                    min: this.domainObject.configuration.domainMin,
-                    max: this.domainObject.configuration.domainMax
-                };
-            }
+            // if (this.domainObject.configuration.domainMin !== undefined && this.domainObject.configuration.domainMax !== undefined) {
+            //     trace.xaxis = {
+            //         min: this.domainObject.configuration.domainMin,
+            //         max: this.domainObject.configuration.domainMax
+            //     };
+            // }
 
-            if (this.domainObject.configuration.rangeMin !== undefined && this.domainObject.configuration.rangeMax !== undefined) {
-                trace.yaxis = {
-                    min: this.domainObject.configuration.rangeMin,
-                    max: this.domainObject.configuration.rangeMax
-                };
-            }
+            // if (this.domainObject.configuration.rangeMin !== undefined && this.domainObject.configuration.rangeMax !== undefined) {
+            //     trace.yaxis = {
+            //         min: this.domainObject.configuration.rangeMin,
+            //         max: this.domainObject.configuration.rangeMax
+            //     };
+            // }
 
             this.trace = [trace];
         },
@@ -377,20 +304,20 @@ export default {
             while ((!prevDone || !nextDone) && count < MAX_INTERPOLATE) {
                 const previous = index - count;
                 const next = index + count;
-                if (prevDone === false && previous >= 0 && values[previous][`${prop}Interpolated`] === true) {
+                if (prevDone === false && previous >= 0 && values[previous] !== undefined && values[previous][`${prop}Interpolated`] === true) {
                     this.valuesByTimestamp[keys[previous]][prop] = trueValue;
                     this.valuesByTimestamp[keys[previous]][`${prop}Interpolated`] = false;
                     prevInterpolated = true;
-                } else if (prevInterpolated === true && values[previous][`${prop}Interpolated`] === false) {
+                } else if (prevInterpolated === true && values[previous] !== undefined && values[previous][`${prop}Interpolated`] === false) {
                     //stop when you find the first true value
                     prevDone = true;
                 }
 
-                if (nextDone === false && next < keysLength && values[next][`${prop}Interpolated`] === true) {
+                if (nextDone === false && next < keysLength && values[next] !== undefined && values[next][`${prop}Interpolated`] === true) {
                     this.valuesByTimestamp[keys[next]][prop] = trueValue;
                     this.valuesByTimestamp[keys[next]][`${prop}Interpolated`] = false;
                     nextInterpolated = true;
-                } else if (nextInterpolated === true && values[next][`${prop}Interpolated`] === false) {
+                } else if (nextInterpolated === true && values[next] !== undefined && values[next][`${prop}Interpolated`] === false) {
                     //stop when you find the first true value
                     nextDone = true;
                 }
@@ -402,14 +329,6 @@ export default {
             const timeSystemKey = this.timeContext.timeSystem().key;
 
             return this.parse(key, timeSystemKey, datum);
-        },
-        isDataInTimeRange(datum, key) {
-            let currentTimestamp = this.getTimestampForDatum(datum, key);
-
-            return currentTimestamp && this.isTimeInBounds(currentTimestamp, this.timeContext.bounds());
-        },
-        isTimeInBounds(currentTimestamp, bounds) {
-            return bounds.start <= currentTimestamp && bounds.end >= currentTimestamp;
         },
         format(telemetryObjectKey, metadataKey, data) {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];
@@ -424,38 +343,6 @@ export default {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];
 
             return formats[metadataKey].parse(datum);
-        },
-        requestDataFor(telemetryObject) {
-            const axisMetadata = this.getAxisMetadata(telemetryObject);
-            this.openmct.telemetry.request(telemetryObject)
-                .then(data => {
-                    data.forEach((datum) => {
-                        this.addDataToGraph(telemetryObject, datum, axisMetadata);
-                    });
-                })
-                .catch((error) => {
-                    console.warn(`Error fetching data`, error);
-                });
-        },
-        subscribeToObject(telemetryObject) {
-            const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-
-            this.removeSubscription(key);
-
-            const options = this.getOptions();
-            const axisMetadata = this.getAxisMetadata(telemetryObject);
-            const unsubscribe = this.openmct.telemetry.subscribe(telemetryObject,
-                data => this.addDataToGraph(telemetryObject, data, axisMetadata)
-                , options);
-
-            this.subscriptions.push({
-                key,
-                unsubscribe
-            });
-        },
-        subscribeToAll() {
-            const telemetryObjects = Object.values(this.telemetryObjects);
-            telemetryObjects.forEach(this.subscribeToObject);
         }
     }
 };
