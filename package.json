@@ -13,7 +13,7 @@
     "copy-webpack-plugin": "10.2.0",
     "core-js": "3.20.3",
     "cross-env": "7.0.3",
-    "css-loader": "4.0.0",
+    "css-loader": "6.7.0",
     "d3-axis": "1.0.x",
     "d3-scale": "1.0.x",
     "d3-selection": "1.3.x",
