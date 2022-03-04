@@ -21,13 +21,14 @@
  *****************************************************************************/
 
 import TimelistViewProvider from './TimelistViewProvider';
+import { TIMELIST_TYPE } from './constants';
 import TimeListInspectorViewProvider from "./inspector/TimeListInspectorViewProvider";
 
 export default function () {
     return function install(openmct) {
-        openmct.types.addType('timelist', {
+        openmct.types.addType(TIMELIST_TYPE, {
             name: 'Time List',
-            key: 'timelist',
+            key: TIMELIST_TYPE,
             description: 'A configurable, time-ordered list view of activities for a compatible mission plan file.',
             creatable: true,
             cssClass: 'icon-timelist',

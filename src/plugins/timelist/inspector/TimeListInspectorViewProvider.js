@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import TimelistPropertiesView from "./TimelistPropertiesView.vue";
+import { TIMELIST_TYPE } from '../constants';
 import Vue from 'vue';
 
 export default function TimeListInspectorViewProvider(openmct) {
@@ -35,7 +36,7 @@ export default function TimeListInspectorViewProvider(openmct) {
             let context = selection[0][0].context;
 
             return context && context.item
-                && context.item.type === 'timelist';
+                && context.item.type === TIMELIST_TYPE;
         },
         view: function (selection) {
             let component;

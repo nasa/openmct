@@ -20,3 +20,5 @@ export const SORT_ORDER_OPTIONS = [
         direction: 'DESC'
     }
 ];
+
+export const TIMELIST_TYPE = 'timelist';

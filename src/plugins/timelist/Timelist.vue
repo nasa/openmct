@@ -189,11 +189,7 @@ export default {
 
             this.viewBounds = {};
 
-            if (currentEventsIndex === 0) {
-                this.noCurrent = true;
-            } else {
-                this.noCurrent = false;
-            }
+            this.noCurrent = currentEventsIndex === 0;
 
             if (pastEventsIndex !== 1) {
                 const pastDurationInMS = this.getDurationInMilliSeconds(pastEventsDuration, pastEventsDurationIndex);
@@ -329,15 +325,8 @@ export default {
         sortByStartTime(a, b) {
             const numA = parseInt(a.start, 10);
             const numB = parseInt(b.start, 10);
-            if (numA > numB) {
-                return 1;
-            }
 
-            if (numA < numB) {
-                return -1;
-            }
-
-            return 0;
+            return numA - numB;
         },
         setStatus(status) {
             this.status = status;

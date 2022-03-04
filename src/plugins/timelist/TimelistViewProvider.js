@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import Timelist from './Timelist.vue';
+import { TIMELIST_TYPE } from './constants';
 import Vue from 'vue';
 
 export default function TimelistViewProvider(openmct) {
@@ -30,11 +31,11 @@ export default function TimelistViewProvider(openmct) {
         name: 'Time List',
         cssClass: 'icon-timelist',
         canView(domainObject) {
-            return domainObject.type === 'timelist';
+            return domainObject.type === TIMELIST_TYPE;
         },
 
         canEdit(domainObject) {
-            return domainObject.type === 'timelist';
+            return domainObject.type === TIMELIST_TYPE;
         },
 
         view: function (domainObject, objectPath) {

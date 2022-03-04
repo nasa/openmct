@@ -22,6 +22,7 @@
 
 import {createOpenMct, resetApplicationState} from "utils/testing";
 import TimelistPlugin from "./plugin";
+import { TIMELIST_TYPE } from "./constants";
 import Vue from 'vue';
 import moment from "moment";
 
@@ -41,7 +42,7 @@ describe('the plugin', function () {
         openmct = createOpenMct();
         openmct.install(new TimelistPlugin());
 
-        timelistDefinition = openmct.types.get('timelist').definition;
+        timelistDefinition = openmct.types.get(TIMELIST_TYPE).definition;
 
         element = document.createElement('div');
         element.style.width = '640px';
@@ -65,7 +66,7 @@ describe('the plugin', function () {
 
     let mockTimelistObject = {
         name: 'Timelist',
-        key: 'timelist',
+        key: TIMELIST_TYPE,
         creatable: true
     };
 
@@ -81,7 +82,7 @@ describe('the plugin', function () {
         it('provides a timelist view', () => {
             const testViewObject = {
                 id: "test-object",
-                type: "timelist"
+                type: TIMELIST_TYPE
             };
             openmct.router.path = [testViewObject];
 
@@ -101,7 +102,7 @@ describe('the plugin', function () {
                     key: 'test-object',
                     namespace: ''
                 },
-                type: 'timelist',
+                type: TIMELIST_TYPE,
                 id: "test-object",
                 configuration: {
                     sortOrderIndex: 0,
