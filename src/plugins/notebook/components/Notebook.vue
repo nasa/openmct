@@ -739,7 +739,6 @@ export default {
             return this.openmct.objects.getActiveTransaction();
         },
         startTransaction() {
-            console.log('start transaction');
             this.openmct.objects.startTransaction();
         },
         saveTransaction() {
@@ -755,7 +754,6 @@ export default {
                 }).catch(error => {
                     throw error;
                 }).finally(() => {
-                    console.log('ending transaction after save');
                     this.openmct.objects.endTransaction();
                 });
         },
@@ -766,7 +764,6 @@ export default {
                     .then(resolve)
                     .catch(reject)
                     .finally(() => {
-                        console.log('ending transaction after cancel');
                         this.openmct.objects.endTransaction();
                     });
             });
