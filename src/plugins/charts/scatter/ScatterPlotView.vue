@@ -102,6 +102,7 @@ export default {
                 telemetry.forEach(datum => {
                     this.addDataToGraph(telemetryObject, datum, axisMetadata);
                 });
+                this.updateTrace();
             };
         },
         getAxisMetadata(telemetryObject) {
@@ -110,9 +111,7 @@ export default {
                 return {};
             }
 
-            const axisMetadata = metadata.valuesForHints(['range'])[0];
-
-            return axisMetadata;
+            return metadata.valuesForHints(['range'])[0];
         },
         loadComposition() {
             this.composition = this.openmct.composition.get(this.domainObject);
@@ -187,31 +186,30 @@ export default {
                 if (data[metadataKey]) {
                     valueForTimestamp.x = this.format(key, metadataKey, data);
                     valueForTimestamp.xInterpolated = false;
-                    this.adjustInterpolatedValues(timestamp, 'x', valueForTimestamp.x);
-                    if (valueForTimestamp.y === undefined) {
-                        //find nearest y
-                        valueForTimestamp.y = this.getInterpolatedValue(timestamp, 'y');
-                        valueForTimestamp.y = null;
-                        valueForTimestamp.yInterpolated = true;
-                    }
+                    // this.adjustInterpolatedValues(timestamp, 'x', valueForTimestamp.x);
+                    // if (valueForTimestamp.y === undefined) {
+                    //     //find nearest y
+                    //     valueForTimestamp.y = this.getInterpolatedValue(timestamp, 'y');
+                    //     valueForTimestamp.y = null;
+                    //     valueForTimestamp.yInterpolated = true;
+                    // }
                 }
             } else if (this.domainObject.configuration.axes.yKey === key) {
                 const metadataKey = axisMetadata.source;
                 if (data[metadataKey]) {
                     valueForTimestamp.y = this.format(key, metadataKey, data);
                     valueForTimestamp.yInterpolated = false;
-                    this.adjustInterpolatedValues(timestamp, 'y', valueForTimestamp.y);
-                    if (valueForTimestamp.x === undefined) {
-                        //find nearest x
-                        valueForTimestamp.x = this.getInterpolatedValue(timestamp, 'x');
-                        valueForTimestamp.x = null;
-                        valueForTimestamp.xInterpolated = true;
-                    }
+                    // this.adjustInterpolatedValues(timestamp, 'y', valueForTimestamp.y);
+                    // if (valueForTimestamp.x === undefined) {
+                    //     //find nearest x
+                    //     valueForTimestamp.x = this.getInterpolatedValue(timestamp, 'x');
+                    //     valueForTimestamp.x = null;
+                    //     valueForTimestamp.xInterpolated = true;
+                    // }
                 }
             }
 
             this.valuesByTimestamp[timestamp] = valueForTimestamp;
-            this.updateTrace();
         },
         updateTrace() {
             const xAndyValues = Object.values(this.valuesByTimestamp);
