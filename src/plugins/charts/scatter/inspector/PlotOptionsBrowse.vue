@@ -39,20 +39,36 @@
             <div class="grid-cell value">{{ yKeyLabel }}</div>
         </li>
     </ul>
+    <ul class="l-inspector-part">
+        <h2 title="Settings for this object">Color</h2>
+        <ColorSwatch :current-color="currentColor"
+                     edit-title="Manually set the line and marker color for this plot."
+                     view-title="The line and marker color for this plot."
+                     short-label="Color"
+        />
+    </ul>
 </div>
 </template>
 
 <script>
+import ColorSwatch from "../../../../ui/color/ColorSwatch.vue";
+import Color from "../../../../ui/color/Color";
+import ColorPalette from "../../../../ui/color/ColorPalette";
+
 export default {
+    components: { ColorSwatch },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
             xKeyLabel: '',
-            yKeyLabel: ''
+            yKeyLabel: '',
+            currentColor: undefined
         };
     },
     mounted() {
         this.plotSeries = [];
+        this.colorPalette = new ColorPalette();
+        this.initColor();
         this.composition = this.openmct.composition.get(this.domainObject);
         this.registerListeners();
         this.composition.load();
@@ -61,6 +77,20 @@ export default {
         this.stopListening();
     },
     methods: {
+        initColor() {
+        // this is called before the plot is initialized
+            if (!this.domainObject.configuration.styles || !this.domainObject.configuration.styles.color) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.styles = {
+                    color
+                };
+            }
+
+            this.currentColor = this.domainObject.configuration.styles.color;
+            const colorObject = Color.fromHexString(this.currentColor);
+
+            this.colorPalette.remove(colorObject);
+        },
         registerListeners() {
             this.composition.on('add', this.addSeries);
             this.composition.on('remove', this.removeSeries);

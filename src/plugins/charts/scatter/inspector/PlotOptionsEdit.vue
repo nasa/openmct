@@ -63,22 +63,39 @@
             </div>
         </li>
     </ul>
+    <ul class="l-inspector-part">
+        <h2 title="Settings for this object">Color</h2>
+        <ColorSwatch :current-color="currentColor"
+                     title="Manually set the line and marker color for this plot."
+                     edit-title="Manually set the line and marker color for this plot."
+                     view-title="The line and marker color for this plot."
+                     short-label="Color"
+                     @colorSet="setColor"
+        />
+    </ul>
 </div>
 </template>
 <script>
+import Color from "../../../../ui/color/Color";
+import ColorPalette from "../../../../ui/color/ColorPalette";
+import ColorSwatch from "../../../../ui/color/ColorSwatch.vue";
 
 export default {
+    components: { ColorSwatch },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
             xKey: undefined,
             yKey: undefined,
             xKeyOptions: [],
-            yKeyOptions: []
+            yKeyOptions: [],
+            currentColor: undefined
         };
     },
     mounted() {
         this.plotSeries = [];
+        this.colorPalette = new ColorPalette();
+        this.initColor();
         this.composition = this.openmct.composition.get(this.domainObject);
         this.registerListeners();
         this.composition.load();
@@ -87,6 +104,28 @@ export default {
         this.stopListening();
     },
     methods: {
+        initColor() {
+        // this is called before the plot is initialized
+            if (!this.domainObject.configuration.styles || !this.domainObject.configuration.styles.color) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.styles = {
+                    color
+                };
+            }
+
+            this.currentColor = this.domainObject.configuration.styles.color;
+            const colorObject = Color.fromHexString(this.currentColor);
+
+            this.colorPalette.remove(colorObject);
+        },
+        setColor(chosenColor) {
+            this.currentColor = chosenColor.asHexString();
+            this.openmct.objects.mutate(
+                this.domainObject,
+                `configuration.styles.color`,
+                this.currentColor
+            );
+        },
         registerListeners() {
             this.composition.on('add', this.addSeries);
             this.composition.on('remove', this.removeSeries);
