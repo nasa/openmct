@@ -4,6 +4,7 @@ on:
   pull_request:
     types: 
       - labeled
+      - opened
   schedule:
     - cron: '28 21 * * 1-5'
 
@@ -12,10 +13,10 @@ jobs:
     if: ${{ github.event.label.name == 'pr:visual' }} || ${{ github.event.workflow_dispatch }} || ${{ github.event.schedule }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - run: npx playwright install-deps
       - run: npm install
       - name: Run the e2e visual tests

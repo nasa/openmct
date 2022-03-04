@@ -185,10 +185,14 @@ describe('The Clear Data Plugin:', () => {
         beforeEach((done) => {
             openmct = createOpenMct();
 
-            clearDataPlugin = new ClearDataPlugin(
-                ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
-                {indicator: true}
-            );
+            clearDataPlugin = new ClearDataPlugin([
+                'table',
+                'telemetry.plot.overlay',
+                'telemetry.plot.stacked',
+                'example.imagery'
+            ], {
+                indicator: true
+            });
             openmct.install(clearDataPlugin);
             appHolder = document.createElement('div');
             document.body.appendChild(appHolder);
