@@ -151,7 +151,7 @@ define([
 
     plugins.MyItems = MyItems.default;
 
-    plugins.StaticRootPlugin = StaticRootPlugin;
+    plugins.StaticRootPlugin = StaticRootPlugin.default;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at
