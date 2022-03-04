@@ -26,6 +26,10 @@ import { TIMELIST_TYPE } from "./constants";
 import Vue from 'vue';
 import moment from "moment";
 
+const LIST_ITEM_CLASS = '.js-table__body .js-list-item';
+const LIST_ITEM_VALUE_CLASS = '.js-list-item__value';
+const LIST_ITEM_BODY_CLASS = '.js-table__body th';
+
 describe('the plugin', function () {
     let timelistDefinition;
     let element;
@@ -152,19 +156,19 @@ describe('the plugin', function () {
         });
 
         it('displays the activities', () => {
-            const items = element.querySelectorAll('.c-table__body .c-list-item');
+            const items = element.querySelectorAll(LIST_ITEM_CLASS);
             expect(items.length).toEqual(2);
         });
 
         it('displays the activity headers', () => {
-            const headers = element.querySelectorAll('.c-table__body th');
+            const headers = element.querySelectorAll(LIST_ITEM_BODY_CLASS);
             expect(headers.length).toEqual(4);
         });
 
         it('displays activity details', (done) => {
             Vue.nextTick(() => {
-                const itemEls = element.querySelectorAll('.c-table__body .c-list-item');
-                const itemValues = itemEls[0].querySelectorAll('.c-list-item__value');
+                const itemEls = element.querySelectorAll(LIST_ITEM_CLASS);
+                const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
                 expect(itemValues.length).toEqual(4);
                 expect(itemValues[3].innerHTML.trim()).toEqual('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua');
                 expect(itemValues[0].innerHTML.trim()).toEqual(`${moment(1597170002854).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);

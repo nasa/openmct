@@ -1,11 +1,11 @@
 <template>
 <tr
-    class="c-list-item"
+    class="c-list-item js-list-item"
     :class="item.cssClass || ''"
 >
     <td v-for="itemValue in formattedItemValues"
         :key="itemValue.key"
-        class="c-list-item__value"
+        class="c-list-item__value js-list-item__value"
         :class="['--' + itemValue.key]"
         :title="itemValue.text"
     >

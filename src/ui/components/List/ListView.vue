@@ -1,6 +1,6 @@
 <template>
 <div class="c-table c-table--sortable c-list-view c-list-view--sticky-header">
-    <table class="c-table__body">
+    <table class="c-table__body js-table__body">
         <thead class="c-table__header">
             <tr>
                 <list-header v-for="headerItem in headerItems"
