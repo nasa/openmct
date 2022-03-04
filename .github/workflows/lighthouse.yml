@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Master for Baseline
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: master #explicitly checkout master for baseline
       - name: Install Node 14
@@ -38,7 +38,7 @@ jobs:
       - name: Run lhci against master to generate baseline and ignore exit codes
         run: lhci autorun || true
       - name: Perform clean checkout of PR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           clean: true
       - name: Install Node version which is compatible with PR
@@ -53,7 +53,7 @@ jobs:
     if: ${{ github.event.schedule }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Node 14
         uses: actions/setup-node@v2
         with:
@@ -77,7 +77,7 @@ jobs:
     if: ${{ github.event.workflow_dispatch }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Install Node 14
