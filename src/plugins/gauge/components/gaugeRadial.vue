@@ -5,8 +5,9 @@
              viewBox="0 0 512 512"
         >
             <text class="c-gauge__curval"
-                  transform="translate(256 310)"
+                  transform="translate(256 290)"
                   text-anchor="middle"
+                  font-size="100px"
             >{{ curVal }}</text>
             <text v-if="displayMinMax"
                   font-size="35"
