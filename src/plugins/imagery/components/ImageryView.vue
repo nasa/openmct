@@ -30,13 +30,10 @@
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
         <ImageControls
-            :filters="filters"
-            :pan-zoom-locked="panZoomLocked"
-            :zoom-factor="formattedZoomFactor"
+            :formatted-zoom-factor="formattedZoomFactor"
             @resetImage="resetImage"
-            @incrementZoomFactor="incrementZoomFactor"
-            @togglePanZoomLock="togglePanZoomLock"
-            @setFilters="setFilters"
+            @panZoomUpdated="handlePanZoomUpdate"
+            @filtersUpdated="setFilters"
         />
 
         <div ref="imageBG"
@@ -48,7 +45,8 @@
                  'cursor-zoom-in': showCursorZoomIn,
                  'cursor-zoom-out': showCursorZoomOut
              }"
-             @click="expand">
+             @click="expand"
+        >
             <div v-if="zoomFactor > 1"
                  class="c-imagery__hints"
             >Alt-drag to pan</div>
@@ -215,9 +213,6 @@ const ARROW_LEFT = 37;
 
 const SCROLL_LATENCY = 250;
 
-const ZOOM_LIMITS_MAX_DEFAULT = 20;
-const ZOOM_LIMITS_MIN_DEFAULT = 1;
-
 export default {
     components: {
         Compass,
@@ -244,10 +239,6 @@ export default {
             timeSystem: timeSystem,
             keyString: undefined,
             autoScroll: true,
-            filters: {
-                brightness: 100,
-                contrast: 100
-            },
             thumbnailClick: THUMBNAIL_CLICKED,
             isPaused: false,
             refreshCSS: false,
@@ -264,17 +255,17 @@ export default {
             lockCompass: true,
             resizingWindow: false,
             timeContext: undefined,
-            altPressed: false,
-            shiftPressed: false,
-            metaPressed: false,
             zoomFactor: 1,
+            filters: {
+                brightness: 100,
+                contrast: 100
+            },
             imageTranslateX: 0,
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
             imagePanned: false,
-            wheelZooming: false,
-            panZoomLocked: false
+            wheelZooming: false
         };
     },
     computed: {
@@ -867,30 +858,18 @@ export default {
             }
         },
         resetImage(overrideLock = false) {
-            if (this.panZoomLocked && !overrideLock) {
+            if (!overrideLock) {
                 return false;
             }
 
-            const defaultScale = 1;
-            this.zoomFactor = defaultScale;
             this.imagePanned = false;
-            this.panZoomLocked = false;
             this.imageTranslateX = 0;
             this.imageTranslateY = 0;
         },
-        zoomImage(newScaleFactor, screenClientX, screenClientY) {
+        handlePanZoomUpdate(options) {
+            const { newScaleFactor, screenClientX, screenClientY } = options;
             if (!this.isPaused) {
                 this.paused(true);
-            }
-
-            if (newScaleFactor > ZOOM_LIMITS_MAX_DEFAULT) {
-                newScaleFactor = ZOOM_LIMITS_MAX_DEFAULT;
-
-                return;
-            }
-
-            if (newScaleFactor <= 0 || newScaleFactor < ZOOM_LIMITS_MIN_DEFAULT) {
-                return this.resetImage(true);
             }
 
             if (!(screenClientX || screenClientY)) {
@@ -920,10 +899,6 @@ export default {
             this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
         },
-        togglePanZoomLock() {
-
-            this.panZoomLocked = !this.panZoomLocked;
-        },
         handlePanZoomClick(e) {
             const step = 1;
             if (this.altPressed) {
@@ -935,7 +910,11 @@ export default {
             }
 
             const newZoomFactor = this.zoomFactor + (this.shiftPressed ? -step : step);
-            this.zoomImage(newZoomFactor, e.clientX, e.clientY);
+            this.handlePanZoomUpdate({
+                newScaleFactor: newZoomFactor,
+                screenClientX: e.clientX,
+                screenClientY: e.clientY
+            });
         },
         arrowDownHandler(event) {
             let key = event.keyCode;
@@ -1128,7 +1107,6 @@ export default {
         },
         setFilters(filtersObj) {
             this.filters = filtersObj;
-
         }
     }
 };

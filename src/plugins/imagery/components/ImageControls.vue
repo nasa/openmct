@@ -26,19 +26,19 @@
         <div class="c-button-set c-button-set--strip-h">
             <button class="c-button t-btn-zoom-out icon-minus"
                     title="Zoom out"
-                    @click="handleZoomButton(-1)"
+                    @click="incrementZoomFactor(-1)"
             ></button>
 
             <button class="c-button t-btn-zoom-in icon-plus"
                     title="Zoom in"
-                    @click="handleZoomButton(1)"
+                    @click="incrementZoomFactor(1)"
             ></button>
         </div>
 
         <button class="c-button t-btn-zoom-lock"
                 title="Lock current zoom and pan across all images"
                 :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
-                @click="handleToggleLock"
+                @click="toggleLock"
         ></button>
 
         <button class="c-button icon-reset t-btn-zoom-reset"
@@ -46,7 +46,7 @@
                 @click="handleResetImage"
         ></button>
 
-        <span class="c-image-controls__zoom-factor">x{{zoomFactor}}</span>
+        <span class="c-image-controls__zoom-factor">x{{ zoomFactor }}</span>
     </div>
     <div class="c-image-controls__control c-image-controls__brightness-contrast">
         <span
@@ -56,18 +56,20 @@
         >
             <div class="c-image-controls__input icon-brightness">
                 <input
-                    v-model="filtersBrightness"
+                    v-model="filters.contrast"
                     type="range"
                     min="0"
                     max="500"
+                    @change="notifyFiltersChanged"
                 >
             </div>
             <div class="c-image-controls__input icon-contrast">
                 <input
-                    v-model="filtersContrast"
+                    v-model="filters.brightness"
                     type="range"
                     min="0"
                     max="500"
+                    @change="notifyFiltersChanged"
                 >
             </div>
         </span>
@@ -86,67 +88,83 @@ const DEFAULT_FILTER_VALUES = {
     brightness: '100',
     contrast: '100'
 };
-export default {
 
+const ZOOM_LIMITS_MAX_DEFAULT = 20;
+const ZOOM_LIMITS_MIN_DEFAULT = 1;
+
+export default {
+    inject: ['openmct', 'domainObject'],
     props: {
-        filters: {
-            type: Object,
+        formattedZoomFactor: {
+            type: Number,
             default() {
-                return DEFAULT_FILTER_VALUES;
-            }
-        },
-        panZoomLocked: Boolean,
-        zoomFactor: {
-            type: String,
-            default() {
-                return '1';
+                return 1;
             }
         }
     },
-    computed: {
-        filtersContrast: {
-
-            get() {
-                return this.filters.contrast;
-            },
-            set(contrast) {
-                this.$emit('setFilters', {
-                    ...this.filters,
-                    contrast
-                });
+    data() {
+        return {
+            altPressed: false,
+            shiftPressed: false,
+            metaPressed: false,
+            panZoomLocked: false,
+            zoomFactor: 1,
+            filters: {
+                brightness: 100,
+                contrast: 100
             }
-        },
-        filtersBrightness: {
-            get() {
-                return this.filters.brightness;
-            },
-            set(brightness) {
-                this.$emit('setFilters', {
-                    ...this.filters,
-                    brightness
-                });
-            }
-
+        };
+    },
+    watch: {
+        formattedZoomFactor(newZoomFactor) {
+            this.zoomFactor = newZoomFactor;
         }
     },
     methods: {
         handleResetImage() {
             this.$emit('resetImage', true);
         },
-
-        handleZoomButton(stepValue) {
-            this.$emit('incrementZoomFactor', stepValue);
+        handleUpdatePanZoom(options) {
+            this.$emit('panZoomUpdated', options);
         },
-        handleToggleLock() {
-            this.$emit('togglePanZoomLock');
+        toggleLock() {
+            this.panZoomLocked = !this.panZoomLocked;
+        },
+        notifyFiltersChanged() {
+            this.$emit('filtersUpdated', this.filters);
         },
         handleResetFilters() {
-            this.$emit('setFilters', DEFAULT_FILTER_VALUES);
+            this.filters = DEFAULT_FILTER_VALUES;
+            this.notifyFiltersChanged();
         },
-
         startDrag(e) {
             e.preventDefault();
             e.stopPropagation();
+        },
+        // used to increment the zoom without knowledge of current level
+        incrementZoomFactor(increment, userCoordX, userCoordY) {
+            const newFactor = this.zoomFactor + increment;
+            this.zoomImage(newFactor, userCoordX, userCoordY);
+        },
+        zoomImage(newScaleFactor, screenClientX, screenClientY) {
+            if (newScaleFactor > ZOOM_LIMITS_MAX_DEFAULT) {
+                newScaleFactor = ZOOM_LIMITS_MAX_DEFAULT;
+
+                return;
+            }
+
+            if (newScaleFactor <= 0 || newScaleFactor < ZOOM_LIMITS_MIN_DEFAULT) {
+                this.zoomFactor = 1;
+                this.panZoomLocked = false;
+
+                return this.handleResetImage(true);
+            }
+
+            this.handleUpdatePanZoom({
+                newScaleFactor,
+                screenClientX,
+                screenClientY
+            });
         }
 
     }
