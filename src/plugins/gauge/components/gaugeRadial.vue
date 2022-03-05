@@ -7,16 +7,16 @@
             <text class="c-gauge__curval"
                   transform="translate(256 310)"
                   text-anchor="middle"
-            >{{ this.curVal }}</text>
+            >{{ curVal }}</text>
             <text v-if="displayMinMax"
                   font-size="35"
                   transform="translate(105 455) rotate(-45)"
-            >{{ this.rangeLow }}</text>
+            >{{ rangeLow }}</text>
             <text v-if="displayMinMax"
                   font-size="35"
                   transform="translate(407 455) rotate(45)"
                   text-anchor="end"
-            >{{ this.rangeHigh }}</text>
+            >{{ rangeHigh }}</text>
         </svg>
 
         <div class="c-dial">
@@ -32,25 +32,25 @@
                  class="c-dial__limit"
                  viewBox="0 0 512 512"
                  :class="{
-                     'c-limit-clip--90': this.degLimit > 90,
-                     'c-limit-clip--180': this.degLimit >= 180
+                     'c-limit-clip--90': degLimit > 90,
+                     'c-limit-clip--180': degLimit >= 180
                  }"
             >
                 <path d="M100,256A156,156,0,1,1,366.3,366.3L437,437a255.2,255.2,0,0,0,75-181C512,114.6,397.4,0,256,0S0,114.6,0,256A255.2,255.2,0,0,0,75,437l70.7-70.7A155.5,155.5,0,0,1,100,256Z"
-                      :style="`transform: rotate(${this.degLimit}deg)`"
+                      :style="`transform: rotate(${degLimit}deg)`"
                 />
             </svg>
 
-            <svg v-if="this.degValue > 0"
+            <svg v-if="degValue > 0"
                  class="c-dial__value"
                  viewBox="0 0 512 512"
                  :class="{
-                     'c-dial-clip--90': this.degValue < 90,
-                     'c-dial-clip--180': this.degValue >= 90 && this.degValue < 180
+                     'c-dial-clip--90': degValue < 90,
+                     'c-dial-clip--180': degValue >= 90 && degValue < 180
                  }"
             >
                 <path d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
-                      :style="`transform: rotate(${this.degValue}deg)`"
+                      :style="`transform: rotate(${degValue}deg)`"
                 />
             </svg>
         </div>
@@ -60,31 +60,26 @@
 
 <script>
 export default {
-    name: "GaugeRadial",
+    name: 'GaugeRadial',
     inject: ['openmct', 'domainObject', 'composition'],
-    data: function () {
-        let config = this.domainObject.configuration;
-        let rangeLow = config.min;
-        let rangeHigh = config.max;
-        let displayMinMax = config.displayMinMax;
-        let limit = config.limit;
-        let decimals = config.decimals;
+    data() {
+        let gaugeController = this.domainObject.configuration.gaugeController;
 
         return {
-            rangeLow,
-            rangeHigh,
-            displayMinMax: displayMinMax.indexOf('Yes') !== -1,
-            limit1: limit,
-            decimals,
-            curVal: 0
+            curVal: 0,
+            precision: gaugeController.precision,
+            displayMinMax: gaugeController.isDisplayMinMax,
+            limit: gaugeController.limit,
+            rangeHigh: gaugeController.max,
+            rangeLow: gaugeController.min
         };
     },
     computed: {
-        degValue: function () {
+        degValue() {
             return this.percentToDegrees(this.valToPercent(this.curVal));
         },
-        degLimit: function () {
-            return this.percentToDegrees(this.valToPercent(this.limit1));
+        degLimit() {
+            return this.percentToDegrees(this.valToPercent(this.limit));
         }
     },
     mounted() {
@@ -93,27 +88,29 @@ export default {
     },
     destroyed() {
         this.composition.off('add', this.subscribe);
-        this.unsubscribe();
+
+        if (this.unsubscribe) {
+            this.unsubscribe();
+        }
     },
     methods: {
-        round: function (val, decimals) {
+        round(val, decimals) {
             let precision = Math.pow(10, decimals);
 
             return Math.round(val * precision) / precision;
         },
-        valToPercent: function (vValue) {
-            // Don't let the current value exceed the high range, or the dial won't display right
+        valToPercent(vValue) {
             if (vValue >= this.rangeHigh) {
                 return 100;
             }
 
             return ((vValue - this.rangeLow) / (this.rangeHigh - this.rangeLow)) * 100;
         },
-        percentToDegrees: function (vPercent) {
+        percentToDegrees(vPercent) {
             return this.round((vPercent / 100) * 270, 2);
         },
         updateValue(datum) {
-            this.curVal = this.round(this.formats[this.valueKey].format(datum), this.decimals);
+            this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
         },
         subscribe(domainObject) {
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);

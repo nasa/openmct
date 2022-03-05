@@ -20,83 +20,70 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './gauge'
-], function (
-    Gauge
-) {
-    return function plugin() {
-        return function install(openmct) {
-            openmct.objectViews.addProvider(new Gauge(openmct));
+import Gauge from './Gauge';
+import GaugeFormController from './components/GaugeFormController.vue';
+import Vue from 'vue';
 
-            openmct.types.addType('gauge', {
-                name: "Gauge",
-                creatable: true,
-                description: "Graphically visualize a telemetry element's current value between a minimum and maximum.",
-                cssClass: 'icon-gauge',
-                initialize(domainObject) {
-                    domainObject.composition = [];
-                    domainObject.configuration = {
-                        min: 0,
-                        max: 100,
-                        displayMinMax: 'Yes',
+export default function () {
+    return function install(openmct) {
+        openmct.objectViews.addProvider(new Gauge(openmct));
+
+        openmct.forms.addNewFormControl('gauge-controller', getGaugeFormController());
+        openmct.types.addType('gauge', {
+            name: "Gauge",
+            creatable: true,
+            description: "Graphically visualize a telemetry element's current value between a minimum and maximum.",
+            cssClass: 'icon-gauge',
+            initialize(domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {
+                    gaugeController: {
+                        isBiDirectional: false,
+                        isDisplayMinMax: true,
                         limit: 90,
-                        decimals: 1
-                    };
-                },
-                form: [
-                    {
-                        name: "Minimum Value",
-                        control: "numberfield",
-                        cssClass: "l-input-sm l-numeric",
-                        key: "min",
-                        property: [
-                            "configuration",
-                            "min"
-                        ]
-                    },
-                    {
-                        name: "Maximum Value",
-                        control: "numberfield",
-                        cssClass: "l-input-sm l-numeric",
-                        key: "max",
-                        property: [
-                            "configuration",
-                            "max"
-                        ]
-                    },
-                    {
-                        name: "Display Min/Max",
-                        control: "textfield",
-                        cssClass: "l-input-sm",
-                        key: "displayMinMax",
-                        property: [
-                            "configuration",
-                            "displayMinMax"
-                        ]
-                    },
-                    {
-                        name: "Limit",
-                        control: "numberfield",
-                        cssClass: "l-input-sm l-numeric",
-                        key: "min",
-                        property: [
-                            "configuration",
-                            "limit"
-                        ]
-                    },
-                    {
-                        name: "Decimals",
-                        control: "numberfield",
-                        cssClass: "l-input-sm l-numeric",
-                        key: "decimals",
-                        property: [
-                            "configuration",
-                            "decimals"
-                        ]
+                        max: 100,
+                        min: 0,
+                        precision: 2
                     }
-                ]
-            });
-        };
+                };
+            },
+            form: [
+                {
+                    name: "Guage Controls",
+                    control: "gauge-controller",
+                    cssClass: "l-input-sm",
+                    key: "gaugeController",
+                    property: [
+                        "configuration",
+                        "gaugeController"
+                    ]
+                }
+            ]
+        });
     };
-});
+
+    function getGaugeFormController() {
+        return {
+            show(element, model, onChange) {
+                const rowComponent = new Vue({
+                    el: element,
+                    components: {
+                        GaugeFormController
+                    },
+                    provide: {
+                        openmct: self.openmct
+                    },
+                    data() {
+                        return {
+                            model,
+                            onChange
+                        };
+                    },
+                    template: `<GaugeFormController :model="model" @onChange="onChange"></GaugeFormController>`
+                });
+
+                return rowComponent;
+            }
+        };
+    }
+}

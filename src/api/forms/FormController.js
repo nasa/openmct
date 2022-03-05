@@ -1,5 +1,6 @@
 import AutoCompleteField from './components/controls/AutoCompleteField.vue';
 import ClockDisplayFormatField from './components/controls/ClockDisplayFormatField.vue';
+import CheckBoxField from './components/controls/CheckBoxField.vue';
 import Datetime from './components/controls/Datetime.vue';
 import FileInput from './components/controls/FileInput.vue';
 import Locator from './components/controls/Locator.vue';
@@ -12,6 +13,7 @@ import Vue from 'vue';
 
 export const DEFAULT_CONTROLS_MAP = {
     'autocomplete': AutoCompleteField,
+    'checkbox': CheckBoxField,
     'composite': ClockDisplayFormatField,
     'datetime': Datetime,
     'file-input': FileInput,
@@ -90,4 +92,3 @@ export default class FormControl {
         };
     }
 }
-

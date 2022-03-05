@@ -20,52 +20,46 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/gaugeRadial.vue',
-    'vue'
-], function (
-    GaugeComponent,
-    Vue
-) {
-    function Gauge(openmct) {
-        return {
-            key: 'gauge',
-            name: 'Gauge',
-            cssClass: 'icon-gauge',
-            canView: function (domainObject) {
-                return domainObject.type === 'gauge';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'gauge';
-            },
-            view: function (domainObject) {
-                let component;
+import GaugeComponent from './components/GaugeRadial.vue';
+import Vue from 'vue';
 
-                return {
-                    show: function (element) {
-                        component =  new Vue({
-                            components: {
-                                GaugeComponent: GaugeComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject,
-                                composition: openmct.composition.get(domainObject)
-                            },
-                            el: element,
-                            template: '<gauge-component></gauge-component>'
-                        });
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
-            }
-        };
-    }
-    return Gauge;
-});
+export default function Gauge(openmct) {
+    return {
+        key: 'gauge',
+        name: 'Gauge',
+        cssClass: 'icon-gauge',
+        canView: function (domainObject) {
+            return domainObject.type === 'gauge';
+        },
+        canEdit: function (domainObject) {
+            return domainObject.type === 'gauge';
+        },
+        view: function (domainObject) {
+            let component;
+
+            return {
+                show: function (element) {
+                    component = new Vue({
+                        el: element,
+                        components: {
+                            GaugeComponent
+                        },
+                        provide: {
+                            openmct,
+                            domainObject,
+                            composition: openmct.composition.get(domainObject)
+                        },
+                        template: '<gauge-component></gauge-component>'
+                    });
+                },
+                destroy: function (element) {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        },
+        priority: function () {
+            return 1;
+        }
+    };
+}

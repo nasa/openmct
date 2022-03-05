@@ -52,6 +52,7 @@ export default class EditPropertiesAction extends PropertiesAction {
      * @private
      */
     async _onSave(changes) {
+        console.log('changes', changes);
         Object.entries(changes).forEach(([key, value]) => {
             const properties = key.split('.');
             let object = this.domainObject;

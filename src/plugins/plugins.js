@@ -215,7 +215,7 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
-    plugins.Gauge = Gauge;
+    plugins.Gauge = Gauge.default;
 
     return plugins;
 });
