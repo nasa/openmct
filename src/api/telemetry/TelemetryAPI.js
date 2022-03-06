@@ -512,7 +512,7 @@ define([
     TelemetryAPI.prototype.handleMissingRequestProvider = function (domainObject) {
         this.noRequestProviderForAllObjects = this.requestProviders.every(requestProvider => {
             const supportsRequest = requestProvider.supportsRequest.apply(requestProvider, arguments);
-            const hasRequestProvider = Object.hasOwn(requestProvider, 'request');
+            const hasRequestProvider = Object.prototype.hasOwnProperty.call(requestProvider, 'request') && typeof requestProvider.request === 'function';
 
             return supportsRequest && hasRequestProvider;
         });
