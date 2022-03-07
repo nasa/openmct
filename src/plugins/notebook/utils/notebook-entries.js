@@ -1,5 +1,17 @@
 import objectLink from '../../../ui/mixins/object-link';
 
+async function getUsername(openmct) {
+    let username = '';
+
+    if (openmct.user.hasProvider()) {
+        const user = await openmct.user.getCurrentUser();
+        username = user.getName();
+    }
+
+    return username;
+
+}
+
 export const DEFAULT_CLASS = 'notebook-default';
 const TIME_BOUNDS = {
     START_BOUND: 'tc.startBound',
@@ -61,7 +73,7 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
     return params.join('&');
 }
 
-export function createNewEmbed(snapshotMeta, snapshot = '') {
+export async function createNewEmbed(snapshotMeta, snapshot = '') {
     const {
         bounds,
         link,
@@ -83,10 +95,12 @@ export function createNewEmbed(snapshotMeta, snapshot = '') {
         });
     const name = domainObject.name;
     const type = domainObject.identifier.key;
+    const createdBy = await getUsername(openmct);
 
     return {
         bounds,
         createdOn: date,
+        createdBy,
         cssClass,
         domainObject,
         historicLink,
@@ -97,7 +111,7 @@ export function createNewEmbed(snapshotMeta, snapshot = '') {
     };
 }
 
-export function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null, entryText = '') {
+export async function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null, entryText = '') {
     if (!openmct || !domainObject || !notebookStorage) {
         return;
     }
@@ -109,10 +123,12 @@ export function addNotebookEntry(openmct, domainObject, notebookStorage, embed =
         ? [embed]
         : [];
 
+    const createdBy = await getUsername(openmct);
     const id = `entry-${date}`;
     const entry = {
         id,
         createdOn: date,
+        createdBy,
         text: entryText,
         embeds
     };
