@@ -596,8 +596,9 @@ export default {
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
-            const id = addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
-            this.focusEntryId = id;
+            addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed).then(id => {
+                this.focusEntryId = id;
+            });
         },
         orientationChange() {
             this.formatSidebar();
