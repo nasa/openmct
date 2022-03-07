@@ -27,6 +27,7 @@ import {
     resetApplicationState,
     simulateKeyEvent
 } from 'utils/testing';
+import ClearDataPlugin from '../clearData/plugin';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
@@ -83,6 +84,7 @@ describe("The Imagery View Layouts", () => {
     let telemetryPromise;
     let telemetryPromiseResolve;
     let cleanupFirst;
+    let isClearDataTriggered;
 
     let openmct;
     let parent;
@@ -201,6 +203,10 @@ describe("The Imagery View Layouts", () => {
         });
 
         spyOn(openmct.telemetry, 'request').and.callFake(() => {
+            if (isClearDataTriggered) {
+                return [];
+            }
+
             telemetryPromiseResolve(imageTelemetry);
 
             return telemetryPromise;
@@ -323,6 +329,8 @@ describe("The Imagery View Layouts", () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
+        let clearDataPlugin;
+        let clearDataAction;
 
         beforeEach(() => {
 
@@ -330,16 +338,21 @@ describe("The Imagery View Layouts", () => {
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
             imageryView.show(child);
+            clearDataPlugin = new ClearDataPlugin(
+                ['example.imagery'],
+                {indicator: true}
+            );
+            openmct.install(clearDataPlugin);
+            clearDataAction = openmct.actions.getAction('clear-data-action');
 
             return Vue.nextTick();
         });
-
-        // afterEach(() => {
-        //     openmct.time.stopClock();
-        //     openmct.router.removeListener('change:hash', resolveFunction);
-        //
-        //     imageryView.destroy();
-        // });
+        afterEach(() => {
+            isClearDataTriggered = false;
+            // openmct.time.stopClock();
+            // openmct.router.removeListener('change:hash', resolveFunction);
+            // imageryView.destroy();
+        });
 
         it("on mount should show the the most recent image", (done) => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
@@ -469,6 +482,21 @@ describe("The Imagery View Layouts", () => {
                     done();
                 });
             });
+        });
+        it('clear data action is installed', () => {
+            expect(clearDataAction).toBeDefined();
+        });
+
+        it('on clearData action should clear data for object is selected', (done) => {
+            expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
+            openmct.objectViews.on('clearData', async (_domainObject) => {
+                await Vue.nextTick();
+                expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
+                done();
+            });
+            // stubbed telemetry data will return empty array when true
+            isClearDataTriggered = true;
+            clearDataAction.invoke(imageryObject);
         });
     });
 
