@@ -41,7 +41,7 @@
         </div>
 
         <div class="form-row c-form__row">
-            <label>Value Precision</label>
+            <label>Float Precision</label>
             <input v-model="precision"
                    type="number"
                    @input="onChange"

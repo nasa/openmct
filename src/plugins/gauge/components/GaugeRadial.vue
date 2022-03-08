@@ -50,7 +50,12 @@
                      'c-dial-clip--180': degValue >= 90 && degValue < 180
                  }"
             >
-                <path d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
+                <path v-if="gaugeType === 0"
+                      d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
+                      :style="`transform: rotate(${degValue}deg)`"
+                />
+                <path v-if="gaugeType === 1"
+                      d="M139.9,360.1l-48.6,48.6c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0l48.6-48.6L139.9,360.1z"
                       :style="`transform: rotate(${degValue}deg)`"
                 />
             </svg>
@@ -72,7 +77,8 @@ export default {
             displayMinMax: gaugeController.isDisplayMinMax,
             limit: gaugeController.limit,
             rangeHigh: gaugeController.max,
-            rangeLow: gaugeController.min
+            rangeLow: gaugeController.min,
+            gaugeType: 1 // 0 = filled, 1 = needle
         };
     },
     computed: {
@@ -101,7 +107,8 @@ export default {
             return Math.round(val * precision) / precision;
         },
         valToPercent(vValue) {
-            if (vValue >= this.rangeHigh) {
+            if (vValue >= this.rangeHigh && this.gaugeType !== 1) {
+                // Don't peg at 100% if the gaugeType isn't a filled shape
                 return 100;
             }
 
