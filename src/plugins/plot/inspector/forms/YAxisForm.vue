@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { objectPath, validate, coerce } from "./formUtil";
+import { objectPath, validate } from "./formUtil";
 import _ from "lodash";
 
 export default {
