@@ -52,10 +52,11 @@ export default {
         };
     },
     mounted() {
-        this.updateText = throttle(this.updateText.bind(this), 500);
+        this.updateText = throttle(this.updateText.bind(this), 200);
     },
     methods: {
         updateText() {
+            console.log('updateText', this.field);
             const data = {
                 model: this.model,
                 value: this.field

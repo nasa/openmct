@@ -27,7 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('@playwright/test');
 
 test.describe('Sine Wave Generator', () => {
-    test.skip('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page }) => {
+    test('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page }) => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -37,31 +37,57 @@ test.describe('Sine Wave Generator', () => {
         // Click Sine Wave Generator
         await page.click('text=Sine Wave Generator');
 
-        // Verify that the Title row has a required indicator
-        await expect(page.locator('div:nth-child(2) .form-row .c-form-row__state-indicator .req')).toBeVisible();
-        await expect(page.locator('div:nth-child(1) .form-row .c-form-row__state-indicator .req')).toBeVisible();
-        await expect(page.locator('div:nth-child(2) .form-row .c-form-row__state-indicator .req')).toBeVisible();
+        // Verify that the each required field has required indicator
+        // Title
+        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(['c-form-row__state-indicator  req']);
 
-        // Verify that the Notes row has a required indicator
-        await expect(page.locator('div:nth-child(1) .form-row .c-form-row__state-indicator')).not.toContain('.req');
+        // Verify that the Notes row does not have a required indicator
+        await expect(page.locator('.c-form__section div:nth-child(3) .form-row .c-form-row__state-indicator')).not.toContain('.req');
 
-        // Verify that the 4th row element has a required indicator
-        await expect(page.locator('div:nth-child(4) .form-row .c-form-row__state-indicator .req')).toBeTruthy();
+        // Period
+        await expect(page.locator('.c-form__section div:nth-child(4) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
 
-        // Click div:nth-child(5) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(5) .form-row .c-form-row__state-indicator').click();
+        // Amplitude
+        await expect(page.locator('.c-form__section div:nth-child(5) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
 
-        // Click div:nth-child(6) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(6) .form-row .c-form-row__state-indicator').click();
+        // Offset
+        await expect(page.locator('.c-form__section div:nth-child(6) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
 
-        // Click div:nth-child(7) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(7) .form-row .c-form-row__state-indicator').click();
+        // Data Rate
+        await expect(page.locator('.c-form__section div:nth-child(7) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
 
-        // Click div:nth-child(8) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(8) .form-row .c-form-row__state-indicator').click();
+        // Phase
+        await expect(page.locator('.c-form__section div:nth-child(8) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
 
-        // Click div:nth-child(9) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(9) .form-row .c-form-row__state-indicator').click();
+        // Randomness
+        await expect(page.locator('.c-form__section div:nth-child(9) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+
+        // Verify that by removing value from required text field shows invalid indicator
+        await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('');
+        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(['c-form-row__state-indicator  req invalid']);
+
+        // Verify that by adding value to empty required text field changes invalid to valid indicator
+        await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('non empty');
+        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(['c-form-row__state-indicator  req valid']);
+
+        // Verify that by removing value from required number field shows invalid indicator
+        await page.locator('.field.control.l-input-sm input').first().fill('');
+        await expect(page.locator('.c-form__section div:nth-child(4) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req invalid']);
+
+        // Verify that by adding value to empty required number field changes invalid to valid indicator
+        await page.locator('.field.control.l-input-sm input').first().fill('3');
+        await expect(page.locator('.c-form__section div:nth-child(4) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req valid']);
+
+        // Verify that can change value of number field by up/down arrows keys
+        // Click .field.control.l-input-sm input >> nth=0
+        await page.locator('.field.control.l-input-sm input').first().click();
+        // Press ArrowUp 3 times to change value from 3 to 6
+        await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
+        await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
+        await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
+
+        const value = await page.locator('.field.control.l-input-sm input').first().inputValue();
+        await expect(value).toBe('6');
 
         // Click .c-form-row__state-indicator.grows
         await page.locator('.c-form-row__state-indicator.grows').click();
