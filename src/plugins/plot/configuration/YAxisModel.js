@@ -19,8 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
-import { antisymlog } from '../mathUtils';
+import { antisymlog, symlog } from '../mathUtils';
 import Model from './Model';
 
 /**
@@ -32,7 +31,7 @@ import Model from './Model';
  *
  * `autoscale`: boolean, whether or not to autoscale.
  * `autoscalePadding`: float, percent of padding to display in plots.
- * `displayRange`: the current display range for the x Axis.
+ * `displayRange`: the current display range for the axis.
  * `format`: the formatter for the axis.
  * `frozen`: boolean, if true, displayRange will not be updated automatically.
  *           Used to temporarily disable automatic updates during user interaction.
@@ -55,7 +54,7 @@ export default class YAxisModel extends Model {
         this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
         this.listenTo(this, 'change:autoscale', this.toggleAutoscale, this);
         this.listenTo(this, 'change:autoscalePadding', this.updatePadding, this);
-        this.listenTo(this, 'change:logMode', this.resetSeries, this);
+        this.listenTo(this, 'change:logMode', this.onLogModeChange, this);
         this.listenTo(this, 'change:frozen', this.toggleFreeze, this);
         this.listenTo(this, 'change:range', this.updateDisplayRange, this);
         this.updateDisplayRange(this.get('range'));
@@ -175,11 +174,34 @@ export default class YAxisModel extends Model {
             this.set('displayRange', this.get('range'));
         }
     }
+    /** @param {boolean} logMode */
+    onLogModeChange(logMode) {
+        const range = this.get('displayRange');
+        const scale = 1; // TODO get from UI, positive number above 0
+
+        console.log(' --- range before:', range.min, range.max);
+
+        if (logMode) {
+            range.min = scale * symlog(range.min, 10);
+            range.max = scale * symlog(range.max, 10);
+        } else {
+            range.min = antisymlog(range.min / scale, 10);
+            range.max = antisymlog(range.max / scale, 10);
+        }
+
+        console.log(' --- range after:', range.min, range.max);
+
+        this.set('displayRange', range);
+
+        this.resetSeries();
+    }
     resetSeries() {
         this.plot.series.forEach((plotSeries) => {
             plotSeries.logMode = this.get('logMode');
             plotSeries.reset(plotSeries.getSeriesData());
         });
+        // Update the series collection labels and formatting
+        this.updateFromSeries(this.seriesCollection);
     }
     /**
      * Update yAxis format, values, and label from known series.
