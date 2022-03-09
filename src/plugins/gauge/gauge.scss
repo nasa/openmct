@@ -2,7 +2,7 @@
 $gaugeColorBg: rgba($colorBodyFg, 0.2);
 $gaugeColorValueBg: rgba($colorBodyFg, 0.5);
 $gaugeColorFg: pullForward($colorBodyFg, 20%);
-$gaugeValueTransitionTime: 50ms;
+$gaugeValueTransitionTime: 250ms;
 $gaugeLimitColorBg: rgba($colorLimitRedBg, 0.5);
 
 .is-object-type-gauge {
@@ -94,7 +94,7 @@ $gaugeLimitColorBg: rgba($colorLimitRedBg, 0.5);
 
     path {
       fill: $gaugeColorValueBg;
-      transition: transform $gaugeValueTransitionTime;
+      //transition: transform $gaugeValueTransitionTime;
     }
   }
 
