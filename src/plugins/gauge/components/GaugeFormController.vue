@@ -26,18 +26,12 @@
           :class="model.cssClass"
     >
         <div class="form-row c-form__row">
-            <label>Bi directional Gauge</label>
-            <input type="checkbox"
-                   :checked="isBiDirectional"
-                   @input="toggleBiDirectional"
-            >
-        </div>
-        <div class="form-row c-form__row">
-            <label>Display Min/Max</label>
-            <input type="checkbox"
-                   :checked="isDisplayMinMax"
-                   @input="toggleMinMax"
-            >
+            <ToggleSwitch
+                id="isDisplayMinMax"
+                :checked="isDisplayMinMax"
+                :label="`Display Minimum and Maximum values`"
+                @change="toggleMinMax"
+            />
         </div>
 
         <div class="form-row c-form__row">
@@ -48,23 +42,25 @@
             >
         </div>
 
-        <div v-if="isBiDirectional">
-            <div class="form-row c-form__row">
-                <label>Min Limit</label>
-                <input v-model="min"
-                       type="number"
-                       @input="onChange"
-                >
-
-                <label>Max Limit</label>
-                <input v-model="max"
-                       type="number"
-                       @input="onChange"
-                >
-            </div>
-            <span>Note: min/max value ll be calculated automatically</span>
+        <div v-if="false"
+             class="form-row c-form__row"
+        >
+            <ToggleSwitch
+                id="isUseTelemetryLimits"
+                :checked="isUseTelemetryLimits"
+                :label="`Use Telemetry Limits`"
+                @change="toggleUseTelemetryLimits"
+            />
         </div>
-        <div v-else>
+
+        <div class="form-row c-form__row">
+            <label>Gauge Type</label>
+            <SelectField :model="getGaugeTypes()"
+                         @onChange="changeGaugeType"
+            />
+        </div>
+
+        <div v-if="!isUseTelemetryLimits">
             <div class="form-row c-form__row">
                 <label>Min value</label>
                 <input v-model="min"
@@ -92,7 +88,15 @@
 </template>
 
 <script>
+import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
+import SelectField from '@/api/forms/components/controls/SelectField.vue';
+import { GAUGE_TYPES } from '../plugin';
+
 export default {
+    components: {
+        SelectField,
+        ToggleSwitch
+    },
     props: {
         model: {
             type: Object,
@@ -101,7 +105,8 @@ export default {
     },
     data() {
         return {
-            isBiDirectional: this.model.value.isBiDirectional,
+            gaugeType: this.model.value.gaugeType || this.getGaugeTypes().value,
+            isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
             isDisplayMinMax: this.model.value.isDisplayMinMax,
             limit: this.model.value.limit,
             max: this.model.value.max,
@@ -110,6 +115,24 @@ export default {
         };
     },
     methods: {
+        changeGaugeType(data) {
+            this.gaugeType = data.value;
+
+            this.onChange();
+        },
+        getGaugeTypes() {
+            const options = GAUGE_TYPES.map(value => {
+                return {
+                    name: value.split('-').join(' '),
+                    value
+                };
+            });
+
+            return {
+                options,
+                value: this.gaugeType || options[0].value
+            };
+        },
         onChange() {
             const data = {
                 model: this.model,
@@ -118,8 +141,8 @@ export default {
 
             this.$emit('onChange', data);
         },
-        toggleBiDirectional() {
-            this.isBiDirectional = !this.isBiDirectional;
+        toggleUseTelemetryLimits() {
+            this.isUseTelemetryLimits = !this.isUseTelemetryLimits;
 
             this.onChange();
         },
