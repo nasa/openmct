@@ -24,6 +24,8 @@ import Gauge from './Gauge';
 import GaugeFormController from './components/GaugeFormController.vue';
 import Vue from 'vue';
 
+export const GAUGE_TYPES = ['dial-filled', 'dial-needle', 'meter-vertical', 'meter-horz'];
+
 export default function () {
     return function install(openmct) {
         openmct.objectViews.addProvider(new Gauge(openmct));
@@ -38,8 +40,9 @@ export default function () {
                 domainObject.composition = [];
                 domainObject.configuration = {
                     gaugeController: {
-                        isBiDirectional: false,
+                        gaugeType: GAUGE_TYPES[0],
                         isDisplayMinMax: true,
+                        isUseTelemetryLimits: false,
                         limit: 90,
                         max: 100,
                         min: 0,

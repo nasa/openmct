@@ -135,7 +135,7 @@ export default {
             limit: gaugeController.limit,
             rangeHigh: gaugeController.max,
             rangeLow: gaugeController.min,
-            gaugeType: 'meter-vertical' // dial-filled, dial-needle, meter-vertical, meter-horz
+            gaugeType: gaugeController.gaugeType
         };
     },
     computed: {
