@@ -1,9 +1,13 @@
 // TEMP COLORS, MOVE TO THEME COLORS
 $gaugeColorBg: rgba($colorBodyFg, 0.2);
 $gaugeColorValueBg: rgba($colorBodyFg, 0.5);
-$meterColorFg: pullForward($colorBodyFg, 20%);
-$gaugeTransitionTime: 50ms;
-$gaugeLimitColorBg: rgba($colorAlert, 0.3);
+$gaugeColorFg: pullForward($colorBodyFg, 20%);
+$gaugeValueTransitionTime: 50ms;
+$gaugeLimitColorBg: rgba($colorLimitRedBg, 0.5);
+
+.is-object-type-gauge {
+  overflow: hidden;
+}
 
 .c-gauge {
   overflow: hidden;
@@ -90,7 +94,7 @@ $gaugeLimitColorBg: rgba($colorAlert, 0.3);
 
     path {
       fill: $gaugeColorValueBg;
-      transition: transform $gaugeTransitionTime;
+      transition: transform $gaugeValueTransitionTime;
     }
   }
 
@@ -123,7 +127,7 @@ $gaugeLimitColorBg: rgba($colorAlert, 0.3);
     &__curval {
       // Text element with current value
       //background: rgba(green, 0.3;
-      color: $meterColorFg;
+      color: $gaugeColorFg;
       font-size: 1.5em;
       position: absolute;
       left: 50%;
@@ -136,7 +140,7 @@ $gaugeLimitColorBg: rgba($colorAlert, 0.3);
       // Filled area
       position: absolute;
       background: $gaugeColorValueBg;
-      transition: transform $gaugeTransitionTime;
+      transition: transform $gaugeValueTransitionTime;
       z-index: 1;
     }
 
@@ -151,16 +155,15 @@ $gaugeLimitColorBg: rgba($colorAlert, 0.3);
       //background: rgba(red, 0.3);
       flex-direction: column;
       min-width: min-content;
-      padding-right: $interiorMargin;
+      margin-right: $interiorMarginSm;
       text-align: right;
     }
 
     &__svg-curval {
       // SVG, not used currently
-      fill: $meterColorFg;
+      fill: $gaugeColorFg;
       font-size: 30px;
       transform-origin: bottom;
-      //transform="translate(50 80)"
     }
 
     &__value {
@@ -190,8 +193,16 @@ $gaugeLimitColorBg: rgba($colorAlert, 0.3);
     //background: rgba(red, 0.3);
     flex-direction: row;
     min-height: min-content;
+    margin-top: $interiorMarginSm;
     order: 2;
-    padding-top: $interiorMargin;
+
+    &__high {
+      order: 2;
+    }
+
+    &__low {
+      order: 1;
+    }
   }
 
   &__bg { order: 1; }

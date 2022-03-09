@@ -67,13 +67,14 @@
 
         <template v-if="gaugeType.indexOf('meter') !== -1">
             <div class="c-meter">
-                <div class="c-meter__range">
+                <div v-if="displayMinMax"
+                     class="c-meter__range"
+                >
                     <div class="c-meter__range__high">{{ rangeHigh }}</div>
                     <div class="c-meter__range__low">{{ rangeLow }}</div>
                 </div>
                 <div class="c-meter__bg">
-                    <div class="c-meter__curval"
-                    >{{ curVal }}</div>
+                    <div class="c-meter__curval">{{ curVal }}</div>
 
                     <template v-if="gaugeType.indexOf('-vertical') !== -1">
                         <div class="c-meter__value"
@@ -81,8 +82,8 @@
                         ></div>
 
                         <div v-if="meterHighLimitPerc > 0"
-                              class="c-meter__limit-high"
-                              :style="`height: ${meterHighLimitPerc}%`"
+                             class="c-meter__limit-high"
+                             :style="`height: ${meterHighLimitPerc}%`"
                         ></div>
 
                         <div v-if="meterLowLimitPerc > 0"
@@ -181,8 +182,6 @@ export default {
             return ((vValue - this.rangeLow) / (this.rangeHigh - this.rangeLow)) * 100;
         },
         valToPercentMeter(vValue) {
-            // Used by meter-vertical
-            // Inverts value to percent, so 100% value == 0%
             return (this.rangeHigh - vValue) / (this.rangeHigh - this.rangeLow) * 100;
         },
         percentToDegrees(vPercent) {
