@@ -182,7 +182,14 @@ export default {
             return ((vValue - this.rangeLow) / (this.rangeHigh - this.rangeLow)) * 100;
         },
         valToPercentMeter(vValue) {
-            return (this.rangeHigh - vValue) / (this.rangeHigh - this.rangeLow) * 100;
+            // Used by meter
+            if (vValue >= this.rangeHigh) {
+                return 0;
+            } else if (vValue <= this.rangeLow) {
+                return 100;
+            } else {
+                return (this.rangeHigh - vValue) / (this.rangeHigh - this.rangeLow) * 100;
+            }
         },
         percentToDegrees(vPercent) {
             return this.round((vPercent / 100) * 270, 2);
