@@ -1,15 +1,22 @@
+// TEMP COLORS, MOVE TO THEME COLORS
+$gaugeColorBg: rgba($colorBodyFg, 0.2);
+$gaugeColorValueBg: rgba($colorBodyFg, 0.5);
+$meterColorFg: pullForward($colorBodyFg, 20%);
+$gaugeTransitionTime: 50ms;
+$gaugeLimitColorBg: rgba($colorAlert, 0.3);
+
 .c-gauge {
-  @include abs();
   overflow: hidden;
 
   &__wrapper {
-    position: absolute;
-    width: 100%;
-    padding-bottom: 100%;
+    //background: rgba(deeppink, 0.2);
+    @include abs();
     overflow: hidden;
   }
 
   &__value {
+    // Is this being used?
+    background: red;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -26,8 +33,18 @@
   &__curval {
     font-family: $heroFont;
   }
+
+  &[class*='dial'] {
+    width: 100%;
+    padding-bottom: 100%;
+  }
+
+  &[class*='meter'] {
+    @include abs();
+  }
 }
 
+/********************************************** DIAL GAUGE */
 .c-dial {
   // Dial elements
   @include abs();
@@ -57,11 +74,12 @@
     }
 
     path {
-      fill: rgba(orange, 0.4);
+      fill: $gaugeLimitColorBg;
     }
   }
 
   &__value {
+
     &.c-dial-clip--90 {
       clip-path: polygon(0 0, 50% 50%, 0 100%);
     }
@@ -71,13 +89,130 @@
     }
 
     path {
-      fill: rgba(#fff, 0.8);
+      fill: $gaugeColorValueBg;
+      transition: transform $gaugeTransitionTime;
     }
   }
 
   &__bg {
     g {
-      fill: rgba(#fff, 0.1);
+      fill: $gaugeColorBg;
     }
   }
+}
+
+/********************************************** METER GAUGE */
+.c-meter {
+    // Common styles for c-meter
+    @include abs();
+    display: flex;
+
+    &__range {
+      display: flex;
+      flex: 0 0 auto;
+      justify-content: space-between;
+    }
+
+    &__bg {
+      background: $gaugeColorBg;
+      border-radius: $basicCr;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    &__curval {
+      // Text element with current value
+      //background: rgba(green, 0.3;
+      color: $meterColorFg;
+      font-size: 1.5em;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
+    &__value {
+      // Filled area
+      position: absolute;
+      background: $gaugeColorValueBg;
+      transition: transform $gaugeTransitionTime;
+      z-index: 1;
+    }
+
+    [class*='limit'] {
+      background: $gaugeLimitColorBg;
+      position: absolute;
+    }
+}
+
+.c-gauge--meter-vertical .c-meter {
+    &__range {
+      //background: rgba(red, 0.3);
+      flex-direction: column;
+      min-width: min-content;
+      padding-right: $interiorMargin;
+      text-align: right;
+    }
+
+    &__svg-curval {
+      // SVG, not used currently
+      fill: $meterColorFg;
+      font-size: 30px;
+      transform-origin: bottom;
+      //transform="translate(50 80)"
+    }
+
+    &__value {
+      // Filled area
+      $lrM: $interiorMargin;
+      left: $lrM; right: $lrM;
+      top: 0; bottom: 0;
+    }
+
+    [class*='limit'] {
+      left: 0; right: 0;
+    }
+
+    &__limit-low {
+      bottom: 0;
+    }
+
+    &__limit-high {
+      top: 0;
+    }
+}
+
+.c-gauge--meter-horz .c-meter {
+  flex-direction: column;
+
+  &__range {
+    //background: rgba(red, 0.3);
+    flex-direction: row;
+    min-height: min-content;
+    order: 2;
+    padding-top: $interiorMargin;
+  }
+
+  &__bg { order: 1; }
+
+  &__value {
+    // Filled area
+    $m: $interiorMargin;
+    top: $m; bottom: $m;
+    left: 0; right: 0;
+  }
+
+  [class*='limit'] {
+    top: 0; bottom: 0;
+  }
+
+  &__limit-low {
+    left: 0;
+  }
+
+  &__limit-high {
+    right: 0;
+  }
+
 }
