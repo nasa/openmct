@@ -29,7 +29,7 @@
             <ToggleSwitch
                 id="isDisplayMinMax"
                 :checked="isDisplayMinMax"
-                :label="`Display Minimum and Maximum values`"
+                :label="`Display minimum and maximum values`"
                 @change="toggleMinMax"
             />
         </div>
@@ -48,7 +48,7 @@
             <ToggleSwitch
                 id="isUseTelemetryLimits"
                 :checked="isUseTelemetryLimits"
-                :label="`Use Telemetry Limits`"
+                :label="`Use telemetry limits`"
                 @change="toggleUseTelemetryLimits"
             />
         </div>
@@ -121,10 +121,10 @@ export default {
             this.onChange();
         },
         getGaugeTypes() {
-            const options = GAUGE_TYPES.map(value => {
+            const options = GAUGE_TYPES.map(type => {
                 return {
-                    name: value.split('-').join(' '),
-                    value
+                    name: type[0],
+                    value: type[1]
                 };
             });
 

@@ -24,7 +24,12 @@ import Gauge from './Gauge';
 import GaugeFormController from './components/GaugeFormController.vue';
 import Vue from 'vue';
 
-export const GAUGE_TYPES = ['dial-filled', 'dial-needle', 'meter-vertical', 'meter-horz'];
+export const GAUGE_TYPES = [
+    ['Filled Dial', 'dial-filled'],
+    ['Needle Dial', 'dial-needle'],
+    ['Vertical Meter', 'meter-vertical'],
+    ['Horizontal Meter', 'meter-horz']
+];
 
 export default function () {
     return function install(openmct) {
