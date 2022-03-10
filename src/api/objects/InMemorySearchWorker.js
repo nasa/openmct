@@ -33,8 +33,10 @@
 
         port.onmessage = function (event) {
             if (event.data.request === 'index') {
+                console.log('onmessage index: ', event.data);
                 indexItem(event.data.keyString, event.data.model);
             } else if (event.data.request === 'search') {
+                console.log('onmessage search: ', event.data);
                 port.postMessage(search(event.data));
             }
         };
@@ -76,6 +78,8 @@
             total: 0,
             queryId: data.queryId
         };
+
+        console.log('indexed on search: ', indexedItems);
 
         results = Object.values(indexedItems).filter((indexedItem) => {
             return indexedItem.name.toLowerCase().includes(input);

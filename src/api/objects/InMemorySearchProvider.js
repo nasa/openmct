@@ -186,6 +186,7 @@ class InMemorySearchProvider {
      * @param {identifier} id to be indexed.
      */
     scheduleForIndexing(identifier) {
+        console.log('scheduleforIndexing: ', identifier);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         const objectProvider = this.openmct.objects.getProvider(identifier);
 
