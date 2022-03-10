@@ -49,8 +49,8 @@
                      class="c-dial__value"
                      viewBox="0 0 512 512"
                      :class="{
-                         'c-dial-clip--90': degValue < 90,
-                         'c-dial-clip--180': degValue >= 90 && degValue < 180
+                         'c-dial-clip--90': degValue < 90 && gaugeType.indexOf('-needle') === -1,
+                         'c-dial-clip--180': degValue >= 90 && degValue < 180 && gaugeType.indexOf('-needle') === -1
                      }"
                 >
                     <path v-if="gaugeType.indexOf('dial-filled') !== -1"

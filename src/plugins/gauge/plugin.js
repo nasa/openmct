@@ -57,7 +57,7 @@ export default function () {
             },
             form: [
                 {
-                    name: "Guage Controls",
+                    name: "Gauge Controls",
                     control: "gauge-controller",
                     cssClass: "l-input-sm",
                     key: "gaugeController",
