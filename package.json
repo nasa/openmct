@@ -3,7 +3,7 @@
   "version": "2.0.1-SNAPSHOT",
   "description": "The Open MCT core platform",
   "devDependencies": {
-    "@braintree/sanitize-url": "5.0.2",
+    "@braintree/sanitize-url": "6.0.0",
     "@percy/cli": "1.0.0-beta.75",
     "@percy/playwright": "1.0.1",
     "@playwright/test": "1.19.2",
