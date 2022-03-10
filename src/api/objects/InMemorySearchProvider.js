@@ -273,7 +273,7 @@ class InMemorySearchProvider {
 
         this.pendingRequests += 1;
         const identifier = await this.openmct.objects.parseKeyString(keyString);
-        const domainObject = await this.openmct.objects.get(identifier.key);
+        const domainObject = await this.openmct.objects.get(identifier);
         delete provider.pendingIndex[keyString];
         try {
             if (domainObject) {
