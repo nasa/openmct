@@ -78,7 +78,7 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
-    './gauge/plugin'
+    './gauge/GaugePlugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -137,7 +137,7 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
-    Gauge
+    GaugePlugin
 ) {
     const plugins = {};
 
@@ -215,7 +215,7 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
-    plugins.Gauge = Gauge.default;
+    plugins.Gauge = GaugePlugin.default;
 
     return plugins;
 });

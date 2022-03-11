@@ -46,19 +46,57 @@ export default function () {
                 domainObject.composition = [];
                 domainObject.configuration = {
                     gaugeController: {
-                        gaugeType: GAUGE_TYPES[0],
+                        gaugeType: GAUGE_TYPES[0][1],
                         isDisplayMinMax: true,
-                        isUseTelemetryLimits: false,
+                        isUseTelemetryLimits: true,
                         limitHigh: 90,
                         max: 100,
-                        min: 0,
-                        precision: 2
+                        min: 0
                     }
                 };
             },
             form: [
                 {
-                    name: "Gauge Controls",
+                    name: "Display minimum and maximum values",
+                    control: "toggleSwitch",
+                    cssClass: "l-input-sm",
+                    key: "isDisplayMinMax",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "isDisplayMinMax"
+                    ]
+                },
+                {
+                    name: "Float Precision",
+                    control: "numberfield",
+                    cssClass: "l-input-sm",
+                    key: "precision",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "precision"
+                    ]
+                },
+                {
+                    name: "Gauge Type",
+                    options: GAUGE_TYPES.map(type => {
+                        return {
+                            name: type[0],
+                            value: type[1]
+                        };
+                    }),
+                    control: "select",
+                    cssClass: "l-input-sm",
+                    key: "gaugeController",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "gaugeType"
+                    ]
+                },
+                {
+                    name: "Use telemetry limits",
                     control: "gauge-controller",
                     cssClass: "l-input-sm",
                     key: "gaugeController",

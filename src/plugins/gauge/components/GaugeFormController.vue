@@ -27,36 +27,10 @@
     >
         <div class="form-row c-form__row">
             <ToggleSwitch
-                id="isDisplayMinMax"
-                :checked="isDisplayMinMax"
-                :label="`Display minimum and maximum values`"
-                @change="toggleMinMax"
-            />
-        </div>
-
-        <div class="form-row c-form__row">
-            <label>Float Precision</label>
-            <input v-model="precision"
-                   type="number"
-                   @input="onChange"
-            >
-        </div>
-
-        <div v-if="false"
-             class="form-row c-form__row"
-        >
-            <ToggleSwitch
                 id="isUseTelemetryLimits"
                 :checked="isUseTelemetryLimits"
                 :label="`Use telemetry limits`"
                 @change="toggleUseTelemetryLimits"
-            />
-        </div>
-
-        <div class="form-row c-form__row">
-            <label>Gauge Type</label>
-            <SelectField :model="getGaugeTypes()"
-                         @onChange="changeGaugeType"
             />
         </div>
 
@@ -97,12 +71,10 @@
 
 <script>
 import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
-import SelectField from '@/api/forms/components/controls/SelectField.vue';
-import { GAUGE_TYPES } from '../plugin';
+import { GAUGE_TYPES } from '../GaugePlugin';
 
 export default {
     components: {
-        SelectField,
         ToggleSwitch
     },
     props: {
