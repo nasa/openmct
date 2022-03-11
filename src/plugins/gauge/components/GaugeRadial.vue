@@ -234,6 +234,7 @@ export default {
 
         return {
             curVal: 0,
+            digits: 3,
             precision: gaugeController.precision,
             displayMinMax: gaugeController.isDisplayMinMax,
             limitHigh: gaugeController.limitHigh,
@@ -271,6 +272,13 @@ export default {
         },
         meterLowLimitPerc() {
             return 100 - this.valToPercentMeter(this.limitLow);
+        }
+    },
+    watch: {
+        curVal(newCurValue) {
+            if (this.digits < newCurValue.toString().length) {
+                this.digits = newCurValue.toString().length;
+            }
         }
     },
     mounted() {
