@@ -71,6 +71,10 @@ const config = {
                     transform: function (content) {
                         return content.toString().replace(/dist\//g, '');
                     }
+                },
+                {
+                    from: 'src/plugins/imagery/layers',
+                    to: 'imagery'
                 }
             ]
         }),
