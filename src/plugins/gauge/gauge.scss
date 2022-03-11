@@ -3,7 +3,13 @@ $gaugeColorBg: rgba($colorBodyFg, 0.2);
 $gaugeColorValueBg: rgba($colorBodyFg, 0.5);
 $gaugeColorFg: pullForward($colorBodyFg, 20%);
 $gaugeValueTransitionTime: 250ms;
-$gaugeLimitColorBg: rgba($colorLimitRedBg, 0.5);
+$gaugeLimitHighColorBg: rgba($colorLimitRedBg, 0.5);
+$gaugeLimitLowColorBg: $gaugeLimitHighColorBg;
+
+$dialClip90: polygon(0 0, 50% 50%, 0 100%);
+$dialClip180: polygon(0 0, 100% 0, 0 100%);
+$limitHighClip90: polygon(0 0, 100% 0, 100% 100%);
+$limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
 
 .is-object-type-gauge {
   overflow: hidden;
@@ -57,7 +63,7 @@ $gaugeLimitColorBg: rgba($colorLimitRedBg, 0.5);
   svg,
   &__ticks,
   &__bg,
-  &__limit,
+  &[class*='__limit'],
   &__value {
     @include abs();
   }
@@ -68,31 +74,31 @@ $gaugeLimitColorBg: rgba($colorLimitRedBg, 0.5);
     }
   }
 
-  &__limit {
-    &.c-limit-clip--90 {
-      clip-path: polygon(0 0, 100% 0, 100% 100%);
+  .c-high-limit-clip--90 {
+    clip-path: $limitHighClip90;
+  }
+
+  .c-high-limit-clip--180 {
+    clip-path: $limitHighClip180;
+  }
+
+  &__limit-high path { fill: $gaugeLimitHighColorBg; }
+  &__limit-low path { fill: $gaugeLimitLowColorBg; }
+
+  &__value,
+  &__limit-low {
+    &.c-dial-clip--90 {
+      clip-path: $dialClip90;
     }
 
-    &.c-limit-clip--180 {
-      clip-path: polygon(100% 0, 100% 100%, 0 100%);
-    }
-
-    path {
-      fill: $gaugeLimitColorBg;
+    &.c-dial-clip--180 {
+      clip-path: $dialClip180;
     }
   }
 
   &__value {
-
-    &.c-dial-clip--90 {
-      clip-path: polygon(0 0, 50% 50%, 0 100%);
-    }
-
-    &.c-dial-clip--180 {
-      clip-path: polygon(0 0, 100% 0, 0 100%);
-    }
-
-    path {
+    path,
+    polygon {
       fill: $gaugeColorValueBg;
     }
   }
@@ -150,8 +156,15 @@ $gaugeLimitColorBg: rgba($colorLimitRedBg, 0.5);
   }
 
   [class*='limit'] {
-    background: $gaugeLimitColorBg;
     position: absolute;
+  }
+
+  &__limit-high {
+    background: $gaugeLimitHighColorBg;
+  }
+
+  &__limit-low {
+    background: $gaugeLimitLowColorBg;
   }
 }
 
@@ -237,6 +250,36 @@ $gaugeLimitColorBg: rgba($colorLimitRedBg, 0.5);
 
   &__limit-high {
     right: 0;
+  }
+
+}
+
+.temp-debug {
+  position: absolute;
+}
+
+.temp-dial-debug {
+  margin-top: 10px;
+  display: flex;
+
+  div {
+    background: rgba(red, 0.1);
+    position: relative;
+    width: 100px;
+    height: 100px;
+
+    div {
+      @include abs();
+      background: rgba(green, 0.3);
+    }
+  }
+
+  svg {
+    opacity: 0.5;
+  }
+
+  > * + * {
+    margin-left: 10px;
   }
 
 }

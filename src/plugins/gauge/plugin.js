@@ -28,6 +28,7 @@ export const GAUGE_TYPES = [
     ['Filled Dial', 'dial-filled'],
     ['Needle Dial', 'dial-needle'],
     ['Vertical Meter', 'meter-vertical'],
+    ['Vertical Meter Inverted', 'meter-vertical-inverted'],
     ['Horizontal Meter', 'meter-horz']
 ];
 
@@ -48,7 +49,7 @@ export default function () {
                         gaugeType: GAUGE_TYPES[0],
                         isDisplayMinMax: true,
                         isUseTelemetryLimits: false,
-                        limit: 90,
+                        limitHigh: 90,
                         max: 100,
                         min: 0,
                         precision: 2

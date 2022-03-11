@@ -76,8 +76,16 @@
             </div>
 
             <div class="form-row c-form__row">
-                <label>Max Limit</label>
-                <input v-model="limit"
+                <label>Low Limit</label>
+                <input v-model="limitLow"
+                       type="number"
+                       @input="onChange"
+                >
+            </div>
+
+            <div class="form-row c-form__row">
+                <label>High Limit</label>
+                <input v-model="limitHigh"
                        type="number"
                        @input="onChange"
                 >
@@ -108,7 +116,8 @@ export default {
             gaugeType: this.model.value.gaugeType || this.getGaugeTypes().value,
             isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
             isDisplayMinMax: this.model.value.isDisplayMinMax,
-            limit: this.model.value.limit,
+            limitHigh: this.model.value.limitHigh,
+            limitLow: this.model.value.limitLow,
             max: this.model.value.max,
             min: this.model.value.min,
             precision: this.model.value.precision
