@@ -125,6 +125,13 @@
             @click="nextImage()"
         ></button>
 
+        <div v-for="(layer, index) in visibleLayers"
+             :key="index"
+             class="layer-image s-image-layer c-imagery__layer-image"
+             :style="{'background-image': `url(${layer.source})`}"
+        >
+        </div>
+
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
                 <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ time }}</div>
@@ -205,6 +212,10 @@ import eventHelpers from '../lib/eventHelpers';
 import _ from 'lodash';
 import moment from 'moment';
 
+import ImagerySettings from "./ImagerySettings.vue";
+import ImageryLayers from "./ImageryLayers.vue";
+import ImageryViewMenuSwitcher from "./ImageryViewMenuSwitcher.vue";
+
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
 import ImageControls from './ImageControls.vue';
@@ -232,7 +243,10 @@ const ZOOM_SCALE_DEFAULT = 1;
 export default {
     components: {
         Compass,
-        ImageControls
+        ImageControls,
+        ImagerySettings,
+        ImageryLayers,
+        ImageryViewMenuSwitcher
     },
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
@@ -250,6 +264,9 @@ export default {
         this.requestCount = 0;
 
         return {
+            timeFormat: '',
+            layers: [],
+            visibleLayers: [],
             durationFormatter: undefined,
             imageHistory: [],
             timeSystem: timeSystem,
@@ -550,8 +567,10 @@ export default {
         }
 
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+        this.loadVisibleLayers();
     },
     beforeDestroy() {
+        this.persistVisibleLayers();
         this.stopFollowingTimeContext();
 
         if (this.thumbWrapperResizeObserver) {
@@ -646,6 +665,38 @@ export default {
             mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
             return mostRecent[valueKey];
+        },
+        loadVisibleLayers() {
+            const metaDataValues = this.metadata.valuesForHints(['image'])[0];
+            this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
+            let layersMetadata = metaDataValues.layers;
+            if (layersMetadata) {
+                this.layers = layersMetadata;
+                if (this.domainObject.configuration) {
+                    let persistedLayers = this.domainObject.configuration.layers;
+                    console.log('persistedLayers', persistedLayers);
+                    layersMetadata.forEach((layer) => {
+                        const persistedLayer = persistedLayers.find(object => object.name === layer.name);
+                        if (persistedLayer) {
+                            layer.visible = persistedLayer.visible === true;
+                        }
+                    });
+                    this.visibleLayers = this.layers.filter(layer => layer.visible);
+                } else {
+                    this.visibleLayers = [];
+                    this.layers.forEach((layer) => {
+                        layer.visible = false;
+                    });
+                }
+            }
+        },
+        persistVisibleLayers() {
+            if (this.domainObject.configuration) {
+                this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
+            }
+
+            this.visibleLayers = [];
+            this.layers = [];
         },
         // will subscribe to data for this key if not already done
         subscribeToDataForKey(key) {
@@ -1050,6 +1101,14 @@ export default {
         },
         setCursorStates(states) {
             this.cursorStates = states;
+        },
+        updateFilterValues(filters) {
+            this.filters = filters;
+        },
+        toggleLayerVisibility(index) {
+            let isVisible = this.layers[index].visible === true;
+            this.layers[index].visible = !isVisible;
+            this.visibleLayers = this.layers.filter(layer => layer.visible);
         }
     }
 };

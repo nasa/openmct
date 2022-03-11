@@ -167,6 +167,16 @@
     }
 }
 
+.s-image-layer {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    opacity: 0.5;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 /*************************************** THUMBS */
 .c-thumb {
     display: flex;
