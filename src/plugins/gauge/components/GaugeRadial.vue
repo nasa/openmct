@@ -32,7 +32,7 @@
                     </g>
                 </svg>
 
-                <svg v-if="dialHighLimitDeg < 270"
+                <svg v-if="limitHigh && dialHighLimitDeg < 270"
                      class="c-dial__limit-high"
                      viewBox="0 0 512 512"
                      :class="{
@@ -45,7 +45,7 @@
                     />
                 </svg>
 
-                <svg v-if="dialLowLimitDeg < 270"
+                <svg v-if="limitLow && dialLowLimitDeg < 270"
                      class="c-dial__limit-low"
                      viewBox="0 0 512 512"
                      :class="{
@@ -94,12 +94,12 @@
                              :style="`transform: translateY(${meterValueToPerc}%)`"
                         ></div>
 
-                        <div v-if="meterHighLimitPerc > 0"
+                        <div v-if="limitHigh && meterHighLimitPerc > 0"
                              class="c-meter__limit-high"
                              :style="`height: ${meterHighLimitPerc}%`"
                         ></div>
 
-                        <div v-if="meterLowLimitPerc > 0"
+                        <div v-if="limitLow && meterLowLimitPerc > 0"
                              class="c-meter__limit-low"
                              :style="`height: ${meterLowLimitPerc}%`"
                         ></div>
@@ -110,12 +110,12 @@
                              :style="`transform: translateX(${meterValueToPerc * -1}%)`"
                         ></div>
 
-                        <div v-if="meterHighLimitPerc > 0"
+                        <div v-if="limitHigh && meterHighLimitPerc > 0"
                              class="c-meter__limit-high"
                              :style="`width: ${meterHighLimitPerc}%`"
                         ></div>
 
-                        <div v-if="meterLowLimitPerc > 0"
+                        <div v-if="limitLow && meterLowLimitPerc > 0"
                              class="c-meter__limit-low"
                              :style="`width: ${meterLowLimitPerc}%`"
                         ></div>
@@ -136,9 +136,12 @@
          class="temp-debug"
     >
         <div><b>ranges: </b>{{ rangeLow }} &lt; &gt; {{ rangeHigh }}</div>
-        <div><b>limits: </b>{{ limitLow }} &lt; &gt; {{ limitHigh }}</div>
-        <div><b>dial limit deg: </b>{{ dialLowLimitDeg }} deg &lt; &gt; {{ dialHighLimitDeg }} deg</div>
-        <div><b>meter limit %: </b>{{ meterLowLimitPerc }} &lt; &gt; {{ meterHighLimitPerc }}</div>
+
+        <template v-if="limitLow && limitHigh">
+            <div><b>limits: </b>{{ limitLow }} &lt; &gt; {{ limitHigh }}</div>
+            <div><b>dial limit deg: </b>{{ dialLowLimitDeg }} deg &lt; &gt; {{ dialHighLimitDeg }} deg</div>
+            <div><b>meter limit %: </b>{{ meterLowLimitPerc }} &lt; &gt; {{ meterHighLimitPerc }}</div>
+        </template>
 
         <div v-if="debugDial"
              class="temp-dial-debug"
@@ -182,7 +185,7 @@
             </div>
         </div>
 
-        <div v-if="debugDial"
+        <div v-if="limitLow && limitHigh && debugDial"
              class="temp-dial-debug"
         >
             <div class="c-dial">
