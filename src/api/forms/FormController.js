@@ -8,6 +8,7 @@ import NumberField from './components/controls/NumberField.vue';
 import SelectField from './components/controls/SelectField.vue';
 import TextAreaField from './components/controls/TextAreaField.vue';
 import TextField from './components/controls/TextField.vue';
+import ToggleSwitchField from './components/controls/ToggleSwitchField.vue';
 
 import Vue from 'vue';
 
@@ -21,7 +22,8 @@ export const DEFAULT_CONTROLS_MAP = {
     'numberfield': NumberField,
     'select': SelectField,
     'textarea': TextAreaField,
-    'textfield': TextField
+    'textfield': TextField,
+    'toggleSwitch': ToggleSwitchField
 };
 
 export default class FormControl {
