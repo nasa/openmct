@@ -7,11 +7,6 @@
             <svg class="c-gauge__range"
                  viewBox="0 0 512 512"
             >
-                <text class="c-gauge__curval"
-                      transform="translate(256 290)"
-                      text-anchor="middle"
-                      font-size="100px"
-                >{{ curVal }}</text>
                 <text v-if="displayMinMax"
                       font-size="35"
                       transform="translate(105 455) rotate(-45)"
@@ -21,6 +16,15 @@
                       transform="translate(407 455) rotate(45)"
                       text-anchor="end"
                 >{{ rangeHigh }}</text>
+            </svg>
+
+            <svg class="c-gauge__curval"
+                 :viewBox="curValViewBox"
+            >
+                <text class="c-gauge__curval-text"
+                      lengthAdjust="spacing"
+                      text-anchor="middle"
+                >{{ curVal }}</text>
             </svg>
 
             <div class="c-dial">
@@ -87,7 +91,7 @@
                     <div class="c-meter__range__low">{{ rangeLow }}</div>
                 </div>
                 <div class="c-meter__bg">
-                    <div class="c-meter__curval">{{ curVal }}</div>
+                    <!--div class="c-meter__curval">{{ curVal }}</div-->
 
                     <template v-if="gaugeType.indexOf('-vertical') !== -1">
                         <div class="c-meter__value"
@@ -121,12 +125,15 @@
                         ></div>
                     </template>
 
-                    <!--svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                      <text class="c-meter__svg-curval"
-                            text-anchor="middle"
-                            transform="translate(50,60)"
-                      >{{ curVal }}</text>
-                    </svg-->
+                    <svg class="c-gauge__curval"
+                         :viewBox="curValViewBox"
+                         preserveAspectRatio="xMidYMid meet"
+                    >
+                        <text class="c-gauge__curval-text"
+                              text-anchor="middle"
+                              lengthAdjust="spacing"
+                        >{{ curVal }}</text>
+                    </svg>
                 </div>
             </div>
         </template>
@@ -136,6 +143,7 @@
          class="temp-debug"
     >
         <div><b>ranges: </b>{{ rangeLow }} &lt; &gt; {{ rangeHigh }}</div>
+        <div><b>digits | viewbox: </b>{{ digits }} | {{ curValViewBox }}</div>
 
         <template v-if="limitLow && limitHigh">
             <div><b>limits: </b>{{ limitLow }} &lt; &gt; {{ limitHigh }}</div>
@@ -256,6 +264,10 @@ export default {
         dialLowLimitDeg() {
             return this.percentToDegrees(this.valToPercent(this.limitLow));
         },
+
+        curValViewBox() {
+            return this.calcCurValViewBox();
+        },
         meterValueToPerc() {
             if (this.curVal <= this.rangeLow) {
                 return 100;
@@ -293,6 +305,14 @@ export default {
         }
     },
     methods: {
+        calcCurValViewBox() {
+            const DIGITS_RATIO = 10; const VIEWBOX_STR = '0 0 X 15';
+
+            let r = VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
+
+            console.log(r);
+            return r;
+        },
         round(val, decimals) {
             let precision = Math.pow(10, decimals);
 
