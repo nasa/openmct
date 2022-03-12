@@ -226,6 +226,8 @@
 </template>
 
 <script>
+const LIMIT_PADDING_IN_PERCENT = 10;
+
 export default {
     name: 'GaugeRadial',
     inject: ['openmct', 'domainObject', 'composition'],
@@ -293,7 +295,7 @@ export default {
         }
     },
     methods: {
-        round(val, decimals) {
+        round(val, decimals = this.precision) {
             let precision = Math.pow(10, decimals);
 
             return Math.round(val * precision) / precision;
@@ -313,23 +315,56 @@ export default {
         percentToDegrees(vPercent) {
             return this.round((vPercent / 100) * 270, 2);
         },
+        updateLimits(telemetryLimit) {
+            if (!telemetryLimit || !this.domainObject.configuration.gaugeController.isUseTelemetryLimits) {
+                return;
+            }
+
+            let limits = {
+                high: 0,
+                low: 0
+            };
+            if (telemetryLimit.CRITICAL) {
+                limits = telemetryLimit.CRITICAL;
+            } else if (telemetryLimit.DISTRESS) {
+                limits = telemetryLimit.DISTRESS;
+            } else if (telemetryLimit.SEVERE) {
+                limits = telemetryLimit.SEVERE;
+            } else if (telemetryLimit.WARNING) {
+                limits = telemetryLimit.WARNING;
+            } else if (telemetryLimit.WATCH) {
+                limits = telemetryLimit.WATCH;
+            } else {
+                this.openmct.notifications.error('No limits definition for given telemetry');
+            }
+
+            this.limitHigh = this.round(limits.high[this.valueKey]);
+            this.limitLow = this.round(limits.low[this.valueKey]);
+            this.rangeHigh = this.round(this.limitHigh + this.limitHigh * LIMIT_PADDING_IN_PERCENT / 100);
+            this.rangeLow = this.round(this.limitLow - Math.abs(this.limitLow * LIMIT_PADDING_IN_PERCENT / 100));
+        },
         updateValue(datum) {
             this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
         },
         subscribe(domainObject) {
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+            const LimitEvaluator = this.openmct.telemetry.getLimits(domainObject);
+            LimitEvaluator.limits().then(this.updateLimits);
 
             this.valueKey = this
                 .metadata
                 .valuesForHints(['range'])[0].key;
             this.unsubscribe = this.openmct
                 .telemetry
-                .subscribe(domainObject, this.updateValue.bind(this), {});
+                .subscribe(domainObject, this.updateValue.bind(this));
             this.openmct
                 .telemetry
-                .request(domainObject, {strategy: 'latest'})
-                .then((values) => values.forEach(this.updateValue));
+                .request(domainObject, { strategy: 'latest' })
+                .then(values => {
+                    const length = values.length;
+                    this.updateValue(values[length - 1]);
+                });
         }
     }
 };
