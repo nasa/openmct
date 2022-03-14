@@ -446,19 +446,9 @@ export default {
                 width: this.sizedImageWidth,
                 height: this.sizedImageHeight
             };
-        },
-
-        // formattedZoomFactor() {
-        //     return Number.parseFloat(this.zoomFactor).toPrecision(2);
-        // }
+        }
     },
     watch: {
-        // imageUrl(newUrl, oldUrl) {
-        //     if (newUrl) {
-
-        //         this.resetImage();
-        //     }
-        // },
         imageHistory: {
             handler(newHistory, oldHistory) {
                 const newSize = newHistory.length;
@@ -508,7 +498,6 @@ export default {
         this.focusedImageWrapper = this.$refs.focusedImageWrapper;
         this.focusedImageElement = this.$refs.focusedImageElement;
 
-
         //We only need to use this till the user focuses an image manually
         if (this.focusedImageTimestamp !== undefined) {
             this.isPaused = true;
@@ -550,7 +539,6 @@ export default {
         }
 
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
-
     },
     beforeDestroy() {
         this.stopFollowingTimeContext();
@@ -1003,7 +991,6 @@ export default {
         },
         // debounced method
         clearWheelZoom() {
-            // this.wheelZooming = false;
             this.$refs.imageControls.clearWheelZoom();
         },
         wheelZoom(e) {
