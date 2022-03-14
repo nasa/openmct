@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,8 +36,8 @@ class InMemorySearchProvider {
          */
         this.MAX_CONCURRENT_REQUESTS = 100;
         /**
-        * If max results is not specified in query, use this as default.
-        */
+         * If max results is not specified in query, use this as default.
+         */
         this.DEFAULT_MAX_RESULTS = 100;
 
         this.openmct = openmct;
@@ -68,6 +68,14 @@ class InMemorySearchProvider {
                 this.worker.port.onmessageerror = null;
                 this.worker.port.close();
             }
+
+            Object.entries(this.indexedIds).forEach(([keyString, unobserve]) => {
+                if (typeof unobserve === 'function') {
+                    unobserve();
+                }
+
+                delete this.indexedIds[keyString];
+            });
         });
     }
 
@@ -186,7 +194,6 @@ class InMemorySearchProvider {
      * @param {identifier} id to be indexed.
      */
     scheduleForIndexing(identifier) {
-        console.log('scheduleforIndexing: ', identifier);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         const objectProvider = this.openmct.objects.getProvider(identifier);
 
@@ -216,27 +223,27 @@ class InMemorySearchProvider {
 
     onMutationOfIndexedObject(domainObject) {
         const provider = this;
-        provider.index(domainObject.identifier, domainObject);
+        provider.index(domainObject);
     }
 
     /**
-     * Pass an id and model to the worker to be indexed.  If the model has
-     * composition, schedule those ids for later indexing.
+     * Pass a domainObject to the worker to be indexed.
+     * If the object has composition, schedule those ids for later indexing.
+     * Watch for object changes and re-index object and children if so
      *
      * @private
-     * @param id a model id
-     * @param model a model
+     * @param domainObject a domainObject
      */
-    async index(id, domainObject) {
+    async index(domainObject) {
         const provider = this;
-        const keyString = this.openmct.objects.makeKeyString(id);
+        const identifier = domainObject.identifier;
+        const keyString = this.openmct.objects.makeKeyString(identifier);
+
         if (!this.indexedIds[keyString]) {
-            this.openmct.objects.observe(domainObject, `*`, this.onMutationOfIndexedObject);
+            this.indexedIds[keyString] = this.openmct.objects.observe(domainObject, '*', this.onMutationOfIndexedObject);
         }
 
-        this.indexedIds[keyString] = true;
-
-        if ((id.key !== 'ROOT')) {
+        if ((identifier.key !== 'ROOT')) {
             if (this.worker) {
                 this.worker.port.postMessage({
                     request: 'index',
@@ -248,11 +255,9 @@ class InMemorySearchProvider {
             }
         }
 
-        const composition = this.openmct.composition.registry.find(foundComposition => {
-            return foundComposition.appliesTo(domainObject);
-        });
+        const composition = this.openmct.composition.get(domainObject);
 
-        if (composition) {
+        if (composition !== undefined) {
             const childIdentifiers = await composition.load(domainObject);
             childIdentifiers.forEach(function (childIdentifier) {
                 provider.scheduleForIndexing(childIdentifier);
@@ -277,7 +282,7 @@ class InMemorySearchProvider {
         delete provider.pendingIndex[keyString];
         try {
             if (domainObject) {
-                await provider.index(identifier, domainObject);
+                await provider.index(domainObject);
             }
         } catch (error) {
             console.warn('Failed to index domain object ' + keyString, error);
@@ -306,9 +311,9 @@ class InMemorySearchProvider {
     }
 
     /**
-    * A local version of the same SharedWorker function
-    * if we don't have SharedWorkers available (e.g., iOS)
-    */
+     * A local version of the same SharedWorker function
+     * if we don't have SharedWorkers available (e.g., iOS)
+     */
     localIndexItem(keyString, model) {
         this.localIndexedItems[keyString] = {
             type: model.type,
