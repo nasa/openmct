@@ -137,7 +137,7 @@ class InMemorySearchProvider {
         };
         modelResults.hits = await Promise.all(event.data.results.map(async (hit) => {
             const identifier = this.openmct.objects.parseKeyString(hit.keyString);
-            const domainObject = await this.openmct.objects.get(identifier.key);
+            const domainObject = await this.openmct.objects.get(identifier);
 
             return domainObject;
         }));
