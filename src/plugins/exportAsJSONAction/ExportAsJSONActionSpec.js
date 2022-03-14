@@ -27,6 +27,10 @@ describe('Export as JSON plugin', () => {
 
     it('ExportAsJSONAction applies to folder', () => {
         domainObject = {
+            identifier: {
+                key: 'export-testing',
+                namespace: ''
+            },
             composition: [],
             location: 'mine',
             modified: 1640115501237,
@@ -40,6 +44,10 @@ describe('Export as JSON plugin', () => {
 
     it('ExportAsJSONAction applies to telemetry.plot.overlay', () => {
         domainObject = {
+            identifier: {
+                key: 'export-testing',
+                namespace: ''
+            },
             composition: [],
             location: 'mine',
             modified: 1640115501237,
@@ -53,6 +61,10 @@ describe('Export as JSON plugin', () => {
 
     it('ExportAsJSONAction applies to telemetry.plot.stacked', () => {
         domainObject = {
+            identifier: {
+                key: 'export-testing',
+                namespace: ''
+            },
             composition: [],
             location: 'mine',
             modified: 1640115501237,
@@ -64,15 +76,23 @@ describe('Export as JSON plugin', () => {
         expect(exportAsJSONAction.appliesTo([domainObject])).toEqual(true);
     });
 
-    it('ExportAsJSONAction applies does not applies to non-creatable objects', () => {
+    it('ExportAsJSONAction does not applie to non-persistable objects', () => {
         domainObject = {
+            identifier: {
+                key: 'export-testing',
+                namespace: ''
+            },
             composition: [],
             location: 'mine',
             modified: 1640115501237,
             name: 'Non Editable Folder',
             persisted: 1640115501237,
-            type: 'noneditable.folder'
+            type: 'folder'
         };
+
+        spyOn(openmct.objects, 'getProvider').and.callFake(() => {
+            return { get: () => domainObject };
+        });
 
         expect(exportAsJSONAction.appliesTo([domainObject])).toEqual(false);
     });
