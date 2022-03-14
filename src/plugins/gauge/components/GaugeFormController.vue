@@ -41,7 +41,9 @@
                        type="number"
                        @input="onChange"
                 >
+            </div>
 
+            <div class="form-row c-form__row">
                 <label>Max value</label>
                 <input v-model="max"
                        type="number"

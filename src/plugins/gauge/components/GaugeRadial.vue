@@ -267,7 +267,10 @@ export default {
             return this.percentToDegrees(this.valToPercent(this.limitLow));
         },
         curValViewBox() {
-            return this.calcCurValViewBox();
+            const DIGITS_RATIO = 10;
+            const VIEWBOX_STR = '0 0 X 15';
+
+            return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
         },
         meterValueToPerc() {
             if (this.curVal <= this.rangeLow) {
@@ -306,14 +309,6 @@ export default {
         }
     },
     methods: {
-        calcCurValViewBox() {
-            const DIGITS_RATIO = 10; const VIEWBOX_STR = '0 0 X 15';
-
-            let r = VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
-
-            console.log(r);
-            return r;
-        },
         round(val, decimals = this.precision) {
             let precision = Math.pow(10, decimals);
 
