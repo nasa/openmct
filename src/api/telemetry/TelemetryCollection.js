@@ -326,11 +326,11 @@ export class TelemetryCollection extends EventEmitter {
         let domain = domains.find((d) => d.key === timeSystem.key);
 
         if (domain === undefined) {
-            this._error(ERRORS.TIMESYSTEM_KEY);
+            this._warn(ERRORS.TIMESYSTEM_KEY);
         }
 
         // timeKey is used to create a dummy datum used for sorting
-        this.timeKey = domain.source; // this defaults to key if no source is set
+        this.timeKey = domain.source || timeSystem.key; // this defaults to key if no source is set
         let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
@@ -399,5 +399,9 @@ export class TelemetryCollection extends EventEmitter {
      */
     _error(message) {
         throw new Error(message);
+    }
+
+    _warn(message) {
+        console.warn(message);
     }
 }
