@@ -30,10 +30,13 @@
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
         <ImageControls
-            :formatted-zoom-factor="formattedZoomFactor"
+            ref="imageControls"
+            :zoom-factor="zoomFactor"
+            :image-url="imageUrl"
             @resetImage="resetImage"
             @panZoomUpdated="handlePanZoomUpdate"
             @filtersUpdated="setFilters"
+            @cursorsUpdated="setCursorStates"
         />
 
         <div ref="imageBG"
@@ -41,9 +44,9 @@
              :class="{
                  'paused unnsynced': isPaused && !isFixed,
                  'stale': false,
-                 'pannable': isPannable,
-                 'cursor-zoom-in': showCursorZoomIn,
-                 'cursor-zoom-out': showCursorZoomOut
+                 'pannable': cursorStates.isPannable,
+                 'cursor-zoom-in': cursorStates.showCursorZoomIn,
+                 'cursor-zoom-out': cursorStates.showCursorZoomOut
              }"
              @click="expand"
         >
@@ -213,6 +216,8 @@ const ARROW_LEFT = 37;
 
 const SCROLL_LATENCY = 250;
 
+const ZOOM_SCALE_DEFAULT = 1;
+
 export default {
     components: {
         Compass,
@@ -255,17 +260,22 @@ export default {
             lockCompass: true,
             resizingWindow: false,
             timeContext: undefined,
-            zoomFactor: 1,
+            zoomFactor: ZOOM_SCALE_DEFAULT,
             filters: {
                 brightness: 100,
                 contrast: 100
+            },
+            cursorStates: {
+                isPannable: false,
+                showCursorZoomIn: false,
+                showCursorZoomOut: false
             },
             imageTranslateX: 0,
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
-            imagePanned: false,
-            wheelZooming: false
+            imagePanned: false
+            // wheelZooming: false
         };
     },
     computed: {
@@ -437,25 +447,18 @@ export default {
                 height: this.sizedImageHeight
             };
         },
-        isPannable() {
-            return this.altPressed && this.zoomFactor > 1;
-        },
-        showCursorZoomIn() {
-            return this.metaPressed && !this.shiftPressed;
-        },
-        showCursorZoomOut() {
-            return this.metaPressed && this.shiftPressed;
-        },
-        formattedZoomFactor() {
-            return Number.parseFloat(this.zoomFactor).toPrecision(2);
-        }
+
+        // formattedZoomFactor() {
+        //     return Number.parseFloat(this.zoomFactor).toPrecision(2);
+        // }
     },
     watch: {
-        imageUrl(newUrl, oldUrl) {
-            if (newUrl) {
-                this.resetImage();
-            }
-        },
+        // imageUrl(newUrl, oldUrl) {
+        //     if (newUrl) {
+
+        //         this.resetImage();
+        //     }
+        // },
         imageHistory: {
             handler(newHistory, oldHistory) {
                 const newSize = newHistory.length;
@@ -504,8 +507,7 @@ export default {
         eventHelpers.extend(this);
         this.focusedImageWrapper = this.$refs.focusedImageWrapper;
         this.focusedImageElement = this.$refs.focusedImageElement;
-        document.addEventListener('keydown', this.handleKeyDown);
-        document.addEventListener('keyup', this.handleKeyUp);
+
 
         //We only need to use this till the user focuses an image manually
         if (this.focusedImageTimestamp !== undefined) {
@@ -547,7 +549,6 @@ export default {
             this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
         }
 
-        this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
 
     },
@@ -576,8 +577,7 @@ export default {
         }
 
         this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
-        document.removeEventListener('keydown', this.handleKeyDown);
-        document.removeEventListener('keyup', this.handleKeyUp);
+
     },
     methods: {
         setTimeContext() {
@@ -704,29 +704,7 @@ export default {
         focusElement() {
             this.$el.focus();
         },
-        handleKeyDown(event) {
-            if (event.key === 'Alt') {
-                this.altPressed = true;
-            }
 
-            if (event.metaKey) {
-                this.metaPressed = true;
-            }
-
-            if (event.shiftKey) {
-                this.shiftPressed = true;
-            }
-        },
-        handleKeyUp(event) {
-            if (event.key === 'Alt') {
-                this.altPressed = false;
-            }
-
-            this.shiftPressed = false;
-            if (!event.metaKey) {
-                this.metaPressed = false;
-            }
-        },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
             if (!thumbsWrapper || this.resizingWindow) {
@@ -857,12 +835,9 @@ export default {
                 this.thumbnailClicked(--index);
             }
         },
-        resetImage(overrideLock = false) {
-            if (!overrideLock) {
-                return false;
-            }
-
+        resetImage() {
             this.imagePanned = false;
+            this.zoomFactor = ZOOM_SCALE_DEFAULT;
             this.imageTranslateX = 0;
             this.imageTranslateY = 0;
         },
@@ -1026,14 +1001,10 @@ export default {
                 this.resizingWindow = false;
             });
         },
-        // used to increment the zoom without knowledge of current level
-        incrementZoomFactor(increment, userCoordX, userCoordY) {
-            const newFactor = this.zoomFactor + increment;
-            this.zoomImage(newFactor, userCoordX, userCoordY);
-        },
         // debounced method
         clearWheelZoom() {
-            this.wheelZooming = false;
+            // this.wheelZooming = false;
+            this.$refs.imageControls.clearWheelZoom();
         },
         wheelZoom(e) {
             e.preventDefault();
@@ -1041,19 +1012,7 @@ export default {
                 this.paused(true);
             }
 
-            // only use x,y coordinates on scrolling in
-            if (this.wheelZooming === false && e.deltaY > 0) {
-                this.wheelZooming = true;
-
-                // grab first x,y coordinates
-                this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
-            } else {
-                // ignore subsequent event x,y so scroll drift doesn't occur
-                this.incrementZoomFactor(e.deltaY * 0.01);
-            }
-
-            // debounced method that will only fire after the scroll series is complete
-            this.clearWheelZoom();
+            this.$refs.imageControls.wheelZoom(e);
         },
         startPan(e) {
             e.preventDefault();
@@ -1107,6 +1066,9 @@ export default {
         },
         setFilters(filtersObj) {
             this.filters = filtersObj;
+        },
+        setCursorStates(states) {
+            this.cursorStates = states;
         }
     }
 };

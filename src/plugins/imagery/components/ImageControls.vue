@@ -46,7 +46,7 @@
                 @click="handleResetImage"
         ></button>
 
-        <span class="c-image-controls__zoom-factor">x{{ zoomFactor }}</span>
+        <span class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</span>
     </div>
     <div class="c-image-controls__control c-image-controls__brightness-contrast">
         <span
@@ -95,12 +95,13 @@ const ZOOM_LIMITS_MIN_DEFAULT = 1;
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
-        formattedZoomFactor: {
+        zoomFactor: {
             type: Number,
             default() {
                 return 1;
             }
-        }
+        },
+        imageUrl: String
     },
     data() {
         return {
@@ -108,21 +109,55 @@ export default {
             shiftPressed: false,
             metaPressed: false,
             panZoomLocked: false,
-            zoomFactor: 1,
+            wheelZooming: false,
             filters: {
                 brightness: 100,
                 contrast: 100
             }
         };
     },
-    watch: {
-        formattedZoomFactor(newZoomFactor) {
-            this.zoomFactor = newZoomFactor;
+    computed: {
+        formattedZoomFactor() {
+            return Number.parseFloat(this.zoomFactor).toPrecision(2);
+        },
+        cursorStates() {
+            const isPannable = this.altPressed && this.zoomFactor > 1;
+            const showCursorZoomIn = this.metaPressed && !this.shiftPressed;
+            const showCursorZoomOut = this.metaPressed && this.shiftPressed;
+            console.log('cursorStates')
+
+            return {
+                isPannable,
+                showCursorZoomIn,
+                showCursorZoomOut
+            };
         }
+    },
+    watch: {
+        imageUrl(newUrl, oldUrl) {
+            console.log('imageControls imageUrl updates', this.panZoomLocked)
+            // reset image pan/zoom if newUrl only if not locked
+            if (newUrl && !this.panZoomLocked) {
+                this.$emit('resetImage');
+            }
+        },
+        cursorStates(states) {
+            console.log('cursorStates watch', states)
+            this.$emit('cursorsUpdated', states);
+        }
+    },
+    mounted() {
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
+        this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
+    },
+    beforeDestroy() {
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
     },
     methods: {
         handleResetImage() {
-            this.$emit('resetImage', true);
+            this.$emit('resetImage');
         },
         handleUpdatePanZoom(options) {
             this.$emit('panZoomUpdated', options);
@@ -141,9 +176,12 @@ export default {
             e.preventDefault();
             e.stopPropagation();
         },
+        limitZoomRange(factor) {
+            return Math.max((Math.min(ZOOM_LIMITS_MAX_DEFAULT, factor), ZOOM_LIMITS_MIN_DEFAULT));
+        },
         // used to increment the zoom without knowledge of current level
         incrementZoomFactor(increment, userCoordX, userCoordY) {
-            const newFactor = this.zoomFactor + increment;
+            const newFactor = this.limitZoomRange(this.zoomFactor + increment);
             this.zoomImage(newFactor, userCoordX, userCoordY);
         },
         zoomImage(newScaleFactor, screenClientX, screenClientY) {
@@ -154,10 +192,8 @@ export default {
             }
 
             if (newScaleFactor <= 0 || newScaleFactor < ZOOM_LIMITS_MIN_DEFAULT) {
-                this.zoomFactor = 1;
-                this.panZoomLocked = false;
 
-                return this.handleResetImage(true);
+                return this.handleResetImage();
             }
 
             this.handleUpdatePanZoom({
@@ -165,7 +201,51 @@ export default {
                 screenClientX,
                 screenClientY
             });
-        }
+        },
+        wheelZoom(e) {
+            // only use x,y coordinates on scrolling in
+            if (this.wheelZooming === false && e.deltaY > 0) {
+                this.wheelZooming = true;
+
+                // grab first x,y coordinates
+                this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
+            } else {
+                // ignore subsequent event x,y so scroll drift doesn't occur
+                this.incrementZoomFactor(e.deltaY * 0.01);
+            }
+
+            // debounced method that will only fire after the scroll series is complete
+            this.clearWheelZoom();
+        },
+        // debounced method so that wheelZooming state will 
+        // remain true through a zoom event series
+        clearWheelZoom() {
+            this.wheelZooming = false;
+        },
+        handleKeyDown(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = true;
+            }
+
+            if (event.metaKey) {
+                this.metaPressed = true;
+            }
+
+            if (event.shiftKey) {
+                this.shiftPressed = true;
+            }
+        },
+        handleKeyUp(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = false;
+            }
+
+            this.shiftPressed = false;
+            if (!event.metaKey) {
+                this.metaPressed = false;
+            }
+        },
+
 
     }
 };
