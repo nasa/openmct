@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {saveAs} from 'file-saver/FileSaver';
+import {saveAs} from 'saveAs/FileSaver';
 
 class JSONExporter {
     export(obj, options) {
