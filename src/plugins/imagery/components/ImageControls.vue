@@ -83,6 +83,7 @@
 </template>
 
 <script>
+import _ from 'lodash';
 
 const DEFAULT_FILTER_VALUES = {
     brightness: '100',
@@ -124,7 +125,6 @@ export default {
             const isPannable = this.altPressed && this.zoomFactor > 1;
             const showCursorZoomIn = this.metaPressed && !this.shiftPressed;
             const showCursorZoomOut = this.metaPressed && this.shiftPressed;
-            console.log('cursorStates')
 
             return {
                 isPannable,
@@ -135,14 +135,12 @@ export default {
     },
     watch: {
         imageUrl(newUrl, oldUrl) {
-            console.log('imageControls imageUrl updates', this.panZoomLocked)
             // reset image pan/zoom if newUrl only if not locked
             if (newUrl && !this.panZoomLocked) {
                 this.$emit('resetImage');
             }
         },
         cursorStates(states) {
-            console.log('cursorStates watch', states)
             this.$emit('cursorsUpdated', states);
         }
     },
@@ -177,7 +175,7 @@ export default {
             e.stopPropagation();
         },
         limitZoomRange(factor) {
-            return Math.max((Math.min(ZOOM_LIMITS_MAX_DEFAULT, factor), ZOOM_LIMITS_MIN_DEFAULT));
+            return Math.min(Math.max(ZOOM_LIMITS_MIN_DEFAULT, factor), ZOOM_LIMITS_MAX_DEFAULT);
         },
         // used to increment the zoom without knowledge of current level
         incrementZoomFactor(increment, userCoordX, userCoordY) {
@@ -244,9 +242,7 @@ export default {
             if (!event.metaKey) {
                 this.metaPressed = false;
             }
-        },
-
-
+        }
     }
 };
 </script>
