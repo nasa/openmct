@@ -125,12 +125,12 @@ export default class DuplicateAction {
     }
 
     appliesTo(objectPath) {
-        let parent = objectPath[1];
-        let parentType = parent && this.openmct.types.get(parent.type);
-        let child = objectPath[0];
-        let childType = child && this.openmct.types.get(child.type);
-        let locked = child.locked ? child.locked : parent && parent.locked;
-        let isPersistable = this.openmct.objects.isPersistable(child.identifier);
+        const parent = objectPath[1];
+        const parentType = parent && this.openmct.types.get(parent.type);
+        const child = objectPath[0];
+        const childType = child && this.openmct.types.get(child.type);
+        const locked = child.locked ? child.locked : parent && parent.locked;
+        const isPersistable = this.openmct.objects.isPersistable(child.identifier);
 
         if (locked || !isPersistable) {
             return false;

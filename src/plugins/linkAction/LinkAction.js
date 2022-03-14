@@ -33,10 +33,6 @@ export default class LinkAction {
     }
 
     appliesTo(objectPath) {
-        // let domainObject = objectPath[0];
-        // let type = domainObject && this.openmct.types.get(domainObject.type);
-
-        // return type && type.definition.creatable;
         return true; // link away!
     }
 
