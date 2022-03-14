@@ -275,7 +275,6 @@ export default {
             pan: undefined,
             animateZoom: true,
             imagePanned: false
-            // wheelZooming: false
         };
     },
     computed: {
