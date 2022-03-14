@@ -125,11 +125,13 @@ export default {
             const isPannable = this.altPressed && this.zoomFactor > 1;
             const showCursorZoomIn = this.metaPressed && !this.shiftPressed;
             const showCursorZoomOut = this.metaPressed && this.shiftPressed;
+            const modifierKeyPressed = Boolean(this.metaPressed || this.shiftPressed || this.altPressed);
 
             return {
                 isPannable,
                 showCursorZoomIn,
-                showCursorZoomOut
+                showCursorZoomOut,
+                modifierKeyPressed
             };
         }
     },

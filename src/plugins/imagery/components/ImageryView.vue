@@ -94,7 +94,6 @@
                         'height': `${sizedImageHeight}px`,
 
                     }"
-                    @mousedown="handlePanZoomClick"
                 ></div>
                 <Compass
                     v-if="shouldDisplayCompass"
@@ -268,7 +267,8 @@ export default {
             cursorStates: {
                 isPannable: false,
                 showCursorZoomIn: false,
-                showCursorZoomOut: false
+                showCursorZoomOut: false,
+                modifierKeyPressed: false
             },
             imageTranslateX: 0,
             imageTranslateY: 0,
@@ -582,7 +582,7 @@ export default {
         },
         expand() {
             // check for modifier keys so it doesnt interfere with the layout
-            if (this.altPressed || this.metaPressed) {
+            if (this.cursorStates.modifierKeyPressed) {
                 return;
             }
 
@@ -860,23 +860,6 @@ export default {
             this.imageTranslateX = translateX;
             this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
-        },
-        handlePanZoomClick(e) {
-            const step = 1;
-            if (this.altPressed) {
-                return this.startPan(e);
-            }
-
-            if (!(this.metaPressed && e.button === 0)) {
-                return;
-            }
-
-            const newZoomFactor = this.zoomFactor + (this.shiftPressed ? -step : step);
-            this.handlePanZoomUpdate({
-                newScaleFactor: newZoomFactor,
-                screenClientX: e.clientX,
-                screenClientY: e.clientY
-            });
         },
         arrowDownHandler(event) {
             let key = event.keyCode;
