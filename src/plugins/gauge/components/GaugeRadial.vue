@@ -62,19 +62,18 @@
                     />
                 </svg>
 
-                <svg v-if="degValue > 0"
-                     class="c-dial__value"
+                <svg class="c-dial__value"
                      viewBox="0 0 512 512"
                      :class="{
                          'c-dial-clip--90': degValue < 90 && gaugeType.indexOf('-needle') === -1,
                          'c-dial-clip--180': degValue >= 90 && degValue < 180 && gaugeType.indexOf('-needle') === -1
                      }"
                 >
-                    <path v-if="gaugeType.indexOf('dial-filled') !== -1"
+                    <path v-if="gaugeType.indexOf('dial-filled') !== -1 && degValue > 0"
                           d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
                           :style="`transform: rotate(${degValue}deg)`"
                     />
-                    <path v-if="gaugeType.indexOf('dial-needle') !== -1"
+                    <path v-if="gaugeType.indexOf('dial-needle') !== -1 && valueInBounds"
                           d="M139.9,360.1l-48.6,48.6c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0l48.6-48.6L139.9,360.1z"
                           :style="`transform: rotate(${degValue}deg)`"
                     />
@@ -85,14 +84,12 @@
         <template v-if="gaugeType.indexOf('meter') !== -1">
             <div class="c-meter">
                 <div v-if="displayMinMax"
-                     class="c-meter__range"
+                     class="c-gauge__range c-meter__range"
                 >
                     <div class="c-meter__range__high">{{ rangeHigh }}</div>
                     <div class="c-meter__range__low">{{ rangeLow }}</div>
                 </div>
                 <div class="c-meter__bg">
-                    <!--div class="c-meter__curval">{{ curVal }}</div-->
-
                     <template v-if="gaugeType.indexOf('-vertical') !== -1">
                         <div class="c-meter__value"
                              :style="`transform: translateY(${meterValueToPerc}%)`"
@@ -288,6 +285,9 @@ export default {
         },
         meterLowLimitPerc() {
             return 100 - this.valToPercentMeter(this.limitLow);
+        },
+        valueInBounds() {
+            return (this.curVal >= this.rangeLow && this.curVal <= this.rangeHigh);
         }
     },
     watch: {
