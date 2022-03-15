@@ -26,7 +26,7 @@
         <div class="c-button-set c-button-set--strip-h">
             <button class="c-button t-btn-zoom-out icon-minus"
                     title="Zoom out"
-                    @click="incrementZoomFactor(-1)"
+                    @click="incrementZoomFactor(-)"
             ></button>
 
             <button class="c-button t-btn-zoom-in icon-plus"
@@ -92,15 +92,14 @@ const DEFAULT_FILTER_VALUES = {
 
 const ZOOM_LIMITS_MAX_DEFAULT = 20;
 const ZOOM_LIMITS_MIN_DEFAULT = 1;
+const ZOOM_STEP = 1;
 
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
         zoomFactor: {
             type: Number,
-            default() {
-                return 1;
-            }
+            required: true
         },
         imageUrl: String
     },
