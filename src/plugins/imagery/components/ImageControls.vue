@@ -38,7 +38,7 @@
         <button class="c-button t-btn-zoom-lock"
                 title="Lock current zoom and pan across all images"
                 :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
-                @click="toggleLock"
+                @click="toggleZoomLock"
         ></button>
 
         <button class="c-button icon-reset t-btn-zoom-reset"
@@ -162,7 +162,7 @@ export default {
         handleUpdatePanZoom(options) {
             this.$emit('panZoomUpdated', options);
         },
-        toggleLock() {
+        toggleZoomLock() {
             this.panZoomLocked = !this.panZoomLocked;
         },
         notifyFiltersChanged() {
