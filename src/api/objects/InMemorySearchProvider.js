@@ -36,8 +36,8 @@ class InMemorySearchProvider {
          */
         this.MAX_CONCURRENT_REQUESTS = 100;
         /**
-        * If max results is not specified in query, use this as default.
-        */
+         * If max results is not specified in query, use this as default.
+         */
         this.DEFAULT_MAX_RESULTS = 100;
 
         this.openmct = openmct;
@@ -223,6 +223,7 @@ class InMemorySearchProvider {
 
     onMutationOfIndexedObject(domainObject) {
         const provider = this;
+
         provider.index(domainObject);
     }
 
@@ -236,14 +237,13 @@ class InMemorySearchProvider {
      */
     async index(domainObject) {
         const provider = this;
-        const identifier = domainObject.identifier;
-        const keyString = this.openmct.objects.makeKeyString(identifier);
+        const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
 
         if (!this.indexedIds[keyString]) {
             this.indexedIds[keyString] = this.openmct.objects.observe(domainObject, '*', this.onMutationOfIndexedObject);
         }
 
-        if ((identifier.key !== 'ROOT')) {
+        if ((keyString !== 'ROOT')) {
             if (this.worker) {
                 this.worker.port.postMessage({
                     request: 'index',
@@ -258,9 +258,9 @@ class InMemorySearchProvider {
         const composition = this.openmct.composition.get(domainObject);
 
         if (composition !== undefined) {
-            const childIdentifiers = await composition.load(domainObject);
-            childIdentifiers.forEach(function (childIdentifier) {
-                provider.scheduleForIndexing(childIdentifier);
+            const children = await composition.load(domainObject);
+            children.forEach(function (child) {
+                provider.scheduleForIndexing(child.identifier);
             });
         }
     }
@@ -277,9 +277,9 @@ class InMemorySearchProvider {
         const provider = this;
 
         this.pendingRequests += 1;
-        const identifier = await this.openmct.objects.parseKeyString(keyString);
-        const domainObject = await this.openmct.objects.get(identifier);
+        const domainObject = await this.openmct.objects.get(keyString);
         delete provider.pendingIndex[keyString];
+
         try {
             if (domainObject) {
                 await provider.index(domainObject);
@@ -311,9 +311,9 @@ class InMemorySearchProvider {
     }
 
     /**
-    * A local version of the same SharedWorker function
-    * if we don't have SharedWorkers available (e.g., iOS)
-    */
+     * A local version of the same SharedWorker function
+     * if we don't have SharedWorkers available (e.g., iOS)
+     */
     localIndexItem(keyString, model) {
         this.localIndexedItems[keyString] = {
             type: model.type,
