@@ -1,0 +1,55 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
+*/
+
+const { test, expect } = require('@playwright/test');
+
+test.describe('Time counductor operations', () => {
+    test('validate start time does not exceeds end time', async ({ page }) => {
+        //Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+        const year = new Date().getFullYear();
+
+        let startDate = 'xxxx-01-01 01:00:00.000Z';
+        startDate = year + startDate.substring(4);
+
+        let endDate = 'xxxx-01-01 02:00:00.000Z';
+        endDate = year + endDate.substring(4);
+
+        // Click start time
+        await page.locator('input[type="text"]').first().click();
+
+        // Click end time
+        await page.locator('input[type="text"]').nth(1).click();
+
+        await page.locator('input[type="text"]').first().fill(startDate.toString());
+        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+
+        startDate = (year + 1) + startDate.substring(4);
+        await page.locator('input[type="text"]').first().fill(startDate.toString());
+
+        await page.locator('input[type="text"]').nth(1).click();
+    });
+});
