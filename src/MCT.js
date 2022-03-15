@@ -269,7 +269,6 @@ define([
         this.install(this.plugins.ViewDatumAction());
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
-        this.install(this.plugins.NonEditableFolder());
         this.install(this.plugins.DeviceClassifier());
         this.install(this.plugins.UserIndicator());
     }

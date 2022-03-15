@@ -126,6 +126,7 @@ export default class MoveAction {
                         {
                             name: "Location",
                             control: "locator",
+                            parent: parentDomainObject,
                             required: true,
                             validate: this.validate(parentDomainObject),
                             key: 'location'
@@ -143,6 +144,10 @@ export default class MoveAction {
         return (data) => {
             const parentCandidatePath = data.value;
             const parentCandidate = parentCandidatePath[0];
+
+            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+                return false;
+            }
 
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
@@ -174,8 +179,9 @@ export default class MoveAction {
         let parentType = parent && this.openmct.types.get(parent.type);
         let child = objectPath[0];
         let childType = child && this.openmct.types.get(child.type);
+        let isPersistable = this.openmct.objects.isPersistable(child.identifier);
 
-        if (child.locked || (parent && parent.locked)) {
+        if (child.locked || (parent && parent.locked) || !isPersistable) {
             return false;
         }
 
