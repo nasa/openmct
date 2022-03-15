@@ -166,7 +166,7 @@ export default {
     },
     computed: {
         gridSize() {
-            return this.domainObject.configuration.layoutGrid.map(item => Number(item));
+            return this.domainObject.configuration.layoutGrid.map(Number);
         },
         layoutItems() {
             return this.domainObject.configuration.items;
