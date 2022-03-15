@@ -217,8 +217,9 @@ export default {
             // debounced method that will only fire after the scroll series is complete
             this.clearWheelZoom();
         },
-        // debounced method so that wheelZooming state will 
-        // remain true through a zoom event series
+        /* debounced method so that wheelZooming state will
+        ** remain true through a zoom event series
+        */
         clearWheelZoom() {
             this.wheelZooming = false;
         },
