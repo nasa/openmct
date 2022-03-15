@@ -26,12 +26,12 @@
         <div class="c-button-set c-button-set--strip-h">
             <button class="c-button t-btn-zoom-out icon-minus"
                     title="Zoom out"
-                    @click="incrementZoomFactor(-)"
+                    @click="zoomOut"
             ></button>
 
             <button class="c-button t-btn-zoom-in icon-plus"
                     title="Zoom in"
-                    @click="incrementZoomFactor(1)"
+                    @click="zoomIn"
             ></button>
         </div>
 
@@ -179,19 +179,16 @@ export default {
             return Math.min(Math.max(ZOOM_LIMITS_MIN_DEFAULT, factor), ZOOM_LIMITS_MAX_DEFAULT);
         },
         // used to increment the zoom without knowledge of current level
-        incrementZoomFactor(increment, userCoordX, userCoordY) {
+        processZoom(increment, userCoordX, userCoordY) {
             const newFactor = this.limitZoomRange(this.zoomFactor + increment);
             this.zoomImage(newFactor, userCoordX, userCoordY);
         },
         zoomImage(newScaleFactor, screenClientX, screenClientY) {
             if (newScaleFactor > ZOOM_LIMITS_MAX_DEFAULT) {
                 newScaleFactor = ZOOM_LIMITS_MAX_DEFAULT;
-
-                return;
             }
 
-            if (newScaleFactor <= 0 || newScaleFactor < ZOOM_LIMITS_MIN_DEFAULT) {
-
+            if (newScaleFactor <= 0 || newScaleFactor <= ZOOM_LIMITS_MIN_DEFAULT) {
                 return this.handleResetImage();
             }
 
@@ -207,10 +204,10 @@ export default {
                 this.wheelZooming = true;
 
                 // grab first x,y coordinates
-                this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
+                this.processZoom(e.deltaY * 0.01, e.clientX, e.clientY);
             } else {
                 // ignore subsequent event x,y so scroll drift doesn't occur
-                this.incrementZoomFactor(e.deltaY * 0.01);
+                this.processZoom(e.deltaY * 0.01);
             }
 
             // debounced method that will only fire after the scroll series is complete
@@ -244,6 +241,12 @@ export default {
             if (!event.metaKey) {
                 this.metaPressed = false;
             }
+        },
+        zoomIn() {
+            this.processZoom(ZOOM_STEP);
+        },
+        zoomOut() {
+            this.processZoom(-ZOOM_STEP);
         }
     }
 };
