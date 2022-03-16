@@ -57,9 +57,9 @@ export default function () {
             },
             form: [
                 {
-                    name: "Display minimum and maximum values",
+                    name: "Display range values",
                     control: "toggleSwitch",
-                    cssClass: "l-input-sm",
+                    cssClass: "l-input",
                     key: "isDisplayMinMax",
                     property: [
                         "configuration",
@@ -68,7 +68,7 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Float Precision",
+                    name: "Float precision",
                     control: "numberfield",
                     cssClass: "l-input-sm",
                     key: "precision",
@@ -79,7 +79,7 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Gauge Type",
+                    name: "Gauge type",
                     options: GAUGE_TYPES.map(type => {
                         return {
                             name: type[0],
@@ -96,9 +96,9 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Use telemetry limits",
+                    name: "Telemetry ranges and limits",
                     control: "gauge-controller",
-                    cssClass: "l-input-sm",
+                    cssClass: "l-input",
                     key: "gaugeController",
                     property: [
                         "configuration",

@@ -21,46 +21,46 @@
 *****************************************************************************/
 
 <template>
-<span class="form-control shell">
+<span class="form-control c-sub-form--grid">
     <span class="field control"
           :class="model.cssClass"
     >
-        <div class="form-row c-form__row">
+        <div class="c-form__row">
             <ToggleSwitch
                 id="isUseTelemetryLimits"
                 :checked="isUseTelemetryLimits"
-                :label="`Use telemetry limits`"
+                :label="`Use telemetry limits for minimum and maximum ranges`"
                 @change="toggleUseTelemetryLimits"
             />
         </div>
 
         <div v-if="!isUseTelemetryLimits">
-            <div class="form-row c-form__row">
-                <label>Min value</label>
+            <div class="c-form__row">
+                <label>Range minimum value</label>
                 <input v-model="min"
                        type="number"
                        @input="onChange"
                 >
             </div>
 
-            <div class="form-row c-form__row">
-                <label>Max value</label>
-                <input v-model="max"
-                       type="number"
-                       @input="onChange"
-                >
-            </div>
-
-            <div class="form-row c-form__row">
-                <label>Low Limit</label>
+            <div class="c-form__row">
+                <label>Range low limit</label>
                 <input v-model="limitLow"
                        type="number"
                        @input="onChange"
                 >
             </div>
 
-            <div class="form-row c-form__row">
-                <label>High Limit</label>
+            <div class="c-form__row">
+                <label>Range maximum value</label>
+                <input v-model="max"
+                       type="number"
+                       @input="onChange"
+                >
+            </div>
+
+            <div class="c-form__row">
+                <label>Range high limit</label>
                 <input v-model="limitHigh"
                        type="number"
                        @input="onChange"
