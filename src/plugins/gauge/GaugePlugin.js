@@ -125,13 +125,13 @@ export default function () {
                         if (limitLow !== '') {
                             validLimitLow = min <= limitLow && limitLow < max;
                         }
-                        
+
                         let validLimitHigh = true;
                         if (limitHigh !== '') {
                             validLimitHigh = min < limitHigh && limitHigh <= max;
                         }
 
-                        if(limitLow !== '' && limitHigh !== '') {
+                        if (limitLow !== '' && limitHigh !== '') {
                             return validLimitLow && validLimitHigh && limitLow < limitHigh;
                         }
 

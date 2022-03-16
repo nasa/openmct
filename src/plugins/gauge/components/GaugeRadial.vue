@@ -301,42 +301,88 @@ export default {
         }
     },
     mounted() {
-        this.composition.on('add', this.subscribe);
+        this.composition.on('add', this.addTelemetryObject);
+        this.composition.on('remove', this.removeTelemetryObject);
+
         this.composition.load();
+
+        this.openmct.time.on('bounds', this.refreshData);
     },
     destroyed() {
-        this.composition.off('add', this.subscribe);
+        this.composition.off('add', this.addTelemetryObject);
+        this.composition.off('remove', this.removeTelemetryObject);
 
         if (this.unsubscribe) {
             this.unsubscribe();
         }
+
+        this.openmct.time.off('bounds', this.refreshData);
     },
     methods: {
+        addTelemetryObject(domainObject) {
+            if (this.telemetryObject) {
+                this.removeTelemetryObject();
+            }
+
+            this.telemetryObject = domainObject;
+            this.request();
+            this.subscribe();
+        },
         getDateValueFormatter() {
             const timeSystem = this.openmct.time.timeSystem();
             const metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
 
             return this.openmct.telemetry.getValueFormatter(metadataValue);
         },
+        percentToDegrees(vPercent) {
+            return this.round((vPercent / 100) * 270, 2);
+        },
+        refreshData(bounds, isTick) {
+            if (!isTick) {
+                this.request();
+            }
+        },
+        removeTelemetryObject() {
+            if (this.unsubscribe) {
+                this.unsubscribe();
+                this.unsubscribe = null;
+            }
+
+            this.metadata = null;
+            this.formats = null;
+            this.valueKey = null;
+            this.limitHigh = null;
+            this.limitLow = null;
+            this.rangeHigh = null;
+            this.rangeLow = null;
+        },
+        request(domainObject = this.telemetryObject) {
+            this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+            this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+            const LimitEvaluator = this.openmct.telemetry.getLimits(domainObject);
+            LimitEvaluator.limits().then(this.updateLimits);
+
+            this.valueKey = this
+                .metadata
+                .valuesForHints(['range'])[0].key;
+
+            this.openmct
+                .telemetry
+                .request(domainObject, { strategy: 'latest' })
+                .then(values => {
+                    const length = values.length;
+                    this.updateValue(values[length - 1]);
+                });
+        },
         round(val, decimals = this.precision) {
             let precision = Math.pow(10, decimals);
 
             return Math.round(val * precision) / precision;
         },
-        valToPercent(vValue) {
-            // Used by dial
-            if (vValue >= this.rangeHigh && this.gaugeType.indexOf('filled') !== -1) {
-                // Don't peg at 100% if the gaugeType isn't a filled shape
-                return 100;
-            }
-
-            return ((vValue - this.rangeLow) / (this.rangeHigh - this.rangeLow)) * 100;
-        },
-        valToPercentMeter(vValue) {
-            return this.round((this.rangeHigh - vValue) / (this.rangeHigh - this.rangeLow) * 100, 2);
-        },
-        percentToDegrees(vPercent) {
-            return this.round((vPercent / 100) * 270, 2);
+        subscribe(domainObject = this.telemetryObject) {
+            this.unsubscribe = this.openmct
+                .telemetry
+                .subscribe(domainObject, this.updateValue.bind(this));
         },
         updateLimits(telemetryLimit) {
             if (!telemetryLimit || !this.domainObject.configuration.gaugeController.isUseTelemetryLimits) {
@@ -377,27 +423,17 @@ export default {
                 this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
             }
         },
-        subscribe(domainObject) {
-            this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-            this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
-            const LimitEvaluator = this.openmct.telemetry.getLimits(domainObject);
-            LimitEvaluator.limits().then(this.updateLimits);
+        valToPercent(vValue) {
+            // Used by dial
+            if (vValue >= this.rangeHigh && this.gaugeType.indexOf('filled') !== -1) {
+                // Don't peg at 100% if the gaugeType isn't a filled shape
+                return 100;
+            }
 
-            this.valueKey = this
-                .metadata
-                .valuesForHints(['range'])[0].key;
-
-            this.unsubscribe = this.openmct
-                .telemetry
-                .subscribe(domainObject, this.updateValue.bind(this));
-
-            this.openmct
-                .telemetry
-                .request(domainObject, { strategy: 'latest' })
-                .then(values => {
-                    const length = values.length;
-                    this.updateValue(values[length - 1]);
-                });
+            return ((vValue - this.rangeLow) / (this.rangeHigh - this.rangeLow)) * 100;
+        },
+        valToPercentMeter(vValue) {
+            return this.round((this.rangeHigh - vValue) / (this.rangeHigh - this.rangeLow) * 100, 2);
         }
     }
 };
