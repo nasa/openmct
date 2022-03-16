@@ -33,10 +33,7 @@ export default class LinkAction {
     }
 
     appliesTo(objectPath) {
-        let domainObject = objectPath[0];
-        let type = domainObject && this.openmct.types.get(domainObject.type);
-
-        return type && type.definition.creatable;
+        return true; // link away!
     }
 
     invoke(objectPath) {
@@ -77,6 +74,7 @@ export default class LinkAction {
                         {
                             name: "location",
                             control: "locator",
+                            parent: parentDomainObject,
                             required: true,
                             validate: this.validate(parentDomainObject),
                             key: 'location'
@@ -96,6 +94,10 @@ export default class LinkAction {
             const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
             const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+
+            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+                return false;
+            }
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
