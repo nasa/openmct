@@ -94,20 +94,7 @@ const config = {
             },
             {
                 test: /\.vue$/,
-                use: {
-                    loader: 'vue-loader'
-                    // Attempt to use Babel with babel-plugin-istanbul
-                    // options: {
-                    //     compiler: require('vue-template-babel-compiler')
-                    // }
-                }
-            },
-            // TODO this is added only for coverage, so move it to karma conf instead.
-            {
-                test: /\.js$/,
-                use: {
-                    loader: 'babel-loader'
-                }
+                use: 'vue-loader'
             },
             {
                 test: /\.html$/,
