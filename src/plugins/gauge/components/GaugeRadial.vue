@@ -141,6 +141,7 @@
     >
         <div><b>ranges: </b>{{ rangeLow }} &lt; &gt; {{ rangeHigh }}</div>
         <div><b>digits | viewbox: </b>{{ digits }} | {{ curValViewBox }}</div>
+        <div><b>meterValueToPerc </b>{{ meterValueToPerc }}</div>
 
         <template v-if="limitLow && limitHigh">
             <div><b>limits: </b>{{ limitLow }} &lt; &gt; {{ limitHigh }}</div>
@@ -270,16 +271,29 @@ export default {
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
         },
         meterValueToPerc() {
+            const meterDirection = (this.gaugeType.indexOf('inverted') !== -1) ? -1 : 1;
+
             if (this.curVal <= this.rangeLow) {
-                return 100;
+                return meterDirection * 100;
             }
 
             if (this.curVal >= this.rangeHigh) {
                 return 0;
             }
 
-            return this.valToPercentMeter(this.curVal);
+            return this.valToPercentMeter(this.curVal) * meterDirection;
         },
+        // meterValueToPercInverted() {
+        //     if (this.curVal <= this.rangeLow) {
+        //         return -100;
+        //     }
+        //
+        //     if (this.curVal >= this.rangeHigh) {
+        //         return 0;
+        //     }
+        //
+        //     return this.valToPercentMeter(this.curVal) * -1;
+        // },
         meterHighLimitPerc() {
             return this.valToPercentMeter(this.limitHigh);
         },

@@ -35,7 +35,6 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
   // Both dial and meter types
   overflow: hidden;
 
-
   &__range {
     $c: $gaugeRangeColorFg;
     color: $c;
@@ -177,86 +176,108 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
   }
 }
 
-.c-gauge--meter-vertical .c-meter {
-  &__range {
-    //background: rgba(red, 0.3);
-    flex-direction: column;
-    min-width: min-content;
-    margin-right: $interiorMarginSm;
-    text-align: right;
-  }
-
-  &__value {
-    // Filled area
-    $lrM: $gaugeMeterValueMargin;
-    left: $lrM;
-    right: $lrM;
-    top: 0;
-    bottom: 0;
-  }
-
-  [class*='limit'] {
-    left: 0;
-    right: 0;
-  }
-
-  &__limit-low {
-    bottom: 0;
-  }
-
-  &__limit-high {
-    top: 0;
-  }
-}
-
-.c-gauge--meter-horz .c-meter {
-  flex-direction: column;
-
-  &__range {
-    //background: rgba(red, 0.3);
-    flex-direction: row;
-    min-height: min-content;
-    margin-top: $interiorMarginSm;
-    order: 2;
-
-    &__high {
-      order: 2;
+.c-meter {
+  .c-gauge--meter-vertical &,
+  .c-gauge--meter-vertical-inverted & {
+    &__range {
+      flex-direction: column;
+      min-width: min-content;
+      margin-right: $interiorMarginSm;
+      text-align: right;
     }
 
-    &__low {
+    &__value {
+      // Filled area
+      $lrM: $gaugeMeterValueMargin;
+      left: $lrM;
+      right: $lrM;
+      top: 0;
+      bottom: 0;
+    }
+
+    [class*='limit'] {
+      left: 0;
+      right: 0;
+    }
+  }
+
+  .c-gauge--meter-vertical & {
+    &__limit-low {
+      bottom: 0;
+    }
+
+    &__limit-high {
+      top: 0;
+    }
+  }
+
+  .c-gauge--meter-vertical-inverted & {
+    &__limit-low {
+      top: 0;
+    }
+
+    &__limit-high {
+      bottom: 0;
+    }
+
+    &__range__low {
       order: 1;
     }
+
+    &__range__high {
+      order: 2;
+    }
   }
 
-  &__bg {
-    order: 1;
-  }
+  .c-gauge--meter-horz & {
+    flex-direction: column;
 
-  &__value {
-    // Filled area
-    $m: $gaugeMeterValueMargin;
-    top: $m;
-    bottom: $m;
-    left: 0;
-    right: 0;
-  }
+    &__range {
+      flex-direction: row;
+      min-height: min-content;
+      margin-top: $interiorMarginSm;
+      order: 2;
 
-  [class*='limit'] {
-    top: 0;
-    bottom: 0;
-  }
+      &__high {
+        order: 2;
+      }
 
-  &__limit-low {
-    left: 0;
-  }
+      &__low {
+        order: 1;
+      }
+    }
 
-  &__limit-high {
-    right: 0;
-  }
+    &__bg {
+      order: 1;
+    }
 
+    &__value {
+      // Filled area
+      $m: $gaugeMeterValueMargin;
+      top: $m;
+      bottom: $m;
+      left: 0;
+      right: 0;
+    }
+
+    [class*='limit'] {
+      top: 0;
+      bottom: 0;
+    }
+
+    &__limit-low {
+      left: 0;
+    }
+
+    &__limit-high {
+      right: 0;
+    }
+  }
 }
 
 .temp-debug {
+  background: rgba(black, 0.4);
+  padding: 2px;
   position: absolute;
 }
 
