@@ -98,7 +98,7 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Telemetry ranges and limits 2",
+                    name: "Value ranges and limits",
                     control: "gauge-controller",
                     cssClass: "l-input",
                     key: "gaugeController",
@@ -112,16 +112,13 @@ export default function () {
                             return true;
                         }
 
-                        const { limitHigh, limitLow, max, min } = value;
+                        const { max, min } = value;
 
-                        if (min === '' || max === '' || limitLow === '' || limitHigh === '') {
+                        if (min === '' || max === '') {
                             return false;
                         }
 
-                        const validMax = max > min && max >= limitHigh;
-                        const validMin = min < limitHigh && min <= limitLow;
-
-                        return validMin && validMax;
+                        return max > min;
                     }
                 }
             ]

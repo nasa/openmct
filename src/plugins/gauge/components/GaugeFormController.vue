@@ -21,7 +21,7 @@
 *****************************************************************************/
 
 <template>
-<span class="form-control c-sub-form--grid">
+<span class="form-control">
     <span class="field control"
           :class="model.cssClass"
     >
@@ -32,7 +32,9 @@
             @change="toggleUseTelemetryLimits"
         />
 
-        <div v-if="!isUseTelemetryLimits">
+        <div v-if="!isUseTelemetryLimits"
+             class="c-form--sub-grid"
+        >
             <div class="c-form__row">
                 <span class="req-indicator req">
                 </span>
@@ -45,7 +47,7 @@
             </div>
 
             <div class="c-form__row">
-                <span class="req-indicator req">
+                <span class="req-indicator">
                 </span>
                 <label>Range low limit</label>
                 <input v-model.number="limitLow"
@@ -67,7 +69,7 @@
             </div>
 
             <div class="c-form__row">
-                <span class="req-indicator req">
+                <span class="req-indicator">
                 </span>
                 <label>Range high limit</label>
                 <input v-model.number="limitHigh"

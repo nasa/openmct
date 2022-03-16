@@ -70,7 +70,23 @@
         padding: $formTBPad $formLRPad;
         text-transform: uppercase;
     }
+
+    &--sub-grid {
+        // 3 columns: <req> <label> <input/control>
+        display: grid;
+        grid-column-gap: $interiorMargin;
+        grid-template-columns: 20px max-content 1fr;
+        grid-row-gap: $interiorMargin;
+        margin-top: $interiorMarginLg;
+        width: max-content;
+
+        .c-form__row {
+            display: contents;
+        }
+    }
 }
+
+
 
 .c-form-row {
     align-items: start;
