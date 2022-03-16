@@ -15,7 +15,8 @@ export default function (folderName, couchPlugin, searchFilter) {
                     return Promise.resolve({
                         identifier,
                         type: 'folder',
-                        name: folderName || "CouchDB Documents"
+                        name: folderName || "CouchDB Documents",
+                        location: 'ROOT'
                     });
                 }
             }
