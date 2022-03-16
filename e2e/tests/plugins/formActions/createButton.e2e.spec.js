@@ -38,9 +38,8 @@ test.describe('Create button operations', () => {
         await page.click('text=Condition Set');
 
         await page.pause();
-        
+
         // Click text=OK
-        
 
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
     });
