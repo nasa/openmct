@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npx playwright install
+      - run: npx @playwright/test install
       - run: npm install
       - run: npm run test:e2e:full
       - name: Archive test results
