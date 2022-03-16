@@ -90,6 +90,17 @@ export default class LinkAction {
 
     validate(currentParent) {
         return (data) => {
+
+            // default current parent to ROOT, if it's undefined, then it's a root level item
+            if (currentParent === undefined) {
+                currentParent = {
+                    identifier: {
+                        key: 'ROOT',
+                        namespace: ''
+                    }
+                };
+            }
+
             const parentCandidate = data.value[0];
             const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
