@@ -43,6 +43,7 @@ class InMemorySearchProvider {
         this.openmct = openmct;
 
         this.indexedIds = {};
+        this.indexedComposition = {};
         this.idsToIndex = [];
         this.pendingIndex = {};
         this.pendingRequests = 0;
@@ -58,7 +59,6 @@ class InMemorySearchProvider {
         this.onWorkerMessageError = this.onWorkerMessageError.bind(this);
         this.onerror = this.onWorkerError.bind(this);
         this.startIndexing = this.startIndexing.bind(this);
-        this.onMutationOfIndexedObject = this.onMutationOfIndexedObject.bind(this);
 
         this.openmct.on('start', this.startIndexing);
         this.openmct.on('destroy', () => {
@@ -221,10 +221,17 @@ class InMemorySearchProvider {
         }
     }
 
-    onMutationOfIndexedObject(domainObject) {
+    onMutationOfComposition(domainObject, composition) {
         const provider = this;
+        const indexedComposition = domainObject.composition;
+        const identifiersToIndex = composition
+            .filter(identifier => !indexedComposition
+                .some(indexedIdentifier => this.openmct.objects
+                    .areIdsEqual([identifier, indexedIdentifier])));
 
-        provider.index(domainObject);
+        identifiersToIndex.forEach(identifier => {
+            this.openmct.objects.get(identifier).then(objectToIndex => provider.index(objectToIndex));
+        });
     }
 
     /**
@@ -235,12 +242,17 @@ class InMemorySearchProvider {
      * @private
      * @param domainObject a domainObject
      */
-    async index(domainObject) {
+    index(domainObject) {
         const provider = this;
         const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
 
         if (!this.indexedIds[keyString]) {
-            this.indexedIds[keyString] = this.openmct.objects.observe(domainObject, '*', this.onMutationOfIndexedObject);
+            this.indexedIds[keyString] = true;
+            this.indexedIds[keyString] =
+                this.openmct.objects.observe(
+                    domainObject,
+                    'composition',
+                    this.onMutationOfComposition.bind(this, domainObject));
         }
 
         if ((keyString !== 'ROOT')) {
@@ -258,9 +270,8 @@ class InMemorySearchProvider {
         const composition = this.openmct.composition.get(domainObject);
 
         if (composition !== undefined) {
-            const children = await composition.load(domainObject);
-            children.forEach(function (child) {
-                provider.scheduleForIndexing(child.identifier);
+            composition.load().then(children => {
+                children.forEach(child => provider.scheduleForIndexing(child.identifier));
             });
         }
     }
