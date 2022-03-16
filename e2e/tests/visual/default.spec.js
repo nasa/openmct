@@ -111,3 +111,42 @@ test('Visual - Default Condition Widget', async ({ page }) => {
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'Default Condition Widget');
 });
+
+test('Visual - Time Conductor start time is less than end time', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+    const year = new Date().getFullYear();
+
+    let startDate = 'xxxx-01-01 01:00:00.000Z';
+    startDate = year + startDate.substring(4);
+
+    let endDate = 'xxxx-01-01 02:00:00.000Z';
+    endDate = year + endDate.substring(4);
+
+    await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+    await page.locator('input[type="text"]').first().fill(startDate.toString());
+
+    //  verify no error msg
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Time conductor');
+
+    startDate = (year + 1) + startDate.substring(4);
+    await page.locator('input[type="text"]').first().fill(startDate.toString());
+    await page.locator('input[type="text"]').nth(1).click();
+
+    //  verify error msg for start time (unable to capture snapshot of popup)
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Start time error');
+
+    startDate = (year - 1) + startDate.substring(4);
+    await page.locator('input[type="text"]').first().fill(startDate.toString());
+
+    endDate = (year - 2) + endDate.substring(4);
+    await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+
+    await page.locator('input[type="text"]').first().click();
+
+    //  verify error msg for end time (unable to capture snapshot of popup)
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'End time error');
+});
