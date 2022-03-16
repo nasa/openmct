@@ -33,18 +33,18 @@ if (coverageEnabled) {
 module.exports = (config) => {
     const webpackConfig = require('./webpack.dev.js');
     delete webpackConfig.output;
-    if (coverageEnabled) {
-        webpackConfig.module.rules.push({
-            test: /\.js$/,
-            exclude: /node_modules|e2e|example|lib|dist|\.*.*Spec\.js/,
-            use: {
-                loader: 'istanbul-instrumenter-loader',
-                options: {
-                    esModules: true
-                }
-            }
-        });
-    }
+    // if (coverageEnabled) {
+    //     webpackConfig.module.rules.push({
+    //         test: /\.js$/,
+    //         exclude: /node_modules|e2e|example|lib|dist|\.*.*Spec\.js/,
+    //         use: {
+    //             loader: 'istanbul-instrumenter-loader',
+    //             options: {
+    //                 esModules: true
+    //             }
+    //         }
+    //     });
+    // }
 
     config.set({
         basePath: '',
