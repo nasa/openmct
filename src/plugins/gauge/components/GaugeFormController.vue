@@ -128,7 +128,7 @@ export default {
                 value: this.gaugeType || options[0].value
             };
         },
-        onChange(e) {
+        onChange(event) {
             const data = {
                 model: this.model,
                 value: {
@@ -143,11 +143,14 @@ export default {
                 }
             };
 
-            if (e) {
+            if (event) {
                 const valid = this.model.validate(data);
-                const reqIndicatorElement = e.target.parentElement.querySelector('.req-indicator');
+                const reqIndicatorElement = event.target.parentElement.querySelector('.req-indicator');
                 reqIndicatorElement.classList.toggle('invalid', !valid);
-                reqIndicatorElement.classList.toggle('valid', valid);
+
+                if (reqIndicatorElement.classList.contains('req')) {
+                    reqIndicatorElement.classList.toggle('valid', valid);
+                }
             }
 
             this.$emit('onChange', data);

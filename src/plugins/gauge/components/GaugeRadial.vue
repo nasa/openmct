@@ -283,17 +283,6 @@ export default {
 
             return this.valToPercentMeter(this.curVal) * meterDirection;
         },
-        // meterValueToPercInverted() {
-        //     if (this.curVal <= this.rangeLow) {
-        //         return -100;
-        //     }
-        //
-        //     if (this.curVal >= this.rangeHigh) {
-        //         return 0;
-        //     }
-        //
-        //     return this.valToPercentMeter(this.curVal) * -1;
-        // },
         meterHighLimitPerc() {
             return this.valToPercentMeter(this.limitHigh);
         },

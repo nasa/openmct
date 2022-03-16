@@ -112,13 +112,30 @@ export default function () {
                             return true;
                         }
 
-                        const { max, min } = value;
-
+                        const { min, max, limitLow, limitHigh } = value;
                         if (min === '' || max === '') {
                             return false;
                         }
 
-                        return max > min;
+                        if (max < min) {
+                            return false;
+                        }
+
+                        let validLimitLow = true;
+                        if (limitLow !== '') {
+                            validLimitLow = min <= limitLow && limitLow < max;
+                        }
+                        
+                        let validLimitHigh = true;
+                        if (limitHigh !== '') {
+                            validLimitHigh = min < limitHigh && limitHigh <= max;
+                        }
+
+                        if(limitLow !== '' && limitHigh !== '') {
+                            return validLimitLow && validLimitHigh && limitLow < limitHigh;
+                        }
+
+                        return validLimitLow && validLimitHigh;
                     }
                 }
             ]
