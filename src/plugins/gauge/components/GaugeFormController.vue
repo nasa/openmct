@@ -25,43 +25,53 @@
     <span class="field control"
           :class="model.cssClass"
     >
-        <div class="c-form__row">
-            <ToggleSwitch
-                id="isUseTelemetryLimits"
-                :checked="isUseTelemetryLimits"
-                :label="`Use telemetry limits for minimum and maximum ranges`"
-                @change="toggleUseTelemetryLimits"
-            />
-        </div>
+        <ToggleSwitch
+            id="isUseTelemetryLimits"
+            :checked="isUseTelemetryLimits"
+            :label="`Use telemetry limits for minimum and maximum ranges`"
+            @change="toggleUseTelemetryLimits"
+        />
 
         <div v-if="!isUseTelemetryLimits">
             <div class="c-form__row">
+                <span class="req-indicator req">
+                </span>
                 <label>Range minimum value</label>
-                <input v-model="min"
+                <input v-model.number="min"
+                       data-field-name="min"
                        type="number"
                        @input="onChange"
                 >
             </div>
 
             <div class="c-form__row">
+                <span class="req-indicator req">
+                </span>
                 <label>Range low limit</label>
-                <input v-model="limitLow"
+                <input v-model.number="limitLow"
+                       data-field-name="limitLow"
                        type="number"
                        @input="onChange"
                 >
             </div>
 
             <div class="c-form__row">
+                <span class="req-indicator req">
+                </span>
                 <label>Range maximum value</label>
-                <input v-model="max"
+                <input v-model.number="max"
+                       data-field-name="max"
                        type="number"
                        @input="onChange"
                 >
             </div>
 
             <div class="c-form__row">
+                <span class="req-indicator req">
+                </span>
                 <label>Range high limit</label>
-                <input v-model="limitHigh"
+                <input v-model.number="limitHigh"
+                       data-field-name="limitHigh"
                        type="number"
                        @input="onChange"
                 >
@@ -116,11 +126,27 @@ export default {
                 value: this.gaugeType || options[0].value
             };
         },
-        onChange() {
+        onChange(e) {
             const data = {
                 model: this.model,
-                value: {...this._data}
+                value: {
+                    gaugeType: this.gaugeType,
+                    isDisplayMinMax: this.isDisplayMinMax,
+                    isUseTelemetryLimits: this.isUseTelemetryLimits,
+                    limitLow: this.limitLow,
+                    limitHigh: this.limitHigh,
+                    max: this.max,
+                    min: this.min,
+                    precision: this.precision
+                }
             };
+
+            if (e) {
+                const valid = this.model.validate(data);
+                const reqIndicatorElement = e.target.parentElement.querySelector('.req-indicator');
+                reqIndicatorElement.classList.toggle('invalid', !valid);
+                reqIndicatorElement.classList.toggle('valid', valid);
+            }
 
             this.$emit('onChange', data);
         },

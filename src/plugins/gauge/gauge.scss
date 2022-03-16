@@ -19,6 +19,18 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
   overflow: hidden;
 }
 
+.req-indicator {
+  width: 20px;
+
+  &.invalid,
+  &.invalid.req { @include validationState($glyph-icon-x, $colorFormInvalid); }
+
+  &.valid,
+  &.valid.req { @include validationState($glyph-icon-check, $colorFormValid); }
+
+  &.req { @include validationState($glyph-icon-asterisk, $colorFormRequired); }
+}
+
 .c-gauge {
   // Both dial and meter types
   overflow: hidden;

@@ -98,14 +98,31 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Telemetry ranges and limits",
+                    name: "Telemetry ranges and limits 2",
                     control: "gauge-controller",
                     cssClass: "l-input",
                     key: "gaugeController",
+                    required: false,
                     property: [
                         "configuration",
                         "gaugeController"
-                    ]
+                    ],
+                    validate: ({ value }) => {
+                        if (value.isUseTelemetryLimits) {
+                            return true;
+                        }
+
+                        const { limitHigh, limitLow, max, min } = value;
+
+                        if (min === '' || max === '' || limitLow === '' || limitHigh === '') {
+                            return false;
+                        }
+
+                        const validMax = max > min && max >= limitHigh;
+                        const validMin = min < limitHigh && min <= limitLow;
+
+                        return validMin && validMax;
+                    }
                 }
             ]
         });
