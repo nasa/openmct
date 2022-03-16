@@ -27,7 +27,7 @@ jobs:
               body: 'Started e2e Run. Follow along: https://github.com/nasa/openmct/actions/runs/' + context.runId
             })
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
       - run: npx playwright install-deps
