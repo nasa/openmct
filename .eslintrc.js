@@ -241,6 +241,7 @@ module.exports = {
             "singleline": 1,
             "multiline": 1,
         }],
+        "vue/first-attribute-linebreak": "error",
         "vue/multiline-html-element-content-newline": "off",
         "vue/singleline-html-element-content-newline": "off",
         "vue/multi-word-component-names": "off", // TODO enable, align with conventions
