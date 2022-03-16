@@ -48,6 +48,7 @@ export default function () {
                     gaugeController: {
                         gaugeType: GAUGE_TYPES[0][1],
                         isDisplayMinMax: true,
+                        isDisplayCurVal: true,
                         isUseTelemetryLimits: true,
                         limitLow: 10,
                         limitHigh: 90,
@@ -58,6 +59,17 @@ export default function () {
                 };
             },
             form: [
+                {
+                    name: "Display current value",
+                    control: "toggleSwitch",
+                    cssClass: "l-input",
+                    key: "isDisplayCurVal",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "isDisplayCurVal"
+                    ]
+                },
                 {
                     name: "Display range values",
                     control: "toggleSwitch",
@@ -125,7 +137,7 @@ export default function () {
                         if (limitLow !== '') {
                             validLimitLow = min <= limitLow && limitLow < max;
                         }
-                        
+
                         let validLimitHigh = true;
                         if (limitHigh !== '') {
                             validLimitHigh = min < limitHigh && limitHigh <= max;

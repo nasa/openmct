@@ -18,7 +18,8 @@
                 >{{ rangeHigh }}</text>
             </svg>
 
-            <svg class="c-gauge__curval"
+            <svg v-if="displayCurVal"
+                 class="c-gauge__curval"
                  :viewBox="curValViewBox"
             >
                 <text class="c-gauge__curval-text"
@@ -120,7 +121,8 @@
                         ></div>
                     </template>
 
-                    <svg class="c-gauge__curval"
+                    <svg v-if="displayCurVal"
+                         class="c-gauge__curval"
                          :viewBox="curValViewBox"
                          preserveAspectRatio="xMidYMid meet"
                     >
@@ -243,6 +245,7 @@ export default {
             digits: 3,
             precision: gaugeController.precision,
             displayMinMax: gaugeController.isDisplayMinMax,
+            displayCurVal: gaugeController.isDisplayCurVal,
             limitHigh: gaugeController.limitHigh,
             limitLow: gaugeController.limitLow,
             rangeHigh: gaugeController.max,

@@ -102,6 +102,7 @@ export default {
             gaugeType: this.model.value.gaugeType || this.getGaugeTypes().value,
             isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
             isDisplayMinMax: this.model.value.isDisplayMinMax,
+            isDisplayCurVal: this.model.value.isDisplayCurVal,
             limitHigh: this.model.value.limitHigh,
             limitLow: this.model.value.limitLow,
             max: this.model.value.max,
@@ -134,6 +135,7 @@ export default {
                 value: {
                     gaugeType: this.gaugeType,
                     isDisplayMinMax: this.isDisplayMinMax,
+                    isDisplayCurVal: this.isDisplayCurVal,
                     isUseTelemetryLimits: this.isUseTelemetryLimits,
                     limitLow: this.limitLow,
                     limitHigh: this.limitHigh,
