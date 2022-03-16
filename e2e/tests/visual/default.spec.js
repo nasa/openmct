@@ -112,7 +112,7 @@ test('Visual - Default Condition Widget', async ({ page }) => {
     await percySnapshot(page, 'Default Condition Widget');
 });
 
-test.only('Visual - Time Conductor start time is less than end time', async ({ page }) => {
+test('Visual - Time Conductor start time is less than end time', async ({ page }) => {
     //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
     const year = new Date().getFullYear();
@@ -134,8 +134,8 @@ test.only('Visual - Time Conductor start time is less than end time', async ({ p
     await page.locator('input[type="text"]').first().fill(startDate.toString());
     await page.locator('input[type="text"]').nth(1).click();
 
-    //  verify error msg for start time
-    await page.waitForTimeout(2000);
+    //  verify error msg for start time (unable to capture snapshot of popup)
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'Start time error');
 
     startDate = (year - 1) + startDate.substring(4);
@@ -146,7 +146,7 @@ test.only('Visual - Time Conductor start time is less than end time', async ({ p
 
     await page.locator('input[type="text"]').first().click();
 
-    //  verify error msg for end time
-    await page.waitForTimeout(2000);
+    //  verify error msg for end time (unable to capture snapshot of popup)
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'End time error');
 });

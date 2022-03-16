@@ -38,18 +38,36 @@ test.describe('Time counductor operations', () => {
         let endDate = 'xxxx-01-01 02:00:00.000Z';
         endDate = year + endDate.substring(4);
 
+        const startTimeLocator = page.locator('input[type="text"]').first();
+        const endTimeLocator = page.locator('input[type="text"]').nth(1);
+
         // Click start time
-        await page.locator('input[type="text"]').first().click();
+        await startTimeLocator.click();
 
         // Click end time
-        await page.locator('input[type="text"]').nth(1).click();
+        await endTimeLocator.click();
 
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
-        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+        await endTimeLocator.fill(endDate.toString());
+        await startTimeLocator.fill(startDate.toString());
 
+        // invalid start date
         startDate = (year + 1) + startDate.substring(4);
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
+        await startTimeLocator.fill(startDate.toString());
+        await endTimeLocator.click();
 
-        await page.locator('input[type="text"]').nth(1).click();
+        const startDateValidityStatus = await startTimeLocator.evaluate((element) => element.checkValidity());
+        expect(startDateValidityStatus).not.toBeTruthy();
+
+        // fix to valid start date
+        startDate = (year - 1) + startDate.substring(4);
+        await startTimeLocator.fill(startDate.toString());
+
+        // invalid end date
+        endDate = (year - 2) + endDate.substring(4);
+        await endTimeLocator.fill(endDate.toString());
+        await startTimeLocator.click();
+
+        const endDateValidityStatus = await endTimeLocator.evaluate((element) => element.checkValidity());
+        expect(endDateValidityStatus).not.toBeTruthy();
     });
 });
