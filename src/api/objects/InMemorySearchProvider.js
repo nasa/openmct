@@ -69,13 +69,8 @@ class InMemorySearchProvider {
                 this.worker.port.close();
             }
 
-            Object.entries(this.indexedIds).forEach(([keyString, unobserve]) => {
-                if (typeof unobserve === 'function') {
-                    unobserve();
-                }
-
-                delete this.indexedIds[keyString];
-            });
+            this.destroyObservers(this.indexedIds);
+            this.destroyObservers(this.indexedCompositions);
         });
     }
 
@@ -374,6 +369,16 @@ class InMemorySearchProvider {
             data: message
         };
         this.onWorkerMessage(eventToReturn);
+    }
+
+    destroyObservers(observers) {
+        Object.entries(observers).forEach(([keyString, unobserve]) => {
+            if (typeof unobserve === 'function') {
+                unobserve();
+            }
+
+            delete observers[keyString];
+        });
     }
 }
 
