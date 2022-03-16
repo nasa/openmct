@@ -309,6 +309,12 @@ export default {
         }
     },
     methods: {
+        getDateValueFormatter() {
+            const timeSystem = this.openmct.time.timeSystem();
+            const metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
+
+            return this.openmct.telemetry.getValueFormatter(metadataValue);
+        },
         round(val, decimals = this.precision) {
             let precision = Math.pow(10, decimals);
 
@@ -358,7 +364,15 @@ export default {
             this.rangeLow = this.round(this.limitLow - Math.abs(this.limitLow * LIMIT_PADDING_IN_PERCENT / 100));
         },
         updateValue(datum) {
-            this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
+            const dateValueFormatter = this.getDateValueFormatter();
+            const parsedValue = dateValueFormatter.parse(datum);
+            const { start, end } = this.openmct.time.bounds();
+
+            const beforeStartOfBounds = parsedValue < start;
+            const afterEndOfBounds = parsedValue > end;
+            if (!afterEndOfBounds && !beforeStartOfBounds) {
+                this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
+            }
         },
         subscribe(domainObject) {
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
@@ -369,9 +383,11 @@ export default {
             this.valueKey = this
                 .metadata
                 .valuesForHints(['range'])[0].key;
+
             this.unsubscribe = this.openmct
                 .telemetry
                 .subscribe(domainObject, this.updateValue.bind(this));
+
             this.openmct
                 .telemetry
                 .request(domainObject, { strategy: 'latest' })
