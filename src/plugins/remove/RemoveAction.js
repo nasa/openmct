@@ -98,6 +98,11 @@ export default class RemoveAction {
     }
 
     isAlias(child, parent) {
+        if (parent === undefined) {
+            // then it's a root item, not an alias
+            return false;
+        }
+
         const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
         const childLocation = child.location;
 
