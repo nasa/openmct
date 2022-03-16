@@ -5,18 +5,14 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"  
-    open-pull-requests-limit: 4
+    open-pull-requests-limit: 10
     labels:
       - "type:maintenance"
       - "dependencies"
       - "pr:e2e"
-    allow:
-      - dependency-name: "*eslint*"
-      - dependency-name: "*karma*"
-      - dependency-name: "*jasmine*"
-      - dependency-name: "*playwright*"
-      - dependency-name: "*percy*"
-      - dependency-name: "*vue-loader*"
+      - "pr:daveit"
+      - "pr:visual"
+      - "pr:platform"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -25,3 +21,4 @@ updates:
     labels:
       - "type:maintenance"
       - "dependencies"
+      - "pr:daveit"

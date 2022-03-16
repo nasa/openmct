@@ -6,7 +6,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const {VueLoaderPlugin} = require('vue-loader');
 const gitRevision = require('child_process')
     .execSync('git rev-parse HEAD')
     .toString().trim();
@@ -37,7 +37,7 @@ const config = {
         alias: {
             "@": path.join(__dirname, "src"),
             "legacyRegistry": path.join(__dirname, "src/legacyRegistry"),
-            "saveAs": "file-saver",
+            "saveAs": "file-saver/src/FileSaver.js",
             "csv": "comma-separated-values",
             "EventEmitter": "eventemitter3",
             "bourbon": "bourbon.scss",
