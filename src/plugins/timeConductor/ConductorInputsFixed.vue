@@ -253,6 +253,8 @@ export default {
                 input.title = '';
             }
 
+            this.$refs.fixedDeltaInput.reportValidity();
+
             return validationResult.valid;
         },
         startDateSelected(date) {
