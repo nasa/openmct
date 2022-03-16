@@ -21,7 +21,7 @@ config.module.rules.push({
     test: /\.js$/,
     // test: /(\.js$)|(\?vue&type=template)/,
     // exclude: /node_modules(?!.*\.vue)/,
-    // exclude: /node_modules|e2e|example|lib|dist|\.*.*Spec\.js/,
+    exclude: /(Spec\.js$)|(node_modules)/,
     use: {
         loader: 'babel-loader',
         options: {
