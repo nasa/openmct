@@ -184,6 +184,12 @@ export default {
             this.zoomImage(newFactor, userCoordX, userCoordY);
         },
         zoomImage(newScaleFactor, screenClientX, screenClientY) {
+            if (!(newScaleFactor || Number.isInteger(newScaleFactor))) {
+                console.error('Scale factor provided is invalid');
+
+                return;
+            }
+
             if (newScaleFactor > ZOOM_LIMITS_MAX_DEFAULT) {
                 newScaleFactor = ZOOM_LIMITS_MAX_DEFAULT;
             }
@@ -247,6 +253,19 @@ export default {
         },
         zoomOut() {
             this.processZoom(-ZOOM_STEP);
+        },
+        // attached to onClick listener in ImageryView
+        handlePanZoomClick(e) {
+            if (this.altPressed) {
+                return this.$emit('startPan', e);
+            }
+
+            if (!(this.metaPressed && e.button === 0)) {
+                return;
+            }
+
+            const newScaleFactor = this.zoomFactor + (this.shiftPressed ? -ZOOM_STEP : ZOOM_STEP);
+            this.zoomImage(newScaleFactor, e.clientX, e.clientY);
         }
     }
 };

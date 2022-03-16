@@ -37,6 +37,7 @@
             @panZoomUpdated="handlePanZoomUpdate"
             @filtersUpdated="setFilters"
             @cursorsUpdated="setCursorStates"
+            @startPan="startPan"
         />
 
         <div ref="imageBG"
@@ -59,6 +60,7 @@
                      'width': `${sizedImageWidth}px`,
                      'height': `${sizedImageHeight}px`
                  }"
+                 @mousedown="handlePanZoomClick"
             >
                 <img ref="focusedImage"
                      class="c-imagery__main-image__image js-imageryView-image "
@@ -828,8 +830,7 @@ export default {
             this.imageTranslateX = 0;
             this.imageTranslateY = 0;
         },
-        handlePanZoomUpdate(options) {
-            const { newScaleFactor, screenClientX, screenClientY } = options;
+        handlePanZoomUpdate({ newScaleFactor, screenClientX, screenClientY }) {
             if (!this.isPaused) {
                 this.paused(true);
             }
@@ -856,10 +857,12 @@ export default {
             const offsetYInOriginalScale = offsetFromCenterY / currentScale;
             const translateX = offsetXInOriginalScale + previousTranslateX;
             const translateY = offsetYInOriginalScale + previousTranslateY;
-
             this.imageTranslateX = translateX;
             this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
+        },
+        handlePanZoomClick(e) {
+            this.$refs.imageControls.handlePanZoomClick(e);
         },
         arrowDownHandler(event) {
             let key = event.keyCode;
@@ -985,7 +988,6 @@ export default {
         },
         startPan(e) {
             e.preventDefault();
-
             if (!this.pan && this.zoomFactor > 1) {
                 this.animateZoom = false;
                 this.imagePanned = true;
