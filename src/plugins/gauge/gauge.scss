@@ -10,6 +10,7 @@ $gaugeLimitHighColorBg: rgba($colorLimitRedBg, 0.4);
 $gaugeLimitLowColorBg: $gaugeLimitHighColorBg;
 $gaugeMeterValueMargin: 10%;
 
+$dialClip: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
 $dialClip90: polygon(0 0, 50% 50%, 0 100%);
 $dialClip180: polygon(0 0, 100% 0, 0 100%);
 $limitHighClip90: polygon(0 0, 100% 0, 100% 100%);
@@ -84,7 +85,7 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
 .c-dial {
   // Dial elements
   @include abs();
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
+  clip-path: $dialClip;
 
   svg,
   &__ticks,
@@ -124,7 +125,7 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
   }
 
   &__bg {
-    g {
+    path {
       fill: $gaugeColorBg;
     }
   }
