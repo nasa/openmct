@@ -20,10 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*
-This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
-*/
-
 const { test, expect } = require('@playwright/test');
 
 test.describe('Time counductor operations', () => {
