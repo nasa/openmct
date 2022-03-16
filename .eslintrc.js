@@ -243,6 +243,7 @@ module.exports = {
         }],
         "vue/multiline-html-element-content-newline": "off",
         "vue/singleline-html-element-content-newline": "off",
+        "vue/multi-word-component-names": "off", // TODO enable, align with conventions
         "vue/no-mutating-props": "off"
 
     },
