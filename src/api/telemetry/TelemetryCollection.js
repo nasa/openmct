@@ -330,7 +330,7 @@ export class TelemetryCollection extends EventEmitter {
         }
 
         // timeKey is used to create a dummy datum used for sorting
-        this.timeKey = domain.source || timeSystem.key; // this defaults to key if no source is set
+        this.timeKey = timeSystem.key;
         let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
