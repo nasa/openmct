@@ -150,3 +150,24 @@ test('Visual - Time Conductor start time is less than end time', async ({ page }
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'End time error');
 });
+
+test('Visual - Sine Wave Generator Form', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click text=Sine Wave Generator
+    await page.click('text=Sine Wave Generator');
+
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Sine Wave Generator Form');
+
+    await page.locator('.field.control.l-input-sm input').first().click();
+    await page.locator('.field.control.l-input-sm input').first().fill('');
+
+    // Validate red x mark
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'removed amplitude property value');
+});
