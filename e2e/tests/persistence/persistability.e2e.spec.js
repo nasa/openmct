@@ -69,7 +69,7 @@ test.describe('Persistence operations', () => {
         await expect(menuOptions).toContainText(['Open In New Tab', 'View', 'Create Link']);
         await expect(menuOptions).not.toContainText(['Move', 'Duplicate', 'Remove', 'Add New Folder', 'Edit Properties...', 'Export as JSON', 'Import from JSON']);
     });
-    test.only('Cannot move a previously created domain object to non-peristable boject in Move Modal', async ({ page }) => {
+    test.fixme('Cannot move a previously created domain object to non-peristable boject in Move Modal', async ({ page }) => {
         //Create a domain object
         //Save Domain object
         //Move Object and verify that cannot select non-persistable object
