@@ -28,7 +28,16 @@
     @keydown="arrowDownHandler"
     @mouseover="focusElement"
 >
-    <div class="c-imagery__main-image-wrapper has-local-controls">
+    <div class="c-imagery__main-image-wrapper has-local-controls"
+         :class="{
+             'paused unnsynced': isPaused && !isFixed,
+             'stale': false,
+             'pannable': cursorStates.isPannable,
+             'cursor-zoom-in': cursorStates.showCursorZoomIn,
+             'cursor-zoom-out': cursorStates.showCursorZoomOut
+         }"
+         @mousedown="handlePanZoomClick"
+    >
         <ImageControls
             ref="imageControls"
             :zoom-factor="zoomFactor"
@@ -39,32 +48,24 @@
             @filtersUpdated="setFilters"
             @cursorsUpdated="setCursorStates"
             @startPan="startPan"
+            @toggleLayerVisibility="toggleLayerVisibility"
         />
 
-        <div
-            ref="imageBG"
-            class="c-imagery__main-image__bg"
-            :class="{
-                'paused unnsynced': isPaused && !isFixed,
-                'stale': false,
-                'pannable': cursorStates.isPannable,
-                'cursor-zoom-in': cursorStates.showCursorZoomIn,
-                'cursor-zoom-out': cursorStates.showCursorZoomOut
-            }"
-            @click="expand"
+        <div v-if="zoomFactor > 1"
+             class="c-imagery__hints"
         >
-            <div
-                v-if="zoomFactor > 1"
-                class="c-imagery__hints"
-            >Alt-drag to pan</div>
-            <div
-                ref="focusedImageWrapper"
-                class="image-wrapper"
-                :style="{
-                    'width': `${sizedImageWidth}px`,
-                    'height': `${sizedImageHeight}px`
-                }"
-                @mousedown="handlePanZoomClick"
+            Alt-drag to pan
+        </div>
+        <div ref="imageBG"
+             class="c-imagery__main-image__bg"
+             @click="expand"
+        >
+            <div ref="focusedImageWrapper"
+                 class="image-wrapper"
+                 :style="{
+                     'width': `${sizedImageWidth}px`,
+                     'height': `${sizedImageHeight}px`
+                 }"
             >
                 <img
                     ref="focusedImage"
@@ -126,11 +127,13 @@
             @click="nextImage()"
         ></button>
 
-        <div
-            v-for="(layer, index) in visibleLayers"
-            :key="index"
-            class="layer-image s-image-layer c-imagery__layer-image"
-            :style="{'background-image': `url(${layer.source})`}"
+        <div v-for="(layer, index) in visibleLayers"
+             :key="index"
+             class="layer-image s-image-layer c-imagery__layer-image"
+             :style="{
+                 'background-image': `url(${layer.source})`,
+                 'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
+             }"
         >
         </div>
 
@@ -669,7 +672,6 @@ export default {
                 this.layers = layersMetadata;
                 if (this.domainObject.configuration) {
                     let persistedLayers = this.domainObject.configuration.layers;
-                    console.log('persistedLayers', persistedLayers);
                     layersMetadata.forEach((layer) => {
                         const persistedLayer = persistedLayers.find(object => object.name === layer.name);
                         if (persistedLayer) {
@@ -1029,7 +1031,6 @@ export default {
                 this.resizingWindow = false;
             });
         },
-        // debounced method
         clearWheelZoom() {
             this.$refs.imageControls.clearWheelZoom();
         },
@@ -1095,6 +1096,11 @@ export default {
         },
         setCursorStates(states) {
             this.cursorStates = states;
+        },
+        toggleLayerVisibility(index) {
+            let isVisible = this.layers[index].visible === true;
+            this.layers[index].visible = !isVisible;
+            this.visibleLayers = this.layers.filter(layer => layer.visible);
         }
     }
 };

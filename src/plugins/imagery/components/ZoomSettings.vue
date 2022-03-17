@@ -1,29 +1,32 @@
 <template>
-<div class="c-image-controls__control c-image-controls__zoom icon-magnify">
-    <div class="c-button-set c-button-set--strip-h">
-        <button class="c-button t-btn-zoom-out icon-minus"
-                title="Zoom out"
-                @click="zoomOut"
-        ></button>
+<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls">
+    <div class="c-image-controls__control c-image-controls__zoom">
+        <div class="c-button-set c-button-set--strip-h">
+            <button class="c-button t-btn-zoom-out icon-minus"
+                    title="Zoom out"
+                    @click="zoomOut"
+            ></button>
 
-        <button class="c-button t-btn-zoom-in icon-plus"
-                title="Zoom in"
-                @click="zoomIn"
-        ></button>
+            <button class="c-button t-btn-zoom-in icon-plus"
+                    title="Zoom in"
+                    @click="zoomIn"
+            ></button>
+
+            <button class="c-button t-btn-zoom-lock"
+                    title="Lock current zoom and pan across all images"
+                    :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
+                    @click="toggleZoomLock"
+            ></button>
+
+            <button class="c-button icon-reset t-btn-zoom-reset"
+                    title="Remove zoom and pan"
+                    @click="handleResetImage"
+            ></button>
+            <span class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</span>
+        </div>
     </div>
-
-    <button class="c-button t-btn-zoom-lock"
-            title="Lock current zoom and pan across all images"
-            :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
-            @click="toggleZoomLock"
-    ></button>
-
-    <button class="c-button icon-reset t-btn-zoom-reset"
-            title="Remove zoom and pan"
-            @click="handleResetImage"
-    ></button>
-
-    <span class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</span>
+    <button class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button">
+    </button>
 </div>
 </template>
 
@@ -31,7 +34,7 @@
 export default {
     inject: ['openmct'],
     props: {
-        formattedZoomFactor: {
+        zoomFactor: {
             type: Number,
             required: true
         },
@@ -43,6 +46,11 @@ export default {
     data() {
         return {
         };
+    },
+    computed: {
+        formattedZoomFactor() {
+            return Number.parseFloat(this.zoomFactor).toPrecision(2);
+        }
     },
     methods: {
         handleResetImage() {
