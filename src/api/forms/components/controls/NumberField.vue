@@ -30,13 +30,15 @@
                :min="model.min"
                :max="model.max"
                :step="model.step"
-               @blur="blur()"
+               @input="updateText()"
         >
     </span>
 </span>
 </template>
 
 <script>
+import { throttle } from 'lodash';
+
 export default {
     props: {
         model: {
@@ -49,8 +51,12 @@ export default {
             field: this.model.value
         };
     },
+    mounted() {
+        this.updateText = throttle(this.updateText.bind(this), 200);
+    },
     methods: {
-        blur() {
+        updateText() {
+            console.log('updateText', this.field);
             const data = {
                 model: this.model,
                 value: this.field
