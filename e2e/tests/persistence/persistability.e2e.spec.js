@@ -64,8 +64,6 @@ test.describe('Persistence operations', () => {
 
         const menuOptions = page.locator('.c-menu ul');
 
-        console.log(menuOptions.length);
-
         await expect(menuOptions).toContainText(['Open In New Tab', 'View', 'Create Link']);
         await expect(menuOptions).not.toContainText(['Move', 'Duplicate', 'Remove', 'Add New Folder', 'Edit Properties...', 'Export as JSON', 'Import from JSON']);
     });
