@@ -22,14 +22,14 @@
 
 /*
 Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct's app.js started by `npm run start` within the 
+are only meant to run against openmct's app.js started by `npm run start` within the
 `./e2e/playwright-visual.config.js` file.
 
-These should only use functional expect statements to verify assumptions about the state 
+These should only use functional expect statements to verify assumptions about the state
 in a test and not for functional verification of correctness. Visual tests are not supposed
 to "fail" on assertions. Instead, they should be used to detect changes between builds or branches.
 
-Note: Larger testsuite sizes are OK due to the setup time associated with these tests. 
+Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
 const { test, expect } = require('@playwright/test');
@@ -170,4 +170,25 @@ test('Visual - Sine Wave Generator Form', async ({ page }) => {
     // Validate red x mark
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'removed amplitude property value');
+});
+
+test.only('Visual - Timestrip', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click li:has-text("Example Imagery")
+    await page.locator('li:has-text("Example Imagery")').click();
+
+    // Fill input[type="number"]
+    await page.locator('input[type="number"]').fill('500');
+
+    // Click text=OK
+    await page.locator('text=OK').click();
+    
+    // Validate red x mark
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Timestrip created');
 });
