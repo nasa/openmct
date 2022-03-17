@@ -20,11 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-table-wrapper"
-     :class="{ 'is-paused': paused }"
+<div
+    class="c-table-wrapper"
+    :class="{ 'is-paused': paused }"
 >
-    <div v-if="enableLegacyToolbar"
-         class="c-table-control-bar c-control-bar"
+    <div
+        v-if="enableLegacyToolbar"
+        class="c-table-control-bar c-control-bar"
     >
         <button
             v-if="allowExport"
@@ -95,8 +97,9 @@
     </div>
 
     <!-- alternate controlbar start -->
-    <div v-if="marking.useAlternateControlBar"
-         class="c-table-control-bar c-control-bar"
+    <div
+        v-if="marking.useAlternateControlBar"
+        class="c-table-control-bar c-control-bar"
     >
         <div class="c-control-bar__label">
             {{ markedRows.length > 1 ? `${markedRows.length} ${marking.rowNamePlural} selected`: `${markedRows.length} ${marking.rowName} selected` }}

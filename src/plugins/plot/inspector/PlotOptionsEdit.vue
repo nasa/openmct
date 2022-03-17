@@ -20,26 +20,30 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded"
-     class="js-plot-options-edit"
+<div
+    v-if="loaded"
+    class="js-plot-options-edit"
 >
     <ul class="c-tree">
         <h2 title="Display properties for this object">Plot Series</h2>
-        <li v-for="series in plotSeries"
+        <li
+            v-for="series in plotSeries"
             :key="series.key"
         >
             <series-form :series="series" />
         </li>
     </ul>
-    <y-axis-form v-if="plotSeries.length"
-                 class="grid-properties"
-                 :y-axis="config.yAxis"
+    <y-axis-form
+        v-if="plotSeries.length"
+        class="grid-properties"
+        :y-axis="config.yAxis"
     />
     <ul class="l-inspector-part">
         <h2 title="Legend options">Legend</h2>
-        <legend-form v-if="plotSeries.length"
-                     class="grid-properties"
-                     :legend="config.legend"
+        <legend-form
+            v-if="plotSeries.length"
+            class="grid-properties"
+            :legend="config.legend"
         />
     </ul>
 </div>

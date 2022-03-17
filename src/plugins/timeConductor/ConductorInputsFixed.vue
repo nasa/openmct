@@ -1,6 +1,7 @@
 <template>
-<form ref="fixedDeltaInput"
-      class="c-conductor__inputs"
+<form
+    ref="fixedDeltaInput"
+    class="c-conductor__inputs"
 >
     <div
         class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
