@@ -62,10 +62,12 @@ test.describe('Persistence operations', () => {
             button: 'right'
         });
 
-        await page.pause();
+        const menuOptions = page.locator('.c-menu ul');
 
-        // Right click on a non persistable item in the tree
-        // verify that the only actions available are: "Open in a new Tab", "View" and "Create Link"
+        console.log(menuOptions.length);
+
+        await expect(menuOptions).toContainText(['Open In New Tab', 'View', 'Create Link']);
+        await expect(menuOptions).not.toContainText(['Move', 'Duplicate', 'Remove', 'Add New Folder', 'Edit Properties...', 'Export as JSON', 'Import from JSON']);
     });
     test.only('Cannot move a previously created domain object to non-peristable boject in Move Modal', async ({ page }) => {
         //Create a domain object
