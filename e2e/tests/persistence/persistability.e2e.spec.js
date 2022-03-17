@@ -53,7 +53,7 @@ test.describe('Persistence operations', () => {
         const okButton = page.locator('button:has-text("OK")');
         await expect(okButton).toBeDisabled();
     });
-    test.only('Non-persistable objects should not show persistence related actions', async ({ page }) => {
+    test('Non-persistable objects should not show persistence related actions', async ({ page }) => {
         // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
