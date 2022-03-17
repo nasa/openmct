@@ -53,6 +53,11 @@ export default class EditPropertiesAction extends PropertiesAction {
      */
     async _onSave(changes) {
         Object.entries(changes).forEach(([key, value]) => {
+            if (key === 'name') {
+                // important for reindexing for search
+                this.openmct.objects.mutate(this.domainObject, 'name', value);
+            }
+
             const properties = key.split('.');
             let object = this.domainObject;
             const propertiesLength = properties.length;
