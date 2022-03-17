@@ -21,74 +21,42 @@
  *****************************************************************************/
 
 <template>
-<div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
-    <div class="c-image-controls__control c-image-controls__zoom icon-magnify">
-        <div class="c-button-set c-button-set--strip-h">
-            <button
-                class="c-button t-btn-zoom-out icon-minus"
-                title="Zoom out"
-                @click="zoomOut"
-            ></button>
+<div class="c-image-controls">
+    <imagery-view-menu-switcher :icon-class="'icon-brightness'"
+                                :title="'Filters menu'"
+    >
+        <filter-settings @filterChanged="updateFilterValues" />
+    </imagery-view-menu-switcher>
 
-            <button
-                class="c-button t-btn-zoom-in icon-plus"
-                title="Zoom in"
-                @click="zoomIn"
-            ></button>
-        </div>
-
-        <button
-            class="c-button t-btn-zoom-lock"
-            title="Lock current zoom and pan across all images"
-            :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
-            @click="toggleZoomLock"
-        ></button>
-
-        <button
-            class="c-button icon-reset t-btn-zoom-reset"
-            title="Remove zoom and pan"
-            @click="handleResetImage"
-        ></button>
-
-        <span class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</span>
-    </div>
-    <div class="c-image-controls__control c-image-controls__brightness-contrast">
-        <span
-            class="c-image-controls__sliders"
-            draggable="true"
-            @dragstart.stop.prevent
-        >
-            <div class="c-image-controls__input icon-brightness">
-                <input
-                    v-model="filters.contrast"
-                    type="range"
-                    min="0"
-                    max="500"
-                    @change="notifyFiltersChanged"
-                >
-            </div>
-            <div class="c-image-controls__input icon-contrast">
-                <input
-                    v-model="filters.brightness"
-                    type="range"
-                    min="0"
-                    max="500"
-                    @change="notifyFiltersChanged"
-                >
-            </div>
-        </span>
-        <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
-            <button
-                class="c-icon-link icon-reset t-btn-reset"
-                @click="handleResetFilters"
-            ></button>
-        </span>
-    </div>
+    <imagery-view-menu-switcher :icon-class="'icon-magnify'"
+                                :title="'Filters menu'"
+    >
+        <zoom-settings :pan-zoom-locked="panZoomLocked"
+                       :formatted-zoom-factor="formattedZoomFactor"
+                       @zoomOut="zoomOut"
+                       @zoomIn="zoomIn"
+                       @toggleZoomLock="toggleZoomLock"
+                       @handleResetImage="handleResetImage"
+        />
+    </imagery-view-menu-switcher>
+    <imagery-view-menu-switcher v-if="layers.length"
+                                :icon-class="'icon-layers'"
+                                :title="'Layers menu'"
+    >
+        <imagery-layers :layers="layers"
+                        @toggleLayerVisibility="toggleLayerVisibility"
+        />
+    </imagery-view-menu-switcher>
 </div>
 </template>
 
 <script>
 import _ from 'lodash';
+
+import FilterSettings from "./FilterSettings.vue";
+import ImageryLayers from "./ImageryLayers.vue";
+import ZoomSettings from "./ZoomSettings.vue";
+import ImageryViewMenuSwitcher from "./ImageryViewMenuSwitcher.vue";
 
 const DEFAULT_FILTER_VALUES = {
     brightness: '100',
@@ -101,13 +69,26 @@ const ZOOM_STEP = 1;
 const ZOOM_WHEEL_SENSITIVITY_REDUCTION = 0.01;
 
 export default {
+    components: {
+        FilterSettings,
+        ImageryLayers,
+        ImageryViewMenuSwitcher,
+        ZoomSettings
+    },
     inject: ['openmct', 'domainObject'],
     props: {
+        layers: {
+            type: Array,
+            required: true
+        },
         zoomFactor: {
             type: Number,
             required: true
         },
-        imageUrl: String
+        imageUrl: {
+            type: String,
+            required: true
+        }
     },
     data() {
         return {
@@ -267,6 +248,14 @@ export default {
 
             const newScaleFactor = this.zoomFactor + (this.shiftPressed ? -ZOOM_STEP : ZOOM_STEP);
             this.zoomImage(newScaleFactor, e.clientX, e.clientY);
+        },
+        toggleLayerVisibility(index) {
+            let isVisible = this.layers[index].visible === true;
+            this.layers[index].visible = !isVisible;
+            this.visibleLayers = this.layers.filter(layer => layer.visible);
+        },
+        updateFilterValues(filters) {
+            this.filters = filters;
         }
     }
 };
