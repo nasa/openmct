@@ -67,5 +67,11 @@ test.describe('Persistence operations', () => {
         // Right click on a non persistable item in the tree
         // verify that the only actions available are: "Open in a new Tab", "View" and "Create Link"
     });
+    test.only('Cannot move a previously created domain object to non-peristable boject in Move Modal', async ({ page }) => {
+        //Create a domain object
+        //Save Domain object
+        //Move Object and verify that cannot select non-persistable object
+        //Move Object to My Items
+        //Verify successful move
+    });
 });
-
