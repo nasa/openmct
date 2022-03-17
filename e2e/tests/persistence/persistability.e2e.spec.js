@@ -25,39 +25,47 @@ This test suite is dedicated to tests which verify the basic operations surround
 */
 
 const { test, expect } = require('@playwright/test');
+const path = require('path');
 
-test.describe('Create button operations', () => {
-    test('Create new button `condition set` creates new condition object', async ({ page }) => {
-        //Go to baseURL
+// https://github.com/nasa/openmct/issues/4323#issuecomment-1067282651
+
+test.describe('Persistence operations', () => {
+    // add non persistable root item
+    test.beforeEach(async ({ page }) => {
+        // eslint-disable-next-line no-undef
+        await page.addInitScript({ path: path.join(__dirname, 'addNoneditableObject.js') });
+    });
+
+    test('Persistability should be respected in the create form location field', async ({ page }) => {
+        // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
-        //Click the Create button
+        // Click the Create button
         await page.click('button:has-text("Create")');
 
         // Click text=Condition Set
         await page.click('text=Condition Set');
 
+        // Click form[name="mctForm"] >> text=Persistence Testing
+        await page.locator('form[name="mctForm"] >> text=Persistence Testing').click();
+
+        // Check that "OK" button is disabled
+        const okButton = page.locator('button:has-text("OK")');
+        await expect(okButton).toBeDisabled();
+    });
+    test.only('Non-persistable objects should not show persistence related actions', async ({ page }) => {
+        // Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Click text=Persistence Testing >> nth=0
+        await page.locator('text=Persistence Testing').first().click({
+            button: 'right'
+        });
+
         await page.pause();
 
-        // Click text=OK
-
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
-    });
-    test.fixme('condition set object properties exist', async ({ page }) => {
-        //Go to object created in step one
-        //Verify the Condition Set properties persist on Save
-        //Verify the Condition Set properties persist on page.reload()
-    });
-    test.fixme('condition set object can be modified', async ({ page }) => {
-        //Go to object created in step one
-        //Update the Condition Set properties
-        //Verify the Condition Set properties persist on Save
-        //Verify the Condition Set properties persist on page.reload()
-    });
-    test.fixme('condition set object can be deleted', async ({ page }) => {
-        //Go to object created in step one
-        //Verify that Condition Set object can be deleted
-        //Verify the Condition Set object does not exist in Tree
-        //Verify the Condition Set object does not exist with direct navigation to object's URL
+        // Right click on a non persistable item in the tree
+        // verify that the only actions available are: "Open in a new Tab", "View" and "Create Link"
     });
 });
+
