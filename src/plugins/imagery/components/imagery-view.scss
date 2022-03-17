@@ -16,6 +16,22 @@
         display: flex;
         flex-direction: column;
         flex: 1 1 auto;
+
+        &.unnsynced{
+            @include sUnsynced();
+        }
+    
+        &.cursor-zoom-in {
+            cursor: zoom-in;
+        }
+    
+        &.cursor-zoom-out {
+            cursor: zoom-out;
+        }
+    
+        &.pannable {
+            @include cursorGrab();
+        }
     }
 
     .image-wrapper {
@@ -33,19 +49,6 @@
             flex: 1 1 auto;
             height: 0;
             overflow: hidden;
-            &.unnsynced{
-                @include sUnsynced();
-            }
-            &.cursor-zoom-in {
-                cursor: zoom-in;
-            }
-            &.cursor-zoom-out {
-                cursor: zoom-out;
-            }
-            &.pannable {
-                @include cursorGrab();
-
-            }
         }
         &__background-image {
             background-position: center;
@@ -167,6 +170,17 @@
     }
 }
 
+.c-control-menu {
+    background: $colorItemBgHov;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    left: 46px;
+    padding: 8px;
+    position: absolute;
+    width: 200px;
+}
+
 .s-image-layer {
     position: absolute;
     height: 100%;
@@ -276,12 +290,11 @@
 
 .c-image-controls {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
 
     &__controls {
         display: flex;
         align-items: stretch;
-        flex-direction: column;
 
         > * + * {
             margin-top: $interiorMargin;
