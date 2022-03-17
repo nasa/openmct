@@ -325,16 +325,7 @@ export default {
             return item && (item.type === type);
         },
         canPersistObject(item) {
-            // for now the only way to tell if an object can be persisted is if it is creatable.
-            let creatable = false;
-            if (item) {
-                const type = this.openmct.types.get(item.type);
-                if (type && type.definition) {
-                    creatable = (type.definition.creatable !== undefined && (type.definition.creatable === 'true' || type.definition.creatable === true));
-                }
-            }
-
-            return creatable;
+            return this.openmct.objects.isPersistable(item.identifier);
         },
         hasConditionalStyle(domainObject, layoutItem) {
             const id = layoutItem ? layoutItem.id : undefined;
