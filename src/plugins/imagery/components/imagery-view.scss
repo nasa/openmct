@@ -275,6 +275,9 @@
 }
 
 .c-image-controls {
+    position: absolute;
+    z-index: 1;
+
     &__controls {
         display: flex;
         align-items: stretch;

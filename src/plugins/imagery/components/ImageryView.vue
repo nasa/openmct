@@ -33,6 +33,7 @@
             ref="imageControls"
             :zoom-factor="zoomFactor"
             :image-url="imageUrl"
+            :layers="layers"
             @resetImage="resetImage"
             @panZoomUpdated="handlePanZoomUpdate"
             @filtersUpdated="setFilters"
@@ -125,10 +126,11 @@
             @click="nextImage()"
         ></button>
 
-        <div v-for="(layer, index) in visibleLayers"
-             :key="index"
-             class="layer-image s-image-layer c-imagery__layer-image"
-             :style="{'background-image': `url(${layer.source})`}"
+        <div
+            v-for="(layer, index) in visibleLayers"
+            :key="index"
+            class="layer-image s-image-layer c-imagery__layer-image"
+            :style="{'background-image': `url(${layer.source})`}"
         >
         </div>
 
@@ -212,10 +214,6 @@ import eventHelpers from '../lib/eventHelpers';
 import _ from 'lodash';
 import moment from 'moment';
 
-import ImagerySettings from "./ImagerySettings.vue";
-import ImageryLayers from "./ImageryLayers.vue";
-import ImageryViewMenuSwitcher from "./ImageryViewMenuSwitcher.vue";
-
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
 import ImageControls from './ImageControls.vue';
@@ -243,10 +241,7 @@ const ZOOM_SCALE_DEFAULT = 1;
 export default {
     components: {
         Compass,
-        ImageControls,
-        ImagerySettings,
-        ImageryLayers,
-        ImageryViewMenuSwitcher
+        ImageControls
     },
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
@@ -754,7 +749,6 @@ export default {
         focusElement() {
             this.$el.focus();
         },
-
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
             if (!thumbsWrapper || this.resizingWindow) {
@@ -1101,14 +1095,6 @@ export default {
         },
         setCursorStates(states) {
             this.cursorStates = states;
-        },
-        updateFilterValues(filters) {
-            this.filters = filters;
-        },
-        toggleLayerVisibility(index) {
-            let isVisible = this.layers[index].visible === true;
-            this.layers[index].visible = !isVisible;
-            this.visibleLayers = this.layers.filter(layer => layer.visible);
         }
     }
 };
