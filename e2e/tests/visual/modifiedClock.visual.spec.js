@@ -40,7 +40,7 @@ const sinon = require('sinon');
 const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
 
 // Snippet from https://github.com/microsoft/playwright/issues/6347#issuecomment-965887758
-// Will replace with cy.clock() equivalent
+//Will replace with cy.clock() equivalent
 test.beforeEach(async ({ context }) => {
     await context.addInitScript({
         // eslint-disable-next-line no-undef
@@ -183,12 +183,13 @@ test.only('Visual - Timestrip', async ({ page }) => {
     await page.locator('li:has-text("Example Imagery")').click();
 
     // Fill input[type="number"]
-    await page.locator('input[type="number"]').fill('500');
+    //await page.locator('input[type="number"]').fill('500');
 
     // Click text=OK
     await page.locator('text=OK').click();
-    
-    // Validate red x mark
+
+    await page.pause();
+    // 
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'Default Timestrip created');
 });
