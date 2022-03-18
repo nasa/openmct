@@ -1,5 +1,7 @@
 <template>
-<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls">
+<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls"
+     @click="handleClose"
+>
     <div class="c-image-controls__control c-image-controls__zoom">
         <div class="c-button-set c-button-set--strip-h">
             <button class="c-button t-btn-zoom-out icon-minus"
@@ -53,6 +55,12 @@ export default {
         }
     },
     methods: {
+        handleClose(e) {
+            const closeButton = e.target.classList.contains('c-switcher-menu__close-button');
+            if (!closeButton) {
+                e.stopPropagation();
+            }
+        },
         handleResetImage() {
             this.$emit('handleResetImage');
         },

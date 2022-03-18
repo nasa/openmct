@@ -1,10 +1,11 @@
 <template>
 <div class="c-switcher-menu">
     <button
+        :id="id"
         class="c-button c-button--menu c-switcher-menu__button"
         :class="iconClass"
         :title="title"
-        @click.stop="toggleMenu"
+        @click="toggleMenu"
     >
         <span class="c-button__label"></span>
     </button>
@@ -18,6 +19,8 @@
 </template>
 
 <script>
+import uuid from 'uuid';
+
 export default {
     inject: ['openmct'],
     props: {
@@ -36,6 +39,7 @@ export default {
     },
     data() {
         return {
+            id: uuid(),
             showMenu: false
         };
     },
@@ -49,7 +53,11 @@ export default {
         toggleMenu() {
             this.showMenu = !this.showMenu;
         },
-        hideMenu() {
+        hideMenu(e) {
+            if (this.id === e.target.id) {
+                return;
+            }
+
             this.showMenu = false;
         }
     }
