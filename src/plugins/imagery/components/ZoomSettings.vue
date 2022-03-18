@@ -1,5 +1,5 @@
 <template>
-<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls"
+<div class="c-image-controls__controls-wrapper"
      @click="handleClose"
 >
     <div class="c-image-controls__control c-image-controls__zoom">
@@ -24,11 +24,10 @@
                     title="Remove zoom and pan"
                     @click="handleResetImage"
             ></button>
-            <span class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</span>
         </div>
+        <div class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</div>
     </div>
-    <button class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button">
-    </button>
+    <button class="c-click-icon icon-x t-btn-close c-switcher-menu__close-button"></button>
 </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls"
+<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls c-image-controls--filters"
      @click="handleClose"
 >
     <div class="c-image-controls__controls"
@@ -25,14 +25,14 @@
                 >
             </div>
         </span>
-        <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
+        <span class="c-image-controls__reset-btn">
             <a class="s-icon-button icon-reset t-btn-reset"
                @click="resetFilters"
             ></a>
         </span>
     </div>
 
-    <button class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button"></button>
+    <button class="c-click-icon icon-x t-btn-close c-switcher-menu__close-button"></button>
 </div>
 </template>
 

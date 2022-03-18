@@ -21,31 +21,42 @@
  *****************************************************************************/
 
 <template>
-<div class="c-image-controls">
+<div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
     <imagery-view-menu-switcher :icon-class="'icon-brightness'"
-                                :title="'filters-menu'"
+                                :title="'Brightness and contrast'"
     >
         <filter-settings @filterChanged="updateFilterValues" />
     </imagery-view-menu-switcher>
 
-    <imagery-view-menu-switcher :icon-class="'icon-magnify'"
-                                :title="'zoom-menu'"
+    <imagery-view-menu-switcher v-if="layers.length"
+                                :icon-class="'icon-layers'"
+                                :title="'Layers'"
+    >
+        <layer-settings :layers="layers"
+                        @toggleLayerVisibility="toggleLayerVisibility"
+        />
+    </imagery-view-menu-switcher>
+
+    <zoom-settings v-if="!isSmall"
+                   :pan-zoom-locked="panZoomLocked"
+                   :zoom-factor="zoomFactor"
+                   @zoomOut="zoomOut"
+                   @zoomIn="zoomIn"
+                   @toggleZoomLock="toggleZoomLock"
+                   @handleResetImage="handleResetImage"
+    />
+
+    <imagery-view-menu-switcher v-if="isSmall"
+                                :icon-class="'icon-magnify'"
+                                :title="'Zoom settings'"
     >
         <zoom-settings :pan-zoom-locked="panZoomLocked"
+                       :class="'c-control-menu c-menu--has-close-btn'"
                        :zoom-factor="zoomFactor"
                        @zoomOut="zoomOut"
                        @zoomIn="zoomIn"
                        @toggleZoomLock="toggleZoomLock"
                        @handleResetImage="handleResetImage"
-        />
-    </imagery-view-menu-switcher>
-
-    <imagery-view-menu-switcher v-if="layers.length"
-                                :icon-class="'icon-layers'"
-                                :title="'layers-menu'"
-    >
-        <layer-settings :layers="layers"
-                        @toggleLayerVisibility="toggleLayerVisibility"
         />
     </imagery-view-menu-switcher>
 </div>
@@ -103,7 +114,8 @@ export default {
             filters: {
                 brightness: 100,
                 contrast: 100
-            }
+            },
+            isSmall: true
         };
     },
     computed: {
