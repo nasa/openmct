@@ -56,16 +56,23 @@ export default class EditPropertiesAction extends PropertiesAction {
             Object.entries(changes).forEach(([key, value]) => {
                 const properties = key.split('.');
                 let object = this.domainObject;
-                properties.forEach((property) => {
-                    object[property] = value;
-                    this.openmct.objects.mutate(this.domainObject, key, value);
+                const propertiesLength = properties.length;
+                properties.forEach((property, index) => {
+                    const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
+                    if (isComplexProperty && object[property] !== null) {
+                        object = object[property];
+                    } else {
+                        object[property] = value;
+                    }
                 });
 
                 object = value;
+                this.openmct.objects.mutate(this.domainObject, key, value);
+                this.openmct.notifications.info('Save successful');
             });
-            this.openmct.notifications.info('Save successful');
-        } catch (exception) {
+        } catch (error) {
             this.openmct.notifications.error('Error saving objects');
+            console.error(error);
         }
     }
 
