@@ -749,24 +749,20 @@ export default {
             }
 
             return transaction.commit()
-                .then(() => {
-                // committed
-                }).catch(error => {
+                .catch(error => {
                     throw error;
                 }).finally(() => {
                     this.openmct.objects.endTransaction();
                 });
         },
         cancelTransaction() {
-            return new Promise((resolve, reject) => {
-                const transaction = this.activeTransaction();
-                transaction.cancel()
-                    .then(resolve)
-                    .catch(reject)
-                    .finally(() => {
-                        this.openmct.objects.endTransaction();
-                    });
-            });
+            const transaction = this.activeTransaction();
+            transaction.cancel()
+                .catch(error => {
+                    throw error;
+                }).finally(() => {
+                    this.openmct.objects.endTransaction();
+                });
         }
     }
 };
