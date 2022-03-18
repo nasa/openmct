@@ -21,13 +21,13 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
+This test suite is dedicated to tests which verify the basic operations surrounding the example event generator.
 */
 
 const { test, expect } = require('@playwright/test');
 
 test.describe('Example Event Generator Operations', () => {
-    test('test', async ({ page }) => {
+    test('Can create example event generator with a name', async ({ page }) => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
         // let's make an event generator
