@@ -51,20 +51,15 @@ export default class EditPropertiesAction extends PropertiesAction {
     /**
      * @private
      */
-    async _onSave(changes) {
-        this.openmct.objects.startTransaction();
-        Object.entries(changes).forEach(([key, value]) => {
-            this.openmct.objects.mutate(this.domainObject, key, value);
-        });
-
-        const transaction = this.openmct.objects.getActiveTransaction();
+    _onSave(changes) {
+        // it would be really handy to use transactions here!
         try {
-            await transaction.commit();
+            Object.entries(changes).forEach(([key, value]) => {
+                this.openmct.objects.mutate(this.domainObject, key, value);
+            });
             this.openmct.notifications.info('Save successful');
         } catch (error) {
             this.openmct.notifications.error('Error saving object');
-        } finally {
-            this.openmct.objects.endTransaction();
         }
     }
 
