@@ -52,45 +52,21 @@ export default class EditPropertiesAction extends PropertiesAction {
      * @private
      */
     async _onSave(changes) {
+        this.openmct.objects.startTransaction();
         Object.entries(changes).forEach(([key, value]) => {
-            if (key === 'name') {
-                // important for reindexing for search
-                this.openmct.objects.mutate(this.domainObject, 'name', value);
-            }
-
-            const properties = key.split('.');
-            let object = this.domainObject;
-            const propertiesLength = properties.length;
-            properties.forEach((property, index) => {
-                const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
-                if (isComplexProperty && object[property] !== null) {
-                    object = object[property];
-                } else {
-                    object[property] = value;
-                }
-            });
-
-            object = value;
+            console.debug(`🍒 Mutating ${key} with `, value);
+            this.openmct.objects.mutate(this.domainObject, key, value);
         });
 
-        this.domainObject.modified = Date.now();
-
-        // Show saving progress dialog
-        let dialog = this.openmct.overlays.progressDialog({
-            progressPerc: 'unknown',
-            message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
-            iconClass: 'info',
-            title: 'Saving'
-        });
-
-        const success = await this.openmct.objects.save(this.domainObject);
-        if (success) {
+        const transaction = this.openmct.objects.getActiveTransaction();
+        try {
+            await transaction.commit();
             this.openmct.notifications.info('Save successful');
-        } else {
-            this.openmct.notifications.error('Error saving objects');
+        } catch (error) {
+            this.openmct.notifications.error('Error saving object');
+        } finally {
+            this.openmct.objects.endTransaction();
         }
-
-        dialog.dismiss();
     }
 
     /**
