@@ -143,7 +143,7 @@ export default function () {
                             validLimitHigh = min < limitHigh && limitHigh <= max;
                         }
 
-                        if(limitLow !== '' && limitHigh !== '') {
+                        if (limitLow !== '' && limitHigh !== '') {
                             return validLimitLow && validLimitHigh && limitLow < limitHigh;
                         }
 
