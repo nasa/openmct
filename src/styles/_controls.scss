@@ -384,6 +384,10 @@ select {
     &__row {
         > * + * { margin-left: $interiorMargin; }
     }
+
+    li {
+        white-space: nowrap;
+    }
 }
 
 /******************************************************** TABS */
@@ -477,6 +481,9 @@ select {
     text-shadow: $shdwMenuText;
     padding: $interiorMarginSm;
     box-shadow: $shdwMenu;
+}
+
+@mixin menuPositioning() {
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -525,6 +532,7 @@ select {
 
 .c-menu {
     @include menuOuter();
+    @include menuPositioning();
     @include menuInner();
 
     &__section-hint {
@@ -548,6 +556,7 @@ select {
 .c-super-menu {
     // Two column layout, menu items on left with detail of hover element on right
     @include menuOuter();
+    @include menuPositioning();
     display: flex;
     padding: $interiorMarginLg;
     flex-direction: row;

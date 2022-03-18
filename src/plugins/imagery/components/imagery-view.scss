@@ -20,15 +20,15 @@
         &.unnsynced{
             @include sUnsynced();
         }
-    
+
         &.cursor-zoom-in {
             cursor: zoom-in;
         }
-    
+
         &.cursor-zoom-out {
             cursor: zoom-out;
         }
-    
+
         &.pannable {
             @include cursorGrab();
         }
@@ -168,17 +168,25 @@
         font-size: 0.8em;
         margin: $interiorMarginSm;
     }
-}
 
-.c-control-menu {
-    background: $colorItemBgHov;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    left: 46px;
-    padding: 8px;
-    position: absolute;
-    width: 200px;
+    .c-control-menu {
+        // Controls on left of flex column layout, close btn on right
+        @include menuOuter();
+        //background: $colorItemBgHov;
+        border-radius: $controlCr;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: $interiorMargin;
+        width: min-content;
+
+        > * + * { margin-left: $interiorMargin; }
+    }
+
+    .c-switcher-menu__content {
+        margin-top: 1px;
+        position: absolute;
+    }
 }
 
 .s-image-layer {
@@ -229,69 +237,25 @@
 /*************************************** IMAGERY LOCAL CONTROLS*/
 .c-imagery {
     .h-local-controls--overlay-content {
+        display: flex;
+        flex-direction: row;
         position: absolute;
         left: $interiorMargin; top: $interiorMargin;
         z-index: 2;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
-        max-width: 250px;
-        min-width: 170px;
-        width: 35%;
         align-items: center;
-        padding: $interiorMargin $interiorMarginLg;
+        padding: $interiorMargin $interiorMargin;
 
-        input[type="range"] {
-            display: block;
-            width: 100%;
-            &:not(:first-child) {
-                margin-top: $interiorMarginLg;
-            }
-
-            &:before {
-                margin-right: $interiorMarginSm;
-            }
-        }
+        > * + * { margin-left: $interiorMargin; }
 
         .s-status-taking-snapshot & {
             display: none;
         }
     }
-
-    &__lc {
-        &__reset-btn {
-            // Span that holds bracket graphics and button
-            $bc: $scrollbarTrackColorBg;
-
-            &:before,
-            &:after {
-                border-right: 1px solid $bc;
-                content:'';
-                display: block;
-                width: 5px;
-                height: 4px;
-            }
-
-            &:before {
-                border-top: 1px solid $bc;
-                margin-bottom: 2px;
-            }
-
-            &:after {
-                border-bottom: 1px solid $bc;
-                margin-top: 2px;
-            }
-
-            .c-icon-link {
-                color: $colorBtnFg;
-            }
-        }
-    }
 }
 
 .c-image-controls {
-    position: absolute;
-    z-index: 2;
-
     &__controls {
         display: flex;
         align-items: stretch;
@@ -316,30 +280,66 @@
 
     }
 
-    &__input {
-        // A wrapper is needed to add the type icon to left of each control
-
-        input[type='range'] {
-            //width: 100%; // Do we need this?
-        }
-    }
-
     &__zoom {
-        > * + * { margin-left: $interiorMargin; }
+        > * + * { margin-left: $interiorMargin; } // Is this used?
     }
 
-    &__sliders {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
+    &--filters {
+        // Styles specific to the brightness and contrast controls
 
-        > * + * {
-            margin-top: 11px;
+        .c-image-controls {
+            &__sliders {
+                display: flex;
+                flex: 1 1 auto;
+                flex-direction: column;
+                min-width: 100px;
+
+                > * + * {
+                    margin-top: 11px;
+                }
+
+                input[type="range"] {
+                    display: block;
+                    width: 100%;
+                }
+            }
+
+            &__slider-wrapper {
+                display: flex;
+                align-items: center;
+
+                &:before { margin-right: $interiorMargin; }
+            }
+
+            &__reset-btn {
+                // Span that holds bracket graphics and button
+                $bc: $scrollbarTrackColorBg;
+                flex: 0 0 auto;
+
+                &:before,
+                &:after {
+                    border-right: 1px solid $bc;
+                    content:'';
+                    display: block;
+                    width: 5px;
+                    height: 4px;
+                }
+
+                &:before {
+                    border-top: 1px solid $bc;
+                    margin-bottom: 2px;
+                }
+
+                &:after {
+                    border-bottom: 1px solid $bc;
+                    margin-top: 2px;
+                }
+
+                .c-icon-link {
+                    color: $colorBtnFg;
+                }
+            }
         }
-    }
-
-    &__btn-reset {
-        flex: 0 0 auto;
     }
 }
 
@@ -410,10 +410,6 @@
             [class*='__image-handle'] {
                 background-color: $colorBodyFg;
             }
-
-            //[class*='__image-placeholder'] {
-            //    display: none;
-            //}
 
             img {
                 display: block !important;

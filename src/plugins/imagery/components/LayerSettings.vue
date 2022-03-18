@@ -2,7 +2,7 @@
 <div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls"
      @click="handleClose"
 >
-    <div class="c-checkbox-menu js-checkbox-menu c-menu--to-left c-menu--has-close-btn">
+    <div class="c-checkbox-list js-checkbox-menu c-menu--to-left c-menu--has-close-btn">
         <ul
             @click="$event.stopPropagation()"
         >
@@ -26,7 +26,7 @@
         </ul>
     </div>
 
-    <button class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button"></button>
+    <button class="c-click-icon icon-x t-btn-close c-switcher-menu__close-button"></button>
 </div>
 </template>
 
