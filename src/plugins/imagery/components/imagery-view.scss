@@ -68,6 +68,7 @@
         background: rgba(black, 0.2);
         border-radius: $smallCr;
         padding: 2px $interiorMargin;
+        pointer-events: none;
         position: absolute;
         right: $m;
         top: $m;
@@ -180,12 +181,19 @@
         padding: $interiorMargin;
         width: min-content;
 
-        > * + * { margin-left: $interiorMargin; }
+        > * + * {
+            margin-left: $interiorMargin;
+        }
     }
 
-    .c-switcher-menu__content {
-        margin-top: 1px;
-        position: absolute;
+    .c-switcher-menu {
+        display: contents;
+
+        &__content {
+            // Menu panel
+            top: 25px;
+            position: absolute;
+        }
     }
 }
 
@@ -253,9 +261,19 @@
             display: none;
         }
     }
+    [class*='--menus-aligned'] {
+        > * + * {
+            button { margin-left: $interiorMarginSm; }
+        }
+    }
 }
 
 .c-image-controls {
+    &__controls-wrapper {
+        // Wraps __controls and __close-btn
+        display: flex;
+    }
+
     &__controls {
         display: flex;
         align-items: stretch;
@@ -292,7 +310,7 @@
                 display: flex;
                 flex: 1 1 auto;
                 flex-direction: column;
-                min-width: 100px;
+                min-width: 80px;
 
                 > * + * {
                     margin-top: 11px;
