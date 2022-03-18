@@ -1,5 +1,7 @@
 <template>
-<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls">
+<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls"
+     @click="handleClose"
+>
     <div class="c-image-controls__controls"
          @click="$event.stopPropagation()"
     >
@@ -30,7 +32,7 @@
         </span>
     </div>
 
-    <a class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button"></a>
+    <button class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button"></button>
 </div>
 </template>
 
@@ -46,6 +48,12 @@ export default {
         };
     },
     methods: {
+        handleClose(e) {
+            const closeButton = e.target.classList.contains('c-switcher-menu__close-button');
+            if (!closeButton) {
+                e.stopPropagation();
+            }
+        },
         notifyFiltersChanged() {
             this.$emit('filterChanged', this.filters);
         },

@@ -1,5 +1,7 @@
 <template>
-<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls">
+<div class="c-control-menu c-menu--to-left c-menu--has-close-btn c-image-controls"
+     @click="handleClose"
+>
     <div class="c-checkbox-menu js-checkbox-menu c-menu--to-left c-menu--has-close-btn">
         <ul
             @click="$event.stopPropagation()"
@@ -24,7 +26,7 @@
         </ul>
     </div>
 
-    <a class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button"></a>
+    <button class="s-icon-button icon-x t-btn-close c-switcher-menu__close-button"></button>
 </div>
 </template>
 
@@ -40,6 +42,12 @@ export default {
         }
     },
     methods: {
+        handleClose(e) {
+            const closeButton = e.target.classList.contains('c-switcher-menu__close-button');
+            if (!closeButton) {
+                e.stopPropagation();
+            }
+        },
         toggleLayerVisibility(index) {
             this.$emit('toggleLayerVisibility', index);
         }
