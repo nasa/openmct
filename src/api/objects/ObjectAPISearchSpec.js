@@ -105,13 +105,18 @@ describe("The Object API Search Function", () => {
 
         beforeEach((done) => {
             openmct = createOpenMct();
+            const defaultObjectProvider = openmct.objects.getProvider({
+                key: '',
+                namespace: ''
+            });
+            openmct.objects.addProvider('foo', defaultObjectProvider);
             spyOn(openmct.objects.inMemorySearchProvider, "query").and.callThrough();
             spyOn(openmct.objects.inMemorySearchProvider, "localSearch").and.callThrough();
 
             openmct.on('start', async () => {
                 mockIdentifier1 = {
                     key: 'some-object',
-                    namespace: ''
+                    namespace: 'foo'
                 };
                 mockDomainObject1 = {
                     type: 'clock',
@@ -120,7 +125,7 @@ describe("The Object API Search Function", () => {
                 };
                 mockIdentifier2 = {
                     key: 'some-other-object',
-                    namespace: ''
+                    namespace: 'foo'
                 };
                 mockDomainObject2 = {
                     type: 'clock',
@@ -129,7 +134,7 @@ describe("The Object API Search Function", () => {
                 };
                 mockIdentifier3 = {
                     key: 'yet-another-object',
-                    namespace: ''
+                    namespace: 'foo'
                 };
                 mockDomainObject3 = {
                     type: 'clock',
