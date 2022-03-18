@@ -172,7 +172,13 @@ export default {
             // to show them all the options
             this.showFilteredOptions = false;
             this.autocompleteInputElement.select();
-            this.showOptions();
+
+            if (this.hideOptions){
+                this.showOptions();
+            } else {
+                this.hideOptions = true;
+            }
+
         },
         optionMouseover(optionId) {
             this.optionIndex = optionId;
