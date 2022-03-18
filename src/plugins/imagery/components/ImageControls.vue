@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
+<div class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hover">
     <imagery-view-menu-switcher :icon-class="'icon-brightness'"
                                 :title="'Brightness and contrast'"
     >
@@ -53,6 +53,7 @@
         <zoom-settings :pan-zoom-locked="panZoomLocked"
                        :class="'c-control-menu c-menu--has-close-btn'"
                        :zoom-factor="zoomFactor"
+                       :is-menu="true"
                        @zoomOut="zoomOut"
                        @zoomIn="zoomIn"
                        @toggleZoomLock="toggleZoomLock"

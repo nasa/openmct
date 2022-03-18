@@ -27,7 +27,8 @@
         </div>
         <div class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</div>
     </div>
-    <button class="c-click-icon icon-x t-btn-close c-switcher-menu__close-button"></button>
+    <button v-if="isMenu"
+            class="c-click-icon icon-x t-btn-close c-switcher-menu__close-button"></button>
 </div>
 </template>
 
@@ -42,6 +43,10 @@ export default {
         panZoomLocked: {
             type: Boolean,
             required: true
+        },
+        isMenu: {
+            type: Boolean,
+            required: false
         }
     },
     data() {

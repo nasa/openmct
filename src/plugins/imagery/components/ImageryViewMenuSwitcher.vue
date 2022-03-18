@@ -9,9 +9,8 @@
     >
         <span class="c-button__label"></span>
     </button>
-    <div
-        v-show="showMenu"
-        class="c-switcher-menu__content"
+    <div v-show="showMenu"
+         class="c-switcher-menu__content"
     >
         <slot></slot>
     </div>
