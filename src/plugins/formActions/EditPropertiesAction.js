@@ -54,7 +54,6 @@ export default class EditPropertiesAction extends PropertiesAction {
     async _onSave(changes) {
         this.openmct.objects.startTransaction();
         Object.entries(changes).forEach(([key, value]) => {
-            console.debug(`🍒 Mutating ${key} with `, value);
             this.openmct.objects.mutate(this.domainObject, key, value);
         });
 
