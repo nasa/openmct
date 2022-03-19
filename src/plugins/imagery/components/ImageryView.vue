@@ -67,16 +67,25 @@
                      'height': `${sizedImageHeight}px`
                  }"
             >
-                <img
-                    ref="focusedImage"
-                    class="c-imagery__main-image__image js-imageryView-image "
-                    :src="imageUrl"
-                    :draggable="!isSelectable"
-                    :style="{
-                        'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                    }"
-                    :data-openmct-image-timestamp="time"
-                    :data-openmct-object-keystring="keyString"
+                <div v-for="(layer, index) in visibleLayers"
+                     :key="index"
+                     class="layer-image s-image-layer c-imagery__layer-image"
+                     :style="{
+                         'background-image': `url(${layer.source})`,
+                         'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
+                         'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
+                     }"
+                >
+                </div>
+                <img ref="focusedImage"
+                     class="c-imagery__main-image__image js-imageryView-image "
+                     :src="imageUrl"
+                     :draggable="!isSelectable"
+                     :style="{
+                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                     }"
+                     :data-openmct-image-timestamp="time"
+                     :data-openmct-object-keystring="keyString"
                 >
                 <div
                     v-if="imageUrl"
@@ -126,16 +135,6 @@
             :disabled="isNextDisabled"
             @click="nextImage()"
         ></button>
-
-        <div v-for="(layer, index) in visibleLayers"
-             :key="index"
-             class="layer-image s-image-layer c-imagery__layer-image"
-             :style="{
-                 'background-image': `url(${layer.source})`,
-                 'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
-             }"
-        >
-        </div>
 
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
