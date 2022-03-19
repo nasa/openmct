@@ -24,13 +24,13 @@
 <div class="form-control autocomplete">
     <span class="autocompleteInputAndArrow">
         <input v-model="field"
-            class="autocompleteInput"
-            type="text"
-            @click="inputClicked()"
-            @keydown="keyDown($event)"
+               class="autocompleteInput"
+               type="text"
+               @click="inputClicked()"
+               @keydown="keyDown($event)"
         >
         <span class="icon-arrow-down"
-            @click="arrowClicked()"
+              @click="arrowClicked()"
         ></span>
     </span>
 
@@ -114,7 +114,7 @@ export default {
                 // handleoutsideclick can collapse the dropdown when clicked outside autocomplete
                 document.body.addEventListener('click', this.handleOutsideClick);
             } else {
-                //removing event listener when hideOptions become true (dropdown is collapsed) 
+                //removing event listener when hideOptions become true (dropdown is collapsed)
                 document.body.removeEventListener('click', this.handleOutsideClick);
             }
         }
@@ -195,7 +195,7 @@ export default {
 
         },
         handleOutsideClick(event) {
-            // if click event is detected outside autocomplete (both input & arrow) while the 
+            // if click event is detected outside autocomplete (both input & arrow) while the
             // dropdown is visible, this will collapse the dropdown.
             const clickedInsideAutocomplete = this.autocompleteInputAndArrow.contains(event.target);
             if (!clickedInsideAutocomplete && !this.hideOptions) {
