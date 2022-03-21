@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
+This test suite is dedicated to tests which verify form functionality.
 */
 
 const { test, expect } = require('@playwright/test');
@@ -67,5 +67,13 @@ test.describe('forms set', () => {
         ]);
 
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(TEST_FOLDER);
+    });
+    test.fixme('Create all object types and verify correctness', async ({ page }) => {
+        //Create the following Domain Objects with their unique Object Types
+        // Sine Wave Generator (number object)
+        // Timer Object
+        // Plan View Object
+        // Clock Object
+        // Hyperlink
     });
 });
