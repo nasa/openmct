@@ -21,12 +21,14 @@
 *****************************************************************************/
 
 <template>
-<div v-if="conditionErrors.length"
-     class="c-condition__errors"
+<div
+    v-if="conditionErrors.length"
+    class="c-condition__errors"
 >
-    <div v-for="(error, index) in conditionErrors"
-         :key="index"
-         class="u-alert u-alert--block u-alert--with-icon"
+    <div
+        v-for="(error, index) in conditionErrors"
+        :key="index"
+        class="u-alert u-alert--block u-alert--with-icon"
     >{{ error.message.errorText }} {{ error.additionalInfo }}
     </div>
 </div>

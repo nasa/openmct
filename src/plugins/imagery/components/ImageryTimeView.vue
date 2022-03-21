@@ -21,11 +21,13 @@
 -->
 
 <template>
-<div ref="imagery"
-     class="c-imagery-tsv c-timeline-holder"
+<div
+    ref="imagery"
+    class="c-imagery-tsv c-timeline-holder"
 >
-    <div ref="imageryHolder"
-         class="c-imagery-tsv__contents u-contents"
+    <div
+        ref="imageryHolder"
+        class="c-imagery-tsv__contents u-contents"
     >
     </div>
 </div>

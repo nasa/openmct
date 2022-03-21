@@ -22,19 +22,23 @@
 
 <template>
 <span class="form-control shell">
-    <span class="field control"
-          :class="model.cssClass"
+    <span
+        class="field control"
+        :class="model.cssClass"
     >
-        <input v-model="field"
-               type="text"
-               :size="model.size"
-               @blur="blur()"
+        <input
+            v-model="field"
+            type="text"
+            :size="model.size"
+            @input="updateText()"
         >
     </span>
 </span>
 </template>
 
 <script>
+import { throttle } from 'lodash';
+
 export default {
     props: {
         model: {
@@ -47,8 +51,11 @@ export default {
             field: this.model.value
         };
     },
+    mounted() {
+        this.updateText = throttle(this.updateText.bind(this), 500);
+    },
     methods: {
-        blur() {
+        updateText() {
             const data = {
                 model: this.model,
                 value: this.field

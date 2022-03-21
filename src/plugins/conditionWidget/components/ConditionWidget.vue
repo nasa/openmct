@@ -21,9 +21,10 @@
 *****************************************************************************/
 
 <template>
-<component :is="urlDefined ? 'a' : 'span'"
-           class="c-condition-widget u-style-receiver js-style-receiver"
-           :href="url"
+<component
+    :is="urlDefined ? 'a' : 'span'"
+    class="c-condition-widget u-style-receiver js-style-receiver"
+    :href="url"
 >
     <div class="c-condition-widget__label">
         {{ internalDomainObject.conditionalLabel || internalDomainObject.label }}

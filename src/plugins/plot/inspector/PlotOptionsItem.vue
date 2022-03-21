@@ -1,41 +1,49 @@
 <template>
 <ul>
-    <li class="c-tree__item menus-to-left"
+    <li
+        class="c-tree__item menus-to-left"
         :class="isAliasClass"
     >
-        <span class="c-disclosure-triangle is-enabled flex-elem"
-              :class="expandedCssClass"
-              @click="toggleExpanded"
+        <span
+            class="c-disclosure-triangle is-enabled flex-elem"
+            :class="expandedCssClass"
+            @click="toggleExpanded"
         >
         </span>
-        <div class="c-object-label"
-             :class="statusClass"
+        <div
+            class="c-object-label"
+            :class="statusClass"
         >
-            <div class="c-object-label__type-icon"
-                 :class="getSeriesClass"
+            <div
+                class="c-object-label__type-icon"
+                :class="getSeriesClass"
             >
-                <span class="is-status__indicator"
-                      title="This item is missing or suspect"
+                <span
+                    class="is-status__indicator"
+                    title="This item is missing or suspect"
                 ></span>
             </div>
             <div class="c-object-label__name">{{ series.domainObject.name }}</div>
         </div>
     </li>
-    <li v-show="expanded"
+    <li
+        v-show="expanded"
         class="c-tree__item menus-to-left"
     >
         <ul class="grid-properties js-plot-options-browse-properties">
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="The field to be plotted as a value for this series."
+                <div
+                    class="grid-cell label"
+                    title="The field to be plotted as a value for this series."
                 >Value</div>
                 <div class="grid-cell value">
                     {{ yKey }}
                 </div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="The rendering method to join lines for this series."
+                <div
+                    class="grid-cell label"
+                    title="The rendering method to join lines for this series."
                 >Line Method</div>
                 <div class="grid-cell value">{{ {
                     'none': 'None',
@@ -45,33 +53,37 @@
                 </div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Whether markers are displayed, and their size."
+                <div
+                    class="grid-cell label"
+                    title="Whether markers are displayed, and their size."
                 >Markers</div>
                 <div class="grid-cell value">
                     {{ markerOptionsDisplayText }}
                 </div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Display markers visually denoting points in alarm."
+                <div
+                    class="grid-cell label"
+                    title="Display markers visually denoting points in alarm."
                 >Alarm Markers</div>
                 <div class="grid-cell value">
                     {{ alarmMarkers ? "Enabled" : "Disabled" }}
                 </div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Display lines visually denoting alarm limits."
+                <div
+                    class="grid-cell label"
+                    title="Display lines visually denoting alarm limits."
                 >Limit lines</div>
                 <div class="grid-cell value">
                     {{ limitLines ? "Enabled" : "Disabled" }}
                 </div>
             </li>
-            <ColorSwatch :current-color="seriesHexColor"
-                         edit-title="Manually set the plot line and marker color for this series."
-                         view-title="The plot line and marker color for this series."
-                         short-label="Color"
+            <ColorSwatch
+                :current-color="seriesHexColor"
+                edit-title="Manually set the plot line and marker color for this series."
+                view-title="The plot line and marker color for this series."
+                short-label="Color"
             />
         </ul>
     </li>
