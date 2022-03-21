@@ -1,6 +1,7 @@
 <template>
-<div ref="axisHolder"
-     class="c-timesystem-axis"
+<div
+    ref="axisHolder"
+    class="c-timesystem-axis"
 >
     <div class="nowMarker"><span class="icon-arrow-down"></span></div>
 </div>
