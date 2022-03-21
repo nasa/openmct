@@ -22,15 +22,17 @@
 
 <template>
 <span class="form-control shell">
-    <span class="field control"
-          :class="model.cssClass"
+    <span
+        class="field control"
+        :class="model.cssClass"
     >
-        <input v-model="field"
-               type="number"
-               :min="model.min"
-               :max="model.max"
-               :step="model.step"
-               @input="updateText()"
+        <input
+            v-model="field"
+            type="number"
+            :min="model.min"
+            :max="model.max"
+            :step="model.step"
+            @input="updateText()"
         >
     </span>
 </span>
