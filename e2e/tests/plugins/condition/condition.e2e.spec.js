@@ -26,8 +26,8 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 const { test, expect } = require('@playwright/test');
 
-test.describe('condition set', () => {
-    test('create new button `condition set` creates new condition object', async ({ page }) => {
+test.describe('Condition Set Operations', () => {
+    test('Create new button `condition set` creates new condition object', async ({ page }) => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -44,5 +44,22 @@ test.describe('condition set', () => {
         ]);
 
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
+    });
+    test.fixme('condition set object properties exist', async ({ page }) => {
+        //Go to object created in step one
+        //Verify the Condition Set properties persist on Save
+        //Verify the Condition Set properties persist on page.reload()
+    });
+    test.fixme('condition set object can be modified', async ({ page }) => {
+        //Go to object created in step one
+        //Update the Condition Set properties
+        //Verify the Condition Set properties persist on Save
+        //Verify the Condition Set properties persist on page.reload()
+    });
+    test.fixme('condition set object can be deleted', async ({ page }) => {
+        //Go to object created in step one
+        //Verify that Condition Set object can be deleted
+        //Verify the Condition Set object does not exist in Tree
+        //Verify the Condition Set object does not exist with direct navigation to object's URL
     });
 });
