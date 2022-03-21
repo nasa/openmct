@@ -1,8 +1,9 @@
 <template>
 <div class="c-progress-bar">
-    <div class="c-progress-bar__bar"
-         :class="{ '--indeterminate': model.progressPerc === undefined }"
-         :style="styleBarWidth"
+    <div
+        class="c-progress-bar__bar"
+        :class="{ '--indeterminate': model.progressPerc === undefined }"
+        :style="styleBarWidth"
     ></div>
     <div
         v-if="model.progressText !== undefined"

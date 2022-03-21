@@ -20,11 +20,12 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-<swim-lane :icon-class="item.type.definition.cssClass"
-           :status="status"
-           :min-height="item.height"
-           :show-ucontents="item.domainObject.type === 'plan'"
-           :span-rows-count="item.rowCount"
+<swim-lane
+    :icon-class="item.type.definition.cssClass"
+    :status="status"
+    :min-height="item.height"
+    :show-ucontents="item.domainObject.type === 'plan'"
+    :span-rows-count="item.rowCount"
 >
     <template slot="label">
         {{ item.domainObject.name }}
