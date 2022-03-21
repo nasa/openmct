@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div ref="historyButton"
-     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+<div
+    ref="historyButton"
+    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
         <button

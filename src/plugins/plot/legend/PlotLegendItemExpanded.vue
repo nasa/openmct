@@ -29,12 +29,14 @@
     @mouseleave="toggleHover(false)"
 >
     <td class="plot-series-swatch-and-name">
-        <span class="plot-series-color-swatch"
-              :style="{ 'background-color': colorAsHexString }"
+        <span
+            class="plot-series-color-swatch"
+            :style="{ 'background-color': colorAsHexString }"
         >
         </span>
-        <span class="is-status__indicator"
-              title="This item is missing or suspect"
+        <span
+            class="is-status__indicator"
+            title="This item is missing or suspect"
         ></span>
         <span class="plot-series-name">{{ name }}</span>
     </td>
@@ -45,8 +47,9 @@
         </span>
     </td>
     <td v-if="showValueWhenExpanded">
-        <span class="plot-series-value cursor-hover hover-value-enabled"
-              :class="[mctLimitStateClass]"
+        <span
+            class="plot-series-value cursor-hover hover-value-enabled"
+            :class="[mctLimitStateClass]"
         >
             {{ formattedYValue }}
         </span>
@@ -56,14 +59,16 @@
             {{ unit }}
         </span>
     </td>
-    <td v-if="showMinimumWhenExpanded"
+    <td
+        v-if="showMinimumWhenExpanded"
         class="mobile-hide"
     >
         <span class="plot-series-value">
             {{ formattedMinY }}
         </span>
     </td>
-    <td v-if="showMaximumWhenExpanded"
+    <td
+        v-if="showMaximumWhenExpanded"
         class="mobile-hide"
     >
         <span class="plot-series-value">

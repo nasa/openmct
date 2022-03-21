@@ -21,9 +21,10 @@
  *****************************************************************************/
 
 <template>
-<section v-show="isEditing"
-         id="test-data"
-         :class="{ 'is-expanded': expanded }"
+<section
+    v-show="isEditing"
+    id="test-data"
+    :class="{ 'is-expanded': expanded }"
 >
     <div class="c-cs__header c-section__header">
         <span
@@ -33,11 +34,13 @@
         ></span>
         <div class="c-cs__header-label c-section__label">Test Data</div>
     </div>
-    <div v-if="expanded"
-         class="c-cs__content"
+    <div
+        v-if="expanded"
+        class="c-cs__content"
     >
-        <div class="c-cs__test-data__controls c-cdef__controls"
-             :disabled="!telemetry.length"
+        <div
+            class="c-cs__test-data__controls c-cdef__controls"
+            :disabled="!telemetry.length"
         >
             <label class="c-toggle-switch">
                 <input
@@ -50,59 +53,69 @@
             </label>
         </div>
         <div class="c-cs-tests">
-            <span v-for="(testInput, tIndex) in testInputs"
-                  :key="tIndex"
-                  class="c-test-datum c-cs-test"
+            <span
+                v-for="(testInput, tIndex) in testInputs"
+                :key="tIndex"
+                class="c-test-datum c-cs-test"
             >
                 <span class="c-cs-test__label">Set</span>
                 <span class="c-cs-test__controls">
                     <span class="c-cdef__control">
-                        <select v-model="testInput.telemetry"
-                                @change="updateMetadata(testInput)"
+                        <select
+                            v-model="testInput.telemetry"
+                            @change="updateMetadata(testInput)"
                         >
                             <option value="">- Select Telemetry -</option>
-                            <option v-for="(telemetryOption, index) in telemetry"
-                                    :key="index"
-                                    :value="telemetryOption.identifier"
+                            <option
+                                v-for="(telemetryOption, index) in telemetry"
+                                :key="index"
+                                :value="telemetryOption.identifier"
                             >
                                 {{ telemetryOption.name }}
                             </option>
                         </select>
                     </span>
-                    <span v-if="testInput.telemetry"
-                          class="c-cdef__control"
+                    <span
+                        v-if="testInput.telemetry"
+                        class="c-cdef__control"
                     >
-                        <select v-model="testInput.metadata"
-                                @change="updateTestData"
+                        <select
+                            v-model="testInput.metadata"
+                            @change="updateTestData"
                         >
                             <option value="">- Select Field -</option>
-                            <option v-for="(option, index) in telemetryMetadataOptions[getId(testInput.telemetry)]"
-                                    :key="index"
-                                    :value="option.key"
+                            <option
+                                v-for="(option, index) in telemetryMetadataOptions[getId(testInput.telemetry)]"
+                                :key="index"
+                                :value="option.key"
                             >
                                 {{ option.name }}
                             </option>
                         </select>
                     </span>
-                    <span v-if="testInput.metadata"
-                          class="c-cdef__control__inputs"
+                    <span
+                        v-if="testInput.metadata"
+                        class="c-cdef__control__inputs"
                     >
-                        <input v-model="testInput.value"
-                               placeholder="Enter test input"
-                               type="text"
-                               class="c-cdef__control__input"
-                               @change="updateTestData"
+                        <input
+                            v-model="testInput.value"
+                            placeholder="Enter test input"
+                            type="text"
+                            class="c-cdef__control__input"
+                            @change="updateTestData"
                         >
                     </span>
                 </span>
                 <div class="c-cs-test__buttons">
-                    <button class="c-click-icon c-test-data__duplicate-button icon-duplicate"
-                            title="Duplicate this test datum"
-                            @click="addTestInput(testInput)"
+                    <button
+                        class="c-click-icon c-test-data__duplicate-button icon-duplicate"
+                        title="Duplicate this test datum"
+                        @click="addTestInput(testInput)"
                     ></button>
-                    <button class="c-click-icon c-test-data__delete-button icon-trash"
-                            title="Delete this test datum"
-                            @click="removeTestInput(tIndex)"
+                    <button
+                        class="c-click-icon c-test-data__delete-button icon-trash"
+                        title="Delete this test datum"
+                        @click="removeTestInput(tIndex)"
                     ></button>
                 </div>
             </span>

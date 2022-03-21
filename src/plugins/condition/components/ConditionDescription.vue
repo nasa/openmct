@@ -22,18 +22,21 @@
 
 <template>
 <div class="c-style__condition-desc">
-    <span v-if="showLabel && condition"
-          class="c-style__condition-desc__name c-condition__name"
+    <span
+        v-if="showLabel && condition"
+        class="c-style__condition-desc__name c-condition__name"
     >
         {{ condition.configuration.name }}
     </span>
-    <span v-if="!condition.isDefault"
-          class="c-style__condition-desc__text"
+    <span
+        v-if="!condition.isDefault"
+        class="c-style__condition-desc__text"
     >
         {{ description }}
     </span>
-    <span v-else
-          class="c-style__condition-desc__text"
+    <span
+        v-else
+        class="c-style__condition-desc__text"
     >
         Match if no other condition is matched
     </span>

@@ -22,47 +22,53 @@
 
 <template>
 <div class="c-plot c-plot--stacked holder holder-plot has-control-bar">
-    <div v-show="!hideExportButtons && !options.compact"
-         class="c-control-bar"
+    <div
+        v-show="!hideExportButtons && !options.compact"
+        class="c-control-bar"
     >
         <span class="c-button-set c-button-set--strip-h">
-            <button class="c-button icon-download"
-                    title="Export This View's Data as PNG"
-                    @click="exportPNG()"
+            <button
+                class="c-button icon-download"
+                title="Export This View's Data as PNG"
+                @click="exportPNG()"
             >
                 <span class="c-button__label">PNG</span>
             </button>
-            <button class="c-button"
-                    title="Export This View's Data as JPG"
-                    @click="exportJPG()"
+            <button
+                class="c-button"
+                title="Export This View's Data as JPG"
+                @click="exportJPG()"
             >
                 <span class="c-button__label">JPG</span>
             </button>
         </span>
-        <button class="c-button icon-crosshair"
-                :class="{ 'is-active': cursorGuide }"
-                title="Toggle cursor guides"
-                @click="toggleCursorGuide"
+        <button
+            class="c-button icon-crosshair"
+            :class="{ 'is-active': cursorGuide }"
+            title="Toggle cursor guides"
+            @click="toggleCursorGuide"
         >
         </button>
-        <button class="c-button"
-                :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
-                title="Toggle grid lines"
-                @click="toggleGridLines"
+        <button
+            class="c-button"
+            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
+            title="Toggle grid lines"
+            @click="toggleGridLines"
         >
         </button>
     </div>
     <div class="l-view-section">
-        <stacked-plot-item v-for="object in compositionObjects"
-                           :key="object.id"
-                           class="c-plot--stacked-container"
-                           :object="object"
-                           :options="options"
-                           :grid-lines="gridLines"
-                           :cursor-guide="cursorGuide"
-                           :plot-tick-width="maxTickWidth"
-                           @plotTickWidth="onTickWidthChange"
-                           @loadingUpdated="loadingUpdated"
+        <stacked-plot-item
+            v-for="object in compositionObjects"
+            :key="object.id"
+            class="c-plot--stacked-container"
+            :object="object"
+            :options="options"
+            :grid-lines="gridLines"
+            :cursor-guide="cursorGuide"
+            :plot-tick-width="maxTickWidth"
+            @plotTickWidth="onTickWidthChange"
+            @loadingUpdated="loadingUpdated"
         />
     </div>
 </div>
