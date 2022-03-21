@@ -26,76 +26,89 @@
     <span class="c-cdef__label">{{ setRowLabel }}</span>
     <span class="c-cdef__controls">
         <span class="c-cdef__control">
-            <select ref="telemetrySelect"
-                    v-model="criterion.telemetry"
-                    @change="updateMetadataOptions"
+            <select
+                ref="telemetrySelect"
+                v-model="criterion.telemetry"
+                @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
                 <option value="all">all telemetry</option>
                 <option value="any">any telemetry</option>
-                <option v-for="telemetryOption in telemetry"
-                        :key="telemetryOption.identifier.key"
-                        :value="telemetryOption.identifier"
+                <option
+                    v-for="telemetryOption in telemetry"
+                    :key="telemetryOption.identifier.key"
+                    :value="telemetryOption.identifier"
                 >
                     {{ telemetryOption.name }}
                 </option>
             </select>
         </span>
-        <span v-if="criterion.telemetry"
-              class="c-cdef__control"
+        <span
+            v-if="criterion.telemetry"
+            class="c-cdef__control"
         >
-            <select ref="metadataSelect"
-                    v-model="criterion.metadata"
-                    @change="updateOperations"
+            <select
+                ref="metadataSelect"
+                v-model="criterion.metadata"
+                @change="updateOperations"
             >
                 <option value="">- Select Field -</option>
-                <option v-for="option in telemetryMetadataOptions"
-                        :key="option.key"
-                        :value="option.key"
+                <option
+                    v-for="option in telemetryMetadataOptions"
+                    :key="option.key"
+                    :value="option.key"
                 >
                     {{ option.name }}
                 </option>
                 <option value="dataReceived">any data received</option>
             </select>
         </span>
-        <span v-if="criterion.telemetry && criterion.metadata"
-              class="c-cdef__control"
+        <span
+            v-if="criterion.telemetry && criterion.metadata"
+            class="c-cdef__control"
         >
-            <select v-model="criterion.operation"
-                    @change="updateInputVisibilityAndValues"
+            <select
+                v-model="criterion.operation"
+                @change="updateInputVisibilityAndValues"
             >
                 <option value="">- Select Comparison -</option>
-                <option v-for="option in filteredOps"
-                        :key="option.name"
-                        :value="option.name"
+                <option
+                    v-for="option in filteredOps"
+                    :key="option.name"
+                    :value="option.name"
                 >
                     {{ option.text }}
                 </option>
             </select>
             <template v-if="!enumerations.length">
-                <span v-for="(item, inputIndex) in inputCount"
-                      :key="inputIndex"
-                      class="c-cdef__control__inputs"
+                <span
+                    v-for="(item, inputIndex) in inputCount"
+                    :key="inputIndex"
+                    class="c-cdef__control__inputs"
                 >
-                    <input v-model="criterion.input[inputIndex]"
-                           class="c-cdef__control__input"
-                           :type="setInputType"
-                           @change="persist"
+                    <input
+                        v-model="criterion.input[inputIndex]"
+                        class="c-cdef__control__input"
+                        :type="setInputType"
+                        @change="persist"
                     >
                     <span v-if="inputIndex < inputCount-1">and</span>
                 </span>
                 <span v-if="criterion.metadata === 'dataReceived'">seconds</span>
             </template>
             <span v-else>
-                <span v-if="inputCount && criterion.operation"
-                      class="c-cdef__control"
+                <span
+                    v-if="inputCount && criterion.operation"
+                    class="c-cdef__control"
                 >
-                    <select v-model="criterion.input[0]"
-                            @change="persist"
+                    <select
+                        v-model="criterion.input[0]"
+                        @change="persist"
                     >
-                        <option v-for="option in enumerations"
-                                :key="option.string"
-                                :value="option.value.toString()"
+                        <option
+                            v-for="option in enumerations"
+                            :key="option.string"
+                            :value="option.value.toString()"
                         >
                             {{ option.string }}
                         </option>

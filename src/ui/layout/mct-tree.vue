@@ -258,10 +258,12 @@ export default {
         if (!this.isSelectorTree) {
             await this.syncTreeOpenItems();
         } else {
-            const objectPath = await this.openmct.objects.getOriginalPath(this.initialSelection.identifier);
-            const navigationPath = this.buildNavigationPath(objectPath);
+            if (this.initialSelection.identifier) {
+                const objectPath = await this.openmct.objects.getOriginalPath(this.initialSelection.identifier);
+                const navigationPath = this.buildNavigationPath(objectPath);
 
-            this.openAndScrollTo(navigationPath);
+                this.openAndScrollTo(navigationPath);
+            }
         }
     },
     created() {

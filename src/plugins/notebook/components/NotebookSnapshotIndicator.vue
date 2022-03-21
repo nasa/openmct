@@ -1,11 +1,12 @@
 <template>
-<div class="c-indicator c-indicator--clickable icon-camera"
-     :class="[
-         { 's-status-off': snapshotCount === 0 },
-         { 's-status-on': snapshotCount > 0 },
-         { 's-status-caution': snapshotCount === snapshotMaxCount },
-         { 'has-new-snapshot': flashIndicator }
-     ]"
+<div
+    class="c-indicator c-indicator--clickable icon-camera"
+    :class="[
+        { 's-status-off': snapshotCount === 0 },
+        { 's-status-on': snapshotCount > 0 },
+        { 's-status-caution': snapshotCount === snapshotMaxCount },
+        { 'has-new-snapshot': flashIndicator }
+    ]"
 >
     <span class="label c-indicator__label">
         {{ indicatorTitle }}

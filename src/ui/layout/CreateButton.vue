@@ -1,6 +1,7 @@
 <template>
-<div ref="createButton"
-     class="c-create-button--w"
+<div
+    ref="createButton"
+    class="c-create-button--w"
 >
     <button
         class="c-create-button c-button--menu c-button--major icon-plus"
