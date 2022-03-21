@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div v-if="selectedTimeSystem.name"
-     ref="timeSystemButton"
-     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+<div
+    v-if="selectedTimeSystem.name"
+    ref="timeSystemButton"
+    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <button
         class="c-button--menu c-time-system-button"

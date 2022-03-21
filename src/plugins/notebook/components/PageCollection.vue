@@ -1,17 +1,19 @@
 <template>
 <ul class="c-list">
-    <li v-for="page in pages"
+    <li
+        v-for="page in pages"
         :key="page.id"
         class="c-list__item-h"
     >
-        <Page ref="pageComponent"
-              :default-page-id="defaultPageId"
-              :selected-page-id="selectedPageId"
-              :page="page"
-              :page-title="pageTitle"
-              @deletePage="deletePage"
-              @renamePage="updatePage"
-              @selectPage="selectPage"
+        <Page
+            ref="pageComponent"
+            :default-page-id="defaultPageId"
+            :selected-page-id="selectedPageId"
+            :page="page"
+            :page-title="pageTitle"
+            @deletePage="deletePage"
+            @renamePage="updatePage"
+            @selectPage="selectPage"
         />
     </li>
 </ul>

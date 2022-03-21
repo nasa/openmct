@@ -21,35 +21,42 @@
 -->
 <template>
 <div class="u-contents">
-    <div v-if="canEdit"
-         class="grid-row"
+    <div
+        v-if="canEdit"
+        class="grid-row"
     >
-        <div class="grid-cell label"
-             :title="editTitle"
+        <div
+            class="grid-cell label"
+            :title="editTitle"
         >{{ shortLabel }}</div>
         <div class="grid-cell value">
-            <div class="c-click-swatch c-click-swatch--menu"
-                 @click="toggleSwatch()"
+            <div
+                class="c-click-swatch c-click-swatch--menu"
+                @click="toggleSwatch()"
             >
-                <span class="c-color-swatch"
-                      :style="{ background: currentColor }"
+                <span
+                    class="c-color-swatch"
+                    :style="{ background: currentColor }"
                 >
                 </span>
             </div>
             <div class="c-palette c-palette--color">
-                <div v-show="swatchActive"
-                     class="c-palette__items"
+                <div
+                    v-show="swatchActive"
+                    class="c-palette__items"
                 >
-                    <div v-for="group in colorPaletteGroups"
-                         :key="group.id"
-                         class="u-contents"
+                    <div
+                        v-for="group in colorPaletteGroups"
+                        :key="group.id"
+                        class="u-contents"
                     >
-                        <div v-for="color in group"
-                             :key="color.id"
-                             class="c-palette__item"
-                             :class="{ 'selected': currentColor === color.hexString }"
-                             :style="{ background: color.hexString }"
-                             @click="setColor(color)"
+                        <div
+                            v-for="color in group"
+                            :key="color.id"
+                            class="c-palette__item"
+                            :class="{ 'selected': currentColor === color.hexString }"
+                            :style="{ background: color.hexString }"
+                            @click="setColor(color)"
                         >
                         </div>
                     </div>
@@ -57,17 +64,20 @@
             </div>
         </div>
     </div>
-    <div v-else
-         class="grid-row"
+    <div
+        v-else
+        class="grid-row"
     >
-        <div class="grid-cell label"
-             :title="viewTitle"
+        <div
+            class="grid-cell label"
+            :title="viewTitle"
         >{{ shortLabel }}</div>
         <div class="grid-cell value">
-            <span class="c-color-swatch"
-                  :style="{
-                      'background': currentColor
-                  }"
+            <span
+                class="c-color-swatch"
+                :style="{
+                    'background': currentColor
+                }"
             >
             </span>
         </div>
