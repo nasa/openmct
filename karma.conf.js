@@ -102,7 +102,7 @@ module.exports = (config) => {
             reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    lines: 55
+                    lines: 52
                 }
             }
         },

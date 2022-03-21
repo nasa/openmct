@@ -20,15 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {saveAs} from 'saveAs';
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding moving objects.
+*/
 
-class JSONExporter {
-    export(obj, options) {
-        let filename = (options && options.filename) || "test-export.json";
-        let jsonText = JSON.stringify(obj);
-        let blob = new Blob([jsonText], {type: "application/json"});
-        saveAs(blob, filename);
-    }
-}
+const { test, expect } = require('@playwright/test');
 
-export default JSONExporter;
+test.describe('Move item tests', () => {
+    test.fixme('Create a basic object and verify that it can be moved to another Folder', async ({ page }) => {
+        //Create and save Folder
+        //Create and save Domain Object
+        //Verify that the newly created domain object can be moved to Folder from Step 1.
+        //Verify that newly moved object appears in the correct point in Tree
+        //Verify that newly moved object appears correctly in Inspector panel
+    });
+    test.fixme('Create a basic object and verify that it cannot be moved to object without Composition Provider', async ({ page }) => {
+        //Create and save Telemetry Object
+        //Create and save Domain Object
+        //Verify that the newly created domain object cannot be moved to Telemetry Object from step 1.
+    });
+});

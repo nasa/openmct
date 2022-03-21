@@ -20,15 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {saveAs} from 'saveAs';
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding importAsJSON.
+*/
 
-class JSONExporter {
-    export(obj, options) {
-        let filename = (options && options.filename) || "test-export.json";
-        let jsonText = JSON.stringify(obj);
-        let blob = new Blob([jsonText], {type: "application/json"});
-        saveAs(blob, filename);
-    }
-}
+const { test, expect } = require('@playwright/test');
 
-export default JSONExporter;
+test.describe('ExportAsJSON', () => {
+    test.fixme('Verify that domain object can be importAsJSON from Tree', async ({ page }) => {
+        //Verify that an testdata JSON file can be imported from Tree
+        //Verify correctness of imported domain object
+    });
+    test.fixme('Verify that domain object can be importAsJSON from 3 dot menu on folder', async ({ page }) => {
+        //Verify that an testdata JSON file can be imported from 3 dot menu on folder domain object
+        //Verify correctness of imported domain object
+    });
+    test.fixme('Verify that a nested Objects can be importAsJSON', async ({ page }) => {
+        // Testdata with hierarchy
+        // ImportAsJSON on Tree
+        // Verify Hierarchy
+    });
+    test.fixme('Verify that the ImportAsJSON dropdown does not appear for the item X', async ({ page }) => {
+        // Other than non-persistible objects
+    });
+});
