@@ -22,18 +22,21 @@
 
 <template>
 <span class="form-control shell">
-    <span class="field control"
-          :class="model.cssClass"
+    <span
+        class="field control"
+        :class="model.cssClass"
     >
-        <input id="fileElem"
-               ref="fileInput"
-               type="file"
-               accept=".json"
-               style="display:none"
+        <input
+            id="fileElem"
+            ref="fileInput"
+            type="file"
+            accept=".json"
+            style="display:none"
         >
-        <button id="fileSelect"
-                class="c-button"
-                @click="selectFile"
+        <button
+            id="fileSelect"
+            class="c-button"
+            @click="selectFile"
         >
             {{ name }}
         </button>
