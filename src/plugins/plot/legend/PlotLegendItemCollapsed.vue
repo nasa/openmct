@@ -20,26 +20,30 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="plot-legend-item"
-     :class="{
-         'is-status--missing': isMissing
-     }"
-     @mouseover="toggleHover(true)"
-     @mouseleave="toggleHover(false)"
+<div
+    class="plot-legend-item"
+    :class="{
+        'is-status--missing': isMissing
+    }"
+    @mouseover="toggleHover(true)"
+    @mouseleave="toggleHover(false)"
 >
     <div class="plot-series-swatch-and-name">
-        <span class="plot-series-color-swatch"
-              :style="{ 'background-color': colorAsHexString }"
+        <span
+            class="plot-series-color-swatch"
+            :style="{ 'background-color': colorAsHexString }"
         >
         </span>
-        <span class="is-status__indicator"
-              title="This item is missing or suspect"
+        <span
+            class="is-status__indicator"
+            title="This item is missing or suspect"
         ></span>
         <span class="plot-series-name">{{ nameWithUnit }}</span>
     </div>
-    <div v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none')"
-         class="plot-series-value hover-value-enabled"
-         :class="[{ 'cursor-hover': notNearest }, valueToDisplayWhenCollapsedClass, mctLimitStateClass]"
+    <div
+        v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none')"
+        class="plot-series-value hover-value-enabled"
+        :class="[{ 'cursor-hover': notNearest }, valueToDisplayWhenCollapsedClass, mctLimitStateClass]"
     >
         <span v-if="valueToShowWhenCollapsed === 'nearestValue'">{{ formattedYValue }}</span>
         <span v-else-if="valueToShowWhenCollapsed === 'nearestTimestamp'">{{ formattedXValue }}</span>
