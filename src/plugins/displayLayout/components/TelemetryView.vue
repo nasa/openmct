@@ -37,8 +37,9 @@
         :data-font="item.font"
         @contextmenu.prevent="showContextMenu"
     >
-        <div class="is-status__indicator"
-             :title="`This item is ${status}`"
+        <div
+            class="is-status__indicator"
+            :title="`This item is ${status}`"
         ></div>
         <div
             v-if="showLabel"

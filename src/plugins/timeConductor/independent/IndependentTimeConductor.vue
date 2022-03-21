@@ -36,25 +36,29 @@
 
         <ConductorModeIcon />
 
-        <div v-if="timeOptions && independentTCEnabled"
-             class="c-conductor__controls"
+        <div
+            v-if="timeOptions && independentTCEnabled"
+            class="c-conductor__controls"
         >
-            <Mode v-if="mode"
-                  class="c-conductor__mode-select"
-                  :key-string="domainObject.identifier.key"
-                  :mode="timeOptions.mode"
-                  :enabled="independentTCEnabled"
-                  @modeChanged="saveMode"
+            <Mode
+                v-if="mode"
+                class="c-conductor__mode-select"
+                :key-string="domainObject.identifier.key"
+                :mode="timeOptions.mode"
+                :enabled="independentTCEnabled"
+                @modeChanged="saveMode"
             />
 
-            <conductor-inputs-fixed v-if="isFixed"
-                                    :key-string="domainObject.identifier.key"
-                                    @updated="saveFixedOffsets"
+            <conductor-inputs-fixed
+                v-if="isFixed"
+                :key-string="domainObject.identifier.key"
+                @updated="saveFixedOffsets"
             />
 
-            <conductor-inputs-realtime v-else
-                                       :key-string="domainObject.identifier.key"
-                                       @updated="saveClockOffsets"
+            <conductor-inputs-realtime
+                v-else
+                :key-string="domainObject.identifier.key"
+                @updated="saveClockOffsets"
             />
         </div>
     </div>
