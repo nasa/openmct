@@ -21,8 +21,9 @@
  *****************************************************************************/
 
 <template>
-<section id="conditionCollection"
-         :class="{ 'is-expanded': expanded }"
+<section
+    id="conditionCollection"
+    :class="{ 'is-expanded': expanded }"
 >
     <div class="c-cs__header c-section__header">
         <span
@@ -32,12 +33,14 @@
         ></span>
         <div class="c-cs__header-label c-section__label">Conditions</div>
     </div>
-    <div v-if="expanded"
-         class="c-cs__content"
+    <div
+        v-if="expanded"
+        class="c-cs__content"
     >
-        <div v-show="isEditing"
-             class="hint"
-             :class="{ 's-status-icon-warning-lo': !telemetryObjs.length }"
+        <div
+            v-show="isEditing"
+            class="hint"
+            :class="{ 's-status-icon-warning-lo': !telemetryObjs.length }"
         >
             <template v-if="!telemetryObjs.length">Drag telemetry into this Condition Set to configure Conditions and add criteria.</template>
             <template v-else>The first condition to match is the one that is applied. Drag conditions to reorder.</template>
@@ -52,24 +55,26 @@
             <span class="c-cs-button__label">Add Condition</span>
         </button>
 
-        <div class="c-cs__conditions-h"
-             :class="{ 'is-active-dragging': isDragging }"
+        <div
+            class="c-cs__conditions-h"
+            :class="{ 'is-active-dragging': isDragging }"
         >
-            <Condition v-for="(condition, index) in conditionCollection"
-                       :key="condition.id"
-                       :condition="condition"
-                       :current-condition-id="currentConditionId"
-                       :condition-index="index"
-                       :telemetry="telemetryObjs"
-                       :is-editing="isEditing"
-                       :move-index="moveIndex"
-                       :is-dragging="isDragging"
-                       @updateCondition="updateCondition"
-                       @removeCondition="removeCondition"
-                       @cloneCondition="cloneCondition"
-                       @setMoveIndex="setMoveIndex"
-                       @dragComplete="dragComplete"
-                       @dropCondition="dropCondition"
+            <Condition
+                v-for="(condition, index) in conditionCollection"
+                :key="condition.id"
+                :condition="condition"
+                :current-condition-id="currentConditionId"
+                :condition-index="index"
+                :telemetry="telemetryObjs"
+                :is-editing="isEditing"
+                :move-index="moveIndex"
+                :is-dragging="isDragging"
+                @updateCondition="updateCondition"
+                @removeCondition="removeCondition"
+                @cloneCondition="cloneCondition"
+                @setMoveIndex="setMoveIndex"
+                @dragComplete="dragComplete"
+                @dropCondition="dropCondition"
             />
         </div>
     </div>

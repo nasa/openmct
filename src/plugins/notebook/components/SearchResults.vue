@@ -24,18 +24,19 @@
 <div class="c-notebook__search-results">
     <div class="c-notebook__search-results__header">Search Results ({{ results.length }})</div>
     <div class="c-notebook__entries">
-        <NotebookEntry v-for="(result, index) in results"
-                       :key="index"
-                       :domain-object="domainObject"
-                       :result="result"
-                       :entry="result.entry"
-                       :read-only="true"
-                       :selected-page="result.page"
-                       :selected-section="result.section"
-                       @editingEntry="editingEntry"
-                       @cancelEdit="cancelEdit"
-                       @changeSectionPage="changeSectionPage"
-                       @updateEntries="updateEntries"
+        <NotebookEntry 
+            v-for="(result, index) in results"
+            :key="index"
+            :domain-object="domainObject"
+            :result="result"
+            :entry="result.entry"
+            :read-only="true"
+            :selected-page="result.page"
+            :selected-section="result.section"
+            @editingEntry="editingEntry"
+            @cancelEdit="cancelEdit"
+            @changeSectionPage="changeSectionPage"
+            @updateEntries="updateEntries"
         />
     </div>
 </div>
