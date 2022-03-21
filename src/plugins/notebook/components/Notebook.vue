@@ -454,6 +454,8 @@ export default {
             const classList = document.querySelector('body').classList;
             const isPhone = Array.from(classList).includes('phone');
             const isTablet = Array.from(classList).includes('tablet');
+            // address in https://github.com/nasa/openmct/issues/4875
+            // eslint-disable-next-line compat/compat
             const isPortrait = window.screen.orientation.type.includes('portrait');
             const isInLayout = Boolean(this.$el.closest('.c-so-view'));
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
