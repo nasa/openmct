@@ -1,8 +1,10 @@
 <template>
-<div class="c-menu"
-     :class="[options.menuClass, 'c-super-menu']"
+<div
+    class="c-menu"
+    :class="[options.menuClass, 'c-super-menu']"
 >
-    <ul v-if="options.actions.length && options.actions[0].length"
+    <ul
+        v-if="options.actions.length && options.actions[0].length"
         class="c-super-menu__menu"
     >
         <template
@@ -34,7 +36,8 @@
         </template>
     </ul>
 
-    <ul v-else
+    <ul
+        v-else
         class="c-super-menu__menu"
     >
         <li

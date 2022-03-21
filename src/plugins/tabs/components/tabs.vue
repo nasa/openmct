@@ -37,18 +37,21 @@
                 class="c-tabs-view__tab__label c-object-label"
                 :class="[tab.status ? `is-status--${tab.status}` : '']"
             >
-                <div class="c-object-label__type-icon"
-                     :class="tab.type.definition.cssClass"
+                <div
+                    class="c-object-label__type-icon"
+                    :class="tab.type.definition.cssClass"
                 >
-                    <span class="is-status__indicator"
-                          :title="`This item is ${tab.status}`"
+                    <span
+                        class="is-status__indicator"
+                        :title="`This item is ${tab.status}`"
                     ></span>
                 </div>
                 <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
             </div>
-            <button v-if="isEditing"
-                    class="icon-x c-click-icon c-tabs-view__tab__close-btn"
-                    @click="showRemoveDialog(index)"
+            <button
+                v-if="isEditing"
+                class="icon-x c-click-icon c-tabs-view__tab__close-btn"
+                @click="showRemoveDialog(index)"
             ></button>
         </div>
     </div>

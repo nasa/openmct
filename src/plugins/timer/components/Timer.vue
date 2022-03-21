@@ -32,10 +32,11 @@
             :class="[{'hide': timerState === 'stopped' }]"
             @click="restartTimer"
         ></button>
-        <button :title="timerStateButtonText"
-                class="c-timer__ctrl-pause-play c-icon-button c-icon-button--major"
-                :class="[timerStateButtonIcon]"
-                @click="toggleStateButton"
+        <button
+            :title="timerStateButtonText"
+            class="c-timer__ctrl-pause-play c-icon-button c-icon-button--major"
+            :class="[timerStateButtonIcon]"
+            @click="toggleStateButton"
         ></button>
     </div>
     <div
