@@ -366,7 +366,7 @@ export default {
             }
 
             this.currentTabIndex = tabIndex;
-            this.currentTab = this.tabsList[tabIndex];
+            this.showTab(this.tabsList[tabIndex]);
         },
         handleWindowResize() {
             if (!this.$refs.tabs || !this.$refs.tabsHolder) {

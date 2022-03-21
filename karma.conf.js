@@ -36,7 +36,7 @@ module.exports = (config) => {
     if (coverageEnabled) {
         webpackConfig.module.rules.push({
             test: /\.js$/,
-            exclude: /node_modules|e2e|example|lib|dist|\.*.*Spec\.js/,
+            exclude: /node_modules|e2e|lib|dist|\.*.*Spec\.js/,
             use: {
                 loader: 'istanbul-instrumenter-loader',
                 options: {
