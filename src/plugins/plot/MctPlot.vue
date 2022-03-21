@@ -68,6 +68,9 @@
 
                 <div ref="chartContainer"
                      class="gl-plot-chart-wrapper"
+                     :class="[
+                         { 'alt-pressed': altPressed },
+                     ]"
                 >
                     <mct-chart :rectangles="rectangles"
                                :highlights="highlights"
@@ -207,6 +210,7 @@ export default {
     },
     data() {
         return {
+            altPressed: false,
             highlights: [],
             lockHighlightPoint: false,
             tickWidth: 0,
@@ -245,6 +249,8 @@ export default {
         }
     },
     mounted() {
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
         eventHelpers.extend(this);
         this.updateRealTime = this.updateRealTime.bind(this);
         this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
@@ -276,9 +282,21 @@ export default {
 
     },
     beforeDestroy() {
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
         this.destroy();
     },
     methods: {
+        handleKeyDown(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = true;
+            }
+        },
+        handleKeyUp(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = false;
+            }
+        },
         setTimeContext() {
             this.stopFollowingTimeContext();
 
