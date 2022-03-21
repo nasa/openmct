@@ -37,8 +37,7 @@
         />
     </imagery-view-menu-switcher>
 
-    <zoom-settings v-if="!isSmall"
-                   :pan-zoom-locked="panZoomLocked"
+    <zoom-settings :pan-zoom-locked="panZoomLocked"
                    :zoom-factor="zoomFactor"
                    @zoomOut="zoomOut"
                    @zoomIn="zoomIn"
@@ -46,8 +45,7 @@
                    @handleResetImage="handleResetImage"
     />
 
-    <imagery-view-menu-switcher v-if="isSmall"
-                                :icon-class="'icon-magnify'"
+    <imagery-view-menu-switcher :icon-class="'icon-magnify'"
                                 :title="'Zoom settings'"
     >
         <zoom-settings :pan-zoom-locked="panZoomLocked"
@@ -115,8 +113,7 @@ export default {
             filters: {
                 brightness: 100,
                 contrast: 100
-            },
-            isSmall: true
+            }
         };
     },
     computed: {
