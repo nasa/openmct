@@ -71,6 +71,12 @@ export default {
             default() {
                 return undefined;
             }
+        },
+        inputBounds: {
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -98,6 +104,12 @@ export default {
     watch: {
         keyString() {
             this.setTimeContext();
+        },
+        inputBounds: {
+            handler(newBounds) {
+                this.handleNewBounds(newBounds);
+            },
+            deep: true
         }
     },
     mounted() {
