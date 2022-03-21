@@ -131,6 +131,10 @@
         @include flash($animName: flashImageAge, $iter: 2, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
     }
 
+    &__layer-image {
+        pointer-events: none;
+    }
+
     &__thumbs-wrapper {
         display: flex; // Uses row layout
 
@@ -191,8 +195,12 @@
 
         &__content {
             // Menu panel
-            top: 25px;
+            top: 28px;
             position: absolute;
+
+            .c-so-view & {
+                top: 25px;
+            }
         }
     }
 }
