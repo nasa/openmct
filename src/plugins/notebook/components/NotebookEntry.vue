@@ -28,6 +28,9 @@
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time">
+            <template v-if="entry.createdBy">
+                <span class="c-icon icon-person">{{ entry.createdBy }}</span>
+            </template>
             <span>{{ createdOnDate }}</span>
             <span>{{ createdOnTime }}</span>
         </div>
@@ -182,7 +185,7 @@ export default {
         this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {
-        addNewEmbed(objectPath) {
+        async addNewEmbed(objectPath) {
             const bounds = this.openmct.time.bounds();
             const snapshotMeta = {
                 bounds,
@@ -190,7 +193,7 @@ export default {
                 objectPath,
                 openmct: this.openmct
             };
-            const newEmbed = createNewEmbed(snapshotMeta);
+            const newEmbed = await createNewEmbed(snapshotMeta);
             this.entry.embeds.push(newEmbed);
         },
         cancelEditMode(event) {
@@ -206,7 +209,7 @@ export default {
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
-        dropOnEntry($event) {
+        async dropOnEntry($event) {
             event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
@@ -221,7 +224,7 @@ export default {
             } else {
                 const data = $event.dataTransfer.getData('openmct/domain-object-path');
                 const objectPath = JSON.parse(data);
-                this.addNewEmbed(objectPath);
+                await this.addNewEmbed(objectPath);
             }
 
             this.$emit('updateEntry', this.entry);

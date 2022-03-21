@@ -30,6 +30,7 @@ export default {
         this.timeSystemChange = this.timeSystemChange.bind(this);
         this.setDataTimeContext = this.setDataTimeContext.bind(this);
         this.setDataTimeContext();
+        this.openmct.objectViews.on('clearData', this.clearData);
 
         // set
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -54,6 +55,7 @@ export default {
         }
 
         this.stopFollowingDataTimeContext();
+        this.openmct.objectViews.off('clearData', this.clearData);
     },
     methods: {
         setDataTimeContext() {
@@ -150,6 +152,25 @@ export default {
                 //this is to optimize anything that reacts to imageHistory length
                 this.imageHistory = imagery;
             }
+        },
+        clearData(domainObjectToClear) {
+            // global clearData button is accepted therefore no truthy check on inputted param
+            const clearDataForObjectSelected = Boolean(domainObjectToClear);
+            if (clearDataForObjectSelected) {
+                const idsEqual = this.openmct.objects.areIdsEqual(
+                    domainObjectToClear.identifier,
+                    this.domainObject.identifier
+                );
+                if (!idsEqual) {
+                    return;
+                }
+            }
+
+            // splice array to encourage garbage collection
+            this.imageHistory.splice(0, this.imageHistory.length);
+
+            // requesting history effectively clears imageHistory array
+            return this.requestHistory();
         },
         timeSystemChange() {
             this.timeSystem = this.timeContext.timeSystem();

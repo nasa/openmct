@@ -20,15 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {saveAs} from 'saveAs';
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding exportAsJSON.
+*/
 
-class JSONExporter {
-    export(obj, options) {
-        let filename = (options && options.filename) || "test-export.json";
-        let jsonText = JSON.stringify(obj);
-        let blob = new Blob([jsonText], {type: "application/json"});
-        saveAs(blob, filename);
-    }
-}
+const { test, expect } = require('@playwright/test');
 
-export default JSONExporter;
+test.describe('ExportAsJSON', () => {
+    test.fixme('Create a basic object and verify that it can be exported as JSON from Tree', async ({ page }) => {
+        //Create domain object
+        //Save Domain Object
+        //Verify that the newly created domain object can be exported as JSON from the Tree
+    });
+    test.fixme('Create a basic object and verify that it can be exported as JSON from 3 dot menu', async ({ page }) => {
+        //Create domain object
+        //Save Domain Object
+        //Verify that the newly created domain object can be exported as JSON from the 3 dot menu
+    });
+    test.fixme('Verify that a nested Object can be exported as JSON', async ({ page }) => {
+        // Create 2 objects with hierarchy
+        // Export as JSON
+        // Verify Hiearchy
+    });
+    test.fixme('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
+        // Other than non-persistible objects
+    });
+});

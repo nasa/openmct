@@ -1,4 +1,4 @@
-const LEGACY_FILES = ["platform/**", "example/**"];
+const LEGACY_FILES = ["example/**"];
 module.exports = {
     "env": {
         "browser": true,

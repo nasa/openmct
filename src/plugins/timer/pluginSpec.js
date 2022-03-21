@@ -67,6 +67,10 @@ describe("Timer plugin:", () => {
         });
     }
 
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
+
     describe("should still work if it's in the old format", () => {
         let timerViewProvider;
         let timerView;
@@ -96,6 +100,7 @@ describe("Timer plugin:", () => {
             timerViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'timer.view');
 
             spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(timerViewObject));
+            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 
             mutableTimerObject = await openmct.objects.getMutable(timerViewObject.identifier);
 
@@ -173,8 +178,6 @@ describe("Timer plugin:", () => {
             if (appHolder) {
                 appHolder.remove();
             }
-
-            return resetApplicationState(openmct);
         });
 
         it("has name as Timer", () => {
