@@ -23,22 +23,25 @@
 <template>
 <div class="c-inspector">
     <object-name />
-    <div v-if="showStyles"
-         class="c-inspector__tabs c-tabs"
+    <div
+        v-if="showStyles"
+        class="c-inspector__tabs c-tabs"
     >
-        <div v-for="tabbedView in tabbedViews"
-             :key="tabbedView.key"
-             class="c-inspector__tab c-tab"
-             :class="{'is-current': isCurrent(tabbedView)}"
-             @click="updateCurrentTab(tabbedView)"
+        <div
+            v-for="tabbedView in tabbedViews"
+            :key="tabbedView.key"
+            class="c-inspector__tab c-tab"
+            :class="{'is-current': isCurrent(tabbedView)}"
+            @click="updateCurrentTab(tabbedView)"
         >
             {{ tabbedView.name }}
         </div>
 
     </div>
     <div class="c-inspector__content">
-        <multipane v-show="currentTabbedView.key === '__properties'"
-                   type="vertical"
+        <multipane
+            v-show="currentTabbedView.key === '__properties'"
+            type="vertical"
         >
             <pane class="c-inspector__properties">
                 <Properties

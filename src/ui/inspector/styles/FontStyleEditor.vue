@@ -1,7 +1,8 @@
 <template>
 <div class="c-toolbar">
-    <div ref="fontSizeMenu"
-         class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left"
+    <div
+        ref="fontSizeMenu"
+        class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left"
     >
         <button
             class="c-icon-button c-button--menu icon-font-size"
@@ -10,8 +11,9 @@
             <span class="c-button__label">{{ fontSizeLabel }}</span>
         </button>
     </div>
-    <div ref="fontMenu"
-         class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left"
+    <div
+        ref="fontMenu"
+        class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left"
     >
         <button
             class="c-icon-button c-button--menu icon-font"
