@@ -1,40 +1,48 @@
 <template>
 <ul>
-    <li class="c-tree__item menus-to-left"
+    <li
+        class="c-tree__item menus-to-left"
         :class="isAliasCss"
     >
-        <span class="c-disclosure-triangle is-enabled flex-elem"
-              :class="expandedCssClass"
-              @click="toggleExpanded"
+        <span
+            class="c-disclosure-triangle is-enabled flex-elem"
+            :class="expandedCssClass"
+            @click="toggleExpanded"
         >
         </span>
         <div :class="objectLabelCss">
-            <div class="c-object-label__type-icon"
-                 :class="[seriesCss]"
+            <div
+                class="c-object-label__type-icon"
+                :class="[seriesCss]"
             >
-                <span class="is-status__indicator"
-                      title="This item is missing or suspect"
+                <span
+                    class="is-status__indicator"
+                    title="This item is missing or suspect"
                 ></span>
             </div>
             <div class="c-object-label__name">{{ series.domainObject.name }}</div>
         </div>
     </li>
-    <ul v-show="expanded"
+    <ul
+        v-show="expanded"
         class="grid-properties js-plot-options-edit-properties"
     >
         <li class="grid-row">
             <!-- Value to be displayed -->
-            <div class="grid-cell label"
-                 title="The field to be plotted as a value for this series."
+            <div
+                class="grid-cell label"
+                title="The field to be plotted as a value for this series."
             >Value</div>
             <div class="grid-cell value">
-                <select v-model="yKey"
-                        @change="updateForm('yKey')"
+                <select
+                    v-model="yKey"
+                    @change="updateForm('yKey')"
                 >
-                    <option v-for="option in yKeyOptions"
-                            :key="option.value"
-                            :value="option.value"
-                            :selected="option.value == yKey"
+                    <option
+                        v-for="option in yKeyOptions"
+                        :key="option.value"
+                        :value="option.value"
+                        :selected="option.value == yKey"
                     >
                         {{ option.name }}
                     </option>
@@ -42,12 +50,14 @@
             </div>
         </li>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="The rendering method to join lines for this series."
+            <div
+                class="grid-cell label"
+                title="The rendering method to join lines for this series."
             >Line Method</div>
             <div class="grid-cell value">
-                <select v-model="interpolate"
-                        @change="updateForm('interpolate')"
+                <select
+                    v-model="interpolate"
+                    @change="updateForm('interpolate')"
                 >
                     <option value="none">None</option>
                     <option value="linear">Linear interpolate</option>
@@ -56,13 +66,15 @@
             </div>
         </li>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Whether markers are displayed."
+            <div
+                class="grid-cell label"
+                title="Whether markers are displayed."
             >Markers</div>
             <div class="grid-cell value">
-                <input v-model="markers"
-                       type="checkbox"
-                       @change="updateForm('markers')"
+                <input
+                    v-model="markers"
+                    type="checkbox"
+                    @change="updateForm('markers')"
                 >
                 <select
                     v-show="markers"
@@ -81,47 +93,56 @@
             </div>
         </li>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Display markers visually denoting points in alarm."
+            <div
+                class="grid-cell label"
+                title="Display markers visually denoting points in alarm."
             >Alarm Markers</div>
             <div class="grid-cell value">
-                <input v-model="alarmMarkers"
-                       type="checkbox"
-                       @change="updateForm('alarmMarkers')"
+                <input
+                    v-model="alarmMarkers"
+                    type="checkbox"
+                    @change="updateForm('alarmMarkers')"
                 >
             </div>
         </li>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Display limit lines"
+            <div
+                class="grid-cell label"
+                title="Display limit lines"
             >Limit lines</div>
             <div class="grid-cell value">
-                <input v-model="limitLines"
-                       type="checkbox"
-                       @change="updateForm('limitLines')"
+                <input
+                    v-model="limitLines"
+                    type="checkbox"
+                    @change="updateForm('limitLines')"
                 >
             </div>
         </li>
-        <li v-show="markers || alarmMarkers"
+        <li
+            v-show="markers || alarmMarkers"
             class="grid-row"
         >
-            <div class="grid-cell label"
-                 title="The size of regular and alarm markers for this series."
+            <div
+                class="grid-cell label"
+                title="The size of regular and alarm markers for this series."
             >Marker Size:</div>
-            <div class="grid-cell value"><input v-model="markerSize"
-                                                class="c-input--flex"
-                                                type="text"
-                                                @change="updateForm('markerSize')"
+            <div class="grid-cell value"><input
+                v-model="markerSize"
+                class="c-input--flex"
+                type="text"
+                @change="updateForm('markerSize')"
             ></div>
         </li>
-        <li v-show="interpolate !== 'none' || markers"
+        <li
+            v-show="interpolate !== 'none' || markers"
             class="grid-row"
         >
-            <ColorSwatch :current-color="currentColor"
-                         edit-title="Manually set the plot line and marker color for this series."
-                         view-title="The plot line and marker color for this series."
-                         short-label="Color"
-                         @colorSet="setColor"
+            <ColorSwatch
+                :current-color="currentColor"
+                edit-title="Manually set the plot line and marker color for this series."
+                view-title="The plot line and marker color for this series."
+                short-label="Color"
+                @colorSet="setColor"
             />
         </li>
     </ul>

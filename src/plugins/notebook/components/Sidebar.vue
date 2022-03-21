@@ -7,21 +7,23 @@
             </div>
         </div>
         <div class="c-sidebar__contents-and-controls">
-            <button class="c-list-button"
-                    @click="addSection"
+            <button
+                class="c-list-button"
+                @click="addSection"
             >
                 <span class="c-button c-list-button__button icon-plus"></span>
                 <span class="c-list-button__label">Add {{ sectionTitle }}</span>
             </button>
-            <SectionCollection class="c-sidebar__contents"
-                               :default-section-id="defaultSectionId"
-                               :selected-section-id="selectedSectionId"
-                               :domain-object="domainObject"
-                               :sections="sections"
-                               :section-title="sectionTitle"
-                               @defaultSectionDeleted="defaultSectionDeleted"
-                               @updateSection="sectionsChanged"
-                               @selectSection="selectSection"
+            <SectionCollection
+                class="c-sidebar__contents"
+                :default-section-id="defaultSectionId"
+                :selected-section-id="selectedSectionId"
+                :domain-object="domainObject"
+                :sections="sections"
+                :section-title="sectionTitle"
+                @defaultSectionDeleted="defaultSectionDeleted"
+                @updateSection="sectionsChanged"
+                @selectSection="selectSection"
             />
         </div>
     </div>
@@ -30,31 +32,34 @@
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ pageTitle }}</span>
             </div>
-            <button class="c-click-icon c-click-icon--major icon-x-in-circle"
-                    @click="toggleNav"
+            <button
+                class="c-click-icon c-click-icon--major icon-x-in-circle"
+                @click="toggleNav"
             ></button>
         </div>
 
         <div class="c-sidebar__contents-and-controls">
-            <button class="c-list-button"
-                    @click="addPage"
+            <button
+                class="c-list-button"
+                @click="addPage"
             >
                 <span class="c-button c-list-button__button icon-plus"></span>
                 <span class="c-list-button__label">Add {{ pageTitle }}</span>
             </button>
-            <PageCollection ref="pageCollection"
-                            class="c-sidebar__contents"
-                            :default-page-id="defaultPageId"
-                            :selected-page-id="selectedPageId"
-                            :domain-object="domainObject"
-                            :pages="pages"
-                            :sections="sections"
-                            :sidebar-covers-entries="sidebarCoversEntries"
-                            :page-title="pageTitle"
-                            @defaultPageDeleted="defaultPageDeleted"
-                            @toggleNav="toggleNav"
-                            @updatePage="pagesChanged"
-                            @selectPage="selectPage"
+            <PageCollection
+                ref="pageCollection"
+                class="c-sidebar__contents"
+                :default-page-id="defaultPageId"
+                :selected-page-id="selectedPageId"
+                :domain-object="domainObject"
+                :pages="pages"
+                :sections="sections"
+                :sidebar-covers-entries="sidebarCoversEntries"
+                :page-title="pageTitle"
+                @defaultPageDeleted="defaultPageDeleted"
+                @toggleNav="toggleNav"
+                @updatePage="pagesChanged"
+                @selectPage="selectPage"
             />
         </div>
     </div>

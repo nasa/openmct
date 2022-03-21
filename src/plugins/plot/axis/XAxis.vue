@@ -21,12 +21,14 @@
 -->
 
 <template>
-<div v-if="loaded"
-     class="gl-plot-axis-area gl-plot-x has-local-controls"
+<div
+    v-if="loaded"
+    class="gl-plot-axis-area gl-plot-x has-local-controls"
 >
-    <mct-ticks :axis-type="'xAxis'"
-               :position="'left'"
-               @plotTickWidth="onTickWidthChange"
+    <mct-ticks
+        :axis-type="'xAxis'"
+        :position="'left'"
+        @plotTickWidth="onTickWidthChange"
     />
 
     <div
@@ -42,9 +44,10 @@
         class="gl-plot-x-label__select local-controls--hidden"
         @change="toggleXKeyOption()"
     >
-        <option v-for="option in xKeyOptions"
-                :key="option.key"
-                :value="option.key"
+        <option
+            v-for="option in xKeyOptions"
+            :key="option.key"
+            :value="option.key"
         >{{ option.name }}
         </option>
     </select>
