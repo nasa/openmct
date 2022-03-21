@@ -38,7 +38,7 @@
         transition: $transIn;
 
         &.is-expanded {
-            height: max-content;
+            min-height: 100px;
         }
     }
 

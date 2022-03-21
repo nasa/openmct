@@ -22,20 +22,24 @@
 
 <template>
 <div class="form-control autocomplete">
-    <input v-model="field"
-           class="autocompleteInput"
-           type="text"
-           @click="inputClicked()"
-           @keydown="keyDown($event)"
+    <input
+        v-model="field"
+        class="autocompleteInput"
+        type="text"
+        @click="inputClicked()"
+        @keydown="keyDown($event)"
     >
-    <span class="icon-arrow-down"
-          @click="arrowClicked()"
+    <span
+        class="icon-arrow-down"
+        @click="arrowClicked()"
     ></span>
-    <div class="autocompleteOptions"
-         @blur="hideOptions = true"
+    <div
+        class="autocompleteOptions"
+        @blur="hideOptions = true"
     >
         <ul v-if="!hideOptions">
-            <li v-for="opt in filteredOptions"
+            <li
+                v-for="opt in filteredOptions"
                 :key="opt.optionId"
                 :class="{'optionPreSelected': optionIndex === opt.optionId}"
                 @click="fillInputWithString(opt.name)"
@@ -65,6 +69,7 @@ export default {
     data() {
         return {
             hideOptions: true,
+            showFilteredOptions: false,
             optionIndex: 0,
             field: this.model.value
         };
@@ -72,16 +77,24 @@ export default {
     computed: {
         filteredOptions() {
             const options = this.optionNames || [];
+            if (this.showFilteredOptions) {
+                return options
+                    .filter(option => {
+                        return option.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
+                    }).map((option, index) => {
+                        return {
+                            optionId: index,
+                            name: option
+                        };
+                    });
+            }
 
-            return options
-                .filter(option => {
-                    return option.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
-                }).map((option, index) => {
-                    return {
-                        optionId: index,
-                        name: option
-                    };
-                });
+            return options.map((option, index) => {
+                return {
+                    optionId: index,
+                    name: option
+                };
+            });
         }
     },
     watch: {
@@ -131,11 +144,12 @@ export default {
             this.hideOptions = true;
             this.field = string;
         },
-        showOptions(string) {
+        showOptions() {
             this.hideOptions = false;
             this.optionIndex = 0;
         },
         keyDown($event) {
+            this.showFilteredOptions = true;
             if (this.filteredOptions) {
                 let keyCode = $event.keyCode;
                 switch (keyCode) {
@@ -155,11 +169,14 @@ export default {
         },
         inputClicked() {
             this.autocompleteInputElement.select();
-            this.showOptions(this.autocompleteInputElement.value);
+            this.showOptions();
         },
         arrowClicked() {
+            // if the user clicked the arrow, we want
+            // to show them all the options
+            this.showFilteredOptions = false;
             this.autocompleteInputElement.select();
-            this.showOptions('');
+            this.showOptions();
         },
         optionMouseover(optionId) {
             this.optionIndex = optionId;

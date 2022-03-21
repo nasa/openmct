@@ -21,13 +21,17 @@
  *****************************************************************************/
 
 <template>
-<div class="c-notebook__entry c-ne has-local-controls"
-     @dragover="changeCursor"
-     @drop.capture="cancelEditMode"
-     @drop.prevent="dropOnEntry"
+<div
+    class="c-notebook__entry c-ne has-local-controls"
+    @dragover="changeCursor"
+    @drop.capture="cancelEditMode"
+    @drop.prevent="dropOnEntry"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time">
+            <template v-if="entry.createdBy">
+                <span class="c-icon icon-person">{{ entry.createdBy }}</span>
+            </template>
             <span>{{ createdOnDate }}</span>
             <span>{{ createdOnTime }}</span>
         </div>
@@ -59,27 +63,31 @@
                 </div>
             </template>
             <div class="c-snapshots c-ne__embeds">
-                <NotebookEmbed v-for="embed in entry.embeds"
-                               :key="embed.id"
-                               :embed="embed"
-                               @removeEmbed="removeEmbed"
-                               @updateEmbed="updateEmbed"
+                <NotebookEmbed
+                    v-for="embed in entry.embeds"
+                    :key="embed.id"
+                    :embed="embed"
+                    @removeEmbed="removeEmbed"
+                    @updateEmbed="updateEmbed"
                 />
             </div>
         </div>
     </div>
-    <div v-if="!readOnly"
-         class="c-ne__local-controls--hidden"
+    <div
+        v-if="!readOnly"
+        class="c-ne__local-controls--hidden"
     >
-        <button class="c-icon-button c-icon-button--major icon-trash"
-                title="Delete this entry"
-                tabindex="-1"
-                @click="deleteEntry"
+        <button
+            class="c-icon-button c-icon-button--major icon-trash"
+            title="Delete this entry"
+            tabindex="-1"
+            @click="deleteEntry"
         >
         </button>
     </div>
-    <div v-if="readOnly"
-         class="c-ne__section-and-page"
+    <div
+        v-if="readOnly"
+        class="c-ne__section-and-page"
     >
         <a
             class="c-click-link"
@@ -182,7 +190,7 @@ export default {
         this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {
-        addNewEmbed(objectPath) {
+        async addNewEmbed(objectPath) {
             const bounds = this.openmct.time.bounds();
             const snapshotMeta = {
                 bounds,
@@ -190,7 +198,7 @@ export default {
                 objectPath,
                 openmct: this.openmct
             };
-            const newEmbed = createNewEmbed(snapshotMeta);
+            const newEmbed = await createNewEmbed(snapshotMeta);
             this.entry.embeds.push(newEmbed);
         },
         cancelEditMode(event) {
@@ -206,7 +214,7 @@ export default {
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
-        dropOnEntry($event) {
+        async dropOnEntry($event) {
             event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
@@ -221,7 +229,7 @@ export default {
             } else {
                 const data = $event.dataTransfer.getData('openmct/domain-object-path');
                 const objectPath = JSON.parse(data);
-                this.addNewEmbed(objectPath);
+                await this.addNewEmbed(objectPath);
             }
 
             this.$emit('updateEntry', this.entry);

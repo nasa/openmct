@@ -99,6 +99,7 @@ export default class CreateAction extends PropertiesAction {
      */
     async _navigateAndEdit(domainObject, parentDomainObjectpath) {
         let objectPath;
+        let self = this;
         if (parentDomainObjectpath) {
             objectPath = parentDomainObjectpath && [domainObject].concat(parentDomainObjectpath);
         } else {
@@ -110,13 +111,18 @@ export default class CreateAction extends PropertiesAction {
             .reverse()
             .join('/');
 
-        this.openmct.router.navigate(url);
+        function editObject() {
+            const objectView = self.openmct.objectViews.get(domainObject, objectPath)[0];
+            const canEdit = objectView && objectView.canEdit && objectView.canEdit(domainObject, objectPath);
 
-        const objectView = this.openmct.objectViews.get(domainObject, objectPath)[0];
-        const canEdit = objectView && objectView.canEdit && objectView.canEdit(domainObject, objectPath);
-        if (canEdit) {
-            this.openmct.editor.edit();
+            if (canEdit) {
+                self.openmct.editor.edit();
+            }
         }
+
+        this.openmct.router.once('afterNavigation', editObject);
+
+        this.openmct.router.navigate(url);
     }
 
     /**

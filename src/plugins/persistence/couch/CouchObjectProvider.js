@@ -298,18 +298,12 @@ class CouchObjectProvider {
         return Array.from(new Set(array));
     }
 
-    search(query, abortSignal) {
-        const filter = {
-            "selector": {
-                "model": {
-                    "name": {
-                        "$regex": `(?i)${query}`
-                    }
-                }
-            }
-        };
-
-        return this.getObjectsByFilter(filter, abortSignal);
+    search() {
+        // Dummy search function. It has to appear to support search,
+        // otherwise the in-memory indexer will index all of its objects,
+        // but actually search results will be provided by a separate search provider
+        // see CoucheSearchProvider.js
+        return Promise.resolve([]);
     }
 
     async getObjectsByFilter(filter, abortSignal) {

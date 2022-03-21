@@ -26,8 +26,9 @@
 <div class="gl-plot-chart-area">
     <span v-html="canvasTemplate"></span>
     <span v-html="canvasTemplate"></span>
-    <div ref="limitArea"
-         class="js-limit-area"
+    <div
+        ref="limitArea"
+        class="js-limit-area"
     ></div>
 </div>
 </template>
@@ -278,7 +279,7 @@ export default {
             // Have to throw away the old canvas elements and replace with new
             // canvas elements in order to get new drawing contexts.
             const div = document.createElement('div');
-            div.innerHTML = this.TEMPLATE;
+            div.innerHTML = this.canvasTemplate + this.canvasTemplate;
             const mainCanvas = div.querySelectorAll("canvas")[1];
             const overlayCanvas = div.querySelectorAll("canvas")[0];
             this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);

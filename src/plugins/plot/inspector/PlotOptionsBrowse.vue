@@ -20,49 +20,58 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded"
-     class="js-plot-options-browse"
+<div
+    v-if="loaded"
+    class="js-plot-options-browse"
 >
     <ul class="c-tree">
         <h2 title="Plot series display properties in this object">Plot Series</h2>
-        <plot-options-item v-for="series in plotSeries"
-                           :key="series.key"
-                           :series="series"
+        <plot-options-item
+            v-for="series in plotSeries"
+            :key="series.key"
+            :series="series"
         />
     </ul>
-    <div v-if="plotSeries.length"
-         class="grid-properties"
+    <div
+        v-if="plotSeries.length"
+        class="grid-properties"
     >
         <ul class="l-inspector-part">
             <h2 title="Y axis settings for this object">Y Axis</h2>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Manually override how the Y axis is labeled."
+                <div
+                    class="grid-cell label"
+                    title="Manually override how the Y axis is labeled."
                 >Label</div>
                 <div class="grid-cell value">{{ label ? label : "Not defined" }}</div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Automatically scale the Y axis to keep all values in view."
+                <div
+                    class="grid-cell label"
+                    title="Automatically scale the Y axis to keep all values in view."
                 >Autoscale</div>
                 <div class="grid-cell value">
                     {{ autoscale ? "Enabled: " : "Disabled" }}
                     {{ autoscale ? autoscalePadding : "" }}
                 </div>
             </li>
-            <li v-if="!autoscale && rangeMin"
+            <li
+                v-if="!autoscale && rangeMin"
                 class="grid-row"
             >
-                <div class="grid-cell label"
-                     title="Minimum Y axis value."
+                <div
+                    class="grid-cell label"
+                    title="Minimum Y axis value."
                 >Minimum value</div>
                 <div class="grid-cell value">{{ rangeMin }}</div>
             </li>
-            <li v-if="!autoscale && rangeMax"
+            <li
+                v-if="!autoscale && rangeMax"
                 class="grid-row"
             >
-                <div class="grid-cell label"
-                     title="Maximum Y axis value."
+                <div
+                    class="grid-cell label"
+                    title="Maximum Y axis value."
                 >Maximum value</div>
                 <div class="grid-cell value">{{ rangeMax }}</div>
             </li>
@@ -70,26 +79,30 @@
         <ul class="l-inspector-part">
             <h2 title="Legend settings for this object">Legend</h2>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="The position of the legend relative to the plot display area."
+                <div
+                    class="grid-cell label"
+                    title="The position of the legend relative to the plot display area."
                 >Position</div>
                 <div class="grid-cell value capitalize">{{ position }}</div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Hide the legend when the plot is small"
+                <div
+                    class="grid-cell label"
+                    title="Hide the legend when the plot is small"
                 >Hide when plot small</div>
                 <div class="grid-cell value">{{ hideLegendWhenSmall ? "Yes" : "No" }}</div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Show the legend expanded by default"
+                <div
+                    class="grid-cell label"
+                    title="Show the legend expanded by default"
                 >Expand by Default</div>
                 <div class="grid-cell value">{{ expandByDefault ? "Yes" : "No" }}</div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="What to display in the legend when it's collapsed."
+                <div
+                    class="grid-cell label"
+                    title="What to display in the legend when it's collapsed."
                 >Show when collapsed:</div>
                 <div class="grid-cell value">{{
                     valueToShowWhenCollapsed.replace('nearest', '')
@@ -97,8 +110,9 @@
                 </div>
             </li>
             <li class="grid-row">
-                <div class="grid-cell label"
-                     title="What to display in the legend when it's expanded."
+                <div
+                    class="grid-cell label"
+                    title="What to display in the legend when it's expanded."
                 >Show when expanded:</div>
                 <div class="grid-cell value comma-list">
                     <span v-if="showTimestampWhenExpanded">Timestamp</span>
