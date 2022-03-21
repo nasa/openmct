@@ -34,14 +34,17 @@
     <div
         class="c-so-view__header"
     >
-        <div class="c-object-label"
-             :class="[ statusClass ]"
+        <div
+            class="c-object-label"
+            :class="[ statusClass ]"
         >
-            <div class="c-object-label__type-icon"
-                 :class="cssClass"
+            <div
+                class="c-object-label__type-icon"
+                :class="cssClass"
             >
-                <span class="is-status__indicator"
-                      :title="`This item is ${status}`"
+                <span
+                    class="is-status__indicator"
+                    :title="`This item is ${status}`"
                 ></span>
             </div>
             <div class="c-object-label__name">
@@ -56,13 +59,15 @@
                 'has-complex-content': complexContent
             }"
         >
-            <NotebookMenuSwitcher v-if="notebookEnabled"
-                                  :domain-object="domainObject"
-                                  :object-path="objectPath"
-                                  class="c-notebook-snapshot-menubutton"
+            <NotebookMenuSwitcher
+                v-if="notebookEnabled"
+                :domain-object="domainObject"
+                :object-path="objectPath"
+                class="c-notebook-snapshot-menubutton"
             />
-            <div v-if="statusBarItems.length > 0"
-                 class="c-so-view__frame-controls__btns"
+            <div
+                v-if="statusBarItems.length > 0"
+                class="c-so-view__frame-controls__btns"
             >
                 <button
                     v-for="(item, index) in statusBarItems"

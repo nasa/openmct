@@ -21,7 +21,7 @@ jobs:
         with:
           ref: master #explicitly checkout master for baseline
       - name: Install Node 14
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Cache node modules
@@ -42,7 +42,7 @@ jobs:
         with:
           clean: true
       - name: Install Node version which is compatible with PR
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
       - name: npm install with lighthouse cli 
         run: npm install && npm install -g @lhci/cli
       - name: Run lhci with PR
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Node 14
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Cache node modules
@@ -81,7 +81,7 @@ jobs:
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Install Node 14
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Cache node modules

@@ -21,31 +21,35 @@
 *****************************************************************************/
 
 <template>
-<div class="c-condition-h"
-     :class="{ 'is-drag-target': draggingOver }"
-     @dragover.prevent
-     @drop.prevent="dropCondition($event, conditionIndex)"
-     @dragenter="dragEnter($event, conditionIndex)"
-     @dragleave="dragLeave($event, conditionIndex)"
+<div
+    class="c-condition-h"
+    :class="{ 'is-drag-target': draggingOver }"
+    @dragover.prevent
+    @drop.prevent="dropCondition($event, conditionIndex)"
+    @dragenter="dragEnter($event, conditionIndex)"
+    @dragleave="dragLeave($event, conditionIndex)"
 >
     <div class="c-condition-h__drop-target"></div>
-    <div v-if="isEditing"
-         :class="{'is-current': condition.id === currentConditionId}"
-         class="c-condition c-condition--edit"
+    <div
+        v-if="isEditing"
+        :class="{'is-current': condition.id === currentConditionId}"
+        class="c-condition c-condition--edit"
     >
         <!-- Edit view -->
         <div class="c-condition__header">
-            <span class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
-                  title="Drag to reorder conditions"
-                  :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
-                  :draggable="!condition.isDefault"
-                  @dragstart="dragStart"
-                  @dragend="dragEnd"
+            <span
+                class="c-condition__drag-grippy c-grippy c-grippy--vertical-drag"
+                title="Drag to reorder conditions"
+                :class="[{ 'is-enabled': !condition.isDefault }, { 'hide-nice': condition.isDefault }]"
+                :draggable="!condition.isDefault"
+                @dragstart="dragStart"
+                @dragend="dragEnd"
             ></span>
 
-            <span class="c-condition__disclosure c-disclosure-triangle c-tree__item__view-control is-enabled"
-                  :class="{ 'c-disclosure-triangle--expanded': expanded }"
-                  @click="expanded = !expanded"
+            <span
+                class="c-condition__disclosure c-disclosure-triangle c-tree__item__view-control is-enabled"
+                :class="{ 'c-disclosure-triangle--expanded': expanded }"
+                @click="expanded = !expanded"
             ></span>
 
             <span class="c-condition__name">{{ condition.configuration.name }}</span>
@@ -54,107 +58,123 @@
                     Define criteria
                 </template>
                 <span v-else>
-                    <condition-description :show-label="false"
-                                           :condition="condition"
+                    <condition-description
+                        :show-label="false"
+                        :condition="condition"
                     />
                 </span>
             </span>
 
             <div class="c-condition__buttons">
-                <button v-if="!condition.isDefault"
-                        class="c-click-icon c-condition__duplicate-button icon-duplicate"
-                        title="Duplicate this condition"
-                        @click="cloneCondition"
+                <button
+                    v-if="!condition.isDefault"
+                    class="c-click-icon c-condition__duplicate-button icon-duplicate"
+                    title="Duplicate this condition"
+                    @click="cloneCondition"
                 ></button>
 
-                <button v-if="!condition.isDefault"
-                        class="c-click-icon c-condition__delete-button icon-trash"
-                        title="Delete this condition"
-                        @click="removeCondition"
+                <button
+                    v-if="!condition.isDefault"
+                    class="c-click-icon c-condition__delete-button icon-trash"
+                    title="Delete this condition"
+                    @click="removeCondition"
                 ></button>
             </div>
         </div>
-        <div v-if="expanded"
-             class="c-condition__definition c-cdef"
+        <div
+            v-if="expanded"
+            class="c-condition__definition c-cdef"
         >
             <span class="c-cdef__separator c-row-separator"></span>
             <span class="c-cdef__label">Condition Name</span>
             <span class="c-cdef__controls">
-                <input v-model="condition.configuration.name"
-                       class="t-condition-input__name"
-                       type="text"
-                       @change="persist"
+                <input
+                    v-model="condition.configuration.name"
+                    class="t-condition-input__name"
+                    type="text"
+                    @change="persist"
                 >
             </span>
 
             <span class="c-cdef__label">Output</span>
             <span class="c-cdef__controls">
                 <span class="c-cdef__control">
-                    <select v-model="selectedOutputSelection"
-                            @change="setOutputValue"
+                    <select
+                        v-model="selectedOutputSelection"
+                        @change="setOutputValue"
                     >
-                        <option v-for="option in outputOptions"
-                                :key="option"
-                                :value="option"
+                        <option
+                            v-for="option in outputOptions"
+                            :key="option"
+                            :value="option"
                         >
                             {{ initCap(option) }}
                         </option>
                     </select>
                 </span>
                 <span class="c-cdef__control">
-                    <input v-if="selectedOutputSelection === outputOptions[2]"
-                           v-model="condition.configuration.output"
-                           class="t-condition-name-input"
-                           type="text"
-                           @change="persist"
+                    <input
+                        v-if="selectedOutputSelection === outputOptions[2]"
+                        v-model="condition.configuration.output"
+                        class="t-condition-name-input"
+                        type="text"
+                        @change="persist"
                     >
                 </span>
             </span>
 
-            <div v-if="!condition.isDefault"
-                 class="c-cdef__match-and-criteria"
+            <div
+                v-if="!condition.isDefault"
+                class="c-cdef__match-and-criteria"
             >
                 <span class="c-cdef__separator c-row-separator"></span>
                 <span class="c-cdef__label">Match</span>
                 <span class="c-cdef__controls">
-                    <select v-model="condition.configuration.trigger"
-                            @change="persist"
+                    <select
+                        v-model="condition.configuration.trigger"
+                        @change="persist"
                     >
-                        <option v-for="option in triggers"
-                                :key="option.value"
-                                :value="option.value"
+                        <option
+                            v-for="option in triggers"
+                            :key="option.value"
+                            :value="option.value"
                         > {{ option.label }}</option>
                     </select>
                 </span>
 
                 <template v-if="telemetry.length || condition.configuration.criteria.length">
-                    <div v-for="(criterion, index) in condition.configuration.criteria"
-                         :key="criterion.id"
-                         class="c-cdef__criteria"
+                    <div
+                        v-for="(criterion, index) in condition.configuration.criteria"
+                        :key="criterion.id"
+                        class="c-cdef__criteria"
                     >
-                        <Criterion :telemetry="telemetry"
-                                   :criterion="criterion"
-                                   :index="index"
-                                   :trigger="condition.configuration.trigger"
-                                   :is-default="condition.configuration.criteria.length === 1"
-                                   @persist="persist"
+                        <Criterion
+                            :telemetry="telemetry"
+                            :criterion="criterion"
+                            :index="index"
+                            :trigger="condition.configuration.trigger"
+                            :is-default="condition.configuration.criteria.length === 1"
+                            @persist="persist"
                         />
                         <div class="c-cdef__criteria__buttons">
-                            <button class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
-                                    title="Duplicate this criteria"
-                                    @click="cloneCriterion(index)"
+                            <button
+                                class="c-click-icon c-cdef__criteria-duplicate-button icon-duplicate"
+                                title="Duplicate this criteria"
+                                @click="cloneCriterion(index)"
                             ></button>
-                            <button v-if="!(condition.configuration.criteria.length === 1)"
-                                    class="c-click-icon c-cdef__criteria-duplicate-button icon-trash"
-                                    title="Delete this criteria"
-                                    @click="removeCriterion(index)"
+                            <button
+                                v-if="!(condition.configuration.criteria.length === 1)"
+                                class="c-click-icon c-cdef__criteria-duplicate-button icon-trash"
+                                title="Delete this criteria"
+                                @click="removeCriterion(index)"
                             ></button>
                         </div>
                     </div>
                 </template>
                 <div class="c-cdef__separator c-row-separator"></div>
-                <div class="c-cdef__controls"
-                     :disabled="!telemetry.length"
+                <div
+                    class="c-cdef__controls"
+                    :disabled="!telemetry.length"
                 >
                     <button
                         class="c-cdef__add-criteria-button c-button c-button--labeled icon-plus"
@@ -166,9 +186,10 @@
             </div>
         </div>
     </div>
-    <div v-else
-         class="c-condition c-condition--browse"
-         :class="{'is-current': condition.id === currentConditionId}"
+    <div
+        v-else
+        class="c-condition c-condition--browse"
+        :class="{'is-current': condition.id === currentConditionId}"
     >
         <!-- Browse view -->
         <div class="c-condition__header">
@@ -180,8 +201,9 @@
             </span>
         </div>
         <div class="c-condition__summary">
-            <condition-description :show-label="false"
-                                   :condition="condition"
+            <condition-description
+                :show-label="false"
+                :condition="condition"
             />
         </div>
     </div>

@@ -26,45 +26,52 @@
         <div class="c-overlay__dialog-title">{{ model.title }}</div>
         <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
     </div>
-    <form name="mctForm"
-          class="c-form__contents"
-          autocomplete="off"
-          @submit.prevent
+    <form
+        name="mctForm"
+        class="c-form__contents"
+        autocomplete="off"
+        @submit.prevent
     >
-        <div v-for="section in formSections"
-             :key="section.id"
-             class="c-form__section"
-             :class="section.cssClass"
+        <div
+            v-for="section in formSections"
+            :key="section.id"
+            class="c-form__section"
+            :class="section.cssClass"
         >
-            <h2 v-if="section.name"
+            <h2
+                v-if="section.name"
                 class="c-form__section-header"
             >
                 {{ section.name }}
             </h2>
-            <div v-for="(row, index) in section.rows"
-                 :key="row.id"
-                 class="u-contents"
+            <div
+                v-for="(row, index) in section.rows"
+                :key="row.id"
+                class="u-contents"
             >
-                <FormRow :css-class="section.cssClass"
-                         :first="index < 1"
-                         :row="row"
-                         @onChange="onChange"
+                <FormRow
+                    :css-class="section.cssClass"
+                    :first="index < 1"
+                    :row="row"
+                    @onChange="onChange"
                 />
             </div>
         </div>
     </form>
 
     <div class="mct-form__controls c-overlay__button-bar c-form__bottom-bar">
-        <button tabindex="0"
-                :disabled="isInvalid"
-                class="c-button c-button--major"
-                @click="onSave"
+        <button
+            tabindex="0"
+            :disabled="isInvalid"
+            class="c-button c-button--major"
+            @click="onSave"
         >
             {{ submitLabel }}
         </button>
-        <button tabindex="0"
-                class="c-button"
-                @click="onDismiss"
+        <button
+            tabindex="0"
+            class="c-button"
+            @click="onDismiss"
         >
             {{ cancelLabel }}
         </button>

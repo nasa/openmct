@@ -22,12 +22,13 @@
 
 <template>
 <span>
-    <CompositeItem v-for="(item, index) in model.items"
-                   :key="item.name"
-                   :first="index < 1"
-                   :value="JSON.stringify(model.value[index])"
-                   :item="item"
-                   @onChange="onChange"
+    <CompositeItem
+        v-for="(item, index) in model.items"
+        :key="item.name"
+        :first="index < 1"
+        :value="JSON.stringify(model.value[index])"
+        :item="item"
+        @onChange="onChange"
     />
 </span>
 </template>
