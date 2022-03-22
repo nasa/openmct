@@ -29,7 +29,7 @@ import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
 
-describe("the plugin", function () {
+fdescribe("the plugin", function () {
     let element;
     let child;
     let openmct;
@@ -571,6 +571,34 @@ describe("the plugin", function () {
                             range: 2
                         }
                     }]
+                },
+                configuration: {
+                    objectStyles: {
+                        staticStyle: {
+                            style: {
+                                backgroundColor: 'rgb(0, 200, 0)',
+                                color: '',
+                                border: ''
+                            }
+                        },
+                        conditionSetIdentifier: {
+                            namespace: '',
+                            key: 'testConditionSetId'
+                        },
+                        selectedConditionId: 'conditionId1',
+                        defaultConditionId: 'conditionId1',
+                        styles: [
+                            {
+                                conditionId: 'conditionId1',
+                                style: {
+                                    backgroundColor: 'rgb(0, 155, 0)',
+                                    color: '',
+                                    output: '',
+                                    border: ''
+                                }
+                            }
+                        ]
+                    }
                 }
             };
 
@@ -814,6 +842,21 @@ describe("the plugin", function () {
                 done();
             });
         });
+
+        it("shows styles for telemetry objects if available", (done) => {
+            Vue.nextTick(() => {
+                let conditionalStylesContainer = element.querySelectorAll(".c-plot--stacked-container .js-style-receiver");
+                let hasStyles = 0;
+                conditionalStylesContainer.forEach(el => {
+                    console.log(el.style.backgroundColor);
+                    if (el.style.backgroundColor !== '') {
+                        hasStyles++;
+                    }
+                });
+                expect(hasStyles).toBe(1);
+                done();
+            });
+        })
 
         describe('limits', () => {
 
