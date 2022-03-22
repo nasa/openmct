@@ -20,36 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
-import ExampleUserProvider from './ExampleUserProvider';
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding importAsJSON.
+*/
 
-xdescribe("The Example User Plugin", () => {
-    let openmct;
+const { test, expect } = require('@playwright/test');
 
-    beforeEach(() => {
-        openmct = createOpenMct();
+test.describe('ExportAsJSON', () => {
+    test.fixme('Verify that domain object can be importAsJSON from Tree', async ({ page }) => {
+        //Verify that an testdata JSON file can be imported from Tree
+        //Verify correctness of imported domain object
     });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    test.fixme('Verify that domain object can be importAsJSON from 3 dot menu on folder', async ({ page }) => {
+        //Verify that an testdata JSON file can be imported from 3 dot menu on folder domain object
+        //Verify correctness of imported domain object
     });
-
-    it('is not installed by default', () => {
-        expect(openmct.user.hasProvider()).toBeFalse();
+    test.fixme('Verify that a nested Objects can be importAsJSON', async ({ page }) => {
+        // Testdata with hierarchy
+        // ImportAsJSON on Tree
+        // Verify Hierarchy
     });
-
-    it('can be installed', () => {
-        openmct.user.on('providerAdded', (provider) => {
-            expect(provider).toBeInstanceOf(ExampleUserProvider);
-        });
-        openmct.install(openmct.plugins.example.ExampleUser());
+    test.fixme('Verify that the ImportAsJSON dropdown does not appear for the item X', async ({ page }) => {
+        // Other than non-persistible objects
     });
-
-    // The rest of the functionality of the ExampleUser Plugin is
-    // tested in both the UserAPISpec.js and in the UserIndicatorPlugin spec.
-    // If that changes, those tests can be moved here.
-
 });

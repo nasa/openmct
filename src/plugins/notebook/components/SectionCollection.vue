@@ -1,17 +1,19 @@
 <template>
 <ul class="c-list">
-    <li v-for="section in sections"
+    <li
+        v-for="section in sections"
         :key="section.id"
         class="c-list__item-h"
     >
-        <NotebookSection ref="sectionComponent"
-                         :default-section-id="defaultSectionId"
-                         :selected-section-id="selectedSectionId"
-                         :section="section"
-                         :section-title="sectionTitle"
-                         @deleteSection="deleteSection"
-                         @renameSection="updateSection"
-                         @selectSection="selectSection"
+        <NotebookSection
+            ref="sectionComponent"
+            :default-section-id="defaultSectionId"
+            :selected-section-id="selectedSectionId"
+            :section="section"
+            :section-title="sectionTitle"
+            @deleteSection="deleteSection"
+            @renameSection="updateSection"
+            @selectSection="selectSection"
         />
     </li>
 </ul>

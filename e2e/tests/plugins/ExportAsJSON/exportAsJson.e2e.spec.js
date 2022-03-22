@@ -20,36 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
-import ExampleUserProvider from './ExampleUserProvider';
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding exportAsJSON.
+*/
 
-xdescribe("The Example User Plugin", () => {
-    let openmct;
+const { test, expect } = require('@playwright/test');
 
-    beforeEach(() => {
-        openmct = createOpenMct();
+test.describe('ExportAsJSON', () => {
+    test.fixme('Create a basic object and verify that it can be exported as JSON from Tree', async ({ page }) => {
+        //Create domain object
+        //Save Domain Object
+        //Verify that the newly created domain object can be exported as JSON from the Tree
     });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    test.fixme('Create a basic object and verify that it can be exported as JSON from 3 dot menu', async ({ page }) => {
+        //Create domain object
+        //Save Domain Object
+        //Verify that the newly created domain object can be exported as JSON from the 3 dot menu
     });
-
-    it('is not installed by default', () => {
-        expect(openmct.user.hasProvider()).toBeFalse();
+    test.fixme('Verify that a nested Object can be exported as JSON', async ({ page }) => {
+        // Create 2 objects with hierarchy
+        // Export as JSON
+        // Verify Hiearchy
     });
-
-    it('can be installed', () => {
-        openmct.user.on('providerAdded', (provider) => {
-            expect(provider).toBeInstanceOf(ExampleUserProvider);
-        });
-        openmct.install(openmct.plugins.example.ExampleUser());
+    test.fixme('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
+        // Other than non-persistible objects
     });
-
-    // The rest of the functionality of the ExampleUser Plugin is
-    // tested in both the UserAPISpec.js and in the UserIndicatorPlugin spec.
-    // If that changes, those tests can be moved here.
-
 });

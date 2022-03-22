@@ -17,8 +17,9 @@
         @mousedown="start"
     ></div>
     <div class="l-pane__header">
-        <span v-if="label"
-              class="l-pane__label"
+        <span
+            v-if="label"
+            class="l-pane__label"
         >{{ label }}</span>
         <slot name="controls"></slot>
         <button

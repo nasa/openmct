@@ -22,14 +22,16 @@
 
 <template>
 <div class="form-control select-field">
-    <select v-model="selected"
-            required="model.required"
-            name="mctControl"
-            @change="onChange($event)"
+    <select
+        v-model="selected"
+        required="model.required"
+        name="mctControl"
+        @change="onChange($event)"
     >
-        <option v-for="option in model.options"
-                :key="option.name"
-                :value="option.value"
+        <option
+            v-for="option in model.options"
+            :key="option.name"
+            :value="option.value"
         >
             {{ option.name }}
         </option>

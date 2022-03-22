@@ -107,16 +107,18 @@
             </div>
         </div>
 
-        <button class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--prev"
-                title="Previous image"
-                :disabled="isPrevDisabled"
-                @click="prevImage()"
+        <button
+            class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--prev"
+            title="Previous image"
+            :disabled="isPrevDisabled"
+            @click="prevImage()"
         ></button>
 
-        <button class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--next"
-                title="Next image"
-                :disabled="isNextDisabled"
-                @click="nextImage()"
+        <button
+            class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--next"
+            title="Next image"
+            :disabled="isNextDisabled"
+            @click="nextImage()"
         ></button>
 
         <div class="c-imagery__control-bar">
@@ -152,11 +154,12 @@
             </div>
         </div>
     </div>
-    <div class="c-imagery__thumbs-wrapper"
-         :class="[
-             { 'is-paused': isPaused && !isFixed },
-             { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
-         ]"
+    <div
+        class="c-imagery__thumbs-wrapper"
+        :class="[
+            { 'is-paused': isPaused && !isFixed },
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+        ]"
     >
         <div
             ref="thumbsWrapper"
@@ -169,12 +172,14 @@
                  :class="{ selected: focusedImageIndex === index && isPaused }"
                  @click="thumbnailClicked(index)"
             >
-                <a href=""
-                   :download="image.imageDownloadName"
-                   @click.prevent
+                <a
+                    href=""
+                    :download="image.imageDownloadName"
+                    @click.prevent
                 >
-                    <img class="c-thumb__image"
-                         :src="image.url"
+                    <img
+                        class="c-thumb__image"
+                        :src="image.url"
                     >
                 </a>
                 <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
