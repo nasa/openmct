@@ -20,36 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
-import ExampleUserProvider from './ExampleUserProvider';
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding moving objects.
+*/
 
-xdescribe("The Example User Plugin", () => {
-    let openmct;
+const { test, expect } = require('@playwright/test');
 
-    beforeEach(() => {
-        openmct = createOpenMct();
+test.describe('Move item tests', () => {
+    test.fixme('Create a basic object and verify that it can be moved to another Folder', async ({ page }) => {
+        //Create and save Folder
+        //Create and save Domain Object
+        //Verify that the newly created domain object can be moved to Folder from Step 1.
+        //Verify that newly moved object appears in the correct point in Tree
+        //Verify that newly moved object appears correctly in Inspector panel
     });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    test.fixme('Create a basic object and verify that it cannot be moved to object without Composition Provider', async ({ page }) => {
+        //Create and save Telemetry Object
+        //Create and save Domain Object
+        //Verify that the newly created domain object cannot be moved to Telemetry Object from step 1.
     });
-
-    it('is not installed by default', () => {
-        expect(openmct.user.hasProvider()).toBeFalse();
-    });
-
-    it('can be installed', () => {
-        openmct.user.on('providerAdded', (provider) => {
-            expect(provider).toBeInstanceOf(ExampleUserProvider);
-        });
-        openmct.install(openmct.plugins.example.ExampleUser());
-    });
-
-    // The rest of the functionality of the ExampleUser Plugin is
-    // tested in both the UserAPISpec.js and in the UserIndicatorPlugin spec.
-    // If that changes, those tests can be moved here.
-
 });

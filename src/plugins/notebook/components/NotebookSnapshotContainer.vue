@@ -8,39 +8,45 @@
                     <div class="c-object-label__name">
                         Notebook Snapshots
                     </div>
-                    <div v-if="snapshots.length"
-                         class="l-browse-bar__object-details"
+                    <div
+                        v-if="snapshots.length"
+                        class="l-browse-bar__object-details"
                     >{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
                     </div>
                 </div>
-                <PopupMenu v-if="snapshots.length > 0"
-                           :popup-menu-items="popupMenuItems"
+                <PopupMenu
+                    v-if="snapshots.length > 0"
+                    :popup-menu-items="popupMenuItems"
                 />
             </div>
 
         </div>
         <div class="l-browse-bar__end">
-            <button class="c-click-icon c-click-icon--major icon-x"
-                    @click="close"
+            <button
+                class="c-click-icon c-click-icon--major icon-x"
+                @click="close"
             ></button>
         </div>
     </div><!-- closes l-browse-bar -->
     <div class="c-snapshots">
-        <span v-for="snapshot in snapshots"
-              :key="snapshot.embedObject.id"
-              draggable="true"
-              @dragstart="startEmbedDrag(snapshot, $event)"
+        <span
+            v-for="snapshot in snapshots"
+            :key="snapshot.embedObject.id"
+            draggable="true"
+            @dragstart="startEmbedDrag(snapshot, $event)"
         >
-            <NotebookEmbed ref="notebookEmbed"
-                           :key="snapshot.embedObject.id"
-                           :embed="snapshot.embedObject"
-                           :is-snapshot-container="true"
-                           :remove-action-string="'Delete Snapshot'"
-                           @removeEmbed="removeSnapshot"
+            <NotebookEmbed
+                ref="notebookEmbed"
+                :key="snapshot.embedObject.id"
+                :embed="snapshot.embedObject"
+                :is-snapshot-container="true"
+                :remove-action-string="'Delete Snapshot'"
+                @removeEmbed="removeSnapshot"
             />
         </span>
-        <div v-if="!snapshots.length > 0"
-             class="hint"
+        <div
+            v-if="!snapshots.length > 0"
+            class="hint"
         >
             There are no Notebook Snapshots currently.
         </div>
