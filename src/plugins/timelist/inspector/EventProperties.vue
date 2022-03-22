@@ -1,37 +1,45 @@
 <template>
 <li class="c-inspect-properties__row">
-    <div class="c-inspect-properties__label"
-         title="Options for future events."
+    <div
+        class="c-inspect-properties__label"
+        title="Options for future events."
     >{{ label }}</div>
-    <div v-if="canEdit"
-         class="c-inspect-properties__value"
+    <div
+        v-if="canEdit"
+        class="c-inspect-properties__value"
     >
-        <select v-model="index"
-                @change="updateForm('index')"
+        <select
+            v-model="index"
+            @change="updateForm('index')"
         >
-            <option v-for="(activityOption, activityKey) in activitiesOptions"
-                    :key="activityKey"
-                    :value="activityKey"
+            <option
+                v-for="(activityOption, activityKey) in activitiesOptions"
+                :key="activityKey"
+                :value="activityKey"
             >{{ activityOption }}</option>
         </select>
-        <input v-if="index === 2"
-               v-model="duration"
-               class="c-input c-input--sm"
-               type="text"
-               @change="updateForm('duration')"
+        <input
+            v-if="index === 2"
+            v-model="duration"
+            class="c-input c-input--sm"
+            type="text"
+            @change="updateForm('duration')"
         >
-        <select v-if="index === 2"
-                v-model="durationIndex"
-                @change="updateForm('durationIndex')"
+        <select
+            v-if="index === 2"
+            v-model="durationIndex"
+            @change="updateForm('durationIndex')"
         >
-            <option v-for="(durationOption, durationKey) in durationOptions"
-                    :key="durationKey"
-                    :value="durationKey"
+            <option
+                v-for="(durationOption, durationKey) in durationOptions"
+                :key="durationKey"
+                :value="durationKey"
             >{{ durationOption }}</option>
         </select>
     </div>
-    <div v-else
-         class="c-inspect-properties__value"
+    <div
+        v-else
+        class="c-inspect-properties__value"
     >
         {{ activitiesOptions[index] }} <span v-if="index > 1">{{ duration }} {{ durationOptions[durationIndex] }}</span>
     </div>

@@ -21,13 +21,15 @@
 -->
 
 <template>
-<div ref="timelistHolder"
-     class="c-timelist"
+<div
+    ref="timelistHolder"
+    class="c-timelist"
 >
-    <list-view :items="planActivities"
-               :header-items="headerItems"
-               :default-sort="defaultSort"
-               class="sticky"
+    <list-view
+        :items="planActivities"
+        :header-items="headerItems"
+        :default-sort="defaultSort"
+        class="sticky"
     />
 </div>
 </template>

@@ -3,14 +3,15 @@
     <table class="c-table__body js-table__body">
         <thead class="c-table__header">
             <tr>
-                <list-header v-for="headerItem in headerItems"
-                             :key="headerItem.property"
-                             :direction="sortBy === headerItem.property ? ascending : headerItem.defaultDirection"
-                             :is-sortable="headerItem.isSortable"
-                             :title="headerItem.name"
-                             :property="headerItem.property"
-                             :current-sort="sortBy"
-                             @sort="sort"
+                <list-header
+                    v-for="headerItem in headerItems"
+                    :key="headerItem.property"
+                    :direction="sortBy === headerItem.property ? ascending : headerItem.defaultDirection"
+                    :is-sortable="headerItem.isSortable"
+                    :title="headerItem.name"
+                    :property="headerItem.property"
+                    :current-sort="sortBy"
+                    @sort="sort"
                 />
             </tr>
         </thead>

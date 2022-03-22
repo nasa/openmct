@@ -1,5 +1,6 @@
 <template>
-<th v-if="isSortable"
+<th
+    v-if="isSortable"
     class="is-sortable"
     :class="{
         'is-sorting': currentSort === property,

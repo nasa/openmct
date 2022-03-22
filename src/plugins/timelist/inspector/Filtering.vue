@@ -1,24 +1,29 @@
 <template>
 <li class="c-inspect-properties__row">
-    <div v-if="canEdit"
-         class="c-inspect-properties__hint span-all"
+    <div
+        v-if="canEdit"
+        class="c-inspect-properties__hint span-all"
     >Filter this view by comma-separated keywords.</div>
-    <div class="c-inspect-properties__label"
-         title="Filter by keyword."
+    <div
+        class="c-inspect-properties__label"
+        title="Filter by keyword."
     >Filters</div>
-    <div v-if="canEdit"
-         class="c-inspect-properties__value"
-         :class="{'form-error': hasError}"
+    <div
+        v-if="canEdit"
+        class="c-inspect-properties__value"
+        :class="{'form-error': hasError}"
     >
-        <textarea v-model="filterValue"
-                  class="c-input--flex"
-                  type="text"
-                  @keydown.enter.exact.stop="forceBlur($event)"
-                  @keyup="updateForm($event, 'filter')"
+        <textarea
+            v-model="filterValue"
+            class="c-input--flex"
+            type="text"
+            @keydown.enter.exact.stop="forceBlur($event)"
+            @keyup="updateForm($event, 'filter')"
         ></textarea>
     </div>
-    <div v-else
-         class="c-inspect-properties__value"
+    <div
+        v-else
+        class="c-inspect-properties__value"
     >
         {{ filterValue }}
     </div>
