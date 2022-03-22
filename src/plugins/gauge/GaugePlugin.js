@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Gauge from './Gauge';
+import GaugeViewProvider from './GaugeViewProvider';
 import GaugeFormController from './components/GaugeFormController.vue';
 import Vue from 'vue';
 
@@ -34,9 +34,9 @@ export const GAUGE_TYPES = [
 
 export default function () {
     return function install(openmct) {
-        openmct.objectViews.addProvider(new Gauge(openmct));
+        openmct.objectViews.addProvider(new GaugeViewProvider(openmct));
 
-        openmct.forms.addNewFormControl('gauge-controller', getGaugeFormController());
+        openmct.forms.addNewFormControl('gauge-controller', getGaugeFormController(openmct));
         openmct.types.addType('gauge', {
             name: "Gauge",
             creatable: true,
@@ -154,7 +154,7 @@ export default function () {
         });
     };
 
-    function getGaugeFormController() {
+    function getGaugeFormController(openmct) {
         return {
             show(element, model, onChange) {
                 const rowComponent = new Vue({
@@ -163,7 +163,7 @@ export default function () {
                         GaugeFormController
                     },
                     provide: {
-                        openmct: self.openmct
+                        openmct
                     },
                     data() {
                         return {
