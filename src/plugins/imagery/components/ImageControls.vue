@@ -93,6 +93,7 @@ const DEFAULT_FILTER_VALUES = {
 const ZOOM_LIMITS_MAX_DEFAULT = 20;
 const ZOOM_LIMITS_MIN_DEFAULT = 1;
 const ZOOM_STEP = 1;
+const ZOOM_WHEEL_SENSITIVITY_REDUCTION = 0.01;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -204,12 +205,11 @@ export default {
             // only use x,y coordinates on scrolling in
             if (this.wheelZooming === false && e.deltaY > 0) {
                 this.wheelZooming = true;
-
                 // grab first x,y coordinates
-                this.processZoom(e.deltaY * 0.01, e.clientX, e.clientY);
+                this.processZoom(e.deltaY * ZOOM_WHEEL_SENSITIVITY_REDUCTION, e.clientX, e.clientY);
             } else {
                 // ignore subsequent event x,y so scroll drift doesn't occur
-                this.processZoom(e.deltaY * 0.01);
+                this.processZoom(e.deltaY * ZOOM_WHEEL_SENSITIVITY_REDUCTION);
             }
 
             // debounced method that will only fire after the scroll series is complete
