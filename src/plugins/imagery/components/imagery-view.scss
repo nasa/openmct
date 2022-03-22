@@ -96,7 +96,7 @@
 
     &__thumbs-wrapper {
         display: flex; // Uses row layout
-        flex-direction: row-reverse;
+        justify-content: flex-end;
 
         &.is-autoscroll-off {
             background: $colorInteriorBorder;
