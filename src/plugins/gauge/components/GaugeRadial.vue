@@ -123,7 +123,7 @@
                         ></div>
                     </template>
 
-                    <template v-if="gaugeType.indexOf('-horz') !== -1">
+                    <template v-if="gaugeType.indexOf('-horizontal') !== -1">
                         <div
                             class="c-meter__value"
                             :style="`transform: translateX(${meterValueToPerc * -1}%)`"

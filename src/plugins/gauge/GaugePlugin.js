@@ -29,7 +29,7 @@ export const GAUGE_TYPES = [
     ['Needle Dial', 'dial-needle'],
     ['Vertical Meter', 'meter-vertical'],
     ['Vertical Meter Inverted', 'meter-vertical-inverted'],
-    ['Horizontal Meter', 'meter-horz']
+    ['Horizontal Meter', 'meter-horizontal']
 ];
 
 export default function () {
