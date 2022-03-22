@@ -22,28 +22,34 @@
 
 <template>
 <div class="c-inspector__header">
-    <div v-if="!multiSelect"
-         class="c-inspector__selected c-object-label"
-         :class="[statusClass]"
+    <div
+        v-if="!multiSelect"
+        class="c-inspector__selected c-object-label"
+        :class="[statusClass]"
     >
-        <div class="c-object-label__type-icon"
-             :class="typeCssClass"
+        <div
+            class="c-object-label__type-icon"
+            :class="typeCssClass"
         >
-            <span class="is-status__indicator"
-                  :title="`This item is ${status}`"
+            <span
+                class="is-status__indicator"
+                :title="`This item is ${status}`"
             ></span>
         </div>
-        <span v-if="!singleSelectNonObject"
-              class="c-inspector__selected c-object-label__name"
+        <span
+            v-if="!singleSelectNonObject"
+            class="c-inspector__selected c-object-label__name"
         >{{ item.name }}</span>
-        <div v-if="singleSelectNonObject"
-             class="c-inspector__selected c-inspector__selected--non-domain-object  c-object-label"
+        <div
+            v-if="singleSelectNonObject"
+            class="c-inspector__selected c-inspector__selected--non-domain-object  c-object-label"
         >
             <span class="c-object-label__name">Layout Object</span>
         </div>
     </div>
-    <div v-if="multiSelect"
-         class="c-inspector__multiple-selected"
+    <div
+        v-if="multiSelect"
+        class="c-inspector__multiple-selected"
     >
         {{ itemsSelected }} items selected
     </div>

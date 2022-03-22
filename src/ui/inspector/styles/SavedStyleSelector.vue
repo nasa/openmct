@@ -23,9 +23,10 @@
 <template>
 <div>
     <div class="c-style c-style--saved has-local-controls c-toolbar">
-        <div class="c-style__controls"
-             :title="description"
-             @click="selectStyle()"
+        <div
+            class="c-style__controls"
+            :title="description"
+            @click="selectStyle()"
         >
             <div
                 class="c-style-thumb"
