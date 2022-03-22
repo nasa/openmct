@@ -29,7 +29,7 @@ import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
 
-fdescribe("the plugin", function () {
+describe("the plugin", function () {
     let element;
     let child;
     let openmct;
@@ -856,7 +856,7 @@ fdescribe("the plugin", function () {
                 expect(hasStyles).toBe(1);
                 done();
             });
-        })
+        });
 
         describe('limits', () => {
 
