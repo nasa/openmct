@@ -10,14 +10,20 @@ config.devtool = false;
 const vueLoaderRule = config.module.rules.find(r => r.use === 'vue-loader');
 
 vueLoaderRule.use = {
-    loader: 'vue-loader',
+    loader: 'vue-loader'
     // Attempt to use Babel with babel-plugin-istanbul
-    options: {
-        compiler: require('vue-template-babel-compiler'),
-        compilerOptions: {
-            babelOptions: require('./babel.coverage')
-        }
-    }
+
+    // TODO The purpose of this was to try to add coverage to JS expressions
+    // inside `<template>` markup, but it seems to add only coverage inside
+    // `<script>` tags.
+    // Issue: https://github.com/nasa/openmct/issues/4973
+    //
+    // options: {
+    //     compiler: require('vue-template-babel-compiler'),
+    //     compilerOptions: {
+    //         babelOptions: require('./babel.coverage')
+    //     }
+    // }
 };
 
 config.module.rules.push({
