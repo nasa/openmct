@@ -40,37 +40,41 @@
             @startPan="startPan"
         />
 
-        <div ref="imageBG"
-             class="c-imagery__main-image__bg"
-             :class="{
-                 'paused unnsynced': isPaused && !isFixed,
-                 'stale': false,
-                 'pannable': cursorStates.isPannable,
-                 'cursor-zoom-in': cursorStates.showCursorZoomIn,
-                 'cursor-zoom-out': cursorStates.showCursorZoomOut
-             }"
-             @click="expand"
+        <div 
+            ref="imageBG"
+            class="c-imagery__main-image__bg"
+            :class="{
+                'paused unnsynced': isPaused && !isFixed,
+                'stale': false,
+                'pannable': cursorStates.isPannable,
+                'cursor-zoom-in': cursorStates.showCursorZoomIn,
+                'cursor-zoom-out': cursorStates.showCursorZoomOut
+            }"
+            @click="expand"
         >
-            <div v-if="zoomFactor > 1"
-                 class="c-imagery__hints"
+            <div 
+                v-if="zoomFactor > 1"
+                class="c-imagery__hints"
             >Alt-drag to pan</div>
-            <div ref="focusedImageWrapper"
-                 class="image-wrapper"
-                 :style="{
-                     'width': `${sizedImageWidth}px`,
-                     'height': `${sizedImageHeight}px`
-                 }"
-                 @mousedown="handlePanZoomClick"
+            <div 
+                ref="focusedImageWrapper"
+                class="image-wrapper"
+                :style="{
+                    'width': `${sizedImageWidth}px`,
+                    'height': `${sizedImageHeight}px`
+                }"
+                @mousedown="handlePanZoomClick"
             >
-                <img ref="focusedImage"
-                     class="c-imagery__main-image__image js-imageryView-image "
-                     :src="imageUrl"
-                     :draggable="!isSelectable"
-                     :style="{
-                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                     }"
-                     :data-openmct-image-timestamp="time"
-                     :data-openmct-object-keystring="keyString"
+                <img 
+                    ref="focusedImage"
+                    class="c-imagery__main-image__image js-imageryView-image "
+                    :src="imageUrl"
+                    :draggable="!isSelectable"
+                    :style="{
+                        'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                    }"
+                    :data-openmct-image-timestamp="time"
+                    :data-openmct-object-keystring="keyString"
                 >
                 <div
                     v-if="imageUrl"
@@ -166,11 +170,12 @@
             class="c-imagery__thumbs-scroll-area"
             @scroll="handleScroll"
         >
-            <div v-for="(image, index) in imageHistory"
-                 :key="image.url + image.time"
-                 class="c-imagery__thumb c-thumb"
-                 :class="{ selected: focusedImageIndex === index && isPaused }"
-                 @click="thumbnailClicked(index)"
+            <div 
+                v-for="(image, index) in imageHistory"
+                :key="image.url + image.time"
+                class="c-imagery__thumb c-thumb"
+                :class="{ selected: focusedImageIndex === index && isPaused }"
+                @click="thumbnailClicked(index)"
             >
                 <a
                     href=""
