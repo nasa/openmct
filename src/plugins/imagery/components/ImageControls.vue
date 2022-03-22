@@ -24,27 +24,27 @@
 <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
     <div class="c-image-controls__control c-image-controls__zoom icon-magnify">
         <div class="c-button-set c-button-set--strip-h">
-            <button 
+            <button
                 class="c-button t-btn-zoom-out icon-minus"
                 title="Zoom out"
                 @click="zoomOut"
             ></button>
 
-            <button 
+            <button
                 class="c-button t-btn-zoom-in icon-plus"
                 title="Zoom in"
                 @click="zoomIn"
             ></button>
         </div>
 
-        <button 
+        <button
             class="c-button t-btn-zoom-lock"
             title="Lock current zoom and pan across all images"
             :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
             @click="toggleZoomLock"
         ></button>
 
-        <button 
+        <button
             class="c-button icon-reset t-btn-zoom-reset"
             title="Remove zoom and pan"
             @click="handleResetImage"
@@ -78,7 +78,7 @@
             </div>
         </span>
         <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
-            <button 
+            <button
                 class="c-icon-link icon-reset t-btn-reset"
                 @click="handleResetFilters"
             ></button>

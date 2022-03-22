@@ -40,7 +40,7 @@
             @startPan="startPan"
         />
 
-        <div 
+        <div
             ref="imageBG"
             class="c-imagery__main-image__bg"
             :class="{
@@ -52,11 +52,11 @@
             }"
             @click="expand"
         >
-            <div 
+            <div
                 v-if="zoomFactor > 1"
                 class="c-imagery__hints"
             >Alt-drag to pan</div>
-            <div 
+            <div
                 ref="focusedImageWrapper"
                 class="image-wrapper"
                 :style="{
@@ -65,7 +65,7 @@
                 }"
                 @mousedown="handlePanZoomClick"
             >
-                <img 
+                <img
                     ref="focusedImage"
                     class="c-imagery__main-image__image js-imageryView-image "
                     :src="imageUrl"
@@ -170,7 +170,7 @@
             class="c-imagery__thumbs-scroll-area"
             @scroll="handleScroll"
         >
-            <div 
+            <div
                 v-for="(image, index) in imageHistory"
                 :key="image.url + image.time"
                 class="c-imagery__thumb c-thumb"
