@@ -1,12 +1,14 @@
 <template>
 <div>
     <li class="grid-row">
-        <div class="grid-cell label"
-             title="The position of the legend relative to the plot display area."
+        <div
+            class="grid-cell label"
+            title="The position of the legend relative to the plot display area."
         >Position</div>
         <div class="grid-cell value">
-            <select v-model="position"
-                    @change="updateForm('position')"
+            <select
+                v-model="position"
+                @change="updateForm('position')"
             >
                 <option value="top">Top</option>
                 <option value="right">Right</option>
@@ -16,30 +18,36 @@
         </div>
     </li>
     <li class="grid-row">
-        <div class="grid-cell label"
-             title="Hide the legend when the plot is small"
+        <div
+            class="grid-cell label"
+            title="Hide the legend when the plot is small"
         >Hide when plot small</div>
-        <div class="grid-cell value"><input v-model="hideLegendWhenSmall"
-                                            type="checkbox"
-                                            @change="updateForm('hideLegendWhenSmall')"
+        <div class="grid-cell value"><input
+            v-model="hideLegendWhenSmall"
+            type="checkbox"
+            @change="updateForm('hideLegendWhenSmall')"
         ></div>
     </li>
     <li class="grid-row">
-        <div class="grid-cell label"
-             title="Show the legend expanded by default"
+        <div
+            class="grid-cell label"
+            title="Show the legend expanded by default"
         >Expand by default</div>
-        <div class="grid-cell value"><input v-model="expandByDefault"
-                                            type="checkbox"
-                                            @change="updateForm('expandByDefault')"
+        <div class="grid-cell value"><input
+            v-model="expandByDefault"
+            type="checkbox"
+            @change="updateForm('expandByDefault')"
         ></div>
     </li>
     <li class="grid-row">
-        <div class="grid-cell label"
-             title="What to display in the legend when it's collapsed."
+        <div
+            class="grid-cell label"
+            title="What to display in the legend when it's collapsed."
         >When collapsed show</div>
         <div class="grid-cell value">
-            <select v-model="valueToShowWhenCollapsed"
-                    @change="updateForm('valueToShowWhenCollapsed')"
+            <select
+                v-model="valueToShowWhenCollapsed"
+                @change="updateForm('valueToShowWhenCollapsed')"
             >
                 <option value="none">Nothing</option>
                 <option value="nearestTimestamp">Nearest timestamp</option>
@@ -51,30 +59,36 @@
         </div>
     </li>
     <li class="grid-row">
-        <div class="grid-cell label"
-             title="What to display in the legend when it's expanded."
+        <div
+            class="grid-cell label"
+            title="What to display in the legend when it's expanded."
         >When expanded show</div>
         <div class="grid-cell value">
             <ul>
-                <li><input v-model="showTimestampWhenExpanded"
-                           type="checkbox"
-                           @change="updateForm('showTimestampWhenExpanded')"
+                <li><input
+                    v-model="showTimestampWhenExpanded"
+                    type="checkbox"
+                    @change="updateForm('showTimestampWhenExpanded')"
                 > Nearest timestamp</li>
-                <li><input v-model="showValueWhenExpanded"
-                           type="checkbox"
-                           @change="updateForm('showValueWhenExpanded')"
+                <li><input
+                    v-model="showValueWhenExpanded"
+                    type="checkbox"
+                    @change="updateForm('showValueWhenExpanded')"
                 > Nearest value</li>
-                <li><input v-model="showMinimumWhenExpanded"
-                           type="checkbox"
-                           @change="updateForm('showMinimumWhenExpanded')"
+                <li><input
+                    v-model="showMinimumWhenExpanded"
+                    type="checkbox"
+                    @change="updateForm('showMinimumWhenExpanded')"
                 > Minimum value</li>
-                <li><input v-model="showMaximumWhenExpanded"
-                           type="checkbox"
-                           @change="updateForm('showMaximumWhenExpanded')"
+                <li><input
+                    v-model="showMaximumWhenExpanded"
+                    type="checkbox"
+                    @change="updateForm('showMaximumWhenExpanded')"
                 > Maximum value</li>
-                <li><input v-model="showUnitsWhenExpanded"
-                           type="checkbox"
-                           @change="updateForm('showUnitsWhenExpanded')"
+                <li><input
+                    v-model="showUnitsWhenExpanded"
+                    type="checkbox"
+                    @change="updateForm('showUnitsWhenExpanded')"
                 > Units</li>
             </ul>
 
