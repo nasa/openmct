@@ -35,6 +35,7 @@ describe('the plugin', () => {
         telemetry: {
             duration: 0
         },
+        options: {},
         type: 'eventGenerator'
     };
 
@@ -61,7 +62,13 @@ describe('the plugin', () => {
             });
         });
 
-        it("supports requests", async () => {
+        it("supports requests without start/end defined", async () => {
+            const telemetry = await openmct.telemetry.request(mockDomainObject);
+            expect(telemetry[0].message).toContain('CC: Eagle, Houston');
+        });
+
+        it("supports requests with arbitrary start time in the past", async () => {
+            mockDomainObject.options.start = 100000000000; // Mar 03 1973
             const telemetry = await openmct.telemetry.request(mockDomainObject);
             expect(telemetry[0].message).toContain('CC: Eagle, Houston');
         });

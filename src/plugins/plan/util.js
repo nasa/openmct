@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export function getValidatedData(domainObject) {
+export function getValidatedPlan(domainObject) {
+    let sourceMap = domainObject.sourceMap;
     let body = domainObject.selectFile.body;
     let json = {};
     if (typeof body === 'string') {
@@ -33,5 +34,33 @@ export function getValidatedData(domainObject) {
         json = body;
     }
 
-    return json;
+    if (sourceMap !== undefined && sourceMap.activities !== undefined && sourceMap.groupId !== undefined) {
+        let mappedJson = {};
+        json[sourceMap.activities].forEach((activity) => {
+            if (activity[sourceMap.groupId]) {
+                const groupIdKey = activity[sourceMap.groupId];
+                let groupActivity = {
+                    ...activity
+                };
+
+                if (sourceMap.start) {
+                    groupActivity.start = activity[sourceMap.start];
+                }
+
+                if (sourceMap.end) {
+                    groupActivity.end = activity[sourceMap.end];
+                }
+
+                if (!mappedJson[groupIdKey]) {
+                    mappedJson[groupIdKey] = [];
+                }
+
+                mappedJson[groupIdKey].push(groupActivity);
+            }
+        });
+
+        return mappedJson;
+    } else {
+        return json;
+    }
 }

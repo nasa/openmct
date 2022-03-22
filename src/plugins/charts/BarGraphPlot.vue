@@ -1,28 +1,34 @@
 <template>
-<div ref="plotWrapper"
-     class="has-local-controls"
-     :class="{ 's-unsynced' : isZoomed }"
+<div
+    ref="plotWrapper"
+    class="has-local-controls"
+    :class="{ 's-unsynced' : isZoomed }"
 >
-    <div v-if="isZoomed"
-         class="l-state-indicators"
+    <div
+        v-if="isZoomed"
+        class="l-state-indicators"
     >
-        <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
-              title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."
+        <span
+            class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+            title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."
         ></span>
     </div>
-    <div ref="plot"
-         class="c-bar-chart"
-         @plotly_relayout="zoom"
+    <div
+        ref="plot"
+        class="c-bar-chart"
+        @plotly_relayout="zoom"
     ></div>
-    <div v-if="false"
-         ref="localControl"
-         class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover"
+    <div
+        v-if="false"
+        ref="localControl"
+        class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover"
     >
-        <button v-if="data.length"
-                class="c-button icon-reset"
-                :disabled="!isZoomed"
-                title="Reset pan/zoom"
-                @click="reset()"
+        <button
+            v-if="data.length"
+            class="c-button icon-reset"
+            :disabled="!isZoomed"
+            title="Reset pan/zoom"
+            @click="reset()"
         >
         </button>
     </div>
