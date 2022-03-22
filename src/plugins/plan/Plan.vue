@@ -21,8 +21,9 @@
 -->
 
 <template>
-<div ref="plan"
-     class="c-plan c-timeline-holder"
+<div
+    ref="plan"
+    class="c-plan c-timeline-holder"
 >
     <template v-if="viewBounds && !options.compact">
         <swim-lane>
@@ -36,8 +37,9 @@
             />
         </swim-lane>
     </template>
-    <div ref="planHolder"
-         class="c-plan__contents u-contents"
+    <div
+        ref="planHolder"
+        class="c-plan__contents u-contents"
     >
     </div>
 </div>

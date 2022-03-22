@@ -22,12 +22,13 @@
 
 <template>
 
-<a class="c-hyperlink"
-   :class="{
-       'c-hyperlink--button' : isButton
-   }"
-   :target="domainObject.linkTarget"
-   :href="url"
+<a
+    class="c-hyperlink"
+    :class="{
+        'c-hyperlink--button' : isButton
+    }"
+    :target="domainObject.linkTarget"
+    :href="url"
 >
     <span class="c-hyperlink__label">{{ domainObject.displayText }}</span>
 </a>

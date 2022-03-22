@@ -21,12 +21,14 @@
 -->
 <template>
 <ul>
-    <li class="c-tree__item menus-to-left"
+    <li
+        class="c-tree__item menus-to-left"
         :class="aliasCss"
     >
-        <span class="c-disclosure-triangle is-enabled flex-elem"
-              :class="expandedCssClass"
-              @click="expanded = !expanded"
+        <span
+            class="c-disclosure-triangle is-enabled flex-elem"
+            :class="expandedCssClass"
+            @click="expanded = !expanded"
         >
         </span>
 
@@ -36,14 +38,15 @@
             <div class="c-object-label__name">{{ name }}</div>
         </div>
     </li>
-    <ColorSwatch v-if="expanded"
-                 :current-color="currentColor"
-                 title="Manually set the color for this bar graph series."
-                 edit-title="Manually set the color for this bar graph series"
-                 view-title="The color for this bar graph series."
-                 short-label="Color"
-                 class="grid-properties"
-                 @colorSet="setColor"
+    <ColorSwatch
+        v-if="expanded"
+        :current-color="currentColor"
+        title="Manually set the color for this bar graph series."
+        edit-title="Manually set the color for this bar graph series"
+        view-title="The color for this bar graph series."
+        short-label="Color"
+        class="grid-properties"
+        @colorSet="setColor"
     />
 </ul>
 </template>
