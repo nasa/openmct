@@ -19,31 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { BAR_GRAPH_KEY } from './BarGraphConstants';
-import { SCATTER_PLOT_KEY } from './scatter/ScatterPlotConstants.js';
-import BarGraphViewProvider from './BarGraphViewProvider';
-import ScatterPlotViewProvider from './scatter/ScatterPlotViewProvider';
-import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider';
-import ScatterPlotInspectorViewProvider from './scatter/inspector/ScatterPlotInspectorViewProvider';
-import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
-import ScatterPlotCompositionPolicy from './scatter/ScatterPlotCompositionPolicy';
+import { SCATTER_PLOT_KEY } from './ScatterPlotConstants.js';
+import ScatterPlotViewProvider from './ScatterPlotViewProvider';
+import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider';
+import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy';
 
 export default function () {
     return function install(openmct) {
-        openmct.types.addType(BAR_GRAPH_KEY, {
-            key: BAR_GRAPH_KEY,
-            name: "Bar Graph",
-            cssClass: "icon-bar-chart",
-            description: "View data as a bar graph. Can be added to Display Layouts.",
-            creatable: true,
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    barStyles: { series: {} }
-                };
-            },
-            priority: 891
-        });
 
         openmct.types.addType(SCATTER_PLOT_KEY, {
             key: SCATTER_PLOT_KEY,
@@ -73,7 +55,6 @@ export default function () {
                     name: "Minimum Y Axis value",
                     control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
-                    required: true,
                     property: [
                         "configuration",
                         "rangeMin"
@@ -83,7 +64,6 @@ export default function () {
                     name: "Maximum Y Axis value",
                     control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
-                    required: true,
                     property: [
                         "configuration",
                         "rangeMax"
@@ -93,7 +73,6 @@ export default function () {
                     name: "Minimum X Axis value",
                     control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
-                    required: true,
                     property: [
                         "configuration",
                         "domainMin"
@@ -103,7 +82,6 @@ export default function () {
                     name: "Maximum X Axis value",
                     control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
-                    required: true,
                     property: [
                         "configuration",
                         "domainMax"
@@ -113,13 +91,10 @@ export default function () {
             priority: 891
         });
 
-        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
         openmct.objectViews.addProvider(new ScatterPlotViewProvider(openmct));
 
-        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
         openmct.inspectorViews.addProvider(new ScatterPlotInspectorViewProvider(openmct));
 
-        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new ScatterPlotCompositionPolicy(openmct).allow);
     };
 }

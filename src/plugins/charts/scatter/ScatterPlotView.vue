@@ -21,7 +21,7 @@
 -->
 
 <template>
-<BarGraph ref="barGraph"
+<ScatterPlotWithUnderlay ref="barGraph"
           class="c-plot c-bar-chart-view"
           :data="trace"
           :plot-axis-title="plotAxisTitle"
@@ -29,13 +29,13 @@
 </template>
 
 <script>
-import BarGraph from '../BarGraphPlot.vue';
+import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
 
 const MAX_INTERPOLATE = 5;
 
 export default {
     components: {
-        BarGraph
+      ScatterPlotWithUnderlay
     },
     inject: ['openmct', 'domainObject', 'path'],
     data() {
@@ -186,26 +186,26 @@ export default {
                 if (data[metadataKey]) {
                     valueForTimestamp.x = this.format(key, metadataKey, data);
                     valueForTimestamp.xInterpolated = false;
-                    // this.adjustInterpolatedValues(timestamp, 'x', valueForTimestamp.x);
-                    // if (valueForTimestamp.y === undefined) {
-                    //     //find nearest y
-                    //     valueForTimestamp.y = this.getInterpolatedValue(timestamp, 'y');
-                    //     valueForTimestamp.y = null;
-                    //     valueForTimestamp.yInterpolated = true;
-                    // }
+                    this.adjustInterpolatedValues(timestamp, 'x', valueForTimestamp.x);
+                    if (valueForTimestamp.y === undefined) {
+                        //find nearest y
+                        valueForTimestamp.y = this.getInterpolatedValue(timestamp, 'y');
+                        valueForTimestamp.y = null;
+                        valueForTimestamp.yInterpolated = true;
+                    }
                 }
             } else if (this.domainObject.configuration.axes.yKey === key) {
                 const metadataKey = axisMetadata.source;
                 if (data[metadataKey]) {
                     valueForTimestamp.y = this.format(key, metadataKey, data);
                     valueForTimestamp.yInterpolated = false;
-                    // this.adjustInterpolatedValues(timestamp, 'y', valueForTimestamp.y);
-                    // if (valueForTimestamp.x === undefined) {
-                    //     //find nearest x
-                    //     valueForTimestamp.x = this.getInterpolatedValue(timestamp, 'x');
-                    //     valueForTimestamp.x = null;
-                    //     valueForTimestamp.xInterpolated = true;
-                    // }
+                    this.adjustInterpolatedValues(timestamp, 'y', valueForTimestamp.y);
+                    if (valueForTimestamp.x === undefined) {
+                        //find nearest x
+                        valueForTimestamp.x = this.getInterpolatedValue(timestamp, 'x');
+                        valueForTimestamp.x = null;
+                        valueForTimestamp.xInterpolated = true;
+                    }
                 }
             }
 
@@ -234,19 +234,19 @@ export default {
                 hoverinfo: 'x+y'
             };
 
-            // if (this.domainObject.configuration.domainMin !== undefined && this.domainObject.configuration.domainMax !== undefined) {
-            //     trace.xaxis = {
-            //         min: this.domainObject.configuration.domainMin,
-            //         max: this.domainObject.configuration.domainMax
-            //     };
-            // }
+            if (this.domainObject.configuration.domainMin !== undefined && this.domainObject.configuration.domainMax !== undefined) {
+                trace.xaxis = {
+                    min: this.domainObject.configuration.domainMin,
+                    max: this.domainObject.configuration.domainMax
+                };
+            }
 
-            // if (this.domainObject.configuration.rangeMin !== undefined && this.domainObject.configuration.rangeMax !== undefined) {
-            //     trace.yaxis = {
-            //         min: this.domainObject.configuration.rangeMin,
-            //         max: this.domainObject.configuration.rangeMax
-            //     };
-            // }
+            if (this.domainObject.configuration.rangeMin !== undefined && this.domainObject.configuration.rangeMax !== undefined) {
+                trace.yaxis = {
+                    min: this.domainObject.configuration.rangeMin,
+                    max: this.domainObject.configuration.rangeMax
+                };
+            }
 
             this.trace = [trace];
         },
