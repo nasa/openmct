@@ -43,8 +43,7 @@
             flex: 0 0 auto;
         }
 
-        .is-in-small-container &,
-        .c-fl-frame & {
+        .--width-less-than-600 & {
             [class*="__label"] {
                 // button labels
                 display: none;
@@ -138,7 +137,24 @@
     &.is-status--missing {
         border: $borderMissing;
     }
+
+    // Leave for debugging
+    //&.--width-less-than-600 { background: rgba(orange, 0.2) !important; }
+    //&.--width-less-than-220 { background: rgba(red, 0.2) !important; }
 }
+
+@mixin hideMoreLess($dimension: '220') {
+    .--width-less-than-#{$dimension} {
+        .--hide-if-less-than-#{$dimension} { display: none; }
+    }
+
+    .--width-more-than-#{$dimension} {
+        .--hide-if-more-than-#{$dimension} { display: none; }
+    }
+}
+
+@include hideMoreLess($dimension: '220');
+@include hideMoreLess($dimension: '600');
 
 .l-angular-ov-wrapper {
     // This element is the recipient for object styling; cannot be display: contents
@@ -146,3 +162,5 @@
     display: block;
     height: 100%;
 }
+
+
