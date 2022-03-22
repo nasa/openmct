@@ -23,22 +23,25 @@
 <template>
 <div class="form-control autocomplete">
     <span class="autocompleteInputAndArrow">
-        <input v-model="field"
-               class="autocompleteInput"
-               type="text"
-               @click="inputClicked()"
-               @keydown="keyDown($event)"
+        <input
+            v-model="field"
+            class="autocompleteInput"
+            type="text"
+            @click="inputClicked()"
+            @keydown="keyDown($event)"
         >
-        <span class="icon-arrow-down"
-              @click="arrowClicked()"
+        <span
+            class="icon-arrow-down"
+            @click="arrowClicked()"
         ></span>
     </span>
-
-    <div class="autocompleteOptions"
-         @blur="hideOptions = true"
+    <div
+        class="autocompleteOptions"
+        @blur="hideOptions = true"
     >
         <ul v-if="!hideOptions">
-            <li v-for="opt in filteredOptions"
+            <li
+                v-for="opt in filteredOptions"
                 :key="opt.optionId"
                 :class="{'optionPreSelected': optionIndex === opt.optionId}"
                 @click="fillInputWithString(opt.name)"
