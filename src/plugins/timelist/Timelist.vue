@@ -29,7 +29,6 @@
                :default-sort="defaultSort"
                class="sticky"
     />
-    <div class="nowMarker"></div>
 </div>
 </template>
 
@@ -43,8 +42,8 @@ import {SORT_ORDER_OPTIONS} from "./constants";
 import moment from "moment";
 import uuid from "uuid";
 
-const HEADER_HEIGHT = 19;
-const ROW_HEIGHT = 29;
+const SCROLL_TIMEOUT = 20000;
+const ROW_HEIGHT = 30;
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
 const headerItems = [
     {
@@ -108,14 +107,17 @@ export default {
     mounted() {
         this.isEditing = this.openmct.editor.isEditing();
         this.timestamp = Date.now();
-        this.observeForChanges(this.domainObject);
+        this.getPlanDataAndSetConfig(this.domainObject);
 
-        this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
-        this.unlistenConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.observeForConfigChanges);
+        this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.getPlanDataAndSetConfig);
+        this.unlistenConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.setViewFromConfig);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
         this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
         this.openmct.editor.on('isEditing', this.setEditState);
+
+        this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
+        this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -135,13 +137,18 @@ export default {
         }
 
         this.openmct.editor.off('isEditing', this.setEditState);
+
+        this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
+        if (this.clearAutoScrollDisabledTimer) {
+            clearTimeout(this.clearAutoScrollDisabledTimer);
+        }
     },
     methods: {
-        observeForChanges(mutatedObject) {
+        getPlanDataAndSetConfig(mutatedObject) {
             this.getPlanData(mutatedObject);
-            this.observeForConfigChanges(mutatedObject.configuration);
+            this.setViewFromConfig(mutatedObject.configuration);
         },
-        observeForConfigChanges(configuration) {
+        setViewFromConfig(configuration) {
             if (this.isEditing) {
                 this.filterValue = configuration.filter;
                 this.hideAll = false;
@@ -233,6 +240,7 @@ export default {
             });
             activities = activities.filter(this.filterActivities);
             activities = this.applyStyles(activities);
+            this.setScrollTop();
             // sort by start time
             this.planActivities = activities.sort(this.sortByStartTime);
         },
@@ -275,14 +283,16 @@ export default {
             }));
         },
         applyStyles(activities) {
-            let isFirstCurrent = false;
+            let firstCurrentActivityIndex = -1;
+            let currentActivitiesCount = 0;
             const styledActivities = activities.map((activity, index) => {
                 if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
                     activity.cssClass = '--is-current';
-                    if (!isFirstCurrent) {
-                        isFirstCurrent = true;
-                        this.setNowMarker(index);
+                    if (firstCurrentActivityIndex < 0) {
+                        firstCurrentActivityIndex = index;
                     }
+
+                    currentActivitiesCount = currentActivitiesCount + 1;
                 } else if (this.timestamp < activity.start) {
                     activity.cssClass = '--is-future';
                 } else {
@@ -298,20 +308,60 @@ export default {
                 return activity;
             });
 
-            if (!isFirstCurrent) {
-                this.resetNowMarker();
-            }
+            this.firstCurrentActivityIndex = firstCurrentActivityIndex;
+            this.currentActivitiesCount = currentActivitiesCount;
 
             return styledActivities;
         },
-        resetNowMarker() {
-            const nowEl = this.$el.querySelector('.nowMarker');
-            nowEl.classList.remove('hasCurrent');
+        canAutoScroll() {
+            //this distinguishes between programmatic vs user-triggered scroll events
+            this.autoScrolled = (this.dontAutoScroll !== true);
+
+            return this.autoScrolled;
         },
-        setNowMarker(index) {
-            const nowEl = this.$el.querySelector('.nowMarker');
-            nowEl.classList.add('hasCurrent');
-            nowEl.style.top = `${ROW_HEIGHT * index + HEADER_HEIGHT}px`;
+        resetScroll() {
+            if (this.canAutoScroll() === false) {
+                return;
+            }
+
+            this.firstCurrentActivityIndex = -1;
+            this.currentActivitiesCount = 0;
+            this.$el.parentElement.scrollTo({top: 0});
+        },
+        setScrollTop() {
+            if (this.canAutoScroll() === false) {
+                return;
+            }
+
+            //scroll to somewhere mid-way of the current activities
+            if (this.firstCurrentActivityIndex > -1) {
+                const scrollOffset = this.currentActivitiesCount > 0 ? Math.floor(this.currentActivitiesCount / 2) : 0;
+                this.$el.parentElement.scrollTo({
+                    top: ROW_HEIGHT * (this.firstCurrentActivityIndex + scrollOffset),
+                    behavior: "smooth"
+                });
+            } else {
+                this.resetScroll();
+            }
+        },
+        deferAutoScroll() {
+            //if this is not a user-triggered event, don't defer auto scrolling
+            if (this.autoScrolled) {
+                this.autoScrolled = false;
+
+                return;
+            }
+
+            this.dontAutoScroll = true;
+            const self = this;
+            if (this.clearAutoScrollDisabledTimer) {
+                clearTimeout(this.clearAutoScrollDisabledTimer);
+            }
+
+            this.clearAutoScrollDisabledTimer = setTimeout(() => {
+                self.dontAutoScroll = false;
+                self.setScrollTop();
+            }, SCROLL_TIMEOUT);
         },
         setSort() {
             const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
@@ -333,7 +383,7 @@ export default {
         },
         setEditState(isEditing) {
             this.isEditing = isEditing;
-            this.observeForConfigChanges(this.domainObject.configuration);
+            this.setViewFromConfig(this.domainObject.configuration);
         }
     }
 };
