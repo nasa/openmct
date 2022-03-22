@@ -52,7 +52,7 @@
         <span
             class="c-image-controls__sliders"
             draggable="true"
-            @dragstart="startDrag"
+            @dragstart.stop.prevent
         >
             <div class="c-image-controls__input icon-brightness">
                 <input
@@ -170,10 +170,6 @@ export default {
         handleResetFilters() {
             this.filters = DEFAULT_FILTER_VALUES;
             this.notifyFiltersChanged();
-        },
-        startDrag(e) {
-            e.preventDefault();
-            e.stopPropagation();
         },
         limitZoomRange(factor) {
             return Math.min(Math.max(ZOOM_LIMITS_MIN_DEFAULT, factor), ZOOM_LIMITS_MAX_DEFAULT);
