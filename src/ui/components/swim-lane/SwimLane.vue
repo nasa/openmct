@@ -1,23 +1,27 @@
 <template>
-<div class="u-contents"
-     :class="[
-         {'c-swimlane': !isNested},
-         statusClass
-     ]"
+<div
+    class="u-contents"
+    :class="[
+        {'c-swimlane': !isNested},
+        statusClass
+    ]"
 >
 
-    <div v-if="hideLabel === false"
-         class="c-swimlane__lane-label c-object-label"
-         :class="[swimlaneClass, statusClass]"
-         :style="gridRowSpan"
+    <div
+        v-if="hideLabel === false"
+        class="c-swimlane__lane-label c-object-label"
+        :class="[swimlaneClass, statusClass]"
+        :style="gridRowSpan"
     >
-        <div v-if="iconClass"
-             class="c-object-label__type-icon"
-             :class="iconClass"
+        <div
+            v-if="iconClass"
+            class="c-object-label__type-icon"
+            :class="iconClass"
         >
-            <span v-if="status"
-                  class="is-status__indicator"
-                  :title="`This item is ${status}`"
+            <span
+                v-if="status"
+                class="is-status__indicator"
+                :title="`This item is ${status}`"
             ></span>
         </div>
 
@@ -26,9 +30,10 @@
         </div>
 
     </div>
-    <div class="c-swimlane__lane-object"
-         :style="{'min-height': minHeight}"
-         :class="{'u-contents': showUcontents}"
+    <div
+        class="c-swimlane__lane-object"
+        :style="{'min-height': minHeight}"
+        :class="{'u-contents': showUcontents}"
     >
         <slot name="object"></slot>
     </div>

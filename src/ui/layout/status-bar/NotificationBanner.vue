@@ -29,9 +29,10 @@
     @click="maximize()"
 >
     <span class="c-message-banner__message">{{ activeModel.message }}</span>
-    <span v-if="haslink"
-          class="c-message-banner__message"
-          :class="[haslink ? getLinkProps.cssClass : '']"
+    <span
+        v-if="haslink"
+        class="c-message-banner__message"
+        :class="[haslink ? getLinkProps.cssClass : '']"
     >{{ getLinkProps.text }}</span>
 
     <progress-bar

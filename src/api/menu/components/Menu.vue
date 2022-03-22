@@ -1,6 +1,7 @@
 <template>
-<div class="c-menu"
-     :class="options.menuClass"
+<div
+    class="c-menu"
+    :class="options.menuClass"
 >
     <ul v-if="options.actions.length && options.actions[0].length">
         <template
