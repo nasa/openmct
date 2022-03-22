@@ -21,10 +21,11 @@
 -->
 <template>
 <div class="c-inspector__properties c-inspect-properties">
-    <plan-activity-view v-for="activity in activities"
-                        :key="activity.id"
-                        :activity="activity"
-                        :heading="heading"
+    <plan-activity-view
+        v-for="activity in activities"
+        :key="activity.id"
+        :activity="activity"
+        :heading="heading"
     />
 </div>
 </template>

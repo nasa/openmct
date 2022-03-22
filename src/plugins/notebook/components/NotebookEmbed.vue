@@ -1,21 +1,24 @@
 <template>
 <div class="c-snapshot c-ne__embed">
-    <div v-if="embed.snapshot"
-         class="c-ne__embed__snap-thumb"
-         @click="openSnapshot()"
+    <div
+        v-if="embed.snapshot"
+        class="c-ne__embed__snap-thumb"
+        @click="openSnapshot()"
     >
         <img :src="thumbnailImage">
     </div>
     <div class="c-ne__embed__info">
         <div class="c-ne__embed__name">
-            <a class="c-ne__embed__link"
-               :class="embed.cssClass"
-               @click="changeLocation"
+            <a
+                class="c-ne__embed__link"
+                :class="embed.cssClass"
+                @click="changeLocation"
             >{{ embed.name }}</a>
             <PopupMenu :popup-menu-items="popupMenuItems" />
         </div>
-        <div v-if="embed.snapshot"
-             class="c-ne__embed__time"
+        <div
+            v-if="embed.snapshot"
+            class="c-ne__embed__time"
         >
             {{ createdOn }}
         </div>

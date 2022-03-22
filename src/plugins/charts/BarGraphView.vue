@@ -21,12 +21,13 @@
 -->
 
 <template>
-<BarGraph ref="barGraph"
-          class="c-plot c-bar-chart-view"
-          :data="trace"
-          :plot-axis-title="plotAxisTitle"
-          @subscribe="subscribeToAll"
-          @unsubscribe="removeAllSubscriptions"
+<BarGraph
+    ref="barGraph"
+    class="c-plot c-bar-chart-view"
+    :data="trace"
+    :plot-axis-title="plotAxisTitle"
+    @subscribe="subscribeToAll"
+    @unsubscribe="removeAllSubscriptions"
 />
 </template>
 

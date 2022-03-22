@@ -1,13 +1,15 @@
 <template>
-<div class="c-list__item js-list__item"
-     :class="[{ 'is-selected': isSelected, 'is-notebook-default' : (defaultSectionId === section.id) }]"
-     :data-id="section.id"
-     @click="selectSection"
+<div
+    class="c-list__item js-list__item"
+    :class="[{ 'is-selected': isSelected, 'is-notebook-default' : (defaultSectionId === section.id) }]"
+    :data-id="section.id"
+    @click="selectSection"
 >
-    <span class="c-list__item__name js-list__item__name"
-          :data-id="section.id"
-          @keydown.enter="updateName"
-          @blur="updateName"
+    <span
+        class="c-list__item__name js-list__item__name"
+        :data-id="section.id"
+        @keydown.enter="updateName"
+        @blur="updateName"
     >{{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}</span>
     <PopupMenu :popup-menu-items="popupMenuItems" />
 </div>

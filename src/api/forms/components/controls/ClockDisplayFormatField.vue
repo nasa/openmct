@@ -22,10 +22,11 @@
 
 <template>
 <div class="c-form-control--clock-display-format-fields">
-    <SelectField v-for="item in items"
-                 :key="item.key"
-                 :model="item"
-                 @onChange="onChange"
+    <SelectField
+        v-for="item in items"
+        :key="item.key"
+        :model="item"
+        @onChange="onChange"
     />
 </div>
 </template>

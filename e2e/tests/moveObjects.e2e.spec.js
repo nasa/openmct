@@ -19,32 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
 
-describe("the plugin", () => {
-    const NON_EDITABLE_FOLDER_KEY = 'noneditable.folder';
-    let openmct;
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding moving objects.
+*/
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
-        openmct.install(openmct.plugins.NonEditableFolder());
+const { test, expect } = require('@playwright/test');
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+test.describe('Move item tests', () => {
+    test.fixme('Create a basic object and verify that it can be moved to another Folder', async ({ page }) => {
+        //Create and save Folder
+        //Create and save Domain Object
+        //Verify that the newly created domain object can be moved to Folder from Step 1.
+        //Verify that newly moved object appears in the correct point in Tree
+        //Verify that newly moved object appears correctly in Inspector panel
     });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    test.fixme('Create a basic object and verify that it cannot be moved to object without Composition Provider', async ({ page }) => {
+        //Create and save Telemetry Object
+        //Create and save Domain Object
+        //Verify that the newly created domain object cannot be moved to Telemetry Object from step 1.
     });
-
-    it('adds the new non-editable folder type', () => {
-        const type = openmct.types.get(NON_EDITABLE_FOLDER_KEY);
-
-        expect(type).toBeDefined();
-        expect(type.definition.creatable).toBeFalse();
-    });
-
 });

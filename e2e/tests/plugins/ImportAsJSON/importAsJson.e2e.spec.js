@@ -20,14 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function () {
-    return function (openmct) {
-        openmct.types.addType("noneditable.folder", {
-            name: "Non-Editable Folder",
-            key: "noneditable.folder",
-            description: "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
-            cssClass: "icon-folder",
-            creatable: false
-        });
-    };
-}
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding importAsJSON.
+*/
+
+const { test, expect } = require('@playwright/test');
+
+test.describe('ExportAsJSON', () => {
+    test.fixme('Verify that domain object can be importAsJSON from Tree', async ({ page }) => {
+        //Verify that an testdata JSON file can be imported from Tree
+        //Verify correctness of imported domain object
+    });
+    test.fixme('Verify that domain object can be importAsJSON from 3 dot menu on folder', async ({ page }) => {
+        //Verify that an testdata JSON file can be imported from 3 dot menu on folder domain object
+        //Verify correctness of imported domain object
+    });
+    test.fixme('Verify that a nested Objects can be importAsJSON', async ({ page }) => {
+        // Testdata with hierarchy
+        // ImportAsJSON on Tree
+        // Verify Hierarchy
+    });
+    test.fixme('Verify that the ImportAsJSON dropdown does not appear for the item X', async ({ page }) => {
+        // Other than non-persistible objects
+    });
+});
