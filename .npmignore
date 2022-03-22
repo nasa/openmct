@@ -12,8 +12,6 @@
 /src/**/test/
 # TODO move test utils into test/ folders
 /src/utils/testing.js
-/platform/**/*Spec.js
-/platform/**/test/
 
 # Also include these special top-level files.
 !copyright-notice.js
