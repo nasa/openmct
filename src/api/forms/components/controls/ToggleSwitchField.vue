@@ -22,8 +22,9 @@
 
 <template>
 <span class="form-control shell">
-    <span class="field control"
-          :class="model.cssClass"
+    <span
+        class="field control"
+        :class="model.cssClass"
     >
         <ToggleSwitch
             id="toggleSwitch"

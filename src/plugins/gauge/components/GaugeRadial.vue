@@ -1,80 +1,94 @@
 <template>
-<div class="c-gauge"
-     :class="`c-gauge--${gaugeType}`"
+<div
+    class="c-gauge"
+    :class="`c-gauge--${gaugeType}`"
 >
     <div class="c-gauge__wrapper">
         <template v-if="gaugeType.indexOf('dial') !== -1">
-            <svg class="c-gauge__range"
-                 viewBox="0 0 512 512"
+            <svg
+                class="c-gauge__range"
+                viewBox="0 0 512 512"
             >
-                <text v-if="displayMinMax"
-                      font-size="35"
-                      transform="translate(105 455) rotate(-45)"
+                <text
+                    v-if="displayMinMax"
+                    font-size="35"
+                    transform="translate(105 455) rotate(-45)"
                 >{{ rangeLow }}</text>
-                <text v-if="displayMinMax"
-                      font-size="35"
-                      transform="translate(407 455) rotate(45)"
-                      text-anchor="end"
+                <text
+                    v-if="displayMinMax"
+                    font-size="35"
+                    transform="translate(407 455) rotate(45)"
+                    text-anchor="end"
                 >{{ rangeHigh }}</text>
             </svg>
 
-            <svg v-if="displayCurVal"
-                 class="c-gauge__curval"
-                 :viewBox="curValViewBox"
+            <svg
+                v-if="displayCurVal"
+                class="c-gauge__curval"
+                :viewBox="curValViewBox"
             >
-                <text class="c-gauge__curval-text"
-                      lengthAdjust="spacing"
-                      text-anchor="middle"
+                <text
+                    class="c-gauge__curval-text"
+                    lengthAdjust="spacing"
+                    text-anchor="middle"
                 >{{ curVal }}</text>
             </svg>
 
             <div class="c-dial">
-                <svg class="c-dial__bg"
-                     viewBox="0 0 512 512"
+                <svg
+                    class="c-dial__bg"
+                    viewBox="0 0 512 512"
                 >
                     <path d="M256,0C114.6,0,0,114.6,0,256S114.6,512,256,512,512,397.4,512,256,397.4,0,256,0Zm0,412A156,156,0,1,1,412,256,155.9,155.9,0,0,1,256,412Z" />
                 </svg>
 
-                <svg v-if="limitHigh && dialHighLimitDeg < 270"
-                     class="c-dial__limit-high"
-                     viewBox="0 0 512 512"
-                     :class="{
-                         'c-high-limit-clip--90': dialHighLimitDeg > 90,
-                         'c-high-limit-clip--180': dialHighLimitDeg >= 180
-                     }"
+                <svg
+                    v-if="limitHigh && dialHighLimitDeg < 270"
+                    class="c-dial__limit-high"
+                    viewBox="0 0 512 512"
+                    :class="{
+                        'c-high-limit-clip--90': dialHighLimitDeg > 90,
+                        'c-high-limit-clip--180': dialHighLimitDeg >= 180
+                    }"
                 >
-                    <path d="M100,256A156,156,0,1,1,366.3,366.3L437,437a255.2,255.2,0,0,0,75-181C512,114.6,397.4,0,256,0S0,114.6,0,256A255.2,255.2,0,0,0,75,437l70.7-70.7A155.5,155.5,0,0,1,100,256Z"
-                          :style="`transform: rotate(${dialHighLimitDeg}deg)`"
+                    <path
+                        d="M100,256A156,156,0,1,1,366.3,366.3L437,437a255.2,255.2,0,0,0,75-181C512,114.6,397.4,0,256,0S0,114.6,0,256A255.2,255.2,0,0,0,75,437l70.7-70.7A155.5,155.5,0,0,1,100,256Z"
+                        :style="`transform: rotate(${dialHighLimitDeg}deg)`"
                     />
                 </svg>
 
-                <svg v-if="limitLow && dialLowLimitDeg < 270"
-                     class="c-dial__limit-low"
-                     viewBox="0 0 512 512"
-                     :class="{
-                         'c-dial-clip--90': dialLowLimitDeg < 90,
-                         'c-dial-clip--180': dialLowLimitDeg >= 90 && dialLowLimitDeg < 180
-                     }"
+                <svg
+                    v-if="limitLow && dialLowLimitDeg < 270"
+                    class="c-dial__limit-low"
+                    viewBox="0 0 512 512"
+                    :class="{
+                        'c-dial-clip--90': dialLowLimitDeg < 90,
+                        'c-dial-clip--180': dialLowLimitDeg >= 90 && dialLowLimitDeg < 180
+                    }"
                 >
-                    <path d="M256,100c86.2,0,156,69.8,156,156s-69.8,156-156,156c-43.1,0-82.1-17.5-110.3-45.7L75,437 c46.3,46.3,110.3,75,181,75c141.4,0,256-114.6,256-256S397.4,0,256,0C185.3,0,121.3,28.7,75,75l70.7,70.7 C173.9,117.5,212.9,100,256,100z"
-                          :style="`transform: rotate(${dialLowLimitDeg}deg)`"
+                    <path
+                        d="M256,100c86.2,0,156,69.8,156,156s-69.8,156-156,156c-43.1,0-82.1-17.5-110.3-45.7L75,437 c46.3,46.3,110.3,75,181,75c141.4,0,256-114.6,256-256S397.4,0,256,0C185.3,0,121.3,28.7,75,75l70.7,70.7 C173.9,117.5,212.9,100,256,100z"
+                        :style="`transform: rotate(${dialLowLimitDeg}deg)`"
                     />
                 </svg>
 
-                <svg class="c-dial__value"
-                     viewBox="0 0 512 512"
-                     :class="{
-                         'c-dial-clip--90': degValue < 90 && gaugeType.indexOf('-needle') === -1,
-                         'c-dial-clip--180': degValue >= 90 && degValue < 180 && gaugeType.indexOf('-needle') === -1
-                     }"
+                <svg
+                    class="c-dial__value"
+                    viewBox="0 0 512 512"
+                    :class="{
+                        'c-dial-clip--90': degValue < 90 && gaugeType.indexOf('-needle') === -1,
+                        'c-dial-clip--180': degValue >= 90 && degValue < 180 && gaugeType.indexOf('-needle') === -1
+                    }"
                 >
-                    <path v-if="gaugeType.indexOf('dial-filled') !== -1 && degValue > 0"
-                          d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
-                          :style="`transform: rotate(${degValue}deg)`"
+                    <path
+                        v-if="gaugeType.indexOf('dial-filled') !== -1 && degValue > 0"
+                        d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
+                        :style="`transform: rotate(${degValue}deg)`"
                     />
-                    <path v-if="gaugeType.indexOf('dial-needle') !== -1 && valueInBounds"
-                          d="M256,86c-93.9,0-170,76.1-170,170c0,43.9,16.6,83.9,43.9,114.1l-38.7,38.7c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0 l38.7-38.7C172.1,409.4,212.1,426,256,426c93.9,0,170-76.1,170-170S349.9,86,256,86z M256,411.7c-86,0-155.7-69.7-155.7-155.7 S170,100.3,256,100.3S411.7,170,411.7,256S342,411.7,256,411.7z"
-                          :style="`transform: rotate(${degValue}deg)`"
+                    <path
+                        v-if="gaugeType.indexOf('dial-needle') !== -1 && valueInBounds"
+                        d="M256,86c-93.9,0-170,76.1-170,170c0,43.9,16.6,83.9,43.9,114.1l-38.7,38.7c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0 l38.7-38.7C172.1,409.4,212.1,426,256,426c93.9,0,170-76.1,170-170S349.9,86,256,86z M256,411.7c-86,0-155.7-69.7-155.7-155.7 S170,100.3,256,100.3S411.7,170,411.7,256S342,411.7,256,411.7z"
+                        :style="`transform: rotate(${degValue}deg)`"
                     />
                 </svg>
             </div>
@@ -82,53 +96,62 @@
 
         <template v-if="gaugeType.indexOf('meter') !== -1">
             <div class="c-meter">
-                <div v-if="displayMinMax"
-                     class="c-gauge__range c-meter__range"
+                <div
+                    v-if="displayMinMax"
+                    class="c-gauge__range c-meter__range"
                 >
                     <div class="c-meter__range__high">{{ rangeHigh }}</div>
                     <div class="c-meter__range__low">{{ rangeLow }}</div>
                 </div>
                 <div class="c-meter__bg">
                     <template v-if="gaugeType.indexOf('-vertical') !== -1">
-                        <div class="c-meter__value"
-                             :style="`transform: translateY(${meterValueToPerc}%)`"
+                        <div
+                            class="c-meter__value"
+                            :style="`transform: translateY(${meterValueToPerc}%)`"
                         ></div>
 
-                        <div v-if="limitHigh && meterHighLimitPerc > 0"
-                             class="c-meter__limit-high"
-                             :style="`height: ${meterHighLimitPerc}%`"
+                        <div
+                            v-if="limitHigh && meterHighLimitPerc > 0"
+                            class="c-meter__limit-high"
+                            :style="`height: ${meterHighLimitPerc}%`"
                         ></div>
 
-                        <div v-if="limitLow && meterLowLimitPerc > 0"
-                             class="c-meter__limit-low"
-                             :style="`height: ${meterLowLimitPerc}%`"
+                        <div
+                            v-if="limitLow && meterLowLimitPerc > 0"
+                            class="c-meter__limit-low"
+                            :style="`height: ${meterLowLimitPerc}%`"
                         ></div>
                     </template>
 
                     <template v-if="gaugeType.indexOf('-horz') !== -1">
-                        <div class="c-meter__value"
-                             :style="`transform: translateX(${meterValueToPerc * -1}%)`"
+                        <div
+                            class="c-meter__value"
+                            :style="`transform: translateX(${meterValueToPerc * -1}%)`"
                         ></div>
 
-                        <div v-if="limitHigh && meterHighLimitPerc > 0"
-                             class="c-meter__limit-high"
-                             :style="`width: ${meterHighLimitPerc}%`"
+                        <div
+                            v-if="limitHigh && meterHighLimitPerc > 0"
+                            class="c-meter__limit-high"
+                            :style="`width: ${meterHighLimitPerc}%`"
                         ></div>
 
-                        <div v-if="limitLow && meterLowLimitPerc > 0"
-                             class="c-meter__limit-low"
-                             :style="`width: ${meterLowLimitPerc}%`"
+                        <div
+                            v-if="limitLow && meterLowLimitPerc > 0"
+                            class="c-meter__limit-low"
+                            :style="`width: ${meterLowLimitPerc}%`"
                         ></div>
                     </template>
 
-                    <svg v-if="displayCurVal"
-                         class="c-gauge__curval"
-                         :viewBox="curValViewBox"
-                         preserveAspectRatio="xMidYMid meet"
+                    <svg
+                        v-if="displayCurVal"
+                        class="c-gauge__curval"
+                        :viewBox="curValViewBox"
+                        preserveAspectRatio="xMidYMid meet"
                     >
-                        <text class="c-gauge__curval-text"
-                              text-anchor="middle"
-                              lengthAdjust="spacing"
+                        <text
+                            class="c-gauge__curval-text"
+                            text-anchor="middle"
+                            lengthAdjust="spacing"
                         >{{ curVal }}</text>
                     </svg>
                 </div>
@@ -136,8 +159,9 @@
         </template>
     </div>
 
-    <div v-if="debug"
-         class="temp-debug"
+    <div
+        v-if="debug"
+        class="temp-debug"
     >
         <div><b>ranges: </b>{{ rangeLow }} &lt; &gt; {{ rangeHigh }}</div>
         <div><b>digits | viewbox: </b>{{ digits }} | {{ curValViewBox }}</div>
@@ -149,34 +173,39 @@
             <div><b>meter limit %: </b>{{ meterLowLimitPerc }} &lt; &gt; {{ meterHighLimitPerc }}</div>
         </template>
 
-        <div v-if="debugDial"
-             class="temp-dial-debug"
+        <div
+            v-if="debugDial"
+            class="temp-dial-debug"
         >
             <div class="c-dial">
                 Value
-                <svg v-if="degValue > 0"
-                     class="c-dial__value"
-                     viewBox="0 0 512 512"
-                     :class="{
-                         'c-dial-clip--90': degValue < 90 && gaugeType.indexOf('-needle') === -1,
-                         'c-dial-clip--180': degValue >= 90 && degValue < 180 && gaugeType.indexOf('-needle') === -1
-                     }"
+                <svg
+                    v-if="degValue > 0"
+                    class="c-dial__value"
+                    viewBox="0 0 512 512"
+                    :class="{
+                        'c-dial-clip--90': degValue < 90 && gaugeType.indexOf('-needle') === -1,
+                        'c-dial-clip--180': degValue >= 90 && degValue < 180 && gaugeType.indexOf('-needle') === -1
+                    }"
                 >
-                    <path v-if="true"
-                          d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
-                          :style="`transform: rotate(${0}deg)`"
+                    <path
+                        v-if="true"
+                        d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
+                        :style="`transform: rotate(${0}deg)`"
                     />
-                    <path v-if="gaugeType.indexOf('dial-needle') !== -1 && false"
-                          d="M139.9,360.1l-48.6,48.6c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0l48.6-48.6L139.9,360.1z"
-                          :style="`transform: rotate(${degValue}deg)`"
+                    <path
+                        v-if="gaugeType.indexOf('dial-needle') !== -1 && false"
+                        d="M139.9,360.1l-48.6,48.6c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0l48.6-48.6L139.9,360.1z"
+                        :style="`transform: rotate(${degValue}deg)`"
                     />
                 </svg>
             </div>
 
             <div class="c-dial">
                 Dial Clip
-                <div class="c-dial__value"
-                     style="clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);"
+                <div
+                    class="c-dial__value"
+                    style="clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);"
                 ></div>
             </div>
 
@@ -191,27 +220,32 @@
             </div>
         </div>
 
-        <div v-if="limitLow && limitHigh && debugDial"
-             class="temp-dial-debug"
+        <div
+            v-if="limitLow && limitHigh && debugDial"
+            class="temp-dial-debug"
         >
             <div class="c-dial">
                 High Limit
-                <svg class="c-dial__bg"
-                     viewBox="0 0 512 512"
+                <svg
+                    class="c-dial__bg"
+                    viewBox="0 0 512 512"
                 >
-                    <path d="M100,256A156,156,0,1,1,366.3,366.3L437,437a255.2,255.2,0,0,0,75-181C512,114.6,397.4,0,256,0S0,114.6,0,256A255.2,255.2,0,0,0,75,437l70.7-70.7A155.5,155.5,0,0,1,100,256Z"
-                          :style="`transform: rotate(${dialHighLimitDeg}deg)`"
+                    <path
+                        d="M100,256A156,156,0,1,1,366.3,366.3L437,437a255.2,255.2,0,0,0,75-181C512,114.6,397.4,0,256,0S0,114.6,0,256A255.2,255.2,0,0,0,75,437l70.7-70.7A155.5,155.5,0,0,1,100,256Z"
+                        :style="`transform: rotate(${dialHighLimitDeg}deg)`"
                     />
                 </svg>
             </div>
 
             <div class="c-dial">
                 Low Limit
-                <svg class="c-dial__bg"
-                     viewBox="0 0 512 512"
+                <svg
+                    class="c-dial__bg"
+                    viewBox="0 0 512 512"
                 >
-                    <path d="M256,100c86.2,0,156,69.8,156,156s-69.8,156-156,156c-43.1,0-82.1-17.5-110.3-45.7L75,437 c46.3,46.3,110.3,75,181,75c141.4,0,256-114.6,256-256S397.4,0,256,0C185.3,0,121.3,28.7,75,75l70.7,70.7 C173.9,117.5,212.9,100,256,100z"
-                          :style="`transform: rotate(${dialLowLimitDeg}deg)`"
+                    <path
+                        d="M256,100c86.2,0,156,69.8,156,156s-69.8,156-156,156c-43.1,0-82.1-17.5-110.3-45.7L75,437 c46.3,46.3,110.3,75,181,75c141.4,0,256-114.6,256-256S397.4,0,256,0C185.3,0,121.3,28.7,75,75l70.7,70.7 C173.9,117.5,212.9,100,256,100z"
+                        :style="`transform: rotate(${dialLowLimitDeg}deg)`"
                     />
                 </svg>
             </div>

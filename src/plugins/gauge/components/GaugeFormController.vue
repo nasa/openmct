@@ -22,8 +22,9 @@
 
 <template>
 <span class="form-control">
-    <span class="field control"
-          :class="model.cssClass"
+    <span
+        class="field control"
+        :class="model.cssClass"
     >
         <ToggleSwitch
             id="isUseTelemetryLimits"
@@ -32,17 +33,19 @@
             @change="toggleUseTelemetryLimits"
         />
 
-        <div v-if="!isUseTelemetryLimits"
-             class="c-form--sub-grid"
+        <div
+            v-if="!isUseTelemetryLimits"
+            class="c-form--sub-grid"
         >
             <div class="c-form__row">
                 <span class="req-indicator req">
                 </span>
                 <label>Range minimum value</label>
-                <input v-model.number="min"
-                       data-field-name="min"
-                       type="number"
-                       @input="onChange"
+                <input
+                    v-model.number="min"
+                    data-field-name="min"
+                    type="number"
+                    @input="onChange"
                 >
             </div>
 
@@ -50,10 +53,11 @@
                 <span class="req-indicator">
                 </span>
                 <label>Range low limit</label>
-                <input v-model.number="limitLow"
-                       data-field-name="limitLow"
-                       type="number"
-                       @input="onChange"
+                <input
+                    v-model.number="limitLow"
+                    data-field-name="limitLow"
+                    type="number"
+                    @input="onChange"
                 >
             </div>
 
@@ -61,10 +65,11 @@
                 <span class="req-indicator req">
                 </span>
                 <label>Range maximum value</label>
-                <input v-model.number="max"
-                       data-field-name="max"
-                       type="number"
-                       @input="onChange"
+                <input
+                    v-model.number="max"
+                    data-field-name="max"
+                    type="number"
+                    @input="onChange"
                 >
             </div>
 
@@ -72,10 +77,11 @@
                 <span class="req-indicator">
                 </span>
                 <label>Range high limit</label>
-                <input v-model.number="limitHigh"
-                       data-field-name="limitHigh"
-                       type="number"
-                       @input="onChange"
+                <input
+                    v-model.number="limitHigh"
+                    data-field-name="limitHigh"
+                    type="number"
+                    @input="onChange"
                 >
             </div>
         </div>
