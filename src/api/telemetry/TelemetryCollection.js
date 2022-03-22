@@ -25,6 +25,7 @@ import EventEmitter from 'EventEmitter';
 
 const ERRORS = {
     TIMESYSTEM_KEY: 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.',
+    TIMESYSTEM_KEY_NOTIFICATION: 'Telemetry metadata does not match the active time system.',
     LOADED: 'Telemetry Collection has already been loaded.'
 };
 
@@ -266,6 +267,10 @@ export class TelemetryCollection extends EventEmitter {
         this.lastBounds = bounds;
 
         if (isTick) {
+            if (this.timeKey === undefined) {
+                return;
+            }
+
             // need to check futureBuffer and need to check
             // if anything has fallen out of bounds
             let startIndex = 0;
@@ -305,7 +310,6 @@ export class TelemetryCollection extends EventEmitter {
             if (added.length > 0) {
                 this.emit('add', added);
             }
-
         } else {
             // user bounds change, reset
             this._reset();
@@ -325,12 +329,14 @@ export class TelemetryCollection extends EventEmitter {
         let domains = this.metadata.valuesForHints(['domain']);
         let domain = domains.find((d) => d.key === timeSystem.key);
 
-        if (domain === undefined) {
+        if (domain !== undefined) {
+            // timeKey is used to create a dummy datum used for sorting
+            this.timeKey = domain.source;
+        } else {
             this._warn(ERRORS.TIMESYSTEM_KEY);
+            this.openmct.notifications.warn(TIMESYSTEM_KEY_NOTIFICATION)
         }
-
-        // timeKey is used to create a dummy datum used for sorting
-        this.timeKey = timeSystem.key;
+        
         let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
