@@ -40,7 +40,6 @@
     >
         <ImageControls
             ref="imageControls"
-            :widthC="widthC"
             :zoom-factor="zoomFactor"
             :image-url="imageUrl"
             :layers="layers"

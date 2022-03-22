@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hover">
+<div class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hoverX">
     <imagery-view-menu-switcher :icon-class="'icon-brightness'"
                                 :title="'Brightness and contrast'"
     >
@@ -46,7 +46,7 @@
                    @handleResetImage="handleResetImage"
     />
 
-    <imagery-view-menu-switcher class="--hide-if-more-than-220"
+    <imagery-view-menu-switcher class="--show-if-less-than-220"
                                 :icon-class="'icon-magnify'"
                                 :title="'Zoom settings'"
     >

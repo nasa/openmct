@@ -205,6 +205,10 @@
     }
 }
 
+.--width-less-than-220 .--show-if-less-than-220.c-switcher-menu {
+    display: contents !important;
+}
+
 .s-image-layer {
     position: absolute;
     height: 100%;
@@ -262,8 +266,6 @@
         border-radius: $basicCr;
         align-items: center;
         padding: $interiorMargin $interiorMargin;
-
-        > * + * { margin-left: $interiorMargin; }
 
         .s-status-taking-snapshot & {
             display: none;
