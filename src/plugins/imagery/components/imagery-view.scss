@@ -411,7 +411,7 @@
     @include cArrowButtonSizing($dimOuter: 48px);
     border-radius: $controlCr;
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         @include cArrowButtonSizing($dimOuter: 32px);
     }
 }

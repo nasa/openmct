@@ -349,3 +349,18 @@ body.desktop .has-local-controls {
     pointer-events: none !important;
     cursor: default !important;
 }
+
+/******************************************************** RESPONSIVE CONTAINERS */
+@mixin responsiveContainerWidths($dimension: '220') {
+    // 3/21/22: container widths set in ObjectFrame.vue
+    .--width-less-than-#{$dimension} {
+        .--hide-if-less-than-#{$dimension} { display: none; }
+    }
+
+    .--width-more-than-#{$dimension} {
+        .--hide-if-more-than-#{$dimension} { display: none; }
+    }
+}
+
+@include responsiveContainerWidths($dimension: '220');
+@include responsiveContainerWidths($dimension: '600');

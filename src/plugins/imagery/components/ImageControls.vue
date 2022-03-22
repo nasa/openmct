@@ -37,7 +37,8 @@
         />
     </imagery-view-menu-switcher>
 
-    <zoom-settings :pan-zoom-locked="panZoomLocked"
+    <zoom-settings class="--hide-if-less-than-220"
+                   :pan-zoom-locked="panZoomLocked"
                    :zoom-factor="zoomFactor"
                    @zoomOut="zoomOut"
                    @zoomIn="zoomIn"
@@ -45,7 +46,8 @@
                    @handleResetImage="handleResetImage"
     />
 
-    <imagery-view-menu-switcher :icon-class="'icon-magnify'"
+    <imagery-view-menu-switcher class="--hide-if-more-than-220"
+                                :icon-class="'icon-magnify'"
                                 :title="'Zoom settings'"
     >
         <zoom-settings :pan-zoom-locked="panZoomLocked"
