@@ -22,16 +22,8 @@
 
 /*global module,process*/
 
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
-const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['spec', 'junit'];
-
-if (coverageEnabled) {
-    reporters.push('coverage-istanbul');
-}
-
 module.exports = (config) => {
-    const webpackConfig = coverageEnabled ? require('./webpack.coverage.js') : require('./webpack.dev.js');
+    const webpackConfig = require('./webpack.coverage.js');
     delete webpackConfig.output;
 
     config.set({
@@ -49,8 +41,8 @@ module.exports = (config) => {
             }
         ],
         port: 9876,
-        reporters: reporters,
-        browsers: browsers,
+        reporters: ['spec', 'junit', 'coverage-istanbul'],
+        browsers: [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'],
         client: {
             jasmine: {
                 random: false,
@@ -71,12 +63,6 @@ module.exports = (config) => {
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
-        // HTML test reporting.
-        // htmlReporter: {
-        //    outputDir: "dist/reports/tests",
-        //    preserveDescribeNesting: true,
-        //    foldAll: false
-        // },
         junitReporter: {
             outputDir: "dist/reports/tests",
             outputFile: "test-results.xml",
@@ -84,9 +70,7 @@ module.exports = (config) => {
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: process.env.CIRCLE_ARTIFACTS
-                ? process.env.CIRCLE_ARTIFACTS + '/coverage'
-                : "dist/reports/coverage",
+            dir: "dist/reports/coverage",
             reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {

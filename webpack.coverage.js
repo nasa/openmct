@@ -1,3 +1,6 @@
+// This file extends the webpack.dev.js config to add istanbul coverage
+// instrumentation using babel-plugin-istanbul (see babel.coverage.js)
+
 const config = require('./webpack.dev');
 
 const path = require('path');
