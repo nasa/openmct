@@ -848,7 +848,6 @@ describe("the plugin", function () {
                 let conditionalStylesContainer = element.querySelectorAll(".c-plot--stacked-container .js-style-receiver");
                 let hasStyles = 0;
                 conditionalStylesContainer.forEach(el => {
-                    console.log(el.style.backgroundColor);
                     if (el.style.backgroundColor !== '') {
                         hasStyles++;
                     }
