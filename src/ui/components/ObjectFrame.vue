@@ -113,8 +113,7 @@ const SIMPLE_CONTENT_TYPES = [
     'hyperlink',
     'conditionWidget'
 ];
-const RESPONSIVE_WIDTH_LESS = '--width-less-than-';
-const RESPONSIVE_WIDTH_MORE = '--width-more-than-';
+const CSS_WIDTH_LESS_STR = '--width-less-than-';
 
 export default {
     components: {
@@ -227,11 +226,9 @@ export default {
             let wClass = '';
 
             if (cW < 220) {
-                wClass = RESPONSIVE_WIDTH_LESS + '220';
-            } else if (cW >= 220 && cW < 600) {
-                wClass = RESPONSIVE_WIDTH_MORE + '220 ' + RESPONSIVE_WIDTH_LESS + '600';
-            } else if (cW >= 600) {
-                wClass = RESPONSIVE_WIDTH_MORE + '220 ' + RESPONSIVE_WIDTH_MORE + '600';
+                wClass = CSS_WIDTH_LESS_STR + '220';
+            } else if (cW < 600) {
+                wClass = CSS_WIDTH_LESS_STR + '600';
             }
 
             this.widthClass = wClass;

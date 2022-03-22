@@ -65,7 +65,7 @@
             }
 
             .--width-less-than-600 & {
-                display: none;
+                display: none !important;
             }
         }
     }
