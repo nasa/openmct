@@ -91,7 +91,6 @@
 
 <script>
 import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
-import { GAUGE_TYPES } from '../GaugePlugin';
 
 export default {
     components: {
@@ -105,41 +104,21 @@ export default {
     },
     data() {
         return {
-            gaugeType: this.model.value.gaugeType || this.getGaugeTypes().value,
             isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
             isDisplayMinMax: this.model.value.isDisplayMinMax,
             isDisplayCurVal: this.model.value.isDisplayCurVal,
             limitHigh: this.model.value.limitHigh,
             limitLow: this.model.value.limitLow,
             max: this.model.value.max,
-            min: this.model.value.min,
-            precision: this.model.value.precision
+            min: this.model.value.min
         };
     },
     methods: {
-        changeGaugeType(data) {
-            this.gaugeType = data.value;
-
-            this.onChange();
-        },
-        getGaugeTypes() {
-            const options = GAUGE_TYPES.map(type => {
-                return {
-                    name: type[0],
-                    value: type[1]
-                };
-            });
-
-            return {
-                options,
-                value: this.gaugeType || options[0].value
-            };
-        },
         onChange(event) {
             const data = {
                 model: this.model,
                 value: {
-                    gaugeType: this.gaugeType,
+                    gaugeType: this.model.value.gaugeType,
                     isDisplayMinMax: this.isDisplayMinMax,
                     isDisplayCurVal: this.isDisplayCurVal,
                     isUseTelemetryLimits: this.isUseTelemetryLimits,
@@ -147,7 +126,7 @@ export default {
                     limitHigh: this.limitHigh,
                     max: this.max,
                     min: this.min,
-                    precision: this.precision
+                    precision: this.model.value.precision
                 }
             };
 

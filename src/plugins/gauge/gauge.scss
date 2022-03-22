@@ -230,7 +230,7 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
     }
   }
 
-  .c-gauge--meter-horz & {
+  .c-gauge--meter-horizontal & {
     flex-direction: column;
 
     &__range {
@@ -273,36 +273,5 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
     &__limit-high {
       right: 0;
     }
-  }
-}
-
-.temp-debug {
-  background: rgba(black, 0.4);
-  padding: 2px;
-  position: absolute;
-}
-
-.temp-dial-debug {
-  margin-top: 10px;
-  display: flex;
-
-  div {
-    background: rgba(red, 0.1);
-    position: relative;
-    width: 100px;
-    height: 100px;
-
-    div {
-      @include abs();
-      background: rgba(green, 0.3);
-    }
-  }
-
-  svg {
-    opacity: 0.5;
-  }
-
-  > * + * {
-    margin-left: 10px;
   }
 }

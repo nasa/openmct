@@ -23,7 +23,7 @@
 import GaugeComponent from './components/GaugeRadial.vue';
 import Vue from 'vue';
 
-export default function Gauge(openmct) {
+export default function GaugeViewProvider(openmct) {
     return {
         key: 'gauge',
         name: 'Gauge',
