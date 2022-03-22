@@ -106,7 +106,7 @@
     "url": "https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=12.22.0"
+    "node": ">=14.19.1"
   },
   "browserslist": [
     "Firefox ESR",
