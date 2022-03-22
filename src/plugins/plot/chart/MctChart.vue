@@ -24,10 +24,15 @@
 
 <template>
 <div class="gl-plot-chart-area">
-    <canvas v-for="i in 2" style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+    <canvas
+        v-for="i in 2"
+        :key="i"
+        style="position: absolute; background: none; width: 100%; height: 100%;"
+    ></canvas>
 
-    <div ref="limitArea"
-         class="js-limit-area"
+    <div
+        ref="limitArea"
+        class="js-limit-area"
     ></div>
 </div>
 </template>

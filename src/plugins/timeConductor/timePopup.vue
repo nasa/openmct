@@ -70,8 +70,9 @@
                 :disabled="isDisabled"
                 @click.prevent="submit"
             ></button>
-            <button class="c-button icon-x"
-                    @click.prevent="hide"
+            <button
+                class="c-button icon-x"
+                @click.prevent="hide"
             ></button>
         </div>
     </div>
