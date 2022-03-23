@@ -36,7 +36,7 @@
     "jasmine-core": "4.0.1",
     "jsdoc": "3.5.5",
     "karma": "6.3.15",
-    "karma-chrome-launcher": "3.1.0",
+    "karma-chrome-launcher": "3.1.1",
     "karma-cli": "2.0.0",
     "karma-coverage": "2.1.1",
     "karma-coverage-istanbul-reporter": "3.0.3",
