@@ -133,6 +133,7 @@
 
     &__layer-image {
         pointer-events: none;
+        z-index: 1;
     }
 
     &__thumbs-wrapper {
