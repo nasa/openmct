@@ -113,7 +113,7 @@ export default {
         },
         hideOptions(newValue) {
             if (!newValue) {
-                // adding a event listener when the hideOptions is false (dropdown is visible)
+                // adding a event listener when the hideOpntions is false (dropdown is visible)
                 // handleoutsideclick can collapse the dropdown when clicked outside autocomplete
                 document.body.addEventListener('click', this.handleOutsideClick);
             } else {
@@ -135,6 +135,9 @@ export default {
         // If options is only an array of string.
             this.optionNames = this.options;
         }
+    },
+    destroyed() {
+        document.body.removeEventListener('click', this.handleOutsideClick);
     },
     methods: {
         decrementOptionIndex() {
