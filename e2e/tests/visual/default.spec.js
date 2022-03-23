@@ -112,53 +112,6 @@ test('Visual - Default Condition Widget', async ({ page }) => {
     await percySnapshot(page, 'Default Condition Widget');
 });
 
-test.skip('Visual - Display layout items view', async ({ page }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
-
-    //Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click text=Display Layout
-    await page.click('text=Display Layout');
-
-    // Click text=OK
-    await page.click('text=OK');
-
-    // Take a snapshot of the newly created Display Layout object
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Default Display Layout');
-
-    // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
-    await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-
-    // Click text=Save and Finish Editing
-    await page.locator('text=Save and Finish Editing').click();
-
-    //Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click text=Sine Wave Generator
-    await page.click('text=Sine Wave Generator');
-
-    // Click text=Save In Open MCT No items >> input[type="search"]
-    await page.locator('text=Save In Open MCT No items >> input[type="search"]').click();
-
-    // Fill text=Save In Open MCT No items >> input[type="search"]
-    await page.locator('text=Save In Open MCT No items >> input[type="search"]').fill('Unnamed Display Layout');
-
-    // Click text=OK Cancel
-    await page.locator('text=OK Cancel').click();
-
-    // Click text=OK
-    await page.click('text=OK');
-
-    // Take a snapshot of the newly created Display Layout object
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Default Sine Wave Generator');
-
-});
-
 test('Visual - Time Conductor start time is less than end time', async ({ page }) => {
     //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
