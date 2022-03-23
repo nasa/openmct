@@ -21,14 +21,18 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
+This test suite is dedicated to tests which verify the basic operations surrounding Clock.
 */
 
 const { test, expect } = require('@playwright/test');
 
 test.describe('Clock Generator', () => {
-    //issue#4878
+
     test('Timezone dropdown will collapse when clicked outside or on dropdown icon again', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/4878'
+        });
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
