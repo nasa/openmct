@@ -63,7 +63,7 @@ commands:
     steps:
         - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
 orbs:
-  node: circleci/node@5.1.0
+  node: circleci/node@5.0.1
   browser-tools: circleci/browser-tools@1.2.4
 jobs:
   npm-audit:
