@@ -44,7 +44,7 @@ import {SORT_ORDER_OPTIONS} from "./constants";
 import moment from "moment";
 import uuid from "uuid";
 
-const SCROLL_TIMEOUT = 20000;
+const SCROLL_TIMEOUT = 10000;
 const ROW_HEIGHT = 30;
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
 const headerItems = [
