@@ -113,7 +113,7 @@ export default {
         },
         hideOptions(newValue) {
             if (!newValue) {
-                // adding a event listener when the hideOpntions is false (dropdown is visible)
+                // adding a event listener when the hideOptions is false (dropdown is visible)
                 // handleoutsideclick can collapse the dropdown when clicked outside autocomplete
                 document.body.addEventListener('click', this.handleOutsideClick);
             } else {
