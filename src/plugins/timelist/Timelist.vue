@@ -329,19 +329,21 @@ export default {
             this.firstCurrentActivityIndex = -1;
             this.currentActivitiesCount = 0;
             this.$el.parentElement.scrollTo({top: 0});
+            this.autoScrolled = false;
         },
         setScrollTop() {
-            if (this.canAutoScroll() === false) {
-                return;
-            }
-
             //scroll to somewhere mid-way of the current activities
             if (this.firstCurrentActivityIndex > -1) {
+                if (this.canAutoScroll() === false) {
+                    return;
+                }
+
                 const scrollOffset = this.currentActivitiesCount > 0 ? Math.floor(this.currentActivitiesCount / 2) : 0;
                 this.$el.parentElement.scrollTo({
                     top: ROW_HEIGHT * (this.firstCurrentActivityIndex + scrollOffset),
                     behavior: "smooth"
                 });
+                this.autoScrolled = false;
             } else {
                 this.resetScroll();
             }
