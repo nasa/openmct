@@ -1,21 +1,21 @@
 export const SORT_ORDER_OPTIONS = [
     {
-        label: 'Start Ascending',
+        label: 'Start ascending',
         property: 'start',
         direction: 'ASC'
     },
     {
-        label: 'Start Descending',
+        label: 'Start descending',
         property: 'start',
         direction: 'DESC'
     },
     {
-        label: 'End Ascending',
+        label: 'End ascending',
         property: 'end',
         direction: 'ASC'
     },
     {
-        label: 'End Descending',
+        label: 'End descending',
         property: 'end',
         direction: 'DESC'
     }

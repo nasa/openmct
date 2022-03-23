@@ -366,6 +366,14 @@ $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 $legendTableHeadBg: $colorTabHeaderBg;
 $colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 
+// Time Strip and Lists
+$colorCurrentBg: rgba($colorStatusAlert, 0.3);
+$colorCurrentFg: pullForward($colorBodyFg, 20%);
+$colorCurrentBorder: $colorBodyBg;
+$colorFutureBg: rgba($colorKey, 0.2);
+$colorFutureFg: $colorCurrentFg;
+$colorFutureBorder: $colorCurrentBorder;
+
 // Tree
 $colorTreeBg: transparent;
 $colorItemTreeHoverBg: rgba(#fff, 0.1);

@@ -28,4 +28,28 @@
     background: cyan;
     width: 100%;
   }
+
+  .c-list-item {
+    /* Time Lists */
+
+    &.--is-current {
+      background-color: $colorCurrentBg;
+      border-top: 1px solid $colorCurrentBorder !important;
+      color: $colorCurrentFg;
+      font-weight: bold;
+    }
+
+    &.--is-future {
+      background-color: $colorFutureBg;
+      border-top-color: $colorFutureBorder !important;
+      color: $colorFutureFg;
+    }
+
+    &__value {
+      &.--duration {
+        width: 5%;
+      }
+    }
+  }
+
 }
