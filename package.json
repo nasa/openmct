@@ -13,7 +13,7 @@
     "babel-plugin-istanbul": "6.1.1",
     "comma-separated-values": "3.6.4",
     "copy-webpack-plugin": "10.2.0",
-    "core-js": "3.20.3",
+    "core-js": "3.21.1",
     "cross-env": "7.0.3",
     "css-loader": "4.0.0",
     "d3-axis": "1.0.x",
