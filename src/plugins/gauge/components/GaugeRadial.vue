@@ -4,7 +4,7 @@
     :class="`c-gauge--${gaugeType}`"
 >
     <div class="c-gauge__wrapper">
-        <template v-if="gaugeType.indexOf('dial') !== -1">
+        <template v-if="typeDial">
             <svg
                 class="c-gauge__range"
                 viewBox="0 0 512 512"
@@ -76,17 +76,17 @@
                     class="c-dial__value"
                     viewBox="0 0 512 512"
                     :class="{
-                        'c-dial-clip--90': degValue < 90 && gaugeType.indexOf('-needle') === -1,
-                        'c-dial-clip--180': degValue >= 90 && degValue < 180 && gaugeType.indexOf('-needle') === -1
+                        'c-dial-clip--90': degValue < 90 && typeFilledDial,
+                        'c-dial-clip--180': degValue >= 90 && degValue < 180 && typeFilledDial
                     }"
                 >
                     <path
-                        v-if="gaugeType.indexOf('dial-filled') !== -1 && degValue > 0"
+                        v-if="typeFilledDial && degValue > 0"
                         d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
                         :style="`transform: rotate(${degValue}deg)`"
                     />
                     <path
-                        v-if="gaugeType.indexOf('dial-needle') !== -1 && valueInBounds"
+                        v-if="typeNeedleDial && valueInBounds"
                         d="M256,86c-93.9,0-170,76.1-170,170c0,43.9,16.6,83.9,43.9,114.1l-38.7,38.7c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0 l38.7-38.7C172.1,409.4,212.1,426,256,426c93.9,0,170-76.1,170-170S349.9,86,256,86z M256,411.7c-86,0-155.7-69.7-155.7-155.7 S170,100.3,256,100.3S411.7,170,411.7,256S342,411.7,256,411.7z"
                         :style="`transform: rotate(${degValue}deg)`"
                     />
@@ -94,7 +94,7 @@
             </div>
         </template>
 
-        <template v-if="gaugeType.indexOf('meter') !== -1">
+        <template v-if="typeMeter">
             <div class="c-meter">
                 <div
                     v-if="displayMinMax"
@@ -104,7 +104,7 @@
                     <div class="c-meter__range__low">{{ rangeLow }}</div>
                 </div>
                 <div class="c-meter__bg">
-                    <template v-if="gaugeType.indexOf('-vertical') !== -1">
+                    <template v-if="typeMeterVertical">
                         <div
                             class="c-meter__value"
                             :style="`transform: translateY(${meterValueToPerc}%)`"
@@ -123,7 +123,7 @@
                         ></div>
                     </template>
 
-                    <template v-if="gaugeType.indexOf('-horizontal') !== -1">
+                    <template v-if="typeMeterHorizontal">
                         <div
                             class="c-meter__value"
                             :style="`transform: translateX(${meterValueToPerc * -1}%)`"
@@ -199,8 +199,29 @@ export default {
 
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
         },
+        typeDial() {
+            return this.matchGaugeType('dial');
+        },
+        typeFilledDial() {
+            return this.matchGaugeType('dial-filled');
+        },
+        typeNeedleDial() {
+            return this.matchGaugeType('dial-needle');
+        },
+        typeMeter() {
+            return this.matchGaugeType('meter');
+        },
+        typeMeterHorizontal() {
+            return this.matchGaugeType('horizontal');
+        },
+        typeMeterVertical() {
+            return this.matchGaugeType('vertical');
+        },
+        typeMeterInverted() {
+            return this.matchGaugeType('inverted');
+        },
         meterValueToPerc() {
-            const meterDirection = (this.gaugeType.indexOf('inverted') !== -1) ? -1 : 1;
+            const meterDirection = (this.typeMeterInverted) ? -1 : 1;
 
             if (this.curVal <= this.rangeLow) {
                 return meterDirection * 100;
@@ -262,6 +283,9 @@ export default {
             const metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
 
             return this.openmct.telemetry.getValueFormatter(metadataValue);
+        },
+        matchGaugeType(str) {
+            return this.gaugeType.indexOf(str) !== -1;
         },
         percentToDegrees(vPercent) {
             return this.round((vPercent / 100) * 270, 2);
@@ -354,7 +378,7 @@ export default {
         },
         valToPercent(vValue) {
             // Used by dial
-            if (vValue >= this.rangeHigh && this.gaugeType.indexOf('filled') !== -1) {
+            if (vValue >= this.rangeHigh && this.typeFilledDial) {
                 // Don't peg at 100% if the gaugeType isn't a filled shape
                 return 100;
             }
