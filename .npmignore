@@ -6,6 +6,13 @@
 !/dist/**/*
 !/src/**/*
 
+# We might be able to remove this if it is not imported by any project directly.
+# https://github.com/nasa/openmct/issues/4992
+!/example/**/*
+
+# We will remove this in https://github.com/nasa/openmct/issues/4922
+!/app.js
+
 # ...except for these files in the above folders.
 /src/**/*Spec.js
 /src/**/test/
