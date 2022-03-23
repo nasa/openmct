@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -21,12 +21,14 @@
 *****************************************************************************/
 
 <template>
-<div v-if="conditionErrors.length"
-     class="c-condition__errors"
+<div
+    v-if="conditionErrors.length"
+    class="c-condition__errors"
 >
-    <div v-for="(error, index) in conditionErrors"
-         :key="index"
-         class="u-alert u-alert--block u-alert--with-icon"
+    <div
+        v-for="(error, index) in conditionErrors"
+        :key="index"
+        class="u-alert u-alert--block u-alert--with-icon"
     >{{ error.message.errorText }} {{ error.additionalInfo }}
     </div>
 </div>

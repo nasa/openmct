@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,16 +24,17 @@
 <div class="c-notebook__search-results">
     <div class="c-notebook__search-results__header">Search Results ({{ results.length }})</div>
     <div class="c-notebook__entries">
-        <NotebookEntry v-for="(result, index) in results"
-                       :key="index"
-                       :domain-object="domainObject"
-                       :result="result"
-                       :entry="result.entry"
-                       :read-only="true"
-                       :selected-page="result.page"
-                       :selected-section="result.section"
-                       @changeSectionPage="changeSectionPage"
-                       @updateEntries="updateEntries"
+        <NotebookEntry
+            v-for="(result, index) in results"
+            :key="index"
+            :domain-object="domainObject"
+            :result="result"
+            :entry="result.entry"
+            :read-only="true"
+            :selected-page="result.page"
+            :selected-section="result.section"
+            @changeSectionPage="changeSectionPage"
+            @updateEntries="updateEntries"
         />
     </div>
 </div>

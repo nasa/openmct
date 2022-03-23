@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -22,8 +22,9 @@
 
 <template>
 <div class="c-inspector__styles c-inspect-styles">
-    <div v-if="isStaticAndConditionalStyles"
-         class="c-inspect-styles__mixed-static-and-conditional u-alert u-alert--block u-alert--with-icon"
+    <div
+        v-if="isStaticAndConditionalStyles"
+        class="c-inspect-styles__mixed-static-and-conditional u-alert u-alert--block u-alert--with-icon"
     >
         Your selection includes one or more items that use Conditional Styling. Applying a static style below will replace any Conditional Styling with the new choice.
     </div>
@@ -37,16 +38,18 @@
             @set-font-property="setFontProperty"
         />
         <div class="c-inspect-styles__content">
-            <div v-if="staticStyle"
-                 class="c-inspect-styles__style"
+            <div
+                v-if="staticStyle"
+                class="c-inspect-styles__style"
             >
-                <StyleEditor class="c-inspect-styles__editor"
-                             :style-item="staticStyle"
-                             :is-editing="allowEditing"
-                             :mixed-styles="mixedStyles"
-                             :non-specific-font-properties="nonSpecificFontProperties"
-                             @persist="updateStaticStyle"
-                             @save-style="saveStyle"
+                <StyleEditor
+                    class="c-inspect-styles__editor"
+                    :style-item="staticStyle"
+                    :is-editing="allowEditing"
+                    :mixed-styles="mixedStyles"
+                    :non-specific-font-properties="nonSpecificFontProperties"
+                    @persist="updateStaticStyle"
+                    @save-style="saveStyle"
                 />
             </div>
             <button
@@ -64,9 +67,10 @@
             Conditional Object Styles
         </div>
         <div class="c-inspect-styles__content c-inspect-styles__condition-set c-inspect-styles__elem">
-            <a v-if="conditionSetDomainObject"
-               class="c-object-label"
-               @click="navigateOrPreview"
+            <a
+                v-if="conditionSetDomainObject"
+                class="c-object-label"
+                @click="navigateOrPreview"
             >
                 <span class="c-object-label__type-icon icon-conditional"></span>
                 <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
@@ -80,15 +84,17 @@
                     <span class="c-button__label">Change...</span>
                 </button>
 
-                <button class="c-click-icon icon-x"
-                        title="Remove conditional styles"
-                        @click="removeConditionSet"
+                <button
+                    class="c-click-icon icon-x"
+                    title="Remove conditional styles"
+                    @click="removeConditionSet"
                 ></button>
             </template>
         </div>
 
-        <div v-if="isConditionWidget && allowEditing"
-             class="c-inspect-styles__elem c-inspect-styles__output-label-toggle"
+        <div
+            v-if="isConditionWidget && allowEditing"
+            class="c-inspect-styles__elem c-inspect-styles__output-label-toggle"
         >
             <label class="c-toggle-switch">
                 <input
@@ -100,8 +106,9 @@
                 <span class="c-toggle-switch__label">Use Condition Set output as label</span>
             </label>
         </div>
-        <div v-if="isConditionWidget && !allowEditing"
-             class="c-inspect-styles__elem"
+        <div
+            v-if="isConditionWidget && !allowEditing"
+            class="c-inspect-styles__elem"
         >
             <span class="c-toggle-switch__label">Condition Set output as label:
                 <span v-if="useConditionSetOutputAsLabel"> Yes</span><span v-else> No</span>
@@ -114,27 +121,32 @@
             @set-font-property="setFontProperty"
         />
 
-        <div v-if="conditionsLoaded"
-             class="c-inspect-styles__conditions"
+        <div
+            v-if="conditionsLoaded"
+            class="c-inspect-styles__conditions"
         >
-            <div v-for="(conditionStyle, index) in conditionalStyles"
-                 :key="index"
-                 class="c-inspect-styles__condition"
-                 :class="{'is-current': conditionStyle.conditionId === selectedConditionId}"
-                 @click="applySelectedConditionStyle(conditionStyle.conditionId)"
+            <div
+                v-for="(conditionStyle, index) in conditionalStyles"
+                :key="index"
+                class="c-inspect-styles__condition"
+                :class="{'is-current': conditionStyle.conditionId === selectedConditionId}"
+                @click="applySelectedConditionStyle(conditionStyle.conditionId)"
             >
-                <condition-error :show-label="true"
-                                 :condition="getCondition(conditionStyle.conditionId)"
+                <condition-error
+                    :show-label="true"
+                    :condition="getCondition(conditionStyle.conditionId)"
                 />
-                <condition-description :show-label="true"
-                                       :condition="getCondition(conditionStyle.conditionId)"
+                <condition-description
+                    :show-label="true"
+                    :condition="getCondition(conditionStyle.conditionId)"
                 />
-                <StyleEditor class="c-inspect-styles__editor"
-                             :style-item="conditionStyle"
-                             :non-specific-font-properties="nonSpecificFontProperties"
-                             :is-editing="allowEditing"
-                             @persist="updateConditionalStyle"
-                             @save-style="saveStyle"
+                <StyleEditor
+                    class="c-inspect-styles__editor"
+                    :style-item="conditionStyle"
+                    :non-specific-font-properties="nonSpecificFontProperties"
+                    :is-editing="allowEditing"
+                    @persist="updateConditionalStyle"
+                    @save-style="saveStyle"
                 />
             </div>
         </div>
@@ -148,10 +160,8 @@ import FontStyleEditor from '@/ui/inspector/styles/FontStyleEditor.vue';
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionSetIdentifierForItem } from "@/plugins/condition/utils/styleUtils";
-import SelectorDialogTree from '@/ui/components/SelectorDialogTree.vue';
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
-import Vue from 'vue';
 
 const NON_SPECIFIC = '??';
 const NON_STYLEABLE_CONTAINER_TYPES = [
@@ -327,16 +337,7 @@ export default {
             return item && (item.type === type);
         },
         canPersistObject(item) {
-            // for now the only way to tell if an object can be persisted is if it is creatable.
-            let creatable = false;
-            if (item) {
-                const type = this.openmct.types.get(item.type);
-                if (type && type.definition) {
-                    creatable = (type.definition.creatable !== undefined && (type.definition.creatable === 'true' || type.definition.creatable === true));
-                }
-            }
-
-            return creatable;
+            return this.openmct.objects.isPersistable(item.identifier);
         },
         hasConditionalStyle(domainObject, layoutItem) {
             const id = layoutItem ? layoutItem.id : undefined;
@@ -551,53 +552,28 @@ export default {
             return this.conditions ? this.conditions[id] : {};
         },
         addConditionSet() {
-            let conditionSetDomainObject;
-            let self = this;
-            function handleItemSelection({ item }) {
-                if (item) {
-                    conditionSetDomainObject = item;
-                }
-            }
+            const conditionWidgetParent = this.openmct.router.path[1];
+            const formStructure = {
+                title: 'Select Condition Set',
+                sections: [{
+                    name: 'Location',
+                    cssClass: 'grows',
+                    rows: [{
+                        key: 'location',
+                        name: 'Condition Set',
+                        cssClass: 'grows',
+                        control: 'locator',
+                        required: true,
+                        parent: conditionWidgetParent,
+                        validate: data => data.value[0].type === 'conditionSet'
+                    }]
+                }]
+            };
 
-            function dismissDialog(overlay, initialize) {
-                overlay.dismiss();
-
-                if (initialize && conditionSetDomainObject) {
-                    self.conditionSetDomainObject = conditionSetDomainObject;
-                    self.conditionalStyles = [];
-                    self.initializeConditionalStyles();
-                }
-            }
-
-            let vm = new Vue({
-                components: { SelectorDialogTree },
-                provide: {
-                    openmct: this.openmct
-                },
-                data() {
-                    return {
-                        handleItemSelection,
-                        title: 'Select Condition Set'
-                    };
-                },
-                template: '<SelectorDialogTree :title="title" @treeItemSelected="handleItemSelection"></SelectorDialogTree>'
-            }).$mount();
-
-            let overlay = this.openmct.overlays.overlay({
-                element: vm.$el,
-                size: 'small',
-                buttons: [
-                    {
-                        label: 'OK',
-                        emphasis: 'true',
-                        callback: () => dismissDialog(overlay, true)
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: () => dismissDialog(overlay, false)
-                    }
-                ],
-                onDestroy: () => vm.$destroy()
+            this.openmct.forms.showForm(formStructure).then(data => {
+                this.conditionSetDomainObject = data.location[0];
+                this.conditionalStyles = [];
+                this.initializeConditionalStyles();
             });
         },
         removeConditionSet() {

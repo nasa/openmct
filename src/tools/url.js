@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,7 @@
  */
 
 export function paramsToArray(openmct) {
-    // parse urParams from an object to an array.
+    // parse urlParams from an object to an array.
     let urlParams = openmct.router.getParams();
     let newTabParams = [];
     for (let key in urlParams) {

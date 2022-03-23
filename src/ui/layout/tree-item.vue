@@ -7,19 +7,19 @@
         class="c-tree__item"
         :class="{
             'is-alias': isAlias,
-            'is-navigated-object': navigated,
+            'is-navigated-object': shouldHightlight,
             'is-context-clicked': contextClickActive,
             'is-new': isNewItem
         }"
-        @click.capture="handleClick"
+        @click.capture="itemClick"
         @contextmenu.capture="handleContextMenu"
     >
         <view-control
-            ref="navigate"
+            ref="action"
             class="c-tree__item__view-control"
             :value="isOpen || isLoading"
             :enabled="!activeSearch && hasComposition"
-            @input="navigationClick()"
+            @input="itemAction()"
         />
         <object-label
             ref="objectLabel"
@@ -49,6 +49,14 @@ export default {
     inject: ['openmct'],
     props: {
         node: {
+            type: Object,
+            required: true
+        },
+        isSelectorTree: {
+            type: Boolean,
+            required: true
+        },
+        selectedItem: {
             type: Object,
             required: true
         },
@@ -109,6 +117,9 @@ export default {
 
             return parentKeyString !== this.node.object.location;
         },
+        isSelectedItem() {
+            return this.selectedItem.objectPath === this.node.objectPath;
+        },
         isNewItem() {
             return this.isNew;
         },
@@ -117,6 +128,13 @@ export default {
         },
         isOpen() {
             return this.openItems.includes(this.navigationPath);
+        },
+        shouldHightlight() {
+            if (this.isSelectorTree) {
+                return this.isSelectedItem;
+            } else {
+                return this.navigated;
+            }
         },
         treeItemStyles() {
             let itemTop = (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
@@ -144,20 +162,30 @@ export default {
         this.$emit('tree-item-destoyed', this.navigationPath);
     },
     methods: {
-        navigationClick() {
-            this.$emit('navigation-click', this.isOpen || this.isLoading ? 'close' : 'open');
+        itemAction() {
+            this.$emit('tree-item-action', this.isOpen || this.isLoading ? 'close' : 'open');
         },
-        handleClick(event) {
+        itemClick(event) {
             // skip for navigation, let viewControl handle click
-            if (this.$refs.navigate.$el === event.target) {
+            if (this.$refs.action.$el === event.target) {
                 return;
             }
 
             event.stopPropagation();
-            this.$refs.objectLabel.navigateOrPreview(event);
+
+            if (!this.isSelectorTree) {
+                this.$refs.objectLabel.navigateOrPreview(event);
+            } else {
+                this.$emit('tree-item-selection', this.node);
+            }
         },
         handleContextMenu(event) {
             event.stopPropagation();
+
+            if (this.isSelectorTree) {
+                return;
+            }
+
             this.$refs.objectLabel.showContextMenu(event);
         },
         isNavigated() {

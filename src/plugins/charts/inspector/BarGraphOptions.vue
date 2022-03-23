@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2020, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,11 +22,13 @@
 <template>
 <ul class="c-tree c-bar-graph-options">
     <h2 title="Display properties for this object">Bar Graph Series</h2>
-    <li v-for="series in domainObject.composition"
+    <li
+        v-for="series in domainObject.composition"
         :key="series.key"
     >
-        <series-options :item="series"
-                        :color-palette="colorPalette"
+        <series-options
+            :item="series"
+            :color-palette="colorPalette"
         />
     </li>
 </ul>

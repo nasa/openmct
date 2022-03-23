@@ -8,6 +8,7 @@ export default function (openmct) {
             return apiSave(domainObject);
         }
 
+        const isNewMutable = !domainObject.isMutable;
         const localMutable = openmct.objects._toMutable(domainObject);
         let result;
 
@@ -20,7 +21,9 @@ export default function (openmct) {
                 result = Promise.reject(error);
             }
         } finally {
-            openmct.objects.destroyMutable(localMutable);
+            if (isNewMutable) {
+                openmct.objects.destroyMutable(localMutable);
+            }
         }
 
         return result;
@@ -28,10 +31,10 @@ export default function (openmct) {
 }
 
 function resolveConflicts(localMutable, openmct) {
+    const localEntries = JSON.parse(JSON.stringify(localMutable.configuration.entries));
+
     return openmct.objects.getMutable(localMutable.identifier).then((remoteMutable) => {
-        const localEntries = localMutable.configuration.entries;
-        remoteMutable.$refresh(remoteMutable);
-        applyLocalEntries(remoteMutable, localEntries);
+        applyLocalEntries(remoteMutable, localEntries, openmct);
 
         openmct.objects.destroyMutable(remoteMutable);
 
@@ -39,7 +42,7 @@ function resolveConflicts(localMutable, openmct) {
     });
 }
 
-function applyLocalEntries(mutable, entries) {
+function applyLocalEntries(mutable, entries, openmct) {
     Object.entries(entries).forEach(([sectionKey, pagesInSection]) => {
         Object.entries(pagesInSection).forEach(([pageKey, localEntries]) => {
             const remoteEntries = mutable.configuration.entries[sectionKey][pageKey];
@@ -58,14 +61,15 @@ function applyLocalEntries(mutable, entries) {
 
             locallyModifiedEntries.forEach((locallyModifiedEntry) => {
                 let mergedEntry = mergedEntries.find(entry => entry.id === locallyModifiedEntry.id);
-                if (mergedEntry !== undefined) {
+                if (mergedEntry !== undefined
+                    && locallyModifiedEntry.text.match(/\S/)) {
                     mergedEntry.text = locallyModifiedEntry.text;
                     shouldMutate = true;
                 }
             });
 
             if (shouldMutate) {
-                mutable.$set(`configuration.entries.${sectionKey}.${pageKey}`, mergedEntries);
+                openmct.objects.mutate(mutable, `configuration.entries.${sectionKey}.${pageKey}`, mergedEntries);
             }
         });
     });

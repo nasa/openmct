@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -22,21 +22,25 @@
 
 <template>
 <span class="form-control shell">
-    <span class="field control"
-          :class="model.cssClass"
+    <span
+        class="field control"
+        :class="model.cssClass"
     >
-        <input v-model="field"
-               type="number"
-               :min="model.min"
-               :max="model.max"
-               :step="model.step"
-               @blur="blur()"
+        <input
+            v-model="field"
+            type="number"
+            :min="model.min"
+            :max="model.max"
+            :step="model.step"
+            @input="updateText()"
         >
     </span>
 </span>
 </template>
 
 <script>
+import { throttle } from 'lodash';
+
 export default {
     props: {
         model: {
@@ -49,8 +53,12 @@ export default {
             field: this.model.value
         };
     },
+    mounted() {
+        this.updateText = throttle(this.updateText.bind(this), 200);
+    },
     methods: {
-        blur() {
+        updateText() {
+            console.log('updateText', this.field);
             const data = {
                 model: this.model,
                 value: this.field

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2020, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,18 +21,21 @@
 -->
 
 <template>
-<div v-if="timeProperties.length"
-     class="u-contents"
+<div
+    v-if="timeProperties.length"
+    class="u-contents"
 >
     <div class="c-inspect-properties__header">
         {{ heading }}
     </div>
-    <ul v-for="timeProperty in timeProperties"
+    <ul
+        v-for="timeProperty in timeProperties"
         :key="timeProperty.id"
         class="c-inspect-properties__section"
     >
-        <activity-property :label="timeProperty.label"
-                           :value="timeProperty.value"
+        <activity-property
+            :label="timeProperty.label"
+            :value="timeProperty.value"
         />
     </ul>
 </div>

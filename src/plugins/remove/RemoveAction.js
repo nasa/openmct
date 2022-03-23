@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -106,6 +106,11 @@ export default class RemoveAction {
         let child = objectPath[0];
         let locked = child.locked ? child.locked : parent && parent.locked;
         let isEditing = this.openmct.editor.isEditing();
+        let isPersistable = this.openmct.objects.isPersistable(child.identifier);
+
+        if (locked || !isPersistable) {
+            return false;
+        }
 
         if (isEditing) {
             let currentItemInView = this.openmct.router.path[0];
@@ -114,10 +119,6 @@ export default class RemoveAction {
             if (this.openmct.objects.areIdsEqual(currentItemInView.identifier, domainObject.identifier)) {
                 return false;
             }
-        }
-
-        if (locked) {
-            return false;
         }
 
         return parentType

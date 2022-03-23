@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,12 +21,13 @@
 -->
 
 <template>
-<BarGraph ref="barGraph"
-          class="c-plot c-bar-chart-view"
-          :data="trace"
-          :plot-axis-title="plotAxisTitle"
-          @subscribe="subscribeToAll"
-          @unsubscribe="removeAllSubscriptions"
+<BarGraph
+    ref="barGraph"
+    class="c-plot c-bar-chart-view"
+    :data="trace"
+    :plot-axis-title="plotAxisTitle"
+    @subscribe="subscribeToAll"
+    @unsubscribe="removeAllSubscriptions"
 />
 </template>
 

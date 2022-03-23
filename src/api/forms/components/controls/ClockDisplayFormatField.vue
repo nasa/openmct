@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -22,10 +22,11 @@
 
 <template>
 <div class="c-form-control--clock-display-format-fields">
-    <SelectField v-for="item in items"
-                 :key="item.key"
-                 :model="item"
-                 @onChange="onChange"
+    <SelectField
+        v-for="item in items"
+        :key="item.key"
+        :model="item"
+        @onChange="onChange"
     />
 </div>
 </template>

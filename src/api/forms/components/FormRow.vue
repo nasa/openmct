@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -21,21 +21,25 @@
 *****************************************************************************/
 
 <template>
-<div class="form-row c-form__row"
-     :class="[{ 'first': first }]"
-     @onChange="onChange"
+<div
+    class="form-row c-form__row"
+    :class="[{ 'first': first }]"
+    @onChange="onChange"
 >
-    <div class="c-form-row__label"
-         :title="row.description"
+    <div
+        class="c-form-row__label"
+        :title="row.description"
     >
         {{ row.name }}
     </div>
-    <div class="c-form-row__state-indicator"
-         :class="rowClass"
+    <div
+        class="c-form-row__state-indicator"
+        :class="rowClass"
     >
     </div>
-    <div v-if="row.control"
-         class="c-form-row__controls"
+    <div
+        v-if="row.control"
+        class="c-form-row__controls"
     >
         <div ref="rowElement"></div>
     </div>

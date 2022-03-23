@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,46 +23,51 @@
 <template>
 <div class="c-notebook">
     <div class="c-notebook__head">
-        <Search class="c-notebook__search"
-                :value="search"
-                @input="search = $event"
-                @clear="resetSearch()"
+        <Search
+            class="c-notebook__search"
+            :value="search"
+            @input="search = $event"
+            @clear="resetSearch()"
         />
     </div>
-    <SearchResults v-if="search.length"
-                   ref="searchResults"
-                   :domain-object="domainObject"
-                   :results="searchResults"
-                   @changeSectionPage="changeSelectedSection"
-                   @updateEntries="updateEntries"
+    <SearchResults
+        v-if="search.length"
+        ref="searchResults"
+        :domain-object="domainObject"
+        :results="searchResults"
+        @changeSectionPage="changeSelectedSection"
+        @updateEntries="updateEntries"
     />
-    <div v-if="!search.length"
-         class="c-notebook__body"
+    <div
+        v-if="!search.length"
+        class="c-notebook__body"
     >
-        <Sidebar ref="sidebar"
-                 class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
-                 :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}, {'c-drawer--overlays': sidebarCoversEntries}]"
-                 :default-page-id="defaultPageId"
-                 :selected-page-id="getSelectedPageId()"
-                 :default-section-id="defaultSectionId"
-                 :selected-section-id="getSelectedSectionId()"
-                 :domain-object="domainObject"
-                 :page-title="domainObject.configuration.pageTitle"
-                 :section-title="domainObject.configuration.sectionTitle"
-                 :sections="sections"
-                 :sidebar-covers-entries="sidebarCoversEntries"
-                 @defaultPageDeleted="cleanupDefaultNotebook"
-                 @defaultSectionDeleted="cleanupDefaultNotebook"
-                 @pagesChanged="pagesChanged"
-                 @selectPage="selectPage"
-                 @sectionsChanged="sectionsChanged"
-                 @selectSection="selectSection"
-                 @toggleNav="toggleNav"
+        <Sidebar
+            ref="sidebar"
+            class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
+            :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}, {'c-drawer--overlays': sidebarCoversEntries}]"
+            :default-page-id="defaultPageId"
+            :selected-page-id="getSelectedPageId()"
+            :default-section-id="defaultSectionId"
+            :selected-section-id="getSelectedSectionId()"
+            :domain-object="domainObject"
+            :page-title="domainObject.configuration.pageTitle"
+            :section-title="domainObject.configuration.sectionTitle"
+            :sections="sections"
+            :sidebar-covers-entries="sidebarCoversEntries"
+            @defaultPageDeleted="cleanupDefaultNotebook"
+            @defaultSectionDeleted="cleanupDefaultNotebook"
+            @pagesChanged="pagesChanged"
+            @selectPage="selectPage"
+            @sectionsChanged="sectionsChanged"
+            @selectSection="selectSection"
+            @toggleNav="toggleNav"
         />
         <div class="c-notebook__page-view">
             <div class="c-notebook__page-view__header">
-                <button class="c-notebook__toggle-nav-button c-icon-button c-icon-button--major icon-menu-hamburger"
-                        @click="toggleNav"
+                <button
+                    class="c-notebook__toggle-nav-button c-icon-button c-icon-button--major icon-menu-hamburger"
+                    @click="toggleNav"
                 ></button>
                 <div class="c-notebook__page-view__path c-path">
                     <span class="c-notebook__path__section c-path__item">
@@ -73,59 +78,70 @@
                     </span>
                 </div>
                 <div class="c-notebook__page-view__controls">
-                    <select v-model="showTime"
-                            class="c-notebook__controls__time"
+                    <select
+                        v-model="showTime"
+                        class="c-notebook__controls__time"
                     >
-                        <option value="0"
-                                :selected="showTime === 0"
+                        <option
+                            value="0"
+                            :selected="showTime === 0"
                         >
                             Show all
                         </option>
-                        <option value="1"
-                                :selected="showTime === 1"
+                        <option
+                            value="1"
+                            :selected="showTime === 1"
                         >Last hour</option>
-                        <option value="8"
-                                :selected="showTime === 8"
+                        <option
+                            value="8"
+                            :selected="showTime === 8"
                         >Last 8 hours</option>
-                        <option value="24"
-                                :selected="showTime === 24"
+                        <option
+                            value="24"
+                            :selected="showTime === 24"
                         >Last 24 hours</option>
                     </select>
-                    <select v-model="defaultSort"
-                            class="c-notebook__controls__time"
+                    <select
+                        v-model="defaultSort"
+                        class="c-notebook__controls__time"
                     >
-                        <option value="newest"
-                                :selected="defaultSort === 'newest'"
+                        <option
+                            value="newest"
+                            :selected="defaultSort === 'newest'"
                         >Newest first</option>
-                        <option value="oldest"
-                                :selected="defaultSort === 'oldest'"
+                        <option
+                            value="oldest"
+                            :selected="defaultSort === 'oldest'"
                         >Oldest first</option>
                     </select>
                 </div>
             </div>
-            <div class="c-notebook__drag-area icon-plus"
-                 @click="newEntry()"
-                 @dragover="dragOver"
-                 @drop.capture="dropCapture"
-                 @drop="dropOnEntry($event)"
+            <div
+                class="c-notebook__drag-area icon-plus"
+                @click="newEntry()"
+                @dragover="dragOver"
+                @drop.capture="dropCapture"
+                @drop="dropOnEntry($event)"
             >
                 <span class="c-notebook__drag-area__label">
                     To start a new entry, click here or drag and drop any object
                 </span>
             </div>
-            <div v-if="selectedSection && selectedPage"
-                 ref="notebookEntries"
-                 class="c-notebook__entries"
+            <div
+                v-if="selectedSection && selectedPage"
+                ref="notebookEntries"
+                class="c-notebook__entries"
             >
-                <NotebookEntry v-for="entry in filteredAndSortedEntries"
-                               :key="entry.id"
-                               :entry="entry"
-                               :domain-object="domainObject"
-                               :selected-page="selectedPage"
-                               :selected-section="selectedSection"
-                               :read-only="false"
-                               @deleteEntry="deleteEntry"
-                               @updateEntry="updateEntry"
+                <NotebookEntry
+                    v-for="entry in filteredAndSortedEntries"
+                    :key="entry.id"
+                    :entry="entry"
+                    :domain-object="domainObject"
+                    :selected-page="selectedPage"
+                    :selected-section="selectedSection"
+                    :read-only="false"
+                    @deleteEntry="deleteEntry"
+                    @updateEntry="updateEntry"
                 />
             </div>
         </div>
@@ -142,7 +158,6 @@ import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaul
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
-import objectUtils from 'objectUtils';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
@@ -323,7 +338,7 @@ export default {
         cleanupDefaultNotebook() {
             this.defaultPageId = undefined;
             this.defaultSectionId = undefined;
-            this.removeDefaultClass(this.domainObject);
+            this.removeDefaultClass(this.domainObject.identifier);
             clearDefaultNotebook();
         },
         setSectionAndPageFromUrl() {
@@ -439,6 +454,8 @@ export default {
             const classList = document.querySelector('body').classList;
             const isPhone = Array.from(classList).includes('phone');
             const isTablet = Array.from(classList).includes('tablet');
+            // address in https://github.com/nasa/openmct/issues/4875
+            // eslint-disable-next-line compat/compat
             const isPortrait = window.screen.orientation.type.includes('portrait');
             const isInLayout = Boolean(this.$el.closest('.c-so-view'));
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
@@ -460,11 +477,6 @@ export default {
             return this.isDefaultNotebook()
                 ? getDefaultNotebook().defaultSectionId
                 : undefined;
-        },
-        getDefaultNotebookObject() {
-            const defaultNotebook = getDefaultNotebook();
-
-            return defaultNotebook && this.openmct.objects.get(defaultNotebook.identifier);
         },
         getLinktoNotebook() {
             const objectPath = this.openmct.router.path;
@@ -602,8 +614,9 @@ export default {
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
-            const id = addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
-            this.focusEntryId = id;
+            addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed).then(id => {
+                this.focusEntryId = id;
+            });
         },
         orientationChange() {
             this.formatSidebar();
@@ -625,12 +638,8 @@ export default {
 
             this.sectionsChanged({ sections });
         },
-        removeDefaultClass(domainObject) {
-            if (!domainObject) {
-                return;
-            }
-
-            this.openmct.status.delete(domainObject.identifier);
+        removeDefaultClass(identifier) {
+            this.openmct.status.delete(identifier);
         },
         resetSearch() {
             this.search = '';
@@ -639,26 +648,25 @@ export default {
         toggleNav() {
             this.showNav = !this.showNav;
         },
-        async updateDefaultNotebook(notebookStorage) {
-            const defaultNotebookObject = await this.getDefaultNotebookObject();
-            const isSameNotebook = defaultNotebookObject
-                && objectUtils.makeKeyString(defaultNotebookObject.identifier) === objectUtils.makeKeyString(notebookStorage.identifier);
-            if (!isSameNotebook) {
-                this.removeDefaultClass(defaultNotebookObject);
+        updateDefaultNotebook(updatedNotebookStorageObject) {
+            if (!this.isDefaultNotebook()) {
+                const persistedNotebookStorageObject = getDefaultNotebook();
+                if (persistedNotebookStorageObject
+                    && persistedNotebookStorageObject.identifier !== undefined) {
+                    this.removeDefaultClass(persistedNotebookStorageObject.identifier);
+                }
+
+                setDefaultNotebook(this.openmct, updatedNotebookStorageObject, this.domainObject);
             }
 
-            if (!defaultNotebookObject || !isSameNotebook) {
-                setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
+            if (this.defaultSectionId !== updatedNotebookStorageObject.defaultSectionId) {
+                setDefaultNotebookSectionId(updatedNotebookStorageObject.defaultSectionId);
+                this.defaultSectionId = updatedNotebookStorageObject.defaultSectionId;
             }
 
-            if (this.defaultSectionId !== notebookStorage.defaultSectionId) {
-                setDefaultNotebookSectionId(notebookStorage.defaultSectionId);
-                this.defaultSectionId = notebookStorage.defaultSectionId;
-            }
-
-            if (this.defaultPageId !== notebookStorage.defaultPageId) {
-                setDefaultNotebookPageId(notebookStorage.defaultPageId);
-                this.defaultPageId = notebookStorage.defaultPageId;
+            if (this.defaultPageId !== updatedNotebookStorageObject.defaultPageId) {
+                setDefaultNotebookPageId(updatedNotebookStorageObject.defaultPageId);
+                this.defaultPageId = updatedNotebookStorageObject.defaultPageId;
             }
         },
         updateDefaultNotebookSection(sections, id) {
@@ -676,7 +684,7 @@ export default {
             if (defaultNotebookSectionId === id) {
                 const section = sections.find(s => s.id === id);
                 if (!section) {
-                    this.removeDefaultClass(this.domainObject);
+                    this.removeDefaultClass(this.domainObject.identifier);
                     clearDefaultNotebook();
 
                     return;

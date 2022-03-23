@@ -5,7 +5,7 @@
 {
     "compilerOptions": {
         "allowJs": true,
-        "checkJs": true,
+        "checkJs": false,
         "strict": true,
         "module": "esnext",
         "moduleResolution": "node"

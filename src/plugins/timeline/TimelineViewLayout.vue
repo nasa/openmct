@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -21,27 +21,31 @@
 *****************************************************************************/
 
 <template>
-<div ref="timelineHolder"
-     class="c-timeline-holder"
+<div
+    ref="timelineHolder"
+    class="c-timeline-holder"
 >
-    <swim-lane v-for="timeSystemItem in timeSystems"
-               :key="timeSystemItem.timeSystem.key"
+    <swim-lane
+        v-for="timeSystemItem in timeSystems"
+        :key="timeSystemItem.timeSystem.key"
     >
         <template slot="label">
             {{ timeSystemItem.timeSystem.name }}
         </template>
         <template slot="object">
-            <timeline-axis :bounds="timeSystemItem.bounds"
-                           :time-system="timeSystemItem.timeSystem"
-                           :content-height="height"
-                           :rendering-engine="'svg'"
+            <timeline-axis
+                :bounds="timeSystemItem.bounds"
+                :time-system="timeSystemItem.timeSystem"
+                :content-height="height"
+                :rendering-engine="'svg'"
             />
         </template>
 
     </swim-lane>
 
-    <div ref="contentHolder"
-         class="c-timeline__objects"
+    <div
+        ref="contentHolder"
+        class="c-timeline__objects"
     >
         <timeline-object-view
             v-for="item in items"

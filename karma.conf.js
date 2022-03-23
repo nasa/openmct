@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,30 +22,9 @@
 
 /*global module,process*/
 
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
-const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['spec', 'junit'];
-
-if (coverageEnabled) {
-    reporters.push('coverage-istanbul');
-}
-
 module.exports = (config) => {
-    const webpackConfig = require('./webpack.dev.js');
+    const webpackConfig = require('./webpack.coverage.js');
     delete webpackConfig.output;
-
-    if (coverageEnabled) {
-        webpackConfig.module.rules.push({
-            test: /\.js$/,
-            exclude: /node_modules|example|lib|dist/,
-            use: {
-                loader: 'istanbul-instrumenter-loader',
-                options: {
-                    esModules: true
-                }
-            }
-        });
-    }
 
     config.set({
         basePath: '',
@@ -62,8 +41,8 @@ module.exports = (config) => {
             }
         ],
         port: 9876,
-        reporters: reporters,
-        browsers: browsers,
+        reporters: ['spec', 'junit', 'coverage-istanbul'],
+        browsers: [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'],
         client: {
             jasmine: {
                 random: false,
@@ -107,13 +86,11 @@ module.exports = (config) => {
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: process.env.CIRCLE_ARTIFACTS
-                ? process.env.CIRCLE_ARTIFACTS + '/coverage'
-                : "dist/reports/coverage",
+            dir: "dist/reports/coverage",
             reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    lines: 66
+                    lines: 52
                 }
             }
         },

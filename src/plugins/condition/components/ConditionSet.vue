@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,18 +36,20 @@
         </div>
     </section>
     <div class="c-cs__test-data-and-conditions-w">
-        <TestData class="c-cs__test-data"
-                  :is-editing="isEditing"
-                  :test-data="testData"
-                  :telemetry="telemetryObjs"
-                  @updateTestData="updateTestData"
+        <TestData
+            class="c-cs__test-data"
+            :is-editing="isEditing"
+            :test-data="testData"
+            :telemetry="telemetryObjs"
+            @updateTestData="updateTestData"
         />
-        <ConditionCollection class="c-cs__conditions"
-                             :is-editing="isEditing"
-                             :test-data="testData"
-                             @conditionSetResultUpdated="updateCurrentOutput"
-                             @updateDefaultOutput="updateDefaultOutput"
-                             @telemetryUpdated="updateTelemetry"
+        <ConditionCollection
+            class="c-cs__conditions"
+            :is-editing="isEditing"
+            :test-data="testData"
+            @conditionSetResultUpdated="updateCurrentOutput"
+            @updateDefaultOutput="updateDefaultOutput"
+            @telemetryUpdated="updateTelemetry"
         />
     </div>
 </div>

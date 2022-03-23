@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -52,7 +52,7 @@ export default class ExportAsJSONAction {
     appliesTo(objectPath) {
         let domainObject = objectPath[0];
 
-        return this._isCreatable(domainObject);
+        return this._isCreatableAndPersistable(domainObject);
     }
     /**
      *
@@ -80,10 +80,11 @@ export default class ExportAsJSONAction {
      * @param {object} domainObject
      * @returns {boolean}
      */
-    _isCreatable(domainObject) {
+    _isCreatableAndPersistable(domainObject) {
         const type = this.openmct.types.get(domainObject.type);
+        const isPersistable = this.openmct.objects.isPersistable(domainObject.identifier);
 
-        return type && type.definition.creatable;
+        return type && type.definition.creatable && isPersistable;
     }
     /**
      * @private
@@ -170,7 +171,7 @@ export default class ExportAsJSONAction {
                 .then((children) => {
                     children.forEach((child, index) => {
                         // Only export if object is creatable
-                        if (this._isCreatable(child)) {
+                        if (this._isCreatableAndPersistable(child)) {
                             // Prevents infinite export of self-contained objs
                             if (!Object.prototype.hasOwnProperty.call(this.tree, this._getId(child))) {
                                 // If object is a link to something absent from

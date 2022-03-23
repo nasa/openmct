@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,50 +30,57 @@
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
-            <span class="c-image-controls__sliders"
-                  draggable="true"
-                  @dragstart="startDrag"
+            <span
+                class="c-image-controls__sliders"
+                draggable="true"
+                @dragstart="startDrag"
             >
                 <div class="c-image-controls__slider-wrapper icon-brightness">
-                    <input v-model="filters.brightness"
-                           type="range"
-                           min="0"
-                           max="500"
+                    <input
+                        v-model="filters.brightness"
+                        type="range"
+                        min="0"
+                        max="500"
                     >
                 </div>
                 <div class="c-image-controls__slider-wrapper icon-contrast">
-                    <input v-model="filters.contrast"
-                           type="range"
-                           min="0"
-                           max="500"
+                    <input
+                        v-model="filters.contrast"
+                        type="range"
+                        min="0"
+                        max="500"
                     >
                 </div>
             </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
-                <a class="s-icon-button icon-reset t-btn-reset"
-                   @click="filters={brightness: 100, contrast: 100}"
+                <a
+                    class="s-icon-button icon-reset t-btn-reset"
+                    @click="filters={brightness: 100, contrast: 100}"
                 ></a>
             </span>
         </div>
-        <div ref="imageBG"
-             class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false }"
-             @click="expand"
+        <div
+            ref="imageBG"
+            class="c-imagery__main-image__bg"
+            :class="{'paused unnsynced': isPaused && !isFixed,'stale':false }"
+            @click="expand"
         >
-            <div class="image-wrapper"
-                 :style="{
-                     'width': `${sizedImageDimensions.width}px`,
-                     'height': `${sizedImageDimensions.height}px`
-                 }"
+            <div
+                class="image-wrapper"
+                :style="{
+                    'width': `${sizedImageDimensions.width}px`,
+                    'height': `${sizedImageDimensions.height}px`
+                }"
             >
-                <img ref="focusedImage"
-                     class="c-imagery__main-image__image js-imageryView-image"
-                     :src="imageUrl"
-                     :style="{
-                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                     }"
-                     :data-openmct-image-timestamp="time"
-                     :data-openmct-object-keystring="keyString"
+                <img
+                    ref="focusedImage"
+                    class="c-imagery__main-image__image js-imageryView-image"
+                    :src="imageUrl"
+                    :style="{
+                        'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                    }"
+                    :data-openmct-image-timestamp="time"
+                    :data-openmct-object-keystring="keyString"
                 >
                 <Compass
                     v-if="shouldDisplayCompass"
@@ -85,16 +92,18 @@
             </div>
         </div>
 
-        <button class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--prev"
-                title="Previous image"
-                :disabled="isPrevDisabled"
-                @click="prevImage()"
+        <button
+            class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--prev"
+            title="Previous image"
+            :disabled="isPrevDisabled"
+            @click="prevImage()"
         ></button>
 
-        <button class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--next"
-                title="Next image"
-                :disabled="isNextDisabled"
-                @click="nextImage()"
+        <button
+            class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--next"
+            title="Next image"
+            :disabled="isNextDisabled"
+            @click="nextImage()"
         ></button>
 
         <div class="c-imagery__control-bar">
@@ -130,29 +139,33 @@
             </div>
         </div>
     </div>
-    <div class="c-imagery__thumbs-wrapper"
-         :class="[
-             { 'is-paused': isPaused && !isFixed },
-             { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
-         ]"
+    <div
+        class="c-imagery__thumbs-wrapper"
+        :class="[
+            { 'is-paused': isPaused && !isFixed },
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+        ]"
     >
         <div
             ref="thumbsWrapper"
             class="c-imagery__thumbs-scroll-area"
             @scroll="handleScroll"
         >
-            <div v-for="(image, index) in imageHistory"
-                 :key="image.url + image.time"
-                 class="c-imagery__thumb c-thumb"
-                 :class="{ selected: focusedImageIndex === index && isPaused }"
-                 @click="setFocusedImage(index, thumbnailClick)"
+            <div
+                v-for="(image, index) in imageHistory"
+                :key="image.url + image.time"
+                class="c-imagery__thumb c-thumb"
+                :class="{ selected: focusedImageIndex === index && isPaused }"
+                @click="setFocusedImage(index, thumbnailClick)"
             >
-                <a href=""
-                   :download="image.imageDownloadName"
-                   @click.prevent
+                <a
+                    href=""
+                    :download="image.imageDownloadName"
+                    @click.prevent
                 >
-                    <img class="c-thumb__image"
-                         :src="image.url"
+                    <img
+                        class="c-thumb__image"
+                        :src="image.url"
                     >
                 </a>
                 <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
@@ -240,9 +253,6 @@ export default {
         };
     },
     computed: {
-        imageHistorySize() {
-            return this.imageHistory.length;
-        },
         compassRoseSizingClasses() {
             let compassRoseSizingClasses = '';
             if (this.sizedImageDimensions.width < 300) {
@@ -409,19 +419,23 @@ export default {
         }
     },
     watch: {
-        imageHistorySize(newSize, oldSize) {
-            let imageIndex;
-            if (this.focusedImageTimestamp !== undefined) {
-                const foundImageIndex = this.imageHistory.findIndex(image => {
-                    return image.time === this.focusedImageTimestamp;
-                });
-                imageIndex = foundImageIndex > -1 ? foundImageIndex : newSize - 1;
-            } else {
-                imageIndex = newSize > 0 ? newSize - 1 : undefined;
-            }
+        imageHistory: {
+            handler(newHistory, oldHistory) {
+                const newSize = newHistory.length;
+                let imageIndex;
+                if (this.focusedImageTimestamp !== undefined) {
+                    const foundImageIndex = this.imageHistory.findIndex(image => {
+                        return image.time === this.focusedImageTimestamp;
+                    });
+                    imageIndex = foundImageIndex > -1 ? foundImageIndex : newSize - 1;
+                } else {
+                    imageIndex = newSize > 0 ? newSize - 1 : undefined;
+                }
 
-            this.setFocusedImage(imageIndex, false);
-            this.scrollToRight();
+                this.setFocusedImage(imageIndex, false);
+                this.scrollToRight();
+            },
+            deep: true
         },
         focusedImageIndex() {
             this.trackDuration();
@@ -508,12 +522,6 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.trackDuration);
                 this.timeContext.off("clock", this.trackDuration);
-            }
-        },
-        boundsChange(bounds, isTick) {
-            if (!isTick) {
-                this.previousFocusedImage = this.focusedImage ? JSON.parse(JSON.stringify(this.focusedImage)) : undefined;
-                this.requestHistory();
             }
         },
         expand() {
@@ -690,22 +698,32 @@ export default {
                 return;
             }
 
-            if (this.previousFocusedImage) {
-                // determine if the previous image exists in the new bounds of imageHistory
-                const matchIndex = this.matchIndexOfPreviousImage(
-                    this.previousFocusedImage,
-                    this.imageHistory
-                );
-                focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
-
-                delete this.previousFocusedImage;
-            }
-
             if (thumbnailClick) {
                 //We use the props till the user changes what they want to see
                 this.focusedImageTimestamp = undefined;
+                //set the previousFocusedImage when a user chooses an image
+                this.previousFocusedImage = this.imageHistory[focusedIndex] ? JSON.parse(JSON.stringify(this.imageHistory[focusedIndex])) : undefined;
             }
 
+            if (this.previousFocusedImage) {
+                // determine if the previous image exists in the new bounds of imageHistory
+                if (!thumbnailClick) {
+                    const matchIndex = this.matchIndexOfPreviousImage(
+                        this.previousFocusedImage,
+                        this.imageHistory
+                    );
+                    focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
+                }
+
+                if (!(this.isPaused || thumbnailClick)
+                    || focusedIndex === this.imageHistory.length - 1) {
+                    delete this.previousFocusedImage;
+                }
+            }
+
+            this.focusedImageIndex = focusedIndex;
+
+            //TODO: do we even need this anymore?
             if (this.isPaused && !thumbnailClick && this.focusedImageTimestamp === undefined) {
                 this.nextImageIndex = focusedIndex;
                 //this could happen if bounds changes
@@ -715,8 +733,6 @@ export default {
 
                 return;
             }
-
-            this.focusedImageIndex = focusedIndex;
 
             if (thumbnailClick && !this.isPaused) {
                 this.paused(true);
