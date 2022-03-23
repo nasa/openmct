@@ -28,15 +28,16 @@
     @keydown="arrowDownHandler"
     @mouseover="focusElement"
 >
-    <div class="c-imagery__main-image-wrapper has-local-controls"
-         :class="{
-             'paused unnsynced': isPaused && !isFixed,
-             'stale': false,
-             'pannable': cursorStates.isPannable,
-             'cursor-zoom-in': cursorStates.showCursorZoomIn,
-             'cursor-zoom-out': cursorStates.showCursorZoomOut
-         }"
-         @mousedown="handlePanZoomClick"
+    <div
+        class="c-imagery__main-image-wrapper has-local-controls"
+        :class="{
+            'paused unnsynced': isPaused && !isFixed,
+            'stale': false,
+            'pannable': cursorStates.isPannable,
+            'cursor-zoom-in': cursorStates.showCursorZoomIn,
+            'cursor-zoom-out': cursorStates.showCursorZoomOut
+        }"
+        @mousedown="handlePanZoomClick"
     >
         <ImageControls
             ref="imageControls"
@@ -51,41 +52,46 @@
             @toggleLayerVisibility="toggleLayerVisibility"
         />
 
-        <div v-if="zoomFactor > 1"
-             class="c-imagery__hints"
+        <div
+            v-if="zoomFactor > 1"
+            class="c-imagery__hints"
         >
             Alt-drag to pan
         </div>
-        <div ref="imageBG"
-             class="c-imagery__main-image__bg"
-             @click="expand"
+        <div
+            ref="imageBG"
+            class="c-imagery__main-image__bg"
+            @click="expand"
         >
-            <div ref="focusedImageWrapper"
-                 class="image-wrapper"
-                 :style="{
-                     'width': `${sizedImageWidth}px`,
-                     'height': `${sizedImageHeight}px`
-                 }"
+            <div
+                ref="focusedImageWrapper"
+                class="image-wrapper"
+                :style="{
+                    'width': `${sizedImageWidth}px`,
+                    'height': `${sizedImageHeight}px`
+                }"
             >
-                <div v-for="(layer, index) in visibleLayers"
-                     :key="index"
-                     class="layer-image s-image-layer c-imagery__layer-image"
-                     :style="{
-                         'background-image': `url(${layer.source})`,
-                         'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
-                         'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
-                     }"
+                <div
+                    v-for="(layer, index) in visibleLayers"
+                    :key="index"
+                    class="layer-image s-image-layer c-imagery__layer-image"
+                    :style="{
+                        'background-image': `url(${layer.source})`,
+                        'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
+                        'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
+                    }"
                 >
                 </div>
-                <img ref="focusedImage"
-                     class="c-imagery__main-image__image js-imageryView-image "
-                     :src="imageUrl"
-                     :draggable="!isSelectable"
-                     :style="{
-                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                     }"
-                     :data-openmct-image-timestamp="time"
-                     :data-openmct-object-keystring="keyString"
+                <img
+                    ref="focusedImage"
+                    class="c-imagery__main-image__image js-imageryView-image "
+                    :src="imageUrl"
+                    :draggable="!isSelectable"
+                    :style="{
+                        'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                    }"
+                    :data-openmct-image-timestamp="time"
+                    :data-openmct-object-keystring="keyString"
                 >
                 <div
                     v-if="imageUrl"

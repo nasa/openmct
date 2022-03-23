@@ -22,42 +22,48 @@
 
 <template>
 <div class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hover">
-    <imagery-view-menu-switcher :icon-class="'icon-brightness'"
-                                :title="'Brightness and contrast'"
+    <imagery-view-menu-switcher
+        :icon-class="'icon-brightness'"
+        :title="'Brightness and contrast'"
     >
         <filter-settings @filterChanged="updateFilterValues" />
     </imagery-view-menu-switcher>
 
-    <imagery-view-menu-switcher v-if="layers.length"
-                                :icon-class="'icon-layers'"
-                                :title="'Layers'"
+    <imagery-view-menu-switcher
+        v-if="layers.length"
+        :icon-class="'icon-layers'"
+        :title="'Layers'"
     >
-        <layer-settings :layers="layers"
-                        @toggleLayerVisibility="toggleLayerVisibility"
+        <layer-settings
+            :layers="layers"
+            @toggleLayerVisibility="toggleLayerVisibility"
         />
     </imagery-view-menu-switcher>
 
-    <zoom-settings class="--hide-if-less-than-220"
-                   :pan-zoom-locked="panZoomLocked"
-                   :zoom-factor="zoomFactor"
-                   @zoomOut="zoomOut"
-                   @zoomIn="zoomIn"
-                   @toggleZoomLock="toggleZoomLock"
-                   @handleResetImage="handleResetImage"
+    <zoom-settings
+        class="--hide-if-less-than-220"
+        :pan-zoom-locked="panZoomLocked"
+        :zoom-factor="zoomFactor"
+        @zoomOut="zoomOut"
+        @zoomIn="zoomIn"
+        @toggleZoomLock="toggleZoomLock"
+        @handleResetImage="handleResetImage"
     />
 
-    <imagery-view-menu-switcher class="--show-if-less-than-220"
-                                :icon-class="'icon-magnify'"
-                                :title="'Zoom settings'"
+    <imagery-view-menu-switcher
+        class="--show-if-less-than-220"
+        :icon-class="'icon-magnify'"
+        :title="'Zoom settings'"
     >
-        <zoom-settings :pan-zoom-locked="panZoomLocked"
-                       :class="'c-control-menu c-menu--has-close-btn'"
-                       :zoom-factor="zoomFactor"
-                       :is-menu="true"
-                       @zoomOut="zoomOut"
-                       @zoomIn="zoomIn"
-                       @toggleZoomLock="toggleZoomLock"
-                       @handleResetImage="handleResetImage"
+        <zoom-settings
+            :pan-zoom-locked="panZoomLocked"
+            :class="'c-control-menu c-menu--has-close-btn'"
+            :zoom-factor="zoomFactor"
+            :is-menu="true"
+            @zoomOut="zoomOut"
+            @zoomIn="zoomIn"
+            @toggleZoomLock="toggleZoomLock"
+            @handleResetImage="handleResetImage"
         />
     </imagery-view-menu-switcher>
 </div>
