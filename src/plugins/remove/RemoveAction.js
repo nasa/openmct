@@ -92,23 +92,33 @@ export default class RemoveAction {
             this.openmct.editor.save();
         }
 
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-        const isAlias = parentKeyString !== child.location;
-
-        if (!isAlias) {
+        if (!this.isAlias(child, parent)) {
             this.openmct.objects.mutate(child, 'location', null);
         }
     }
 
-    appliesTo(objectPath) {
-        let parent = objectPath[1];
-        let parentType = parent && this.openmct.types.get(parent.type);
-        let child = objectPath[0];
-        let locked = child.locked ? child.locked : parent && parent.locked;
-        let isEditing = this.openmct.editor.isEditing();
-        let isPersistable = this.openmct.objects.isPersistable(child.identifier);
+    isAlias(child, parent) {
+        if (parent === undefined) {
+            // then it's a root item, not an alias
+            return false;
+        }
 
-        if (locked || !isPersistable) {
+        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+        const childLocation = child.location;
+
+        return childLocation !== parentKeyString;
+    }
+
+    appliesTo(objectPath) {
+        const parent = objectPath[1];
+        const parentType = parent && this.openmct.types.get(parent.type);
+        const child = objectPath[0];
+        const locked = child.locked ? child.locked : parent && parent.locked;
+        const isEditing = this.openmct.editor.isEditing();
+        const isPersistable = this.openmct.objects.isPersistable(child.identifier);
+        const isAlias = this.isAlias(child, parent);
+
+        if (locked || (!isPersistable && !isAlias)) {
             return false;
         }
 
