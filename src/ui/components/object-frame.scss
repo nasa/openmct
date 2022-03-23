@@ -43,6 +43,7 @@
             flex: 0 0 auto;
         }
 
+        .--width-less-than-220 &,
         .--width-less-than-600 & {
             [class*="__label"] {
                 // button labels
