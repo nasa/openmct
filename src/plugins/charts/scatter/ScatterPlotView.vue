@@ -21,10 +21,10 @@
 -->
 
 <template>
-<ScatterPlotWithUnderlay ref="barGraph"
-          class="c-plot c-bar-chart-view"
-          :data="trace"
-          :plot-axis-title="plotAxisTitle"
+<ScatterPlotWithUnderlay
+    class="c-plot c-scatter-chart-view"
+    :data="trace"
+    :plot-axis-title="plotAxisTitle"
 />
 </template>
 
@@ -35,7 +35,7 @@ const MAX_INTERPOLATE = 5;
 
 export default {
     components: {
-      ScatterPlotWithUnderlay
+        ScatterPlotWithUnderlay
     },
     inject: ['openmct', 'domainObject', 'path'],
     data() {
@@ -63,6 +63,7 @@ export default {
         this.setTimeContext();
         this.loadComposition();
         this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.reloadTelemetry);
+        this.unobserveInterpolation = this.openmct.objects.observe(this.domainObject, 'configuration.useInterpolation', this.reloadTelemetry);
     },
     beforeDestroy() {
         Object.keys(this.telemetryCollections).forEach(this.removeTelemetryCollection);
@@ -74,6 +75,10 @@ export default {
         this.composition.off('remove', this.removeTelemetryObject);
         if (this.unobserve) {
             this.unobserve();
+        }
+
+        if (this.unobserveInterpolation) {
+            this.unobserveInterpolation();
         }
     },
     methods: {
@@ -185,27 +190,13 @@ export default {
                 const metadataKey = axisMetadata.source;
                 if (data[metadataKey]) {
                     valueForTimestamp.x = this.format(key, metadataKey, data);
-                    valueForTimestamp.xInterpolated = false;
-                    this.adjustInterpolatedValues(timestamp, 'x', valueForTimestamp.x);
-                    if (valueForTimestamp.y === undefined) {
-                        //find nearest y
-                        valueForTimestamp.y = this.getInterpolatedValue(timestamp, 'y');
-                        valueForTimestamp.y = null;
-                        valueForTimestamp.yInterpolated = true;
-                    }
+                    this.interpolateValues(valueForTimestamp, timestamp, 'x', 'y');
                 }
             } else if (this.domainObject.configuration.axes.yKey === key) {
                 const metadataKey = axisMetadata.source;
                 if (data[metadataKey]) {
                     valueForTimestamp.y = this.format(key, metadataKey, data);
-                    valueForTimestamp.yInterpolated = false;
-                    this.adjustInterpolatedValues(timestamp, 'y', valueForTimestamp.y);
-                    if (valueForTimestamp.x === undefined) {
-                        //find nearest x
-                        valueForTimestamp.x = this.getInterpolatedValue(timestamp, 'x');
-                        valueForTimestamp.x = null;
-                        valueForTimestamp.xInterpolated = true;
-                    }
+                    this.interpolateValues(valueForTimestamp, timestamp, 'y', 'x');
                 }
             }
 
@@ -216,7 +207,10 @@ export default {
             const xValues = xAndyValues.map(value => value.x);
             const yValues = xAndyValues.map(value => value.y);
             const xAxisMetadata = this.getAxisMetadata(this.telemetryObjects[this.domainObject.configuration.axes.xKey]);
-            const yAxisMetadata = this.getAxisMetadata(this.telemetryObjects[this.domainObject.configuration.axes.yKey]);
+            let yAxisMetadata = {};
+            if (this.domainObject.configuration.axes.yKey) {
+                yAxisMetadata = this.getAxisMetadata(this.telemetryObjects[this.domainObject.configuration.axes.yKey]);
+            }
 
             let trace = {
                 key: this.openmct.objects.makeKeyString(this.domainObject.identifier),
@@ -249,6 +243,20 @@ export default {
             }
 
             this.trace = [trace];
+        },
+        interpolateValues(valueForTimestamp, timestamp, adjustProp, interpolateProp) {
+            if (this.domainObject.configuration.useInterpolation !== true) {
+                valueForTimestamp[`${adjustProp}Interpolated`] = false;
+
+                return;
+            }
+
+            this.adjustInterpolatedValues(timestamp, adjustProp, valueForTimestamp[adjustProp]);
+            if (valueForTimestamp[interpolateProp] === undefined) {
+                //find nearest y
+                valueForTimestamp[interpolateProp] = this.getInterpolatedValue(timestamp, interpolateProp);
+                valueForTimestamp[`${interpolateProp}Interpolated`] = true;
+            }
         },
         getInterpolatedValue(timestamp, prop) {
             const keys = Object.keys(this.valuesByTimestamp);

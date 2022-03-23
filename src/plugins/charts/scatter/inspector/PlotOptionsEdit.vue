@@ -24,17 +24,20 @@
     <ul class="l-inspector-part">
         <h2 title="Y axis settings for this object">X Axis</h2>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="X axis selection."
+            <div
+                class="grid-cell label"
+                title="X axis selection."
             >X Axis</div>
             <div class="grid-cell value">
-                <select v-model="xKey"
-                        @change="updateForm('xKey')"
+                <select
+                    v-model="xKey"
+                    @change="updateForm('xKey')"
                 >
-                    <option v-for="option in xKeyOptions"
-                            :key="`xKey-${option.value}`"
-                            :value="option.value"
-                            :selected="option.value == xKey"
+                    <option
+                        v-for="option in xKeyOptions"
+                        :key="`xKey-${option.value}`"
+                        :value="option.value"
+                        :selected="option.value == xKey"
                     >
                         {{ option.name }}
                     </option>
@@ -45,17 +48,20 @@
     <ul class="l-inspector-part">
         <h2 title="Y axis settings for this object">Y Axis</h2>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Y axis selection."
+            <div
+                class="grid-cell label"
+                title="Y axis selection."
             >Y Axis</div>
             <div class="grid-cell value">
-                <select v-model="yKey"
-                        @change="updateForm('yKey')"
+                <select
+                    v-model="yKey"
+                    @change="updateForm('yKey')"
                 >
-                    <option v-for="option in yKeyOptions"
-                            :key="`yKey-${option.value}`"
-                            :value="option.value"
-                            :selected="option.value == yKey"
+                    <option
+                        v-for="option in yKeyOptions"
+                        :key="`yKey-${option.value}`"
+                        :value="option.value"
+                        :selected="option.value == yKey"
                     >
                         {{ option.name }}
                     </option>
@@ -65,13 +71,28 @@
     </ul>
     <ul class="l-inspector-part">
         <h2 title="Settings for this object">Color</h2>
-        <ColorSwatch :current-color="currentColor"
-                     title="Manually set the line and marker color for this plot."
-                     edit-title="Manually set the line and marker color for this plot."
-                     view-title="The line and marker color for this plot."
-                     short-label="Color"
-                     @colorSet="setColor"
+        <ColorSwatch
+            :current-color="currentColor"
+            title="Manually set the line and marker color for this plot."
+            edit-title="Manually set the line and marker color for this plot."
+            view-title="The line and marker color for this plot."
+            short-label="Color"
+            @colorSet="setColor"
         />
+    </ul>
+    <ul class="l-inspector-part">
+        <h2 title="Use time-based interpolation for telemetry">Interpolation</h2>
+        <li class="grid-row">
+            <label class="c-toggle-switch">
+                <input
+                    type="checkbox"
+                    :checked="useInterpolation"
+                    @change="updateInterpolation"
+                >
+                <span class="c-toggle-switch__slider"></span>
+                <span class="c-toggle-switch__label">Use Interpolation</span>
+            </label>
+        </li>
     </ul>
 </div>
 </template>
@@ -89,7 +110,8 @@ export default {
             yKey: undefined,
             xKeyOptions: [],
             yKeyOptions: [],
-            currentColor: undefined
+            currentColor: undefined,
+            useInterpolation: this.domainObject.configuration.useInterpolation === true
         };
     },
     mounted() {
@@ -248,6 +270,10 @@ export default {
                 xKey: this.xKey,
                 yKey: this.yKey
             });
+        },
+        updateInterpolation(event) {
+            this.useInterpolation = event.target.checked === true;
+            this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation === true);
         }
     }
 };
