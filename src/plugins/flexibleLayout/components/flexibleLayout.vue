@@ -91,9 +91,9 @@
 <script>
 import ContainerComponent from './container.vue';
 import Container from '../utils/container';
+import DropHint from './dropHint.vue';
 import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
-import DropHint from './dropHint.vue';
 
 const MIN_CONTAINER_SIZE = 5;
 
