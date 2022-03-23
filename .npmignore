@@ -5,7 +5,6 @@
 # ...but include these folders...
 !/dist/**/*
 !/src/**/*
-!/platform/**/*
 
 # ...except for these files in the above folders.
 /src/**/*Spec.js
