@@ -115,6 +115,7 @@ export default function () {
                     cssClass: "l-input",
                     key: "gaugeController",
                     required: false,
+                    hideFromInspector: true,
                     property: [
                         "configuration",
                         "gaugeController"
