@@ -70,6 +70,7 @@
                     'width': `${sizedImageWidth}px`,
                     'height': `${sizedImageHeight}px`
                 }"
+                @mousedown="handlePanZoomClick"
             >
                 <div
                     v-for="(layer, index) in visibleLayers"
@@ -756,6 +757,7 @@ export default {
         focusElement() {
             this.$el.focus();
         },
+
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
             if (!thumbsWrapper || this.resizingWindow) {
