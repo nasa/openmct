@@ -325,7 +325,7 @@ export default {
 
             this.valueKey = this
                 .metadata
-                .valuesForHints(['range'])[0].key;
+                .valuesForHints(['range'])[0].source;
 
             this.openmct
                 .telemetry
