@@ -271,6 +271,7 @@ export default {
     methods: {
         addTelemetryObject(domainObject) {
             if (this.telemetryObject) {
+                this.removeFromComposition();
                 this.removeTelemetryObject();
             }
 
@@ -289,6 +290,13 @@ export default {
         },
         percentToDegrees(vPercent) {
             return this.round((vPercent / 100) * 270, 2);
+        },
+        removeFromComposition() {
+            let composition = this.domainObject.composition.filter(id =>
+                !this.openmct.objects.areIdsEqual(id, this.telemetryObject.identifier)
+            );
+
+            this.openmct.objects.mutate(this.domainObject, 'composition', composition);
         },
         refreshData(bounds, isTick) {
             if (!isTick) {
