@@ -42,6 +42,7 @@
                 </span>
                 <label>Range minimum value</label>
                 <input
+                    ref="min"
                     v-model.number="min"
                     data-field-name="min"
                     type="number"
@@ -54,6 +55,7 @@
                 </span>
                 <label>Range low limit</label>
                 <input
+                    ref="limitLow"
                     v-model.number="limitLow"
                     data-field-name="limitLow"
                     type="number"
@@ -66,6 +68,7 @@
                 </span>
                 <label>Range maximum value</label>
                 <input
+                    ref="max"
                     v-model.number="max"
                     data-field-name="max"
                     type="number"
@@ -78,6 +81,7 @@
                 </span>
                 <label>Range high limit</label>
                 <input
+                    ref="limitHigh"
                     v-model.number="limitHigh"
                     data-field-name="limitHigh"
                     type="number"
@@ -131,13 +135,23 @@ export default {
             };
 
             if (event) {
-                const valid = this.model.validate(data);
-                const reqIndicatorElement = event.target.parentElement.querySelector('.req-indicator');
-                reqIndicatorElement.classList.toggle('invalid', !valid);
-
-                if (reqIndicatorElement.classList.contains('req')) {
-                    reqIndicatorElement.classList.toggle('valid', valid);
+                const target = event.target;
+                const targetIndicator = target.parentElement.querySelector('.req-indicator');
+                if (targetIndicator.classList.contains('req')) {
+                    targetIndicator.classList.add('visited');
                 }
+
+                this.model.validate(data, (valid) => {
+                    Object.entries(valid).forEach(([key, isValid]) => {
+                        const element = this.$refs[key];
+                        const reqIndicatorElement = element.parentElement.querySelector('.req-indicator');
+                        reqIndicatorElement.classList.toggle('invalid', !isValid);
+
+                        if (reqIndicatorElement.classList.contains('req') && (!isValid || reqIndicatorElement.classList.contains('visited'))) {
+                            reqIndicatorElement.classList.toggle('valid', isValid);
+                        }
+                    });
+                });
             }
 
             this.$emit('onChange', data);

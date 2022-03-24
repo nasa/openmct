@@ -120,35 +120,52 @@ export default function () {
                         "configuration",
                         "gaugeController"
                     ],
-                    validate: ({ value }) => {
+                    validate: ({ value }, callback) => {
                         if (value.isUseTelemetryLimits) {
                             return true;
                         }
 
                         const { min, max, limitLow, limitHigh } = value;
-                        if (min === '' || max === '') {
-                            return false;
+                        const valid = {
+                            min: true,
+                            max: true,
+                            limitLow: true,
+                            limitHigh: true
+                        };
+
+                        if (min === '') {
+                            valid.min = false;
+                        }
+
+                        if (max === '') {
+                            valid.max = false;
                         }
 
                         if (max < min) {
-                            return false;
+                            valid.min = false;
+                            valid.max = false;
                         }
 
-                        let validLimitLow = true;
                         if (limitLow !== '') {
-                            validLimitLow = min <= limitLow && limitLow < max;
+                            valid.limitLow = min <= limitLow && limitLow < max;
                         }
 
-                        let validLimitHigh = true;
                         if (limitHigh !== '') {
-                            validLimitHigh = min < limitHigh && limitHigh <= max;
+                            valid.limitHigh = min < limitHigh && limitHigh <= max;
                         }
 
-                        if (limitLow !== '' && limitHigh !== '') {
-                            return validLimitLow && validLimitHigh && limitLow < limitHigh;
+                        if (valid.limitLow && valid.limitHigh
+                                && limitLow !== '' && limitHigh !== ''
+                                && limitLow > limitHigh) {
+                            valid.limitLow = false;
+                            valid.limitHigh = false;
                         }
 
-                        return validLimitLow && validLimitHigh;
+                        if (callback) {
+                            callback(valid);
+                        }
+
+                        return valid.min && valid.max && valid.limitLow && valid.limitHigh;
                     }
                 }
             ]
