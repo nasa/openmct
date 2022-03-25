@@ -46,6 +46,7 @@
     "karma-sourcemap-loader": "0.3.8",
     "karma-spec-reporter": "0.0.33",
     "karma-webpack": "5.0.0",
+    "lighthouse": "9.5.0",
     "location-bar": "3.0.1",
     "lodash": "4.17.12",
     "mini-css-extract-plugin": "2.4.5",
@@ -106,7 +107,7 @@
     "url": "https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=12.22.0"
+    "node": ">=14.19.1"
   },
   "browserslist": [
     "Firefox ESR",
