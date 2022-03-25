@@ -24,7 +24,10 @@
 <div class="c-form">
     <div class="c-overlay__top-bar c-form__top-bar">
         <div class="c-overlay__dialog-title">{{ model.title }}</div>
-        <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
+        <div
+            v-if="hasRequiredFields"
+            class="c-overlay__dialog-hint hint"
+        >All fields marked <span class="req icon-asterisk"></span> are required.</div>
     </div>
     <form
         name="mctForm"
@@ -106,6 +109,10 @@ export default {
         };
     },
     computed: {
+        hasRequiredFields() {
+            return this.model.sections.some(section =>
+                section.rows.some(row => row.required));
+        },
         isInvalid() {
             return Object.entries(this.invalidProperties)
                 .some(([key, value]) => {
