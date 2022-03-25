@@ -85,7 +85,8 @@ describe('the plugin', function () {
             expect(object).toEqual({
                 identifier,
                 type: 'folder',
-                name: "CouchDB Documents"
+                name: 'CouchDB Documents',
+                location: 'ROOT'
             });
         });
     });
