@@ -157,5 +157,9 @@ test.describe('Sine Wave Generator', () => {
                 y: 28
             }
         });
+
+        // Verify that where we click on canvas shows the number we clicked on
+        await expect(page.locator('.value-to-display-nearestValue')).toContainText('0.00');
+
     });
 });
