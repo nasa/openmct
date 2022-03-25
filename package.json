@@ -1,11 +1,11 @@
 {
   "name": "openmct",
-  "version": "2.0.1-SNAPSHOT",
+  "version": "2.0.2-SNAPSHOT",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@babel/eslint-parser": "7.16.3",
     "@braintree/sanitize-url": "6.0.0",
-    "@percy/cli": "1.0.0-beta.75",
+    "@percy/cli": "1.0.0-beta.76",
     "@percy/playwright": "1.0.1",
     "@playwright/test": "1.19.2",
     "@types/eventemitter3": "^1.0.0",
@@ -18,7 +18,7 @@
     "babel-plugin-istanbul": "6.1.1",
     "comma-separated-values": "3.6.4",
     "copy-webpack-plugin": "10.2.0",
-    "core-js": "3.20.3",
+    "core-js": "3.21.1",
     "cross-env": "7.0.3",
     "css-loader": "4.0.0",
     "d3-axis": "1.0.x",
@@ -34,14 +34,14 @@
     "express": "4.13.1",
     "file-loader": "6.2.0",
     "file-saver": "2.0.5",
-    "git-rev-sync": "1.4.0",
+    "git-rev-sync": "3.0.2",
     "html-loader": "0.5.5",
     "html2canvas": "1.4.1",
     "imports-loader": "0.8.0",
-    "jasmine-core": "4.0.0",
+    "jasmine-core": "4.0.1",
     "jsdoc": "3.5.5",
     "karma": "6.3.15",
-    "karma-chrome-launcher": "3.1.0",
+    "karma-chrome-launcher": "3.1.1",
     "karma-cli": "2.0.0",
     "karma-coverage": "2.1.1",
     "karma-coverage-istanbul-reporter": "3.0.3",
@@ -51,6 +51,7 @@
     "karma-sourcemap-loader": "0.3.8",
     "karma-spec-reporter": "0.0.33",
     "karma-webpack": "5.0.0",
+    "lighthouse": "9.5.0",
     "location-bar": "3.0.1",
     "lodash": "4.17.12",
     "mini-css-extract-plugin": "2.4.5",
@@ -61,9 +62,8 @@
     "painterro": "1.2.56",
     "plotly.js-basic-dist": "2.5.0",
     "plotly.js-gl2d-dist": "2.5.0",
-    "printj": "1.2.1",
-    "raw-loader": "0.5.1",
-    "request": "2.69.0",
+    "printj": "1.3.1",
+    "request": "2.88.2",
     "resolve-url-loader": "4.0.0",
     "sass": "1.49.0",
     "sass-loader": "12.4.0",
@@ -77,7 +77,7 @@
     "webpack": "5.68.0",
     "webpack-cli": "4.9.2",
     "webpack-dev-middleware": "3.7.3",
-    "webpack-hot-middleware": "2.22.3",
+    "webpack-hot-middleware": "2.25.1",
     "webpack-merge": "5.8.0",
     "zepto": "1.2.0"
   },
@@ -112,7 +112,7 @@
     "url": "https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=12.22.0"
+    "node": ">=14.19.1"
   },
   "browserslist": [
     "Firefox ESR",
