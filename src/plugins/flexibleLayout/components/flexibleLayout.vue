@@ -43,7 +43,7 @@
         <template v-for="(container, index) in containers">
             <drop-hint
                 v-if="index === 0 && containers.length > 1"
-                :key="index"
+                :key="`hint-top-${container.id}`"
                 class="c-fl-frame__drop-hint"
                 :index="-1"
                 :allow-drop="allowContainerDrop"
@@ -51,7 +51,7 @@
             />
 
             <container-component
-                :key="container.id"
+                :key="`component-${container.id}`"
                 class="c-fl__container"
                 :index="index"
                 :container="container"
@@ -66,7 +66,7 @@
 
             <resize-handle
                 v-if="index !== (containers.length - 1)"
-                :key="index"
+                :key="`handle-${container.id}`"
                 :index="index"
                 :orientation="rowsLayout ? 'vertical' : 'horizontal'"
                 :is-editing="isEditing"
@@ -77,7 +77,7 @@
 
             <drop-hint
                 v-if="containers.length > 1"
-                :key="index"
+                :key="`hint-bottom-${container.id}`"
                 class="c-fl-frame__drop-hint"
                 :index="index"
                 :allow-drop="allowContainerDrop"

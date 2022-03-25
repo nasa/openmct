@@ -113,7 +113,7 @@ jobs:
           steps:
             - browser-tools/install-chrome:
                 replace-existing: false
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
+      - run: npm run test -- --browsers=<<parameters.browser>>
       - save_cache_cmd:
           node-version: <<parameters.node-version>>
       - store_test_results:
