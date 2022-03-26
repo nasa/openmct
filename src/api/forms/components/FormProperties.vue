@@ -72,6 +72,7 @@
             {{ submitLabel }}
         </button>
         <button
+            v-if="!hideCancel"
             tabindex="0"
             class="c-button"
             @click="onDismiss"
@@ -85,6 +86,7 @@
 <script>
 import FormRow from "@/api/forms/components/FormRow.vue";
 import uuid from 'uuid';
+
 export default {
     components: {
         FormRow
@@ -127,6 +129,7 @@ export default {
             ) {
                 return this.model.buttons.submit.label;
             }
+
             return 'OK';
         },
         cancelLabel() {
@@ -137,22 +140,32 @@ export default {
             ) {
                 return this.model.buttons.submit.label;
             }
+
             return 'Cancel';
+        },
+        hideCancel() {
+            return this.model.buttons
+                && this.model.buttons.cancel
+                && this.model.buttons.cancel.hide === true;
         }
     },
     mounted() {
         this.formSections = this.model.sections.map(section => {
             section.id = uuid();
+
             section.rows = section.rows.map(row => {
                 row.id = uuid();
+
                 return row;
             });
+
             return section;
         });
     },
     methods: {
         onChange(data) {
             this.$set(this.invalidProperties, data.model.key, data.invalid);
+
             this.$emit('onChange', data);
         },
         onDismiss() {
