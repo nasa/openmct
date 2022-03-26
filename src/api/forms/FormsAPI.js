@@ -172,7 +172,9 @@ export default class FormsAPI {
 
         function onFormSave(save) {
             return () => {
-                overlay.dismiss();
+                if (overlay) {
+                    overlay.dismiss();
+                }
 
                 if (save) {
                     save(changes);
