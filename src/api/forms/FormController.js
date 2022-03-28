@@ -69,10 +69,11 @@ export default class FormControl {
      */
     _getControlViewProvider(control) {
         const self = this;
+        let rowComponent;
 
         return {
             show(element, model, onChange) {
-                const rowComponent = new Vue({
+                rowComponent = new Vue({
                     el: element,
                     components: {
                         FormControlComponent: DEFAULT_CONTROLS_MAP[control]
@@ -90,6 +91,9 @@ export default class FormControl {
                 });
 
                 return rowComponent;
+            },
+            destroy() {
+                rowComponent.$destroy();
             }
         };
     }
