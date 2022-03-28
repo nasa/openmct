@@ -172,7 +172,9 @@ export default class FormsAPI {
 
         function onFormSave(save) {
             return () => {
-                if (overlay) {
+                if (element) {
+                    formElement.remove();
+                } else {
                     overlay.dismiss();
                 }
 
