@@ -28,7 +28,7 @@ import Model from './Model';
  */
 export default class Collection extends Model {
     /** @type {Constructor} */
-    modelClass = Model
+    modelClass = Model;
 
     initialize(options) {
         super.initialize(options);

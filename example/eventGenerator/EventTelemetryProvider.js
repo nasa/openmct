@@ -33,7 +33,7 @@ class EventTelemetryProvider {
 
     generateData(firstObservedTime, count, startTime, duration, name) {
         const millisecondsSinceStart = startTime - firstObservedTime;
-        const utc = Math.floor(startTime / duration) * duration;
+        const utc = startTime + (count * duration);
         const ind = count % messages.length;
         const message = messages[ind] + " - [" + millisecondsSinceStart + "]";
 
@@ -75,7 +75,7 @@ class EventTelemetryProvider {
         const duration = domainObject.telemetry.duration * 1000;
         const size = options.size ? options.size : this.defaultSize;
         const data = [];
-        const firstObservedTime = Date.now();
+        const firstObservedTime = options.start;
         let count = 0;
 
         if (options.strategy === 'latest' || options.size === 1) {
@@ -83,7 +83,7 @@ class EventTelemetryProvider {
         }
 
         while (start <= end && data.length < size) {
-            const startTime = Date.now() + count;
+            const startTime = options.start + count;
             data.push(this.generateData(firstObservedTime, count, startTime, duration, domainObject.name));
             start += duration;
             count += 1;

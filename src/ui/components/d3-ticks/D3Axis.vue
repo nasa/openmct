@@ -1,6 +1,7 @@
 <template>
-<div ref="axisHolder"
-     class="c-d3-axis"
+<div
+    ref="axisHolder"
+    class="c-d3-axis"
 >
 </div>
 </template>
@@ -13,8 +14,8 @@ import * as d3Scale from 'd3-scale';
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
 const RESIZE_POLL_INTERVAL = 200;
-const PIXELS_PER_TICK = 100;
-const PIXELS_PER_TICK_WIDE = 200;
+// const PIXELS_PER_TICK = 100;
+// const PIXELS_PER_TICK_WIDE = 200;
 //This offset needs to be re-considered
 
 export default {

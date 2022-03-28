@@ -36,18 +36,20 @@
         </div>
     </section>
     <div class="c-cs__test-data-and-conditions-w">
-        <TestData class="c-cs__test-data"
-                  :is-editing="isEditing"
-                  :test-data="testData"
-                  :telemetry="telemetryObjs"
-                  @updateTestData="updateTestData"
+        <TestData
+            class="c-cs__test-data"
+            :is-editing="isEditing"
+            :test-data="testData"
+            :telemetry="telemetryObjs"
+            @updateTestData="updateTestData"
         />
-        <ConditionCollection class="c-cs__conditions"
-                             :is-editing="isEditing"
-                             :test-data="testData"
-                             @conditionSetResultUpdated="updateCurrentOutput"
-                             @updateDefaultOutput="updateDefaultOutput"
-                             @telemetryUpdated="updateTelemetry"
+        <ConditionCollection
+            class="c-cs__conditions"
+            :is-editing="isEditing"
+            :test-data="testData"
+            @conditionSetResultUpdated="updateCurrentOutput"
+            @updateDefaultOutput="updateDefaultOutput"
+            @telemetryUpdated="updateTelemetry"
         />
     </div>
 </div>

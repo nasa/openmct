@@ -19,32 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
 
-describe("the plugin", () => {
-    const NON_EDITABLE_FOLDER_KEY = 'noneditable.folder';
-    let openmct;
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding exportAsJSON.
+*/
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
-        openmct.install(openmct.plugins.NonEditableFolder());
+const { test, expect } = require('@playwright/test');
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+test.describe('ExportAsJSON', () => {
+    test.fixme('Create a basic object and verify that it can be exported as JSON from Tree', async ({ page }) => {
+        //Create domain object
+        //Save Domain Object
+        //Verify that the newly created domain object can be exported as JSON from the Tree
     });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    test.fixme('Create a basic object and verify that it can be exported as JSON from 3 dot menu', async ({ page }) => {
+        //Create domain object
+        //Save Domain Object
+        //Verify that the newly created domain object can be exported as JSON from the 3 dot menu
     });
-
-    it('adds the new non-editable folder type', () => {
-        const type = openmct.types.get(NON_EDITABLE_FOLDER_KEY);
-
-        expect(type).toBeDefined();
-        expect(type.definition.creatable).toBeFalse();
+    test.fixme('Verify that a nested Object can be exported as JSON', async ({ page }) => {
+        // Create 2 objects with hierarchy
+        // Export as JSON
+        // Verify Hiearchy
     });
-
+    test.fixme('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
+        // Other than non-persistible objects
+    });
 });

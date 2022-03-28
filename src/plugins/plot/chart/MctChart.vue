@@ -24,10 +24,11 @@
 
 <template>
 <div class="gl-plot-chart-area">
-    <canvas v-for="i in 2" style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
-
-    <div ref="limitArea"
-         class="js-limit-area"
+    <span v-html="canvasTemplate"></span>
+    <span v-html="canvasTemplate"></span>
+    <div
+        ref="limitArea"
+        class="js-limit-area"
     ></div>
 </div>
 </template>
@@ -73,6 +74,11 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            canvasTemplate: '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>'
+        };
+    },
     watch: {
         highlights() {
             this.scheduleDraw();
@@ -96,7 +102,7 @@ export default {
         this.seriesElements = new WeakMap();
         this.seriesLimits = new WeakMap();
 
-        const canvasEls = this.$el.querySelectorAll("canvas");
+        let canvasEls = this.$parent.$refs.chartContainer.querySelectorAll("canvas");
         const mainCanvas = canvasEls[1];
         const overlayCanvas = canvasEls[0];
         if (this.initializeCanvas(mainCanvas, overlayCanvas)) {
@@ -273,7 +279,7 @@ export default {
             // Have to throw away the old canvas elements and replace with new
             // canvas elements in order to get new drawing contexts.
             const div = document.createElement('div');
-            div.innerHTML = this.canvasTemplate + this.canvasTemplate;
+            div.innerHTML = this.TEMPLATE;
             const mainCanvas = div.querySelectorAll("canvas")[1];
             const overlayCanvas = div.querySelectorAll("canvas")[0];
             this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);

@@ -65,6 +65,12 @@ Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpa
 
 See our documentation for a guide on [building Applications with Open MCT](https://github.com/nasa/openmct/blob/master/API.md#starting-an-open-mct-application).
 
+## Compatibility
+
+This is a fast moving project and we do our best to test and support the widest possible range of browsers, operating systems, and nodejs APIs. We have a published list of support available in our package.json's `browserslist` key.
+
+If you encounter an issue with a particular browser, OS, or nodejs API, please file a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose)
+
 ## Plugins
 
 Open MCT can be extended via plugins that make calls to the Open MCT API. A plugin is a group 

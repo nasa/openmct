@@ -20,43 +20,51 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="c-plot-legend gl-plot-legend"
-     :class="{
-         'hover-on-plot': !!highlights.length,
-         'is-legend-hidden': isLegendHidden
-     }"
+<div
+    class="c-plot-legend gl-plot-legend"
+    :class="{
+        'hover-on-plot': !!highlights.length,
+        'is-legend-hidden': isLegendHidden
+    }"
 >
-    <div class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
-         :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
-         @click="expandLegend"
+    <div
+        class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
+        :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
+        @click="expandLegend"
     >
     </div>
 
-    <div class="c-plot-legend__wrapper"
-         :class="{ 'is-cursor-locked': cursorLocked }"
+    <div
+        class="c-plot-legend__wrapper"
+        :class="{ 'is-cursor-locked': cursorLocked }"
     >
 
         <!-- COLLAPSED PLOT LEGEND -->
-        <div class="plot-wrapper-collapsed-legend"
-             :class="{'is-cursor-locked': cursorLocked }"
+        <div
+            class="plot-wrapper-collapsed-legend"
+            :class="{'is-cursor-locked': cursorLocked }"
         >
-            <div class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
-                 title="Cursor is point locked. Click anywhere in the plot to unlock."
+            <div
+                class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
+                title="Cursor is point locked. Click anywhere in the plot to unlock."
             ></div>
-            <plot-legend-item-collapsed v-for="seriesObject in series"
-                                        :key="seriesObject.keyString"
-                                        :highlights="highlights"
-                                        :value-to-show-when-collapsed="legend.get('valueToShowWhenCollapsed')"
-                                        :series-object="seriesObject"
-                                        @legendHoverChanged="legendHoverChanged"
+            <plot-legend-item-collapsed
+                v-for="seriesObject in series"
+                :key="seriesObject.keyString"
+                :highlights="highlights"
+                :value-to-show-when-collapsed="legend.get('valueToShowWhenCollapsed')"
+                :series-object="seriesObject"
+                @legendHoverChanged="legendHoverChanged"
             />
         </div>
         <!-- EXPANDED PLOT LEGEND -->
-        <div class="plot-wrapper-expanded-legend"
-             :class="{'is-cursor-locked': cursorLocked }"
+        <div
+            class="plot-wrapper-expanded-legend"
+            :class="{'is-cursor-locked': cursorLocked }"
         >
-            <div class="c-state-indicator__alert-cursor-lock--verbose icon-cursor-lock"
-                 title="Click anywhere in the plot to unlock."
+            <div
+                class="c-state-indicator__alert-cursor-lock--verbose icon-cursor-lock"
+                title="Click anywhere in the plot to unlock."
             > Cursor locked to point</div>
             <table>
                 <thead>
@@ -71,12 +79,14 @@
                         <th v-if="showUnitsWhenExpanded">
                             Unit
                         </th>
-                        <th v-if="showMinimumWhenExpanded"
+                        <th
+                            v-if="showMinimumWhenExpanded"
                             class="mobile-hide"
                         >
                             Min
                         </th>
-                        <th v-if="showMaximumWhenExpanded"
+                        <th
+                            v-if="showMaximumWhenExpanded"
                             class="mobile-hide"
                         >
                             Max
@@ -84,12 +94,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <plot-legend-item-expanded v-for="seriesObject in series"
-                                               :key="seriesObject.keyString"
-                                               :series-object="seriesObject"
-                                               :highlights="highlights"
-                                               :legend="legend"
-                                               @legendHoverChanged="legendHoverChanged"
+                    <plot-legend-item-expanded
+                        v-for="seriesObject in series"
+                        :key="seriesObject.keyString"
+                        :series-object="seriesObject"
+                        :highlights="highlights"
+                        :legend="legend"
+                        @legendHoverChanged="legendHoverChanged"
                     />
                 </tbody>
             </table>
