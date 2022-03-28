@@ -26,8 +26,9 @@
 <div class="gl-plot-chart-area">
     <span v-html="canvasTemplate"></span>
     <span v-html="canvasTemplate"></span>
-    <div ref="limitArea"
-         class="js-limit-area"
+    <div
+        ref="limitArea"
+        class="js-limit-area"
     ></div>
 </div>
 </template>
