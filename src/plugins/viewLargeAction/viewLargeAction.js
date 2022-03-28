@@ -60,19 +60,18 @@ export default class ViewLargeAction {
 
     _expand(objectPath, childElement) {
         const parentElement = childElement.parentElement;
-        const element = childElement ? childElement : this._getPreview(objectPath);
 
         this.overlay = this.openmct.overlays.overlay({
-            element,
+            element: this._getPreview(objectPath),
             size: 'large',
             autoHide: false,
             onDestroy() {
-                parentElement.appendChild(childElement);
+                parentElement.append(childElement);
             }
         });
     }
 
-    _getPreview(objectPath, childElement) {
+    _getPreview(objectPath) {
         const preview = new Vue({
             components: {
                 Preview
