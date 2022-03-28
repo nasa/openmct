@@ -2,11 +2,16 @@ import ImageryViewComponent from './components/ImageryView.vue';
 
 import Vue from 'vue';
 
+const DEFAULT_IMAGE_FRESHNESS_OPTIONS = {
+    fadeOutDelayTime: '66s',
+    fadeOutDurationTime: '4000ms'
+};
 export default class ImageryView {
-    constructor(openmct, domainObject, objectPath) {
+    constructor(openmct, domainObject, objectPath, options) {
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.objectPath = objectPath;
+        this.options = options;
         this.component = undefined;
     }
 
@@ -17,7 +22,6 @@ export default class ImageryView {
             focusedImageTimestamp = viewOptions.timestamp;
             alternateObjectPath = viewOptions.objectPath;
         }
-
         this.component = new Vue({
             el: element,
             components: {
@@ -27,6 +31,7 @@ export default class ImageryView {
                 openmct: this.openmct,
                 domainObject: this.domainObject,
                 objectPath: alternateObjectPath || this.objectPath,
+                imageFreshnessOptions: (this.options && this.options.imageFreshness) || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
                 currentView: this
             },
             data() {

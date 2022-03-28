@@ -133,8 +133,8 @@
                 <div
                     v-if="canTrackDuration"
                     :style="{
-                        'animation-delay': imageFreshness.fadeOutDelay,
-                        'animation-duration': imageFreshness.fadeOutDuration
+                        'animation-delay': imageFreshnessOptions.fadeOutDelayTime,
+                        'animation-duration': imageFreshnessOptions.fadeOutDurationTime
                     }"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
@@ -232,8 +232,6 @@ const ARROW_LEFT = 37;
 const SCROLL_LATENCY = 250;
 
 const ZOOM_SCALE_DEFAULT = 1;
-const IMAGERY_FRESHNESS_FADE_OUT_DELAY_TIME = '60s';
-const IMAGERY_FRESHNESS_FADE_OUT_DURATION_TIME = '4000ms';
 
 export default {
     components: {
@@ -241,7 +239,7 @@ export default {
         ImageControls
     },
     mixins: [imageryData],
-    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
     props: {
         focusedImageTimestamp: {
             type: Number,
@@ -292,11 +290,7 @@ export default {
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
-            imagePanned: false,
-            imageFreshness: {
-                fadeOutDelay: IMAGERY_FRESHNESS_FADE_OUT_DELAY_TIME,
-                fadeOutDuration: IMAGERY_FRESHNESS_FADE_OUT_DURATION_TIME
-            }
+            imagePanned: false
         };
     },
     computed: {
