@@ -35,7 +35,6 @@
     "file-loader": "6.2.0",
     "file-saver": "2.0.5",
     "git-rev-sync": "3.0.2",
-    "html-loader": "0.5.5",
     "html2canvas": "1.4.1",
     "imports-loader": "0.8.0",
     "jasmine-core": "4.0.1",
@@ -82,7 +81,7 @@
     "zepto": "1.2.0"
   },
   "scripts": {
-    "clean": "rm -rf ./dist ./node_modules; rm package-lock.json",
+    "clean": "rm -rf ./dist ./node_modules ./package-lock.json",
     "clean-test-lint": "npm run clean; npm install; npm run test; npm run lint",
     "start": "node app.js",
     "lint": "eslint example src --ext .js,.vue openmct.js",
