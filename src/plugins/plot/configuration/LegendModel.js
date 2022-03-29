@@ -42,7 +42,10 @@ export default class LegendModel extends Model {
         }
     }
 
-    defaults(options) {
+    /**
+     * @override
+     */
+    defaultModel(options) {
         return {
             position: 'top',
             expandByDefault: false,
