@@ -20,22 +20,38 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import Model from "./Model";
+
 /**
-     * TODO: doc strings.
-     */
+ * @extends {Model<XAxisModelType, XAxisModelOptions>}
+ */
 export default class XAxisModel extends Model {
+    // Despite providing template types to the Model class, we still need to
+    // re-define the type of the following initialize() method's options arg. Tracking
+    // issue for this: https://github.com/microsoft/TypeScript/issues/32082
+    // When they fix it, we can remove the `@param` we have here.
+    /**
+     * @override
+     * @param {import('./Model').ModelOptions<XAxisModelType, XAxisModelOptions>} options
+     */
     initialize(options) {
         this.plot = options.plot;
+
+        // This is a type assertion for TypeScript, this error is not thrown in practice.
+        if (!options.model) {
+            throw new Error('Not a collection model.');
+        }
+
         this.set('label', options.model.name || '');
-        this.on('change:range', function (newValue, oldValue, model) {
-            if (!model.get('frozen')) {
-                model.set('displayRange', newValue);
+
+        this.on('change:range', (newValue) => {
+            if (!this.get('frozen')) {
+                this.set('displayRange', newValue);
             }
         });
 
-        this.on('change:frozen', ((frozen, oldValue, model) => {
+        this.on('change:frozen', ((frozen) => {
             if (!frozen) {
-                model.set('range', this.get('range'));
+                this.set('range', this.get('range'));
             }
         }));
 
@@ -45,6 +61,10 @@ export default class XAxisModel extends Model {
 
         this.listenTo(this, 'change:key', this.changeKey, this);
     }
+
+    /**
+     * @param {string} newKey
+     */
     changeKey(newKey) {
         const series = this.plot.series.first();
         if (series) {
@@ -68,12 +88,17 @@ export default class XAxisModel extends Model {
             plotSeries.reset();
         });
     }
-    defaults(options) {
+    /**
+     * @param {import('./Model').ModelOptions<XAxisModelType, XAxisModelOptions>} options
+     * @override
+     */
+    defaultModel(options) {
         const bounds = options.openmct.time.bounds();
         const timeSystem = options.openmct.time.timeSystem();
         const format = options.openmct.telemetry.getFormatter(timeSystem.timeFormat);
 
-        return {
+        /** @type {XAxisModelType} */
+        const defaultModel = {
             name: timeSystem.name,
             key: timeSystem.key,
             format: format.format.bind(format),
@@ -83,5 +108,42 @@ export default class XAxisModel extends Model {
             },
             frozen: false
         };
+
+        return defaultModel;
     }
 }
+
+/** @typedef {any} TODO */
+
+/** @typedef {TODO} OpenMCT */
+
+/**
+@typedef {{
+    min: number
+    max: number
+}} NumberRange
+*/
+
+/**
+@typedef {import("./Model").ModelType<{
+    range: NumberRange
+    displayRange: NumberRange
+    frozen: boolean
+    label: string
+    format: (n: number) => string
+    values: Array<TODO>
+}>} AxisModelType
+*/
+
+/**
+@typedef {AxisModelType & {
+    name: string
+    key: string
+}} XAxisModelType
+*/
+
+/**
+@typedef {{
+    plot: import('./PlotConfigurationModel').default
+}} XAxisModelOptions
+*/

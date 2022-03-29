@@ -146,7 +146,7 @@ define([
             }
         });
 
-        openmct.telemetry.addProvider(new GeneratorProvider());
+        openmct.telemetry.addProvider(new GeneratorProvider(openmct));
         openmct.telemetry.addProvider(new GeneratorMetadataProvider());
         openmct.telemetry.addProvider(new SinewaveLimitProvider());
     };
