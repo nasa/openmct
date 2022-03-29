@@ -22,7 +22,7 @@
             ref="startOffset"
             class="c-button c-conductor__delta-button"
             title="Set the time offset after now"
-            @click.prevent="showTimePopupStart"
+            @click.prevent.stop="showTimePopupStart"
         >
             {{ offsets.start }}
         </button>
@@ -61,7 +61,7 @@
             ref="endOffset"
             class="c-button c-conductor__delta-button"
             title="Set the time offset preceding now"
-            @click.prevent="showTimePopupEnd"
+            @click.prevent.stop="showTimePopupEnd"
         >
             {{ offsets.end }}
         </button>
@@ -84,6 +84,12 @@ export default {
     props: {
         keyString: {
             type: String,
+            default() {
+                return undefined;
+            }
+        },
+        inputBounds: {
+            type: Object,
             default() {
                 return undefined;
             }
@@ -119,6 +125,12 @@ export default {
     watch: {
         keyString() {
             this.setTimeContext();
+        },
+        inputBounds: {
+            handler(newBounds) {
+                this.handleNewBounds(newBounds);
+            },
+            deep: true
         }
     },
     mounted() {
