@@ -22,6 +22,7 @@ export default class ImageryView {
             focusedImageTimestamp = viewOptions.timestamp;
             alternateObjectPath = viewOptions.objectPath;
         }
+
         this.component = new Vue({
             el: element,
             components: {
