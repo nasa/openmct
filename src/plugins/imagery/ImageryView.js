@@ -22,7 +22,6 @@ export default class ImageryView {
             focusedImageTimestamp = viewOptions.timestamp;
             alternateObjectPath = viewOptions.objectPath;
         }
-        
         this.component = new Vue({
             el: element,
             components: {
@@ -32,7 +31,7 @@ export default class ImageryView {
                 openmct: this.openmct,
                 domainObject: this.domainObject,
                 objectPath: alternateObjectPath || this.objectPath,
-                imageFreshnessOptions: (this.options && this.options.imageFreshness) || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
+                imageFreshnessOptions: this.options?.imageFreshness || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
                 currentView: this
             },
             data() {
