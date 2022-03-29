@@ -160,6 +160,10 @@ mct-plot {
             bottom: 0;
             left: 0;
         }
+        .alt-pressed {
+            // When alt is being pressed and user is hovering over the plot, set the cursor
+            @include cursorGrab();
+        }
 
         .gl-plot-axis-area.gl-plot-x {
             top: auto;

@@ -2,7 +2,7 @@ version: 2.1
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.19.1-focal
+      - image: mcr.microsoft.com/playwright:v1.19.2-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
 parameters:
@@ -101,7 +101,7 @@ jobs:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
-                version: "91.4.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
+                version: "91.7.1esr" #https://archive.mozilla.org/pub/firefox/releases/          
       - when:
           condition:
             equal: [ "FirefoxHeadless", <<parameters.browser>> ]
@@ -142,11 +142,8 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
+          name: node16-lint
           node-version: lts/gallium
-      - unit-test:
-          name: node12-chrome
-          node-version: lts/erbium
-          browser: ChromeHeadless
       - unit-test: 
           name: node14-chrome
           node-version: lts/fermium
@@ -164,13 +161,9 @@ workflows:
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node12-firefoxESR-nightly
-          node-version: lts/erbium
+          name: node16-firefoxESR-nightly
+          node-version: lts/gallium
           browser: FirefoxESR
-      - unit-test:
-          name: node12-chrome-nightly
-          node-version: lts/erbium
-          browser: ChromeHeadless
       - unit-test:
           name: node14-firefox-nightly
           node-version: lts/fermium
