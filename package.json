@@ -94,6 +94,7 @@
     "test:debug": "cross-env NODE_ENV=debug karma start --no-single-run",
     "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome smoke default condition timeConductor",
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js --project=chrome",
+    "test:e2e:debug": "npm run test:e2e:local -- --debug",
     "test:e2e:visual": "percy exec --config ./e2e/.percy.yml -- npx playwright test --config=e2e/playwright-visual.config.js default",
     "test:e2e:full": "npx playwright test --config=e2e/playwright-ci.config.js",
     "test:watch": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --no-single-run",
