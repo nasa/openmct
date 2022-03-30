@@ -120,8 +120,7 @@ module.exports = (config) => {
         },
         webpack: webpackConfig,
         webpackMiddleware: {
-            stats: 'errors-only',
-            logLevel: 'warn'
+            stats: 'errors-warnings'
         },
         concurrency: 1,
         singleRun: true,
