@@ -24,10 +24,10 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }--build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
-            ${{ runner.os }}--build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
-      - run: npx playwright install
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+      - run: npx playwright@1.19.2 install
       - run: npm install
       - name: Run the e2e visual tests
         run: npm run test:e2e:visual
