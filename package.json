@@ -64,7 +64,7 @@
     "request": "2.88.2",
     "resolve-url-loader": "4.0.0",
     "sass": "1.49.9",
-    "sass-loader": "12.4.0",
+    "sass-loader": "12.6.0",
     "sinon": "13.0.1",
     "style-loader": "^1.0.1",
     "uuid": "3.3.3",
