@@ -64,7 +64,7 @@ app.use(require('webpack-dev-middleware')(
     compiler,
     {
         publicPath: '/dist',
-        logLevel: 'warn'
+        stats: 'errors-warnings'
     }
 ));
 

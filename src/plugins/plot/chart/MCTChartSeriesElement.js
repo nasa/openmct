@@ -22,6 +22,7 @@
 
 import eventHelpers from '../lib/eventHelpers';
 
+/** @abstract */
 export default class MCTChartSeriesElement {
     constructor(series, chart, offset) {
         this.series = series;
@@ -72,9 +73,11 @@ export default class MCTChartSeriesElement {
         }
     }
 
-    removePoint(point, index, count) {
-        // by default, do nothing.
-    }
+    /** @abstract */
+    removePoint(index) {}
+
+    /** @abstract */
+    addPoint(point, index) {}
 
     remove(point, index, series) {
         const vertexCount = this.vertexCountForPointAtIndex(index);
@@ -155,3 +158,18 @@ export default class MCTChartSeriesElement {
     }
 
 }
+
+/** @typedef {any} TODO */
+
+/** @typedef {import('../configuration/PlotSeries').default} PlotSeries */
+
+/**
+@typedef {{
+    x: (x: number) => number
+    y: (y: number) => number
+    xVal: (point: Point, pSeries: PlotSeries) => number
+    yVal: (point: Point, pSeries: PlotSeries) => number
+    xKey: TODO
+    yKey: TODO
+}} Offset
+*/
