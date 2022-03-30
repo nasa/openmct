@@ -10,7 +10,7 @@ on:
 
 jobs:
   e2e-visual:
-    if: ${{ github.event.label.name == 'pr:visual' }} || ${{ github.event.workflow_dispatch }} || ${{ github.event.schedule }}
+    if: ${{ github.event.label.name == 'pr:visual' }} || ${{ github.event.workflow_dispatch }} || ${{ github.event.schedule }} || ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

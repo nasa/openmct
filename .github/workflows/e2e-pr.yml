@@ -8,7 +8,7 @@ on:
 
 jobs:
   e2e-full:
-    if: ${{ github.event.label.name == 'pr:e2e' }}
+    if: ${{ github.event.label.name == 'pr:e2e' }} || ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
