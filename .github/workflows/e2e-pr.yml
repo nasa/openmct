@@ -37,9 +37,9 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }--build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
-            ${{ runner.os }}--build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+            ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
       - run: npx playwright install
       - run: npm install
       - run: npm run test:e2e:full
