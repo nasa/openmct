@@ -18,6 +18,11 @@
         flex: 1 1 auto;
     }
 
+    .image-wrapper {
+        overflow: visible clip;
+        background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px);
+    }
+
     &__main-image {
         &__bg {
             background-color: $colorPlotBg;
@@ -27,16 +32,44 @@
             justify-content: center;
             flex: 1 1 auto;
             height: 0;
-
+            overflow: hidden;
             &.unnsynced{
                 @include sUnsynced();
             }
-        }
+            &.cursor-zoom-in {
+                cursor: zoom-in;
+            }
+            &.cursor-zoom-out {
+                cursor: zoom-out;
+            }
+            &.pannable {
+                @include cursorGrab();
 
+            }
+        }
+        &__background-image {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
         &__image {
             height: 100%;
             width: 100%;
+            visibility: hidden;
+            display: contents;
         }
+    }
+
+    &__hints {
+        $m: $interiorMargin;
+        background: rgba(black, 0.2);
+        border-radius: $smallCr;
+        padding: 2px $interiorMargin;
+        position: absolute;
+        right: $m;
+        top: $m;
+        opacity: 0.9;
+        z-index: 2;
     }
 
     &__control-bar,
@@ -177,8 +210,8 @@
         z-index: 2;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
-        max-width: 200px;
-        min-width: 70px;
+        max-width: 250px;
+        min-width: 170px;
         width: 35%;
         align-items: center;
         padding: $interiorMargin $interiorMarginLg;
@@ -202,6 +235,7 @@
 
     &__lc {
         &__reset-btn {
+            // Span that holds bracket graphics and button
             $bc: $scrollbarTrackColorBg;
 
             &:before,
@@ -222,18 +256,50 @@
                 border-bottom: 1px solid $bc;
                 margin-top: 2px;
             }
+
+            .c-icon-link {
+                color: $colorBtnFg;
+            }
         }
     }
 }
 
 .c-image-controls {
-    // Brightness/contrast
-
     &__controls {
-        // Sliders and reset element
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+
+        [class*='c-button'] { flex: 0 0 auto; }
+    }
+
+    &__control,
+    &__input {
         display: flex;
         align-items: center;
-        margin-right: $interiorMargin; // Need some extra space due to proximity to close button
+        width: 100%;
+
+        &:before {
+            color: rgba($colorMenuFg, 0.5);
+            margin-right: $interiorMarginSm;
+        }
+
+    }
+
+    &__input {
+        // A wrapper is needed to add the type icon to left of each control
+
+        input[type='range'] {
+            //width: 100%; // Do we need this?
+        }
+    }
+
+    &__zoom {
+        > * + * { margin-left: $interiorMargin; }
     }
 
     &__sliders {
@@ -243,21 +309,6 @@
 
         > * + * {
             margin-top: 11px;
-        }
-    }
-
-    &__slider-wrapper {
-        // A wrapper is needed to add the type icon to left of each range input
-        display: flex;
-        align-items: center;
-
-        &:before {
-            color: rgba($colorMenuFg, 0.5);
-            margin-right: $interiorMarginSm;
-        }
-
-        input[type='range'] {
-            width: 100px;
         }
     }
 
