@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-20.04
+          - ubuntu-20.04 #MMOC Ubuntu version
           - macos-latest
           - macos-10.15
           - windows-latest
