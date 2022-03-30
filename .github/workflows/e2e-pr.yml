@@ -30,7 +30,17 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npx playwright@1.19.2 install
+          check-latest: true
+      - name: Cache node modules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }--build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}--build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+      - run: npx playwright install
       - run: npm install
       - run: npm run test:e2e:full
       - name: Archive test results
