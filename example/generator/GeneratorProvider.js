@@ -35,8 +35,8 @@ define([
         phase: 0
     };
 
-    function GeneratorProvider() {
-        this.workerInterface = new WorkerInterface();
+    function GeneratorProvider(openmct) {
+        this.workerInterface = new WorkerInterface(openmct);
     }
 
     GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
