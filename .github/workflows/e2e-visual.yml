@@ -27,8 +27,8 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
-      - run: npx playwright@1.19.2 install
       - run: npm install
+      - run: npx playwright install
       - name: Run the e2e visual tests
         run: npm run test:e2e:visual
         env:
