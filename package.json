@@ -55,7 +55,7 @@
     "mini-css-extract-plugin": "2.4.5",
     "moment": "2.29.1",
     "moment-duration-format": "2.2.2",
-    "moment-timezone": "0.5.28",
+    "moment-timezone": "0.5.34",
     "node-bourbon": "4.2.3",
     "painterro": "1.2.56",
     "plotly.js-basic-dist": "2.5.0",
