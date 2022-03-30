@@ -12,12 +12,14 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-20.04
           - macos-latest
+          - macos-10.15
           - windows-latest
         node_version:
           - 14
           - 16
+          - 17
         architecture:
           - x64
     name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
@@ -28,6 +30,16 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
           architecture: ${{ matrix.architecture }}
+          check-latest: true
+      - name: Cache node modules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ matrix.node_version }}--build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node_version }}--build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm test
       - run: npm run lint -- --quiet
