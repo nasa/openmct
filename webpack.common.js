@@ -109,25 +109,24 @@ const config = {
                 ]
             },
             {
-                test: /\.(jpg|jpeg|png|svg|ico|woff|woff2?|eot|ttf)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[name].[ext]',
-                    outputPath(url, resourcePath, context) {
-                        if (/\.(jpg|jpeg|png|svg)$/.test(url)) {
-                            return `images/${url}`;
-                        }
-
-                        if (/\.ico$/.test(url)) {
-                            return `icons/${url}`;
-                        }
-
-                        if (/\.(woff|woff2?|eot|ttf)$/.test(url)) {
-                            return `fonts/${url}`;
-                        } else {
-                            return `${url}`;
-                        }
-                    }
+                test: /\.(jpg|jpeg|png|svg)$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'images/[name][ext]'
+                }
+            },
+            {
+                test: /\.ico$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'icons/[name][ext]'
+                }
+            },
+            {
+                test: /\.(woff|woff2?|eot|ttf)$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'fonts/[name][ext]'
                 }
             }
         ]
@@ -135,4 +134,5 @@ const config = {
     stats: 'errors-warnings'
 };
 
+// eslint-disable-next-line no-undef
 module.exports = config;
