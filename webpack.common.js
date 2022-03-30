@@ -99,7 +99,7 @@ const config = {
             },
             {
                 test: /\.html$/,
-                use: 'html-loader'
+                type: 'asset/source'
             },
             {
                 test: /zepto/,
