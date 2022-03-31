@@ -179,8 +179,6 @@ export default class YAxisModel extends Model {
         const range = this.get('displayRange');
         const scale = 1; // TODO get from UI, positive number above 0
 
-        console.log(' --- range before:', range.min, range.max);
-
         if (logMode) {
             range.min = scale * symlog(range.min, 10);
             range.max = scale * symlog(range.max, 10);
@@ -188,8 +186,6 @@ export default class YAxisModel extends Model {
             range.min = antisymlog(range.min / scale, 10);
             range.max = antisymlog(range.max / scale, 10);
         }
-
-        console.log(' --- range after:', range.min, range.max);
 
         this.set('displayRange', range);
 
@@ -283,7 +279,7 @@ export default class YAxisModel extends Model {
         return {
             frozen: false,
             autoscale: true,
-            logMode: false,
+            logMode: options.model?.logMode ?? false,
             autoscalePadding: 0.1
         };
     }

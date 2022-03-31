@@ -64,12 +64,16 @@ import { symlog } from '../mathUtils';
  * @extends {Model<PlotSeriesModelType, PlotSeriesModelOptions>}
  */
 export default class PlotSeries extends Model {
+    logMode = false;
+
     /**
      @param {import('./Model').ModelOptions<PlotSeriesModelType, PlotSeriesModelOptions>} options
      */
     constructor(options) {
 
         super(options);
+
+        this.logMode = options.collection.plot.model.yAxis.logMode;
 
         this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
         this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
@@ -230,8 +234,6 @@ export default class PlotSeries extends Model {
             this.getXVal = format.parse.bind(format);
         }
     }
-
-    logMode = false;
 
     /**
      * Update y formatter on change, default to stepAfter interpolation if
