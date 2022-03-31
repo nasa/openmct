@@ -52,6 +52,12 @@ export default {
             default() {
                 return undefined;
             }
+        },
+        existingView: {
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -62,19 +68,29 @@ export default {
             viewKey: undefined,
             views: [],
             currentView: {},
-            actionCollection: undefined
+            actionCollection: undefined,
+            existingViewIndex: 0
         };
     },
     mounted() {
-        this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view) => {
+        this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view, index) => {
             view.onItemClicked = () => {
-                return this.setView(view);
+                if (this.existingView && view.key === this.existingView.key) {
+                    this.existingViewIndex = index;
+                    this.showExistingView();
+                } else {
+                    this.setView(view);
+                }
             };
 
             return view;
         });
 
-        this.setView(this.views[0]);
+        if (!this.existingView) {
+            this.setView(this.views[0]);
+        } else {
+            this.showExistingView();
+        }
     },
     beforeDestroy() {
         if (this.stopListeningStyles) {
@@ -91,7 +107,13 @@ export default {
         }
     },
     destroyed() {
-        this.view.destroy();
+        if (!this.existingView) {
+            this.view.destroy();
+        } else if (this.existingViewElement) {
+            // if the existing view element is populated, it's the currently viewed view
+            // in preview and we need to add it back to the parent.
+            this.addExistingViewBackToParent();
+        }
     },
     methods: {
         clear() {
@@ -108,24 +130,58 @@ export default {
                 return;
             }
 
+            // if there is an existing view element, then it's currently being viewed
+            // we'll add it back to the parent in the meantime
+            if (this.existingViewElement) {
+                this.addExistingViewBackToParent();
+            }
+
             this.clear();
             this.viewKey = view.key;
             this.currentView = view;
-            this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('l-angular-ov-wrapper');
-            this.$refs.objectView.append(this.viewContainer);
+            this.initializeViewContainer();
             this.view = this.currentView.view(this.domainObject, this.objectPath);
-
-            this.getActionsCollection();
+            this.getActionsCollection(this.view);
             this.view.show(this.viewContainer, false, this.viewOptions);
             this.initObjectStyles();
         },
-        getActionsCollection() {
+        showExistingView() {
+            if (this.viewKey === this.existingView.key) {
+                return;
+            }
+
+            this.clear();
+            this.initializeViewContainer();
+
+            this.currentView = this.views[this.existingViewIndex]; // this is for action collections and view switcher
+
+            // save this for later, so it can be added back to the parent on destroy
+            this.existingViewElement = this.existingView.parentElement.firstChild;
+
+            this.viewKey = this.existingView.key;
+            this.getActionsCollection(this.currentView);
+
+            // this will use the existing DOM element for the view
+            // removing it from it's existing parent
+            this.viewContainer.appendChild(this.existingViewElement);
+            this.initObjectStyles();
+
+        },
+        addExistingViewBackToParent() {
+            this.existingView.parentElement.appendChild(this.existingViewElement);
+            delete this.existingViewElement;
+        },
+        initializeViewContainer() {
+            this.viewContainer = document.createElement('div');
+            this.viewContainer.classList.add('l-angular-ov-wrapper');
+            this.$refs.objectView.append(this.viewContainer);
+        },
+        getActionsCollection(view) {
             if (this.actionCollection) {
                 this.actionCollection.destroy();
             }
 
-            this.actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.view);
+            this.actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, view);
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {

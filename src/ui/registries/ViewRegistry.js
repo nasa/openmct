@@ -92,6 +92,7 @@ define(['EventEmitter'], function (EventEmitter) {
             const wrappedShow = viewObject.show.bind(viewObject);
             viewObject.show = (element, isEditing, viewOptions) => {
                 viewObject.parentElement = element.parentElement;
+                viewObject.key = key; // provide access to provider key on view object
                 wrappedShow(element, isEditing, viewOptions);
             };
 
