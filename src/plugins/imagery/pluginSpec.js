@@ -483,6 +483,42 @@ describe("The Imagery View Layouts", () => {
                 });
             });
         });
+        xit('should change the image zoom factor when using the zoom buttons', async (done) => {
+            await Vue.nextTick();
+            let imageSizeBefore;
+            let imageSizeAfter;
+
+            // test clicking the zoom in button
+            imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            parent.querySelector('.t-btn-zoom-in').click();
+            await Vue.nextTick();
+            imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            expect(imageSizeAfter.height).toBeGreaterThan(imageSizeBefore.height);
+            expect(imageSizeAfter.width).toBeGreaterThan(imageSizeBefore.width);
+            // test clicking the zoom out button
+            imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            parent.querySelector('.t-btn-zoom-out').click();
+            await Vue.nextTick();
+            imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
+            expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
+            done();
+        });
+        xit('should reset the zoom factor on the image when clicking the zoom button', async (done) => {
+            await Vue.nextTick();
+            // test clicking the zoom reset button
+            // zoom in to scale up the image dimensions
+            parent.querySelector('.t-btn-zoom-in').click();
+            await Vue.nextTick();
+            let imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            await Vue.nextTick();
+            parent.querySelector('.t-btn-zoom-reset').click();
+            let imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
+            expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
+            done();
+        });
+
         it('clear data action is installed', () => {
             expect(clearDataAction).toBeDefined();
         });
