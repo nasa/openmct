@@ -166,17 +166,17 @@ test.describe('Example Imagery', () => {
         // wait for zoom animation to finish
         await bgImageLocator.hover();
         const zoomedInBoundingBox = await bgImageLocator.boundingBox();
-        expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
-        expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
+        expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
+        expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
         await zoomResetBtn.click();
         await bgImageLocator.hover();
 
         const resetBoundingBox = await bgImageLocator.boundingBox();
-        expect(resetBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
-        expect(resetBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
+        expect.soft(resetBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
+        expect.soft(resetBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
 
-        expect(resetBoundingBox.height).toEqual(initialBoundingBox.height);
+        expect.soft(resetBoundingBox.height).toEqual(initialBoundingBox.height);
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
 
