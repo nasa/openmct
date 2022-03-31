@@ -50,10 +50,9 @@ export default class ViewLargeAction {
 
     appliesTo(objectPath, view) {
         const childElement = view?.parentElement?.firstChild;
-        const viewLargeAction = childElement && !childElement.classList.contains('js-main-container')
-            && !this.openmct.router.isNavigatedObject(objectPath);
 
-        return viewLargeAction;
+        return childElement && !childElement.classList.contains('js-main-container')
+            && !this.openmct.router.isNavigatedObject(objectPath);
     }
 
     _expand(objectPath, view) {
