@@ -35,11 +35,6 @@ export default class ViewLargeAction {
         this.name = 'Large View';
         this.priority = 1;
         this.showInStatusBar = true;
-        this.preview = undefined;
-
-        this.invoke = this.invoke.bind(this);
-        this._expand = this._expand.bind(this);
-        this._getPreview = this._getPreview.bind(this);
     }
 
     invoke(objectPath, view) {
