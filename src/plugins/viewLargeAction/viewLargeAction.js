@@ -38,8 +38,7 @@ export default class ViewLargeAction {
     }
 
     invoke(objectPath, view) {
-        const parentElement = view.parentElement;
-        let childElement = parentElement?.firstChild;
+        let childElement = view?.parentElement?.firstChild;
         if (!childElement) {
             const message = "ViewLargeAction: missing element";
             this.openmct.notifications.error(message);
