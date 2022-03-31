@@ -38,7 +38,7 @@ export default class ViewLargeAction {
     }
 
     invoke(objectPath, view) {
-        let childElement = view?.parentElement?.firstChild;
+        const childElement = view?.parentElement?.firstChild;
         if (!childElement) {
             const message = "ViewLargeAction: missing element";
             this.openmct.notifications.error(message);
@@ -49,8 +49,8 @@ export default class ViewLargeAction {
     }
 
     appliesTo(objectPath, view) {
-        const element = view?.parentElement?.firstChild;
-        const viewLargeAction = element && !element.classList.contains('js-main-container')
+        const childElement = view?.parentElement?.firstChild;
+        const viewLargeAction = childElement && !childElement.classList.contains('js-main-container')
             && !this.openmct.router.isNavigatedObject(objectPath);
 
         return viewLargeAction;
