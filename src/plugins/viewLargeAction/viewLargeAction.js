@@ -38,6 +38,7 @@ export default class ViewLargeAction {
     }
 
     invoke(objectPath, view) {
+        performance.mark('viewlarge.start');
         const childElement = view?.parentElement?.firstChild;
         if (!childElement) {
             const message = "ViewLargeAction: missing element";
