@@ -30,7 +30,7 @@
             @clear="resetSearch()"
         />
     </div>
-    <SearchResults 
+    <SearchResults
         v-if="search.length"
         ref="searchResults"
         :domain-object="domainObject"
@@ -134,7 +134,7 @@
                 ref="notebookEntries"
                 class="c-notebook__entries"
             >
-                <NotebookEntry 
+                <NotebookEntry
                     v-for="entry in filteredAndSortedEntries"
                     :key="entry.id"
                     :entry="entry"
@@ -757,12 +757,14 @@ export default {
             return this.openmct.objects.getActiveTransaction();
         },
         startTransaction() {
-            this.openmct.objects.startTransaction();
+            if (!this.openmct.editor.isEditing()) {
+                this.openmct.objects.startTransaction();
+            }
         },
         saveTransaction() {
             const transaction = this.activeTransaction();
 
-            if (!transaction) {
+            if (!transaction || this.openmct.editor.isEditing()) {
                 return;
             }
 
@@ -774,13 +776,15 @@ export default {
                 });
         },
         cancelTransaction() {
-            const transaction = this.activeTransaction();
-            transaction.cancel()
-                .catch(error => {
-                    throw error;
-                }).finally(() => {
-                    this.openmct.objects.endTransaction();
-                });
+            if (!this.openmct.editor.isEditing()) {
+                const transaction = this.activeTransaction();
+                transaction.cancel()
+                    .catch(error => {
+                        throw error;
+                    }).finally(() => {
+                        this.openmct.objects.endTransaction();
+                    });
+            }
         }
     }
 };
