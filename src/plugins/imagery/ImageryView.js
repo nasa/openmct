@@ -3,8 +3,8 @@ import ImageryViewComponent from './components/ImageryView.vue';
 import Vue from 'vue';
 
 const DEFAULT_IMAGE_FRESHNESS_OPTIONS = {
-    fadeOutDelayTime: '60s',
-    fadeOutDurationTime: '4000ms'
+    fadeOutDelayTime: '0s',
+    fadeOutDurationTime: '30s'
 };
 export default class ImageryView {
     constructor(openmct, domainObject, objectPath, options) {
