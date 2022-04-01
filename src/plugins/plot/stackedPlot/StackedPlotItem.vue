@@ -26,8 +26,10 @@
 
 import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
+import conditionalStylesMixin from "./mixins/objectStyles-mixin";
 
 export default {
+    mixins: [conditionalStylesMixin],
     inject: ['openmct', 'domainObject', 'path'],
     props: {
         object: {
