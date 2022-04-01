@@ -176,19 +176,6 @@ export default class YAxisModel extends Model {
     }
     /** @param {boolean} logMode */
     onLogModeChange(logMode) {
-        const range = this.get('displayRange');
-        const scale = 1; // TODO get from UI, positive number above 0
-
-        if (logMode) {
-            range.min = scale * symlog(range.min, 10);
-            range.max = scale * symlog(range.max, 10);
-        } else {
-            range.min = antisymlog(range.min / scale, 10);
-            range.max = antisymlog(range.max / scale, 10);
-        }
-
-        this.set('displayRange', range);
-
         this.resetSeries();
     }
     resetSeries() {

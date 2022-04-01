@@ -72,6 +72,7 @@ import MctTicks from "../MctTicks.vue";
 import D3Axis from "../../../ui/components/d3-ticks/D3Axis.vue";
 import configStore from "../configuration/ConfigStore";
 import eventHelpers from "../lib/eventHelpers";
+import { symlog, antisymlog } from "../mathUtils";
 
 export default {
     components: {
@@ -139,7 +140,25 @@ export default {
         },
         setBounds() {
             const bounds = this.yAxis.get('displayRange');
-            if (bounds) {
+            const autoScale = this.yAxis.get('autoscale');
+            if (bounds === undefined) {
+                return;
+            }
+
+            if (this.logMode) {
+                if (autoScale !== true) {
+                    //We manually get the log of any user defined min and max ranges
+                    this.bounds = {
+                        start: symlog(bounds.min, 10),
+                        end: symlog(bounds.max, 10)
+                    };
+                } else {
+                    this.bounds = {
+                        start: antisymlog(bounds.min, 10),
+                        end: antisymlog(bounds.max, 10)
+                    };
+                }
+            } else {
                 this.bounds = {
                     start: bounds.min,
                     end: bounds.max
@@ -148,6 +167,7 @@ export default {
         },
         changeToLogTicks(logMode) {
             this.logMode = logMode;
+            this.setBounds();
         },
         getYAxisFromConfig() {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
