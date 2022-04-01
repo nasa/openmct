@@ -108,8 +108,8 @@ export default class FormsAPI {
         let onSave;
 
         const promise = new Promise((resolve, reject) => {
-            onSave = onFormSave(resolve);
-            onDismiss = onFormDismiss(reject);
+            onSave = onFormAction(resolve);
+            onDismiss = onFormAction(reject);
         });
 
         const vm = new Vue({
@@ -156,7 +156,7 @@ export default class FormsAPI {
             }
         }
 
-        function onFormDismiss(dismiss) {
+        function onFormAction(callback) {
             return () => {
                 if (element) {
                     formElement.remove();
@@ -164,22 +164,10 @@ export default class FormsAPI {
                     overlay.dismiss();
                 }
 
-                if (dismiss) {
-                    dismiss();
+                if (callback) {
+                    callback();
                 }
             };
         }
-
-        function onFormSave(save) {
-            return () => {
-                overlay.dismiss();
-
-                if (save) {
-                    save(changes);
-                }
-            };
-        }
-
-        return promise;
     }
 }
