@@ -72,7 +72,7 @@
             {{ submitLabel }}
         </button>
         <button
-            v-if="!hideCancel"
+            v-if="!shouldHideCancelButton"
             tabindex="0"
             class="c-button"
             @click="onDismiss"
@@ -143,7 +143,7 @@ export default {
 
             return 'Cancel';
         },
-        hideCancel() {
+        shouldHideCancelButton() {
             return this.model.buttons
                 && this.model.buttons.cancel
                 && this.model.buttons.cancel.hide === true;
