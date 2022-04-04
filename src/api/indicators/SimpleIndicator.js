@@ -20,12 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import EventEmitter from 'EventEmitter';
 import indicatorTemplate from './res/indicator-template.html';
 
 const DEFAULT_ICON_CLASS = 'icon-info';
 
-class SimpleIndicator {
+class SimpleIndicator extends EventEmitter{
     constructor(openmct) {
+        super();
+
         this.openmct = openmct;
         this.element = compileTemplate(indicatorTemplate)[0];
         this.priority = openmct.priority.DEFAULT;
@@ -105,8 +108,8 @@ class SimpleIndicator {
         return this.statusClassValue;
     };
 
-    click() {
-        this.emit('click');
+    click(event) {
+        this.emit('click', event);
     }
 }
 
@@ -114,7 +117,7 @@ function compileTemplate(htmlTemplate) {
     const templateNode = document.createElement('template');
     templateNode.innerHTML = htmlTemplate;
     
-    return templateNode.childNodes;
+    return templateNode.content.cloneNode(true).children;
 }
 
 export default SimpleIndicator;

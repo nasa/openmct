@@ -38,7 +38,7 @@ define([
     };
 
     IndicatorAPI.prototype.simpleIndicator = function () {
-        return new SimpleIndicator(this.openmct);
+        return new SimpleIndicator.default(this.openmct);
     };
 
     /**
