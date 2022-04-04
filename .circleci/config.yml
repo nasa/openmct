@@ -153,11 +153,7 @@ workflows:
       - unit-test:
           name: node16-chrome
           node-version: lts/gallium
-          browser: ChromeHeadless             
-      - e2e-test:
-          name: e2e-ci
-          node-version: lts/gallium
-          suite: ci
+          browser: ChromeHeadless
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
