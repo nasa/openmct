@@ -64,6 +64,8 @@ export default class ViewLargeAction {
             autoHide: false,
             onDestroy: () => {
                 this.preview.$destroy();
+                this.preview = undefined;
+                delete this.preview;
             }
         });
     }
