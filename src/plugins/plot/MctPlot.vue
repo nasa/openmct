@@ -630,7 +630,6 @@ export default {
                 this.yScale.domain(displayBounds);
             }
         },
-
         onTickWidthChange(width, fromDifferentObject) {
             if (fromDifferentObject) {
                 // Always accept tick width if it comes from a different object.

@@ -118,8 +118,8 @@ export default {
         this.setDimensions = this.setDimensions.bind(this);
         this.setDimensions();
         this.loaded = true;
-        this.listenTo(this.yAxis, 'change:displayRange', this.setBounds);
         this.listenTo(this.yAxis, 'change:logMode', this.changeToLogTicks);
+        this.listenTo(this.yAxis, 'change:displayRange', this.setBounds);
         this.plotResizeObserver = new ResizeObserver(this.setDimensions);
         this.plotResizeObserver.observe(this.parentElement);
     },
@@ -140,34 +140,27 @@ export default {
         },
         setBounds() {
             const bounds = this.yAxis.get('displayRange');
-            const autoScale = this.yAxis.get('autoscale');
+            const logMode = this.yAxis.get('logMode');
             if (bounds === undefined) {
                 return;
             }
 
-            if (this.logMode) {
-                if (autoScale !== true) {
-                    //We manually get the log of any user defined min and max ranges
-                    this.bounds = {
-                        start: symlog(bounds.min, 10),
-                        end: symlog(bounds.max, 10)
-                    };
-                } else {
-                    this.bounds = {
-                        start: antisymlog(bounds.min, 10),
-                        end: antisymlog(bounds.max, 10)
-                    };
-                }
+            if (logMode) {
+                this.bounds = {
+                    start: antisymlog(bounds.min, 10),
+                    end: antisymlog(bounds.max, 10)
+                };
+
             } else {
                 this.bounds = {
                     start: bounds.min,
                     end: bounds.max
                 };
             }
+
         },
         changeToLogTicks(logMode) {
             this.logMode = logMode;
-            this.setBounds();
         },
         getYAxisFromConfig() {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);

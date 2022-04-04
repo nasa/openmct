@@ -52,7 +52,7 @@ export default class YAxisModel extends Model {
     initialize(options) {
         this.plot = options.plot;
         this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
-        this.listenTo(this, 'change:autoscale', this.toggleAutoscale, this);
+        this.listenTo(this, 'change:autoscale', this.setDisplayRangeForAutoscale, this);
         this.listenTo(this, 'change:autoscalePadding', this.updatePadding, this);
         this.listenTo(this, 'change:logMode', this.onLogModeChange, this);
         this.listenTo(this, 'change:frozen', this.toggleFreeze, this);
@@ -77,12 +77,12 @@ export default class YAxisModel extends Model {
     }
     updateDisplayRange(range) {
         if (!this.get('autoscale')) {
-            this.set('displayRange', range);
+            this.setManualDisplayRange(range);
         }
     }
     toggleFreeze(frozen) {
         if (!frozen) {
-            this.toggleAutoscale(this.get('autoscale'));
+            this.setDisplayRangeForAutoscale(this.get('autoscale'));
         }
     }
     applyPadding(range) {
@@ -167,15 +167,30 @@ export default class YAxisModel extends Model {
         this.resetStats();
         this.updateFromSeries(this.seriesCollection);
     }
-    toggleAutoscale(autoscale) {
+    setDisplayRangeForAutoscale(autoscale) {
         if (autoscale && this.has('stats')) {
             this.set('displayRange', this.applyPadding(this.get('stats')));
         } else {
-            this.set('displayRange', this.get('range'));
+            this.setManualDisplayRange(this.get('range'));
+        }
+    }
+    setManualDisplayRange(range) {
+        if (this.get('logMode')) {
+            this.set('displayRange', {
+                min: symlog(range.min, 10),
+                max: symlog(range.max, 10)
+            });
+        } else {
+            this.set('displayRange', range);
         }
     }
     /** @param {boolean} logMode */
     onLogModeChange(logMode) {
+        const autoScale = this.get('autoscale');
+        if (!autoScale) {
+            this.setDisplayRangeForAutoscale(autoScale);
+        }
+
         this.resetSeries();
     }
     resetSeries() {
