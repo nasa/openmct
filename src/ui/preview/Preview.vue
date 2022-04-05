@@ -79,7 +79,7 @@ export default {
                 if (this.existingView && provider.key === this.existingView.key) {
                     this.existingViewIndex = index;
                 }
-                
+
                 this.setView(provider);
             };
         });
