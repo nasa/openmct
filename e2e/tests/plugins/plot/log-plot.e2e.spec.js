@@ -34,15 +34,16 @@ test.describe('Log plot tests', () => {
         // Set a specific time range for consistency, otherwise it will change
         // on every test to a range based on the current time.
 
-        await page.locator('input[type="text"]').first().click();
-        await page.locator('input[type="text"]').first().fill('2022-03-29 22:00:00.000Z');
+        const timeInputs = page.locator('input.c-input--datetime');
+        await timeInputs.first().click();
+        await timeInputs.first().fill('2022-03-29 22:00:00.000Z');
 
-        await page.locator('input[type="text"]').nth(1).click();
-        await page.locator('input[type="text"]').nth(1).fill('2022-03-29 22:00:30.000Z');
+        await timeInputs.nth(1).click();
+        await timeInputs.nth(1).fill('2022-03-29 22:00:30.000Z');
 
         // create overlay plot
 
-        await page.locator('button:has-text("Create")').click();
+        await page.locator('button.c-create-button').click();
         await page.locator('li:has-text("Overlay Plot")').click();
         await Promise.all([
             page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/8caf7072-535b-4af6-8394-edd86e3ea35f?tc.mode=fixed&tc.startBound=1648590633191&tc.endBound=1648592433191&tc.timeSystem=utc&view=plot-overlay' }*/),
@@ -56,7 +57,7 @@ test.describe('Log plot tests', () => {
 
         // create a sinewave generator
 
-        await page.locator('button:has-text("Create")').click();
+        await page.locator('button.c-create-button').click();
         await page.locator('li:has-text("Sine Wave Generator")').click();
 
         // set amplitude to 6, offset 4, period 2
@@ -130,11 +131,8 @@ test.describe('Log plot tests', () => {
 
         await page.reload();
 
-        // wait for chart
-        // test log ticks
-
-        // FIXME, log ticks are wrong after restart.
-        // await testLogTicks();
+        // test log ticks hold up after refresh
+        await testLogTicks();
 
         async function testRegularTicks() {
             const yTicks = page.locator('.gl-plot-y-tick-label');
