@@ -22,10 +22,10 @@
 <template>
 <div class="l-preview-window js-preview-window">
     <PreviewHeader
-        :current-view="currentView"
+        :current-view="currentViewProvider"
         :action-collection="actionCollection"
         :domain-object="domainObject"
-        :views="views"
+        :views="viewProviders"
     />
     <div class="l-preview-window__object-view js-notebook-snapshot-item">
         <div ref="objectView"></div>
@@ -52,6 +52,12 @@ export default {
             default() {
                 return undefined;
             }
+        },
+        existingView: {
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -60,21 +66,25 @@ export default {
         return {
             domainObject: domainObject,
             viewKey: undefined,
-            views: [],
-            currentView: {},
-            actionCollection: undefined
+            viewProviders: [],
+            currentViewProvider: {},
+            actionCollection: undefined,
+            existingViewIndex: 0
         };
     },
     mounted() {
-        this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view) => {
-            view.onItemClicked = () => {
-                return this.setView(view);
-            };
+        this.viewProviders = this.openmct.objectViews.get(this.domainObject, this.objectPath);
+        this.viewProviders.forEach((provider, index) => {
+            provider.onItemClicked = () => {
+                if (this.existingView && provider.key === this.existingView.key) {
+                    this.existingViewIndex = index;
+                }
 
-            return view;
+                this.setView(provider);
+            };
         });
 
-        this.setView(this.views[0]);
+        this.setView(this.viewProviders[0]);
     },
     beforeDestroy() {
         if (this.stopListeningStyles) {
@@ -91,41 +101,74 @@ export default {
         }
     },
     destroyed() {
-        this.view.destroy();
+        if (!this.existingView) {
+            this.view.destroy();
+        } else if (this.existingViewElement) {
+            // if the existing view element is populated, it's the currently viewed view
+            // in preview and we need to add it back to the parent.
+            this.addExistingViewBackToParent();
+        }
     },
     methods: {
         clear() {
             if (this.view) {
-                this.view.destroy();
-                this.$refs.objectView.innerHTML = '';
-            }
+                if (this.view !== this.existingView) {
+                    this.view.destroy();
+                } else {
+                    this.addExistingViewBackToParent();
+                }
 
-            delete this.view;
-            delete this.viewContainer;
+                this.$refs.objectView.innerHTML = '';
+                delete this.view;
+                delete this.viewContainer;
+            }
         },
-        setView(view) {
-            if (this.viewKey === view.key) {
+        setView(viewProvider) {
+            if (this.viewKey === viewProvider.key) {
                 return;
             }
 
+            const isExistingView = viewProvider.key === this.existingView.key;
+
             this.clear();
-            this.viewKey = view.key;
-            this.currentView = view;
+
+            this.viewKey = viewProvider.key;
+            this.initializeViewContainer();
+
+            if (isExistingView) {
+                this.view = this.existingView;
+                this.existingViewElement = this.existingView.parentElement.firstChild;
+                this.currentViewProvider = this.viewProviders[this.existingViewIndex];
+            } else {
+                this.currentViewProvider = viewProvider;
+                this.view = this.currentViewProvider.view(this.domainObject, this.objectPath);
+            }
+
+            this.getActionsCollection(this.view);
+
+            if (isExistingView) {
+                this.viewContainer.appendChild(this.existingViewElement);
+            } else {
+                this.view.show(this.viewContainer, false, this.viewOptions);
+            }
+
+            this.initObjectStyles();
+        },
+        addExistingViewBackToParent() {
+            this.existingView.parentElement.appendChild(this.existingViewElement);
+            delete this.existingViewElement;
+        },
+        initializeViewContainer() {
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('l-angular-ov-wrapper');
             this.$refs.objectView.append(this.viewContainer);
-            this.view = this.currentView.view(this.domainObject, this.objectPath);
-
-            this.getActionsCollection();
-            this.view.show(this.viewContainer, false, this.viewOptions);
-            this.initObjectStyles();
         },
-        getActionsCollection() {
+        getActionsCollection(view) {
             if (this.actionCollection) {
                 this.actionCollection.destroy();
             }
 
-            this.actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.view);
+            this.actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, view);
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {

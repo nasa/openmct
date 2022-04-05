@@ -38,41 +38,41 @@ export default class ViewLargeAction {
     }
 
     invoke(objectPath, view) {
-        const parentElement = view.parentElement;
-        let childElement = parentElement && parentElement.firstChild;
+        performance.mark('viewlarge.start');
+        const childElement = view?.parentElement?.firstChild;
         if (!childElement) {
             const message = "ViewLargeAction: missing element";
             this.openmct.notifications.error(message);
             throw new Error(message);
         }
 
-        this._expand(objectPath, childElement);
+        this._expand(objectPath, view);
     }
 
-    appliesTo(objectPath, view = {}) {
-        const parentElement = view.parentElement;
-        const element = parentElement && parentElement.firstChild;
-        const viewLargeAction = element && !element.classList.contains('js-main-container')
+    appliesTo(objectPath, view) {
+        const childElement = view?.parentElement?.firstChild;
+
+        return childElement && !childElement.classList.contains('js-main-container')
             && !this.openmct.router.isNavigatedObject(objectPath);
-
-        return viewLargeAction;
     }
 
-    _expand(objectPath, childElement) {
-        const parentElement = childElement.parentElement;
+    _expand(objectPath, view) {
+        const element = this._getPreview(objectPath, view);
 
         this.overlay = this.openmct.overlays.overlay({
-            element: this._getPreview(objectPath),
+            element,
             size: 'large',
             autoHide: false,
-            onDestroy() {
-                parentElement.append(childElement);
+            onDestroy: () => {
+                this.preview.$destroy();
+                this.preview = undefined;
+                delete this.preview;
             }
         });
     }
 
-    _getPreview(objectPath) {
-        const preview = new Vue({
+    _getPreview(objectPath, view) {
+        this.preview = new Vue({
             components: {
                 Preview
             },
@@ -80,9 +80,14 @@ export default class ViewLargeAction {
                 openmct: this.openmct,
                 objectPath
             },
-            template: '<Preview></Preview>'
+            data() {
+                return {
+                    view
+                };
+            },
+            template: '<Preview :existing-view="view"></Preview>'
         });
 
-        return preview.$mount().$el;
+        return this.preview.$mount().$el;
     }
 }
