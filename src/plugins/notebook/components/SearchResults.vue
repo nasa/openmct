@@ -24,7 +24,7 @@
 <div class="c-notebook__search-results">
     <div class="c-notebook__search-results__header">Search Results ({{ results.length }})</div>
     <div class="c-notebook__entries">
-        <NotebookEntry 
+        <NotebookEntry
             v-for="(result, index) in results"
             :key="index"
             :domain-object="domainObject"
