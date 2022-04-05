@@ -22,10 +22,10 @@
 <template>
 <div class="l-preview-window js-preview-window">
     <PreviewHeader
-        :current-view="currentView"
+        :current-view="currentViewProvider"
         :action-collection="actionCollection"
         :domain-object="domainObject"
-        :views="views"
+        :views="viewProviders"
     />
     <div class="l-preview-window__object-view js-notebook-snapshot-item">
         <div ref="objectView"></div>
@@ -66,31 +66,25 @@ export default {
         return {
             domainObject: domainObject,
             viewKey: undefined,
-            views: [],
-            currentView: {},
+            viewProviders: [],
+            currentViewProvider: {},
             actionCollection: undefined,
             existingViewIndex: 0
         };
     },
     mounted() {
-        this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view, index) => {
-            view.onItemClicked = () => {
-                if (this.existingView && view.key === this.existingView.key) {
+        this.viewProviders = this.openmct.objectViews.get(this.domainObject, this.objectPath);
+        this.viewProviders.forEach((provider, index) => {
+            provider.onItemClicked = () => {
+                if (this.existingView && provider.key === this.existingView.key) {
                     this.existingViewIndex = index;
-                    this.showExistingView();
-                } else {
-                    this.setView(view);
                 }
+                
+                this.setView(provider);
             };
-
-            return view;
         });
 
-        if (!this.existingView) {
-            this.setView(this.views[0]);
-        } else {
-            this.showExistingView();
-        }
+        this.setView(this.viewProviders[0]);
     },
     beforeDestroy() {
         if (this.stopListeningStyles) {
@@ -118,54 +112,47 @@ export default {
     methods: {
         clear() {
             if (this.view) {
-                this.view.destroy();
+                if (this.view !== this.existingView) {
+                    this.view.destroy();
+                } else {
+                    this.addExistingViewBackToParent();
+                }
+
                 this.$refs.objectView.innerHTML = '';
+                delete this.view;
+                delete this.viewContainer;
             }
-
-            delete this.view;
-            delete this.viewContainer;
         },
-        setView(view) {
-            if (this.viewKey === view.key) {
+        setView(viewProvider) {
+            if (this.viewKey === viewProvider.key) {
                 return;
             }
 
-            // if there is an existing view element, then it's currently being viewed
-            // we'll add it back to the parent in the meantime
-            if (this.existingViewElement) {
-                this.addExistingViewBackToParent();
-            }
+            const isExistingView = viewProvider.key === this.existingView.key;
 
             this.clear();
-            this.viewKey = view.key;
-            this.currentView = view;
+
+            this.viewKey = viewProvider.key;
             this.initializeViewContainer();
-            this.view = this.currentView.view(this.domainObject, this.objectPath);
+
+            if (isExistingView) {
+                this.view = this.existingView;
+                this.existingViewElement = this.existingView.parentElement.firstChild;
+                this.currentViewProvider = this.viewProviders[this.existingViewIndex];
+            } else {
+                this.currentViewProvider = viewProvider;
+                this.view = this.currentViewProvider.view(this.domainObject, this.objectPath);
+            }
+
             this.getActionsCollection(this.view);
-            this.view.show(this.viewContainer, false, this.viewOptions);
-            this.initObjectStyles();
-        },
-        showExistingView() {
-            if (this.viewKey === this.existingView.key) {
-                return;
+
+            if (isExistingView) {
+                this.viewContainer.appendChild(this.existingViewElement);
+            } else {
+                this.view.show(this.viewContainer, false, this.viewOptions);
             }
 
-            this.clear();
-            this.initializeViewContainer();
-
-            this.currentView = this.views[this.existingViewIndex]; // this is for action collections and view switcher
-
-            // save this for later, so it can be added back to the parent on destroy
-            this.existingViewElement = this.existingView.parentElement.firstChild;
-
-            this.viewKey = this.existingView.key;
-            this.getActionsCollection(this.currentView);
-
-            // this will use the existing DOM element for the view
-            // removing it from it's existing parent
-            this.viewContainer.appendChild(this.existingViewElement);
             this.initObjectStyles();
-
         },
         addExistingViewBackToParent() {
             this.existingView.parentElement.appendChild(this.existingViewElement);
