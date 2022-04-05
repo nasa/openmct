@@ -3,18 +3,13 @@
     height: $w;
 
     svg {
-        $lineC: rgba($colorBodyFg, 0.3) !important;
         text-rendering: geometricPrecision;
         width: 100%;
         height: 100%;
 
-        .domain {
-            stroke: $lineC;
-        }
-
         .tick {
             line {
-                stroke: $lineC;
+                opacity: 0;
             }
 
             text {
@@ -23,6 +18,10 @@
                 paint-order: stroke;
                 font-weight: bold;
             }
+        }
+
+        path.domain {
+            opacity: 0;
         }
     }
 }

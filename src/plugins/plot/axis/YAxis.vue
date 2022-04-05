@@ -63,6 +63,7 @@
         class="gl-plot-ticks"
         :bounds="bounds"
         :content-height="height"
+        @plotTickWidth="onTickWidthChange"
     />
 </div>
 </template>
@@ -72,7 +73,7 @@ import MctTicks from "../MctTicks.vue";
 import D3Axis from "../../../ui/components/d3-ticks/D3Axis.vue";
 import configStore from "../configuration/ConfigStore";
 import eventHelpers from "../lib/eventHelpers";
-import { symlog, antisymlog } from "../mathUtils";
+import { antisymlog } from "../mathUtils";
 
 export default {
     components: {

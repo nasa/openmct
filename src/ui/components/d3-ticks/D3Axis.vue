@@ -14,9 +14,6 @@ import * as d3Scale from 'd3-scale';
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
 const RESIZE_POLL_INTERVAL = 200;
-// const PIXELS_PER_TICK = 100;
-// const PIXELS_PER_TICK_WIDE = 200;
-//This offset needs to be re-considered
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -51,8 +48,7 @@ export default {
         // draw x axis with labels. CSS is used to position them.
         this.axisElement = this.svgElement.append("g")
             .attr("class", "axis")
-            .attr('font-size', '1.3em')
-            .attr("transform", "translate(25,0)");
+            .attr('font-size', '1.5em');
 
         this.setDimensions();
         this.drawAxis(this.bounds);
@@ -71,12 +67,21 @@ export default {
         setDimensions() {
             const axisHolder = this.$refs.axisHolder;
             this.width = axisHolder.clientWidth;
-
             this.height = axisHolder.clientHeight;
             this.offsetHeight = this.height - this.offset;
 
             this.svgElement.attr("width", this.width);
             this.svgElement.attr("height", this.height);
+        },
+        doTickUpdate() {
+            const tickElements = this.$refs.axisHolder && this.$refs.axisHolder.querySelectorAll('.tick');
+            if (tickElements) {
+                const tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
+                    return Math.max(memo, first.getBoundingClientRect().width);
+                }, 0));
+                this.$emit('plotTickWidth', tickWidth);
+                this.axisElement.attr("transform", `translate(${tickWidth + 30},0)`);
+            }
         },
         drawAxis(bounds) {
             let viewBounds = Object.assign({}, bounds);
@@ -85,6 +90,7 @@ export default {
             this.setAxis(viewBounds);
             this.axisElement.call(this.xAxis);
 
+            this.doTickUpdate();
         },
         setScale(bounds) {
             if (!this.height) {
@@ -106,12 +112,6 @@ export default {
         },
         setAxis() {
             this.xAxis = d3Axis.axisLeft(this.xScale).tickFormat((d, i) => d);
-            //
-            // if (this.height > 1800) {
-            //     this.xAxis.ticks(this.offsetHeight / PIXELS_PER_TICK_WIDE);
-            // } else {
-            //     this.xAxis.ticks(this.offsetHeight / PIXELS_PER_TICK);
-            // }
         }
     }
 };
