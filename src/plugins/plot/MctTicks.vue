@@ -112,6 +112,10 @@ export default {
     mounted() {
         eventHelpers.extend(this);
 
+        if (!this.axisType) {
+            throw new Error("axis-type prop expected");
+        }
+
         this.axis = this.getAxisFromConfig();
 
         this.tickCount = 4;
@@ -126,15 +130,16 @@ export default {
     },
     methods: {
         getAxisFromConfig() {
-            if (!this.axisType) {
-                return;
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            /** @type {import('./configuration/PlotConfigurationModel').default} */
+            let config = configStore.get(configId);
+
+            if (!config) {
+                throw new Error('config is missing');
             }
 
-            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            let config = configStore.get(configId);
-            if (config) {
-                return config[this.axisType];
-            }
+            return config[this.axisType];
         },
         /**
        * Determine whether ticks should be regenerated for a given range.
@@ -210,8 +215,8 @@ export default {
             if (this.shouldRegenerateTicks(range, forceRegeneration)) {
                 let newTicks = this.getTicks();
                 this.tickRange = {
-                    min: Math.min.apply(Math, newTicks),
-                    max: Math.max.apply(Math, newTicks),
+                    min: Math.min(...newTicks),
+                    max: Math.max(...newTicks),
                     step: newTicks[1] - newTicks[0]
                 };
 

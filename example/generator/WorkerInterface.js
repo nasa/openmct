@@ -21,20 +21,13 @@
  *****************************************************************************/
 
 define([
-    'raw-loader!./generatorWorker.js',
     'uuid'
 ], function (
-    workerText,
     uuid
 ) {
-
-    var workerBlob = new Blob(
-        [workerText],
-        {type: 'application/javascript'}
-    );
-    var workerUrl = URL.createObjectURL(workerBlob);
-
-    function WorkerInterface() {
+    function WorkerInterface(openmct) {
+        // eslint-disable-next-line no-undef
+        const workerUrl = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}generatorWorker.js`;
         this.worker = new Worker(workerUrl);
         this.worker.onmessage = this.onMessage.bind(this);
         this.callbacks = {};
