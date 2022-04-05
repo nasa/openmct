@@ -5,7 +5,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.16.3",
     "@braintree/sanitize-url": "6.0.0",
-    "@percy/cli": "1.0.0-beta.76",
+    "@percy/cli": "1.0.2",
     "@percy/playwright": "1.0.1",
     "@playwright/test": "1.19.2",
     "@types/eventemitter3": "^1.0.0",
@@ -112,8 +112,7 @@
     "node": ">=14.19.1"
   },
   "overrides": {
-    "core-js": "3.21.1",
-    "@percy/sdk-utils": "1.0.0-beta.76"
+    "core-js": "3.21.1"
   },
   "browserslist": [
     "Firefox ESR",
