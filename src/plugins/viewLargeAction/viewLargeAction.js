@@ -38,6 +38,7 @@ export default class ViewLargeAction {
     }
 
     invoke(objectPath, view) {
+        performance.mark('viewlarge.start');
         const parentElement = view.parentElement;
         let childElement = parentElement && parentElement.firstChild;
         if (!childElement) {
