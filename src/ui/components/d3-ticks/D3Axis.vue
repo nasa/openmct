@@ -105,7 +105,7 @@ export default {
             this.xScale.range([PADDING, this.offsetHeight - PADDING * 2]);
         },
         setAxis() {
-            this.xAxis = d3Axis.axisLeft(this.xScale);
+            this.xAxis = d3Axis.axisLeft(this.xScale).tickFormat((d, i) => d);
             //
             // if (this.height > 1800) {
             //     this.xAxis.ticks(this.offsetHeight / PIXELS_PER_TICK_WIDE);
