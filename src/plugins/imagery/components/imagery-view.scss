@@ -143,6 +143,7 @@
 
     &__thumbs-wrapper {
         display: flex; // Uses row layout
+        justify-content: flex-end;
 
         &.is-autoscroll-off {
             background: $colorInteriorBorder;
