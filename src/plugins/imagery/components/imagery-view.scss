@@ -1,3 +1,13 @@
+@keyframes fade-out {
+    from {
+        background-color: rgba($colorOk, 0.5);
+    }
+    to {
+        background-color: rgba($colorOk, 0);
+        color: inherit;
+    }
+}
+
 .c-imagery {
     display: flex;
     flex-direction: column;
@@ -123,9 +133,13 @@
         // New imagery
         $bgColor: $colorOk;
         color: $colorOkFg;
-        background: rgba($bgColor, 0.5);
-        @include flash($animName: flashImageAge, $iter: 2, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
+        background-color: rgba($bgColor, 0.5);
+        animation-name: fade-out;
+        animation-timing-function: ease-in;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;   
     }
+    
 
     &__thumbs-wrapper {
         display: flex; // Uses row layout
