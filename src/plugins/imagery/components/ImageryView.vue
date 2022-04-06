@@ -150,6 +150,10 @@
                 <!-- image fresh -->
                 <div
                     v-if="canTrackDuration"
+                    :style="{
+                        'animation-delay': imageFreshnessOptions.fadeOutDelayTime,
+                        'animation-duration': imageFreshnessOptions.fadeOutDurationTime
+                    }"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
@@ -253,7 +257,7 @@ export default {
         ImageControls
     },
     mixins: [imageryData],
-    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
     props: {
         focusedImageTimestamp: {
             type: Number,
