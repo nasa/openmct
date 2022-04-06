@@ -59,9 +59,15 @@ import configStore from "../configuration/ConfigStore";
  * `metadata`: the Open MCT Telemetry Metadata Manager for the associated
  *             telemetry point.
  * `formats`: the Open MCT format map for this telemetry point.
+ *
+ * @extends {Model<PlotSeriesModelType, PlotSeriesModelOptions>}
  */
 export default class PlotSeries extends Model {
+    /**
+     @param {import('./Model').ModelOptions<PlotSeriesModelType, PlotSeriesModelOptions>} options
+     */
     constructor(options) {
+
         super(options);
 
         this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
@@ -76,8 +82,10 @@ export default class PlotSeries extends Model {
 
     /**
      * Set defaults for telemetry series.
+     * @param {import('./Model').ModelOptions<PlotSeriesModelType, PlotSeriesModelOptions>} options
+     * @override
      */
-    defaults(options) {
+    defaultModel(options) {
         this.metadata = options
             .openmct
             .telemetry
@@ -109,13 +117,21 @@ export default class PlotSeries extends Model {
 
     /**
      * Remove real-time subscription when destroyed.
+     * @override
      */
-    onDestroy(model) {
+    destroy() {
+        super.destroy();
+
         if (this.unsubscribe) {
             this.unsubscribe();
         }
     }
 
+    /**
+     * Set defaults for telemetry series.
+     * @override
+     * @param {import('./Model').ModelOptions<PlotSeriesModelType, PlotSeriesModelOptions>} options
+     */
     initialize(options) {
         this.openmct = options.openmct;
         this.domainObject = options.domainObject;
@@ -136,9 +152,11 @@ export default class PlotSeries extends Model {
 
         });
         this.openmct.time.on('bounds', this.updateLimits);
-        this.on('destroy', this.onDestroy, this);
     }
 
+    /**
+     * @param {Bounds} bounds
+     */
     updateLimits(bounds) {
         this.emit('limitBounds', bounds);
     }
@@ -188,7 +206,7 @@ export default class PlotSeries extends Model {
         return this.openmct
             .telemetry
             .request(this.domainObject, options)
-            .then(function (points) {
+            .then((points) => {
                 const data = this.getSeriesData();
                 const newPoints = _(data)
                     .concat(points)
@@ -196,7 +214,7 @@ export default class PlotSeries extends Model {
                     .uniq(true, point => [this.getXVal(point), this.getYVal(point)].join())
                     .value();
                 this.reset(newPoints);
-            }.bind(this))
+            })
             .catch((error) => {
                 console.warn('Error fetching data', error);
             });
@@ -501,8 +519,55 @@ export default class PlotSeries extends Model {
 
     /**
      * Update the series data with the given value.
+     * @returns {Array<{
+            cos: number
+            sin: number
+            mctLimitState: {
+                cssClass: string
+                high: number
+                low: {sin: number, cos: number}
+                name: string
+            }
+            utc: number
+            wavelength: number
+            yesterday: number
+        }>}
      */
     getSeriesData() {
         return configStore.get(this.dataStoreId) || [];
     }
 }
+
+/** @typedef {any} TODO */
+
+/** @typedef {{key: string, namespace: string}} Identifier */
+
+/**
+@typedef {{
+    identifier: Identifier
+    name: string
+    unit: string
+    xKey: string
+    yKey: string
+    markers: boolean
+    markerShape: keyof typeof MARKER_SHAPES
+    markerSize: number
+    alarmMarkers: boolean
+    limitLines: boolean
+    interpolate: boolean
+    stats: TODO
+}} PlotSeriesModelType
+*/
+
+/**
+@typedef {{
+    model: PlotSeriesModelType
+    collection: import('./SeriesCollection').default
+    persistedConfig: PlotSeriesModelType
+    filters: TODO
+}} PlotSeriesModelOptions
+*/
+
+/**
+@typedef {import('@/api/time/TimeContext').Bounds} Bounds
+*/

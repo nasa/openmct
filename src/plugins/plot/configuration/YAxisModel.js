@@ -23,27 +23,32 @@ import _ from 'lodash';
 import Model from './Model';
 
 /**
-     * YAxis model
-      *
-     * TODO: docstrings.
-     *
-     * has the following Model properties:
-     *
-     * `autoscale`: boolean, whether or not to autoscale.
-     * `autoscalePadding`: float, percent of padding to display in plots.
-     * `displayRange`: the current display range for the x Axis.
-     * `format`: the formatter for the axis.
-     * `frozen`: boolean, if true, displayRange will not be updated automatically.
-     *           Used to temporarily disable automatic updates during user interaction.
-     * `label`: label to display on axis.
-     * `stats`: Min and Max Values of data, automatically updated by observing
-     *          plot series.
-     * `values`: for enumerated types, an array of possible display values.
-     * `range`: the user-configured range to use for display, when autoscale is
-     *         disabled.
-     *
-     */
+ * YAxis model
+ *
+ * TODO: docstrings.
+ *
+ * has the following Model properties:
+ *
+ * `autoscale`: boolean, whether or not to autoscale.
+ * `autoscalePadding`: float, percent of padding to display in plots.
+ * `displayRange`: the current display range for the x Axis.
+ * `format`: the formatter for the axis.
+ * `frozen`: boolean, if true, displayRange will not be updated automatically.
+ *           Used to temporarily disable automatic updates during user interaction.
+ * `label`: label to display on axis.
+ * `stats`: Min and Max Values of data, automatically updated by observing
+ *          plot series.
+ * `values`: for enumerated types, an array of possible display values.
+ * `range`: the user-configured range to use for display, when autoscale is
+ *         disabled.
+ *
+ * @extends {Model<YAxisModelType, YAxisModelOptions>}
+ */
 export default class YAxisModel extends Model {
+    /**
+     * @override
+     * @param {import('./Model').ModelOptions<YAxisModelType, YAxisModelOptions>} options
+     */
     initialize(options) {
         this.plot = options.plot;
         this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
@@ -53,6 +58,9 @@ export default class YAxisModel extends Model {
         this.listenTo(this, 'change:range', this.updateDisplayRange, this);
         this.updateDisplayRange(this.get('range'));
     }
+    /**
+     * @param {import('./SeriesCollection').default} seriesCollection
+     */
     listenToSeriesCollection(seriesCollection) {
         this.seriesCollection = seriesCollection;
         this.listenTo(this.seriesCollection, 'add', (series => {
@@ -138,6 +146,9 @@ export default class YAxisModel extends Model {
             }
         }, this);
     }
+    /**
+     * @param {import('./PlotSeries').default} series
+     */
     trackSeries(series) {
         this.listenTo(series, 'change:stats', seriesStats => {
             if (!seriesStats) {
@@ -163,12 +174,13 @@ export default class YAxisModel extends Model {
         }
     }
     /**
-         * Update yAxis format, values, and label from known series.
-         */
-    updateFromSeries(series) {
+     * Update yAxis format, values, and label from known series.
+     * @param {import('./SeriesCollection').default} seriesCollection
+     */
+    updateFromSeries(seriesCollection) {
         const plotModel = this.plot.get('domainObject');
         const label = _.get(plotModel, 'configuration.yAxis.label');
-        const sampleSeries = series.first();
+        const sampleSeries = seriesCollection.first();
         if (!sampleSeries) {
             if (!label) {
                 this.unset('label');
@@ -183,7 +195,7 @@ export default class YAxisModel extends Model {
         this.set('format', yFormat.format.bind(yFormat));
         this.set('values', yMetadata.values);
         if (!label) {
-            const labelName = series.map(function (s) {
+            const labelName = seriesCollection.map(function (s) {
                 return s.metadata ? s.metadata.value(s.get('yKey')).name : '';
             }).reduce(function (a, b) {
                 if (a === undefined) {
@@ -203,7 +215,7 @@ export default class YAxisModel extends Model {
                 return;
             }
 
-            const labelUnits = series.map(function (s) {
+            const labelUnits = seriesCollection.map(function (s) {
                 return s.metadata ? s.metadata.value(s.get('yKey')).units : '';
             }).reduce(function (a, b) {
                 if (a === undefined) {
@@ -224,7 +236,13 @@ export default class YAxisModel extends Model {
             }
         }
     }
-    defaults(options) {
+    /**
+     * @override
+     * @param {import('./Model').ModelOptions<YAxisModelType, YAxisModelOptions>} options
+     * @returns {YAxisModelType}
+     */
+    defaultModel(options) {
+        // @ts-ignore incomplete YAxisModelType object used for default value.
         return {
             frozen: false,
             autoscale: true,
@@ -232,3 +250,20 @@ export default class YAxisModel extends Model {
         };
     }
 }
+
+/** @typedef {any} TODO */
+
+/**
+@typedef {import('./XAxisModel').AxisModelType & {
+    autoscale: boolean
+    autoscalePadding: number
+    stats: import('./XAxisModel').NumberRange
+    values: Array<TODO>
+}} YAxisModelType
+*/
+
+/**
+@typedef {{
+    plot: import('./PlotConfigurationModel').default
+}} YAxisModelOptions
+*/

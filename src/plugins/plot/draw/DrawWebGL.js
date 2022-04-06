@@ -110,6 +110,7 @@ DrawWebGL.prototype.onContextLost = function (event) {
     this.emit('error');
     this.isContextLost = true;
     this.destroy();
+    // TODO re-initialize and re-draw on context restored
 };
 
 DrawWebGL.prototype.initContext = function () {
