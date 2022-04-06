@@ -165,7 +165,7 @@
 const LIMIT_PADDING_IN_PERCENT = 10;
 
 export default {
-    name: 'GaugeRadial',
+    name: 'Gauge',
     inject: ['openmct', 'domainObject', 'composition'],
     data() {
         let gaugeController = this.domainObject.configuration.gaugeController;
@@ -380,9 +380,20 @@ export default {
 
             const beforeStartOfBounds = parsedValue < start;
             const afterEndOfBounds = parsedValue > end;
-            if (!afterEndOfBounds && !beforeStartOfBounds) {
-                this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
+            if (afterEndOfBounds || beforeStartOfBounds) {
+                return;
             }
+
+            if (this.isRendering) {
+                return;
+            }
+
+            this.isRendering = true;
+            requestAnimationFrame(() => {
+                this.isRendering = false;
+
+                this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
+            });
         },
         valToPercent(vValue) {
             // Used by dial

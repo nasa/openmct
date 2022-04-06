@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GaugeComponent from './components/GaugeRadial.vue';
+import GaugeComponent from './components/Gauge.vue';
 import Vue from 'vue';
 
 export default function GaugeViewProvider(openmct) {
