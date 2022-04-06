@@ -77,7 +77,8 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
-    './gauge/GaugePlugin'
+    './gauge/GaugePlugin',
+    './timelist/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -135,7 +136,8 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
-    GaugePlugin
+    GaugePlugin,
+    TimeList
 ) {
     const plugins = {};
 
@@ -213,6 +215,7 @@ define([
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
     plugins.Gauge = GaugePlugin.default;
+    plugins.Timelist = TimeList.default;
 
     return plugins;
 });
