@@ -27,7 +27,7 @@
         :class="model.cssClass"
     >
         <ToggleSwitch
-            id="toggleSwitch"
+            id="switchId"
             :checked="isChecked"
             @change="toggleCheckBox"
         />
@@ -36,12 +36,16 @@
 </template>
 
 <script>
+import toggleMixin from '../../toggle-check-box-mixin';
 import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
+
+import uuid from 'uuid';
 
 export default {
     components: {
         ToggleSwitch
     },
+    mixins: [toggleMixin],
     props: {
         model: {
             type: Object,
@@ -50,20 +54,9 @@ export default {
     },
     data() {
         return {
+            switchId: `toggleSwitch-${uuid}`,
             isChecked: this.model.value
         };
-    },
-    methods: {
-        toggleCheckBox() {
-            this.isChecked = !this.isChecked;
-
-            const data = {
-                model: this.model,
-                value: this.isChecked
-            };
-
-            this.$emit('onChange', data);
-        }
     }
 };
 </script>

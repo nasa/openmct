@@ -36,7 +36,10 @@
 </template>
 
 <script>
+import toggleMixin from '../../toggle-check-box-mixin';
+
 export default {
+    mixins: [toggleMixin],
     props: {
         model: {
             type: Object,
@@ -47,18 +50,6 @@ export default {
         return {
             isChecked: this.model.value
         };
-    },
-    methods: {
-        toggleCheckBox() {
-            this.isChecked = !this.isChecked;
-
-            const data = {
-                model: this.model,
-                value: this.isChecked
-            };
-
-            this.$emit('onChange', data);
-        }
     }
 };
 </script>
