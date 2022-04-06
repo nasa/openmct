@@ -345,7 +345,7 @@ $shdwItemText: none;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
-$colorTabHeaderBg: rgba($colorBodyFg, 0.2);
+$colorTabHeaderBg: #e2e2e2;
 $colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
 $colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
@@ -365,6 +365,14 @@ $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 $legendTableHeadBg: rgba($colorBodyFg, 0.15);
 $colorPlotLimitLineBg: rgba($colorBodyBg, 0.4);
+
+// Time Strip and Lists
+$colorCurrentBg: rgba($colorStatusAlert, 0.3);
+$colorCurrentFg: pullForward($colorBodyFg, 20%);
+$colorCurrentBorder: #fff;
+$colorFutureBg: rgba($colorKey, 0.2);
+$colorFutureFg: $colorCurrentFg;
+$colorFutureBorder: $colorCurrentBorder;
 
 // Tree
 $colorTreeBg: transparent;
