@@ -38,12 +38,6 @@ test.describe('ExportAsJSON', () => {
 
         const canvas = await page.locator('canvas').nth(1);
 
-        // const canvasBox = await canvas.boundingBox();
-        // page.mouse.move(canvasBox.x + 100, canvasBox.y + 100, {steps: 200})
-        // page.mouse.down({
-        //     button: 'left'
-        // });
-
         let errorCount = 0;
 
         function onError() {
