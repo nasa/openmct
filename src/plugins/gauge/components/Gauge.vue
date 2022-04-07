@@ -251,7 +251,7 @@ export default {
         }
     },
     mounted() {
-        this.composition.on('add', this.addTelemetryObject);
+        this.composition.on('add', this.addedToComposition);
         this.composition.on('remove', this.removeTelemetryObject);
 
         this.composition.load();
@@ -259,7 +259,7 @@ export default {
         this.openmct.time.on('bounds', this.refreshData);
     },
     destroyed() {
-        this.composition.off('add', this.addTelemetryObject);
+        this.composition.off('add', this.addedToComposition);
         this.composition.off('remove', this.removeTelemetryObject);
 
         if (this.unsubscribe) {
@@ -269,15 +269,42 @@ export default {
         this.openmct.time.off('bounds', this.refreshData);
     },
     methods: {
-        addTelemetryObject(domainObject) {
-            if (this.telemetryObject) {
-                this.removeFromComposition();
-                this.removeTelemetryObject();
-            }
-
+        addTelemetryObjectAndSubscribe(domainObject) {
             this.telemetryObject = domainObject;
             this.request();
             this.subscribe();
+        },
+        addedToComposition(domainObject) {
+            if (this.telemetryObject) {
+                this.confirmRemoval(domainObject);
+            } else {
+                this.addTelemetryObjectAndSubscribe(domainObject);
+            }
+        },
+        confirmRemoval(domainObject) {
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will replace the current telemetry source. Do you want to continue?',
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: true,
+                        callback: () => {
+                            this.removeFromComposition();
+                            this.removeTelemetryObject();
+                            this.addTelemetryObjectAndSubscribe(domainObject);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            this.removeFromComposition(domainObject);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
         },
         getDateValueFormatter() {
             const timeSystem = this.openmct.time.timeSystem();
@@ -291,9 +318,9 @@ export default {
         percentToDegrees(vPercent) {
             return this.round((vPercent / 100) * 270, 2);
         },
-        removeFromComposition() {
+        removeFromComposition(telemetryObject = this.telemetryObject) {
             let composition = this.domainObject.composition.filter(id =>
-                !this.openmct.objects.areIdsEqual(id, this.telemetryObject.identifier)
+                !this.openmct.objects.areIdsEqual(id, telemetryObject.identifier)
             );
 
             this.openmct.objects.mutate(this.domainObject, 'composition', composition);
