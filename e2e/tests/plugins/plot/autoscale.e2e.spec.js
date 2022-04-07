@@ -34,7 +34,7 @@ test.describe('ExportAsJSON', () => {
 
         await createSinewaveOverlayPlot(page);
 
-        // TODO test ticks have default range values.
+        await testTicks(page, ['-10', '-5', '0', '5', '10']);
 
         const canvas = await page.locator('canvas').nth(1);
 
@@ -54,8 +54,8 @@ test.describe('ExportAsJSON', () => {
                 y: 200
             },
             targetPosition: {
-                x: 300,
-                y: 300
+                x: 400,
+                y: 400
             }
         });
 
@@ -66,7 +66,7 @@ test.describe('ExportAsJSON', () => {
         // No error means the bug was fixed.
         expect(errorCount).toBe(0);
 
-        // TODO test ticks after drag
+        await testTicks(page, ['0', '5', '10', '15']);
     });
 });
 
@@ -114,4 +114,18 @@ async function createSinewaveOverlayPlot(page) {
     // save
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
     await page.locator('text=Save and Finish Editing').click();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function testTicks(page, values) {
+    const yTicks = page.locator('.gl-plot-y-tick-label');
+    let promises = [yTicks.count().then((c) => expect(c).toBe(values.length))];
+
+    for (let i = 0, l = values.length; i < l; i += 1) {
+        promises.push(expect(yTicks.nth(i)).toHaveText(values[i])); // eslint-disable-line
+    }
+
+    await Promise.all(promises);
 }
