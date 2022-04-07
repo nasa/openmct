@@ -80,15 +80,83 @@ define(
                     this.rows = [];
                 }
 
-                for (let row of rowsToAdd) {
-                    let index = this.sortedIndex(this.rows, row);
-                    this.rows.splice(index, 0, row);
+                if (rowsToAdd.length < 10) {
+                    this.insertRows(rowsToAdd);
+                } else {
+                    this.sortAndMergeRows(rowsToAdd);
                 }
 
                 // we emit filter no matter what to trigger
                 // an update of visible rows
                 if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
                     this.emit(type, rowsToAdd);
+                }
+            }
+
+            sortAndMergeRows(rows) {
+                const sortedRowsToAdd = this.sortCollection(rows);
+
+                this.mergeSortedRows(sortedRowsToAdd);
+            }
+
+            sortCollection(rows) {
+                const sortedRows = _.orderBy(
+                    rows,
+                    row => row.getParsedValue(this.sortOptions.key), this.sortOptions.direction
+                );
+
+                return sortedRows;
+            }
+
+            // merges two sorted row collections
+            mergeSortedRows(rows) {
+                let mergedRows = [];
+                let x = 0;
+                let y = 0;
+
+                while (x < this.rows.length && y < rows.length) {
+                    const xRow = this.rows[x];
+                    const yRow = rows[y];
+                    const xVal = this.getValueForSortColumn(xRow);
+                    const yVal = this.getValueForSortColumn(yRow);
+
+                    if (this.shouldMergeFirstInput(xVal, yVal)) {
+                        mergedRows.push(xRow);
+                        x++;
+                    } else {
+                        mergedRows.push(yRow);
+                        y++;
+                    }
+                }
+
+                if (x < this.rows.length) {
+                    for (x; x < this.rows.length; x++) {
+                        mergedRows.push(this.rows[x]);
+                    }
+                }
+
+                if (y < rows.length) {
+                    for (y; y < rows.length; y++) {
+                        mergedRows.push(rows[y]);
+                    }
+                }
+
+                this.rows = mergedRows;
+            }
+
+            shouldMergeFirstInput(first, second) {
+                if (this.sortOptions.direction === 'asc') {
+                    return first <= second;
+                }
+
+                return first >= second;
+            }
+
+            insertRows(rows) {
+                for (let row of rows) {
+                    const index = this.sortedIndex(this.rows, row);
+
+                    this.rows.splice(index, 0, row);
                 }
             }
 
