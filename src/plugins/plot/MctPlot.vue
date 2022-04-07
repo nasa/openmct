@@ -661,7 +661,7 @@ export default {
             this.positionOverElement = {
                 x: event.clientX - this.chartElementBounds.left,
                 y: this.chartElementBounds.height
-              - (event.clientY - this.chartElementBounds.top)
+                    - (event.clientY - this.chartElementBounds.top)
             };
 
             this.positionOverPlot = {

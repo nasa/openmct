@@ -19,31 +19,37 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ImageryView from './ImageryView';
 
-export default function ImageryViewProvider(openmct, options) {
-    const type = 'example.imagery';
+.c-timelist {
+  & .nowMarker.hasCurrent {
+    height: 2px;
+    position: absolute;
+    z-index: 10;
+    background: cyan;
+    width: 100%;
+  }
 
-    function hasImageTelemetry(domainObject) {
-        const metadata = openmct.telemetry.getMetadata(domainObject);
-        if (!metadata) {
-            return false;
-        }
+  .c-list-item {
+    /* Time Lists */
 
-        return metadata.valuesForHints(['image']).length > 0;
+    &.--is-current {
+      background-color: $colorCurrentBg;
+      border-top: 1px solid $colorCurrentBorder !important;
+      color: $colorCurrentFg;
+      font-weight: bold;
     }
 
-    return {
-        key: type,
-        name: 'Imagery Layout',
-        cssClass: 'icon-image',
-        canView: function (domainObject, objectPath) {
-            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+    &.--is-future {
+      background-color: $colorFutureBg;
+      border-top-color: $colorFutureBorder !important;
+      color: $colorFutureFg;
+    }
 
-            return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
-        },
-        view: function (domainObject, objectPath) {
-            return new ImageryView(openmct, domainObject, objectPath, options);
-        }
-    };
+    &__value {
+      &.--duration {
+        width: 5%;
+      }
+    }
+  }
+
 }
