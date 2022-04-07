@@ -239,14 +239,20 @@ export default class YAxisModel extends Model {
     /**
      * @override
      * @param {import('./Model').ModelOptions<YAxisModelType, YAxisModelOptions>} options
-     * @returns {YAxisModelType}
+     * @returns {Partial<YAxisModelType>}
      */
     defaultModel(options) {
-        // @ts-ignore incomplete YAxisModelType object used for default value.
         return {
             frozen: false,
             autoscale: true,
-            autoscalePadding: 0.1
+            autoscalePadding: 0.1,
+
+            // Specify a default user range for when autoscale is turned off, so
+            // that there is not a runtime error due to no range being set.
+            range: {
+                min: -10,
+                max: 10
+            }
         };
     }
 }
@@ -257,7 +263,7 @@ export default class YAxisModel extends Model {
 @typedef {import('./XAxisModel').AxisModelType & {
     autoscale: boolean
     autoscalePadding: number
-    stats: import('./XAxisModel').NumberRange
+    stats?: import('./XAxisModel').NumberRange
     values: Array<TODO>
 }} YAxisModelType
 */
