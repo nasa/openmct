@@ -91,7 +91,6 @@ export default {
         }
 
         if (this.stopListeningStyles) {
-            this.styleReceiver = undefined;
             this.stopListeningStyles();
         }
 
@@ -162,18 +161,16 @@ export default {
         getStyleReceiver() {
             let styleReceiver;
 
-            if (this.$refs.objectViewWrapper !== undefined && this.styleReceiver === undefined) {
-                styleReceiver = this.$refs.objectViewWrapper.querySelectorAll('.js-style-receiver')[0]
+            if (this.$refs.objectViewWrapper !== undefined) {
+                styleReceiver = this.$refs.objectViewWrapper.querySelector('.js-style-receiver')
                   || this.$refs.objectViewWrapper.querySelector(':first-child');
 
                 if (styleReceiver === null) {
                     styleReceiver = undefined;
                 }
-
-                this.styleReceiver = styleReceiver;
             }
 
-            return this.styleReceiver;
+            return styleReceiver;
         },
         invokeEditModeHandler(editMode) {
             let edit;
@@ -314,7 +311,6 @@ export default {
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
-                this.styleReceiver = undefined;
                 this.styleRuleManager = new StyleRuleManager((this.domainObject.configuration && this.domainObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this), true);
             } else {
                 this.styleRuleManager.updateObjectStyleConfig(this.domainObject.configuration && this.domainObject.configuration.objectStyles);
