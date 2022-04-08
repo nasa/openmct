@@ -19,31 +19,49 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ImageryView from './ImageryView';
 
-export default function ImageryViewProvider(openmct, options) {
-    const type = 'example.imagery';
+import Timelist from './Timelist.vue';
+import { TIMELIST_TYPE } from './constants';
+import Vue from 'vue';
 
-    function hasImageTelemetry(domainObject) {
-        const metadata = openmct.telemetry.getMetadata(domainObject);
-        if (!metadata) {
-            return false;
-        }
-
-        return metadata.valuesForHints(['image']).length > 0;
-    }
+export default function TimelistViewProvider(openmct) {
 
     return {
-        key: type,
-        name: 'Imagery Layout',
-        cssClass: 'icon-image',
-        canView: function (domainObject, objectPath) {
-            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
-
-            return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
+        key: 'timelist.view',
+        name: 'Time List',
+        cssClass: 'icon-timelist',
+        canView(domainObject) {
+            return domainObject.type === TIMELIST_TYPE;
         },
+
+        canEdit(domainObject) {
+            return domainObject.type === TIMELIST_TYPE;
+        },
+
         view: function (domainObject, objectPath) {
-            return new ImageryView(openmct, domainObject, objectPath, options);
+            let component;
+
+            return {
+                show: function (element) {
+
+                    component = new Vue({
+                        el: element,
+                        components: {
+                            Timelist
+                        },
+                        provide: {
+                            openmct,
+                            domainObject,
+                            path: objectPath
+                        },
+                        template: '<timelist></timelist>'
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
         }
     };
 }
