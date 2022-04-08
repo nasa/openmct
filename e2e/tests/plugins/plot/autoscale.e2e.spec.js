@@ -26,6 +26,13 @@ Test for plot autoscale.
 
 const { test, expect } = require('@playwright/test');
 
+test.use({
+    viewport: {
+        width: 1280,
+        height: 720
+    }
+});
+
 test.describe('ExportAsJSON', () => {
     test.only('autoscale off causes no error from undefined user range', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
