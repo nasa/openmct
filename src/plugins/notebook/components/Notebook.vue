@@ -35,6 +35,8 @@
         ref="searchResults"
         :domain-object="domainObject"
         :results="searchResults"
+        @cancelEdit="cancelTransaction"
+        @editingEntry="startTransaction"
         @changeSectionPage="changeSelectedSection"
         @updateEntries="updateEntries"
     />
@@ -140,6 +142,8 @@
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
+                    @cancelEdit="cancelTransaction"
+                    @editingEntry="startTransaction"
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
                 />
@@ -710,6 +714,8 @@ export default {
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
             mutateObject(this.openmct, this.domainObject, 'configuration.entries', notebookEntries);
+
+            this.saveTransaction();
         },
         getPageIdFromUrl() {
             return this.openmct.router.getParams().pageId;
@@ -746,6 +752,39 @@ export default {
             this.selectPage(pageId);
 
             this.syncUrlWithPageAndSection();
+        },
+        activeTransaction() {
+            return this.openmct.objects.getActiveTransaction();
+        },
+        startTransaction() {
+            if (!this.openmct.editor.isEditing()) {
+                this.openmct.objects.startTransaction();
+            }
+        },
+        saveTransaction() {
+            const transaction = this.activeTransaction();
+
+            if (!transaction || this.openmct.editor.isEditing()) {
+                return;
+            }
+
+            return transaction.commit()
+                .catch(error => {
+                    throw error;
+                }).finally(() => {
+                    this.openmct.objects.endTransaction();
+                });
+        },
+        cancelTransaction() {
+            if (!this.openmct.editor.isEditing()) {
+                const transaction = this.activeTransaction();
+                transaction.cancel()
+                    .catch(error => {
+                        throw error;
+                    }).finally(() => {
+                        this.openmct.objects.endTransaction();
+                    });
+            }
         }
     }
 };
