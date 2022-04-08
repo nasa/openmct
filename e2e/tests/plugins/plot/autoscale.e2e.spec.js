@@ -42,6 +42,11 @@ test.describe('ExportAsJSON', () => {
         await createSinewaveOverlayPlot(page);
 
         await testTicks(page, ['-10', '-5', '0', '5', '10']);
+        // TODO, snapshot testing not working, https://github.com/microsoft/playwright/issues/13414
+        // await Promise.all([
+        //     testTicks(page, ['-10', '-5', '0', '5', '10']),
+        //     page.screenshot().then((shot) => expect(shot).toMatchSnapshot('autoscale-canvas-prepan'))
+        // ]);
 
         const canvas = await page.locator('canvas').nth(1);
 
@@ -74,6 +79,11 @@ test.describe('ExportAsJSON', () => {
         expect(errorCount).toBe(0);
 
         await testTicks(page, ['0', '5', '10', '15']);
+        // TODO, snapshot testing not working, https://github.com/microsoft/playwright/issues/13414
+        // await Promise.all([
+        //     testTicks(page, ['0', '5', '10', '15']),
+        //     page.screenshot().then((shot) => expect(shot).toMatchSnapshot('autoscale-canvas-panned'))
+        // ]);
     });
 });
 
