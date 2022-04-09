@@ -24,7 +24,20 @@
 Test for plot autoscale.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test: _test, expect } = require('@playwright/test');
+
+// create a new `test` API that will not append platform details to snapshot
+// file names, only for the tests in this file, so that the same snapshots will
+// be used for all platforms.
+const test = _test.extend({
+    _autoSnapshotSuffix: [
+        async ({}, use, testInfo) => {
+            testInfo.snapshotSuffix = '';
+            await use();
+        },
+        { auto: true }
+    ]
+});
 
 test.use({
     viewport: {
@@ -37,7 +50,7 @@ test.describe('ExportAsJSON', () => {
     test.only('autoscale off causes no error from undefined user range', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
-        expect(true).toBe(true);
+        await setTimeRange(page);
 
         await createSinewaveOverlayPlot(page);
 
@@ -45,15 +58,15 @@ test.describe('ExportAsJSON', () => {
 
         await turnOffAutoscale(page);
 
-        // Make sure that after turning off autoscale, the user selected range values start at the same values the graph had.
-        await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
-        // TODO, snapshot testing not working, https://github.com/microsoft/playwright/issues/13414
-        // await Promise.all([
-        //     testTicks(page, ['-10', '-5', '0', '5', '10']),
-        //     page.screenshot().then((shot) => expect(shot).toMatchSnapshot('autoscale-canvas-prepan'))
-        // ]);
+        const canvas = page.locator('canvas').nth(1);
 
-        const canvas = await page.locator('canvas').nth(1);
+        // Make sure that after turning off autoscale, the user selected range values start at the same values the plot had prior.
+        await Promise.all([
+            testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']),
+            new Promise(r => setTimeout(r, 100))
+                .then(() => canvas.screenshot())
+                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-prepan.png', { maxDiffPixels: 40 }))
+        ]);
 
         let errorCount = 0;
 
@@ -85,14 +98,31 @@ test.describe('ExportAsJSON', () => {
         expect(errorCount).toBe(0);
 
         // Ensure the drag worked.
-        await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']);
-        // TODO, snapshot testing not working, https://github.com/microsoft/playwright/issues/13414
-        // await Promise.all([
-        //     testTicks(page, ['0', '5', '10', '15']),
-        //     page.screenshot().then((shot) => expect(shot).toMatchSnapshot('autoscale-canvas-panned'))
-        // ]);
+        await Promise.all([
+            testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']),
+            new Promise(r => setTimeout(r, 100))
+                .then(() => canvas.screenshot())
+                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-panned.png', { maxDiffPixels: 20 }))
+        ]);
     });
 });
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} start
+ * @param {string} end
+ */
+async function setTimeRange(page, start = '2022-03-29 22:00:00.000Z', end = '2022-03-29 22:00:30.000Z') {
+    // Set a specific time range for consistency, otherwise it will change
+    // on every test to a range based on the current time.
+
+    const timeInputs = page.locator('input.c-input--datetime');
+    await timeInputs.first().click();
+    await timeInputs.first().fill(start);
+
+    await timeInputs.nth(1).click();
+    await timeInputs.nth(1).fill(end);
+}
 
 /**
  * @param {import('@playwright/test').Page} page
