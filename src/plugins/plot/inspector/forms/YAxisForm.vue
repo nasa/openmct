@@ -186,9 +186,9 @@ export default {
             this.label = this.yAxis.get('label');
             this.autoscale = this.yAxis.get('autoscale');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
-            const range = this.yAxis.get('range');
-            this.rangeMin = range.min;
-            this.rangeMax = range.max;
+            const range = this.yAxis.get('range') ?? this.yAxis.get('displayRange');
+            this.rangeMin = range?.min;
+            this.rangeMax = range?.max;
         },
         updateForm(formKey) {
             let newVal;

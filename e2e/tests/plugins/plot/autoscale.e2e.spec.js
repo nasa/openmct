@@ -41,7 +41,12 @@ test.describe('ExportAsJSON', () => {
 
         await createSinewaveOverlayPlot(page);
 
-        await testTicks(page, ['-10', '-5', '0', '5', '10']);
+        await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
+
+        await turnOffAutoscale(page);
+
+        // Make sure that after turning off autoscale, the user selected range values start at the same values the graph had.
+        await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
         // TODO, snapshot testing not working, https://github.com/microsoft/playwright/issues/13414
         // await Promise.all([
         //     testTicks(page, ['-10', '-5', '0', '5', '10']),
@@ -75,10 +80,12 @@ test.describe('ExportAsJSON', () => {
 
         page.off('pageerror', onError);
 
-        // No error means the bug was fixed.
+        // There would have been an error at this point. So if there isn't, then
+        // we fixed it.
         expect(errorCount).toBe(0);
 
-        await testTicks(page, ['0', '5', '10', '15']);
+        // Ensure the drag worked.
+        await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']);
         // TODO, snapshot testing not working, https://github.com/microsoft/playwright/issues/13414
         // await Promise.all([
         //     testTicks(page, ['0', '5', '10', '15']),
@@ -121,7 +128,12 @@ async function createSinewaveOverlayPlot(page) {
         page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/a9268c6f-45cc-4bcd-a6a0-50ac4036e396?tc.mode=fixed&tc.startBound=1649305424163&tc.endBound=1649307224163&tc.timeSystem=utc&view=plot-overlay' }*/),
         page.locator('text=Unnamed Overlay Plot').first().click()
     ]);
+}
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function turnOffAutoscale(page) {
     // enter edit mode
     await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
 
@@ -136,9 +148,9 @@ async function createSinewaveOverlayPlot(page) {
 /**
  * @param {import('@playwright/test').Page} page
  */
-async function testTicks(page, values) {
+async function testYTicks(page, values) {
     const yTicks = page.locator('.gl-plot-y-tick-label');
-    let promises = [yTicks.count().then((c) => expect(c).toBe(values.length))];
+    let promises = [yTicks.count().then(c => expect(c).toBe(values.length))];
 
     for (let i = 0, l = values.length; i < l; i += 1) {
         promises.push(expect(yTicks.nth(i)).toHaveText(values[i])); // eslint-disable-line
