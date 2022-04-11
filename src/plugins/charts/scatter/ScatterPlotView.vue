@@ -178,7 +178,7 @@ export default {
                 this.openmct.notifications.alert(data.message);
             }
 
-            if (!this.domainObject.configuration.axes.xKey || !this.domainObject.configuration.axes.yKey) {
+            if (!this.domainObject.configuration.axes.xKey) {
                 return;
             }
 
@@ -190,22 +190,23 @@ export default {
                 const metadataKey = axisMetadata.source;
                 if (data[metadataKey]) {
                     valueForTimestamp.x = this.format(key, metadataKey, data);
-                    this.interpolateValues(valueForTimestamp, timestamp, 'x', 'y');
+                    // this.interpolateValues(valueForTimestamp, timestamp, 'x', 'y');
                 }
             } else if (this.domainObject.configuration.axes.yKey === key) {
-                const metadataKey = axisMetadata.source;
-                if (data[metadataKey]) {
-                    valueForTimestamp.y = this.format(key, metadataKey, data);
-                    this.interpolateValues(valueForTimestamp, timestamp, 'y', 'x');
-                }
+                // const metadataKey = axisMetadata.source;
+                // if (data[metadataKey]) {
+                //     valueForTimestamp.y = this.format(key, metadataKey, data);
+                //     this.interpolateValues(valueForTimestamp, timestamp, 'y', 'x');
+                // }
             }
 
             this.valuesByTimestamp[timestamp] = valueForTimestamp;
         },
         updateTrace() {
             const xAndyValues = Object.values(this.valuesByTimestamp);
-            const xValues = xAndyValues.map(value => value.x);
-            const yValues = xAndyValues.map(value => value.y);
+            const xValues = Object.keys(this.valuesByTimestamp);
+            const yValues = xAndyValues.map(value => value.x);
+            // const xValues = xAndyValues.map(value => value.time);
             const xAxisMetadata = this.getAxisMetadata(this.telemetryObjects[this.domainObject.configuration.axes.xKey]);
             let yAxisMetadata = {};
             if (this.domainObject.configuration.axes.yKey) {
@@ -219,7 +220,7 @@ export default {
                 y: yValues,
                 text: yValues.map(String),
                 xAxisMetadata: xAxisMetadata,
-                yAxisMetadata: yAxisMetadata,
+                yAxisMetadata: xAxisMetadata,
                 type: 'scatter',
                 mode: 'markers',
                 marker: {
