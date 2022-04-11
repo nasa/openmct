@@ -112,7 +112,7 @@ describe("The create action plugin", () => {
                         .then(object => {
                             expect(object.type).toEqual(type);
                             expect(object.location).toEqual(openmct.objects.makeKeyString(parentObject.identifier));
-    
+
                             done();
                         });
                 }
