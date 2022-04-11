@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Model from "./Model";
+import Model from './Model';
 
 /**
  * @extends {Model<XAxisModelType, XAxisModelOptions>}
@@ -49,11 +49,11 @@ export default class XAxisModel extends Model {
             }
         });
 
-        this.on('change:frozen', ((frozen) => {
+        this.on('change:frozen', (frozen) => {
             if (!frozen) {
                 this.set('range', this.get('range'));
             }
-        }));
+        });
 
         if (this.get('range')) {
             this.set('range', this.get('range'));
@@ -126,7 +126,7 @@ export default class XAxisModel extends Model {
 
 /**
 @typedef {import("./Model").ModelType<{
-    range: NumberRange
+    range?: NumberRange
     displayRange: NumberRange
     frozen: boolean
     label: string
