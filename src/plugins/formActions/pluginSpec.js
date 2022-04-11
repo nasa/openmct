@@ -101,12 +101,10 @@ describe('EditPropertiesAction plugin', () => {
             composition: []
         };
 
-        editPropertiesAction.invoke([domainObject])
-            .catch(() => {
-                done();
-            });
+        const deBouncedFormChange = debounce(handleFormPropertyChange, 500);
+        openmct.forms.on('onFormPropertyChange', deBouncedFormChange);
 
-        setTimeout(() => {
+        function handleFormPropertyChange(data) {
             const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             expect(title.value).toEqual(domainObject.name);
@@ -120,7 +118,14 @@ describe('EditPropertiesAction plugin', () => {
 
             const clickEvent = createMouseEvent('click');
             buttons[1].dispatchEvent(clickEvent);
-        }, 1000);
+
+            openmct.forms.off('onFormPropertyChange', deBouncedFormChange);
+        }
+
+        editPropertiesAction.invoke([domainObject])
+            .catch(() => {
+                done();
+            });
     });
 
     it('edit properties action saves changes', (done) => {
@@ -151,34 +156,40 @@ describe('EditPropertiesAction plugin', () => {
         const deBouncedCallback = debounce(callback, 300);
         unObserve = openmct.objects.observe(domainObject, '*', deBouncedCallback);
 
-        editPropertiesAction.invoke([domainObject]);
+        let changed = false;
+        const deBouncedFormChange = debounce(handleFormPropertyChange, 500);
+        openmct.forms.on('onFormPropertyChange', deBouncedFormChange);
 
-        setTimeout(() => {
-            // wait for vue to assign given values
+        function handleFormPropertyChange(data) {
             const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
-            expect(title.value).toEqual(domainObject.name);
-
             const notes = form.querySelector('textArea');
-            expect(notes.value).toEqual(domainObject.notes);
 
             const buttons = form.querySelectorAll('button');
             expect(buttons[0].textContent.trim()).toEqual('OK');
             expect(buttons[1].textContent.trim()).toEqual('Cancel');
 
-            // change input field value and dispatch event for it
-            title.focus();
-            title.value = newName;
-            title.dispatchEvent(new Event('input'));
-            title.blur();
+            if (!changed) {
+                expect(title.value).toEqual(domainObject.name);
+                expect(notes.value).toEqual(domainObject.notes);
 
-            // wait for vue to reflect on value change
-            setTimeout(() => {
+                // change input field value and dispatch event for it
+                title.focus();
+                title.value = newName;
+                title.dispatchEvent(new Event('input'));
+                title.blur();
+
+                changed = true;
+            } else {
                 // click ok to save form changes
                 const clickEvent = createMouseEvent('click');
                 buttons[0].dispatchEvent(clickEvent);
-            });
-        }, 1000);
+
+                openmct.forms.off('onFormPropertyChange', deBouncedFormChange);
+            }
+        }
+
+        editPropertiesAction.invoke([domainObject]);
     });
 
     it('edit properties action discards changes', (done) => {
