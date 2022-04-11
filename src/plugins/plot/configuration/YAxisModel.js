@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
 import Model from './Model';
 
 /**
@@ -63,14 +62,14 @@ export default class YAxisModel extends Model {
      */
     listenToSeriesCollection(seriesCollection) {
         this.seriesCollection = seriesCollection;
-        this.listenTo(this.seriesCollection, 'add', (series => {
+        this.listenTo(this.seriesCollection, 'add', series => {
             this.trackSeries(series);
             this.updateFromSeries(this.seriesCollection);
-        }), this);
-        this.listenTo(this.seriesCollection, 'remove', (series => {
+        }, this);
+        this.listenTo(this.seriesCollection, 'remove', series => {
             this.untrackSeries(series);
             this.updateFromSeries(this.seriesCollection);
-        }), this);
+        }, this);
         this.seriesCollection.forEach(this.trackSeries, this);
         this.updateFromSeries(this.seriesCollection);
     }
@@ -140,11 +139,11 @@ export default class YAxisModel extends Model {
     }
     resetStats() {
         this.unset('stats');
-        this.seriesCollection.forEach(function (series) {
+        this.seriesCollection.forEach(series => {
             if (series.has('stats')) {
                 this.updateStats(series.get('stats'));
             }
-        }, this);
+        });
     }
     /**
      * @param {import('./PlotSeries').default} series
@@ -170,7 +169,18 @@ export default class YAxisModel extends Model {
         if (autoscale && this.has('stats')) {
             this.set('displayRange', this.applyPadding(this.get('stats')));
         } else {
-            this.set('displayRange', this.get('range'));
+            const range = this.get('range');
+
+            if (range) {
+                // If we already have a user-defined range, make sure it maps to the
+                // range we'll actually use for the ticks.
+                this.set('displayRange', range);
+            } else {
+                // Otherwise use the last known displayRange as the initial
+                // values for the user-defined range, so that we don't end up
+                // with any error from an undefined user range.
+                this.set('range', this.get('displayRange'));
+            }
         }
     }
     /**
@@ -179,7 +189,7 @@ export default class YAxisModel extends Model {
      */
     updateFromSeries(seriesCollection) {
         const plotModel = this.plot.get('domainObject');
-        const label = _.get(plotModel, 'configuration.yAxis.label');
+        const label = plotModel?.configuration?.yAxis?.label;
         const sampleSeries = seriesCollection.first();
         if (!sampleSeries) {
             if (!label) {
@@ -195,19 +205,19 @@ export default class YAxisModel extends Model {
         this.set('format', yFormat.format.bind(yFormat));
         this.set('values', yMetadata.values);
         if (!label) {
-            const labelName = seriesCollection.map(function (s) {
-                return s.metadata ? s.metadata.value(s.get('yKey')).name : '';
-            }).reduce(function (a, b) {
-                if (a === undefined) {
-                    return b;
-                }
+            const labelName = seriesCollection
+                .map(s => (s.metadata ? s.metadata.value(s.get('yKey')).name : ''))
+                .reduce((a, b) => {
+                    if (a === undefined) {
+                        return b;
+                    }
 
-                if (a === b) {
-                    return a;
-                }
+                    if (a === b) {
+                        return a;
+                    }
 
-                return '';
-            }, undefined);
+                    return '';
+                }, undefined);
 
             if (labelName) {
                 this.set('label', labelName);
@@ -215,19 +225,19 @@ export default class YAxisModel extends Model {
                 return;
             }
 
-            const labelUnits = seriesCollection.map(function (s) {
-                return s.metadata ? s.metadata.value(s.get('yKey')).units : '';
-            }).reduce(function (a, b) {
-                if (a === undefined) {
-                    return b;
-                }
+            const labelUnits = seriesCollection
+                .map(s => (s.metadata ? s.metadata.value(s.get('yKey')).units : ''))
+                .reduce((a, b) => {
+                    if (a === undefined) {
+                        return b;
+                    }
 
-                if (a === b) {
-                    return a;
-                }
+                    if (a === b) {
+                        return a;
+                    }
 
-                return '';
-            }, undefined);
+                    return '';
+                }, undefined);
 
             if (labelUnits) {
                 this.set('label', labelUnits);
@@ -239,14 +249,17 @@ export default class YAxisModel extends Model {
     /**
      * @override
      * @param {import('./Model').ModelOptions<YAxisModelType, YAxisModelOptions>} options
-     * @returns {YAxisModelType}
+     * @returns {Partial<YAxisModelType>}
      */
     defaultModel(options) {
-        // @ts-ignore incomplete YAxisModelType object used for default value.
         return {
             frozen: false,
             autoscale: true,
             autoscalePadding: 0.1
+
+            // 'range' is not specified here, it is undefined at first. When the
+            // user turns off autoscale, the current 'displayRange' is used for
+            // the initial value of 'range'.
         };
     }
 }
@@ -257,7 +270,7 @@ export default class YAxisModel extends Model {
 @typedef {import('./XAxisModel').AxisModelType & {
     autoscale: boolean
     autoscalePadding: number
-    stats: import('./XAxisModel').NumberRange
+    stats?: import('./XAxisModel').NumberRange
     values: Array<TODO>
 }} YAxisModelType
 */
