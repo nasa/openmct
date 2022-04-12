@@ -61,7 +61,7 @@ describe('the plugin', () => {
     it('correctly calculates fps', async () => {
         const frames = await countFramesPromise;
         expect(frames).toBe(140);
-        expect(['60 fps', '120 fps']).toContain(performanceIndicator.text());
+        expect(['59 fps', '60 fps', '61 fps', '119 fps', '120 fps', '121 fps']).toContain(performanceIndicator.text());
     });
 
     function countFrames() {
