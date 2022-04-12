@@ -58,10 +58,10 @@ describe('the plugin', () => {
         expect(performanceIndicator).toBeDefined();
     });
 
-    fit('correctly calculates fps', () => {
-        return countFramesPromise.then(frames => {
-            expect(['60 fps', '120 fps']).toContain(`${frames} fps`);
-        });
+    it('correctly calculates fps', async () => {
+        const frames = await countFramesPromise;
+        expect(frames).toBe(140);
+        expect(['60 fps', '120 fps']).toContain(performanceIndicator.text());
     });
 
     function countFrames() {
@@ -69,7 +69,7 @@ describe('the plugin', () => {
 
         return new Promise(resolve => {
             requestAnimationFrame(function incrementCount() {
-                if (++frames === 60) {
+                if (++frames === 140) {
                     resolve(frames);
                 } else {
                     requestAnimationFrame(incrementCount);
