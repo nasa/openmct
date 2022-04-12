@@ -334,9 +334,9 @@ export class TelemetryCollection extends EventEmitter {
             this.timeKey = domain.source;
         } else {
             this._warn(ERRORS.TIMESYSTEM_KEY);
-            this.openmct.notifications.alert(ERRORS.TIMESYSTEM_KEY_NOTIFICATION)
+            this.openmct.notifications.alert(ERRORS.TIMESYSTEM_KEY_NOTIFICATION);
         }
-        
+
         let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
