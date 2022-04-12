@@ -102,7 +102,7 @@ test.describe('ExportAsJSON', () => {
             testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']),
             new Promise(r => setTimeout(r, 100))
                 .then(() => canvas.screenshot())
-                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-panned.png', { maxDiffPixels: 20 }))
+                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-panned.png', { maxDiffPixels: 40 }))
         ]);
     });
 });
