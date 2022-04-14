@@ -77,7 +77,8 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
-    './timelist/plugin'
+    './timelist/plugin',
+    './faultManagement/FaultManagementPlugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -135,7 +136,8 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
-    TimeList
+    TimeList,
+    FaultManagementPlugin
 ) {
     const plugins = {};
 
@@ -178,6 +180,7 @@ define([
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FaultManagementPlugin = FaultManagementPlugin.default;
     plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
