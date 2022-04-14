@@ -47,7 +47,7 @@ test.use({
 });
 
 test.describe('ExportAsJSON', () => {
-    test.only('autoscale off causes no error from undefined user range', async ({ page }) => {
+    test('autoscale off causes no error from undefined user range', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
         await setTimeRange(page);
