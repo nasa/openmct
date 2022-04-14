@@ -27,9 +27,10 @@
      }"
 >
 
-    <div v-if="singleSeries"
-         class="gl-plot-label gl-plot-y-label"
-         :class="{'icon-gear': (yKeyOptions.length > 1)}"
+    <div
+        v-if="canShowYAxisLabel"
+        class="gl-plot-label gl-plot-y-label"
+        :class="{'icon-gear': (yKeyOptions.length > 1 && singleSeries)}"
     >{{ yAxisLabel }}
     </div>
 
@@ -71,6 +72,12 @@ export default {
                 return true;
             }
         },
+        hasSameRangeValue: {
+            type: Boolean,
+            default() {
+                return true;
+            }
+        },
         seriesModel: {
             type: Object,
             default() {
@@ -89,6 +96,11 @@ export default {
             yAxisLabel: 'none',
             loaded: false
         };
+    },
+    computed: {
+        canShowYAxisLabel() {
+            return this.singleSeries === true || this.hasSameRangeValue === true;
+        }
     },
     mounted() {
         this.yAxis = this.getYAxisFromConfig();

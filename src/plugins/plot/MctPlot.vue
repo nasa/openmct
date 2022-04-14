@@ -223,7 +223,8 @@ export default {
             loaded: false,
             isTimeOutOfSync: false,
             showLimitLineLabels: undefined,
-            isFrozenOnMouseDown: false
+            isFrozenOnMouseDown: false,
+            hasSameRangeValue: true
         };
     },
     computed: {
@@ -321,6 +322,7 @@ export default {
                 this.setDisplayRange(series, xKey);
             }, this);
             this.listenTo(series, 'change:yKey', () => {
+                this.checkSameRangeValue();
                 this.loadSeriesData(series);
             }, this);
 
@@ -328,10 +330,18 @@ export default {
                 this.loadSeriesData(series);
             }, this);
 
+            this.checkSameRangeValue();
             this.loadSeriesData(series);
         },
 
+        checkSameRangeValue() {
+            this.hasSameRangeValue = this.seriesModels.every((model) => {
+                return model.get('yKey') === this.seriesModels[0].get('yKey');
+            });
+        },
+
         removeSeries(plotSeries) {
+            this.checkSameRangeValue();
             this.stopListening(plotSeries);
         },
 
