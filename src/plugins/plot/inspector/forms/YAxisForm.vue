@@ -150,19 +150,16 @@ export default {
                 range: {
                     objectPath: 'configuration.yAxis.range',
                     coerce: function coerceRange(range) {
-                        if (!range) {
-                            return {
-                                min: 0,
-                                max: 0
-                            };
-                        }
+                        const newRange = {
+                            min: -1,
+                            max: 1
+                        };
 
-                        const newRange = {};
-                        if (typeof range.min !== 'undefined' && range.min !== null) {
+                        if (range && typeof range.min !== 'undefined' && range.min !== null) {
                             newRange.min = Number(range.min);
                         }
 
-                        if (typeof range.max !== 'undefined' && range.max !== null) {
+                        if (range && typeof range.max !== 'undefined' && range.max !== null) {
                             newRange.max = Number(range.max);
                         }
 

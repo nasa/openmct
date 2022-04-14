@@ -75,11 +75,6 @@ export default class YAxisModel extends Model {
         this.seriesCollection.forEach(this.trackSeries, this);
         this.updateFromSeries(this.seriesCollection);
     }
-    updateDisplayRange(range) {
-        if (!this.get('autoscale')) {
-            this.set('displayRange', range);
-        }
-    }
     toggleFreeze(frozen) {
         if (!frozen) {
             this.toggleAutoscale(this.get('autoscale'));
@@ -167,35 +162,82 @@ export default class YAxisModel extends Model {
         this.resetStats();
         this.updateFromSeries(this.seriesCollection);
     }
+
+    // TODO get from UI, positive number above 0. This might be a way to
+    // solve the smooshed ticks on zoom out. Need to experiment with it.
+    scale = 1;
+
+    /**
+     * This is called in order to map the user-provided `range` to the
+     * `displayRange` that we actually use for plot display.
+     *
+     * @param {import('./XAxisModel').NumberRange} range
+     */
+    updateDisplayRange(range) {
+        if (this.get('autoscale')) {
+            return;
+        }
+
+        const _range = { ...range };
+
+        if (this.get('logMode')) {
+            _range.min = this.scale * symlog(range.min, 10);
+            _range.max = this.scale * symlog(range.max, 10);
+        }
+
+        this.set('displayRange', _range);
+    }
+
+    /**
+     * @param {boolean} autoscale
+     */
     toggleAutoscale(autoscale) {
         if (autoscale && this.has('stats')) {
             this.set('displayRange', this.applyPadding(this.get('stats')));
-        } else {
-            const range = this.get('range');
 
-            if (range) {
-                // If we already have a user-defined range, make sure it maps to the
-                // range we'll actually use for the ticks.
-                this.set('displayRange', range);
-            } else {
-                // Otherwise use the last known displayRange as the initial
-                // values for the user-defined range, so that we don't end up
-                // with any error from an undefined user range.
-                this.set('range', this.get('displayRange'));
+            return;
+        }
+
+        const range = this.get('range');
+
+        if (range) {
+            // If we already have a user-defined range, make sure it maps to the
+            // range we'll actually use for the ticks.
+
+            const _range = { ...range };
+
+            if (this.get('logMode')) {
+                _range.min = this.scale * symlog(range.min, 10);
+                _range.max = this.scale * symlog(range.max, 10);
             }
+
+            this.set('displayRange', _range);
+        } else {
+            // Otherwise use the last known displayRange as the initial
+            // values for the user-defined range, so that we don't end up
+            // with any error from an undefined user range.
+
+            const _range = this.get('displayRange');
+
+            if (this.get('logMode')) {
+                _range.min = antisymlog(_range.min / this.scale, 10);
+                _range.max = antisymlog(_range.max / this.scale, 10);
+            }
+
+            this.set('range', _range);
         }
     }
+
     /** @param {boolean} logMode */
     onLogModeChange(logMode) {
         const range = this.get('displayRange');
-        const scale = 1; // TODO get from UI, positive number above 0
 
         if (logMode) {
-            range.min = scale * symlog(range.min, 10);
-            range.max = scale * symlog(range.max, 10);
+            range.min = this.scale * symlog(range.min, 10);
+            range.max = this.scale * symlog(range.max, 10);
         } else {
-            range.min = antisymlog(range.min / scale, 10);
-            range.max = antisymlog(range.max / scale, 10);
+            range.min = antisymlog(range.min / this.scale, 10);
+            range.max = antisymlog(range.max / this.scale, 10);
         }
 
         this.set('displayRange', range);
@@ -229,10 +271,9 @@ export default class YAxisModel extends Model {
         const yKey = sampleSeries.get('yKey');
         const yMetadata = sampleSeries.metadata.value(yKey);
         const yFormat = sampleSeries.formats[yKey];
-        const scale = 1; // TODO get from UI, positive number above 0
 
         if (this.get('logMode')) {
-            this.set('format', (n) => yFormat.format(antisymlog(n / scale, 10)));
+            this.set('format', (n) => yFormat.format(antisymlog(n / this.scale, 10)));
         } else {
             this.set('format', (n) => yFormat.format(n));
         }
