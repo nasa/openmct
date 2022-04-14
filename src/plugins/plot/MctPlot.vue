@@ -499,7 +499,7 @@ export default {
         },
 
         setDisplayRange(series, xKey) {
-            if (this.config.series.length !== 1) {
+            if (this.config.series.models.length !== 1) {
                 return;
             }
 
