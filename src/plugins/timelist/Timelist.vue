@@ -229,7 +229,7 @@ export default {
                 } else if (durationIndex === 1) {
                     return duration * 60 * 1000;
                 } else if (durationIndex === 2) {
-                    return duration * 60 * 24 * 1000;
+                    return duration * 60 * 60 * 1000;
                 }
             }
         },
