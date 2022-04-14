@@ -172,6 +172,7 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
+        performance.mark('begin telemetry processing')
         if (telemetryData === undefined) {
             return;
         }
