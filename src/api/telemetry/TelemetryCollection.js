@@ -71,6 +71,7 @@ export class TelemetryCollection extends EventEmitter {
         this._watchTimeSystem();
 
         this._requestHistoricalTelemetry();
+        // comment out this._initiateSubscriptionTelemetry(); for historical only
         this._initiateSubscriptionTelemetry();
 
         this.loaded = true;
@@ -172,6 +173,7 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
+        performance.mark('start telemetry processing');
         if (telemetryData === undefined) {
             return;
         }

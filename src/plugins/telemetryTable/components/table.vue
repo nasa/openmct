@@ -669,6 +669,7 @@ export default {
             this.setHeight();
         },
         rowsAdded(rows) {
+            performance.mark('end telemetry processing');
             this.setHeight();
 
             let sizingRow;

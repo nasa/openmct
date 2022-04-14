@@ -121,6 +121,7 @@
 
         var data = [];
 
+        // modify 5000 to set the max data size of the telemetry request for SWG
         for (; nextStep < end && data.length < 5000; nextStep += step) {
             data.push({
                 utc: nextStep,
