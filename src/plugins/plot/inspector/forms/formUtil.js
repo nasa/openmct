@@ -15,15 +15,5 @@ export function validate(value, model, validateFunc) {
 }
 
 export function objectPath(path) {
-    if (path) {
-        if (typeof path !== "function") {
-            const staticObjectPath = path;
-
-            return function (object, model) {
-                return staticObjectPath;
-            };
-        }
-
-        return path;
-    }
+    return path && typeof path !== 'function' ? () => path : path;
 }
