@@ -37,7 +37,7 @@
     "imports-loader": "0.8.0",
     "jasmine-core": "4.0.1",
     "jsdoc": "3.5.5",
-    "karma": "6.3.15",
+    "karma": "6.3.17",
     "karma-chrome-launcher": "3.1.1",
     "karma-cli": "2.0.0",
     "karma-coverage": "2.1.1",
