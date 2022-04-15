@@ -335,9 +335,9 @@ export default {
         getTimestampForDatum(datum, key, telemetryObject) {
             const timeSystemKey = this.timeContext.timeSystem().key;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            let metadataValue = metadata.value(key) || { format: key };
+            let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
 
-            return this.parse(metadataValue, timeSystemKey, datum);
+            return this.parse(key, metadataValue, datum);
         },
         format(telemetryObjectKey, metadataKey, data) {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];
