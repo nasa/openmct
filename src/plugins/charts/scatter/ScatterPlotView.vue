@@ -139,14 +139,15 @@ export default {
                 return;
             }
 
-            this.telemetryCollections[key] = this.openmct.telemetry
-                .requestCollection(telemetryObject);
+            // this.telemetryCollections[key] = this.openmct.telemetry
+            //     .requestCollection(telemetryObject);
 
             const telemetryProcessor = this.getTelemetryProcessor(key);
+            this.openmct.telemetry.request(telemetryObject).then(telemetryProcessor);
             // this.telemetryCollections[key].on('remove', telemetryRemover);
-            this.telemetryCollections[key].on('add', telemetryProcessor);
-            // this.telemetryCollections[key].on('clear', this.clearData);
-            this.telemetryCollections[key].load();
+            // this.telemetryCollections[key].on('add', telemetryProcessor);
+            // // this.telemetryCollections[key].on('clear', this.clearData);
+            // this.telemetryCollections[key].load();
         },
         removeTelemetryCollection(keyString) {
             if (this.telemetryCollections[keyString]) {
