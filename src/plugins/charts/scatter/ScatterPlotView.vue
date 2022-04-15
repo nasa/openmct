@@ -182,7 +182,7 @@ export default {
                 return;
             }
 
-            const timestamp = this.getTimestampForDatum(data, key);
+            const timestamp = this.getTimestampForDatum(data, key, telemetryObject);
             let valueForTimestamp = this.valuesByTimestamp[timestamp] || {};
 
             if (this.domainObject.configuration.axes.xKey === key) {
@@ -332,10 +332,12 @@ export default {
                 count++;
             }
         },
-        getTimestampForDatum(datum, key) {
+        getTimestampForDatum(datum, key, telemetryObject) {
             const timeSystemKey = this.timeContext.timeSystem().key;
+            const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            let metadataValue = metadata.value(key) || { format: key };
 
-            return this.parse(key, timeSystemKey, datum);
+            return this.parse(metadataValue, timeSystemKey, datum);
         },
         format(telemetryObjectKey, metadataKey, data) {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];
