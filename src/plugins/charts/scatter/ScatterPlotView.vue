@@ -91,9 +91,7 @@ export default {
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
-            if (key === this.domainObject.configuration.axes.xKey || key === this.domainObject.configuration.axes.yKey) {
-                this.addTelemetryCollection(key);
-            }
+            this.addTelemetryCollection(key);
         },
         getTelemetryProcessor(keyString) {
             return (telemetry) => {
@@ -107,7 +105,7 @@ export default {
                 telemetry.forEach(datum => {
                     this.addDataToGraph(telemetryObject, datum, axisMetadata);
                 });
-                this.updateTrace();
+                this.updateTrace(telemetryObject);
             };
         },
         getAxisMetadata(telemetryObject) {
@@ -116,7 +114,7 @@ export default {
                 return {};
             }
 
-            return metadata.valuesForHints(['range'])[0];
+            return metadata.valuesForHints(['range']);
         },
         loadComposition() {
             this.composition = this.openmct.composition.get(this.domainObject);
@@ -125,17 +123,15 @@ export default {
             this.composition.load();
         },
         reloadTelemetry() {
-            const axes = this.domainObject.configuration.axes;
-            const xKey = axes.xKey;
-            const yKey = axes.yKey;
             Object.keys(this.telemetryCollections).forEach(key => {
                 this.removeTelemetryCollection(key);
             });
 
             this.valuesByTimestamp = {};
 
-            this.addTelemetryCollection(xKey);
-            this.addTelemetryCollection(yKey);
+            Object.keys(this.telemetryObjects).forEach(key => {
+                this.addTelemetryCollection(key);
+            });
         },
         addTelemetryCollection(key) {
             const telemetryObject = this.telemetryObjects[key];
@@ -167,9 +163,6 @@ export default {
             }
 
             this.removeTelemetryCollection(key);
-            if (this.domainObject.configuration.axes.xKey === key || this.domainObject.configuration.axes.yKey === key) {
-                this.reloadTelemetry();
-            }
         },
         addDataToGraph(telemetryObject, data, axisMetadata) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -178,39 +171,34 @@ export default {
                 this.openmct.notifications.alert(data.message);
             }
 
-            if (!this.domainObject.configuration.axes.xKey) {
+            if (!this.domainObject.configuration.axes.xKey || !this.domainObject.configuration.axes.yKey) {
                 return;
             }
 
             const timestamp = this.getTimestampForDatum(data, key, telemetryObject);
             let valueForTimestamp = this.valuesByTimestamp[timestamp] || {};
 
-            if (this.domainObject.configuration.axes.xKey === key) {
-                //populate x values
-                const metadataKey = axisMetadata.source;
-                if (data[metadataKey]) {
-                    valueForTimestamp.x = this.format(key, metadataKey, data);
-                    // this.interpolateValues(valueForTimestamp, timestamp, 'x', 'y');
-                }
-            } else if (this.domainObject.configuration.axes.yKey === key) {
-                // const metadataKey = axisMetadata.source;
-                // if (data[metadataKey]) {
-                //     valueForTimestamp.y = this.format(key, metadataKey, data);
-                //     this.interpolateValues(valueForTimestamp, timestamp, 'y', 'x');
-                // }
+            //populate x values
+            let metadataKey = this.domainObject.configuration.axes.xKey;
+            if (data[metadataKey]) {
+                valueForTimestamp.x = this.format(key, metadataKey, data);
+            }
+
+            metadataKey = this.domainObject.configuration.axes.yKey;
+            if (data[metadataKey]) {
+                valueForTimestamp.y = this.format(key, metadataKey, data);
             }
 
             this.valuesByTimestamp[timestamp] = valueForTimestamp;
         },
-        updateTrace() {
+        updateTrace(telemetryObject) {
             const xAndyValues = Object.values(this.valuesByTimestamp);
-            const xValues = Object.keys(this.valuesByTimestamp);
-            const yValues = xAndyValues.map(value => value.x);
-            // const xValues = xAndyValues.map(value => value.time);
-            const xAxisMetadata = this.getAxisMetadata(this.telemetryObjects[this.domainObject.configuration.axes.xKey]);
+            const xValues = xAndyValues.map(value => value.x);
+            const yValues = xAndyValues.map(value => value.y);
+            const xAxisMetadata = this.getAxisMetadata(telemetryObject).find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
             let yAxisMetadata = {};
             if (this.domainObject.configuration.axes.yKey) {
-                yAxisMetadata = this.getAxisMetadata(this.telemetryObjects[this.domainObject.configuration.axes.yKey]);
+                yAxisMetadata = this.getAxisMetadata(telemetryObject).find(metadata => metadata.source === this.domainObject.configuration.axes.yKey);
             }
 
             let trace = {
@@ -220,7 +208,7 @@ export default {
                 y: yValues,
                 text: yValues.map(String),
                 xAxisMetadata: xAxisMetadata,
-                yAxisMetadata: xAxisMetadata,
+                yAxisMetadata: yAxisMetadata,
                 type: 'scatter',
                 mode: 'markers',
                 marker: {
@@ -244,93 +232,6 @@ export default {
             }
 
             this.trace = [trace];
-        },
-        interpolateValues(valueForTimestamp, timestamp, adjustProp, interpolateProp) {
-            if (this.domainObject.configuration.useInterpolation !== true) {
-                valueForTimestamp[`${adjustProp}Interpolated`] = false;
-
-                return;
-            }
-
-            this.adjustInterpolatedValues(timestamp, adjustProp, valueForTimestamp[adjustProp]);
-            if (valueForTimestamp[interpolateProp] === undefined) {
-                //find nearest y
-                valueForTimestamp[interpolateProp] = this.getInterpolatedValue(timestamp, interpolateProp);
-                valueForTimestamp[`${interpolateProp}Interpolated`] = true;
-            }
-        },
-        getInterpolatedValue(timestamp, prop) {
-            const keys = Object.keys(this.valuesByTimestamp);
-            const keysLength = keys.length;
-            const values = Object.values(this.valuesByTimestamp);
-            let index = keys.findIndex(item => {
-                return parseInt(item, 10) === timestamp;
-            });
-            if (index < 0) {
-                index = keysLength - 1;
-            }
-
-            let found;
-
-            let count = 1;
-            let done = false;
-            while (found === undefined && !done && count < MAX_INTERPOLATE) {
-                const previous = index - count;
-                const next = index + count;
-                if (previous >= 0 && values[previous] !== undefined && values[previous][prop] !== null) {
-                    found = values[previous][prop];
-                } else if (next < keysLength && values[next] !== undefined && values[next][prop] !== null) {
-                    found = values[next][prop];
-                }
-
-                if (previous < 0 && next >= keysLength) {
-                    done = true;
-                }
-
-                count++;
-            }
-
-            return found === undefined ? null : found;
-        },
-        adjustInterpolatedValues(timestamp, prop, trueValue) {
-            const keys = Object.keys(this.valuesByTimestamp);
-            const keysLength = keys.length;
-            const values = Object.values(this.valuesByTimestamp);
-            let index = keys.findIndex(item => {
-                return parseInt(item, 10) === timestamp;
-            });
-            if (index < 0) {
-                index = keysLength;
-            }
-
-            let count = 1;
-            let prevDone = false;
-            let prevInterpolated = false;
-            let nextDone = false;
-            let nextInterpolated = false;
-            while ((!prevDone || !nextDone) && count < MAX_INTERPOLATE) {
-                const previous = index - count;
-                const next = index + count;
-                if (prevDone === false && previous >= 0 && values[previous] !== undefined && values[previous][`${prop}Interpolated`] === true) {
-                    this.valuesByTimestamp[keys[previous]][prop] = trueValue;
-                    this.valuesByTimestamp[keys[previous]][`${prop}Interpolated`] = false;
-                    prevInterpolated = true;
-                } else if (prevInterpolated === true && values[previous] !== undefined && values[previous][`${prop}Interpolated`] === false) {
-                    //stop when you find the first true value
-                    prevDone = true;
-                }
-
-                if (nextDone === false && next < keysLength && values[next] !== undefined && values[next][`${prop}Interpolated`] === true) {
-                    this.valuesByTimestamp[keys[next]][prop] = trueValue;
-                    this.valuesByTimestamp[keys[next]][`${prop}Interpolated`] = false;
-                    nextInterpolated = true;
-                } else if (nextInterpolated === true && values[next] !== undefined && values[next][`${prop}Interpolated`] === false) {
-                    //stop when you find the first true value
-                    nextDone = true;
-                }
-
-                count++;
-            }
         },
         getTimestampForDatum(datum, key, telemetryObject) {
             const timeSystemKey = this.timeContext.timeSystem().key;

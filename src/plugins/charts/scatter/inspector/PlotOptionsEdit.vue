@@ -174,66 +174,58 @@ export default {
         setupOptions() {
             this.xKeyOptions = [];
             this.yKeyOptions = [];
+            if (this.plotSeries.length <= 0) {
+                return;
+            }
+
             let update = false;
-            this.plotSeries.forEach((series) => {
-                const id = this.openmct.objects.makeKeyString(series.identifier);
+            const series = this.plotSeries[0];
+            const metadataValues = this.openmct.telemetry.getMetadata(series).valuesForHints(['range']);
+            metadataValues.forEach((metadataValue) => {
                 this.xKeyOptions.push({
-                    name: series.name,
-                    value: id
+                    name: metadataValue.name || metadataValue.key,
+                    value: metadataValue.source || metadataValue.key
                 });
                 this.yKeyOptions.push({
-                    name: series.name,
-                    value: id
+                    name: metadataValue.name || metadataValue.key,
+                    value: metadataValue.source || metadataValue.key
                 });
             });
-            if (this.plotSeries.length) {
-                let xKeyOptionIndex;
-                let yKeyOptionIndex;
 
-                if (this.domainObject.configuration.axes.xKey) {
-                    xKeyOptionIndex = this.xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
-                    if (xKeyOptionIndex > -1) {
-                        this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+            let xKeyOptionIndex;
+            let yKeyOptionIndex;
+
+            if (this.domainObject.configuration.axes.xKey) {
+                xKeyOptionIndex = this.xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
+                if (xKeyOptionIndex > -1) {
+                    this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                }
+            } else {
+                if (this.xKey === undefined) {
+                    update = true;
+                    xKeyOptionIndex = 0;
+                    this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                }
+            }
+
+            if (metadataValues.length > 1) {
+                if (this.domainObject.configuration.axes.yKey) {
+                    yKeyOptionIndex = this.yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
+                    if (yKeyOptionIndex > -1 && yKeyOptionIndex !== xKeyOptionIndex) {
+                        this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
                     }
                 } else {
-                    if (this.xKey === undefined) {
+                    if (this.yKey === undefined) {
                         update = true;
-                        xKeyOptionIndex = 0;
-                        this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                        yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
+                        this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
                     }
                 }
 
-                if (this.plotSeries.length > 1) {
-                    if (this.domainObject.configuration.axes.yKey) {
-                        yKeyOptionIndex = this.yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
-                        if (yKeyOptionIndex > -1 && yKeyOptionIndex !== xKeyOptionIndex) {
-                            this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
-                        }
-                    } else {
-                        if (this.yKey === undefined) {
-                            update = true;
-                            yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
-                            this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
-                        }
-                    }
-
-                    this.yKeyOptions = this.yKeyOptions.map((option, index) => {
-                        if (index === xKeyOptionIndex) {
-                            option.name = `${option.name} (swap)`;
-                            option.swap = yKeyOptionIndex;
-                        } else {
-                            option.name = option.name.replace(' (swap)', '');
-                            option.swap = undefined;
-                        }
-
-                        return option;
-                    });
-                }
-
-                this.xKeyOptions = this.xKeyOptions.map((option, index) => {
-                    if (index === yKeyOptionIndex) {
+                this.yKeyOptions = this.yKeyOptions.map((option, index) => {
+                    if (index === xKeyOptionIndex) {
                         option.name = `${option.name} (swap)`;
-                        option.swap = xKeyOptionIndex;
+                        option.swap = yKeyOptionIndex;
                     } else {
                         option.name = option.name.replace(' (swap)', '');
                         option.swap = undefined;
@@ -241,8 +233,19 @@ export default {
 
                     return option;
                 });
-
             }
+
+            this.xKeyOptions = this.xKeyOptions.map((option, index) => {
+                if (index === yKeyOptionIndex) {
+                    option.name = `${option.name} (swap)`;
+                    option.swap = xKeyOptionIndex;
+                } else {
+                    option.name = option.name.replace(' (swap)', '');
+                    option.swap = undefined;
+                }
+
+                return option;
+            });
 
             if (update === true) {
                 this.saveConfiguration();

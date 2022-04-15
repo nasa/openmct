@@ -129,33 +129,37 @@ export default {
         setAxesLabels() {
             let xKeyOptions = [];
             let yKeyOptions = [];
-            this.plotSeries.forEach((series) => {
-                const id = this.openmct.objects.makeKeyString(series.identifier);
+            if (this.plotSeries.length <= 0) {
+                return;
+            }
+
+            const series = this.plotSeries[0];
+            const metadataValues = this.openmct.telemetry.getMetadata(series).valuesForHints(['range']);
+
+            metadataValues.forEach((metadataValue) => {
                 xKeyOptions.push({
-                    name: series.name,
-                    value: id
+                    name: metadataValue.name || metadataValue.key,
+                    value: metadataValue.source || metadataValue.key
                 });
                 yKeyOptions.push({
-                    name: series.name,
-                    value: id
+                    name: metadataValue.name || metadataValue.key,
+                    value: metadataValue.source || metadataValue.key
                 });
             });
-            if (this.plotSeries.length) {
-                let xKeyOptionIndex;
-                let yKeyOptionIndex;
+            let xKeyOptionIndex;
+            let yKeyOptionIndex;
 
-                if (this.domainObject.configuration.axes.xKey) {
-                    xKeyOptionIndex = xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
-                    if (xKeyOptionIndex > -1) {
-                        this.xKeyLabel = xKeyOptions[xKeyOptionIndex].name;
-                    }
+            if (this.domainObject.configuration.axes.xKey) {
+                xKeyOptionIndex = xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
+                if (xKeyOptionIndex > -1) {
+                    this.xKeyLabel = xKeyOptions[xKeyOptionIndex].name;
                 }
+            }
 
-                if (this.plotSeries.length > 1 && this.domainObject.configuration.axes.yKey) {
-                    yKeyOptionIndex = yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
-                    if (yKeyOptionIndex > -1) {
-                        this.yKeyLabel = yKeyOptions[yKeyOptionIndex].name;
-                    }
+            if (metadataValues.length > 1 && this.domainObject.configuration.axes.yKey) {
+                yKeyOptionIndex = yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
+                if (yKeyOptionIndex > -1) {
+                    this.yKeyLabel = yKeyOptions[yKeyOptionIndex].name;
                 }
             }
         }
