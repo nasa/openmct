@@ -337,7 +337,7 @@ export default {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
 
-            return this.parse(key, metadataValue, datum);
+            return this.parse(key, metadataValue.source, datum);
         },
         format(telemetryObjectKey, metadataKey, data) {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];
