@@ -4,6 +4,7 @@ The purpose of this document is to identify common patterns and "implicit requir
 
 These checklist items are not strict rules to follow, but just a list of "implicit requirements" that come when adding new domain objects to Open MCT given how it is leveraged by many downstream projects. When a checklist item in the form of a question, they should be viewed as design decision as well as a requirement.
 
+This technique is well established and is found in https://pragprog.com/titles/ehxta/explore-it/
 ## Net New Domain Object
 The following checklist items should be considered when adding a net new domain object.
 
