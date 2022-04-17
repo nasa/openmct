@@ -1,0 +1,40 @@
+/******************************* LIST VIEW */
+.c-list-view {
+    tbody tr {
+        background: $colorListItemBg;
+        transition: $transOut;
+    }
+
+    td {
+        $p: floor($interiorMargin * 1.5);
+        @include ellipsize();
+        line-height: 120%; // Needed for icon alignment
+        max-width: 0;
+        padding-top: $p;
+        padding-bottom: $p;
+        width: 25%;
+    }
+
+    &--selectable {
+        body.desktop & {
+            tbody tr {
+                cursor: pointer;
+
+                &:hover {
+                    background: $colorListItemBgHov;
+                    filter: $filterHov;
+                    transition: $transIn;
+                }
+            }
+        }
+    }
+
+    &--sticky-header {
+        thead tr {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+    }
+}

@@ -157,7 +157,8 @@ export default class PlotConfigurationModel extends Model {
 @typedef {{
     configuration: {
         series: import('./PlotSeries').PlotSeriesModelType[]
-    }
+        yAxis: import('./YAxisModel').YAxisModelType
+    },
 }} SomeDomainObject_NeedsName
 */
 
