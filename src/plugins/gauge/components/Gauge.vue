@@ -401,17 +401,17 @@ export default {
             this.rangeLow = this.round(this.limitLow - Math.abs(this.limitLow * LIMIT_PADDING_IN_PERCENT / 100));
         },
         updateValue(datum) {
+            if (this.isRendering) {
+                return;
+            }
+
+            const { start, end } = this.openmct.time.bounds();
             const dateValueFormatter = this.getDateValueFormatter();
             const parsedValue = dateValueFormatter.parse(datum);
-            const { start, end } = this.openmct.time.bounds();
 
             const beforeStartOfBounds = parsedValue < start;
             const afterEndOfBounds = parsedValue > end;
             if (afterEndOfBounds || beforeStartOfBounds) {
-                return;
-            }
-
-            if (this.isRendering) {
                 return;
             }
 
