@@ -3,71 +3,84 @@
     <ul class="l-inspector-part">
         <h2>Y Axis</h2>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Manually override how the Y axis is labeled."
+            <div
+                class="grid-cell label"
+                title="Manually override how the Y axis is labeled."
             >Label</div>
-            <div class="grid-cell value"><input v-model="label"
-                                                class="c-input--flex"
-                                                type="text"
-                                                @change="updateForm('label')"
+            <div class="grid-cell value"><input
+                v-model="label"
+                class="c-input--flex"
+                type="text"
+                @change="updateForm('label')"
             ></div>
         </li>
     </ul>
     <ul class="l-inspector-part">
         <h2>Y Axis Scaling</h2>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Automatically scale the Y axis to keep all values in view."
+            <div
+                class="grid-cell label"
+                title="Automatically scale the Y axis to keep all values in view."
             >Auto scale</div>
-            <div class="grid-cell value"><input v-model="autoscale"
-                                                type="checkbox"
-                                                @change="updateForm('autoscale')"
+            <div class="grid-cell value"><input
+                v-model="autoscale"
+                type="checkbox"
+                @change="updateForm('autoscale')"
             ></div>
         </li>
-        <li v-show="autoscale"
+        <li
+            v-show="autoscale"
             class="grid-row"
         >
-            <div class="grid-cell label"
-                 title="Percentage of padding above and below plotted min and max values. 0.1, 1.0, etc."
+            <div
+                class="grid-cell label"
+                title="Percentage of padding above and below plotted min and max values. 0.1, 1.0, etc."
             >
                 Padding</div>
             <div class="grid-cell value">
-                <input v-model="autoscalePadding"
-                       class="c-input--flex"
-                       type="text"
-                       @change="updateForm('autoscalePadding')"
+                <input
+                    v-model="autoscalePadding"
+                    class="c-input--flex"
+                    type="text"
+                    @change="updateForm('autoscalePadding')"
                 >
             </div>
         </li>
     </ul>
-    <ul v-show="!autoscale"
+    <ul
+        v-show="!autoscale"
         class="l-inspector-part"
     >
-        <div v-show="!autoscale && validation.range"
-             class="grid-span-all form-error"
+        <div
+            v-show="!autoscale && validationErrors.range"
+            class="grid-span-all form-error"
         >
-            {{ validation.range }}
+            {{ validationErrors.range }}
         </div>
         <li class="grid-row force-border">
-            <div class="grid-cell label"
-                 title="Minimum Y axis value."
+            <div
+                class="grid-cell label"
+                title="Minimum Y axis value."
             >Minimum Value</div>
             <div class="grid-cell value">
-                <input v-model="rangeMin"
-                       class="c-input--flex"
-                       type="number"
-                       @change="updateForm('range')"
+                <input
+                    v-model="rangeMin"
+                    class="c-input--flex"
+                    type="number"
+                    @change="updateForm('range')"
                 >
             </div>
         </li>
         <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Maximum Y axis value."
+            <div
+                class="grid-cell label"
+                title="Maximum Y axis value."
             >Maximum Value</div>
-            <div class="grid-cell value"><input v-model="rangeMax"
-                                                class="c-input--flex"
-                                                type="number"
-                                                @change="updateForm('range')"
+            <div class="grid-cell value"><input
+                v-model="rangeMax"
+                class="c-input--flex"
+                type="number"
+                @change="updateForm('range')"
             ></div>
         </li>
     </ul>
@@ -75,7 +88,7 @@
 </template>
 
 <script>
-import { objectPath, validate, coerce } from "./formUtil";
+import { objectPath } from "./formUtil";
 import _ from "lodash";
 
 export default {
@@ -95,7 +108,7 @@ export default {
             autoscalePadding: '',
             rangeMin: '',
             rangeMax: '',
-            validation: {}
+            validationErrors: {}
         };
     },
     mounted() {
@@ -165,12 +178,6 @@ export default {
                         if (Number(range.min) > Number(range.max)) {
                             return 'Minimum must be less than Maximum.';
                         }
-
-                        if (model.get('autoscale')) {
-                            return false;
-                        }
-
-                        return true;
                     }
                 }
             ];
@@ -179,14 +186,9 @@ export default {
             this.label = this.yAxis.get('label');
             this.autoscale = this.yAxis.get('autoscale');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
-            const range = this.yAxis.get('range');
-            if (!range) {
-                this.rangeMin = undefined;
-                this.rangeMax = undefined;
-            } else {
-                this.rangeMin = range.min;
-                this.rangeMax = range.max;
-            }
+            const range = this.yAxis.get('range') ?? this.yAxis.get('displayRange');
+            this.rangeMin = range?.min;
+            this.rangeMax = range?.max;
         },
         updateForm(formKey) {
             let newVal;
@@ -199,26 +201,27 @@ export default {
                 newVal = this[formKey];
             }
 
-            const oldVal = this.yAxis.get(formKey);
+            let oldVal = this.yAxis.get(formKey);
             const formField = this.fields.find((field) => field.modelProp === formKey);
 
-            const path = objectPath(formField.objectPath);
-            const validationResult = validate(newVal, this.yAxis, formField.validate);
-            if (validationResult === true) {
-                delete this.validation[formKey];
-            } else {
-                this.validation[formKey] = validationResult;
-
+            const validationError = formField.validate?.(newVal, this.yAxis);
+            this.validationErrors[formKey] = validationError;
+            if (validationError) {
                 return;
             }
 
-            if (!_.isEqual(coerce(newVal, formField.coerce), coerce(oldVal, formField.coerce))) {
-                this.yAxis.set(formKey, coerce(newVal, formField.coerce));
+            newVal = formField.coerce?.(newVal) ?? newVal;
+            oldVal = formField.coerce?.(oldVal) ?? oldVal;
+
+            const path = objectPath(formField.objectPath);
+            if (!_.isEqual(newVal, oldVal)) {
+                // TODO: Why do we mutate yAxis twice, once directly, once via objects.mutate? Or are they different objects?
+                this.yAxis.set(formKey, newVal);
                 if (path) {
                     this.openmct.objects.mutate(
                         this.domainObject,
                         path(this.domainObject, this.yAxis),
-                        coerce(newVal, formField.coerce)
+                        newVal
                     );
                 }
             }

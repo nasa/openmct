@@ -20,14 +20,16 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-<div v-if="modes.length > 1"
-     ref="modeMenuButton"
-     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+<div
+    v-if="modes.length > 1"
+    ref="modeMenuButton"
+    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-        <button v-if="selectedMode"
-                class="c-button--menu c-mode-button"
-                @click.prevent.stop="showModesMenu"
+        <button
+            v-if="selectedMode"
+            class="c-button--menu c-mode-button"
+            @click.prevent.stop="showModesMenu"
         >
             <span class="c-button__label">{{ selectedMode.name }}</span>
         </button>

@@ -20,14 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function () {
-    return function (openmct) {
-        openmct.types.addType("noneditable.folder", {
-            name: "Non-Editable Folder",
-            key: "noneditable.folder",
-            description: "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
-            cssClass: "icon-folder",
-            creatable: false
-        });
-    };
+.c-timelist {
+  & .nowMarker.hasCurrent {
+    height: 2px;
+    position: absolute;
+    z-index: 10;
+    background: cyan;
+    width: 100%;
+  }
+
+  .c-list-item {
+    /* Time Lists */
+
+    &.--is-current {
+      background-color: $colorCurrentBg;
+      border-top: 1px solid $colorCurrentBorder !important;
+      color: $colorCurrentFg;
+      font-weight: bold;
+    }
+
+    &.--is-future {
+      background-color: $colorFutureBg;
+      border-top-color: $colorFutureBorder !important;
+      color: $colorFutureFg;
+    }
+
+    &__value {
+      &.--duration {
+        width: 5%;
+      }
+    }
+  }
+
 }

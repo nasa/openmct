@@ -23,6 +23,9 @@
 import eventHelpers from '../lib/eventHelpers';
 
 export default class MCTChartAlarmLineSet {
+    /**
+     * @param {Bounds} bounds
+     */
     constructor(series, chart, offset, bounds) {
         this.series = series;
         this.chart = chart;
@@ -40,6 +43,9 @@ export default class MCTChartAlarmLineSet {
         }
     }
 
+    /**
+     * @param {Bounds} bounds
+     */
     updateBounds(bounds) {
         this.bounds = bounds;
         this.getLimitPoints(this.series);
@@ -106,3 +112,7 @@ export default class MCTChartAlarmLineSet {
     }
 
 }
+
+/**
+@typedef {import('@/api/time/TimeContext').Bounds} Bounds
+*/

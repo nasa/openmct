@@ -21,53 +21,60 @@
 -->
 
 <template>
-<div ref="tickContainer"
-     class="u-contents js-ticks"
+<div
+    ref="tickContainer"
+    class="u-contents js-ticks"
 >
-    <div v-if="position === 'left'"
-         class="gl-plot-tick-wrapper"
+    <div
+        v-if="position === 'left'"
+        class="gl-plot-tick-wrapper"
     >
-        <div v-for="tick in ticks"
-             :key="tick.value"
-             class="gl-plot-tick gl-plot-x-tick-label"
-             :style="{
-                 left: (100 * (tick.value - min) / interval) + '%'
-             }"
-             :title="tick.fullText || tick.text"
+        <div
+            v-for="tick in ticks"
+            :key="tick.value"
+            class="gl-plot-tick gl-plot-x-tick-label"
+            :style="{
+                left: (100 * (tick.value - min) / interval) + '%'
+            }"
+            :title="tick.fullText || tick.text"
         >
             {{ tick.text }}
         </div>
     </div>
-    <div v-if="position === 'top'"
-         class="gl-plot-tick-wrapper"
+    <div
+        v-if="position === 'top'"
+        class="gl-plot-tick-wrapper"
     >
-        <div v-for="tick in ticks"
-             :key="tick.value"
-             class="gl-plot-tick gl-plot-y-tick-label"
-             :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
-             :title="tick.fullText || tick.text"
-             style="margin-top: -0.50em; direction: ltr;"
+        <div
+            v-for="tick in ticks"
+            :key="tick.value"
+            class="gl-plot-tick gl-plot-y-tick-label"
+            :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
+            :title="tick.fullText || tick.text"
+            style="margin-top: -0.50em; direction: ltr;"
         >
             <span>{{ tick.text }}</span>
         </div>
     </div>
     <!-- grid lines follow -->
     <template v-if="position === 'right'">
-        <div v-for="tick in ticks"
-             :key="tick.value"
-             class="gl-plot-hash hash-v"
-             :style="{
-                 right: (100 * (max - tick.value) / interval) + '%',
-                 height: '100%'
-             }"
+        <div
+            v-for="tick in ticks"
+            :key="tick.value"
+            class="gl-plot-hash hash-v"
+            :style="{
+                right: (100 * (max - tick.value) / interval) + '%',
+                height: '100%'
+            }"
         >
         </div>
     </template>
     <template v-if="position === 'bottom'">
-        <div v-for="tick in ticks"
-             :key="tick.value"
-             class="gl-plot-hash hash-h"
-             :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
+        <div
+            v-for="tick in ticks"
+            :key="tick.value"
+            class="gl-plot-hash hash-h"
+            :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
         >
         </div>
     </template>
@@ -105,6 +112,10 @@ export default {
     mounted() {
         eventHelpers.extend(this);
 
+        if (!this.axisType) {
+            throw new Error("axis-type prop expected");
+        }
+
         this.axis = this.getAxisFromConfig();
 
         this.tickCount = 4;
@@ -119,15 +130,16 @@ export default {
     },
     methods: {
         getAxisFromConfig() {
-            if (!this.axisType) {
-                return;
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            /** @type {import('./configuration/PlotConfigurationModel').default} */
+            let config = configStore.get(configId);
+
+            if (!config) {
+                throw new Error('config is missing');
             }
 
-            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            let config = configStore.get(configId);
-            if (config) {
-                return config[this.axisType];
-            }
+            return config[this.axisType];
         },
         /**
        * Determine whether ticks should be regenerated for a given range.
@@ -203,8 +215,8 @@ export default {
             if (this.shouldRegenerateTicks(range, forceRegeneration)) {
                 let newTicks = this.getTicks();
                 this.tickRange = {
-                    min: Math.min.apply(Math, newTicks),
-                    max: Math.max.apply(Math, newTicks),
+                    min: Math.min(...newTicks),
+                    max: Math.max(...newTicks),
                     step: newTicks[1] - newTicks[0]
                 };
 

@@ -21,10 +21,11 @@
  *****************************************************************************/
 
 <template>
-<div class="c-notebook__entry c-ne has-local-controls"
-     @dragover="changeCursor"
-     @drop.capture="cancelEditMode"
-     @drop.prevent="dropOnEntry"
+<div
+    class="c-notebook__entry c-ne has-local-controls"
+    @dragover="changeCursor"
+    @drop.capture="cancelEditMode"
+    @drop.prevent="dropOnEntry"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time">
@@ -54,6 +55,7 @@
                     class="c-ne__text c-ne__input"
                     tabindex="0"
                     contenteditable
+                    @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
@@ -62,27 +64,31 @@
                 </div>
             </template>
             <div class="c-snapshots c-ne__embeds">
-                <NotebookEmbed v-for="embed in entry.embeds"
-                               :key="embed.id"
-                               :embed="embed"
-                               @removeEmbed="removeEmbed"
-                               @updateEmbed="updateEmbed"
+                <NotebookEmbed
+                    v-for="embed in entry.embeds"
+                    :key="embed.id"
+                    :embed="embed"
+                    @removeEmbed="removeEmbed"
+                    @updateEmbed="updateEmbed"
                 />
             </div>
         </div>
     </div>
-    <div v-if="!readOnly"
-         class="c-ne__local-controls--hidden"
+    <div
+        v-if="!readOnly"
+        class="c-ne__local-controls--hidden"
     >
-        <button class="c-icon-button c-icon-button--major icon-trash"
-                title="Delete this entry"
-                tabindex="-1"
-                @click="deleteEntry"
+        <button
+            class="c-icon-button c-icon-button--major icon-trash"
+            title="Delete this entry"
+            tabindex="-1"
+            @click="deleteEntry"
         >
         </button>
     </div>
-    <div v-if="readOnly"
-         class="c-ne__section-and-page"
+    <div
+        v-if="readOnly"
+        class="c-ne__section-and-page"
     >
         <a
             class="c-click-link"
@@ -279,11 +285,16 @@ export default {
 
             this.$emit('updateEntry', this.entry);
         },
+        editingEntry() {
+            this.$emit('editingEntry');
+        },
         updateEntryValue($event) {
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;
                 this.$emit('updateEntry', this.entry);
+            } else {
+                this.$emit('cancelEdit');
             }
         }
     }
