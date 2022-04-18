@@ -1,7 +1,7 @@
 <template>
 <div
     class="c-gauge"
-    :class="`c-gauge--${gaugeType}`"
+    :class="`c-gauge--${gaugeType} c-gauge--style-${gaugeDisplayStyle}`"
 >
     <div class="c-gauge__wrapper">
         <template v-if="typeDial">
@@ -76,17 +76,17 @@
                     class="c-dial__value"
                     viewBox="0 0 512 512"
                     :class="{
-                        'c-dial-clip--90': degValue < 90 && typeFilledDial,
-                        'c-dial-clip--180': degValue >= 90 && degValue < 180 && typeFilledDial
+                        'c-dial-clip--90': degValue < 90 && styleBar,
+                        'c-dial-clip--180': degValue >= 90 && degValue < 180 && styleBar
                     }"
                 >
                     <path
-                        v-if="typeFilledDial && degValue > 0"
+                        v-if="styleBar && degValue > 0"
                         d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
                         :style="`transform: rotate(${degValue}deg)`"
                     />
                     <path
-                        v-if="typeNeedleDial && valueInBounds"
+                        v-if="styleNeedle && valueInBounds"
                         d="M256,86c-93.9,0-170,76.1-170,170c0,43.9,16.6,83.9,43.9,114.1l-38.7,38.7c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0 l38.7-38.7C172.1,409.4,212.1,426,256,426c93.9,0,170-76.1,170-170S349.9,86,256,86z M256,411.7c-86,0-155.7-69.7-155.7-155.7 S170,100.3,256,100.3S411.7,170,411.7,256S342,411.7,256,411.7z"
                         :style="`transform: rotate(${degValue}deg)`"
                     />
@@ -124,8 +124,7 @@
                     </template>
 
                     <template v-if="typeMeterHorizontal">
-                        <div
-                            class="c-meter__value"
+                        <div class="c-meter__value"
                             :style="`transform: translateX(${meterValueToPerc * -1}%)`"
                         ></div>
 
@@ -180,7 +179,8 @@ export default {
             limitLow: gaugeController.limitLow,
             rangeHigh: gaugeController.max,
             rangeLow: gaugeController.min,
-            gaugeType: gaugeController.gaugeType
+            gaugeType: gaugeController.gaugeType,
+            gaugeDisplayStyle: gaugeController.gaugeDisplayStyle
         };
     },
     computed: {
@@ -202,12 +202,6 @@ export default {
         typeDial() {
             return this.matchGaugeType('dial');
         },
-        typeFilledDial() {
-            return this.matchGaugeType('dial-filled');
-        },
-        typeNeedleDial() {
-            return this.matchGaugeType('dial-needle');
-        },
         typeMeter() {
             return this.matchGaugeType('meter');
         },
@@ -220,14 +214,21 @@ export default {
         typeMeterInverted() {
             return this.matchGaugeType('inverted');
         },
+        styleBar() {
+            return this.matchGaugeDisplayStyle('bar');
+        },
+        styleNeedle() {
+            return this.matchGaugeDisplayStyle('needle');
+        },
         meterValueToPerc() {
             const meterDirection = (this.typeMeterInverted) ? -1 : 1;
 
-            if (this.curVal <= this.rangeLow) {
+            // For bar meter, don't move the bar if it's not visible
+            if (this.styleBar && this.curVal <= this.rangeLow) {
                 return meterDirection * 100;
             }
-
-            if (this.curVal >= this.rangeHigh) {
+            // For bar meter, don't move the bar if it's beyond 100% of the range
+            if (this.styleBar && this.curVal >= this.rangeHigh) {
                 return 0;
             }
 
@@ -314,6 +315,9 @@ export default {
         },
         matchGaugeType(str) {
             return this.gaugeType.indexOf(str) !== -1;
+        },
+        matchGaugeDisplayStyle(str) {
+            return this.gaugeDisplayStyle.indexOf(str) !== -1;
         },
         percentToDegrees(vPercent) {
             return this.round((vPercent / 100) * 270, 2);
@@ -424,7 +428,7 @@ export default {
         },
         valToPercent(vValue) {
             // Used by dial
-            if (vValue >= this.rangeHigh && this.typeFilledDial) {
+            if (vValue >= this.rangeHigh && this.styleBar) {
                 // Don't peg at 100% if the gaugeType isn't a filled shape
                 return 100;
             }

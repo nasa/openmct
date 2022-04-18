@@ -123,6 +123,7 @@ export default {
                 model: this.model,
                 value: {
                     gaugeType: this.model.value.gaugeType,
+                    gaugeDisplayStyle: this.model.value.gaugeDisplayStyle,
                     isDisplayMinMax: this.isDisplayMinMax,
                     isDisplayCurVal: this.isDisplayCurVal,
                     isUseTelemetryLimits: this.isUseTelemetryLimits,

@@ -25,11 +25,15 @@ import GaugeFormController from './components/GaugeFormController.vue';
 import Vue from 'vue';
 
 export const GAUGE_TYPES = [
-    ['Filled Dial', 'dial-filled'],
-    ['Needle Dial', 'dial-needle'],
+    ['Dial', 'dial'],
     ['Vertical Meter', 'meter-vertical'],
     ['Vertical Meter Inverted', 'meter-vertical-inverted'],
     ['Horizontal Meter', 'meter-horizontal']
+];
+
+export const GAUGE_DISPLAY_STYLES = [
+    ['Bar', 'bar'],
+    ['Needle', 'needle']
 ];
 
 export default function () {
@@ -47,6 +51,7 @@ export default function () {
                 domainObject.configuration = {
                     gaugeController: {
                         gaugeType: GAUGE_TYPES[0][1],
+                        gaugeDisplayStyle: GAUGE_DISPLAY_STYLES[0][1],
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
                         isUseTelemetryLimits: true,
@@ -107,6 +112,23 @@ export default function () {
                         "configuration",
                         "gaugeController",
                         "gaugeType"
+                    ]
+                },
+                {
+                    name: "Display style",
+                    options: GAUGE_DISPLAY_STYLES.map(type => {
+                        return {
+                            name: type[0],
+                            value: type[1]
+                        };
+                    }),
+                    control: "select",
+                    cssClass: "l-input-sm",
+                    key: "gaugeController",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "gaugeDisplayStyle"
                     ]
                 },
                 {

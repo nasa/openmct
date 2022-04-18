@@ -125,7 +125,7 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
   }
 }
 
-/********************************************** METER GAUGE */
+/********************************************** HORIZONTAL AND VERTICAL METERS */
 .c-meter {
   // Common styles for c-meter
   @include abs();
@@ -169,9 +169,9 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
   }
 }
 
-.c-meter {
-  .c-gauge--meter-vertical &,
-  .c-gauge--meter-vertical-inverted & {
+/*********************************************** VERTICAL METER */
+[class*='c-gauge--meter-vertical'] {
+  .c-meter {
     &__range {
       flex-direction: column;
       min-width: min-content;
@@ -192,9 +192,7 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
       left: 0;
       right: 0;
     }
-  }
 
-  .c-gauge--meter-vertical & {
     &__limit-low {
       bottom: 0;
     }
@@ -204,25 +202,46 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
     }
   }
 
-  .c-gauge--meter-vertical-inverted & {
-    &__limit-low {
-      top: 0;
-    }
-
-    &__limit-high {
-      bottom: 0;
-    }
-
-    &__range__low {
-      order: 1;
-    }
-
-    &__range__high {
-      order: 2;
+  &[class*='--style-needle'] {
+    .c-meter__value {
+      border-top: 3px solid $colorGaugeValue;
+      background: none;
     }
   }
 
-  .c-gauge--meter-horizontal & {
+  &[class*='inverted'] {
+    .c-meter {
+      &__limit-low {
+        bottom: auto;
+        top: 0;
+      }
+
+      &__limit-high {
+        bottom: 0;
+        top: auto;
+      }
+
+      &__range__low {
+        order: 1;
+      }
+
+      &__range__high {
+        order: 2;
+      }
+    }
+
+    &[class*='--style-needle'] {
+      .c-meter__value {
+        border-top: none;
+        border-bottom: 3px solid $colorGaugeValue;
+      }
+    }
+  }
+}
+
+/*********************************************** HORIZONTAL METER */
+[class*='c-gauge--meter-horizontal'] {
+  .c-meter {
     flex-direction: column;
 
     &__range {
@@ -264,6 +283,15 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
 
     &__limit-high {
       right: 0;
+    }
+  }
+
+  &[class*='--style-needle'] {
+    .c-meter {
+      &__value {
+        border-right: 3px solid $colorGaugeValue;
+        background: none;
+      }
     }
   }
 }
