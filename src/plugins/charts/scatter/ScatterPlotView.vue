@@ -181,12 +181,12 @@ export default {
 
             //populate x values
             let metadataKey = this.domainObject.configuration.axes.xKey;
-            if (data[metadataKey]) {
+            if (data[metadataKey] !== undefined) {
                 valueForTimestamp.x = this.format(key, metadataKey, data);
             }
 
             metadataKey = this.domainObject.configuration.axes.yKey;
-            if (data[metadataKey]) {
+            if (data[metadataKey] !== undefined) {
                 valueForTimestamp.y = this.format(key, metadataKey, data);
             }
 
