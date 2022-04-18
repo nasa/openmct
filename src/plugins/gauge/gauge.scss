@@ -234,6 +234,7 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
       .c-meter__value {
         border-top: none;
         border-bottom: 3px solid $colorGaugeValue;
+        right: 0;
       }
     }
   }
@@ -290,6 +291,7 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
     .c-meter {
       &__value {
         border-right: 3px solid $colorGaugeValue;
+        bottom: 0;
         background: none;
       }
     }
