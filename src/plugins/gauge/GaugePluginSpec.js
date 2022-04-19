@@ -74,6 +74,17 @@ describe('Gaugue plugin', () => {
         expect(gaugueType.definition.creatable).toBeTrue();
     });
 
+    it('Gaugue plugin is creatable', () => {
+        const gaugueType = openmct.types.get('gauge');
+
+        expect(gaugueType.definition.creatable).toBeTrue();
+    });
+
+    it('Gaugue form controller', () => {
+        const gaugeController = openmct.forms.getFormControl('gauge-controller');
+        expect(gaugeController).toBeDefined();
+    });
+
     describe('Gaugue with Filled Dial', () => {
         let gaugeViewProvider;
         let gaugeView;
@@ -202,7 +213,7 @@ describe('Gaugue plugin', () => {
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
                 const textElement = appHolder.querySelector('.c-gauge__curval-text');
-                expect(textElement.textContent).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
 
@@ -338,7 +349,7 @@ describe('Gaugue plugin', () => {
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
                 const textElement = appHolder.querySelector('.c-gauge__curval-text');
-                expect(textElement.textContent).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
 
@@ -474,7 +485,7 @@ describe('Gaugue plugin', () => {
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
                 const textElement = appHolder.querySelector('.c-gauge__curval-text');
-                expect(textElement.textContent).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
 
@@ -646,6 +657,150 @@ describe('Gaugue plugin', () => {
             const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
 
             expect(hasMajorElements).toBe(true);
+        });
+    });
+
+    describe('Gaugue with Filled Dial with Use Telemetry Limits', () => {
+        let gaugeViewProvider;
+        let gaugeView;
+        let gaugeViewObject;
+        let mutablegaugeObject;
+        let randomValue;
+
+        beforeEach(() => {
+            randomValue = Math.random();
+
+            gaugeViewObject = {
+                ...gaugeDomainObject,
+                configuration: {
+                    gaugeController: {
+                        gaugeType: 'dial-filled',
+                        isDisplayMinMax: true,
+                        isDisplayCurVal: true,
+                        isUseTelemetryLimits: true,
+                        limitLow: 10,
+                        limitHigh: 90,
+                        max: 100,
+                        min: 0,
+                        precision: 2
+                    }
+                },
+                composition: [
+                    {
+                        namespace: 'test-namespace',
+                        key: 'test-object'
+                    }
+                ],
+                id: 'test-object',
+                name: 'gauge'
+            };
+
+            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
+                'get',
+                'create',
+                'update',
+                'observe'
+            ]);
+
+            openmct.editor = {};
+            openmct.editor.isEditing = () => false;
+
+            const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
+            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
+
+            testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
+            testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
+            openmct.objects.addProvider('test-namespace', testObjectProvider);
+            testObjectProvider.observe.and.returnValue(() => {});
+            testObjectProvider.create.and.returnValue(Promise.resolve(true));
+            testObjectProvider.update.and.returnValue(Promise.resolve(true));
+
+            spyOn(openmct.telemetry, 'getMetadata').and.returnValue({
+                valuesForHints: () => {
+                    return [
+                        {
+                            source: 'sin'
+                        }
+                    ];
+                },
+                value: () => 1
+            });
+            spyOn(openmct.telemetry, 'getValueFormatter').and.returnValue({
+                parse: () => {
+                    return 2000;
+                }
+            });
+            spyOn(openmct.telemetry, 'getFormatMap').and.returnValue({
+                sin: {
+                    format: (datum) => {
+                        return randomValue;
+                    }
+                }
+            });
+            spyOn(openmct.telemetry, 'getLimits').and.returnValue(
+                {
+                    limits: () => Promise.resolve({
+                        CRITICAL: {
+                            high: 0.99,
+                            low: -0.99
+                        }
+                    })
+                }
+            );
+            spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
+            spyOn(openmct.time, 'bounds').and.returnValue({
+                start: 1000,
+                end: 5000
+            });
+
+            return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
+                mutablegaugeObject = mutableObject;
+                gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+                gaugeView.show(child);
+
+                return Vue.nextTick();
+            });
+        });
+
+        afterEach(() => {
+            gaugeView.destroy();
+
+            return resetApplicationState(openmct);
+        });
+
+        it('provides gauge view', () => {
+            expect(gaugeViewProvider).toBeDefined();
+        });
+
+        it('renders gauge element', () => {
+            const gaugeElement = appHolder.querySelectorAll('.c-gauge');
+            expect(gaugeElement.length).toBe(1);
+        });
+
+        it('renders major elements', () => {
+            const wrapperElement = appHolder.querySelector('.c-gauge__wrapper');
+            const rangeElement = appHolder.querySelector('.c-gauge__range');
+            const curveElement = appHolder.querySelector('.c-gauge__curval');
+            const dialElement = appHolder.querySelector('.c-dial');
+
+            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
+
+            expect(hasMajorElements).toBe(true);
+        });
+
+        it('renders correct min max values', () => {
+            expect(appHolder.querySelector('.c-gauge__range').textContent).toEqual(`${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`);
+        });
+
+        it('renders correct current value', (done) => {
+            function WatchUpdateValue() {
+                const textElement = appHolder.querySelector('.c-gauge__curval-text');
+                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                done();
+            }
+
+            const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
+            Vue.nextTick(debouncedWatchUpdate);
         });
     });
 });
