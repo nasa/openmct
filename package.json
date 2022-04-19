@@ -5,7 +5,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.16.3",
     "@braintree/sanitize-url": "6.0.0",
-    "@percy/cli": "1.0.4",
+    "@percy/cli": "1.0.8",
     "@percy/playwright": "1.0.2",
     "@playwright/test": "1.19.2",
     "@types/eventemitter3": "^1.0.0",
@@ -46,7 +46,7 @@
     "karma-jasmine": "4.0.1",
     "karma-junit-reporter": "2.0.1",
     "karma-sourcemap-loader": "0.3.8",
-    "karma-spec-reporter": "0.0.33",
+    "karma-spec-reporter": "0.0.34",
     "karma-webpack": "5.0.0",
     "lighthouse": "9.5.0",
     "location-bar": "3.0.1",
