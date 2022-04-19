@@ -142,9 +142,9 @@
         }
     }
 
+
     &__thumbs-scroll-area {
         flex: 0 1 auto;
-        display: flex;
         flex-direction: row;
         height: 135px;
         overflow-x: auto;
@@ -200,6 +200,11 @@
         //  When Imagery is in a layout, hide the thumbs area
         display: none;
     }
+    .show-thumbnail {
+        .c-imagery__thumbs-scroll-area {
+            display: block;
+        }
+    }   
 }
 
 /*************************************** IMAGERY LOCAL CONTROLS*/

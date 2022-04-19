@@ -162,7 +162,8 @@
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused && !isFixed },
-            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused },
+            { 'show-thumbnail': shouldDisplayThumbnail}
         ]"
     >
         <div
@@ -457,6 +458,11 @@ export default {
                 width: this.sizedImageWidth,
                 height: this.sizedImageHeight
             };
+        },
+        shouldDisplayThumbnail() {
+            const THUMBNAIL_LAYOUT_MIN_WIDTH = 250;
+            const THUMBNAIL_LAYOUT_MIN_HEIGHT = 250;
+            return this.sizedImageWidth >= THUMBNAIL_LAYOUT_MIN_WIDTH && this.sizedImageHeight >= THUMBNAIL_LAYOUT_MIN_WIDTH; 
         }
     },
     watch: {
