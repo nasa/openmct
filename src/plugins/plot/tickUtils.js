@@ -1,3 +1,5 @@
+import { antisymlog, symlog } from "./mathUtils";
+
 const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
 const e2 = Math.sqrt(2);
@@ -38,6 +40,47 @@ function getPrecision(step) {
     }
 
     return precision;
+}
+
+export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount = 6) {
+    // log()'ed values
+    const mainLogTicks = ticks(start, stop, mainTickCount);
+
+    // original values
+    const mainTicks = mainLogTicks.map(n => antisymlog(n, 10));
+
+    const result = [];
+
+    let i = 0;
+    for (const logTick of mainLogTicks) {
+        result.push(logTick);
+
+        if (i === mainLogTicks.length - 1) {
+            break;
+        }
+
+        const tick = mainTicks[i];
+        const nextTick = mainTicks[i + 1];
+        const rangeBetweenMainTicks = nextTick - tick;
+
+        const secondaryLogTicks = ticks(
+            tick + rangeBetweenMainTicks / (secondaryTickCount + 1),
+            nextTick - rangeBetweenMainTicks / (secondaryTickCount + 1),
+            secondaryTickCount - 2
+        )
+            .map(n => symlog(n, 10));
+
+        result.push(...secondaryLogTicks);
+
+        i++;
+    }
+
+    return result;
+}
+
+export function getLogTicks2(start, stop, count = 8) {
+    return ticks(antisymlog(start, 10), antisymlog(stop, 10), count)
+        .map(n => symlog(n, 10));
 }
 
 /**
