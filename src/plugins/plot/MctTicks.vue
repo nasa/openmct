@@ -31,7 +31,7 @@
     >
         <div
             v-for="(tick, i) in ticks"
-            :key="i"
+            :key="'tick-left' + i"
             class="gl-plot-tick gl-plot-x-tick-label"
             :style="{
                 left: (100 * (tick.value - min) / interval) + '%'
@@ -47,7 +47,7 @@
     >
         <div
             v-for="(tick, i) in ticks"
-            :key="i"
+            :key="'tick-top' + i"
             class="gl-plot-tick gl-plot-y-tick-label"
             :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
             :title="tick.fullText || tick.text"
@@ -60,7 +60,7 @@
     <template v-if="position === 'right'">
         <div
             v-for="(tick, i) in ticks"
-            :key="i"
+            :key="'tick-right' + i"
             class="gl-plot-hash hash-v"
             :style="{
                 right: (100 * (max - tick.value) / interval) + '%',
@@ -72,7 +72,7 @@
     <template v-if="position === 'bottom'">
         <div
             v-for="(tick, i) in ticks"
-            :key="i"
+            :key="'tick-bottom' + i"
             class="gl-plot-hash hash-h"
             :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
         >
