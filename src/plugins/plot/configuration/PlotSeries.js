@@ -258,10 +258,9 @@ export default class PlotSeries extends Model {
         }.bind(this);
         const format = this.formats[newKey];
         this.getYVal = (value) => {
-            const scale = 1; // TODO get from UI, positive number above 0
             const y = format.parse(value);
 
-            return this.logMode ? scale * symlog(y, 10) : y;
+            return this.logMode ? symlog(y, 10) : y;
         };
     }
 

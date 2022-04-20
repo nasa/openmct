@@ -47,8 +47,7 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
     const mainLogTicks = ticks(start, stop, mainTickCount);
 
     // original values
-    const scale = 1; // TODO get from UI, positive number above 0
-    const mainTicks = mainLogTicks.map(n => antisymlog(n / scale, 10));
+    const mainTicks = mainLogTicks.map(n => antisymlog(n, 10));
 
     const result = [];
 
@@ -69,7 +68,7 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
             nextTick - rangeBetweenMainTicks / (secondaryTickCount + 1),
             secondaryTickCount - 2
         )
-            .map(n => scale * symlog(n, 10));
+            .map(n => symlog(n, 10));
 
         result.push(...secondaryLogTicks);
 
@@ -80,10 +79,8 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
 }
 
 export function getLogTicks2(start, stop, count = 8) {
-    const scale = 1; // TODO get from UI, positive number above 0
-
-    return ticks(antisymlog(start / scale, 10), antisymlog(stop / scale, 10), count)
-        .map(n => scale * symlog(n, 10));
+    return ticks(antisymlog(start, 10), antisymlog(stop, 10), count)
+        .map(n => symlog(n, 10));
 }
 
 /**

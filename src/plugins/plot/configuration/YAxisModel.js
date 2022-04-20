@@ -163,10 +163,6 @@ export default class YAxisModel extends Model {
         this.updateFromSeries(this.seriesCollection);
     }
 
-    // TODO get from UI, positive number above 0. This might be a way to
-    // solve the smooshed ticks on zoom out. Need to experiment with it.
-    scale = 1;
-
     /**
      * This is called in order to map the user-provided `range` to the
      * `displayRange` that we actually use for plot display.
@@ -181,8 +177,8 @@ export default class YAxisModel extends Model {
         const _range = { ...range };
 
         if (this.get('logMode')) {
-            _range.min = this.scale * symlog(range.min, 10);
-            _range.max = this.scale * symlog(range.max, 10);
+            _range.min = symlog(range.min, 10);
+            _range.max = symlog(range.max, 10);
         }
 
         this.set('displayRange', _range);
@@ -207,8 +203,8 @@ export default class YAxisModel extends Model {
             const _range = { ...range };
 
             if (this.get('logMode')) {
-                _range.min = this.scale * symlog(range.min, 10);
-                _range.max = this.scale * symlog(range.max, 10);
+                _range.min = symlog(range.min, 10);
+                _range.max = symlog(range.max, 10);
             }
 
             this.set('displayRange', _range);
@@ -220,8 +216,8 @@ export default class YAxisModel extends Model {
             const _range = this.get('displayRange');
 
             if (this.get('logMode')) {
-                _range.min = antisymlog(_range.min / this.scale, 10);
-                _range.max = antisymlog(_range.max / this.scale, 10);
+                _range.min = antisymlog(_range.min, 10);
+                _range.max = antisymlog(_range.max, 10);
             }
 
             this.set('range', _range);
@@ -233,11 +229,11 @@ export default class YAxisModel extends Model {
         const range = this.get('displayRange');
 
         if (logMode) {
-            range.min = this.scale * symlog(range.min, 10);
-            range.max = this.scale * symlog(range.max, 10);
+            range.min = symlog(range.min, 10);
+            range.max = symlog(range.max, 10);
         } else {
-            range.min = antisymlog(range.min / this.scale, 10);
-            range.max = antisymlog(range.max / this.scale, 10);
+            range.min = antisymlog(range.min, 10);
+            range.max = antisymlog(range.max, 10);
         }
 
         this.set('displayRange', range);
@@ -273,7 +269,7 @@ export default class YAxisModel extends Model {
         const yFormat = sampleSeries.formats[yKey];
 
         if (this.get('logMode')) {
-            this.set('format', (n) => yFormat.format(antisymlog(n / this.scale, 10)));
+            this.set('format', (n) => yFormat.format(antisymlog(n, 10)));
         } else {
             this.set('format', (n) => yFormat.format(n));
         }
