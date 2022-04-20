@@ -47,7 +47,7 @@ test.use({
 });
 
 test.describe('ExportAsJSON', () => {
-    test.only('autoscale off causes no error from undefined user range', async ({ page }) => {
+    test('autoscale off causes no error from undefined user range', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
         await setTimeRange(page);
@@ -102,7 +102,7 @@ test.describe('ExportAsJSON', () => {
             testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']),
             new Promise(r => setTimeout(r, 100))
                 .then(() => canvas.screenshot())
-                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-panned.png', { maxDiffPixels: 20 }))
+                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-panned.png', { maxDiffPixels: 40 }))
         ]);
     });
 });
