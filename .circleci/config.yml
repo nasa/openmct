@@ -149,11 +149,15 @@ workflows:
           node-version: lts/fermium
           browser: ChromeHeadless
           post-steps:
-            - upload_code_covio  
+            - upload_code_covio
       - unit-test:
           name: node16-chrome
           node-version: lts/gallium
-          browser: ChromeHeadless             
+          browser: ChromeHeadless
+      - unit-test:
+          name: node18-chrome
+          node-version: "18"
+          browser: ChromeHeadless
       - e2e-test:
           name: e2e-ci
           node-version: lts/gallium
@@ -175,6 +179,10 @@ workflows:
       - unit-test:
           name: node16-chrome-nightly
           node-version: lts/gallium
+          browser: ChromeHeadless
+      - unit-test:
+          name: node18-chrome
+          node-version: "18"
           browser: ChromeHeadless
       - npm-audit:
           node-version: lts/gallium

@@ -46,7 +46,7 @@
     "karma-jasmine": "4.0.1",
     "karma-junit-reporter": "2.0.1",
     "karma-sourcemap-loader": "0.3.8",
-    "karma-spec-reporter": "0.0.33",
+    "karma-spec-reporter": "0.0.34",
     "karma-webpack": "5.0.0",
     "lighthouse": "9.5.0",
     "location-bar": "3.0.1",
