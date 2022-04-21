@@ -511,7 +511,7 @@ export default {
         },
         sizedImageDimensions() {
             const previousVisibility = this.showImageThumbnails;
-            this.showImageThumbnails = this.shouldDisplayThumbnail(previousVisibility);
+            this.showImageThumbnails = this.shouldDisplayThumbnails(previousVisibility);
         }
     },
     async mounted() {
@@ -1061,27 +1061,30 @@ export default {
         setCursorStates(states) {
             this.cursorStates = states;
         },
-        shouldDisplayThumbnail(previousVisibility) {
-
-            const { width, height } = this.sizedImageDimensions;
-            // create an arbitrary buffer to keep thumbnails visible after image resizes
-            const THRESHOLD_VALUE = 0.7;
-
-            let displayThumbnail = false;
-
-            if (previousVisibility) {
-                displayThumbnail = (
-                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH * THRESHOLD_VALUE
-                    && height >= THUMBNAIL_LAYOUT_MIN_HEIGHT * THRESHOLD_VALUE
-                );
+        shouldDisplayThumbnails(previousVisibility) {
+            const focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
+            // FIXME: magic number of thumbnail height; 
+            // cannot use this.$refs.thumbsWrapper.getBoundingClientRect since zeroed out by display:none
+            const thumbnailContainerHeight = 135; 
+            let sizedImageWidth;
+            let sizedImageHeight;
+            // if the image thumbnail strip is not visible, subtract from container height
+            let imageContainerHeight = previousVisibility ? this.imageContainerHeight : this.imageContainerHeight - thumbnailContainerHeight;
+            let imageContainerWidth = this.imageContainerWidth;
+            if ((imageContainerWidth / imageContainerHeight) > focusedImageNaturalAspectRatio) {
+                // container is wider than image
+                sizedImageWidth = imageContainerHeight * focusedImageNaturalAspectRatio;
+                sizedImageHeight = imageContainerHeight;
             } else {
-                displayThumbnail = (
-                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH
-                    && height >= THUMBNAIL_LAYOUT_MIN_HEIGHT
-                );
+                // container is taller than image
+                sizedImageWidth = imageContainerWidth;
+                sizedImageHeight = imageContainerWidth / focusedImageNaturalAspectRatio;
             }
 
-            return displayThumbnail;
+            return (
+                sizedImageWidth >= THUMBNAIL_LAYOUT_MIN_WIDTH
+                && sizedImageHeight >= THUMBNAIL_LAYOUT_MIN_HEIGHT
+            );
         }
     }
 };
