@@ -171,7 +171,6 @@
             class="c-imagery__thumbs-scroll-area"
             @scroll="handleScroll"
         >
-        <div>{{imageHistory.length}}</div>
             <div
                 v-for="(image, index) in imageHistory"
                 :key="image.url + image.time"
@@ -1068,7 +1067,7 @@ export default {
 
             const { width, height } = this.sizedImageDimensions;
             // create an arbitrary buffer to keep thumbnails visible after image resizes
-            const THRESHOLD_VALUE = 0.6; 
+            const THRESHOLD_VALUE = 0.7; 
 
             let shouldDisplayThumbnail = false;
 
