@@ -168,6 +168,7 @@
             { 'is-paused': isPaused && !isFixed },
             { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
         ]"
+        :style="{ 'display': displayThumbnails ? 'flex' : 'none'}"
     >
         <div
             ref="thumbsWrapper"
@@ -232,6 +233,7 @@ const ARROW_LEFT = 37;
 const SCROLL_LATENCY = 250;
 
 const ZOOM_SCALE_DEFAULT = 1;
+const SHOW_THUMBS_THRESHOLD_HEIGHT = 400;
 
 export default {
     components: {
@@ -272,6 +274,7 @@ export default {
             imageContainerHeight: undefined,
             sizedImageWidth: 0,
             sizedImageHeight: 0,
+            viewHeight: 0,
             lockCompass: true,
             resizingWindow: false,
             timeContext: undefined,
@@ -305,6 +308,9 @@ export default {
             }
 
             return compassRoseSizingClasses;
+        },
+        displayThumbnails() {
+            return this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT;
         },
         time() {
             return this.formatTime(this.focusedImage);
@@ -583,6 +589,9 @@ export default {
 
     },
     methods: {
+        calculateViewHeight() {
+            this.viewHeight = this.$el.clientHeight;
+        },
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -956,6 +965,7 @@ export default {
             }
 
             this.setSizedImageDimensions();
+            this.calculateViewHeight();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
@@ -983,6 +993,8 @@ export default {
             if (!this.isPaused) {
                 this.scrollToRight('reset');
             }
+
+            this.calculateViewHeight();
 
             this.$nextTick(() => {
                 this.resizingWindow = false;
