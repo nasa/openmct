@@ -462,8 +462,8 @@ export default {
                 width: this.sizedImageWidth,
                 height: this.sizedImageHeight
             };
-        },
-        
+        }
+
     },
     watch: {
         imageHistory: {
@@ -509,11 +509,9 @@ export default {
             this.updateRelatedTelemetryForFocusedImage();
             this.getImageNaturalDimensions();
         },
-        sizedImageDimensions(newDimensions, oldDimensions) {
+        sizedImageDimensions() {
             const previousVisibility = this.showImageThumbnails;
-            console.log(newDimensions, oldDimensions)
             this.showImageThumbnails = this.shouldDisplayThumbnail(previousVisibility);
-
         }
     },
     async mounted() {
@@ -1067,21 +1065,22 @@ export default {
 
             const { width, height } = this.sizedImageDimensions;
             // create an arbitrary buffer to keep thumbnails visible after image resizes
-            const THRESHOLD_VALUE = 0.7; 
+            const THRESHOLD_VALUE = 0.7;
 
             let shouldDisplayThumbnail = false;
 
             if (previousVisibility) {
                 shouldDisplayThumbnail = (
-                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH * THRESHOLD_VALUE &&
-                    height >= THUMBNAIL_LAYOUT_MIN_HEIGHT * THRESHOLD_VALUE
+                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH * THRESHOLD_VALUE 
+                    && height >= THUMBNAIL_LAYOUT_MIN_HEIGHT * THRESHOLD_VALUE
                 );
             } else {
                 shouldDisplayThumbnail = (
-                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH &&
-                    height >= THUMBNAIL_LAYOUT_MIN_HEIGHT
+                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH 
+                    && height >= THUMBNAIL_LAYOUT_MIN_HEIGHT
                 );
             }
+
             return shouldDisplayThumbnail;
         }
     }
