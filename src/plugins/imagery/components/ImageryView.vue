@@ -171,6 +171,7 @@
             class="c-imagery__thumbs-scroll-area"
             @scroll="handleScroll"
         >
+        <div>{{imageHistory.length}}</div>
             <div
                 v-for="(image, index) in imageHistory"
                 :key="image.url + image.time"
@@ -460,9 +461,17 @@ export default {
             };
         },
         shouldDisplayThumbnail() {
-            const THUMBNAIL_LAYOUT_MIN_WIDTH = 250;
-            const THUMBNAIL_LAYOUT_MIN_HEIGHT = 250;
-            return this.sizedImageWidth >= THUMBNAIL_LAYOUT_MIN_WIDTH && this.sizedImageHeight >= THUMBNAIL_LAYOUT_MIN_WIDTH; 
+            const THUMBNAIL_LAYOUT_MIN_WIDTH = 600;
+            const THUMBNAIL_LAYOUT_MIN_HEIGHT = 400;
+
+            const { width, height } = this.sizedImageDimensions;
+
+            const shouldDisplayThumbnail = (
+                width >= THUMBNAIL_LAYOUT_MIN_WIDTH && 
+                height >= THUMBNAIL_LAYOUT_MIN_HEIGHT
+            );
+            
+            return shouldDisplayThumbnail;
         }
     },
     watch: {
