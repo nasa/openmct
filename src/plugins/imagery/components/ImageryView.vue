@@ -163,7 +163,7 @@
         :class="[
             { 'is-paused': isPaused && !isFixed },
             { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused },
-            { 'show-thumbnail': shouldDisplayThumbnail}
+            { 'show-thumbnail': showImageThumbnails}
         ]"
     >
         <div
@@ -291,7 +291,8 @@ export default {
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
-            imagePanned: false
+            imagePanned: false,
+            showImageThumbnails: false
         };
     },
     computed: {
@@ -463,17 +464,7 @@ export default {
                 height: this.sizedImageHeight
             };
         },
-        shouldDisplayThumbnail() {
-
-            const { width, height } = this.sizedImageDimensions;
-
-            const shouldDisplayThumbnail = (
-                width >= THUMBNAIL_LAYOUT_MIN_WIDTH && 
-                height >= THUMBNAIL_LAYOUT_MIN_HEIGHT
-            );
-            
-            return shouldDisplayThumbnail;
-        }
+        
     },
     watch: {
         imageHistory: {
@@ -518,6 +509,12 @@ export default {
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
             this.getImageNaturalDimensions();
+        },
+        sizedImageDimensions(newDimensions, oldDimensions) {
+            const previousVisibility = this.showImageThumbnails;
+            console.log(newDimensions, oldDimensions)
+            this.showImageThumbnails = this.shouldDisplayThumbnail(previousVisibility);
+
         }
     },
     async mounted() {
@@ -1066,6 +1063,27 @@ export default {
         },
         setCursorStates(states) {
             this.cursorStates = states;
+        },
+        shouldDisplayThumbnail(previousVisibility) {
+
+            const { width, height } = this.sizedImageDimensions;
+            // create an arbitrary buffer to keep thumbnails visible after image resizes
+            const THRESHOLD_VALUE = 0.6; 
+
+            let shouldDisplayThumbnail = false;
+
+            if (previousVisibility) {
+                shouldDisplayThumbnail = (
+                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH * THRESHOLD_VALUE &&
+                    height >= THUMBNAIL_LAYOUT_MIN_HEIGHT * THRESHOLD_VALUE
+                );
+            } else {
+                shouldDisplayThumbnail = (
+                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH &&
+                    height >= THUMBNAIL_LAYOUT_MIN_HEIGHT
+                );
+            }
+            return shouldDisplayThumbnail;
         }
     }
 };
