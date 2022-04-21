@@ -77,7 +77,8 @@
                             utc: nextStep,
                             yesterday: nextStep - 60 * 60 * 24 * 1000,
                             sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
-                            wavelength: wavelength(start, nextStep),
+                            wavelengths: ['20', '25', '30', '40'],
+                            intensities: [1.2, 1.1, 0.8, 0.5],
                             cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
                         }
                     });
@@ -126,7 +127,8 @@
                 utc: nextStep,
                 yesterday: nextStep - 60 * 60 * 24 * 1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),
-                wavelength: wavelength(start, nextStep),
+                wavelengths: ['20', '25', '30', '40'],
+                intensities: [1.2, 1.1, 0.8, 0.5],
                 cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
@@ -152,10 +154,6 @@
     function sin(timestamp, period, amplitude, offset, phase, randomness) {
         return amplitude
             * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
-    }
-
-    function wavelength(start, nextStep) {
-        return (nextStep - start) / 10;
     }
 
     function sendError(error, message) {

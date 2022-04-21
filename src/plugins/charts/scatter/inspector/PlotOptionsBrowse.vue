@@ -51,6 +51,17 @@
         />
     </ul>
     <ul class="l-inspector-part">
+        <h2 title="Use time-based interpolation for telemetry">Bar vs Scatter</h2>
+        <li class="grid-row">
+            <span class="c-toggle-switch__label">Use bar:
+                <span v-if="useBar"> Yes</span><span v-else> No</span>
+            </span>
+        </li>
+    </ul>
+    <ul
+        v-if="useBar === false"
+        class="l-inspector-part"
+    >
         <h2 title="Use time-based interpolation for telemetry">Interpolation</h2>
         <li class="grid-row">
             <span class="c-toggle-switch__label">Use interpolation:
@@ -74,7 +85,8 @@ export default {
             xKeyLabel: '',
             yKeyLabel: '',
             currentColor: undefined,
-            useInterpolation: this.domainObject.configuration.useInterpolation === true
+            useInterpolation: this.domainObject.configuration.useInterpolation === true,
+            useBar: this.domainObject.configuration.useBar === true
         };
     },
     mounted() {
