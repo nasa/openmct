@@ -1071,12 +1071,12 @@ export default {
 
             if (previousVisibility) {
                 shouldDisplayThumbnail = (
-                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH * THRESHOLD_VALUE 
+                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH * THRESHOLD_VALUE
                     && height >= THUMBNAIL_LAYOUT_MIN_HEIGHT * THRESHOLD_VALUE
                 );
             } else {
                 shouldDisplayThumbnail = (
-                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH 
+                    width >= THUMBNAIL_LAYOUT_MIN_WIDTH
                     && height >= THUMBNAIL_LAYOUT_MIN_HEIGHT
                 );
             }
