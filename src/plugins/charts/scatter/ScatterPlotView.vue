@@ -31,6 +31,8 @@
 <script>
 import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
 
+const MAX_INTERPOLATE = 5;
+
 export default {
     components: {
         ScatterPlotWithUnderlay
@@ -62,7 +64,6 @@ export default {
         this.loadComposition();
         this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.reloadTelemetry);
         this.unobserveInterpolation = this.openmct.objects.observe(this.domainObject, 'configuration.useInterpolation', this.reloadTelemetry);
-        this.unobserveBar = this.openmct.objects.observe(this.domainObject, 'configuration.useBar', this.reloadTelemetry);
     },
     beforeDestroy() {
         Object.keys(this.telemetryCollections).forEach(this.removeTelemetryCollection);
@@ -78,10 +79,6 @@ export default {
 
         if (this.unobserveInterpolation) {
             this.unobserveInterpolation();
-        }
-
-        if (this.unobserveBar) {
-            this.unobserveBar();
         }
     },
     methods: {
@@ -175,15 +172,8 @@ export default {
                 this.openmct.notifications.alert(data.message);
             }
 
-            //TODO: check if both xKey and yKey are arrayValues or NOT arrayValues
             if (!this.domainObject.configuration.axes.xKey || !this.domainObject.configuration.axes.yKey) {
                 return;
-            }
-
-            const xAxisMetadata = axisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
-            if (xAxisMetadata.isArrayValue) {
-                //reset the data
-                this.valuesByTimestamp = {};
             }
 
             const timestamp = this.getTimestampForDatum(data, key, telemetryObject);
@@ -203,22 +193,13 @@ export default {
             this.valuesByTimestamp[timestamp] = valueForTimestamp;
         },
         updateTrace(telemetryObject) {
-            const axisMetadata = this.getAxisMetadata(telemetryObject);
-            const xAxisMetadata = axisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
+            const xAndyValues = Object.values(this.valuesByTimestamp);
+            const xValues = xAndyValues.map(value => value.x);
+            const yValues = xAndyValues.map(value => value.y);
+            const xAxisMetadata = this.getAxisMetadata(telemetryObject).find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
             let yAxisMetadata = {};
             if (this.domainObject.configuration.axes.yKey) {
-                yAxisMetadata = axisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.yKey);
-            }
-
-            const xAndyValues = Object.values(this.valuesByTimestamp);
-            let xValues;
-            let yValues;
-            if (xAxisMetadata.isArrayValue) {
-                xValues = xAndyValues.map(value => value.x)[0];
-                yValues = xAndyValues.map(value => value.y)[0];
-            } else {
-                xValues = xAndyValues.map(value => value.x);
-                yValues = xAndyValues.map(value => value.y);
+                yAxisMetadata = this.getAxisMetadata(telemetryObject).find(metadata => metadata.source === this.domainObject.configuration.axes.yKey);
             }
 
             let trace = {
@@ -229,8 +210,8 @@ export default {
                 text: yValues.map(String),
                 xAxisMetadata: xAxisMetadata,
                 yAxisMetadata: yAxisMetadata,
-                type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
-                mode: this.domainObject.configuration.useInterpolation ? 'lines' : 'markers',
+                type: 'scatter',
+                mode: 'markers',
                 marker: {
                     color: this.domainObject.configuration.styles.color
                 },

@@ -20,18 +20,126 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<ul class="c-tree c-bar-graph-options">
-    <h2 title="Display properties for this object">Bar Graph Series</h2>
-    <li
-        v-for="series in domainObject.composition"
-        :key="series.key"
+<div class="js-plot-options-edit grid-properties">
+    <ul class="c-tree c-bar-graph-options l-inspector-part">
+        <h2 title="Display properties for this object">Bar Graph Series</h2>
+        <li class="grid-row">
+            <series-options
+                v-for="series in plotSeries"
+                :key="series.key"
+                :item="series"
+                :color-palette="colorPalette"
+            />
+        </li>
+    </ul>
+    <ul class="l-inspector-part">
+        <h2 title="Y axis settings for this object">X Axis</h2>
+        <li class="grid-row">
+            <div
+                class="grid-cell label"
+                title="X axis selection."
+            >X Axis</div>
+            <div class="grid-cell value">
+                <select
+                    v-if="isEditing"
+                    v-model="xKey"
+                    @change="updateForm('xKey')"
+                >
+                    <option
+                        v-for="option in xKeyOptions"
+                        :key="`xKey-${option.value}`"
+                        :value="option.value"
+                        :selected="option.value === xKey"
+                    >
+                        {{ option.name }}
+                    </option>
+                </select>
+                <div
+                    v-else
+                    class="grid-cell value"
+                >{{ xKeyLabel }}</div>
+            </div>
+        </li>
+    </ul>
+    <ul class="l-inspector-part">
+        <h2 title="Y axis settings for this object">Y Axis</h2>
+        <li class="grid-row">
+            <div
+                class="grid-cell label"
+                title="Y axis selection."
+            >Y Axis</div>
+            <div class="grid-cell value">
+                <select
+                    v-if="isEditing"
+                    v-model="yKey"
+                    @change="updateForm('yKey')"
+                >
+                    <option
+                        v-for="option in yKeyOptions"
+                        :key="`yKey-${option.value}`"
+                        :value="option.value"
+                        :selected="option.value === yKey"
+                    >
+                        {{ option.name }}
+                    </option>
+                </select>
+                <div
+                    v-else
+                    class="grid-cell value"
+                >{{ yKeyLabel }}</div>
+            </div>
+        </li>
+    </ul>
+    <ul class="l-inspector-part">
+        <h2 title="Use time-based interpolation for telemetry">Bar vs Scatter</h2>
+        <li class="grid-row">
+            <label
+                v-if="isEditing"
+                class="c-toggle-switch"
+            >
+                <input
+                    type="checkbox"
+                    :checked="useBar"
+                    @change="updateBar"
+                >
+                <span class="c-toggle-switch__slider"></span>
+                <span class="c-toggle-switch__label">Show Bars</span>
+            </label>
+            <span
+                v-else
+                class="c-toggle-switch__label"
+            >Use bar:
+                <span v-if="useBar"> Yes</span><span v-else> No</span>
+            </span>
+        </li>
+    </ul>
+    <ul
+        v-if="useBar === false"
+        class="l-inspector-part"
     >
-        <series-options
-            :item="series"
-            :color-palette="colorPalette"
-        />
-    </li>
-</ul>
+        <h2 title="Use time-based interpolation for telemetry">Interpolation</h2>
+        <li class="grid-row">
+            <label
+                v-if="isEditing"
+                class="c-toggle-switch"
+            >
+                <input
+                    type="checkbox"
+                    :checked="useInterpolation"
+                    @change="updateInterpolation"
+                >
+                <span class="c-toggle-switch__slider"></span>
+                <span class="c-toggle-switch__label">Use Interpolation</span>
+            </label>
+            <span
+                v-else
+                class="c-toggle-switch__label"
+            >Use interpolation:
+                <span v-if="useInterpolation"> Yes</span><span v-else> No</span>
+            </span>
+        </li>
+    </ul>
+</div>
 </template>
 
 <script>
@@ -45,8 +153,17 @@ export default {
     inject: ['openmct', 'domainObject'],
     data() {
         return {
+            xKey: undefined,
+            yKey: undefined,
+            xKeyLabel: '',
+            yKeyLabel: '',
+            plotSeries: [],
+            yKeyOptions: [],
+            xKeyOptions: [],
             isEditing: this.openmct.editor.isEditing(),
-            colorPalette: this.colorPalette
+            colorPalette: this.colorPalette,
+            useInterpolation: this.domainObject.configuration.useInterpolation === true,
+            useBar: this.domainObject.configuration.useBar === true
         };
     },
     computed: {
@@ -59,13 +176,158 @@ export default {
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.setEditState);
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.registerListeners();
+        this.composition.load();
     },
     beforeDestroy() {
         this.openmct.editor.off('isEditing', this.setEditState);
+        this.stopListening();
     },
     methods: {
         setEditState(isEditing) {
             this.isEditing = isEditing;
+        },
+        registerListeners() {
+            this.composition.on('add', this.addSeries);
+            this.composition.on('remove', this.removeSeries);
+            this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.setupOptions);
+        },
+        stopListening() {
+            this.composition.off('add', this.addSeries);
+            this.composition.off('remove', this.removeSeries);
+            if (this.unobserve) {
+                this.unobserve();
+            }
+        },
+        addSeries(series, index) {
+            this.$set(this.plotSeries, this.plotSeries.length, series);
+            this.setupOptions();
+        },
+        removeSeries(series) {
+            const index = this.plotSeries.find(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
+            if (index !== undefined) {
+                this.$delete(this.plotSeries, index);
+                this.setupOptions();
+            }
+        },
+        setupOptions() {
+            this.xKeyOptions = [];
+            this.yKeyOptions = [];
+            if (this.plotSeries.length <= 0) {
+                return;
+            }
+
+            let update = false;
+            const series = this.plotSeries[0];
+            const metadataValues = this.openmct.telemetry.getMetadata(series).valuesForHints(['range']);
+            metadataValues.forEach((metadataValue) => {
+                this.xKeyOptions.push({
+                    name: metadataValue.name || metadataValue.key,
+                    value: metadataValue.source || metadataValue.key,
+                    isArrayValue: metadataValue.isArrayValue
+                });
+                this.yKeyOptions.push({
+                    name: metadataValue.name || metadataValue.key,
+                    value: metadataValue.source || metadataValue.key,
+                    isArrayValue: metadataValue.isArrayValue
+                });
+            });
+
+            let xKeyOptionIndex;
+            let yKeyOptionIndex;
+
+            if (this.domainObject.configuration.axes.xKey) {
+                xKeyOptionIndex = this.xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
+                if (xKeyOptionIndex > -1) {
+                    this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                    this.xKeyLabel = this.xKeyOptions[xKeyOptionIndex].name;
+                }
+            } else {
+                if (this.xKey === undefined) {
+                    update = true;
+                    xKeyOptionIndex = 0;
+                    this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                    this.xKeyLabel = this.xKeyOptions[xKeyOptionIndex].name;
+                }
+            }
+
+            if (metadataValues.length > 1) {
+                if (this.domainObject.configuration.axes.yKey) {
+                    yKeyOptionIndex = this.yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
+                    if (yKeyOptionIndex > -1 && yKeyOptionIndex !== xKeyOptionIndex) {
+                        this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
+                        this.yKeyLabel = this.yKeyOptions[yKeyOptionIndex].name;
+                    }
+                } else {
+                    if (this.yKey === undefined) {
+                        update = true;
+                        yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
+                        this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
+                        this.yKeyLabel = this.yKeyOptions[yKeyOptionIndex].name;
+                    }
+                }
+
+                this.yKeyOptions = this.yKeyOptions.map((option, index) => {
+                    if (index === xKeyOptionIndex) {
+                        option.name = `${option.name} (swap)`;
+                        option.swap = yKeyOptionIndex;
+                    } else {
+                        option.name = option.name.replace(' (swap)', '');
+                        option.swap = undefined;
+                    }
+
+                    return option;
+                });
+            }
+
+            this.xKeyOptions = this.xKeyOptions.map((option, index) => {
+                if (index === yKeyOptionIndex) {
+                    option.name = `${option.name} (swap)`;
+                    option.swap = xKeyOptionIndex;
+                } else {
+                    option.name = option.name.replace(' (swap)', '');
+                    option.swap = undefined;
+                }
+
+                return option;
+            });
+
+            if (update === true) {
+                this.saveConfiguration();
+            }
+        },
+        updateForm(property) {
+            //TODO: Handle xKey and yKey not being arrays
+            if (property === 'xKey') {
+                const xKeyOption = this.xKeyOptions.find(option => option.value === this.xKey);
+                if (xKeyOption.swap !== undefined) {
+                    //swap
+                    this.yKey = this.xKeyOptions[xKeyOption.swap].value;
+                }
+            } else if (property === 'yKey') {
+                const yKeyOption = this.yKeyOptions.find(option => option.value === this.yKey);
+                if (yKeyOption.swap !== undefined) {
+                    //swap
+                    this.xKey = this.yKeyOptions[yKeyOption.swap].value;
+                }
+            }
+
+            this.saveConfiguration();
+        },
+        saveConfiguration() {
+            this.openmct.objects.mutate(this.domainObject, `configuration.axes`, {
+                xKey: this.xKey,
+                yKey: this.yKey
+            });
+        },
+        updateInterpolation(event) {
+            this.useInterpolation = event.target.checked === true;
+            this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation === true);
+        },
+        updateBar(event) {
+            this.useBar = event.target.checked === true;
+            this.openmct.objects.mutate(this.domainObject, `configuration.useBar`, this.useBar === true);
         }
     }
 };

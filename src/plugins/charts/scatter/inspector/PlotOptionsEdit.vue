@@ -81,23 +81,6 @@
         />
     </ul>
     <ul class="l-inspector-part">
-        <h2 title="Use time-based interpolation for telemetry">Bar vs Scatter</h2>
-        <li class="grid-row">
-            <label class="c-toggle-switch">
-                <input
-                    type="checkbox"
-                    :checked="useBar"
-                    @change="updateBar"
-                >
-                <span class="c-toggle-switch__slider"></span>
-                <span class="c-toggle-switch__label">Show Bars</span>
-            </label>
-        </li>
-    </ul>
-    <ul
-        v-if="useBar === false"
-        class="l-inspector-part"
-    >
         <h2 title="Use time-based interpolation for telemetry">Interpolation</h2>
         <li class="grid-row">
             <label class="c-toggle-switch">
@@ -128,8 +111,7 @@ export default {
             xKeyOptions: [],
             yKeyOptions: [],
             currentColor: undefined,
-            useInterpolation: this.domainObject.configuration.useInterpolation === true,
-            useBar: this.domainObject.configuration.useBar === true
+            useInterpolation: this.domainObject.configuration.useInterpolation === true
         };
     },
     mounted() {
@@ -295,10 +277,6 @@ export default {
         updateInterpolation(event) {
             this.useInterpolation = event.target.checked === true;
             this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation === true);
-        },
-        updateBar(event) {
-            this.useBar = event.target.checked === true;
-            this.openmct.objects.mutate(this.domainObject, `configuration.useBar`, this.useBar === true);
         }
     }
 };

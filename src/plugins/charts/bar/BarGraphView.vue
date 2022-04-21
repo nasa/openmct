@@ -40,14 +40,6 @@ export default {
         BarGraph
     },
     inject: ['openmct', 'domainObject', 'path'],
-    props: {
-        options: {
-            type: Object,
-            default() {
-                return {};
-            }
-        }
-    },
     data() {
         this.telemetryObjects = {};
         this.telemetryObjectFormats = {};
@@ -75,7 +67,9 @@ export default {
         this.setTimeContext();
 
         this.loadComposition();
-
+        this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.refreshData);
+        this.unobserveInterpolation = this.openmct.objects.observe(this.domainObject, 'configuration.useInterpolation', this.refreshData);
+        this.unobserveBar = this.openmct.objects.observe(this.domainObject, 'configuration.useBar', this.refreshData);
     },
     beforeDestroy() {
         this.stopFollowingTimeContext();
@@ -88,6 +82,17 @@ export default {
 
         this.composition.off('add', this.addTelemetryObject);
         this.composition.off('remove', this.removeTelemetryObject);
+        if (this.unobserve) {
+            this.unobserve();
+        }
+
+        if (this.unobserveInterpolation) {
+            this.unobserveInterpolation();
+        }
+
+        if (this.unobserveBar) {
+            this.unobserveBar();
+        }
     },
     methods: {
         setTimeContext() {
@@ -237,23 +242,41 @@ export default {
                 this.openmct.notifications.alert(data.message);
             }
 
-            if (!this.isDataInTimeRange(data, key)) {
+            if (!this.isDataInTimeRange(data, key, telemetryObject)) {
+                return;
+            }
+
+            //TODO: check if both xKey and yKey are arrayValues or NOT arrayValues
+            if (!this.domainObject.configuration.axes.xKey || !this.domainObject.configuration.axes.yKey) {
                 return;
             }
 
             let xValues = [];
             let yValues = [];
-
-            //populate X and Y values for plotly
-            axisMetadata.xAxisMetadata.forEach((metadata) => {
-                xValues.push(metadata.name);
-                if (data[metadata.key]) {
-                    const formattedValue = this.format(key, metadata.key, data);
-                    yValues.push(formattedValue);
-                } else {
-                    yValues.push(null);
+            const xAxisMetadata = axisMetadata.xAxisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
+            if (xAxisMetadata.isArrayValue) {
+                //populate x and y values
+                let metadataKey = this.domainObject.configuration.axes.xKey;
+                if (data[metadataKey] !== undefined) {
+                    xValues = this.format(key, metadataKey, data);
                 }
-            });
+
+                metadataKey = this.domainObject.configuration.axes.yKey;
+                if (data[metadataKey] !== undefined) {
+                    yValues = this.format(key, metadataKey, data);
+                }
+            } else {
+                //populate X and Y values for plotly
+                axisMetadata.xAxisMetadata.filter(metadataObj => !metadataObj.isArrayValue).forEach((metadata) => {
+                    xValues.push(metadata.name);
+                    if (data[metadata.key]) {
+                        const formattedValue = this.format(key, metadata.key, data);
+                        yValues.push(formattedValue);
+                    } else {
+                        yValues.push(null);
+                    }
+                });
+            }
 
             let trace = {
                 key,
@@ -263,23 +286,22 @@ export default {
                 text: yValues.map(String),
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: this.options.type ? this.options.type : 'bar',
+                type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
+                mode: this.domainObject.configuration.useInterpolation ? 'lines' : 'markers',
                 marker: {
                     color: this.domainObject.configuration.barStyles.series[key].color
                 },
-                hoverinfo: 'skip'
+                hoverinfo: this.domainObject.configuration.useBar ? 'skip' : 'x+y'
             };
-
-            if (this.options.type) {
-                trace.mode = 'markers';
-                trace.hoverinfo = 'x+y';
-            }
 
             this.addTrace(trace, key);
         },
-        isDataInTimeRange(datum, key) {
+        isDataInTimeRange(datum, key, telemetryObject) {
             const timeSystemKey = this.timeContext.timeSystem().key;
-            let currentTimestamp = this.parse(key, timeSystemKey, datum);
+            const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
+
+            let currentTimestamp = this.parse(key, metadataValue.source, datum);
 
             return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
         },

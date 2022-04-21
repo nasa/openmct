@@ -35,7 +35,10 @@ export default function () {
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
-                    barStyles: { series: {} }
+                    barStyles: { series: {} },
+                    axes: {},
+                    useInterpolation: false,
+                    useBar: false
                 };
             },
             priority: 891
