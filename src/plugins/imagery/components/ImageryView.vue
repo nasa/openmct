@@ -231,6 +231,9 @@ const SCROLL_LATENCY = 250;
 
 const ZOOM_SCALE_DEFAULT = 1;
 
+const THUMBNAIL_LAYOUT_MIN_WIDTH = 600;
+const THUMBNAIL_LAYOUT_MIN_HEIGHT = 400;
+
 export default {
     components: {
         Compass,
@@ -461,8 +464,6 @@ export default {
             };
         },
         shouldDisplayThumbnail() {
-            const THUMBNAIL_LAYOUT_MIN_WIDTH = 600;
-            const THUMBNAIL_LAYOUT_MIN_HEIGHT = 400;
 
             const { width, height } = this.sizedImageDimensions;
 
