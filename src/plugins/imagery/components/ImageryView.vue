@@ -230,8 +230,8 @@ const SCROLL_LATENCY = 250;
 
 const ZOOM_SCALE_DEFAULT = 1;
 
-const THUMBNAIL_LAYOUT_MIN_WIDTH = 600;
-const THUMBNAIL_LAYOUT_MIN_HEIGHT = 400;
+const THUMBNAIL_LAYOUT_MIN_WIDTH = 400;
+const THUMBNAIL_LAYOUT_MIN_HEIGHT = 300;
 
 export default {
     components: {
@@ -1067,21 +1067,21 @@ export default {
             // create an arbitrary buffer to keep thumbnails visible after image resizes
             const THRESHOLD_VALUE = 0.7;
 
-            let shouldDisplayThumbnail = false;
+            let displayThumbnail = false;
 
             if (previousVisibility) {
-                shouldDisplayThumbnail = (
+                displayThumbnail = (
                     width >= THUMBNAIL_LAYOUT_MIN_WIDTH * THRESHOLD_VALUE
                     && height >= THUMBNAIL_LAYOUT_MIN_HEIGHT * THRESHOLD_VALUE
                 );
             } else {
-                shouldDisplayThumbnail = (
+                displayThumbnail = (
                     width >= THUMBNAIL_LAYOUT_MIN_WIDTH
                     && height >= THUMBNAIL_LAYOUT_MIN_HEIGHT
                 );
             }
 
-            return shouldDisplayThumbnail;
+            return displayThumbnail;
         }
     }
 };
