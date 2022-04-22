@@ -112,7 +112,7 @@ define([
         }
 
         const matchingMetadata = this.valueMetadatas.filter(hasHints).map(metadata => {
-            metadata.isArrayValue = this.isArrayValue(metadata) !== null;
+            metadata.isArrayValue = this.isArrayValue(metadata) === true;
 
             return metadata;
         });
@@ -136,7 +136,7 @@ define([
             return false;
         }
 
-        return (metadata.format || metadata.formatString).match(regex);
+        return (metadata.format || metadata.formatString).match(regex) !== null;
     };
 
     TelemetryMetadataManager.prototype.getFilterableValues = function () {
