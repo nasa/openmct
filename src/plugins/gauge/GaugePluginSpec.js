@@ -36,25 +36,24 @@ let gaugeDomainObject = {
     composition: []
 };
 
-describe('Gaugue plugin', () => {
+describe('Gauge plugin', () => {
     let openmct;
     let child;
-    let appHolder;
+    let gaugeHolder;
 
     beforeEach((done) => {
-        appHolder = document.createElement('div');
-        appHolder.style.display = 'block';
-        appHolder.style.width = '1920px';
-        appHolder.style.height = '1080px';
+        gaugeHolder = document.createElement('div');
+        gaugeHolder.style.display = 'block';
+        gaugeHolder.style.width = '1920px';
+        gaugeHolder.style.height = '1080px';
 
         child = document.createElement('div');
-        appHolder.appendChild(child);
-        document.body.appendChild(appHolder);
+        gaugeHolder.appendChild(child);
 
         openmct = createOpenMct();
         openmct.on('start', done);
 
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
@@ -191,15 +190,15 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = appHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = appHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = appHolder.querySelector('.c-gauge__range');
-            const curveElement = appHolder.querySelector('.c-gauge__curval');
-            const dialElement = appHolder.querySelector('.c-dial');
+            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
+            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
+            const curveElement = gaugeHolder.querySelector('.c-gauge__curval');
+            const dialElement = gaugeHolder.querySelector('.c-dial');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
 
@@ -207,12 +206,12 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(appHolder.querySelector('.c-gauge__range').textContent).toEqual(`${minValue} ${maxValue}`);
+            expect(gaugeHolder.querySelector('.c-gauge__range').textContent).toEqual(`${minValue} ${maxValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = appHolder.querySelector('.c-gauge__curval-text');
+                const textElement = gaugeHolder.querySelector('.c-gauge__curval-text');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
@@ -327,15 +326,15 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = appHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = appHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = appHolder.querySelector('.c-gauge__range');
-            const curveElement = appHolder.querySelector('.c-gauge__curval');
-            const dialElement = appHolder.querySelector('.c-dial');
+            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
+            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
+            const curveElement = gaugeHolder.querySelector('.c-gauge__curval');
+            const dialElement = gaugeHolder.querySelector('.c-dial');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
 
@@ -343,12 +342,12 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(appHolder.querySelector('.c-gauge__range').textContent).toEqual(`${minValue} ${maxValue}`);
+            expect(gaugeHolder.querySelector('.c-gauge__range').textContent).toEqual(`${minValue} ${maxValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = appHolder.querySelector('.c-gauge__curval-text');
+                const textElement = gaugeHolder.querySelector('.c-gauge__curval-text');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
@@ -463,15 +462,15 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = appHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = appHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = appHolder.querySelector('.c-gauge__range');
-            const curveElement = appHolder.querySelector('.c-meter');
-            const dialElement = appHolder.querySelector('.c-meter__bg');
+            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
+            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
+            const curveElement = gaugeHolder.querySelector('.c-meter');
+            const dialElement = gaugeHolder.querySelector('.c-meter__bg');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
 
@@ -479,12 +478,12 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(appHolder.querySelector('.c-gauge__range').textContent).toEqual(`${maxValue} ${minValue}`);
+            expect(gaugeHolder.querySelector('.c-gauge__range').textContent).toEqual(`${maxValue} ${minValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = appHolder.querySelector('.c-gauge__curval-text');
+                const textElement = gaugeHolder.querySelector('.c-gauge__curval-text');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
@@ -561,15 +560,15 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = appHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = appHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = appHolder.querySelector('.c-gauge__range');
-            const curveElement = appHolder.querySelector('.c-meter');
-            const dialElement = appHolder.querySelector('.c-meter__bg');
+            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
+            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
+            const curveElement = gaugeHolder.querySelector('.c-meter');
+            const dialElement = gaugeHolder.querySelector('.c-meter__bg');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
 
@@ -644,15 +643,15 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = appHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = appHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = appHolder.querySelector('.c-gauge__range');
-            const curveElement = appHolder.querySelector('.c-meter');
-            const dialElement = appHolder.querySelector('.c-meter__bg');
+            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
+            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
+            const curveElement = gaugeHolder.querySelector('.c-meter');
+            const dialElement = gaugeHolder.querySelector('.c-meter__bg');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
 
@@ -773,15 +772,15 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = appHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = appHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = appHolder.querySelector('.c-gauge__range');
-            const curveElement = appHolder.querySelector('.c-gauge__curval');
-            const dialElement = appHolder.querySelector('.c-dial');
+            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
+            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
+            const curveElement = gaugeHolder.querySelector('.c-gauge__curval');
+            const dialElement = gaugeHolder.querySelector('.c-dial');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
 
@@ -789,12 +788,12 @@ describe('Gaugue plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(appHolder.querySelector('.c-gauge__range').textContent).toEqual(`${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`);
+            expect(gaugeHolder.querySelector('.c-gauge__range').textContent).toEqual(`${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = appHolder.querySelector('.c-gauge__curval-text');
+                const textElement = gaugeHolder.querySelector('.c-gauge__curval-text');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
