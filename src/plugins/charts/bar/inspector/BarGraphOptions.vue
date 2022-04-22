@@ -20,8 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="js-plot-options-edit grid-properties">
-    <ul class="c-tree c-bar-graph-options l-inspector-part">
+<div class="c-bar-graph-options js-bar-plot-option">
+    <ul class="c-tree">
         <h2 title="Display properties for this object">Bar Graph Series</h2>
         <li class="grid-row">
             <series-options
@@ -32,113 +32,131 @@
             />
         </li>
     </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Y axis settings for this object">X Axis</h2>
-        <li class="grid-row">
-            <div
-                class="grid-cell label"
-                title="X axis selection."
-            >X Axis</div>
-            <div class="grid-cell value">
-                <select
+    <div class="grid-properties">
+        <ul class="l-inspector-part">
+            <h2 title="Y axis settings for this object">Axes</h2>
+            <li class="grid-row">
+                <div
+                    class="grid-cell label"
+                    title="X axis selection."
+                >X Axis</div>
+                <div
                     v-if="isEditing"
-                    v-model="xKey"
-                    @change="updateForm('xKey')"
+                    class="grid-cell value"
                 >
-                    <option
-                        v-for="option in xKeyOptions"
-                        :key="`xKey-${option.value}`"
-                        :value="option.value"
-                        :selected="option.value === xKey"
+                    <select
+                        v-model="xKey"
+                        @change="updateForm('xKey')"
                     >
-                        {{ option.name }}
-                    </option>
-                </select>
+                        <option
+                            v-for="option in xKeyOptions"
+                            :key="`xKey-${option.value}`"
+                            :value="option.value"
+                            :selected="option.value === xKey"
+                        >
+                            {{ option.name }}
+                        </option>
+                    </select>
+                </div>
                 <div
                     v-else
                     class="grid-cell value"
                 >{{ xKeyLabel }}</div>
-            </div>
-        </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Y axis settings for this object">Y Axis</h2>
-        <li class="grid-row">
-            <div
-                class="grid-cell label"
-                title="Y axis selection."
-            >Y Axis</div>
-            <div class="grid-cell value">
-                <select
+            </li>
+            <li class="grid-row">
+                <div
+                    class="grid-cell label"
+                    title="Y axis selection."
+                >Y Axis</div>
+                <div
                     v-if="isEditing"
-                    v-model="yKey"
-                    @change="updateForm('yKey')"
+                    class="grid-cell value"
                 >
-                    <option
-                        v-for="option in yKeyOptions"
-                        :key="`yKey-${option.value}`"
-                        :value="option.value"
-                        :selected="option.value === yKey"
+                    <select
+                        v-model="yKey"
+                        @change="updateForm('yKey')"
                     >
-                        {{ option.name }}
-                    </option>
-                </select>
+                        <option
+                            v-for="option in yKeyOptions"
+                            :key="`yKey-${option.value}`"
+                            :value="option.value"
+                            :selected="option.value === yKey"
+                        >
+                            {{ option.name }}
+                        </option>
+                    </select>
+                </div>
                 <div
                     v-else
                     class="grid-cell value"
                 >{{ yKeyLabel }}</div>
-            </div>
-        </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Use time-based interpolation for telemetry">Bar vs Scatter</h2>
-        <li class="grid-row">
-            <label
-                v-if="isEditing"
-                class="c-toggle-switch"
-            >
-                <input
-                    type="checkbox"
-                    :checked="useBar"
-                    @change="updateBar"
+            </li>
+        </ul>
+    </div>
+    <div class="grid-properties">
+        <ul class="l-inspector-part">
+            <h2 title="Use time-based interpolation for telemetry">Line Method</h2>
+            <li class="grid-row">
+                <div
+                    v-if="isEditing"
+                    class="grid-cell label"
+                    title="The rendering method to join lines for this series."
+                >Line Method</div>
+                <div
+                    v-if="isEditing"
+                    class="grid-cell value"
                 >
-                <span class="c-toggle-switch__slider"></span>
-                <span class="c-toggle-switch__label">Show Bars</span>
-            </label>
-            <span
-                v-else
-                class="c-toggle-switch__label"
-            >Use bar:
-                <span v-if="useBar"> Yes</span><span v-else> No</span>
-            </span>
-        </li>
-    </ul>
-    <ul
-        v-if="useBar === false"
-        class="l-inspector-part"
-    >
-        <h2 title="Use time-based interpolation for telemetry">Interpolation</h2>
-        <li class="grid-row">
-            <label
-                v-if="isEditing"
-                class="c-toggle-switch"
-            >
-                <input
-                    type="checkbox"
-                    :checked="useInterpolation"
-                    @change="updateInterpolation"
+                    <select
+                        v-model="useInterpolation"
+                        @change="updateInterpolation"
+                    >
+                        <option value="none">None</option>
+                        <option value="linear">Linear interpolate</option>
+                        <option value="hv">Step after</option>
+                    </select>
+                </div>
+                <div
+                    v-if="!isEditing"
+                    class="grid-cell label"
+                    title="The rendering method to join lines for this series."
+                >Line Method</div>
+                <div
+                    v-if="!isEditing"
+                    class="grid-cell value"
+                >{{ {
+                    'none': 'None',
+                    'linear': 'Linear interpolation',
+                    'hv': 'Step After'
+                }[useInterpolation] }}
+                </div>
+            </li>
+        </ul>
+        <ul class="l-inspector-part">
+            <h2 title="Use time-based interpolation for telemetry">Bars</h2>
+            <li class="grid-row">
+                <label
+                    v-if="isEditing"
+                    class="c-toggle-switch"
                 >
-                <span class="c-toggle-switch__slider"></span>
-                <span class="c-toggle-switch__label">Use Interpolation</span>
-            </label>
-            <span
-                v-else
-                class="c-toggle-switch__label"
-            >Use interpolation:
-                <span v-if="useInterpolation"> Yes</span><span v-else> No</span>
-            </span>
-        </li>
-    </ul>
+                    <input
+                        type="checkbox"
+                        :checked="useBar"
+                        @change="updateBar"
+                    >
+                    <span class="c-toggle-switch__slider"></span>
+                    <span class="c-toggle-switch__label">Show Bars</span>
+                </label>
+                <span
+                    v-if="!isEditing"
+                    class="c-toggle-switch__label grid-cell label"
+                >Show bars:</span>
+                <span
+                    v-if="!isEditing"
+                    class="grid-cell value"
+                >{{ useBar ? 'Yes' : 'No' }}</span>
+            </li>
+        </ul>
+    </div>
 </div>
 </template>
 
@@ -162,7 +180,7 @@ export default {
             xKeyOptions: [],
             isEditing: this.openmct.editor.isEditing(),
             colorPalette: this.colorPalette,
-            useInterpolation: this.domainObject.configuration.useInterpolation === true,
+            useInterpolation: this.domainObject.configuration.useInterpolation,
             useBar: this.domainObject.configuration.useBar === true
         };
     },
@@ -322,8 +340,7 @@ export default {
             });
         },
         updateInterpolation(event) {
-            this.useInterpolation = event.target.checked === true;
-            this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation === true);
+            this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation);
         },
         updateBar(event) {
             this.useBar = event.target.checked === true;

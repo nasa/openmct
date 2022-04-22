@@ -31,14 +31,17 @@
 <script>
 import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
 
-const MAX_INTERPOLATE = 5;
-
 export default {
     components: {
         ScatterPlotWithUnderlay
     },
     inject: ['openmct', 'domainObject', 'path'],
     data() {
+        this.telemetryObjects = {};
+        this.telemetryObjectFormats = {};
+        this.telemetryCollections = {};
+        this.valuesByTimestamp = {};
+
         return {
             trace: []
         };
@@ -56,16 +59,14 @@ export default {
         }
     },
     mounted() {
-        this.telemetryObjects = {};
-        this.telemetryObjectFormats = {};
-        this.telemetryCollections = {};
-        this.valuesByTimestamp = {};
         this.setTimeContext();
         this.loadComposition();
+        this.reloadTelemetry = this.reloadTelemetry.bind(this);
         this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.reloadTelemetry);
-        this.unobserveInterpolation = this.openmct.objects.observe(this.domainObject, 'configuration.useInterpolation', this.reloadTelemetry);
     },
     beforeDestroy() {
+        this.stopFollowingTimeContext();
+
         Object.keys(this.telemetryCollections).forEach(this.removeTelemetryCollection);
         if (!this.composition) {
             return;
@@ -76,14 +77,22 @@ export default {
         if (this.unobserve) {
             this.unobserve();
         }
-
-        if (this.unobserveInterpolation) {
-            this.unobserveInterpolation();
-        }
     },
     methods: {
         setTimeContext() {
+            this.stopFollowingTimeContext();
+
             this.timeContext = this.openmct.time.getContextForView(this.path);
+            this.followTimeContext();
+
+        },
+        followTimeContext() {
+            this.timeContext.on('bounds', this.reloadTelemetry);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off('bounds', this.reloadTelemetry);
+            }
         },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
@@ -101,9 +110,8 @@ export default {
                     return;
                 }
 
-                const axisMetadata = this.getAxisMetadata(telemetryObject);
                 telemetry.forEach(datum => {
-                    this.addDataToGraph(telemetryObject, datum, axisMetadata);
+                    this.addDataToGraph(telemetryObject, datum);
                 });
                 this.updateTrace(telemetryObject);
             };
@@ -114,7 +122,8 @@ export default {
                 return {};
             }
 
-            return metadata.valuesForHints(['range']);
+            //Only present ranges that don't have array values
+            return metadata.valuesForHints(['range']).filter(metadataObj => !metadataObj.isArrayValue);
         },
         loadComposition() {
             this.composition = this.openmct.composition.get(this.domainObject);
@@ -165,7 +174,7 @@ export default {
 
             this.removeTelemetryCollection(key);
         },
-        addDataToGraph(telemetryObject, data, axisMetadata) {
+        addDataToGraph(telemetryObject, data) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
             if (data.message) {
@@ -196,10 +205,11 @@ export default {
             const xAndyValues = Object.values(this.valuesByTimestamp);
             const xValues = xAndyValues.map(value => value.x);
             const yValues = xAndyValues.map(value => value.y);
-            const xAxisMetadata = this.getAxisMetadata(telemetryObject).find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
+            const axisMetadata = this.getAxisMetadata(telemetryObject);
+            const xAxisMetadata = axisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
             let yAxisMetadata = {};
             if (this.domainObject.configuration.axes.yKey) {
-                yAxisMetadata = this.getAxisMetadata(telemetryObject).find(metadata => metadata.source === this.domainObject.configuration.axes.yKey);
+                yAxisMetadata = axisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.yKey);
             }
 
             let trace = {

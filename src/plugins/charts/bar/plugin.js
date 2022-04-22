@@ -37,7 +37,7 @@ export default function () {
                 domainObject.configuration = {
                     barStyles: { series: {} },
                     axes: {},
-                    useInterpolation: false,
+                    useInterpolation: 'linear',
                     useBar: false
                 };
             },

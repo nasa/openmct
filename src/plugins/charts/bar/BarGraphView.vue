@@ -287,7 +287,10 @@ export default {
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
                 type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
-                mode: this.domainObject.configuration.useInterpolation ? 'lines' : 'markers',
+                mode: this.domainObject.configuration.useInterpolation !== 'none' ? 'lines' : 'markers',
+                line: {
+                    shape: this.domainObject.configuration.useInterpolation
+                },
                 marker: {
                     color: this.domainObject.configuration.barStyles.series[key].color
                 },
@@ -298,10 +301,11 @@ export default {
         },
         isDataInTimeRange(datum, key, telemetryObject) {
             const timeSystemKey = this.timeContext.timeSystem().key;
-            const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
+            //TODO: this is causing issues in VIPER - investigation needed
+            // const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            // let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
 
-            let currentTimestamp = this.parse(key, metadataValue.source, datum);
+            let currentTimestamp = this.parse(key, timeSystemKey, datum);
 
             return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
         },

@@ -37,8 +37,7 @@ export default function () {
                 domainObject.composition = [];
                 domainObject.configuration = {
                     styles: {},
-                    axes: {},
-                    useInterpolation: false
+                    axes: {}
                 };
             },
             form: [
