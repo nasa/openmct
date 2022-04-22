@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import PerformancePlugin from './plugin.js';
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 describe('the plugin', () => {
     let openmct;
@@ -31,9 +28,8 @@ describe('the plugin', () => {
     let child;
 
     let performanceIndicator;
-    let countFramesPromise;
 
-    beforeEach((done) => {
+    beforeEach(done => {
         openmct = createOpenMct();
 
         element = document.createElement('div');
@@ -42,11 +38,9 @@ describe('the plugin', () => {
 
         openmct.install(new PerformancePlugin());
 
-        countFramesPromise = countFrames();
-
         openmct.on('start', done);
 
-        performanceIndicator = openmct.indicators.indicatorObjects.find((indicator) => {
+        performanceIndicator = openmct.indicators.indicatorObjects.find(indicator => {
             return indicator.text && indicator.text() === '~ fps';
         });
 
@@ -61,25 +55,21 @@ describe('the plugin', () => {
         expect(performanceIndicator).toBeDefined();
     });
 
-    it('correctly calculates fps', () => {
-        return countFramesPromise.then((frames) => {
-            expect(performanceIndicator.text()).toEqual(`${frames} fps`);
-        });
+    it('calculates an fps value', async () => {
+        await loopForABit();
+        // eslint-disable-next-line
+        expect(parseInt(performanceIndicator.text().split(' fps')[0])).toBeGreaterThan(0);
     });
 
-    function countFrames() {
-        let startTime = performance.now();
+    function loopForABit() {
         let frames = 0;
 
-        return new Promise((resolve) => {
-            requestAnimationFrame(function incrementCount() {
-                let now = performance.now();
-
-                if ((now - startTime) < 1000) {
-                    frames++;
-                    requestAnimationFrame(incrementCount);
+        return new Promise(resolve => {
+            requestAnimationFrame(function loop() {
+                if (++frames === 240) {
+                    resolve();
                 } else {
-                    resolve(frames);
+                    requestAnimationFrame(loop);
                 }
             });
         });
