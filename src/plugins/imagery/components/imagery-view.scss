@@ -222,7 +222,7 @@
     .h-local-controls--overlay-content {
         position: absolute;
         left: $interiorMargin; top: $interiorMargin;
-        z-index: 2;
+        z-index: 70;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
         max-width: 250px;
