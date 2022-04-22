@@ -344,6 +344,8 @@ describe("The Imagery View Layouts", () => {
             );
             openmct.install(clearDataPlugin);
             clearDataAction = openmct.actions.getAction('clear-data-action');
+            // force show the thumbnails
+            imageryView._getInstance().$children[0].forceShowThumbnails = true;
 
             return Vue.nextTick();
         });
@@ -524,10 +526,9 @@ describe("The Imagery View Layouts", () => {
         });
 
         it('on clearData action should clear data for object is selected', async (done) => {
-            // force show the thumbnails so we can use count the thumbs
+            // force show the thumbnails
             imageryView._getInstance().$children[0].forceShowThumbnails = true;
             await Vue.nextTick();
-
             expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
             openmct.objectViews.on('clearData', async (_domainObject) => {
                 await Vue.nextTick();
