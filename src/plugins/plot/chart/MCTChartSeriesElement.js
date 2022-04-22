@@ -85,11 +85,10 @@ export default class MCTChartSeriesElement {
 
         this.removeSegments(removalPoint, vertexCount);
 
-        this.removePoint(
-            this.makePoint(point, series),
-            removalPoint,
-            vertexCount
-        );
+        // TODO useless makePoint call?
+        this.makePoint(point, series);
+        this.removePoint(removalPoint);
+
         this.count -= (vertexCount / 2);
     }
 
@@ -109,11 +108,7 @@ export default class MCTChartSeriesElement {
         const insertionPoint = this.startIndexForPointAtIndex(index);
         this.growIfNeeded(pointsRequired);
         this.makeInsertionPoint(insertionPoint, pointsRequired);
-        this.addPoint(
-            this.makePoint(point, series),
-            insertionPoint,
-            pointsRequired
-        );
+        this.addPoint(this.makePoint(point, series), insertionPoint);
         this.count += (pointsRequired / 2);
     }
 

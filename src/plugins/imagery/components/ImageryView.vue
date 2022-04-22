@@ -536,7 +536,7 @@ export default {
         this.updateRelatedTelemetryForFocusedImage = _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
 
         // for resizing the object view
-        this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400);
+        this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400, { leading: true });
 
         if (this.$refs.imageBG) {
             this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
