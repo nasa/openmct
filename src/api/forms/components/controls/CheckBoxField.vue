@@ -27,21 +27,19 @@
         :class="model.cssClass"
     >
         <input
-            v-model="field"
-            type="number"
-            :min="model.min"
-            :max="model.max"
-            :step="model.step"
-            @input="updateText()"
+            type="checkbox"
+            :checked="isChecked"
+            @input="toggleCheckBox"
         >
     </span>
 </span>
 </template>
 
 <script>
-import { throttle } from 'lodash';
+import toggleMixin from '../../toggle-check-box-mixin';
 
 export default {
+    mixins: [toggleMixin],
     props: {
         model: {
             type: Object,
@@ -50,21 +48,8 @@ export default {
     },
     data() {
         return {
-            field: this.model.value
+            isChecked: this.model.value
         };
-    },
-    mounted() {
-        this.updateText = throttle(this.updateText.bind(this), 200);
-    },
-    methods: {
-        updateText() {
-            const data = {
-                model: this.model,
-                value: this.field
-            };
-
-            this.$emit('onChange', data);
-        }
     }
 };
 </script>
