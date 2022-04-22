@@ -175,6 +175,8 @@ export class TelemetryCollection extends EventEmitter {
         if (telemetryData === undefined) {
             return;
         }
+        performance.mark('tlmprocessing:start');
+
 
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
         let parsedValue;
