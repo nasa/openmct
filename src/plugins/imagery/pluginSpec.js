@@ -28,11 +28,13 @@ import {
     simulateKeyEvent
 } from 'utils/testing';
 import ClearDataPlugin from '../clearData/plugin';
+import _ from 'lodash';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
 const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
+const THUMBS_WRAPPER_CLASS = '.c-imagery__thumbs-wrapper';
 const REFRESH_CSS_MS = 500;
 
 function getImageInfo(doc) {
@@ -523,7 +525,11 @@ describe("The Imagery View Layouts", () => {
             expect(clearDataAction).toBeDefined();
         });
 
-        it('on clearData action should clear data for object is selected', (done) => {
+        fit('on clearData action should clear data for object is selected', async (done) => {
+            // force show the thumbnails so we can use count the thumbs
+            imageryView._getInstance().$children[0].forceShowThumbnails = true;
+            await Vue.nextTick();
+
             expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
             openmct.objectViews.on('clearData', async (_domainObject) => {
                 await Vue.nextTick();

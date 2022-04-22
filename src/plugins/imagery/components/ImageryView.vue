@@ -163,6 +163,7 @@
         </div>
     </div>
     <div
+        v-if="displayThumbnails"
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused && !isFixed },
@@ -296,7 +297,8 @@ export default {
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
-            imagePanned: false
+            imagePanned: false,
+            forceShowThumbnails: false
         };
     },
     computed: {
@@ -313,7 +315,10 @@ export default {
             return compassRoseSizingClasses;
         },
         displayThumbnails() {
-            return this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT;
+            return (
+                this.forceShowThumbnails 
+                || this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT
+            ); 
         },
         displayThumbnailsSmall() {
             return this.viewHeight > SHOW_THUMBS_THRESHOLD_HEIGHT && this.viewHeight <= SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT;
