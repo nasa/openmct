@@ -180,7 +180,8 @@ export default {
             limitLow: gaugeController.limitLow,
             rangeHigh: gaugeController.max,
             rangeLow: gaugeController.min,
-            gaugeType: gaugeController.gaugeType
+            gaugeType: gaugeController.gaugeType,
+            activeTimeSystem: this.openmct.time.timeSystem()
         };
     },
     computed: {
@@ -241,6 +242,12 @@ export default {
         },
         valueInBounds() {
             return (this.curVal >= this.rangeLow && this.curVal <= this.rangeHigh);
+        },
+        timeFormatter() {
+            const timeSystem = this.activeTimeSystem;
+            const metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
+
+            return this.openmct.telemetry.getValueFormatter(metadataValue);
         }
     },
     watch: {
@@ -257,6 +264,7 @@ export default {
         this.composition.load();
 
         this.openmct.time.on('bounds', this.refreshData);
+        this.openmct.time.on('timeSystem', this.setTimeSystem);
     },
     destroyed() {
         this.composition.off('add', this.addedToComposition);
@@ -267,6 +275,7 @@ export default {
         }
 
         this.openmct.time.off('bounds', this.refreshData);
+        this.openmct.time.off('timeSystem', this.setTimeSystem);
     },
     methods: {
         addTelemetryObjectAndSubscribe(domainObject) {
@@ -305,12 +314,6 @@ export default {
                     }
                 ]
             });
-        },
-        getDateValueFormatter() {
-            const timeSystem = this.openmct.time.timeSystem();
-            const metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
-
-            return this.openmct.telemetry.getValueFormatter(metadataValue);
         },
         matchGaugeType(str) {
             return this.gaugeType.indexOf(str) !== -1;
@@ -367,6 +370,9 @@ export default {
 
             return Math.round(val * precision) / precision;
         },
+        setTimeSystem(timeSystem) {
+            this.activeTimeSystem = timeSystem;
+        },
         subscribe(domainObject = this.telemetryObject) {
             this.unsubscribe = this.openmct
                 .telemetry
@@ -401,13 +407,14 @@ export default {
             this.rangeLow = this.round(this.limitLow - Math.abs(this.limitLow * LIMIT_PADDING_IN_PERCENT / 100));
         },
         updateValue(datum) {
+            this.datum = datum;
+
             if (this.isRendering) {
                 return;
             }
 
             const { start, end } = this.openmct.time.bounds();
-            const dateValueFormatter = this.getDateValueFormatter();
-            const parsedValue = dateValueFormatter.parse(datum);
+            const parsedValue = this.timeFormatter.parse(this.datum);
 
             const beforeStartOfBounds = parsedValue < start;
             const afterEndOfBounds = parsedValue > end;
@@ -419,7 +426,7 @@ export default {
             requestAnimationFrame(() => {
                 this.isRendering = false;
 
-                this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
+                this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);
             });
         },
         valToPercent(vValue) {
