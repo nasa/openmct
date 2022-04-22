@@ -523,7 +523,7 @@ describe("The Imagery View Layouts", () => {
             expect(clearDataAction).toBeDefined();
         });
 
-        fit('on clearData action should clear data for object is selected', async (done) => {
+        it('on clearData action should clear data for object is selected', async (done) => {
             // force show the thumbnails so we can use count the thumbs
             imageryView._getInstance().$children[0].forceShowThumbnails = true;
             await Vue.nextTick();
