@@ -100,6 +100,10 @@ export default {
         if (this.unlistenUnderlay) {
             this.unlistenUnderlay();
         }
+
+        if (this.unobserveColorChanges) {
+            this.unobserveColorChanges();
+        }
     },
     methods: {
         getUnderlayPlotData() {
@@ -252,6 +256,8 @@ export default {
             return yaxis;
         },
         registerListeners() {
+
+            this.unobserveColorChanges = this.openmct.objects.observe(this.domainObject, 'configuration.styles.color', this.updateColors);
             this.unlistenUnderlay = this.openmct.objects.observe(this.domainObject, 'selectFile', this.observeForUnderlayPlotChanges);
             this.resizeTimer = false;
             if (window.ResizeObserver) {
@@ -264,6 +270,24 @@ export default {
                 });
                 this.plotResizeObserver.observe(this.$refs.plotWrapper);
             }
+        },
+        updateColors() {
+            const colors = [];
+            const indices = [];
+            this.data.forEach((item, index) => {
+                const colorExists = this.domainObject.configuration.styles.color;
+                indices.push(index);
+                if (colorExists) {
+                    colors.push(this.domainObject.configuration.styles.color);
+                } else {
+                    colors.push(item.marker.color);
+                }
+            });
+            const plotUpdate = {
+                'marker.color': colors
+            };
+
+            Plotly.restyle(this.$refs.plot, plotUpdate, indices);
         },
         reset() {
             this.updatePlot();

@@ -50,14 +50,6 @@
             short-label="Color"
         />
     </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Use time-based interpolation for telemetry">Interpolation</h2>
-        <li class="grid-row">
-            <span class="c-toggle-switch__label">Use interpolation:
-                <span v-if="useInterpolation"> Yes</span><span v-else> No</span>
-            </span>
-        </li>
-    </ul>
 </div>
 </template>
 
@@ -73,8 +65,7 @@ export default {
         return {
             xKeyLabel: '',
             yKeyLabel: '',
-            currentColor: undefined,
-            useInterpolation: this.domainObject.configuration.useInterpolation === true
+            currentColor: undefined
         };
     },
     mounted() {

@@ -80,20 +80,6 @@
             @colorSet="setColor"
         />
     </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Use time-based interpolation for telemetry">Interpolation</h2>
-        <li class="grid-row">
-            <label class="c-toggle-switch">
-                <input
-                    type="checkbox"
-                    :checked="useInterpolation"
-                    @change="updateInterpolation"
-                >
-                <span class="c-toggle-switch__slider"></span>
-                <span class="c-toggle-switch__label">Use Interpolation</span>
-            </label>
-        </li>
-    </ul>
 </div>
 </template>
 <script>
@@ -110,8 +96,7 @@ export default {
             yKey: undefined,
             xKeyOptions: [],
             yKeyOptions: [],
-            currentColor: undefined,
-            useInterpolation: this.domainObject.configuration.useInterpolation === true
+            currentColor: undefined
         };
     },
     mounted() {
@@ -273,10 +258,6 @@ export default {
                 xKey: this.xKey,
                 yKey: this.yKey
             });
-        },
-        updateInterpolation(event) {
-            this.useInterpolation = event.target.checked === true;
-            this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation === true);
         }
     }
 };
