@@ -166,8 +166,7 @@ export default {
             }
 
             return definition.form
-                .filter(field => !field.hideFromInspector)
-                .map(field => {
+                .map((field) => {
                     let path = field.property;
                     if (typeof path === 'string') {
                         path = [path];

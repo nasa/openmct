@@ -79,11 +79,9 @@ export default {
         rowClass() {
             let cssClass = this.cssClass;
 
-            if (!this.row.required) {
-                return;
+            if (this.row.required) {
+                cssClass = `${cssClass} req`;
             }
-
-            cssClass = `${cssClass} req`;
 
             if (this.visited && this.valid !== undefined) {
                 if (this.valid === true) {

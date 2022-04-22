@@ -242,7 +242,6 @@ define([
 
         // Plugins that are installed by default
 
-        this.install(this.plugins.Gauge());
         this.install(this.plugins.Plot());
         this.install(this.plugins.Chart());
         this.install(this.plugins.TelemetryTable.default());
