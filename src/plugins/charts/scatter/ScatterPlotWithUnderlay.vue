@@ -197,7 +197,7 @@ export default {
                 const yAxisMetadata = datum.yAxisMetadata;
                 const range = '1';
                 const side = 'left';
-                const name = '';
+                const name = yAxisMetadata.name;
                 const unit = yAxisMetadata.units;
 
                 yAxisMeta[range] = {
