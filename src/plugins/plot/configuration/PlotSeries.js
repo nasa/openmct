@@ -23,6 +23,7 @@ import _ from 'lodash';
 import Model from "./Model";
 import { MARKER_SHAPES } from '../draw/MarkerShapes';
 import configStore from "../configuration/ConfigStore";
+import { symlog } from '../mathUtils';
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry
@@ -63,12 +64,16 @@ import configStore from "../configuration/ConfigStore";
  * @extends {Model<PlotSeriesModelType, PlotSeriesModelOptions>}
  */
 export default class PlotSeries extends Model {
+    logMode = false;
+
     /**
      @param {import('./Model').ModelOptions<PlotSeriesModelType, PlotSeriesModelOptions>} options
      */
     constructor(options) {
 
         super(options);
+
+        this.logMode = options.collection.plot.model.yAxis.logMode;
 
         this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
         this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
@@ -229,6 +234,7 @@ export default class PlotSeries extends Model {
             this.getXVal = format.parse.bind(format);
         }
     }
+
     /**
      * Update y formatter on change, default to stepAfter interpolation if
      * y range is an enumeration.
@@ -252,7 +258,11 @@ export default class PlotSeries extends Model {
         }.bind(this);
         this.set('unit', valueMetadata.unit);
         const format = this.formats[newKey];
-        this.getYVal = format.parse.bind(format);
+        this.getYVal = (value) => {
+            const y = format.parse(value);
+
+            return this.logMode ? symlog(y, 10) : y;
+        };
     }
 
     formatX(point) {
@@ -520,7 +530,8 @@ export default class PlotSeries extends Model {
 
     /**
      * Update the series data with the given value.
-     * @returns {Array<{
+     * This return type definition is totally wrong, only covers sinwave generator. It needs to be generic.
+     * @return-example {Array<{
             cos: number
             sin: number
             mctLimitState: {

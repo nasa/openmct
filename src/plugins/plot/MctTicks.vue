@@ -30,8 +30,8 @@
         class="gl-plot-tick-wrapper"
     >
         <div
-            v-for="tick in ticks"
-            :key="tick.value"
+            v-for="(tick, i) in ticks"
+            :key="'tick-left' + i"
             class="gl-plot-tick gl-plot-x-tick-label"
             :style="{
                 left: (100 * (tick.value - min) / interval) + '%'
@@ -46,8 +46,8 @@
         class="gl-plot-tick-wrapper"
     >
         <div
-            v-for="tick in ticks"
-            :key="tick.value"
+            v-for="(tick, i) in ticks"
+            :key="'tick-top' + i"
             class="gl-plot-tick gl-plot-y-tick-label"
             :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
             :title="tick.fullText || tick.text"
@@ -59,8 +59,8 @@
     <!-- grid lines follow -->
     <template v-if="position === 'right'">
         <div
-            v-for="tick in ticks"
-            :key="tick.value"
+            v-for="(tick, i) in ticks"
+            :key="'tick-right' + i"
             class="gl-plot-hash hash-v"
             :style="{
                 right: (100 * (max - tick.value) / interval) + '%',
@@ -71,8 +71,8 @@
     </template>
     <template v-if="position === 'bottom'">
         <div
-            v-for="tick in ticks"
-            :key="tick.value"
+            v-for="(tick, i) in ticks"
+            :key="'tick-bottom' + i"
             class="gl-plot-hash hash-h"
             :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
         >
@@ -83,7 +83,7 @@
 
 <script>
 import eventHelpers from "./lib/eventHelpers";
-import { ticks, getFormattedTicks } from "./tickUtils";
+import { ticks, getLogTicks, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
 
 export default {
@@ -95,6 +95,13 @@ export default {
                 return '';
             },
             required: true
+        },
+        // Make it a prop, then later we can allow user to change it via UI input
+        tickCount: {
+            type: Number,
+            default() {
+                return 6;
+            }
         },
         position: {
             required: true,
@@ -118,7 +125,6 @@ export default {
 
         this.axis = this.getAxisFromConfig();
 
-        this.tickCount = 4;
         this.tickUpdate = false;
         this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
         this.listenTo(this.axis, 'change:format', this.updateTicks, this);
@@ -184,7 +190,12 @@ export default {
                 }, this);
             }
 
-            return ticks(range.min, range.max, number);
+            if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
+                return getLogTicks(range.min, range.max, number, 4);
+                // return getLogTicks2(range.min, range.max, number);
+            } else {
+                return ticks(range.min, range.max, number);
+            }
         },
 
         updateTicksForceRegeneration() {
