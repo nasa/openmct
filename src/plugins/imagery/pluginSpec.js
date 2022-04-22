@@ -28,13 +28,11 @@ import {
     simulateKeyEvent
 } from 'utils/testing';
 import ClearDataPlugin from '../clearData/plugin';
-import _ from 'lodash';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
 const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
-const THUMBS_WRAPPER_CLASS = '.c-imagery__thumbs-wrapper';
 const REFRESH_CSS_MS = 500;
 
 function getImageInfo(doc) {
