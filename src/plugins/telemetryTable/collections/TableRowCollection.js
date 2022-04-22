@@ -131,14 +131,14 @@ define(
                 let j = 0;
 
                 while (i < this.rows.length && j < rows.length) {
-                    const iRow = this.rows[i];
-                    const jRow = rows[j];
+                    const existingRow = this.rows[i];
+                    const incomingRow = rows[j];
 
-                    if (this.firstRowInSortOrder(iRow, jRow) === iRow) {
-                        mergedRows.push(iRow);
+                    if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
+                        mergedRows.push(existingRow);
                         i++;
                     } else {
-                        mergedRows.push(jRow);
+                        mergedRows.push(incomingRow);
                         j++;
                     }
                 }
