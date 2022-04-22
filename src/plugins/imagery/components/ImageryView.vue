@@ -316,9 +316,9 @@ export default {
         },
         displayThumbnails() {
             return (
-                this.forceShowThumbnails 
+                this.forceShowThumbnails
                 || this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT
-            ); 
+            );
         },
         displayThumbnailsSmall() {
             return this.viewHeight > SHOW_THUMBS_THRESHOLD_HEIGHT && this.viewHeight <= SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT;
