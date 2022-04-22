@@ -112,6 +112,7 @@ export default {
         },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
+            //TODO: Remove existing telemetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
@@ -230,6 +231,12 @@ export default {
                     undefined
                 );
             }
+
+            this.openmct.objects.mutate(
+                this.domainObject,
+                `configuration.axes`,
+                {}
+            );
 
             this.removeSubscription(key);
 
