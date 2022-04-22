@@ -14,9 +14,22 @@
                 @change="updateForm('label')"
             ></div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2>Y Axis Scaling</h2>
+        <li class="grid-row">
+            <div
+                class="grid-cell label"
+                title="Enable log mode."
+            >
+                Log mode
+            </div>
+            <div class="grid-cell value">
+                <!-- eslint-disable-next-line vue/html-self-closing -->
+                <input
+                    v-model="logMode"
+                    type="checkbox"
+                    @change="updateForm('logMode')"
+                />
+            </div>
+        </li>
         <li class="grid-row">
             <div
                 class="grid-cell label"
@@ -105,6 +118,7 @@ export default {
         return {
             label: '',
             autoscale: '',
+            logMode: false,
             autoscalePadding: '',
             rangeMin: '',
             rangeMax: '',
@@ -117,38 +131,35 @@ export default {
     },
     methods: {
         initialize: function () {
-            this.fields = [
-                {
-                    modelProp: 'label',
+            this.fields = {
+                label: {
                     objectPath: 'configuration.yAxis.label'
                 },
-                {
-                    modelProp: 'autoscale',
+                autoscale: {
                     coerce: Boolean,
                     objectPath: 'configuration.yAxis.autoscale'
                 },
-                {
-                    modelProp: 'autoscalePadding',
+                autoscalePadding: {
                     coerce: Number,
                     objectPath: 'configuration.yAxis.autoscalePadding'
                 },
-                {
-                    modelProp: 'range',
+                logMode: {
+                    coerce: Boolean,
+                    objectPath: 'configuration.yAxis.logMode'
+                },
+                range: {
                     objectPath: 'configuration.yAxis.range',
                     coerce: function coerceRange(range) {
-                        if (!range) {
-                            return {
-                                min: 0,
-                                max: 0
-                            };
-                        }
+                        const newRange = {
+                            min: -1,
+                            max: 1
+                        };
 
-                        const newRange = {};
-                        if (typeof range.min !== 'undefined' && range.min !== null) {
+                        if (range && typeof range.min !== 'undefined' && range.min !== null) {
                             newRange.min = Number(range.min);
                         }
 
-                        if (typeof range.max !== 'undefined' && range.max !== null) {
+                        if (range && typeof range.max !== 'undefined' && range.max !== null) {
                             newRange.max = Number(range.max);
                         }
 
@@ -180,11 +191,12 @@ export default {
                         }
                     }
                 }
-            ];
+            };
         },
         initFormValues() {
             this.label = this.yAxis.get('label');
             this.autoscale = this.yAxis.get('autoscale');
+            this.logMode = this.yAxis.get('logMode');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
             const range = this.yAxis.get('range') ?? this.yAxis.get('displayRange');
             this.rangeMin = range?.min;
@@ -202,7 +214,7 @@ export default {
             }
 
             let oldVal = this.yAxis.get(formKey);
-            const formField = this.fields.find((field) => field.modelProp === formKey);
+            const formField = this.fields[formKey];
 
             const validationError = formField.validate?.(newVal, this.yAxis);
             this.validationErrors[formKey] = validationError;
