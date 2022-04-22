@@ -166,9 +166,10 @@
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused && !isFixed },
-            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused },
+            { 'is-small-thumbs': displayThumbnailsSmall },
+            { 'hide': !displayThumbnails }
         ]"
-        :style="{ 'display': displayThumbnails ? 'flex' : 'none'}"
     >
         <div
             ref="thumbsWrapper"
@@ -180,6 +181,7 @@
                 :key="image.url + image.time"
                 class="c-imagery__thumb c-thumb"
                 :class="{ selected: focusedImageIndex === index && isPaused }"
+                :title="image.formattedTime"
                 @click="thumbnailClicked(index)"
             >
                 <a
@@ -233,7 +235,8 @@ const ARROW_LEFT = 37;
 const SCROLL_LATENCY = 250;
 
 const ZOOM_SCALE_DEFAULT = 1;
-const SHOW_THUMBS_THRESHOLD_HEIGHT = 400;
+const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
+const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
 export default {
     components: {
@@ -311,6 +314,9 @@ export default {
         },
         displayThumbnails() {
             return this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT;
+        },
+        displayThumbnailsSmall() {
+            return this.viewHeight > SHOW_THUMBS_THRESHOLD_HEIGHT && this.viewHeight <= SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT;
         },
         time() {
             return this.formatTime(this.focusedImage);
