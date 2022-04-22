@@ -16,10 +16,8 @@
     <div
         ref="plot"
         class="c-scatter-chart"
-        @plotly_relayout="zoom"
     ></div>
     <div
-        v-if="false"
         ref="localControl"
         class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover"
     >
@@ -90,8 +88,12 @@ export default {
             displayModeBar: false
         });
         this.registerListeners();
+
+        this.$refs.plot.on('plotly_relayout', this.zoom);
     },
     beforeDestroy() {
+        this.$refs.plot.off('plotly_relayout', this.zoom);
+
         if (this.plotResizeObserver) {
             this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
             clearTimeout(this.resizeTimer);
@@ -173,8 +175,7 @@ export default {
                     domain: xAxisDomain,
                     range: [this.xAxisRange.min, this.xAxisRange.max],
                     title: this.plotAxisTitle.xAxisTitle,
-                    automargin: true,
-                    fixedrange: true
+                    automargin: true
                 },
                 yaxis: primaryYaxis,
                 margin: {
@@ -233,7 +234,6 @@ export default {
             const title = `${name} ${unit ? '(' + unit + ')' : ''}`;
             const yaxis = {
                 automargin: true,
-                fixedrange: true,
                 title
             };
 
@@ -256,7 +256,6 @@ export default {
             return yaxis;
         },
         registerListeners() {
-
             this.unobserveColorChanges = this.openmct.objects.observe(this.domainObject, 'configuration.styles.color', this.updateColors);
             this.unlistenUnderlay = this.openmct.objects.observe(this.domainObject, 'selectFile', this.observeForUnderlayPlotChanges);
             this.resizeTimer = false;
@@ -290,9 +289,9 @@ export default {
             Plotly.restyle(this.$refs.plot, plotUpdate, indices);
         },
         reset() {
-            this.updatePlot();
-
             this.isZoomed = false;
+
+            this.updatePlot();
             this.$emit('subscribe');
         },
         updateData() {
@@ -316,7 +315,7 @@ export default {
             localControl.style.display = 'block';
         },
         updatePlot() {
-            if (!this.$refs || !this.$refs.plot) {
+            if (!this.$refs || !this.$refs.plot || this.isZoomed) {
                 return;
             }
 
@@ -327,9 +326,6 @@ export default {
             const { autosize } = eventData;
 
             if (autosize || autorange) {
-                this.isZoomed = false;
-                this.reset();
-
                 return;
             }
 
