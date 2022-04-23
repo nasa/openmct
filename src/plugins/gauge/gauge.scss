@@ -1,0 +1,269 @@
+$dialClip: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
+$dialClip90: polygon(0 0, 50% 50%, 0 100%);
+$dialClip180: polygon(0 0, 100% 0, 0 100%);
+$limitHighClip90: polygon(0 0, 100% 0, 100% 100%);
+$limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
+
+.is-object-type-gauge {
+  overflow: hidden;
+}
+
+.req-indicator {
+  width: 20px;
+
+  &.invalid,
+  &.invalid.req { @include validationState($glyph-icon-x, $colorFormInvalid); }
+
+  &.valid,
+  &.valid.req { @include validationState($glyph-icon-check, $colorFormValid); }
+
+  &.req { @include validationState($glyph-icon-asterisk, $colorFormRequired); }
+}
+
+.c-gauge {
+  // Both dial and meter types
+  overflow: hidden;
+
+  &__range {
+    $c: $colorGaugeRange;
+    color: $c;
+
+    text {
+      fill: $c;
+    }
+  }
+
+  &__wrapper {
+    @include abs();
+    overflow: hidden;
+  }
+
+  svg {
+    path {
+      transform-origin: center;
+    }
+
+    &.c-gauge__curval {
+      @include abs();
+      fill: $colorGaugeTextValue;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+
+      .c-gauge__curval-text {
+        font-family: $heroFont;
+        transform: translate(50%, 75%);
+      }
+    }
+  }
+
+  &[class*='dial'] {
+    // Square aspect ratio
+    width: 100%;
+    padding-bottom: 100%;
+  }
+
+  &[class*='meter'] {
+    @include abs();
+  }
+}
+
+/********************************************** DIAL GAUGE */
+.c-dial {
+  // Dial elements
+  @include abs();
+  clip-path: $dialClip;
+
+  svg,
+  &__ticks,
+  &__bg,
+  &[class*='__limit'],
+  &__value {
+    @include abs();
+  }
+
+  .c-high-limit-clip--90 {
+    clip-path: $limitHighClip90;
+  }
+
+  .c-high-limit-clip--180 {
+    clip-path: $limitHighClip180;
+  }
+
+  &__limit-high path { fill: $colorGaugeLimitHigh; }
+  &__limit-low path { fill: $colorGaugeLimitLow; }
+
+  &__value,
+  &__limit-low {
+    &.c-dial-clip--90 {
+      clip-path: $dialClip90;
+    }
+
+    &.c-dial-clip--180 {
+      clip-path: $dialClip180;
+    }
+  }
+
+  &__value {
+    path,
+    polygon {
+      fill: $colorGaugeValue;
+    }
+  }
+
+  &__bg {
+    path {
+      fill: $colorGaugeBg;
+    }
+  }
+}
+
+.c-gauge--dial-needle .c-dial__value {
+  path {
+    transition: transform $transitionTimeGauge;
+  }
+}
+
+/********************************************** METER GAUGE */
+.c-meter {
+  // Common styles for c-meter
+  @include abs();
+  display: flex;
+
+  &__range {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: space-between;
+  }
+
+  &__bg {
+    background: $colorGaugeBg;
+    border-radius: $basicCr;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  &__value {
+    // Filled area
+    position: absolute;
+    background: $colorGaugeValue;
+    transition: transform $transitionTimeGauge;
+    z-index: 1;
+  }
+
+  .c-gauge__curval {
+    fill: $colorGaugeMeterTextValue !important;
+  }
+
+  [class*='limit'] {
+    position: absolute;
+  }
+
+  &__limit-high {
+    background: $colorGaugeLimitHigh;
+  }
+
+  &__limit-low {
+    background: $colorGaugeLimitLow;
+  }
+}
+
+.c-meter {
+  .c-gauge--meter-vertical &,
+  .c-gauge--meter-vertical-inverted & {
+    &__range {
+      flex-direction: column;
+      min-width: min-content;
+      margin-right: $interiorMarginSm;
+      text-align: right;
+    }
+
+    &__value {
+      // Filled area
+      $lrM: $marginGaugeMeterValue;
+      left: $lrM;
+      right: $lrM;
+      top: 0;
+      bottom: 0;
+    }
+
+    [class*='limit'] {
+      left: 0;
+      right: 0;
+    }
+  }
+
+  .c-gauge--meter-vertical & {
+    &__limit-low {
+      bottom: 0;
+    }
+
+    &__limit-high {
+      top: 0;
+    }
+  }
+
+  .c-gauge--meter-vertical-inverted & {
+    &__limit-low {
+      top: 0;
+    }
+
+    &__limit-high {
+      bottom: 0;
+    }
+
+    &__range__low {
+      order: 1;
+    }
+
+    &__range__high {
+      order: 2;
+    }
+  }
+
+  .c-gauge--meter-horizontal & {
+    flex-direction: column;
+
+    &__range {
+      flex-direction: row;
+      min-height: min-content;
+      margin-top: $interiorMarginSm;
+      order: 2;
+
+      &__high {
+        order: 2;
+      }
+
+      &__low {
+        order: 1;
+      }
+    }
+
+    &__bg {
+      order: 1;
+    }
+
+    &__value {
+      // Filled area
+      $m: $marginGaugeMeterValue;
+      top: $m;
+      bottom: $m;
+      left: 0;
+      right: 0;
+    }
+
+    [class*='limit'] {
+      top: 0;
+      bottom: 0;
+    }
+
+    &__limit-low {
+      left: 0;
+    }
+
+    &__limit-high {
+      right: 0;
+    }
+  }
+}
