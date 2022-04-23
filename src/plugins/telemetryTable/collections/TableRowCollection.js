@@ -29,10 +29,6 @@ define(
         _,
         EventEmitter
     ) {
-        const LESS_THAN = -1;
-        const EQUAL = 0;
-        const GREATER_THAN = 1;
-
         /**
          * @constructor
          */
@@ -80,10 +76,7 @@ define(
                     this.rows = [];
                 }
 
-                for (let row of rowsToAdd) {
-                    let index = this.sortedIndex(this.rows, row);
-                    this.rows.splice(index, 0, row);
-                }
+                this.sortAndMergeRows(rowsToAdd);
 
                 // we emit filter no matter what to trigger
                 // an update of visible rows
@@ -92,58 +85,85 @@ define(
                 }
             }
 
-            sortedLastIndex(rows, testRow) {
-                return this.sortedIndex(rows, testRow, _.sortedLastIndex);
-            }
+            sortAndMergeRows(rows) {
+                const sortedRowsToAdd = this.sortCollection(rows);
 
-            /**
-             * Finds the correct insertion point for the given row.
-             * Leverages lodash's `sortedIndex` function which implements a binary search.
-             * @private
-             */
-            sortedIndex(rows, testRow, lodashFunction = _.sortedIndexBy) {
                 if (this.rows.length === 0) {
-                    return 0;
+                    this.rows = sortedRowsToAdd;
+
+                    return;
                 }
 
-                const testRowValue = this.getValueForSortColumn(testRow);
-                const firstValue = this.getValueForSortColumn(this.rows[0]);
-                const lastValue = this.getValueForSortColumn(this.rows[this.rows.length - 1]);
+                const firstIncomingRow = sortedRowsToAdd[0];
+                const lastIncomingRow = sortedRowsToAdd[sortedRowsToAdd.length - 1];
+                const firstExistingRow = this.rows[0];
+                const lastExistingRow = this.rows[this.rows.length - 1];
+
+                if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow)
+                    === lastIncomingRow
+                ) {
+                    this.rows = [...sortedRowsToAdd, ...this.rows];
+                } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow)
+                    === lastExistingRow
+                ) {
+                    this.rows = [...this.rows, ...sortedRowsToAdd];
+                } else {
+                    this.mergeSortedRows(sortedRowsToAdd);
+                }
+            }
+
+            sortCollection(rows) {
+                const sortedRows = _.orderBy(
+                    rows,
+                    row => row.getParsedValue(this.sortOptions.key), this.sortOptions.direction
+                );
+
+                return sortedRows;
+            }
+
+            mergeSortedRows(rows) {
+                const mergedRows = [];
+                let i = 0;
+                let j = 0;
+
+                while (i < this.rows.length && j < rows.length) {
+                    const existingRow = this.rows[i];
+                    const incomingRow = rows[j];
+
+                    if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
+                        mergedRows.push(existingRow);
+                        i++;
+                    } else {
+                        mergedRows.push(incomingRow);
+                        j++;
+                    }
+                }
+
+                // tail of existing rows is all that is left to merge
+                if (i < this.rows.length) {
+                    for (i; i < this.rows.length; i++) {
+                        mergedRows.push(this.rows[i]);
+                    }
+                }
+
+                // tail of incoming rows is all that is left to merge
+                if (j < rows.length) {
+                    for (j; j < rows.length; j++) {
+                        mergedRows.push(rows[j]);
+                    }
+                }
+
+                this.rows = mergedRows;
+            }
+
+            firstRowInSortOrder(row1, row2) {
+                const val1 = this.getValueForSortColumn(row1);
+                const val2 = this.getValueForSortColumn(row2);
 
                 if (this.sortOptions.direction === 'asc') {
-                    if (testRowValue > lastValue) {
-                        return this.rows.length;
-                    } else if (testRowValue === lastValue) {
-                        // Maintain stable sort
-                        return this.rows.length;
-                    } else if (testRowValue <= firstValue) {
-                        return 0;
-                    } else {
-                        return lodashFunction(rows, testRow, (thisRow) => {
-                            return this.getValueForSortColumn(thisRow);
-                        });
-                    }
+                    return val1 <= val2 ? row1 : row2;
                 } else {
-                    if (testRowValue >= firstValue) {
-                        return 0;
-                    } else if (testRowValue < lastValue) {
-                        return this.rows.length;
-                    } else if (testRowValue === lastValue) {
-                        // Maintain stable sort
-                        return this.rows.length;
-                    } else {
-                        // Use a custom comparison function to support descending sort.
-                        return lodashFunction(rows, testRow, (thisRow) => {
-                            const thisRowValue = this.getValueForSortColumn(thisRow);
-                            if (testRowValue === thisRowValue) {
-                                return EQUAL;
-                            } else if (testRowValue < thisRowValue) {
-                                return LESS_THAN;
-                            } else {
-                                return GREATER_THAN;
-                            }
-                        });
-                    }
+                    return val1 >= val2 ? row1 : row2;
                 }
             }
 
