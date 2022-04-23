@@ -225,8 +225,9 @@ define(
             sortBy(sortOptions) {
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
+                    performance.mark('table:row:sort:start');
                     this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key), sortOptions.direction);
-
+                    performance.mark('table:row:sort:stop');
                     this.emit('sort');
                 }
 
