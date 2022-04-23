@@ -185,8 +185,8 @@ export class TelemetryCollection extends EventEmitter {
 
         for (let datum of data) {
             parsedValue = this.parseTime(datum);
-            beforeStartOfBounds = parsedValue < this.lastBounds.start;
-            afterEndOfBounds = parsedValue > this.lastBounds.end;
+            beforeStartOfBounds = parsedValue <= this.lastBounds.start;
+            afterEndOfBounds = parsedValue >= this.lastBounds.end;
 
             if (!afterEndOfBounds && !beforeStartOfBounds) {
                 let isDuplicate = false;
