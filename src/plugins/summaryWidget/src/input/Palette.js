@@ -1,13 +1,11 @@
 define([
     '../eventHelpers',
     '../../res/input/paletteTemplate.html',
-    'EventEmitter',
-    'zepto'
+    'EventEmitter'
 ], function (
     eventHelpers,
     paletteTemplate,
-    EventEmitter,
-    $
+    EventEmitter
 ) {
     /**
      * Instantiates a new Open MCT Color Palette input
@@ -28,36 +26,40 @@ define([
         this.items = items;
         this.container = container;
 
-        this.domElement = $(paletteTemplate);
+        const template = document.createElement('template');
+        template.innerHTML = paletteTemplate;
+        this.domElement = template.content;
+
         this.itemElements = {
-            nullOption: $('.c-palette__item-none .c-palette__item', this.domElement)
+            nullOption: this.domElement.querySelector('.c-palette__item-none .c-palette__item')
         };
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['change'];
         this.value = this.items[0];
         this.nullOption = ' ';
-        this.button = $('.js-button', this.domElement);
-        this.menu = $('.c-menu', this.domElement);
+        this.button = this.domElement.querySelector('.js-button');
+        this.menu = this.domElement.querySelector('.c-menu');
 
         this.hideMenu = this.hideMenu.bind(this);
 
-        self.button.addClass(this.cssClass);
+        self.button.className += ` ${this.cssClass}`;
         self.setNullOption(this.nullOption);
 
         self.items.forEach(function (item) {
-            const itemElement = $('<div class = "c-palette__item ' + item + '"'
-                                + ' data-item = ' + item + '></div>');
-            $('.c-palette__items', self.domElement).append(itemElement);
-            self.itemElements[item] = itemElement;
+            const itemElement = `<div class = "c-palette__item ${item}" data-item = "${item}"></div>`;
+            const temp = document.createElement('div');
+            temp.innerHTML = itemElement;
+            self.itemElements[item] = temp.firstChild;
+            self.domElement.querySelector('.c-palette__items').appendChild(temp.firstChild);
         });
 
-        $('.c-menu', self.domElement).hide();
+        self.domElement.querySelector('.c-menu').style.display = 'none';
 
-        this.listenTo($(document), 'click', this.hideMenu);
-        this.listenTo($('.js-button', self.domElement), 'click', function (event) {
+        this.listenTo(window.document, 'click', this.hideMenu);
+        this.listenTo(self.domElement.querySelector('.js-button'), 'click', function (event) {
             event.stopPropagation();
-            $('.c-menu', self.container).hide();
-            $('.c-menu', self.domElement).show();
+            self.container.querySelector('.c-menu').style.display = 'none';
+            self.domElement.querySelector('.c-menu').style.display = '';
         });
 
         /**
@@ -70,10 +72,10 @@ define([
             const elem = event.currentTarget;
             const item = elem.dataset.item;
             self.set(item);
-            $('.c-menu', self.domElement).hide();
+            self.domElement.querySelector('.c-menu').style.display = 'none';
         }
 
-        this.listenTo($('.c-palette__item', self.domElement), 'click', handleItemClick);
+        this.listenTo(self.domElement.querySelector('.c-palette__item'), 'click', handleItemClick);
     }
 
     /**
@@ -91,7 +93,7 @@ define([
     };
 
     Palette.prototype.hideMenu = function () {
-        $('.c-menu', this.domElement).hide();
+        this.domElement.querySelector('.c-menu').style.display = 'none';
     };
 
     /**
@@ -141,12 +143,13 @@ define([
      * Update the view assoicated with the currently selected item
      */
     Palette.prototype.updateSelected = function (item) {
-        $('.c-palette__item', this.domElement).removeClass('is-selected');
-        this.itemElements[item].addClass('is-selected');
+        this.domElement.querySelector('.c-palette__item').classList.remove('is-selected');
+
+        this.itemElements[item].classList.add('is-selected');
         if (item === 'nullOption') {
-            $('.t-swatch', this.domElement).addClass('no-selection');
+            this.domElement.querySelector('.t-swatch').classList.add('no-selection');
         } else {
-            $('.t-swatch', this.domElement).removeClass('no-selection');
+            this.domElement.querySelector('.t-swatch').classList.remove('no-selection');
         }
     };
 
@@ -157,14 +160,20 @@ define([
      */
     Palette.prototype.setNullOption = function (item) {
         this.nullOption = item;
-        this.itemElements.nullOption.data('item', item);
+        this.itemElements.nullOption.data = { item: item };
     };
 
     /**
      * Hides the 'no selection' option to be hidden in the view if it doesn't apply
      */
     Palette.prototype.toggleNullOption = function () {
-        $('.c-palette__item-none', this.domElement).toggle();
+        const elem = this.domElement.querySelector('.c-palette__item-none');
+
+        if (elem.style.display === 'none') {
+            this.domElement.querySelector('.c-palette__item-none').style.display = 'flex';
+        } else {
+            this.domElement.querySelector('.c-palette__item-none').style.display = 'none';
+        }
     };
 
     return Palette;
