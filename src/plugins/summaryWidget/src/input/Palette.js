@@ -1,10 +1,12 @@
 define([
     '../eventHelpers',
     '../../res/input/paletteTemplate.html',
+    '../../../../utils/template/templateHelpers',
     'EventEmitter'
 ], function (
     eventHelpers,
     paletteTemplate,
+    templateHelpers,
     EventEmitter
 ) {
     /**
@@ -26,9 +28,7 @@ define([
         this.items = items;
         this.container = container;
 
-        const template = document.createElement('template');
-        template.innerHTML = paletteTemplate;
-        this.domElement = template.content;
+        this.domElement = templateHelpers.convertTemplateToHTML(paletteTemplate);
 
         this.itemElements = {
             nullOption: this.domElement.querySelector('.c-palette__item-none .c-palette__item')
