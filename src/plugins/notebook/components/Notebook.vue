@@ -147,6 +147,13 @@
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
                 />
+                <button
+                    v-if="isRestricted"
+                    class="c-button--major commit-button icon-lock"
+                    @click="lockPage()"
+                >
+                    <span class="c-button__label">{{ lockButtonLabel }}</span>
+                </button>
             </div>
         </div>
     </div>
@@ -161,7 +168,7 @@ import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSectionId, setDefaultNotebookPageId } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
-import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
+import { isNotebookViewType } from '../notebook-constants';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
@@ -177,7 +184,7 @@ export default {
         SearchResults,
         Sidebar
     },
-    inject: ['openmct', 'snapshotContainer'],
+    inject: ['openmct', 'snapshotContainer', 'config'],
     props: {
         domainObject: {
             type: Object,
@@ -192,6 +199,8 @@ export default {
             selectedPageId: this.getSelectedPageId(),
             defaultSort: this.domainObject.configuration.defaultSort,
             focusEntryId: null,
+            isRestricted: false,
+            lockButtonLabel: 'Commit Page',
             search: '',
             searchResults: [],
             showTime: this.domainObject.configuration.showTime || 0,
@@ -274,6 +283,12 @@ export default {
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
+        this.isRestricted = this.domainObject.type === 'restricted-notebook';
+        console.log('config', this.config, this.isRestricted);
+        if (this.config.lockButtonLabel) {
+            this.lockButtonLabel = this.config.lockButtonLabel;
+        }
+
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
     },
@@ -292,7 +307,7 @@ export default {
     },
     methods: {
         changeSectionPage(newParams, oldParams, changedParams) {
-            if (newParams.view !== NOTEBOOK_VIEW_TYPE) {
+            if (isNotebookViewType(newParams.view)) {
                 return;
             }
 
@@ -344,6 +359,13 @@ export default {
             this.defaultSectionId = undefined;
             this.removeDefaultClass(this.domainObject.identifier);
             clearDefaultNotebook();
+        },
+        lockPage() {
+            let sections = this.getSections();
+            this.selectedPage.isLocked = true;
+
+            mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
+            mutateObject(this.openmct, this.domainObject, 'locked', true);
         },
         setSectionAndPageFromUrl() {
             let sectionId = this.getSectionIdFromUrl() || this.getDefaultSectionId() || this.getSelectedSectionId();

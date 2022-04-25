@@ -188,6 +188,13 @@
         [class*="__entry"] + [class*="__entry"] {
             margin-top: $interiorMarginSm;
         }
+
+        .commit-button {
+            @include cButton();
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+        }
     }
 
     /***** SEARCH RESULTS */
