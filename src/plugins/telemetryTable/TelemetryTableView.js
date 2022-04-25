@@ -9,7 +9,11 @@ export default class TelemetryTableView {
         this.objectPath = objectPath;
         this.component = undefined;
 
-        this.table = new TelemetryTable(domainObject, openmct);
+        Object.defineProperty(this, 'table', {
+            value: new TelemetryTable(domainObject, openmct),
+            enumerable: false,
+            configurable: false
+        });
     }
 
     getViewContext() {
