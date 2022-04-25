@@ -52,7 +52,7 @@
     "location-bar": "3.0.1",
     "lodash": "4.17.21",
     "mini-css-extract-plugin": "2.6.0",
-    "moment": "2.29.1",
+    "moment": "2.29.3",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.34",
     "node-bourbon": "4.2.3",
