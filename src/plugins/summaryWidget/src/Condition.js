@@ -4,6 +4,7 @@ define([
     './input/KeySelect',
     './input/OperationSelect',
     './eventHelpers',
+    '../../../utils/template/templateHelpers',
     'EventEmitter'
 ], function (
     conditionTemplate,
@@ -11,6 +12,7 @@ define([
     KeySelect,
     OperationSelect,
     eventHelpers,
+    templateHelpers,
     EventEmitter
 ) {
     /**
@@ -29,9 +31,7 @@ define([
         this.index = index;
         this.conditionManager = conditionManager;
 
-        const template = document.createElement('template');
-        template.innerHTML = conditionTemplate;
-        this.domElement = template.content.firstChild;
+        this.domElement = templateHelpers.convertTemplateToHTML(conditionTemplate).firstChild;
 
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change'];
@@ -181,7 +181,7 @@ define([
         let index = 0;
         let emitChange = false;
 
-        inputArea.html('');
+        inputArea.innerHTML = '';
         this.valueInputs = [];
         this.config.values = this.config.values || [];
 
@@ -206,9 +206,9 @@ define([
                     newInput.type = `${inputType}`;
                     newInput.value = `${value}`;
                 }
-
-                this.valueInputs.push(newInput.get(0));
-                inputArea.append(newInput);
+                
+                this.valueInputs.push(newInput);
+                inputArea.appendChild(newInput);
                 index += 1;
             }
 
