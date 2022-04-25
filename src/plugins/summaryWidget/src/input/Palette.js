@@ -28,7 +28,7 @@ define([
         this.items = items;
         this.container = container;
 
-        this.domElement = templateHelpers.convertTemplateToHTML(paletteTemplate);
+        this.domElement = templateHelpers.convertTemplateToHTML(paletteTemplate).children[0];
 
         this.itemElements = {
             nullOption: this.domElement.querySelector('.c-palette__item-none .c-palette__item')
