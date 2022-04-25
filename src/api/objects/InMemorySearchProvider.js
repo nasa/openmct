@@ -36,13 +36,14 @@ class InMemorySearchProvider {
          */
         this.MAX_CONCURRENT_REQUESTS = 100;
         /**
-        * If max results is not specified in query, use this as default.
-        */
+         * If max results is not specified in query, use this as default.
+         */
         this.DEFAULT_MAX_RESULTS = 100;
 
         this.openmct = openmct;
 
         this.indexedIds = {};
+        this.indexedCompositions = {};
         this.idsToIndex = [];
         this.pendingIndex = {};
         this.pendingRequests = 0;
@@ -58,7 +59,6 @@ class InMemorySearchProvider {
         this.onWorkerMessageError = this.onWorkerMessageError.bind(this);
         this.onerror = this.onWorkerError.bind(this);
         this.startIndexing = this.startIndexing.bind(this);
-        this.onMutationOfIndexedObject = this.onMutationOfIndexedObject.bind(this);
 
         this.openmct.on('start', this.startIndexing);
         this.openmct.on('destroy', () => {
@@ -68,6 +68,9 @@ class InMemorySearchProvider {
                 this.worker.port.onmessageerror = null;
                 this.worker.port.close();
             }
+
+            this.destroyObservers(this.indexedIds);
+            this.destroyObservers(this.indexedCompositions);
         });
     }
 
@@ -137,7 +140,7 @@ class InMemorySearchProvider {
         };
         modelResults.hits = await Promise.all(event.data.results.map(async (hit) => {
             const identifier = this.openmct.objects.parseKeyString(hit.keyString);
-            const domainObject = await this.openmct.objects.get(identifier.key);
+            const domainObject = await this.openmct.objects.get(identifier);
 
             return domainObject;
         }));
@@ -213,29 +216,52 @@ class InMemorySearchProvider {
         }
     }
 
-    onMutationOfIndexedObject(domainObject) {
+    onNameMutation(domainObject, name) {
         const provider = this;
-        provider.index(domainObject.identifier, domainObject);
+
+        domainObject.name = name;
+        provider.index(domainObject);
+    }
+
+    onCompositionMutation(domainObject, composition) {
+        const provider = this;
+        const indexedComposition = domainObject.composition;
+        const identifiersToIndex = composition
+            .filter(identifier => !indexedComposition
+                .some(indexedIdentifier => this.openmct.objects
+                    .areIdsEqual([identifier, indexedIdentifier])));
+
+        identifiersToIndex.forEach(identifier => {
+            this.openmct.objects.get(identifier).then(objectToIndex => provider.index(objectToIndex));
+        });
     }
 
     /**
-     * Pass an id and model to the worker to be indexed.  If the model has
-     * composition, schedule those ids for later indexing.
+     * Pass a domainObject to the worker to be indexed.
+     * If the object has composition, schedule those ids for later indexing.
+     * Watch for object changes and re-index object and children if so
      *
      * @private
-     * @param id a model id
-     * @param model a model
+     * @param domainObject a domainObject
      */
-    async index(id, domainObject) {
+    async index(domainObject) {
         const provider = this;
-        const keyString = this.openmct.objects.makeKeyString(id);
+        const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
         if (!this.indexedIds[keyString]) {
-            this.openmct.objects.observe(domainObject, `*`, this.onMutationOfIndexedObject);
+            this.indexedIds[keyString] = this.openmct.objects.observe(
+                domainObject,
+                'name',
+                this.onNameMutation.bind(this, domainObject)
+            );
+            this.indexedCompositions[keyString] = this.openmct.objects.observe(
+                domainObject,
+                'composition',
+                this.onCompositionMutation.bind(this, domainObject)
+            );
         }
 
-        this.indexedIds[keyString] = true;
-
-        if ((id.key !== 'ROOT')) {
+        if ((keyString !== 'ROOT')) {
             if (this.worker) {
                 this.worker.port.postMessage({
                     request: 'index',
@@ -247,15 +273,12 @@ class InMemorySearchProvider {
             }
         }
 
-        const composition = this.openmct.composition.registry.find(foundComposition => {
-            return foundComposition.appliesTo(domainObject);
-        });
+        const composition = this.openmct.composition.get(domainObject);
 
-        if (composition) {
-            const childIdentifiers = await composition.load(domainObject);
-            childIdentifiers.forEach(function (childIdentifier) {
-                provider.scheduleForIndexing(childIdentifier);
-            });
+        if (composition !== undefined) {
+            const children = await composition.load();
+
+            children.forEach(child => provider.scheduleForIndexing(child.identifier));
         }
     }
 
@@ -271,12 +294,12 @@ class InMemorySearchProvider {
         const provider = this;
 
         this.pendingRequests += 1;
-        const identifier = await this.openmct.objects.parseKeyString(keyString);
-        const domainObject = await this.openmct.objects.get(identifier.key);
+        const domainObject = await this.openmct.objects.get(keyString);
         delete provider.pendingIndex[keyString];
+
         try {
             if (domainObject) {
-                await provider.index(identifier, domainObject);
+                await provider.index(domainObject);
             }
         } catch (error) {
             console.warn('Failed to index domain object ' + keyString, error);
@@ -305,9 +328,9 @@ class InMemorySearchProvider {
     }
 
     /**
-    * A local version of the same SharedWorker function
-    * if we don't have SharedWorkers available (e.g., iOS)
-    */
+     * A local version of the same SharedWorker function
+     * if we don't have SharedWorkers available (e.g., iOS)
+     */
     localIndexItem(keyString, model) {
         this.localIndexedItems[keyString] = {
             type: model.type,
@@ -346,6 +369,16 @@ class InMemorySearchProvider {
             data: message
         };
         this.onWorkerMessage(eventToReturn);
+    }
+
+    destroyObservers(observers) {
+        Object.entries(observers).forEach(([keyString, unobserve]) => {
+            if (typeof unobserve === 'function') {
+                unobserve();
+            }
+
+            delete observers[keyString];
+        });
     }
 }
 

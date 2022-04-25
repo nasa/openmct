@@ -20,11 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-table-wrapper"
-     :class="{ 'is-paused': paused }"
+<div
+    class="c-table-wrapper"
+    :class="{ 'is-paused': paused }"
 >
-    <div v-if="enableLegacyToolbar"
-         class="c-table-control-bar c-control-bar"
+    <div
+        v-if="enableLegacyToolbar"
+        class="c-table-control-bar c-control-bar"
     >
         <button
             v-if="allowExport"
@@ -95,8 +97,9 @@
     </div>
 
     <!-- alternate controlbar start -->
-    <div v-if="marking.useAlternateControlBar"
-         class="c-table-control-bar c-control-bar"
+    <div
+        v-if="marking.useAlternateControlBar"
+        class="c-table-control-bar c-control-bar"
     >
         <div class="c-control-bar__label">
             {{ markedRows.length > 1 ? `${markedRows.length} ${marking.rowNamePlural} selected`: `${markedRows.length} ${marking.rowName} selected` }}
@@ -610,6 +613,7 @@ export default {
             this.calculateScrollbarWidth();
         },
         sortBy(columnKey) {
+            performance.mark('table:sort');
             // If sorting by the same column, flip the sort direction.
             if (this.sortOptions.key === columnKey) {
                 if (this.sortOptions.direction === 'asc') {
@@ -666,6 +670,7 @@ export default {
             this.setHeight();
         },
         rowsAdded(rows) {
+            performance.mark('row:added');
             this.setHeight();
 
             let sizingRow;
@@ -687,6 +692,7 @@ export default {
             this.updateVisibleRows();
         },
         rowsRemoved(rows) {
+            performance.mark('row:removed');
             this.setHeight();
             this.updateVisibleRows();
         },

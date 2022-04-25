@@ -20,37 +20,42 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded"
-     class="gl-plot-axis-area gl-plot-y has-local-controls"
-     :style="{
-         width: (tickWidth + 20) + 'px'
-     }"
+<div
+    v-if="loaded"
+    class="gl-plot-axis-area gl-plot-y has-local-controls"
+    :style="{
+        width: (tickWidth + 20) + 'px'
+    }"
 >
 
-    <div v-if="singleSeries"
-         class="gl-plot-label gl-plot-y-label"
-         :class="{'icon-gear': (yKeyOptions.length > 1)}"
+    <div
+        v-if="canShowYAxisLabel"
+        class="gl-plot-label gl-plot-y-label"
+        :class="{'icon-gear': (yKeyOptions.length > 1 && singleSeries)}"
     >{{ yAxisLabel }}
     </div>
 
-    <select v-if="yKeyOptions.length > 1 && singleSeries"
-            v-model="yAxisLabel"
-            class="gl-plot-y-label__select local-controls--hidden"
-            @change="toggleYAxisLabel"
+    <select
+        v-if="yKeyOptions.length > 1 && singleSeries"
+        v-model="yAxisLabel"
+        class="gl-plot-y-label__select local-controls--hidden"
+        @change="toggleYAxisLabel"
     >
-        <option v-for="(option, index) in yKeyOptions"
-                :key="index"
-                :value="option.name"
-                :selected="option.name === yAxisLabel"
+        <option
+            v-for="(option, index) in yKeyOptions"
+            :key="index"
+            :value="option.name"
+            :selected="option.name === yAxisLabel"
         >
             {{ option.name }}
         </option>
     </select>
 
-    <mct-ticks :axis-type="'yAxis'"
-               class="gl-plot-ticks"
-               :position="'top'"
-               @plotTickWidth="onTickWidthChange"
+    <mct-ticks
+        :axis-type="'yAxis'"
+        class="gl-plot-ticks"
+        :position="'top'"
+        @plotTickWidth="onTickWidthChange"
     />
 </div>
 </template>
@@ -66,6 +71,12 @@ export default {
     inject: ['openmct', 'domainObject'],
     props: {
         singleSeries: {
+            type: Boolean,
+            default() {
+                return true;
+            }
+        },
+        hasSameRangeValue: {
             type: Boolean,
             default() {
                 return true;
@@ -89,6 +100,11 @@ export default {
             yAxisLabel: 'none',
             loaded: false
         };
+    },
+    computed: {
+        canShowYAxisLabel() {
+            return this.singleSeries === true || this.hasSameRangeValue === true;
+        }
     },
     mounted() {
         this.yAxis = this.getYAxisFromConfig();

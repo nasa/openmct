@@ -13,11 +13,13 @@
         >
             <div class="l-browse-bar__edit-label">Editing</div>
 
-            <div class="c-object-label__type-icon"
-                 :class="type.cssClass"
+            <div
+                class="c-object-label__type-icon"
+                :class="type.cssClass"
             >
-                <span class="is-status__indicator"
-                      :title="`This item is ${status}`"
+                <span
+                    class="is-status__indicator"
+                    :title="`This item is ${status}`"
                 ></span>
             </div>
             <span
@@ -40,10 +42,11 @@
             :views="views"
         />
         <!-- Action buttons -->
-        <NotebookMenuSwitcher v-if="notebookEnabled"
-                              :domain-object="domainObject"
-                              :object-path="openmct.router.path"
-                              class="c-notebook-snapshot-menubutton"
+        <NotebookMenuSwitcher
+            v-if="notebookEnabled"
+            :domain-object="domainObject"
+            :object-path="openmct.router.path"
+            class="c-notebook-snapshot-menubutton"
         />
         <div class="l-browse-bar__actions">
             <button

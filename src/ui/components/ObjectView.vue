@@ -1,16 +1,19 @@
 <template>
 <div>
-    <div v-if="supportsIndependentTime"
-         class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
+    <div
+        v-if="supportsIndependentTime"
+        class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
     >
-        <independent-time-conductor :domain-object="domainObject"
-                                    @stateChanged="updateIndependentTimeState"
-                                    @updated="saveTimeOptions"
+        <independent-time-conductor
+            :domain-object="domainObject"
+            @stateChanged="updateIndependentTimeState"
+            @updated="saveTimeOptions"
         />
     </div>
-    <div ref="objectViewWrapper"
-         class="c-object-view"
-         :class="objectTypeClass"
+    <div
+        ref="objectViewWrapper"
+        class="c-object-view"
+        :class="objectTypeClass"
     ></div>
 </div>
 </template>

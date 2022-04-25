@@ -61,7 +61,6 @@ define([
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
     './newFolderAction/plugin',
-    './nonEditableFolder/plugin',
     './persistence/couch/plugin',
     './defaultRootName/plugin',
     './plan/plugin',
@@ -78,8 +77,8 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
-    './legacySupport/plugin.js',
-    '../adapter/indicators/legacy-indicators-plugin'
+    './gauge/GaugePlugin',
+    './timelist/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -121,7 +120,6 @@ define([
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
     NewFolderAction,
-    NonEditableFolder,
     CouchDBPlugin,
     DefaultRootName,
     PlanLayout,
@@ -138,20 +136,10 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
-    LegacySupportPlugin,
-    LegacyIndicatorsPlugin
+    GaugePlugin,
+    TimeList
 ) {
-    const bundleMap = {
-        Elasticsearch: 'platform/persistence/elastic'
-    };
-
-    const plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
-        return function pluginConstructor() {
-            return function (openmct) {
-                openmct.legacyRegistry.enable(bundleName);
-            };
-        };
-    });
+    const plugins = {};
 
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
@@ -165,7 +153,7 @@ define([
 
     plugins.MyItems = MyItems.default;
 
-    plugins.StaticRootPlugin = StaticRootPlugin;
+    plugins.StaticRootPlugin = StaticRootPlugin.default;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at
@@ -181,28 +169,6 @@ define([
     plugins.Conductor = TimeConductorPlugin.default;
 
     plugins.CouchDB = CouchDBPlugin.default;
-
-    plugins.Elasticsearch = function (url) {
-        return function (openmct) {
-            if (url) {
-                const bundleName = "config/elastic";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "ELASTIC_ROOT",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
-
-            openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
-        };
-    };
 
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
@@ -233,7 +199,6 @@ define([
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
-    plugins.NonEditableFolder = NonEditableFolder.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
     plugins.PlanLayout = PlanLayout.default;
@@ -249,8 +214,8 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
-    plugins.LegacySupport = LegacySupportPlugin.default;
-    plugins.LegacyIndicators = LegacyIndicatorsPlugin;
+    plugins.Gauge = GaugePlugin.default;
+    plugins.Timelist = TimeList.default;
 
     return plugins;
 });

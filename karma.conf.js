@@ -22,29 +22,9 @@
 
 /*global module,process*/
 
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
-const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['spec', 'junit'];
-
-if (coverageEnabled) {
-    reporters.push('coverage-istanbul');
-}
-
 module.exports = (config) => {
-    const webpackConfig = require('./webpack.dev.js');
+    const webpackConfig = require('./webpack.coverage.js');
     delete webpackConfig.output;
-    if (coverageEnabled) {
-        webpackConfig.module.rules.push({
-            test: /\.js$/,
-            exclude: /node_modules|e2e|example|lib|dist|\.*.*Spec\.js/,
-            use: {
-                loader: 'istanbul-instrumenter-loader',
-                options: {
-                    esModules: true
-                }
-            }
-        });
-    }
 
     config.set({
         basePath: '',
@@ -58,11 +38,15 @@ module.exports = (config) => {
             {
                 pattern: 'dist/inMemorySearchWorker.js*',
                 included: false
+            },
+            {
+                pattern: 'dist/generatorWorker.js*',
+                included: false
             }
         ],
         port: 9876,
-        reporters: reporters,
-        browsers: browsers,
+        reporters: ['spec', 'junit', 'coverage-istanbul'],
+        browsers: [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'],
         client: {
             jasmine: {
                 random: false,
@@ -83,12 +67,6 @@ module.exports = (config) => {
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
-        // HTML test reporting.
-        // htmlReporter: {
-        //    outputDir: "dist/reports/tests",
-        //    preserveDescribeNesting: true,
-        //    foldAll: false
-        // },
         junitReporter: {
             outputDir: "dist/reports/tests",
             outputFile: "test-results.xml",
@@ -96,13 +74,11 @@ module.exports = (config) => {
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: process.env.CIRCLE_ARTIFACTS
-                ? process.env.CIRCLE_ARTIFACTS + '/coverage'
-                : "dist/reports/coverage",
+            dir: "dist/reports/coverage",
             reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    lines: 55
+                    lines: 52
                 }
             }
         },
@@ -120,8 +96,7 @@ module.exports = (config) => {
         },
         webpack: webpackConfig,
         webpackMiddleware: {
-            stats: 'errors-only',
-            logLevel: 'warn'
+            stats: 'errors-warnings'
         },
         concurrency: 1,
         singleRun: true,

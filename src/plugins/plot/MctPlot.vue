@@ -20,132 +20,159 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded"
-     class="gl-plot"
-     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+<div
+    v-if="loaded"
+    class="gl-plot"
+    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <plot-legend :cursor-locked="!!lockHighlightPoint"
-                 :series="seriesModels"
-                 :highlights="highlights"
-                 :legend="legend"
-                 @legendHoverChanged="legendHoverChanged"
+    <plot-legend
+        :cursor-locked="!!lockHighlightPoint"
+        :series="seriesModels"
+        :highlights="highlights"
+        :legend="legend"
+        @legendHoverChanged="legendHoverChanged"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis v-if="seriesModels.length > 0"
-                :tick-width="tickWidth"
-                :single-series="seriesModels.length === 1"
-                :series-model="seriesModels[0]"
-                :style="{
-                    left: (plotWidth - tickWidth) + 'px'
-                }"
-                @yKeyChanged="setYAxisKey"
-                @tickWidthChanged="onTickWidthChange"
+        <y-axis
+            v-if="seriesModels.length > 0"
+            :tick-width="tickWidth"
+            :single-series="seriesModels.length === 1"
+            :has-same-range-value="hasSameRangeValue"
+            :series-model="seriesModels[0]"
+            :style="{
+                left: (plotWidth - tickWidth) + 'px'
+            }"
+            @yKeyChanged="setYAxisKey"
+            @tickWidthChanged="onTickWidthChange"
         />
-        <div class="gl-plot-wrapper-display-area-and-x-axis"
-             :style="{
-                 left: (plotWidth + 20) + 'px'
-             }"
+        <div
+            class="gl-plot-wrapper-display-area-and-x-axis"
+            :style="{
+                left: (plotWidth + 20) + 'px'
+            }"
         >
 
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
                 <div class="l-state-indicators">
-                    <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
-                          title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."
+                    <span
+                        class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+                        title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."
                     ></span>
                 </div>
 
-                <mct-ticks v-show="gridLines && !options.compact"
-                           :axis-type="'xAxis'"
-                           :position="'right'"
-                           @plotTickWidth="onTickWidthChange"
+                <mct-ticks
+                    v-show="gridLines && !options.compact"
+                    :axis-type="'xAxis'"
+                    :position="'right'"
+                    @plotTickWidth="onTickWidthChange"
                 />
 
-                <mct-ticks v-show="gridLines"
-                           :axis-type="'yAxis'"
-                           :position="'bottom'"
-                           @plotTickWidth="onTickWidthChange"
+                <mct-ticks
+                    v-show="gridLines"
+                    :axis-type="'yAxis'"
+                    :position="'bottom'"
+                    @plotTickWidth="onTickWidthChange"
                 />
 
-                <div ref="chartContainer"
-                     class="gl-plot-chart-wrapper"
+                <div
+                    ref="chartContainer"
+                    class="gl-plot-chart-wrapper"
+                    :class="[
+                        { 'alt-pressed': altPressed },
+                    ]"
                 >
-                    <mct-chart :rectangles="rectangles"
-                               :highlights="highlights"
-                               :show-limit-line-labels="showLimitLineLabels"
-                               @plotReinitializeCanvas="initCanvas"
+                    <mct-chart
+                        :rectangles="rectangles"
+                        :highlights="highlights"
+                        :show-limit-line-labels="showLimitLineLabels"
+                        @plotReinitializeCanvas="initCanvas"
                     />
                 </div>
 
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
-                    <div v-if="!options.compact"
-                         class="c-button-set c-button-set--strip-h js-zoom"
+                    <div
+                        v-if="!options.compact"
+                        class="c-button-set c-button-set--strip-h js-zoom"
                     >
-                        <button class="c-button icon-minus"
-                                title="Zoom out"
-                                @click="zoom('out', 0.2)"
+                        <button
+                            class="c-button icon-minus"
+                            title="Zoom out"
+                            @click="zoom('out', 0.2)"
                         >
                         </button>
-                        <button class="c-button icon-plus"
-                                title="Zoom in"
-                                @click="zoom('in', 0.2)"
+                        <button
+                            class="c-button icon-plus"
+                            title="Zoom in"
+                            @click="zoom('in', 0.2)"
                         >
                         </button>
                     </div>
-                    <div v-if="plotHistory.length && !options.compact"
-                         class="c-button-set c-button-set--strip-h js-pan"
+                    <div
+                        v-if="plotHistory.length && !options.compact"
+                        class="c-button-set c-button-set--strip-h js-pan"
                     >
-                        <button class="c-button icon-arrow-left"
-                                title="Restore previous pan/zoom"
-                                @click="back()"
+                        <button
+                            class="c-button icon-arrow-left"
+                            title="Restore previous pan/zoom"
+                            @click="back()"
                         >
                         </button>
-                        <button class="c-button icon-reset"
-                                title="Reset pan/zoom"
-                                @click="clear()"
+                        <button
+                            class="c-button icon-reset"
+                            title="Reset pan/zoom"
+                            @click="clear()"
                         >
                         </button>
                     </div>
-                    <div v-if="isRealTime && !options.compact"
-                         class="c-button-set c-button-set--strip-h js-pause"
+                    <div
+                        v-if="isRealTime && !options.compact"
+                        class="c-button-set c-button-set--strip-h js-pause"
                     >
-                        <button v-if="!isFrozen"
-                                class="c-button icon-pause"
-                                title="Pause incoming real-time data"
-                                @click="pause()"
+                        <button
+                            v-if="!isFrozen"
+                            class="c-button icon-pause"
+                            title="Pause incoming real-time data"
+                            @click="pause()"
                         >
                         </button>
-                        <button v-if="isFrozen"
-                                class="c-button icon-arrow-right pause-play is-paused"
-                                title="Resume displaying real-time data"
-                                @click="play()"
+                        <button
+                            v-if="isFrozen"
+                            class="c-button icon-arrow-right pause-play is-paused"
+                            title="Resume displaying real-time data"
+                            @click="play()"
                         >
                         </button>
                     </div>
-                    <div v-if="isTimeOutOfSync || isFrozen"
-                         class="c-button-set c-button-set--strip-h"
+                    <div
+                        v-if="isTimeOutOfSync || isFrozen"
+                        class="c-button-set c-button-set--strip-h"
                     >
-                        <button class="c-button icon-clock"
-                                title="Synchronize Time Conductor"
-                                @click="showSynchronizeDialog()"
+                        <button
+                            class="c-button icon-clock"
+                            title="Synchronize Time Conductor"
+                            @click="showSynchronizeDialog()"
                         >
                         </button>
                     </div>
                 </div>
 
                 <!--Cursor guides-->
-                <div v-show="cursorGuide"
-                     ref="cursorGuideVertical"
-                     class="c-cursor-guide--v js-cursor-guide--v"
+                <div
+                    v-show="cursorGuide"
+                    ref="cursorGuideVertical"
+                    class="c-cursor-guide--v js-cursor-guide--v"
                 >
                 </div>
-                <div v-show="cursorGuide"
-                     ref="cursorGuideHorizontal"
-                     class="c-cursor-guide--h js-cursor-guide--h"
+                <div
+                    v-show="cursorGuide"
+                    ref="cursorGuideHorizontal"
+                    class="c-cursor-guide--h js-cursor-guide--h"
                 >
                 </div>
             </div>
-            <x-axis v-if="seriesModels.length > 0 && !options.compact"
-                    :series-model="seriesModels[0]"
+            <x-axis
+                v-if="seriesModels.length > 0 && !options.compact"
+                :series-model="seriesModels[0]"
             />
 
         </div>
@@ -207,6 +234,7 @@ export default {
     },
     data() {
         return {
+            altPressed: false,
             highlights: [],
             lockHighlightPoint: false,
             tickWidth: 0,
@@ -223,7 +251,8 @@ export default {
             loaded: false,
             isTimeOutOfSync: false,
             showLimitLineLabels: undefined,
-            isFrozenOnMouseDown: false
+            isFrozenOnMouseDown: false,
+            hasSameRangeValue: true
         };
     },
     computed: {
@@ -245,6 +274,8 @@ export default {
         }
     },
     mounted() {
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
         eventHelpers.extend(this);
         this.updateRealTime = this.updateRealTime.bind(this);
         this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
@@ -276,9 +307,21 @@ export default {
 
     },
     beforeDestroy() {
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
         this.destroy();
     },
     methods: {
+        handleKeyDown(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = true;
+            }
+        },
+        handleKeyUp(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = false;
+            }
+        },
         setTimeContext() {
             this.stopFollowingTimeContext();
 
@@ -321,6 +364,7 @@ export default {
                 this.setDisplayRange(series, xKey);
             }, this);
             this.listenTo(series, 'change:yKey', () => {
+                this.checkSameRangeValue();
                 this.loadSeriesData(series);
             }, this);
 
@@ -328,10 +372,18 @@ export default {
                 this.loadSeriesData(series);
             }, this);
 
+            this.checkSameRangeValue();
             this.loadSeriesData(series);
         },
 
+        checkSameRangeValue() {
+            this.hasSameRangeValue = this.seriesModels.every((model) => {
+                return model.get('yKey') === this.seriesModels[0].get('yKey');
+            });
+        },
+
         removeSeries(plotSeries) {
+            this.checkSameRangeValue();
             this.stopListening(plotSeries);
         },
 
@@ -447,7 +499,7 @@ export default {
         },
 
         setDisplayRange(series, xKey) {
-            if (this.config.series.length !== 1) {
+            if (this.config.series.models.length !== 1) {
                 return;
             }
 
@@ -620,7 +672,7 @@ export default {
             this.positionOverElement = {
                 x: event.clientX - this.chartElementBounds.left,
                 y: this.chartElementBounds.height
-              - (event.clientY - this.chartElementBounds.top)
+                    - (event.clientY - this.chartElementBounds.top)
             };
 
             this.positionOverPlot = {

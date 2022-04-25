@@ -27,6 +27,7 @@ import {
     resetApplicationState,
     simulateKeyEvent
 } from 'utils/testing';
+import ClearDataPlugin from '../clearData/plugin';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
@@ -83,6 +84,7 @@ describe("The Imagery View Layouts", () => {
     let telemetryPromise;
     let telemetryPromiseResolve;
     let cleanupFirst;
+    let isClearDataTriggered;
 
     let openmct;
     let parent;
@@ -201,6 +203,10 @@ describe("The Imagery View Layouts", () => {
         });
 
         spyOn(openmct.telemetry, 'request').and.callFake(() => {
+            if (isClearDataTriggered) {
+                return [];
+            }
+
             telemetryPromiseResolve(imageTelemetry);
 
             return telemetryPromise;
@@ -323,6 +329,8 @@ describe("The Imagery View Layouts", () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
+        let clearDataPlugin;
+        let clearDataAction;
 
         beforeEach(() => {
 
@@ -330,16 +338,23 @@ describe("The Imagery View Layouts", () => {
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
             imageryView.show(child);
+            clearDataPlugin = new ClearDataPlugin(
+                ['example.imagery'],
+                {indicator: true}
+            );
+            openmct.install(clearDataPlugin);
+            clearDataAction = openmct.actions.getAction('clear-data-action');
+            // force show the thumbnails
+            imageryView._getInstance().$children[0].forceShowThumbnails = true;
 
             return Vue.nextTick();
         });
-
-        // afterEach(() => {
-        //     openmct.time.stopClock();
-        //     openmct.router.removeListener('change:hash', resolveFunction);
-        //
-        //     imageryView.destroy();
-        // });
+        afterEach(() => {
+            isClearDataTriggered = false;
+            // openmct.time.stopClock();
+            // openmct.router.removeListener('change:hash', resolveFunction);
+            // imageryView.destroy();
+        });
 
         it("on mount should show the the most recent image", (done) => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
@@ -469,6 +484,60 @@ describe("The Imagery View Layouts", () => {
                     done();
                 });
             });
+        });
+        xit('should change the image zoom factor when using the zoom buttons', async (done) => {
+            await Vue.nextTick();
+            let imageSizeBefore;
+            let imageSizeAfter;
+
+            // test clicking the zoom in button
+            imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            parent.querySelector('.t-btn-zoom-in').click();
+            await Vue.nextTick();
+            imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            expect(imageSizeAfter.height).toBeGreaterThan(imageSizeBefore.height);
+            expect(imageSizeAfter.width).toBeGreaterThan(imageSizeBefore.width);
+            // test clicking the zoom out button
+            imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            parent.querySelector('.t-btn-zoom-out').click();
+            await Vue.nextTick();
+            imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
+            expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
+            done();
+        });
+        xit('should reset the zoom factor on the image when clicking the zoom button', async (done) => {
+            await Vue.nextTick();
+            // test clicking the zoom reset button
+            // zoom in to scale up the image dimensions
+            parent.querySelector('.t-btn-zoom-in').click();
+            await Vue.nextTick();
+            let imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            await Vue.nextTick();
+            parent.querySelector('.t-btn-zoom-reset').click();
+            let imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
+            expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
+            done();
+        });
+
+        it('clear data action is installed', () => {
+            expect(clearDataAction).toBeDefined();
+        });
+
+        it('on clearData action should clear data for object is selected', async (done) => {
+            // force show the thumbnails
+            imageryView._getInstance().$children[0].forceShowThumbnails = true;
+            await Vue.nextTick();
+            expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
+            openmct.objectViews.on('clearData', async (_domainObject) => {
+                await Vue.nextTick();
+                expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
+                done();
+            });
+            // stubbed telemetry data will return empty array when true
+            isClearDataTriggered = true;
+            clearDataAction.invoke(imageryObject);
         });
     });
 

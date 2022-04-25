@@ -22,20 +22,26 @@
 
 <template>
 <div class="form-control autocomplete">
-    <input v-model="field"
-           class="autocompleteInput"
-           type="text"
-           @click="inputClicked()"
-           @keydown="keyDown($event)"
-    >
-    <span class="icon-arrow-down"
-          @click="arrowClicked()"
-    ></span>
-    <div class="autocompleteOptions"
-         @blur="hideOptions = true"
+    <span class="autocompleteInputAndArrow">
+        <input
+            v-model="field"
+            class="autocompleteInput"
+            type="text"
+            @click="inputClicked()"
+            @keydown="keyDown($event)"
+        >
+        <span
+            class="icon-arrow-down"
+            @click="arrowClicked()"
+        ></span>
+    </span>
+    <div
+        class="autocompleteOptions"
+        @blur="hideOptions = true"
     >
         <ul v-if="!hideOptions">
-            <li v-for="opt in filteredOptions"
+            <li
+                v-for="opt in filteredOptions"
                 :key="opt.optionId"
                 :class="{'optionPreSelected': optionIndex === opt.optionId}"
                 @click="fillInputWithString(opt.name)"
@@ -104,10 +110,21 @@ export default {
 
                 this.$emit('onChange', data);
             }
+        },
+        hideOptions(newValue) {
+            if (!newValue) {
+                // adding a event listener when the hideOpntions is false (dropdown is visible)
+                // handleoutsideclick can collapse the dropdown when clicked outside autocomplete
+                document.body.addEventListener('click', this.handleOutsideClick);
+            } else {
+                //removing event listener when hideOptions become true (dropdown is collapsed)
+                document.body.removeEventListener('click', this.handleOutsideClick);
+            }
         }
     },
     mounted() {
         this.options = this.model.options;
+        this.autocompleteInputAndArrow = this.$el.getElementsByClassName('autocompleteInputAndArrow')[0];
         this.autocompleteInputElement = this.$el.getElementsByClassName('autocompleteInput')[0];
         if (this.options[0].name) {
         // If "options" include name, value pair
@@ -118,6 +135,9 @@ export default {
         // If options is only an array of string.
             this.optionNames = this.options;
         }
+    },
+    destroyed() {
+        document.body.removeEventListener('click', this.handleOutsideClick);
     },
     methods: {
         decrementOptionIndex() {
@@ -172,7 +192,21 @@ export default {
             // to show them all the options
             this.showFilteredOptions = false;
             this.autocompleteInputElement.select();
-            this.showOptions();
+
+            if (this.hideOptions) {
+                this.showOptions();
+            } else {
+                this.hideOptions = true;
+            }
+
+        },
+        handleOutsideClick(event) {
+            // if click event is detected outside autocomplete (both input & arrow) while the
+            // dropdown is visible, this will collapse the dropdown.
+            const clickedInsideAutocomplete = this.autocompleteInputAndArrow.contains(event.target);
+            if (!clickedInsideAutocomplete && !this.hideOptions) {
+                this.hideOptions = true;
+            }
         },
         optionMouseover(optionId) {
             this.optionIndex = optionId;

@@ -22,10 +22,11 @@
 
 <template>
 <div :class="compositeCssClass">
-    <FormRow :css-class="item.cssClass"
-             :first="first"
-             :row="row"
-             @onChange="onChange"
+    <FormRow
+        :css-class="item.cssClass"
+        :first="first"
+        :row="row"
+        @onChange="onChange"
     />
     <span class="composite-control-label">
         {{ item.name }}

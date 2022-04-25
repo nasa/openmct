@@ -90,6 +90,9 @@ export default class CreateWizard {
             rows: this.properties.map(property => {
                 const row = JSON.parse(JSON.stringify(property));
                 row.value = this.getValue(row);
+                if (property.validate) {
+                    row.validate = property.validate;
+                }
 
                 return row;
             }).filter(row => row && row.control)
@@ -101,7 +104,10 @@ export default class CreateWizard {
         // Ensure there is always a 'save in' section
         if (includeLocation) {
             function validateLocation(data) {
-                return self.openmct.composition.checkPolicy(data.value[0], domainObject);
+                const policyCheck = self.openmct.composition.checkPolicy(data.value[0], domainObject);
+                const parentIsPersistable = self.openmct.objects.isPersistable(data.value[0].identifier);
+
+                return policyCheck && parentIsPersistable;
             }
 
             sections.push({

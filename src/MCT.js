@@ -242,6 +242,7 @@ define([
 
         // Plugins that are installed by default
 
+        this.install(this.plugins.Gauge());
         this.install(this.plugins.Plot());
         this.install(this.plugins.Chart());
         this.install(this.plugins.TelemetryTable.default());
@@ -269,7 +270,6 @@ define([
         this.install(this.plugins.ViewDatumAction());
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
-        this.install(this.plugins.NonEditableFolder());
         this.install(this.plugins.DeviceClassifier());
         this.install(this.plugins.UserIndicator());
     }

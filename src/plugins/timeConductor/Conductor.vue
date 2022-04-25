@@ -30,11 +30,15 @@
     ]"
 >
     <div class="c-conductor__time-bounds">
-        <conductor-inputs-fixed v-if="isFixed"
-                                @updated="saveFixedOffsets"
+        <conductor-inputs-fixed
+            v-if="isFixed"
+            :input-bounds="viewBounds"
+            @updated="saveFixedOffsets"
         />
-        <conductor-inputs-realtime v-else
-                                   @updated="saveClockOffsets"
+        <conductor-inputs-realtime
+            v-else
+            :input-bounds="viewBounds"
+            @updated="saveClockOffsets"
         />
         <ConductorModeIcon class="c-conductor__mode-icon" />
         <conductor-axis
