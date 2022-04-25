@@ -90,6 +90,9 @@ export default class CreateWizard {
             rows: this.properties.map(property => {
                 const row = JSON.parse(JSON.stringify(property));
                 row.value = this.getValue(row);
+                if (property.validate) {
+                    row.validate = property.validate;
+                }
 
                 return row;
             }).filter(row => row && row.control)
