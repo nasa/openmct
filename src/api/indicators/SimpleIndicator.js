@@ -20,17 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./res/indicator-template.html'],
-    function (indicatorTemplate) {
+define(['./res/indicator-template.html', '../../utils/template/templateHelpers'],
+    function (indicatorTemplate, templateHelpers) {
         const DEFAULT_ICON_CLASS = 'icon-info';
 
         function SimpleIndicator(openmct) {
             this.openmct = openmct;
 
-            const template = document.createElement('template');
-            template.innerHTML = indicatorTemplate;
-
-            this.element = template.content.firstChild;
+            this.element = templateHelpers.convertTemplateToHTML(indicatorTemplate).firstChild;
 
             this.priority = openmct.priority.DEFAULT;
 
