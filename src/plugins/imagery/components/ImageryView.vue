@@ -144,12 +144,20 @@
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
                     class="c-imagery__age icon-check c-imagery--new"
+                    :style="{
+                        'animation-delay': imageFreshnessOptions.fadeOutDelayTime,
+                        'animation-duration': imageFreshnessOptions.fadeOutDurationTime
+                    }"
                 >POS</div>
 
                 <!-- camera position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isCameraPositionFresh"
                     class="c-imagery__age icon-check c-imagery--new"
+                    :style="{
+                        'animation-delay': imageFreshnessOptions.fadeOutDelayTime,
+                        'animation-duration': imageFreshnessOptions.fadeOutDurationTime
+                    }"
                 >CAM</div>
             </div>
             <div class="h-local-controls">
@@ -331,6 +339,16 @@ export default {
         },
         isImageNew() {
             let cutoff = FIVE_MINUTES;
+            if (this.imageFreshnessOptions) {
+                const { fadeOutDelayTime, fadeOutDurationTime} = this.imageFreshnessOptions;
+                // convert css duration to IS8601 format for parsing
+                const isoFormattedDuration = 'PT' + fadeOutDurationTime.toUpperCase();
+                const isoFormattedDelay = 'PT' + fadeOutDelayTime.toUpperCase();
+                const parsedDuration = moment.duration(isoFormattedDuration).asMilliseconds();
+                const parsedDelay = moment.duration(isoFormattedDelay).asMilliseconds();
+                cutoff = parsedDuration + parsedDelay;
+            }
+
             let age = this.numericDuration;
 
             return age < cutoff && !this.refreshCSS;
