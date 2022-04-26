@@ -152,13 +152,10 @@ export default {
     },
     methods: {
         updateView() {
-            console.log('update view');
             if (!this.updatingView) {
-                console.log('not updating, go ahead');
                 this.updatingView = true;
                 requestAnimationFrame(() => {
                     let newTimestamp = this.getParsedTimestamp(this.latestDatum);
-                    console.log('should update?', this.shouldUpdate(newTimestamp));
                     if (this.shouldUpdate(newTimestamp)) {
                         this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
@@ -199,6 +196,11 @@ export default {
             }
         },
         inBounds(timestamp) {
+            console.log('in bounds?', timestamp >= this.bounds.start && timestamp <= this.bounds.end, {
+                timestamp,
+                start: this.bounds.start,
+                end: this.bounds.end
+            });
             return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
         },
         updateTimeSystem(timeSystem) {
