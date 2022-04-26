@@ -158,10 +158,10 @@ export default {
                     // let start = bounds.start;
                     // let end = bounds.end;
                     let newTimestamp = this.getParsedTimestamp(this.latestDatum);
-                    let inBounds = newTimestamp >= this.openmct.time.bounds().start && newTimestamp <= this.openmct.time.bounds().end;
+                    // let inBounds = newTimestamp >= this.openmct.time.bounds().start && newTimestamp <= this.openmct.time.bounds().end;
                     let valid = this.timestamp === undefined || newTimestamp > this.timestamp;
-                    console.log(inBounds, valid);
-                    if (inBounds && valid) {
+                    console.log(newTimestamp >= this.openmct.time.bounds().start && newTimestamp <= this.openmct.time.bounds().end, valid);
+                    if ((newTimestamp >= this.openmct.time.bounds().start && newTimestamp <= this.openmct.time.bounds().end) && valid) {
                         this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
                     }
