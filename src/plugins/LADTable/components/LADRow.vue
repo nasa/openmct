@@ -189,6 +189,7 @@ export default {
                 });
         },
         updateBounds(bounds, isTick) {
+            console.log('update bounds', this.bounds);
             this.bounds = bounds;
             if (!isTick) {
                 this.resetValues();
