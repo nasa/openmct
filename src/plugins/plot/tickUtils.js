@@ -134,9 +134,18 @@ export function commonSuffix(a, b) {
 export function getFormattedTicks(newTicks, format) {
     newTicks = newTicks
         .map(function (tickValue) {
+            let formattedValue = format(tickValue);
+            if (typeof formattedValue === 'number') {
+                if (Number.isInteger(formattedValue)) {
+                    return formattedValue;
+                } else {
+                    return parseFloat(formattedValue).toPrecision(2);
+                }
+            }
+
             return {
                 value: tickValue,
-                text: format(tickValue)
+                text: formattedValue
             };
         });
 
