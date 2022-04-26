@@ -979,9 +979,7 @@ export default {
 
             this.setSizedImageDimensions();
             this.calculateViewHeight();
-            if (this.isPaused) {
-                this.scrollToFocused();
-            }
+            this.scrollToFocused();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
