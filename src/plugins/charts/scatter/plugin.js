@@ -29,9 +29,9 @@ export default function () {
 
         openmct.types.addType(SCATTER_PLOT_KEY, {
             key: SCATTER_PLOT_KEY,
-            name: "X-Y Plot",
-            cssClass: "icon-plot",
-            description: "View data as a scatter plot. Can be added to Display Layouts.",
+            name: "Scatter Plot",
+            cssClass: "icon-plot-scatter",
+            description: "View data as a scatter plot.",
             creatable: true,
             initialize: function (domainObject) {
                 domainObject.composition = [];
@@ -42,7 +42,7 @@ export default function () {
             },
             form: [
                 {
-                    name: 'Upload Underlay data (JSON File)',
+                    name: 'Underlay data (JSON file)',
                     key: 'selectFile',
                     control: 'file-input',
                     text: 'Select File...',
@@ -52,7 +52,7 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Minimum Y Axis value",
+                    name: "Underlay minimum Y axis value",
                     control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     property: [
@@ -61,7 +61,7 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Maximum Y Axis value",
+                    name: "Underlay maximum Y axis value",
                     control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     property: [
@@ -70,7 +70,7 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Minimum X Axis value",
+                    name: "Underlay minimum X axis value",
                     control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     property: [
@@ -79,7 +79,7 @@ export default function () {
                     ]
                 },
                 {
-                    name: "Maximum X Axis value",
+                    name: "Underlay maximum X axis value",
                     control: "numberfield",
                     cssClass: "l-input-sm l-numeric",
                     property: [
