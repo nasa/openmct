@@ -76,7 +76,8 @@ define([
     './timer/plugin',
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
-    './localStorage/plugin'
+    './localStorage/plugin',
+    './operatorStatus/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -133,7 +134,8 @@ define([
     Timer,
     UserIndicator,
     ExampleUser,
-    LocalStorage
+    LocalStorage,
+    OperatorStatus
 ) {
     const plugins = {};
 
@@ -210,6 +212,7 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
+    plugins.OperatorStatus = OperatorStatus.default;
 
     return plugins;
 });
