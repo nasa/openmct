@@ -114,7 +114,6 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.bounds = this.openmct.time.bounds();
 
         this.limitEvaluator = this.openmct
             .telemetry
@@ -156,8 +155,9 @@ export default {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
                     let newTimestamp = this.getParsedTimestamp(this.latestDatum);
-                    let start = this.bounds.start;
-                    let end = this.bounds.end;
+                    let bounds = this.openmct.time.bounds();
+                    let start = bounds.start;
+                    let end = bounds.end;
                     let valid = this.timestamp === undefined || newTimestamp > this.timestamp;
 
                     if ((newTimestamp >= start && newTimestamp <= end) && valid) {
@@ -175,11 +175,12 @@ export default {
             this.updateView();
         },
         requestHistory() {
+            let bounds = this.openmct.time.bounds();
             this.openmct
                 .telemetry
                 .request(this.domainObject, {
-                    start: this.bounds.start,
-                    end: this.bounds.end,
+                    start: bounds.start,
+                    end: bounds.end,
                     size: 1,
                     strategy: 'latest'
                 })
@@ -189,8 +190,6 @@ export default {
                 });
         },
         updateBounds(bounds, isTick) {
-            console.log('update bounds', this.bounds);
-            this.bounds = bounds;
             if (!isTick) {
                 this.resetValues();
                 this.requestHistory();
