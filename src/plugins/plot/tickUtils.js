@@ -131,12 +131,14 @@ export function commonSuffix(a, b) {
     return a.slice(a.length - breakpoint);
 }
 
-export function getFormattedTicks(newTicks, format) {
+export function getFormattedTicks(newTicks, format, useWholeNumbers) {
     newTicks = newTicks
         .map(function (tickValue) {
             let formattedValue = format(tickValue);
-            if (typeof formattedValue === 'number' && !Number.isInteger(formattedValue)) {
-                formattedValue = parseFloat(formattedValue).toPrecision(2);
+            if (useWholeNumbers === true
+                && typeof formattedValue === 'number'
+                && !Number.isInteger(formattedValue)) {
+                formattedValue = Math.round(formattedValue);
             }
 
             return {

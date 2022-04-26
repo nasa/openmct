@@ -204,6 +204,8 @@ export default {
 
         updateTicks(forceRegeneration = false) {
             const range = this.axis.get('displayRange');
+            const logMode = this.axis.get('logMode');
+
             if (!range) {
                 delete this.min;
                 delete this.max;
@@ -231,7 +233,7 @@ export default {
                     step: newTicks[1] - newTicks[0]
                 };
 
-                newTicks = getFormattedTicks(newTicks, format);
+                newTicks = getFormattedTicks(newTicks, format, logMode);
 
                 this.ticks = newTicks;
                 this.shouldCheckWidth = true;
