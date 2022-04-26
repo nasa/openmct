@@ -159,7 +159,7 @@ export default {
                     let start = bounds.start;
                     let end = bounds.end;
                     let valid = this.timestamp === undefined || newTimestamp > this.timestamp;
-
+                    console.log(valid, newTimestamp >= start && newTimestamp <= end, newTimestamp, start, end);
                     if ((newTimestamp >= start && newTimestamp <= end) && valid) {
                         this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
