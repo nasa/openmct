@@ -152,11 +152,13 @@ export default {
     },
     methods: {
         updateView() {
+            console.log('update view');
             if (!this.updatingView) {
+                console.log('not updating, go ahead');
                 this.updatingView = true;
                 requestAnimationFrame(() => {
                     let newTimestamp = this.getParsedTimestamp(this.latestDatum);
-
+                    console.log('should update?', this.shouldUpdate(newTimestamp));
                     if (this.shouldUpdate(newTimestamp)) {
                         this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
