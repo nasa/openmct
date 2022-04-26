@@ -135,12 +135,8 @@ export function getFormattedTicks(newTicks, format) {
     newTicks = newTicks
         .map(function (tickValue) {
             let formattedValue = format(tickValue);
-            if (typeof formattedValue === 'number') {
-                if (Number.isInteger(formattedValue)) {
-                    return formattedValue;
-                } else {
-                    return parseFloat(formattedValue).toPrecision(2);
-                }
+            if (typeof formattedValue === 'number' && !Number.isInteger(formattedValue)) {
+                formattedValue = parseFloat(formattedValue).toPrecision(2);
             }
 
             return {
