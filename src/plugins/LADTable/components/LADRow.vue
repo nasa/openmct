@@ -154,13 +154,14 @@ export default {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
                     let bounds = this.openmct.time.bounds();
                     let start = bounds.start;
                     let end = bounds.end;
+                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
+                    let inBounds = newTimestamp >= start && newTimestamp <= end;
                     let valid = this.timestamp === undefined || newTimestamp > this.timestamp;
-                    console.log(valid, newTimestamp >= start && newTimestamp <= end, newTimestamp, start, end);
-                    if ((newTimestamp >= start && newTimestamp <= end) && valid) {
+                    console.log(inBounds, valid, newTimestamp, start, end);
+                    if (inBounds && valid) {
                         this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
                     }
