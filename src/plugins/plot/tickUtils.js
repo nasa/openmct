@@ -126,12 +126,17 @@ export function commonSuffix(a, b) {
     return a.slice(a.length - breakpoint);
 }
 
-export function getFormattedTicks(newTicks, format) {
+export function getFormattedTicks(newTicks, format, formatFloat) {
     newTicks = newTicks
         .map(function (tickValue) {
+            let formattedValue = format(tickValue);
+            if (formatFloat === true && typeof formattedValue === 'number' && !Number.isInteger(formattedValue)) {
+                formattedValue = parseFloat(formattedValue).toFixed(2);
+            }
+
             return {
                 value: tickValue,
-                text: format(tickValue)
+                text: formattedValue
             };
         });
 
