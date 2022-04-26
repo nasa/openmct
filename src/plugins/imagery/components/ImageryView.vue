@@ -55,7 +55,7 @@
             <div
                 v-if="zoomFactor > 1"
                 class="c-imagery__hints"
-            >Alt-drag to pan</div>
+            >{{formatImageAltText}}</div>
             <div
                 ref="focusedImageWrapper"
                 class="image-wrapper"
@@ -478,6 +478,17 @@ export default {
                 width: this.sizedImageWidth,
                 height: this.sizedImageHeight
             };
+        },
+        formatImageAltText() {
+            const regexLinux = /Linux/;
+            const platform = window.navigator.platform || window.navigator.userAgentData.platform;
+
+            if (!regexLinux.test(platform)) {
+                return 'Ctrl+Alt drag to pan';
+            }
+
+            return 'Alt drag to pan';
+
         }
     },
     watch: {
