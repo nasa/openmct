@@ -22,31 +22,25 @@
 <template>
 <div class="js-plot-options-browse grid-properties">
     <ul class="l-inspector-part">
-        <h2 title="Y axis settings for this object">X Axis</h2>
+        <h2 title="Object view settings">Settings</h2>
         <li class="grid-row">
             <div
                 class="grid-cell label"
-                title="X axis selection."
+                title="X axis selection"
             >X Axis</div>
             <div class="grid-cell value">{{ xKeyLabel }}</div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Y axis settings for this object">Y Axis</h2>
         <li class="grid-row">
             <div
                 class="grid-cell label"
-                title="Y axis selection."
+                title="Y axis selection"
             >Y Axis</div>
             <div class="grid-cell value">{{ yKeyLabel }}</div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Settings for this object">Color</h2>
         <ColorSwatch
             :current-color="currentColor"
-            edit-title="Manually set the line and marker color for this plot."
-            view-title="The line and marker color for this plot."
+            edit-title="Manually set the color for this plot"
+            view-title="The marker color for this plot"
             short-label="Color"
         />
     </ul>

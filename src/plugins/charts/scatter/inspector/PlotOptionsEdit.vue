@@ -22,7 +22,7 @@
 <template>
 <div class="js-plot-options-edit grid-properties">
     <ul class="l-inspector-part">
-        <h2 title="Y axis settings for this object">X Axis</h2>
+        <h2 title="Object view settings">Settings</h2>
         <li class="grid-row">
             <div
                 class="grid-cell label"
@@ -44,9 +44,6 @@
                 </select>
             </div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Y axis settings for this object">Y Axis</h2>
         <li class="grid-row">
             <div
                 class="grid-cell label"
@@ -68,9 +65,6 @@
                 </select>
             </div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Settings for this object">Color</h2>
         <ColorSwatch
             :current-color="currentColor"
             title="Manually set the line and marker color for this plot."
