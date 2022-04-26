@@ -156,7 +156,11 @@ export default {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
                     let newTimestamp = this.getParsedTimestamp(this.latestDatum);
-                    if (this.shouldUpdate(newTimestamp)) {
+                    let start = this.bounds.start;
+                    let end = this.bounds.end;
+                    let valid = this.timestamp === undefined || newTimestamp > this.timestamp;
+
+                    if ((newTimestamp >= start && newTimestamp <= end) && valid) {
                         this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
                     }
@@ -169,10 +173,6 @@ export default {
             this.latestDatum = datum;
 
             this.updateView();
-        },
-        shouldUpdate(newTimestamp) {
-            return this.inBounds(newTimestamp)
-                && (this.timestamp === undefined || newTimestamp > this.timestamp);
         },
         requestHistory() {
             this.openmct
@@ -195,14 +195,6 @@ export default {
                 this.resetValues();
                 this.requestHistory();
             }
-        },
-        inBounds(timestamp) {
-            console.log('in bounds?', timestamp >= this.bounds.start && timestamp <= this.bounds.end, {
-                timestamp,
-                start: this.bounds.start,
-                end: this.bounds.end
-            });
-            return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
         },
         updateTimeSystem(timeSystem) {
             this.resetValues();
