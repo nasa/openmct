@@ -134,60 +134,70 @@ export default {
 
         this.valueKey = this.valueMetadata ? this.valueMetadata.key : undefined;
 
-        this.unsubscribe = this.openmct
-            .telemetry
-            .subscribe(this.domainObject, this.setLatestValues);
+        this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
+            start: this.bounds.start,
+            end: this.bounds.end,
+            size: 1,
+            strategy: 'latest'
+        });
+        this.telemetryCollection.on('add', this.setLatestValues);
+        this.telemetryCollection.load();
 
-        this.requestHistory();
+        // this.unsubscribe = this.openmct
+        //     .telemetry
+        //     .subscribe(this.domainObject, this.setLatestValues);
+
+        // this.requestHistory();
 
         if (this.hasUnits) {
             this.setUnit();
         }
     },
     destroyed() {
-        this.unsubscribe();
+        // this.unsubscribe();
         this.openmct.time.off('timeSystem', this.updateTimeSystem);
         this.openmct.time.off('bounds', this.updateBounds);
+        this.telemetryCollection.off('add', this.setLatestValues);
     },
     methods: {
         updateView() {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
+                    // let newTimestamp = this.getParsedTimestamp(this.latestDatum);
 
-                    if (this.shouldUpdate(newTimestamp)) {
-                        this.timestamp = newTimestamp;
-                        this.datum = this.latestDatum;
-                    }
+                    // if (this.shouldUpdate(newTimestamp)) {
+                    this.timestamp = this.getParsedTimestamp(this.latestDatum);
+                    this.datum = this.latestDatum;
+                    // }
 
                     this.updatingView = false;
                 });
             }
         },
-        setLatestValues(datum) {
-            this.latestDatum = datum;
+        setLatestValues(data) {
+            this.latestDatum = data[data.length - 1];
 
             this.updateView();
         },
-        shouldUpdate(newTimestamp) {
-            return this.inBounds(newTimestamp)
-                && (this.timestamp === undefined || newTimestamp > this.timestamp);
-        },
-        requestHistory() {
-            this.openmct
-                .telemetry
-                .request(this.domainObject, {
-                    start: this.bounds.start,
-                    end: this.bounds.end,
-                    size: 1,
-                    strategy: 'latest'
-                })
-                .then((array) => this.setLatestValues(array[array.length - 1]))
-                .catch((error) => {
-                    console.warn('Error fetching data', error);
-                });
-        },
+        // shouldUpdate(newTimestamp) {
+        //     return this.inBounds(newTimestamp)
+        //         && (this.timestamp === undefined || newTimestamp > this.timestamp);
+        // },
+        // requestHistory() {
+        //     this.openmct
+        //         .telemetry
+        //         .request(this.domainObject, {
+        //             start: this.bounds.start,
+        //             end: this.bounds.end,
+        //             size: 1,
+        //             strategy: 'latest'
+        //         })
+        //         .then((array) => this.setLatestValues(array[array.length - 1]))
+        //         .catch((error) => {
+        //             console.warn('Error fetching data', error);
+        //         });
+        // },
         updateBounds(bounds, isTick) {
             this.bounds = bounds;
             if (!isTick) {
