@@ -202,7 +202,7 @@ export default {
             this.bounds = bounds;
             if (!isTick) {
                 this.resetValues();
-                this.requestHistory();
+                // this.requestHistory();
             }
         },
         inBounds(timestamp) {
