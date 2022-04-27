@@ -20,46 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div
-    class="c-conductor"
-    :class="[
-        isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode'
-    ]"
->
-    <div class="c-conductor__time-bounds">
-        <toggle-switch
-            id="independentTCToggle"
-            :checked="independentTCEnabled"
-            :title="`${independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`"
-            @change="toggleIndependentTC"
-        />
+<div class="c-conductor-holder--compact l-shell__main-independent-time-conductor">
+    <div
+        class="c-conductor"
+        :class="[
+            isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode'
+        ]"
+    >
+        <div class="c-conductor__time-bounds">
+            <ConductorModeIcon />
 
-        <ConductorModeIcon />
+            <div
+                v-if="timeOptions && independentTCEnabled"
+                class="c-conductor__controls"
+            >
+                <Mode
+                    v-if="mode"
+                    class="c-conductor__mode-select"
+                    :key-string="domainObject.identifier.key"
+                    :mode="timeOptions.mode"
+                    :enabled="independentTCEnabled"
+                    @modeChanged="saveMode"
+                />
 
-        <div
-            v-if="timeOptions && independentTCEnabled"
-            class="c-conductor__controls"
-        >
-            <Mode
-                v-if="mode"
-                class="c-conductor__mode-select"
-                :key-string="domainObject.identifier.key"
-                :mode="timeOptions.mode"
-                :enabled="independentTCEnabled"
-                @modeChanged="saveMode"
-            />
+                <conductor-inputs-fixed
+                    v-if="isFixed"
+                    :key-string="domainObject.identifier.key"
+                    @updated="saveFixedOffsets"
+                />
 
-            <conductor-inputs-fixed
-                v-if="isFixed"
-                :key-string="domainObject.identifier.key"
-                @updated="saveFixedOffsets"
-            />
-
-            <conductor-inputs-realtime
-                v-else
-                :key-string="domainObject.identifier.key"
-                @updated="saveClockOffsets"
-            />
+                <conductor-inputs-realtime
+                    v-else
+                    :key-string="domainObject.identifier.key"
+                    @updated="saveClockOffsets"
+                />
+            </div>
         </div>
     </div>
 </div>
@@ -69,7 +64,6 @@
 import ConductorInputsFixed from "../ConductorInputsFixed.vue";
 import ConductorInputsRealtime from "../ConductorInputsRealtime.vue";
 import ConductorModeIcon from "@/plugins/timeConductor/ConductorModeIcon.vue";
-import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import Mode from "./Mode.vue";
 
 export default {
@@ -77,15 +71,15 @@ export default {
         Mode,
         ConductorModeIcon,
         ConductorInputsRealtime,
-        ConductorInputsFixed,
-        ToggleSwitch
+        ConductorInputsFixed
     },
     inject: ['openmct'],
     props: {
         domainObject: {
             type: Object,
             required: true
-        }
+        },
+        independentTCEnabled: Boolean
     },
     data() {
         return {
@@ -93,8 +87,7 @@ export default {
                 clockOffsets: this.openmct.time.clockOffsets(),
                 fixedOffsets: this.openmct.time.bounds()
             },
-            mode: undefined,
-            independentTCEnabled: this.domainObject.configuration.useIndependentTime === true
+            mode: undefined
         };
     },
     computed: {
@@ -114,7 +107,6 @@ export default {
                     //domain object has changed
                     this.destroyIndependentTime();
 
-                    this.independentTCEnabled = domainObject.configuration.useIndependentTime === true;
                     this.timeOptions = domainObject.configuration.timeOptions || {
                         clockOffsets: this.openmct.time.clockOffsets(),
                         fixedOffsets: this.openmct.time.bounds()
@@ -124,6 +116,13 @@ export default {
                 }
             },
             deep: true
+        },
+        independentTCEnabled(independentTCEnabled) {
+            if (independentTCEnabled) {
+                this.registerIndependentTimeOffsets();
+            } else {
+                this.destroyIndependentTime();
+            }
         }
     },
     mounted() {
@@ -151,16 +150,6 @@ export default {
             if (this.independentTCEnabled) {
                 this.registerIndependentTimeOffsets();
             }
-        },
-        toggleIndependentTC() {
-            this.independentTCEnabled = !this.independentTCEnabled;
-            if (this.independentTCEnabled) {
-                this.registerIndependentTimeOffsets();
-            } else {
-                this.destroyIndependentTime();
-            }
-
-            this.$emit('stateChanged', this.independentTCEnabled);
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
