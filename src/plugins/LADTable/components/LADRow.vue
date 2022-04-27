@@ -114,6 +114,7 @@ export default {
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.bounds = this.openmct.time.bounds();
+        this.offsets = this.openmct.time.clockOffsets();
 
         this.limitEvaluator = this.openmct
             .telemetry
@@ -121,6 +122,7 @@ export default {
 
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
         this.openmct.time.on('bounds', this.updateBounds);
+        this.openmct.time.on('clockOffsets', this.updateOffsets);
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
@@ -148,6 +150,7 @@ export default {
         this.unsubscribe();
         this.openmct.time.off('timeSystem', this.updateTimeSystem);
         this.openmct.time.off('bounds', this.updateBounds);
+        this.openmct.time.off('offsets', this.updateOffsets);
     },
     methods: {
         updateView() {
@@ -194,6 +197,10 @@ export default {
                 this.resetValues();
                 this.requestHistory();
             }
+        },
+        updateOffsets(offsets) {
+            console.log('offsets', offsets);
+            this.offsets = offsets;
         },
         inBounds(timestamp) {
             return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
