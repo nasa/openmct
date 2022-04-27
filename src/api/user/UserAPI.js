@@ -35,6 +35,11 @@ class UserAPI extends EventEmitter {
         this._provider = undefined;
 
         this.User = User;
+
+        this._openmct.once('destroy', () => {
+            this._provider.off('roleStatusChange', this.onProviderStatusChange);
+            this._provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
+        });
     }
 
     /**
@@ -51,8 +56,18 @@ class UserAPI extends EventEmitter {
         }
 
         this._provider = provider;
+        this._provider.on('roleStatusChange', this.onProviderStatusChange);
+        this._provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
 
         this.emit('providerAdded', this._provider);
+    }
+
+    onProviderStatusChange(newStatus) {
+        this.emit('roleStatusChange', newStatus);
+    }
+
+    onProviderPollQuestionChange(pollQuestion) {
+        this.emit('pollQuestionChange', pollQuestion);
     }
 
     /**
@@ -77,6 +92,77 @@ class UserAPI extends EventEmitter {
         this._noProviderCheck();
 
         return this._provider.getCurrentUser();
+    }
+
+    providesRoleStatus() {
+        this._noProviderCheck();
+
+        if (this._provider.providesRoleStatus) {
+            return this._provider.providesRoleStatus();
+        } else {
+            return false;
+        }
+
+    }
+
+    getRolesThatProvideStatus() {
+        this._noProviderCheck();
+
+        if (this._provider.getRolesThatProvideStatus) {
+            return this._provider.getRolesThatProvideStatus();
+        } else {
+            this._error("User provider does not support role status");
+        }
+    }
+
+    getAllStatuses() {
+        this._noProviderCheck();
+
+        if (this._provider.getAllStatuses) {
+            return this._provider.getAllStatuses();
+        } else {
+            this._error("User provider does not support role status");
+        }
+    }
+
+    getRoleStatus(role) {
+        this._noProviderCheck();
+
+        if (this._provider.getRoleStatus) {
+            return this._provider.getRoleStatus(role);
+        } else {
+            this._error("User provider does not support role status");
+        }
+    }
+
+    setRoleStatus(role, status) {
+        this._noProviderCheck();
+
+        if (this._provider.setRoleStatus) {
+            return this._provider.setRoleStatus(role, status);
+        } else {
+            this._error("User provider does not support setting role status");
+        }
+    }
+
+    getPollQuestion() {
+        this._noProviderCheck();
+
+        if (this._provider.getPollQuestion) {
+            return this._provider.getPollQuestion();
+        } else {
+            this._error("User provider does not support status polling");
+        }
+    }
+
+    setPollQuestion(pollQuestion) {
+        this._noProviderCheck();
+
+        if (this._provider.setPollQuestion) {
+            return this._provider.setPollQuestion(pollQuestion);
+        } else {
+            this._error("User provider does not support status polling");
+        }
     }
 
     /**
