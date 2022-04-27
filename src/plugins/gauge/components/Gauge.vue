@@ -65,16 +65,16 @@
         </svg>
 
         <svg
-            class="c-dial__current-value-text"
+            class="c-dial__current-value-text-wrapper"
             viewBox="0 0 512 512"
         >
             <svg
                 v-if="displayCurVal"
-                class="c-dial__curval"
+                class="c-dial__current-value-text-sizer"
                 :viewBox="curValViewBox"
             >
                 <text
-                    class="c-gauge__curval-text"
+                    class="c-dial__current-value-text"
                     lengthAdjust="spacing"
                     text-anchor="middle"
                     style="transform: translate(50%, 70%)"
@@ -86,18 +86,6 @@
             class="c-dial__bg"
             viewBox="0 0 10 10"
         >
-            <g
-                v-if="valueInBounds"
-                class="c-dial__needle-value"
-                :style="`transform: rotate(${degValue}deg)`"
-            >
-                <circle
-                    cx="5"
-                    cy="5"
-                    r="3.3"
-                />
-                <path d="M5.09765 9.39453L4.90234 9.39453L4.6875 8.14453L5.3125 8.14453L5.09765 9.39453Z" />
-            </g>
 
             <g
                 v-if="limitLow && dialLowLimitDeg < 315"
@@ -163,6 +151,7 @@
         </svg>
 
         <svg
+            v-if="typeFilledDial"
             class="c-dial__filled-value-wrapper"
             viewBox="0 0 10 10"
         >
@@ -197,66 +186,19 @@
             </g>
         </svg>
 
-        <!-- OLD MARKUP -->
+        <svg
+            v-if="valueInBounds && typeNeedleDial"
+            class="c-dial__needle-value-wrapper"
+            viewBox="0 0 10 10"
+        >
+            <g
 
-        <!--div-- class="c-dial">
-            <svg
-                class="c-dial__bg"
-                viewBox="0 0 512 512"
+                class="c-dial__needle-value"
+                :style="`transform: rotate(${degValue}deg)`"
             >
-                <path d="M256,0C114.6,0,0,114.6,0,256S114.6,512,256,512,512,397.4,512,256,397.4,0,256,0Zm0,412A156,156,0,1,1,412,256,155.9,155.9,0,0,1,256,412Z" />
-            </svg>
-
-            <svg
-                v-if="limitHigh && dialHighLimitDeg < 270"
-                class="c-dial__limit-high"
-                viewBox="0 0 512 512"
-                :class="{
-                    'c-high-limit-clip--90': dialHighLimitDeg > 90,
-                    'c-high-limit-clip--180': dialHighLimitDeg >= 180
-                }"
-            >
-                <path
-                    d="M100,256A156,156,0,1,1,366.3,366.3L437,437a255.2,255.2,0,0,0,75-181C512,114.6,397.4,0,256,0S0,114.6,0,256A255.2,255.2,0,0,0,75,437l70.7-70.7A155.5,155.5,0,0,1,100,256Z"
-                    :style="`transform: rotate(${dialHighLimitDeg}deg)`"
-                />
-            </svg>
-
-            <svg
-                v-if="limitLow && dialLowLimitDeg < 270"
-                class="c-dial__limit-low"
-                viewBox="0 0 512 512"
-                :class="{
-                    'c-dial-clip--90': dialLowLimitDeg < 90,
-                    'c-dial-clip--180': dialLowLimitDeg >= 90 && dialLowLimitDeg < 180
-                }"
-            >
-                <path
-                    d="M256,100c86.2,0,156,69.8,156,156s-69.8,156-156,156c-43.1,0-82.1-17.5-110.3-45.7L75,437 c46.3,46.3,110.3,75,181,75c141.4,0,256-114.6,256-256S397.4,0,256,0C185.3,0,121.3,28.7,75,75l70.7,70.7 C173.9,117.5,212.9,100,256,100z"
-                    :style="`transform: rotate(${dialLowLimitDeg}deg)`"
-                />
-            </svg>
-
-            <svg
-                class="c-dial__value"
-                viewBox="0 0 512 512"
-                :class="{
-                    'c-dial-clip--90': degValue < 90 && typeFilledDial,
-                    'c-dial-clip--180': degValue >= 90 && degValue < 180 && typeFilledDial
-                }"
-            >
-                <path
-                    v-if="typeFilledDial && degValue > 0"
-                    d="M256,31A224.3,224.3,0,0,0,98.3,95.5l48.4,49.2a156,156,0,1,1-1,221.6L96.9,415.1A224.4,224.4,0,0,0,256,481c124.3,0,225-100.7,225-225S380.3,31,256,31Z"
-                    :style="`transform: rotate(${degValue}deg)`"
-                />
-                <path
-                    v-if="typeNeedleDial && valueInBounds"
-                    d="M256,86c-93.9,0-170,76.1-170,170c0,43.9,16.6,83.9,43.9,114.1l-38.7,38.7c-3.3,3.3-3.3,8.7,0,12s8.7,3.3,12,0 l38.7-38.7C172.1,409.4,212.1,426,256,426c93.9,0,170-76.1,170-170S349.9,86,256,86z M256,411.7c-86,0-155.7-69.7-155.7-155.7 S170,100.3,256,100.3S411.7,170,411.7,256S342,411.7,256,411.7z"
-                    :style="`transform: rotate(${degValue}deg)`"
-                />
-            </svg>
-        </div-->
+                <path d="M4.90234 9.39453L5.09766 9.39453L5.30146 8.20874C6.93993 8.05674 8.22265 6.67817 8.22266 5C8.22266 3.22018 6.77982 1.77734 5 1.77734C3.22018 1.77734 1.77734 3.22018 1.77734 5C1.77734 6.67817 3.06007 8.05674 4.69854 8.20874L4.90234 9.39453Z" />
+            </g>
+        </svg>
     </template>
 
     <template v-if="typeMeter">
@@ -307,17 +249,24 @@
                     ></div>
                 </template>
 
+
                 <svg
-                    v-if="displayCurVal"
-                    class="c-gauge__curval"
-                    :viewBox="curValViewBox"
-                    preserveAspectRatio="xMidYMid meet"
+                    class="c-meter__current-value-text-wrapper"
+                    viewBox="0 0 512 512"
                 >
-                    <text
-                        class="c-gauge__curval-text"
-                        text-anchor="middle"
-                        lengthAdjust="spacing"
-                    >{{ curVal }}</text>
+                    <svg
+                        v-if="displayCurVal"
+                        class="c-meter__current-value-text-sizer"
+                        :viewBox="curValViewBox"
+                        preserveAspectRatio="xMidYMid meet"
+                    >
+                        <text
+                            class="c-dial__current-value-text"
+                            lengthAdjust="spacing"
+                            text-anchor="middle"
+                            style="transform: translate(50%, 70%)"
+                        >{{ curVal }}</text>
+                    </svg>
                 </svg>
             </div>
         </div>

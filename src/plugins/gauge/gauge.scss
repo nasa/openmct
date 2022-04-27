@@ -57,16 +57,6 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
       }
     }
   }
-
-  //&[class*='dial'] {
-  //  // Square aspect ratio
-  //  width: 100%;
-  //  padding-bottom: 100%;
-  //}
-
-  &[class*='meter'] {
-    @include abs();
-  }
 }
 
 /********************************************** DIAL GAUGE */
@@ -84,84 +74,32 @@ svg[class*='c-dial'] {
 }
 
 .c-dial {
+  &__bg {
+    background: $colorGaugeBg;
+    clip-path: url(#gaugeBgMask);
+  }
+
+  &__limit-high rect { fill: $colorGaugeLimitHigh; }
+  &__limit-low rect { fill: $colorGaugeLimitLow; }
+
   &__filled-value-wrapper {
     clip-path: url(#gaugeValueMask);
   }
 
-  &__bg {
-    background: rgba(blue, 0.3); // Gauge bg color
-    clip-path: url(#gaugeBgMask);
+  &__needle-value-wrapper {
+    clip-path: url(#gaugeValueMask);
   }
 
-  //&__high-limit {
-  //  &__low {
-  //    fill: red;
-  //  }
-  //
-  //  &__mid {
-  //    fill: green;
-  //  }
-  //
-  //  &__high {
-  //    fill: blue;
-  //  }
-  //}
-}
+  &__filled-value { fill: $colorGaugeValue; }
 
-
-
-.c-dial {
-  // Dial elements
-  //@include abs();
-  //clip-path: $dialClip;
-
-  svg,
-  &__ticks,
-  &__bg,
-  &[class*='__limit'],
-  &__value {
-    @include abs();
-  }
-
-  .c-high-limit-clip--90 {
-    clip-path: $limitHighClip90;
-  }
-
-  .c-high-limit-clip--180 {
-    clip-path: $limitHighClip180;
-  }
-
-  &__limit-high path { fill: $colorGaugeLimitHigh; }
-  &__limit-low path { fill: $colorGaugeLimitLow; }
-
-  &__value,
-  &__limit-low {
-    &.c-dial-clip--90 {
-      clip-path: $dialClip90;
-    }
-
-    &.c-dial-clip--180 {
-      clip-path: $dialClip180;
-    }
-  }
-
-  &__value {
-    path,
-    polygon {
-      fill: $colorGaugeValue;
-    }
-  }
-
-  &__bg {
-    path {
-      fill: $colorGaugeBg;
-    }
-  }
-}
-
-.c-gauge--dial-needle .c-dial__value {
-  path {
+  &__needle-value {
+    fill: $colorGaugeValue;
     transition: transform $transitionTimeGauge;
+  }
+
+  &__current-value-text {
+    fill: $colorGaugeTextValue;
+    font-family: $heroFont;
   }
 }
 
@@ -170,6 +108,13 @@ svg[class*='c-dial'] {
   // Common styles for c-meter
   @include abs();
   display: flex;
+
+  svg {
+    // current-value-text
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
 
   &__range {
     display: flex;
