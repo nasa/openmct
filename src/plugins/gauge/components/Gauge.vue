@@ -87,7 +87,7 @@
         >
 
             <g
-                v-if="limitLow && dialLowLimitDeg < 315"
+                v-if="limitLow !== null && dialLowLimitDeg < 315"
                 class="c-dial__limit-low"
                 :style="`transform: rotate(${dialLowLimitDeg}deg)`"
             >
@@ -118,7 +118,7 @@
             </g>
 
             <g
-                v-if="limitHigh && dialHighLimitDeg < 315"
+                v-if="limitHigh !== null && dialHighLimitDeg < 315"
                 class="c-dial__limit-high"
                 :style="`transform: rotate(${dialHighLimitDeg}deg)`"
             >
@@ -222,7 +222,7 @@
                     ></div>
 
                     <div
-                        v-if="limitLow && meterLowLimitPerc > 0"
+                        v-if="limitLow !== null && meterLowLimitPerc > 0"
                         class="c-meter__limit-low"
                         :style="`height: ${meterLowLimitPerc}%`"
                     ></div>
@@ -241,7 +241,7 @@
                     ></div>
 
                     <div
-                        v-if="limitLow && meterLowLimitPerc > 0"
+                        v-if="limitLow !== null && meterLowLimitPerc > 0"
                         class="c-meter__limit-low"
                         :style="`width: ${meterLowLimitPerc}%`"
                     ></div>
