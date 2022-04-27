@@ -10,43 +10,51 @@ import Vue from 'vue';
 export default function operatorStatusPlugin(config) {
     return function install(openmct) {
 
+        if (openmct.user.hasProvider()) {
+            openmct.user.getCurrentUser().then(async currentUser => {
+                const canProvideStatus = await openmct.user.canProvideStatusFor(currentUser);
+
+                if (canProvideStatus) {
+                    const operatorStatusElement = new Vue({
+                        components: {
+                            OperatorStatus: OperatorStatusComponent
+                        },
+                        provide: {
+                            openmct
+                        },
+                        data() {
+                            return {
+                                positionX: 0,
+                                positionY: 0
+                            };
+                        },
+                        template: '<operator-status :positionX="positionX" :positionY="positionY" />'
+                    }).$mount();
+
+                    const operatorIndicator = openmct.indicators.simpleIndicator();
+
+                    operatorIndicator.text("My Operator Status");
+                    operatorIndicator.description("Set my operator status");
+                    operatorIndicator.iconClass('icon-check');
+                    operatorIndicator.on('click', (event) => {
+                        //Don't propagate, otherwise this event will trigger the listener below and remove itself.
+                        event.stopPropagation();
+                        document.body.appendChild(operatorStatusElement.$el);
+                        operatorStatusElement.positionX = event.clientX;
+                        operatorStatusElement.positionY = event.clientY;
+
+                        document.addEventListener('click', () => {
+                            operatorStatusElement.$el.remove();
+                        }, {once: true});
+                    });
+
+                    openmct.indicators.add(operatorIndicator);
+                }
+            });
+        }
         /**
             Operator Status
          */
-        const operatorStatusElement = new Vue({
-            components: {
-                OperatorStatus: OperatorStatusComponent
-            },
-            provide: {
-                openmct
-            },
-            data() {
-                return {
-                    positionX: 0,
-                    positionY: 0
-                }
-            },
-            template: '<operator-status :positionX="positionX" :positionY="positionY" />'
-        }).$mount();
-
-        const operatorIndicator = openmct.indicators.simpleIndicator();
-
-        operatorIndicator.text("My Operator Status");
-        operatorIndicator.description("Set my operator status");
-        operatorIndicator.iconClass('icon-check');
-        operatorIndicator.on('click', (event) => {
-            //Don't propagate, otherwise this event will trigger the listener below and remove itself.
-            event.stopPropagation();
-            document.body.appendChild(operatorStatusElement.$el);
-            operatorStatusElement.positionX = event.clientX;
-            operatorStatusElement.positionY = event.clientY;
-
-            document.addEventListener('click', event => {
-                operatorStatusElement.$el.remove();
-            }, {once: true});
-        });
-
-        openmct.indicators.add(operatorIndicator);
 
         /**
             Poll Question

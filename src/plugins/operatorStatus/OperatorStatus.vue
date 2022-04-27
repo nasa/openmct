@@ -66,31 +66,20 @@ export default {
     },
     async mounted() {
         this.unsubscribe = [];
-        await this.fetchAllStatuses();
-        await this.fetchAllRoles();
+        await this.findFirstApplicableRole();
         this.fetchCurrentPoll();
         this.fetchMyStatus();
         this.subscribeToMyStatus();
         this.subscribeToPollQuestion();
-
-        this.findFirstApplicableRole();
     },
     methods: {
-        fetchAllStatuses() {
-            this.allStatuses = this.openmct.user.getAllStatuses();
-        },
-        async fetchAllRoles() {
-            const allRoles = await this.openmct.user.getRolesThatProvideStatus();
-            this.allRoles = allRoles;
-        },
         async findFirstApplicableRole() {
-            const userRolesMap = await Promise.all(this.allRoles.map((role) => this.openmct.user.hasRole(role)));
-            const index = userRolesMap.findIndex((hasRole) => hasRole);
+            const rolesWithStatusForUser = await this.openmct.user.getStatusRolesForUser(this.user);
 
-            this.role = this.allRoles[index];
+            this.role = rolesWithStatusForUser[0];
         },
         async fetchCurrentPoll() {
-            const pollQuestion = await this.openmct.user.getCurrentPollQuestion();
+            const pollQuestion = await this.openmct.user.getPollQuestion();
 
             this.setPollQuestion(pollQuestion);
         },
@@ -110,11 +99,8 @@ export default {
             this.openmct.user.on('pollQuestionChange', this.setPollQuestion);
         },
         setStatus(status) {
-            this.roleStatus = status;
-            this.selectedStatus = this.findStatus(this.roleStatus);
-        },
-        findStatus(status) {
-            return (this.allStatuses.find(s => s.label === status) || this.allStatuses[0]).value;
+            this.roleStatus = status.label;
+            this.selectedStatus = status.key;
         },
         async changeStatus(status) {
             const result = await this.openmct.user.setRoleStatus(this.role, status);
