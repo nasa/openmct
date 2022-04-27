@@ -87,6 +87,7 @@
             viewBox="0 0 10 10"
         >
             <g
+                v-if="valueInBounds"
                 class="c-dial__needle-value"
                 :style="`transform: rotate(${degValue}deg)`"
             >
@@ -167,7 +168,7 @@
         >
             <g
                 class="c-dial__filled-value"
-                :style="`transform: rotate(${degValue}deg)`"
+                :style="`transform: rotate(${degValueFilledDial}deg)`"
             >
                 <rect
                     v-if="degValue >= 45"
@@ -350,6 +351,13 @@ export default {
     },
     computed: {
         degValue() {
+            return this.percentToDegrees(this.valToPercent(this.curVal));
+        },
+        degValueFilledDial() {
+            if (this.curVal > this.rangeHigh) {
+                return this.percentToDegrees(100);
+            }
+
             return this.percentToDegrees(this.valToPercent(this.curVal));
         },
         dialHighLimitDeg() {
