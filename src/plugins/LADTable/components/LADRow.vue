@@ -154,18 +154,27 @@ export default {
     },
     methods: {
         updateView() {
+            // bypass animation frame for no end offsets
+            if (this.offsets.end === 0) {
+                this.updateViewCheck();
+
+                return;
+            }
+
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
-
-                    if (this.shouldUpdate(newTimestamp)) {
-                        this.timestamp = newTimestamp;
-                        this.datum = this.latestDatum;
-                    }
-
+                    this.updateViewCheck();
                     this.updatingView = false;
                 });
+            }
+        },
+        updateViewCheck() {
+            let newTimestamp = this.getParsedTimestamp(this.latestDatum);
+
+            if (this.shouldUpdate(newTimestamp)) {
+                this.timestamp = newTimestamp;
+                this.datum = this.latestDatum;
             }
         },
         setLatestValues(datum) {
@@ -199,7 +208,6 @@ export default {
             }
         },
         updateOffsets(offsets) {
-            console.log('offsets', offsets);
             this.offsets = offsets;
         },
         inBounds(timestamp) {
