@@ -180,6 +180,21 @@ test.describe('Example Imagery', () => {
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
 
+    test('Image Pan/Zoom alt text is displayed', async ({ page }) => {
+        const bgImageLocator = await page.locator(backgroundImageSelector);
+        await bgImageLocator.hover();
+        const zoomInBtn = await page.locator('.t-btn-zoom-in');
+        await zoomInBtn.click();
+        // userAgentData.platform is not available so match against entire userAgent string
+        const userAgent = await page.evaluate('navigator.userAgent');
+        expect(userAgent).toBeTruthy();
+
+        const regexLinux = /Linux/;
+        const expectedAltText = regexLinux.test(userAgent) ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+        expect(expectedAltText).toEqual(imageryHintsText);
+    });
+
     //test('Can use Mouse Wheel to zoom in and out of previous image');
     //test('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
     //test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');

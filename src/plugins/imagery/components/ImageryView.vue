@@ -483,12 +483,11 @@ export default {
             const regexLinux = /Linux/;
             const platform = window.navigator.platform || window.navigator.userAgentData.platform;
 
-            if (!regexLinux.test(platform)) {
+            if (regexLinux.test(platform)) {
                 return 'Ctrl+Alt drag to pan';
             }
 
             return 'Alt drag to pan';
-
         }
     },
     watch: {
