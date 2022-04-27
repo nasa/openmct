@@ -172,6 +172,7 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
+        performance.mark('tlm:process:start');
         if (telemetryData === undefined) {
             return;
         }
@@ -184,8 +185,8 @@ export class TelemetryCollection extends EventEmitter {
 
         for (let datum of data) {
             parsedValue = this.parseTime(datum);
-            beforeStartOfBounds = parsedValue < this.lastBounds.start;
-            afterEndOfBounds = parsedValue > this.lastBounds.end;
+            beforeStartOfBounds = parsedValue <= this.lastBounds.start;
+            afterEndOfBounds = parsedValue >= this.lastBounds.end;
 
             if (!afterEndOfBounds && !beforeStartOfBounds) {
                 let isDuplicate = false;
@@ -352,6 +353,7 @@ export class TelemetryCollection extends EventEmitter {
      * @todo handle subscriptions more granually
      */
     _reset() {
+        performance.mark('tlm:reset');
         this.boundedTelemetry = [];
         this.futureBuffer = [];
 

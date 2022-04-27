@@ -132,6 +132,10 @@
                 <!-- image fresh -->
                 <div
                     v-if="canTrackDuration"
+                    :style="{
+                        'animation-delay': imageFreshnessOptions.fadeOutDelayTime,
+                        'animation-duration': imageFreshnessOptions.fadeOutDurationTime
+                    }"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
@@ -159,10 +163,13 @@
         </div>
     </div>
     <div
+        v-if="displayThumbnails"
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused && !isFixed },
-            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused },
+            { 'is-small-thumbs': displayThumbnailsSmall },
+            { 'hide': !displayThumbnails }
         ]"
     >
         <div
@@ -175,6 +182,7 @@
                 :key="image.url + image.time"
                 class="c-imagery__thumb c-thumb"
                 :class="{ selected: focusedImageIndex === index && isPaused }"
+                :title="image.formattedTime"
                 @click="thumbnailClicked(index)"
             >
                 <a
@@ -228,6 +236,8 @@ const ARROW_LEFT = 37;
 const SCROLL_LATENCY = 250;
 
 const ZOOM_SCALE_DEFAULT = 1;
+const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
+const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
 export default {
     components: {
@@ -235,7 +245,7 @@ export default {
         ImageControls
     },
     mixins: [imageryData],
-    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
     props: {
         focusedImageTimestamp: {
             type: Number,
@@ -268,6 +278,7 @@ export default {
             imageContainerHeight: undefined,
             sizedImageWidth: 0,
             sizedImageHeight: 0,
+            viewHeight: 0,
             lockCompass: true,
             resizingWindow: false,
             timeContext: undefined,
@@ -286,7 +297,8 @@ export default {
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
-            imagePanned: false
+            imagePanned: false,
+            forceShowThumbnails: false
         };
     },
     computed: {
@@ -301,6 +313,15 @@ export default {
             }
 
             return compassRoseSizingClasses;
+        },
+        displayThumbnails() {
+            return (
+                this.forceShowThumbnails
+                || this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT
+            );
+        },
+        displayThumbnailsSmall() {
+            return this.viewHeight > SHOW_THUMBS_THRESHOLD_HEIGHT && this.viewHeight <= SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT;
         },
         time() {
             return this.formatTime(this.focusedImage);
@@ -532,7 +553,7 @@ export default {
         this.updateRelatedTelemetryForFocusedImage = _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
 
         // for resizing the object view
-        this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400);
+        this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400, { leading: true });
 
         if (this.$refs.imageBG) {
             this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
@@ -579,6 +600,9 @@ export default {
 
     },
     methods: {
+        calculateViewHeight() {
+            this.viewHeight = this.$el.clientHeight;
+        },
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -952,6 +976,7 @@ export default {
             }
 
             this.setSizedImageDimensions();
+            this.calculateViewHeight();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
@@ -979,6 +1004,8 @@ export default {
             if (!this.isPaused) {
                 this.scrollToRight('reset');
             }
+
+            this.calculateViewHeight();
 
             this.$nextTick(() => {
                 this.resizingWindow = false;

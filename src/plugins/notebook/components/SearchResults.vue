@@ -33,6 +33,8 @@
             :read-only="true"
             :selected-page="result.page"
             :selected-section="result.section"
+            @editingEntry="editingEntry"
+            @cancelEdit="cancelEdit"
             @changeSectionPage="changeSectionPage"
             @updateEntries="updateEntries"
         />
@@ -63,6 +65,12 @@ export default {
         }
     },
     methods: {
+        editingEntry() {
+            this.$emit('editingEntry');
+        },
+        cancelEdit() {
+            this.$emit('cancelEdit');
+        },
         changeSectionPage(data) {
             this.$emit('changeSectionPage', data);
         },

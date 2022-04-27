@@ -34,6 +34,7 @@ export default class ExampleUserProvider extends EventEmitter {
         this.autoLoginUser = undefined;
 
         this.ExampleUser = createExampleUser(this.openmct.user.User);
+        this.loginPromise = undefined;
     }
 
     isLoggedIn() {
@@ -45,11 +46,11 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     getCurrentUser() {
-        if (this.loggedIn) {
-            return Promise.resolve(this.user);
+        if (!this.loginPromise) {
+            this.loginPromise = this._login().then(() => this.user);
         }
 
-        return this._login().then(() => this.user);
+        return this.loginPromise;
     }
 
     hasRole(roleId) {
@@ -58,6 +59,24 @@ export default class ExampleUserProvider extends EventEmitter {
         }
 
         return Promise.resolve(this.user.getRoles().includes(roleId));
+    }
+
+    getStatusRolesForUser() {
+        return Promise.resolve(['driver']);
+    }
+
+    getRoleStatus(role) {
+        return Promise.resolve({
+            key: 'foo',
+            label: 'Foo'
+        });
+    }
+
+    getPollQuestion() {
+        return Promise.resolve({
+            question: 'Do the thing?',
+            timestamp: Date.now()
+        });
     }
 
     _login() {
