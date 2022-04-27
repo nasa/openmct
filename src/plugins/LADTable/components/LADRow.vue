@@ -114,7 +114,6 @@ export default {
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.bounds = this.openmct.time.bounds();
-        this.offsets = this.openmct.time.clockOffsets();
 
         this.limitEvaluator = this.openmct
             .telemetry
@@ -122,7 +121,6 @@ export default {
 
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
         this.openmct.time.on('bounds', this.updateBounds);
-        this.openmct.time.on('clockOffsets', this.updateOffsets);
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
@@ -150,36 +148,27 @@ export default {
         this.unsubscribe();
         this.openmct.time.off('timeSystem', this.updateTimeSystem);
         this.openmct.time.off('bounds', this.updateBounds);
-        this.openmct.time.off('offsets', this.updateOffsets);
     },
     methods: {
-        requestViewUpdate() {
+        updateView() {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    this.updateView(this.latestDatum);
+                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
+
+                    if (this.shouldUpdate(newTimestamp)) {
+                        this.timestamp = newTimestamp;
+                        this.datum = this.latestDatum;
+                    }
+
                     this.updatingView = false;
                 });
-            }
-        },
-        updateView(datum) {
-            let newTimestamp = this.getParsedTimestamp(datum);
-
-            if (this.shouldUpdate(newTimestamp)) {
-                this.timestamp = newTimestamp;
-                this.datum = datum;
             }
         },
         setLatestValues(datum) {
             this.latestDatum = datum;
 
-            if (this.offsets.end === 0) {
-                this.updateView(datum);
-
-                return;
-            }
-
-            this.requestViewUpdate();
+            this.updateView();
         },
         shouldUpdate(newTimestamp) {
             return this.inBounds(newTimestamp)
@@ -205,9 +194,6 @@ export default {
                 this.resetValues();
                 this.requestHistory();
             }
-        },
-        updateOffsets(offsets) {
-            this.offsets = offsets;
         },
         inBounds(timestamp) {
             return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
