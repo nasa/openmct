@@ -1,4 +1,3 @@
-
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -114,6 +113,7 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.bounds = this.openmct.time.bounds();
 
         this.limitEvaluator = this.openmct
             .telemetry
@@ -134,7 +134,6 @@ export default {
 
         this.valueKey = this.valueMetadata ? this.valueMetadata.key : undefined;
 
-        this.evaulationQueue = [];
         this.unsubscribe = this.openmct
             .telemetry
             .subscribe(this.domainObject, this.setLatestValues);
@@ -155,11 +154,9 @@ export default {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    let evaluate = this.evaulationQueue.pop();
-                    let newTimestamp = this.getParsedTimestamp(evaluate.datum);
-                    let valid = this.timestamp === undefined || newTimestamp > this.timestamp;
-                    console.log(newTimestamp >= evaluate.start && newTimestamp <= evaluate.end, valid);
-                    if ((newTimestamp >= evaluate.start && newTimestamp <= evaluate.end) && valid) {
+                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
+
+                    if (this.shouldUpdate(newTimestamp)) {
                         this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
                     }
@@ -169,25 +166,20 @@ export default {
             }
         },
         setLatestValues(datum) {
-            let bounds = this.openmct.time.bounds();
-            let start = bounds.start;
-            let end = bounds.end;
-
-            this.evaulationQueue.push({
-                datum,
-                start,
-                end
-            });
+            this.latestDatum = datum;
 
             this.updateView();
         },
+        shouldUpdate(newTimestamp) {
+            return this.inBounds(newTimestamp)
+                && (this.timestamp === undefined || newTimestamp > this.timestamp);
+        },
         requestHistory() {
-            let bounds = this.openmct.time.bounds();
             this.openmct
                 .telemetry
                 .request(this.domainObject, {
-                    start: bounds.start,
-                    end: bounds.end,
+                    start: this.bounds.start,
+                    end: this.bounds.end,
                     size: 1,
                     strategy: 'latest'
                 })
@@ -197,10 +189,14 @@ export default {
                 });
         },
         updateBounds(bounds, isTick) {
+            this.bounds = bounds;
             if (!isTick) {
                 this.resetValues();
                 this.requestHistory();
             }
+        },
+        inBounds(timestamp) {
+            return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
         },
         updateTimeSystem(timeSystem) {
             this.resetValues();
@@ -244,4 +240,3 @@ export default {
     }
 };
 </script>
-
