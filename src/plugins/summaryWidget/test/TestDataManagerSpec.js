@@ -1,4 +1,4 @@
-define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
+define(['../src/TestDataManager'], function (TestDataManager) {
     describe('A Summary Widget Rule', function () {
         let mockDomainObject;
         let mockOpenMCT;
@@ -103,7 +103,15 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
             mockConditionManager.getObjectName.and.returnValue('Object Name');
             mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
 
-            mockContainer = $(document.createElement('div'));
+            if (document.readyState === "complete" ||
+                (document.readyState !== "loading" && !document.documentElement.doScroll)
+            ) {
+                mockContainer = document.createElement('div');
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    mockContainer = document.createElement('div');
+                });
+            }
 
             testDataManager = new TestDataManager(mockDomainObject, mockConditionManager, mockOpenMCT);
         });
@@ -114,7 +122,7 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
 
         it('exposes a DOM element to represent itself in the view', function () {
             mockContainer.append(testDataManager.getDOM());
-            expect($('.t-widget-test-data-content', mockContainer).get().length).toBeGreaterThan(0);
+            expect(mockContainer.querySelectorAll('.t-widget-test-data-content').length).toBeGreaterThan(0);
         });
 
         it('generates a test cache in the format expected by a condition evaluator', function () {
@@ -207,7 +215,7 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
 
         it('builds item view from item configuration', function () {
             mockContainer.append(testDataManager.getDOM());
-            expect($('.t-test-data-item', mockContainer).get().length).toEqual(3);
+            expect(mockContainer.querySelectorAll('.t-test-data-item').length).toEqual(3);
         });
 
         it('can remove a item from its configuration', function () {
