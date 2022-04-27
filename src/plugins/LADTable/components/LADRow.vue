@@ -153,34 +153,33 @@ export default {
         this.openmct.time.off('offsets', this.updateOffsets);
     },
     methods: {
-        updateView() {
-            // bypass animation frame for no end offsets
-            if (this.offsets.end === 0) {
-                this.updateViewCheck();
-
-                return;
-            }
-
+        requestViewUpdate() {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    this.updateViewCheck();
+                    this.updateView(this.latestDatum);
                     this.updatingView = false;
                 });
             }
         },
-        updateViewCheck() {
-            let newTimestamp = this.getParsedTimestamp(this.latestDatum);
+        updateView(datum) {
+            let newTimestamp = this.getParsedTimestamp(datum);
 
             if (this.shouldUpdate(newTimestamp)) {
                 this.timestamp = newTimestamp;
-                this.datum = this.latestDatum;
+                this.datum = datum;
             }
         },
         setLatestValues(datum) {
             this.latestDatum = datum;
 
-            this.updateView();
+            if (this.offsets.end === 0) {
+                this.updateView(datum);
+
+                return;
+            }
+
+            this.requestViewUpdate();
         },
         shouldUpdate(newTimestamp) {
             return this.inBounds(newTimestamp)
