@@ -87,12 +87,12 @@
         >
 
             <g
-                v-if="limitLow && dialLowLimitDeg < 315"
+                v-if="limitLow && dialLowLimitDeg < getLimitDegree('low', 'max')"
                 class="c-dial__limit-low"
                 :style="`transform: rotate(${dialLowLimitDeg}deg)`"
             >
                 <rect
-                    v-if="dialLowLimitDeg >= 45"
+                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q1')"
                     class="c-dial__low-limit__low"
                     x="5"
                     y="5"
@@ -100,7 +100,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialLowLimitDeg >= 135"
+                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q2')"
                     class="c-dial__low-limit__mid"
                     x="5"
                     y="0"
@@ -108,7 +108,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialLowLimitDeg >= 225"
+                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q3')"
                     class="c-dial__low-limit__high"
                     x="0"
                     y="0"
@@ -118,12 +118,12 @@
             </g>
 
             <g
-                v-if="limitHigh && dialHighLimitDeg < 315"
+                v-if="limitHigh && dialHighLimitDeg < getLimitDegree('high', 'max')"
                 class="c-dial__limit-high"
                 :style="`transform: rotate(${dialHighLimitDeg}deg)`"
             >
                 <rect
-                    v-if="dialHighLimitDeg <= 315"
+                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'max')"
                     class="c-dial__high-limit__low"
                     x="0"
                     y="5"
@@ -131,7 +131,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialHighLimitDeg <= 225"
+                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'q2')"
                     class="c-dial__high-limit__mid"
                     x="0"
                     y="0"
@@ -139,7 +139,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialHighLimitDeg <= 135"
+                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'q3')"
                     class="c-dial__high-limit__high"
                     x="5"
                     y="0"
@@ -159,7 +159,7 @@
                 :style="`transform: rotate(${degValueFilledDial}deg)`"
             >
                 <rect
-                    v-if="degValue >= 45"
+                    v-if="degValue >= getLimitDegree('low', 'q1')"
                     class="c-dial__filled-value__low"
                     x="5"
                     y="5"
@@ -167,7 +167,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="degValue >= 135"
+                    v-if="degValue >= getLimitDegree('low', 'q2')"
                     class="c-dial__filled-value__mid"
                     x="5"
                     y="0"
@@ -175,7 +175,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="degValue >= 225"
+                    v-if="degValue >= getLimitDegree('low', 'q3')"
                     class="c-dial__filled-value__high"
                     x="0"
                     y="0"
@@ -272,8 +272,9 @@
 </template>
 
 <script>
+import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
+
 const LIMIT_PADDING_IN_PERCENT = 10;
-const DIAL_VALUE_DEG_OFFSET = 45;
 
 export default {
     name: 'Gauge',
@@ -396,6 +397,7 @@ export default {
         this.openmct.time.off('timeSystem', this.setTimeSystem);
     },
     methods: {
+        getLimitDegree: getLimitDegree,
         addTelemetryObjectAndSubscribe(domainObject) {
             this.telemetryObject = domainObject;
             this.request();
