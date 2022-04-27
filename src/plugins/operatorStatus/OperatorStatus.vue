@@ -157,8 +157,8 @@ export default {
             }));
         },
         subscribeToPollQuestion() {
-            this.unsubscribe.push(this.openmct.telemetry.subscribe(this.roleStatusTelemetryObject, (datum) => {
-                this.setRoleStatusFromDatum(datum);
+            this.unsubscribe.push(this.openmct.telemetry.subscribe(this.pollQuestionTelemetryObject, (datum) => {
+                this.setPollQuestionFromDatum(datum);
             }));
         },
         setRoleStatusFromDatum(datum) {
