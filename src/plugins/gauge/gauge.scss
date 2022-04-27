@@ -1,9 +1,3 @@
-$dialClip: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
-$dialClip90: polygon(0 0, 50% 50%, 0 100%);
-$dialClip180: polygon(0 0, 100% 0, 0 100%);
-$limitHighClip90: polygon(0 0, 100% 0, 100% 100%);
-$limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
-
 .is-object-type-gauge {
   overflow: hidden;
 }
@@ -13,10 +7,8 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
 
   &.invalid,
   &.invalid.req { @include validationState($glyph-icon-x, $colorFormInvalid); }
-
   &.valid,
   &.valid.req { @include validationState($glyph-icon-check, $colorFormValid); }
-
   &.req { @include validationState($glyph-icon-asterisk, $colorFormRequired); }
 }
 
@@ -37,39 +29,16 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
     @include abs();
     overflow: hidden;
   }
-
-  svg {
-    path {
-      transform-origin: center;
-    }
-
-    &.c-gauge__curval {
-      @include abs();
-      fill: $colorGaugeTextValue;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 2;
-
-      .c-gauge__curval-text {
-        font-family: $heroFont;
-        transform: translate(50%, 75%);
-      }
-    }
-  }
 }
 
 /********************************************** DIAL GAUGE */
-/*** NEW CLASSES ***/
 svg[class*='c-dial'] {
-  //background: rgba(deeppink, 0.4);
   max-height: 100%;
   max-width: 100%;
   position: absolute;
 
   g {
     transform-origin: center;
-    opacity: 0.5;
   }
 }
 

@@ -25,7 +25,6 @@
     :class="`c-gauge--${gaugeType}`"
 >
     <template v-if="typeDial">
-        <div style="position: absolute">High limit degrees: {{ dialHighLimitDeg }}</div>
         <svg
             width="0"
             height="0"
@@ -192,7 +191,6 @@
             viewBox="0 0 10 10"
         >
             <g
-
                 class="c-dial__needle-value"
                 :style="`transform: rotate(${degValue}deg)`"
             >
@@ -248,7 +246,6 @@
                         :style="`width: ${meterLowLimitPerc}%`"
                     ></div>
                 </template>
-
 
                 <svg
                     class="c-meter__current-value-text-wrapper"
@@ -553,7 +550,7 @@ export default {
         valToPercent(vValue) {
             // Used by dial
             if (vValue >= this.rangeHigh && this.typeFilledDial) {
-                // Don't peg at 100% if the gaugeType isn't a filled shape
+                // For filled dial, clip values over the high range to prevent over-rotation
                 return 100;
             }
 
