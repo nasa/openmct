@@ -172,7 +172,7 @@ export default {
         },
         setLatestValues(datum) {
             this.latestDatum = datum;
-            console.log(this.getParsedTimestamp(datum), this.bounds.end);
+
             if (this.offsets.end === 0) {
                 this.updateView(datum);
 
