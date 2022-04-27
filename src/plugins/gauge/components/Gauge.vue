@@ -21,7 +21,7 @@
 *****************************************************************************/
 <template>
 <div
-    class="c-gauge__wrapper"
+    class="c-gauge__wrapper js-gauge-wrapper"
     :class="`c-gauge--${gaugeType}`"
 >
     <template v-if="typeDial">
@@ -47,7 +47,7 @@
         </svg>
 
         <svg
-            class="c-dial__range c-gauge__range"
+            class="c-dial__range c-gauge__range js-gauge-dial-range"
             viewBox="0 0 512 512"
         >
             <text
@@ -73,7 +73,7 @@
                 :viewBox="curValViewBox"
             >
                 <text
-                    class="c-dial__current-value-text"
+                    class="c-dial__current-value-text js-dial-current-value"
                     lengthAdjust="spacing"
                     text-anchor="middle"
                     style="transform: translate(50%, 70%)"
@@ -203,7 +203,7 @@
         <div class="c-meter">
             <div
                 v-if="displayMinMax"
-                class="c-gauge__range c-meter__range"
+                class="c-gauge__range c-meter__range js-gauge-meter-range"
             >
                 <div class="c-meter__range__high">{{ rangeHigh }}</div>
                 <div class="c-meter__range__low">{{ rangeLow }}</div>
@@ -258,7 +258,7 @@
                         preserveAspectRatio="xMidYMid meet"
                     >
                         <text
-                            class="c-dial__current-value-text"
+                            class="c-dial__current-value-text js-meter-current-value"
                             lengthAdjust="spacing"
                             text-anchor="middle"
                             style="transform: translate(50%, 70%)"
