@@ -134,6 +134,7 @@ export default {
 
         this.valueKey = this.valueMetadata ? this.valueMetadata.key : undefined;
 
+        this.evaulationQueue = [];
         this.unsubscribe = this.openmct
             .telemetry
             .subscribe(this.domainObject, this.setLatestValues);
@@ -154,14 +155,11 @@ export default {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    // let bounds = this.openmct.time.bounds();
-                    // let start = bounds.start;
-                    // let end = bounds.end;
-                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
-                    // let inBounds = newTimestamp >= this.openmct.time.bounds().start && newTimestamp <= this.openmct.time.bounds().end;
+                    let evaluate = this.evaulationQueue.pop();
+                    let newTimestamp = this.getParsedTimestamp(evaluate.datum);
                     let valid = this.timestamp === undefined || newTimestamp > this.timestamp;
-                    console.log(newTimestamp >= this.openmct.time.bounds().start && newTimestamp <= this.openmct.time.bounds().end, valid);
-                    if ((newTimestamp >= this.openmct.time.bounds().start && newTimestamp <= this.openmct.time.bounds().end) && valid) {
+                    console.log(newTimestamp >= evaluate.start && newTimestamp <= evaluate.end, valid);
+                    if ((newTimestamp >= evaluate.start && newTimestamp <= evaluate.end) && valid) {
                         this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
                     }
@@ -171,7 +169,15 @@ export default {
             }
         },
         setLatestValues(datum) {
-            this.latestDatum = datum;
+            let bounds = this.openmct.time.bounds();
+            let start = bounds.start;
+            let end = bounds.end;
+
+            this.evaulationQueue.push({
+                datum,
+                start,
+                end
+            });
 
             this.updateView();
         },
