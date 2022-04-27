@@ -58,11 +58,11 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
     }
   }
 
-  &[class*='dial'] {
-    // Square aspect ratio
-    width: 100%;
-    padding-bottom: 100%;
-  }
+  //&[class*='dial'] {
+  //  // Square aspect ratio
+  //  width: 100%;
+  //  padding-bottom: 100%;
+  //}
 
   &[class*='meter'] {
     @include abs();
@@ -70,10 +70,50 @@ $limitHighClip180: polygon(100% 0, 100% 100%, 0 100%);
 }
 
 /********************************************** DIAL GAUGE */
+/*** NEW CLASSES ***/
+svg[class*='c-dial'] {
+  //background: rgba(deeppink, 0.4);
+  max-height: 100%;
+  max-width: 100%;
+  position: absolute;
+
+  g {
+    transform-origin: center;
+    opacity: 0.5;
+  }
+}
+
+.c-dial {
+  &__filled-value-wrapper {
+    clip-path: url(#gaugeValueMask);
+  }
+
+  &__bg {
+    background: rgba(blue, 0.3); // Gauge bg color
+    clip-path: url(#gaugeBgMask);
+  }
+
+  //&__high-limit {
+  //  &__low {
+  //    fill: red;
+  //  }
+  //
+  //  &__mid {
+  //    fill: green;
+  //  }
+  //
+  //  &__high {
+  //    fill: blue;
+  //  }
+  //}
+}
+
+
+
 .c-dial {
   // Dial elements
-  @include abs();
-  clip-path: $dialClip;
+  //@include abs();
+  //clip-path: $dialClip;
 
   svg,
   &__ticks,
