@@ -52,7 +52,7 @@ define([
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
 
-        this.thumbnail = $('.t-widget-thumb', this.domElement);
+        //this.thumbnail = $('.t-widget-thumb', this.domElement);
         //this.thumbnailIcon = $('.js-sw__icon', this.domElement);
         //this.thumbnailLabel = $('.c-sw__label', this.domElement);
         //this.title = $('.rule-title', this.domElement);
@@ -67,6 +67,7 @@ define([
         //this.duplicateButton = $('.t-duplicate', this.domElement);
         //this.addConditionButton = $('.add-condition', this.domElement);
 
+        this.thumbnail = this.domElement.querySelector('.t-widget-thumb');
         this.thumbnailIcon = this.domElement.querySelector('.js-sw__icon');
         this.thumbnailLabel = this.domElement.querySelector('.c-sw__label');
         this.title = this.domElement.querySelector('.rule-title');
@@ -122,7 +123,7 @@ define([
          */
         function onColorInput(color, property) {
             self.config.style[property] = color;
-            self.thumbnail.css(property, color);
+            self.thumbnail.style[property] = color;
             self.eventEmitter.emit('change');
         }
 

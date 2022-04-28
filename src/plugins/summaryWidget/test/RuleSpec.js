@@ -196,9 +196,9 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
             testRule.colorInputs.color.set('#999999');
             expect(mockRuleConfig.style.color).toEqual('#999999');
 
-            expect(testRule.thumbnail.css('background-color')).toEqual('rgb(67, 67, 67)');
-            expect(testRule.thumbnail.css('border-color')).toEqual('rgb(102, 102, 102)');
-            expect(testRule.thumbnail.css('color')).toEqual('rgb(153, 153, 153)');
+            expect(testRule.thumbnail.style['background-color']).toEqual('rgb(67, 67, 67)');
+            expect(testRule.thumbnail.style['border-color']).toEqual('rgb(102, 102, 102)');
+            expect(testRule.thumbnail.style['color']).toEqual('rgb(153, 153, 153)');
 
             expect(changeSpy).toHaveBeenCalled();
         });
