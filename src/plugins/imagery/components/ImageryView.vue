@@ -514,6 +514,8 @@ export default {
                 if (!this.isPaused) {
                     this.setFocusedImage(imageIndex);
                     this.scrollToRight();
+                } else {
+                    this.scrollToFocused();
                 }
             },
             deep: true
@@ -977,6 +979,7 @@ export default {
 
             this.setSizedImageDimensions();
             this.calculateViewHeight();
+            this.scrollToFocused();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
