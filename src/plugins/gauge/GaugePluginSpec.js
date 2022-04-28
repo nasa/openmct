@@ -53,6 +53,8 @@ describe('Gauge plugin', () => {
         openmct = createOpenMct();
         openmct.on('start', done);
 
+        openmct.install(openmct.plugins.Gauge());
+
         openmct.startHeadless();
     });
 
