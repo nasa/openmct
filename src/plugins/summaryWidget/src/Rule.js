@@ -87,11 +87,18 @@ define([
          * have the appropriate event handlers registered to it, and it's corresponding
          * field in the domain object will be updated with its value
          */
+        // this.textInputs = {
+        //     name: $('.t-rule-name-input', this.domElement),
+        //     label: $('.t-rule-label-input', this.domElement),
+        //     message: $('.t-rule-message-input', this.domElement),
+        //     jsCondition: $('.t-rule-js-condition-input', this.domElement)
+        // };
+
         this.textInputs = {
-            name: $('.t-rule-name-input', this.domElement),
-            label: $('.t-rule-label-input', this.domElement),
-            message: $('.t-rule-message-input', this.domElement),
-            jsCondition: $('.t-rule-js-condition-input', this.domElement)
+            name: this.domElement.querySelector('.t-rule-name-input'),
+            label: this.domElement.querySelector('.t-rule-label-input'),
+            message: this.domElement.querySelector('.t-rule-message-input'),
+            jsCondition: this.domElement.querySelector('.t-rule-js-condition-input'),
         };
 
         this.iconInput = new IconPalette('', container);
@@ -219,11 +226,13 @@ define([
         });
 
         Object.keys(this.textInputs).forEach(function (inputKey) {
-            self.textInputs[inputKey].prop('value', self.config[inputKey] || '');
-            self.listenTo(self.textInputs[inputKey], 'input', function () {
-                // eslint-disable-next-line no-invalid-this
-                onTextInput(this, inputKey);
-            });
+            if (self.textInputs[inputKey]) {
+                self.textInputs[inputKey].value = self.config[inputKey] || '';
+                self.listenTo(self.textInputs[inputKey], 'input', function () {
+                    // eslint-disable-next-line no-invalid-this
+                    onTextInput(this, inputKey);
+                });
+            }
         });
 
         this.listenTo(this.deleteButton, 'click', this.remove);
