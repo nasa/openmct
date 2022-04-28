@@ -53,7 +53,7 @@ define([
         this.duplicate = this.duplicate.bind(this);
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
-        this.thumbnailIcon = $('.js-sw__icon', this.domElement);
+        //this.thumbnailIcon = $('.js-sw__icon', this.domElement);
         //this.thumbnailLabel = $('.c-sw__label', this.domElement);
         //this.title = $('.rule-title', this.domElement);
         //this.description = $('.rule-description', this.domElement);
@@ -67,6 +67,7 @@ define([
         //this.duplicateButton = $('.t-duplicate', this.domElement);
         //this.addConditionButton = $('.add-condition', this.domElement);
 
+        this.thumbnailIcon = this.domElement.querySelector('.js-sw__icon');
         this.thumbnailLabel = this.domElement.querySelector('.c-sw__label');
         this.title = this.domElement.querySelector('.rule-title');
         this.description = this.domElement.querySelector('.rule-description');
@@ -109,7 +110,7 @@ define([
         function onIconInput(icon) {
             self.config.icon = icon;
             self.updateDomainObject('icon', icon);
-            self.thumbnailIcon.removeClass().addClass(THUMB_ICON_CLASS + ' ' + icon);
+            self.thumbnailIcon.className = `${THUMB_ICON_CLASS + ' ' + icon}`;
             self.eventEmitter.emit('change');
         }
 
@@ -199,7 +200,7 @@ define([
         });
 
         // Initialize thumbs when first loading
-        this.thumbnailIcon.removeClass().addClass(THUMB_ICON_CLASS + ' ' + self.config.icon);
+        this.thumbnailIcon.className = `${THUMB_ICON_CLASS + ' ' + self.config.icon}`;
         this.thumbnailLabel.innerHTML = self.config.label;
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
