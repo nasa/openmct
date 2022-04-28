@@ -138,6 +138,9 @@
         animation-timing-function: ease-in;
         animation-iteration-count: 1;
         animation-fill-mode: forwards;
+        &.no-animation {
+            animation: none;
+        }
     }
 
 

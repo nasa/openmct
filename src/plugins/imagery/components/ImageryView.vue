@@ -143,21 +143,13 @@
                 <!-- spacecraft position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
-                    class="c-imagery__age icon-check c-imagery--new"
-                    :style="{
-                        'animation-delay': imageFreshnessOptions.fadeOutDelayTime,
-                        'animation-duration': imageFreshnessOptions.fadeOutDurationTime
-                    }"
+                    class="c-imagery__age icon-check c-imagery--new no-animation"
                 >POS</div>
 
                 <!-- camera position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isCameraPositionFresh"
-                    class="c-imagery__age icon-check c-imagery--new"
-                    :style="{
-                        'animation-delay': imageFreshnessOptions.fadeOutDelayTime,
-                        'animation-duration': imageFreshnessOptions.fadeOutDurationTime
-                    }"
+                    class="c-imagery__age icon-check c-imagery--new no-animation"
                 >CAM</div>
             </div>
             <div class="h-local-controls">
