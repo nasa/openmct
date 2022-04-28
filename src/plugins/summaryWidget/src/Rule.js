@@ -54,9 +54,9 @@ define([
 
         this.thumbnail = $('.t-widget-thumb', this.domElement);
         this.thumbnailIcon = $('.js-sw__icon', this.domElement);
-        this.thumbnailLabel = $('.c-sw__label', this.domElement);
-        this.title = $('.rule-title', this.domElement);
-        this.description = $('.rule-description', this.domElement);
+        //this.thumbnailLabel = $('.c-sw__label', this.domElement);
+        //this.title = $('.rule-title', this.domElement);
+        //this.description = $('.rule-description', this.domElement);
         //this.trigger = $('.t-trigger', this.domElement);
         //this.toggleConfigButton = $('.js-disclosure', this.domElement);
         //this.configArea = $('.widget-rule-content', this.domElement);
@@ -67,6 +67,9 @@ define([
         //this.duplicateButton = $('.t-duplicate', this.domElement);
         //this.addConditionButton = $('.add-condition', this.domElement);
 
+        this.thumbnailLabel = this.domElement.querySelector('.c-sw__label');
+        this.title = this.domElement.querySelector('.rule-title');
+        this.description = this.domElement.querySelector('.rule-description');
         this.trigger = this.domElement.querySelector('.t-trigger');
         this.toggleConfigButton = this.domElement.querySelector('.js-disclosure');
         this.configArea = this.domElement.querySelector('.widget-rule-content');
@@ -197,7 +200,7 @@ define([
 
         // Initialize thumbs when first loading
         this.thumbnailIcon.removeClass().addClass(THUMB_ICON_CLASS + ' ' + self.config.icon);
-        this.thumbnailLabel.html(self.config.label);
+        this.thumbnailLabel.innerHTML = self.config.label;
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
             const input = self.colorInputs[inputKey];
@@ -229,8 +232,8 @@ define([
         this.listenTo(this.toggleConfigButton, 'click', toggleConfig);
         this.listenTo(this.trigger, 'change', onTriggerInput);
 
-        this.title.html(self.config.name);
-        this.description.html(self.config.description);
+        this.title.innerHTML = self.config.name;
+        this.description.innerHTML = self.config.description;
         this.trigger.value = self.config.trigger;
 
         this.listenTo(this.grippy, 'mousedown', onDragStart);
@@ -505,7 +508,7 @@ define([
         }
 
         description = (description === '' ? this.config.description : description);
-        this.description.html(description);
+        this.description.innerHTML = self.config.description;
         this.config.description = description;
     };
 
