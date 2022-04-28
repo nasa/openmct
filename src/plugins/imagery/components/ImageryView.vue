@@ -481,9 +481,9 @@ export default {
         },
         formatImageAltText() {
             const regexLinux = /Linux/;
-            const platform = window.navigator.platform || window.navigator.userAgentData.platform;
+            const navigator = window.navigator;
 
-            if (regexLinux.test(platform)) {
+            if (regexLinux.test(navigator)) {
                 return 'Ctrl+Alt drag to pan';
             }
 
