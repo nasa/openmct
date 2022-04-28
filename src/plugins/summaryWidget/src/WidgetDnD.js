@@ -1,11 +1,11 @@
 define([
     '../res/ruleImageTemplate.html',
     'EventEmitter',
-    'zepto'
+    '../../../utils/template/templateHelpers'
 ], function (
     ruleImageTemplate,
     EventEmitter,
-    $
+    templateHelpers
 ) {
 
     /**
@@ -19,8 +19,8 @@ define([
         this.ruleOrder = ruleOrder;
         this.rulesById = rulesById;
 
-        this.imageContainer = $(ruleImageTemplate);
-        this.image = $('.t-drag-rule-image', this.imageContainer);
+        this.imageContainer = templateHelpers.convertTemplateToHTML(ruleImageTemplate).firstChild;
+        this.image = this.imageContainer.querySelector('.t-drag-rule-image');
         this.draggingId = '';
         this.draggingRulePrevious = '';
         this.eventEmitter = new EventEmitter();
@@ -29,18 +29,18 @@ define([
         this.drag = this.drag.bind(this);
         this.drop = this.drop.bind(this);
 
-        $(this.container).on('mousemove', this.drag);
-        $(document).on('mouseup', this.drop);
-        $(this.container).before(this.imageContainer);
-        $(this.imageContainer).hide();
+        this.container.addEventListener('mousemove', this.drag);
+        document.addEventListener('mouseup', this.drop);
+        this.container.parentNode.insertBefore(this.imageContainer, this.container);
+        this.imageContainer.style.display = 'none';
     }
 
     /**
      * Remove event listeners registered to elements external to the widget
      */
     WidgetDnD.prototype.destroy = function () {
-        $(this.container).off('mousemove', this.drag);
-        $(document).off('mouseup', this.drop);
+        this.container.removeEventListener('mousemove', this.drag);
+       document.removeEventListener('mouseup', this.drop);
     };
 
     /**
@@ -114,7 +114,7 @@ define([
         this.imageContainer.show();
         this.imageContainer.offset({
             top: event.pageY - this.image.height() / 2,
-            left: event.pageX - $('.t-grippy', this.image).width()
+            left: event.pageX - this.image.querySelector('.t-grippy').style.width
         });
     };
 
@@ -129,7 +129,7 @@ define([
             dragTarget = this.getDropLocation(event);
             this.imageContainer.offset({
                 top: event.pageY - this.image.height() / 2,
-                left: event.pageX - $('.t-grippy', this.image).width()
+                left: event.pageX - this.image.querySelector('.t-grippy').style.width
             });
             if (this.rulesById[dragTarget]) {
                 this.rulesById[dragTarget].showDragIndicator();
