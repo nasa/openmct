@@ -54,7 +54,7 @@ define([
             domElement = this.palette.getDOM();
         } else {
             document.addEventListener("DOMContentLoaded", () => {
-                domElement = this.palette.getDOM()
+                domElement = this.palette.getDOM();
             });
         }
 
