@@ -53,6 +53,8 @@ describe('Gauge plugin', () => {
         openmct = createOpenMct();
         openmct.on('start', done);
 
+        openmct.install(openmct.plugins.Gauge());
+
         openmct.startHeadless();
     });
 
@@ -190,28 +192,27 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
-            const curveElement = gaugeHolder.querySelector('.c-gauge__curval');
-            const dialElement = gaugeHolder.querySelector('.c-dial');
+            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector('.js-gauge-dial-range');
+            const valueElement = gaugeHolder.querySelector('.js-dial-current-value');
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
+            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
             expect(hasMajorElements).toBe(true);
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.c-gauge__range').textContent).toEqual(`${minValue} ${maxValue}`);
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${minValue} ${maxValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.c-gauge__curval-text');
+                const textElement = gaugeHolder.querySelector('.js-dial-current-value');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
@@ -326,28 +327,27 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
-            const curveElement = gaugeHolder.querySelector('.c-gauge__curval');
-            const dialElement = gaugeHolder.querySelector('.c-dial');
+            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector('.js-gauge-dial-range');
+            const valueElement = gaugeHolder.querySelector('.js-dial-current-value');
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
+            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
             expect(hasMajorElements).toBe(true);
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.c-gauge__range').textContent).toEqual(`${minValue} ${maxValue}`);
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${minValue} ${maxValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.c-gauge__curval-text');
+                const textElement = gaugeHolder.querySelector('.js-dial-current-value');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
@@ -462,28 +462,27 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
-            const curveElement = gaugeHolder.querySelector('.c-meter');
-            const dialElement = gaugeHolder.querySelector('.c-meter__bg');
+            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector('.js-gauge-meter-range');
+            const valueElement = gaugeHolder.querySelector('.js-meter-current-value');
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
+            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
             expect(hasMajorElements).toBe(true);
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.c-gauge__range').textContent).toEqual(`${maxValue} ${minValue}`);
+            expect(gaugeHolder.querySelector('.js-gauge-meter-range').textContent).toEqual(`${maxValue} ${minValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.c-gauge__curval-text');
+                const textElement = gaugeHolder.querySelector('.js-meter-current-value');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
@@ -560,17 +559,16 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
-            const curveElement = gaugeHolder.querySelector('.c-meter');
-            const dialElement = gaugeHolder.querySelector('.c-meter__bg');
+            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector('.js-gauge-meter-range');
+            const valueElement = gaugeHolder.querySelector('.js-meter-current-value');
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
+            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
             expect(hasMajorElements).toBe(true);
         });
@@ -643,17 +641,16 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
+            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
             const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
             const curveElement = gaugeHolder.querySelector('.c-meter');
-            const dialElement = gaugeHolder.querySelector('.c-meter__bg');
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
+            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement);
 
             expect(hasMajorElements).toBe(true);
         });
@@ -772,28 +769,27 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.c-gauge');
+            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.c-gauge__wrapper');
-            const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
-            const curveElement = gaugeHolder.querySelector('.c-gauge__curval');
-            const dialElement = gaugeHolder.querySelector('.c-dial');
+            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector('.js-gauge-dial-range');
+            const valueElement = gaugeHolder.querySelector('.js-dial-current-value');
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement && dialElement);
+            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
             expect(hasMajorElements).toBe(true);
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.c-gauge__range').textContent).toEqual(`${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`);
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.c-gauge__curval-text');
+                const textElement = gaugeHolder.querySelector('.js-dial-current-value');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
