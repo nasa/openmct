@@ -140,7 +140,9 @@ define([
          * @private
          */
         function encodeMsg(msg) {
-            return $('<div />').text(msg).html();
+            const div = document.createElement('div');
+            div.innerHTML = msg;
+            return div.innerHTML;
         }
 
         /**
