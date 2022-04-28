@@ -24,6 +24,20 @@ import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 import createExampleUser from './exampleUserCreator';
 
+const STATUSES = [{
+    key: "NO_STATUS",
+    label: "No Status"
+}, {
+    key: "NO_GO",
+    label: "No Go"
+}, {
+    key: "GO",
+    label: "Go"
+}, {
+    key: "MAYBE",
+    label: "Maybe"
+}];
+
 export default class ExampleUserProvider extends EventEmitter {
     constructor(openmct) {
         super();
@@ -32,6 +46,7 @@ export default class ExampleUserProvider extends EventEmitter {
         this.user = undefined;
         this.loggedIn = false;
         this.autoLoginUser = undefined;
+        this.status = STATUSES[1];
 
         this.ExampleUser = createExampleUser(this.openmct.user.User);
         this.loginPromise = undefined;
@@ -53,6 +68,10 @@ export default class ExampleUserProvider extends EventEmitter {
         return this.loginPromise;
     }
 
+    canProvideStatus() {
+        return Promise.resolve(true);
+    }
+
     hasRole(roleId) {
         if (!this.loggedIn) {
             Promise.resolve(undefined);
@@ -61,15 +80,17 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve(this.user.getRoles().includes(roleId));
     }
 
-    getStatusRolesForUser() {
-        return Promise.resolve(['driver']);
+    getActiveStatusRole() {
+        return Promise.resolve('Driver');
     }
 
-    getRoleStatus(role) {
-        return Promise.resolve({
-            key: 'foo',
-            label: 'Foo'
-        });
+    getStatus() {
+        return Promise.resolve(this.status);
+    }
+
+    setStatus(status) {
+        this.status = status;
+        this.emit('statusChange', status);
     }
 
     getPollQuestion() {
@@ -77,6 +98,10 @@ export default class ExampleUserProvider extends EventEmitter {
             question: 'Do the thing?',
             timestamp: Date.now()
         });
+    }
+
+    getPossibleStatuses() {
+        return Promise.resolve(STATUSES);
     }
 
     _login() {

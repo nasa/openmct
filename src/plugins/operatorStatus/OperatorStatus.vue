@@ -7,7 +7,7 @@
     <div>My Role: {{ role }}</div>
     <div>Current Poll Question: {{ currentPollQuestion }}</div>
     <div>Current Poll Date: {{ pollQuestionUpdated }}</div>
-    <div>My Status: {{ roleStatus }}</div>
+    <div>My Status: {{ roleStatus.label }}</div>
     <div>Set Status:
         <select
             v-model="selectedStatus"
@@ -16,8 +16,8 @@
         >
             <option
                 v-for="status in allStatuses"
-                :key="status.value"
-                :value="status.value"
+                :key="status.key"
+                :value="status.key"
             >
                 {{ status.label }}
             </option>
@@ -61,12 +61,14 @@ export default {
         }
     },
     beforeDestroy() {
-        this.openmct.user.off('roleStatusChange', this.setStatus);
+        this.openmct.user.off('statusChange', this.setStatus);
         this.openmct.user.off('pollQuestionChange', this.setPollQuestion);
     },
     async mounted() {
         this.unsubscribe = [];
+        await this.fetchUser();
         await this.findFirstApplicableRole();
+        this.fetchPossibleStatusesForUser();
         this.fetchCurrentPoll();
         this.fetchMyStatus();
         this.subscribeToMyStatus();
@@ -74,38 +76,46 @@ export default {
     },
     methods: {
         async findFirstApplicableRole() {
-            const rolesWithStatusForUser = await this.openmct.user.getStatusRolesForUser(this.user);
-
-            this.role = rolesWithStatusForUser[0];
+            this.role = await this.openmct.user.getActiveStatusRole();
+        },
+        async fetchUser() {
+            this.user = await this.openmct.user.getCurrentUser();
         },
         async fetchCurrentPoll() {
             const pollQuestion = await this.openmct.user.getPollQuestion();
 
             this.setPollQuestion(pollQuestion);
         },
+        async fetchPossibleStatusesForUser() {
+            this.allStatuses = await this.openmct.user.getPossibleStatuses();
+        },
         setPollQuestion(pollQuestion) {
             this.currentPollQuestion = pollQuestion.question;
-            this.pollQuestionUpdated = pollQuestion.timestamp;
+            this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
         },
         async fetchMyStatus() {
-            const status = await this.openmct.user.getRoleStatus(this.role);
+            const status = await this.openmct.user.getStatus();
 
             this.setStatus(status);
         },
         subscribeToMyStatus() {
-            this.openmct.user.on('roleStatusChange', this.setStatus);
+            this.openmct.user.on('statusChange', this.setStatus);
         },
         subscribeToPollQuestion() {
             this.openmct.user.on('pollQuestionChange', this.setPollQuestion);
         },
         setStatus(status) {
-            this.roleStatus = status.label;
+            this.roleStatus = status;
             this.selectedStatus = status.key;
         },
-        async changeStatus(status) {
-            const result = await this.openmct.user.setRoleStatus(this.role, status);
+        findStatusByKey(statusKey) {
+            return this.allStatuses.find(possibleMatch => possibleMatch.key === statusKey);
+        },
+        async changeStatus() {
+            if (this.selectedStatus !== undefined && this.selectedStatus !== this.roleStatus.key) {
+                await this.openmct.user.setStatus(this.findStatusByKey(this.selectedStatus));
+            }
 
-            return result;
         },
         noop() {}
     }

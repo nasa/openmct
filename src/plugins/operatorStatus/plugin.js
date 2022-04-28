@@ -11,8 +11,8 @@ export default function operatorStatusPlugin(config) {
     return function install(openmct) {
 
         if (openmct.user.hasProvider()) {
-            openmct.user.getCurrentUser().then(async currentUser => {
-                const canProvideStatus = await openmct.user.canProvideStatusFor(currentUser);
+            openmct.user.getCurrentUser().then(async () => {
+                const canProvideStatus = await openmct.user.canProvideStatus();
 
                 if (canProvideStatus) {
                     const operatorStatusElement = new Vue({
