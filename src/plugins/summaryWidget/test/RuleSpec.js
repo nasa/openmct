@@ -1,5 +1,5 @@
 define(['../src/Rule', 'zepto'], function (Rule, $) {
-    describe('A Summary Widget Rule', function () {
+    fdescribe('A Summary Widget Rule', function () {
         let mockRuleConfig;
         let mockDomainObject;
         let mockOpenMCT;
@@ -228,8 +228,12 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
         // });
 
         it('allows input for when the rule triggers', function () {
-            testRule.trigger.prop('value', 'all');
-            testRule.trigger.trigger('change');
+            testRule.trigger.value = 'all';
+            const event = new Event('change', {
+                bubbles: true,
+                cancelable: true,
+            });
+            testRule.trigger.dispatchEvent(event);     
             expect(testRule.config.trigger).toEqual('all');
             expect(conditionChangeSpy).toHaveBeenCalled();
         });
@@ -247,7 +251,12 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
         });
 
         it('initiates a drag event when its grippy is clicked', function () {
-            testRule.grippy.trigger('mousedown');
+            const event = new Event('mousedown', {
+                bubbles: true,
+                cancelable: true,
+            });
+            testRule.grippy.dispatchEvent(event);    
+
             expect(mockWidgetDnD.setDragImage).toHaveBeenCalled();
             expect(mockWidgetDnD.dragStart).toHaveBeenCalledWith('mockRule');
         });

@@ -43,7 +43,6 @@ define([
         this.widgetDnD = widgetDnD;
         this.container = container;
 
-        //this.domElement = $(ruleTemplate);
         this.domElement = templateHelpers.convertTemplateToHTML(ruleTemplate).firstChild;
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change', 'conditionChange'];
@@ -58,9 +57,9 @@ define([
         this.thumbnailLabel = $('.c-sw__label', this.domElement);
         this.title = $('.rule-title', this.domElement);
         this.description = $('.rule-description', this.domElement);
-        this.trigger = $('.t-trigger', this.domElement);
-        this.toggleConfigButton = $('.js-disclosure', this.domElement);
-        this.configArea = $('.widget-rule-content', this.domElement);
+        //this.trigger = $('.t-trigger', this.domElement);
+        //this.toggleConfigButton = $('.js-disclosure', this.domElement);
+        //this.configArea = $('.widget-rule-content', this.domElement);
         //this.grippy = $('.t-grippy', this.domElement);
         //this.conditionArea = $('.t-widget-rule-config', this.domElement);
         //this.jsConditionArea = $('.t-rule-js-condition-input-holder', this.domElement);
@@ -68,6 +67,9 @@ define([
         //this.duplicateButton = $('.t-duplicate', this.domElement);
         //this.addConditionButton = $('.add-condition', this.domElement);
 
+        this.trigger = this.domElement.querySelector('.t-trigger');
+        this.toggleConfigButton = this.domElement.querySelector('.js-disclosure');
+        this.configArea = this.domElement.querySelector('.widget-rule-content');
         this.grippy = this.domElement.querySelector('.t-grippy');
         this.conditionArea = this.domElement.querySelector('.t-widget-rule-config');
         this.jsConditionArea = this.domElement.querySelector('.t-rule-js-condition-input-holder');
@@ -229,7 +231,7 @@ define([
 
         this.title.html(self.config.name);
         this.description.html(self.config.description);
-        this.trigger.prop('value', self.config.trigger);
+        this.trigger.value = self.config.trigger;
 
         this.listenTo(this.grippy, 'mousedown', onDragStart);
         this.widgetDnD.on('drop', function () {
@@ -243,8 +245,8 @@ define([
         }
 
         if (!this.config.expanded) {
-            this.configArea.removeClass('expanded');
-            this.toggleConfigButton.removeClass('c-disclosure-triangle--expanded');
+            this.configArea.classList.remove('expanded');
+            this.toggleConfigButton.classList.remove('c-disclosure-triangle--expanded');
         }
 
         if (this.domainObject.configuration.ruleOrder.length === 2) {
