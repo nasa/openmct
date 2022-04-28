@@ -116,6 +116,9 @@ export default {
         this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
             capture: true
         });
+        this.$refs.objectViewWrapper.addEventListener('dragenter', this.onDragEnter, {
+            capture: true
+        });
         this.$refs.objectViewWrapper.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
@@ -342,6 +345,9 @@ export default {
             } else {
                 return { item: this.domainObject };
             }
+        },
+        onDragEnter(event) {
+            event.target.click();
         },
         onDragOver(event) {
             if (this.hasComposableDomainObject(event)) {
