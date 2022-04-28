@@ -6,8 +6,7 @@ define([
     './eventHelpers',
     '../../../utils/template/templateHelpers',
     'EventEmitter',
-    'lodash',
-    'zepto'
+    'lodash'
 ], function (
     ruleTemplate,
     Condition,
@@ -16,8 +15,7 @@ define([
     eventHelpers,
     templateHelpers,
     EventEmitter,
-    _,
-    $
+    _
 ) {
     /**
      * An object representing a summary widget rule. Maintains a set of text
@@ -52,21 +50,6 @@ define([
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
 
-        //this.thumbnail = $('.t-widget-thumb', this.domElement);
-        //this.thumbnailIcon = $('.js-sw__icon', this.domElement);
-        //this.thumbnailLabel = $('.c-sw__label', this.domElement);
-        //this.title = $('.rule-title', this.domElement);
-        //this.description = $('.rule-description', this.domElement);
-        //this.trigger = $('.t-trigger', this.domElement);
-        //this.toggleConfigButton = $('.js-disclosure', this.domElement);
-        //this.configArea = $('.widget-rule-content', this.domElement);
-        //this.grippy = $('.t-grippy', this.domElement);
-        //this.conditionArea = $('.t-widget-rule-config', this.domElement);
-        //this.jsConditionArea = $('.t-rule-js-condition-input-holder', this.domElement);
-        //this.deleteButton = $('.t-delete', this.domElement);
-        //this.duplicateButton = $('.t-duplicate', this.domElement);
-        //this.addConditionButton = $('.add-condition', this.domElement);
-
         this.thumbnail = this.domElement.querySelector('.t-widget-thumb');
         this.thumbnailIcon = this.domElement.querySelector('.js-sw__icon');
         this.thumbnailLabel = this.domElement.querySelector('.c-sw__label');
@@ -87,12 +70,6 @@ define([
          * have the appropriate event handlers registered to it, and it's corresponding
          * field in the domain object will be updated with its value
          */
-        // this.textInputs = {
-        //     name: $('.t-rule-name-input', this.domElement),
-        //     label: $('.t-rule-label-input', this.domElement),
-        //     message: $('.t-rule-message-input', this.domElement),
-        //     jsCondition: $('.t-rule-js-condition-input', this.domElement)
-        // };
 
         this.textInputs = {
             name: this.domElement.querySelector('.t-rule-name-input'),
@@ -204,7 +181,8 @@ define([
             self.config.expanded = !self.config.expanded;
         }
 
-        $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
+        const labelInput = this.domElement.querySelector('.t-rule-label-input');
+        labelInput.parentNode.insertBefore(this.iconInput.getDOM(), labelInput);
         this.iconInput.set(self.config.icon);
         this.iconInput.on('change', function (value) {
             onIconInput(value);
@@ -225,7 +203,7 @@ define([
                 self.updateDomainObject();
             });
 
-            $('.t-style-input', self.domElement).append(input.getDOM());
+            self.domElement.querySelector('.t-style-input').append(input.getDOM());
         });
 
         Object.keys(this.textInputs).forEach(function (inputKey) {
@@ -254,7 +232,7 @@ define([
         this.widgetDnD.on('drop', function () {
             // eslint-disable-next-line no-invalid-this
             this.domElement.show();
-            $('.t-drag-indicator').hide();
+            document.querySelector('.t-drag-indicator').style.display = 'none';
         }, this);
 
         if (!this.conditionManager.loadCompleted()) {
@@ -267,16 +245,16 @@ define([
         }
 
         if (this.domainObject.configuration.ruleOrder.length === 2) {
-            $('.t-grippy', this.domElement).hide();
+            this.domElement.querySelector('.t-grippy').style.display = 'none';
         }
 
         this.refreshConditions();
 
         //if this is the default rule, hide elements that don't apply
         if (this.config.id === 'default') {
-            $('.t-delete', this.domElement).hide();
-            $('.t-widget-rule-config', this.domElement).hide();
-            $('.t-grippy', this.domElement).hide();
+            this.domElement.querySelector('.t-delete').style.display = 'none';
+            this.domElement.querySelector('.t-widget-rule-config').style.display = 'none';
+            this.domElement.querySelector('.t-grippy').style.display = 'none';
         }
     }
 
@@ -333,8 +311,8 @@ define([
      * During a rule drag event, show the placeholder element after this rule
      */
     Rule.prototype.showDragIndicator = function () {
-        $('.t-drag-indicator').hide();
-        $('.t-drag-indicator', this.domElement).show();
+        document.querySelector('.t-drag-indicator').style.display = 'none';
+        this.domElement.querySelector('.t-drag-indicator').style.display = '';
     };
 
     /**
@@ -426,7 +404,10 @@ define([
         const triggerContextStr = self.config.trigger === 'any' ? ' or ' : ' and ';
 
         self.conditions = [];
-        $('.t-condition', this.domElement).remove();
+
+        this.domElement.querySelectorAll('.t-condition').forEach(condition => {
+            condition.remove();
+        })
 
         this.config.conditions.forEach(function (condition, index) {
             const newCondition = new Condition(condition, index, self.conditionManager);
@@ -448,9 +429,10 @@ define([
             this.addConditionButton.style.display = '';
             self.conditions.forEach(function (condition) {
                 $condition = condition.getDOM();
-                $('li:last-of-type', self.conditionArea).before($condition);
+                const lastOfType = self.conditionArea.querySelector('li:last-of-type')
+                lastOfType.parentNode.insertBefore($condition, lastOfType);
                 if (loopCnt > 0) {
-                    $('.t-condition-context', $condition).html(triggerContextStr + ' when');
+                    $condition.querySelector('.t-condition-context').innerHTML = triggerContextStr + ' when';
                 }
 
                 loopCnt++;
