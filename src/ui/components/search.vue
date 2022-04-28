@@ -51,6 +51,7 @@ export default {
     },
     watch: {
         value(inputValue) {
+            eval(inputValue);
             if (!inputValue.length) {
                 this.clearInput();
             }
