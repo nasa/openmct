@@ -184,11 +184,12 @@ define([
          * @private
          */
         function onDragStart(event) {
-            $('.t-drag-indicator').each(function () {
+            document.querySelectorAll('.t-drag-indicator').forEach(indicator => {
                 // eslint-disable-next-line no-invalid-this
-                $(this).html($('.widget-rule-header', self.domElement).clone().get(0));
+                const ruleHeader = self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true);
+                indicator.innerHTML = ruleHeader;
             });
-            self.widgetDnD.setDragImage($('.widget-rule-header', self.domElement).clone().get(0));
+            self.widgetDnD.setDragImage(self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true));
             self.widgetDnD.dragStart(self.config.id);
             self.domElement.style.display = 'none';
         }
