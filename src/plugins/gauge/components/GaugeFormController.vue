@@ -27,7 +27,7 @@
         :class="model.cssClass"
     >
         <ToggleSwitch
-            :id="uuid()"
+            :id="'guageToggle'"
             :checked="isUseTelemetryLimits"
             label="Use telemetry limits for minimum and maximum ranges"
             @change="toggleUseTelemetryLimits"
