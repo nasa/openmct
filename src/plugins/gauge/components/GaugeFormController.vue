@@ -27,7 +27,7 @@
         :class="model.cssClass"
     >
         <ToggleSwitch
-            :id="'guageToggle'"
+            :id="'gaugeToggle'"
             :checked="isUseTelemetryLimits"
             label="Use telemetry limits for minimum and maximum ranges"
             @change="toggleUseTelemetryLimits"
@@ -95,7 +95,6 @@
 
 <script>
 import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
-import uuid from 'uuid';
 
 export default {
     components: {
@@ -119,7 +118,6 @@ export default {
         };
     },
     methods: {
-        uuid: uuid,
         onChange(event) {
             const data = {
                 model: this.model,
