@@ -4,6 +4,7 @@ define([
     './input/ColorPalette',
     './input/IconPalette',
     './eventHelpers',
+    '../../../utils/template/templateHelpers',
     'EventEmitter',
     'lodash',
     'zepto'
@@ -13,6 +14,7 @@ define([
     ColorPalette,
     IconPalette,
     eventHelpers,
+    templateHelpers,
     EventEmitter,
     _,
     $
@@ -41,7 +43,8 @@ define([
         this.widgetDnD = widgetDnD;
         this.container = container;
 
-        this.domElement = $(ruleTemplate);
+        //this.domElement = $(ruleTemplate);
+        this.domElement = templateHelpers.convertTemplateToHTML(ruleTemplate).firstChild;
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change', 'conditionChange'];
         this.conditions = [];
@@ -58,12 +61,19 @@ define([
         this.trigger = $('.t-trigger', this.domElement);
         this.toggleConfigButton = $('.js-disclosure', this.domElement);
         this.configArea = $('.widget-rule-content', this.domElement);
-        this.grippy = $('.t-grippy', this.domElement);
-        this.conditionArea = $('.t-widget-rule-config', this.domElement);
-        this.jsConditionArea = $('.t-rule-js-condition-input-holder', this.domElement);
-        this.deleteButton = $('.t-delete', this.domElement);
-        this.duplicateButton = $('.t-duplicate', this.domElement);
-        this.addConditionButton = $('.add-condition', this.domElement);
+        //this.grippy = $('.t-grippy', this.domElement);
+        //this.conditionArea = $('.t-widget-rule-config', this.domElement);
+        //this.jsConditionArea = $('.t-rule-js-condition-input-holder', this.domElement);
+        //this.deleteButton = $('.t-delete', this.domElement);
+        //this.duplicateButton = $('.t-duplicate', this.domElement);
+        //this.addConditionButton = $('.add-condition', this.domElement);
+
+        this.grippy = this.domElement.querySelector('.t-grippy');
+        this.conditionArea = this.domElement.querySelector('.t-widget-rule-config');
+        this.jsConditionArea = this.domElement.querySelector('.t-rule-js-condition-input-holder');
+        this.deleteButton = this.domElement.querySelector('.t-delete');
+        this.duplicateButton = this.domElement.querySelector('.t-duplicate');
+        this.addConditionButton = this.domElement.querySelector('.add-condition');
 
         /**
          * The text inputs for this rule: any input included in this object will
@@ -164,7 +174,7 @@ define([
             });
             self.widgetDnD.setDragImage($('.widget-rule-header', self.domElement).clone().get(0));
             self.widgetDnD.dragStart(self.config.id);
-            self.domElement.hide();
+            self.domElement.style.display = 'none';
         }
 
         /**
@@ -408,11 +418,15 @@ define([
         });
 
         if (this.config.trigger === 'js') {
-            this.jsConditionArea.show();
-            this.addConditionButton.hide();
+            if (this.jsConditionArea) {
+                this.jsConditionArea.style.display = '';
+            }
+            this.addConditionButton.style.display = 'none';
         } else {
-            this.jsConditionArea.hide();
-            this.addConditionButton.show();
+            if (this.jsConditionArea) {
+                this.jsConditionArea.style.display = 'none';
+            }
+            this.addConditionButton.style.display = '';
             self.conditions.forEach(function (condition) {
                 $condition = condition.getDOM();
                 $('li:last-of-type', self.conditionArea).before($condition);
