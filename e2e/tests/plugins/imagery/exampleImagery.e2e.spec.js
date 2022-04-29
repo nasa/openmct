@@ -180,7 +180,7 @@ test.describe('Example Imagery', () => {
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
 
-    test.only('Image Pan/Zoom alt text is displayed (Linux)', async ({ page }) => {
+    test('Image Pan/Zoom alt text is displayed (Linux)', async ({ page }) => {
         // userAgentData.platform is not available so match against entire userAgent string
         const userAgent = await page.evaluate('navigator.userAgent');
         expect(userAgent).toBeTruthy();
@@ -197,7 +197,7 @@ test.describe('Example Imagery', () => {
         expect(expectedAltText).toEqual(imageryHintsText);
     });
 
-    test.only('Image Pan/Zoom alt text is displayed (Other Platforms)', async ({ page }) => {
+    test('Image Pan/Zoom alt text is displayed (Other Platforms)', async ({ page }) => {
         // userAgentData.platform is not available so match against entire userAgent string
         const userAgent = await page.evaluate('navigator.userAgent');
         expect(userAgent).toBeTruthy();
