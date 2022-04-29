@@ -87,7 +87,7 @@
         >
 
             <g
-                v-if="limitLow !== null && dialLowLimitDeg < getLimitDegree('low', 'max')"
+                v-if="limitLow !== '' && dialLowLimitDeg < getLimitDegree('low', 'max')"
                 class="c-dial__limit-low"
                 :style="`transform: rotate(${dialLowLimitDeg}deg)`"
             >
@@ -118,7 +118,7 @@
             </g>
 
             <g
-                v-if="limitHigh !== null && dialHighLimitDeg < getLimitDegree('high', 'max')"
+                v-if="limitHigh !== '' && dialHighLimitDeg < getLimitDegree('high', 'max')"
                 class="c-dial__limit-high"
                 :style="`transform: rotate(${dialHighLimitDeg}deg)`"
             >
@@ -216,13 +216,13 @@
                     ></div>
 
                     <div
-                        v-if="limitHigh !== null && meterHighLimitPerc > 0"
+                        v-if="limitHigh !== '' && meterHighLimitPerc > 0"
                         class="c-meter__limit-high"
                         :style="`height: ${meterHighLimitPerc}%`"
                     ></div>
 
                     <div
-                        v-if="limitLow !== null && meterLowLimitPerc > 0"
+                        v-if="limitLow !== '' && meterLowLimitPerc > 0"
                         class="c-meter__limit-low"
                         :style="`height: ${meterLowLimitPerc}%`"
                     ></div>
@@ -235,13 +235,13 @@
                     ></div>
 
                     <div
-                        v-if="limitHigh !== null && meterHighLimitPerc > 0"
+                        v-if="limitHigh !== '' && meterHighLimitPerc > 0"
                         class="c-meter__limit-high"
                         :style="`width: ${meterHighLimitPerc}%`"
                     ></div>
 
                     <div
-                        v-if="limitLow !== null && meterLowLimitPerc > 0"
+                        v-if="limitLow !== '' && meterLowLimitPerc > 0"
                         class="c-meter__limit-low"
                         :style="`width: ${meterLowLimitPerc}%`"
                     ></div>
