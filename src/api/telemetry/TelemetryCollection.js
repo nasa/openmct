@@ -270,7 +270,8 @@ export class TelemetryCollection extends EventEmitter {
     _bounds(bounds, isTick) {
         let startChanged = this.lastBounds.start !== bounds.start;
         let endChanged = this.lastBounds.end !== bounds.end;
-
+        console.log('start changed', startChanged, 'end changed', endChanged);
+        console.log('isTick', isTick);
         this.lastBounds = bounds;
 
         if (isTick) {
