@@ -109,7 +109,6 @@ export class TelemetryCollection extends EventEmitter {
     async _requestHistoricalTelemetry() {
         let options = { ...this.options };
         let historicalProvider;
-        console.log('request historical', options);
 
         this.openmct.telemetry.standardizeRequestOptions(options);
         historicalProvider = this.openmct.telemetry.
@@ -118,7 +117,7 @@ export class TelemetryCollection extends EventEmitter {
         if (!historicalProvider) {
             return;
         }
-        console.log('historical provider, we have');
+
         let historicalData;
 
         options.onPartialResponse = this._processNewTelemetry.bind(this);
@@ -132,7 +131,6 @@ export class TelemetryCollection extends EventEmitter {
             options.signal = this.requestAbort.signal;
             this.emit('requestStarted');
             historicalData = await historicalProvider.request(this.domainObject, options);
-            console.log('historical data', historicalData);
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Error requesting telemetry data...');
@@ -174,7 +172,6 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
-        console.log('process', telemetryData);
         performance.mark('tlm:process:start');
         if (telemetryData === undefined) {
             return;
@@ -190,16 +187,14 @@ export class TelemetryCollection extends EventEmitter {
             parsedValue = this.parseTime(datum);
             beforeStartOfBounds = parsedValue < this.lastBounds.start;
             afterEndOfBounds = parsedValue > this.lastBounds.end;
-            console.log(`for ${this.domainObject.name}`, parsedValue, 'before', beforeStartOfBounds, 'after', afterEndOfBounds);
+
             if (!afterEndOfBounds && !beforeStartOfBounds) {
-                console.log(`for ${this.domainObject.name}`, 'in', parsedValue);
                 let isDuplicate = false;
                 let startIndex = this._sortedIndex(datum);
                 let endIndex = undefined;
 
                 // dupe check
                 if (startIndex !== this.boundedTelemetry.length) {
-                    console.log(`for ${this.domainObject.name}`, 'dupe check if');
                     endIndex = _.sortedLastIndexBy(
                         this.boundedTelemetry,
                         datum,
@@ -207,17 +202,14 @@ export class TelemetryCollection extends EventEmitter {
                     );
 
                     if (endIndex > startIndex) {
-                        console.log(`for ${this.domainObject.name}`, 'end > start index');
                         let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
                         isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
                     }
                 } else if (startIndex === this.boundedTelemetry.length) {
-                    console.log(`for ${this.domainObject.name}`, 'dupe check else/if');
                     isDuplicate = _.isEqual(datum, this.boundedTelemetry[this.boundedTelemetry.length - 1]);
                 }
 
                 if (!isDuplicate) {
-                    console.log(`for ${this.domainObject.name}`, 'not a dupe');
                     let index = endIndex || startIndex;
 
                     this.boundedTelemetry.splice(index, 0, datum);
@@ -225,13 +217,11 @@ export class TelemetryCollection extends EventEmitter {
                 }
 
             } else if (afterEndOfBounds) {
-                console.log(`for ${this.domainObject.name}`, 'future buff', afterEndOfBounds);
                 this.futureBuffer.push(datum);
             }
         }
 
         if (added.length) {
-            console.log(`for ${this.domainObject.name}`, 'added length');
             this.emit('add', added);
         }
     }
@@ -273,8 +263,7 @@ export class TelemetryCollection extends EventEmitter {
     _bounds(bounds, isTick) {
         let startChanged = this.lastBounds.start !== bounds.start;
         let endChanged = this.lastBounds.end !== bounds.end;
-        console.log('start changed', startChanged, 'end changed', endChanged);
-        console.log('isTick', isTick);
+
         this.lastBounds = bounds;
 
         if (isTick) {
