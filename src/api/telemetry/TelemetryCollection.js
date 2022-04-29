@@ -185,7 +185,7 @@ export class TelemetryCollection extends EventEmitter {
 
         for (let datum of data) {
             parsedValue = this.parseTime(datum);
-            beforeStartOfBounds = parsedValue <= this.lastBounds.start;
+            beforeStartOfBounds = parsedValue < this.lastBounds.start;
             afterEndOfBounds = parsedValue > this.lastBounds.end;
             console.log(`for ${this.domainObject.name}`, parsedValue, 'before', beforeStartOfBounds, 'after', afterEndOfBounds);
             if (!afterEndOfBounds && !beforeStartOfBounds) {
