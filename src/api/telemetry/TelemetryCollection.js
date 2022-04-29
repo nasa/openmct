@@ -109,6 +109,7 @@ export class TelemetryCollection extends EventEmitter {
     async _requestHistoricalTelemetry() {
         let options = { ...this.options };
         let historicalProvider;
+        console.log('request historical', options);
 
         this.openmct.telemetry.standardizeRequestOptions(options);
         historicalProvider = this.openmct.telemetry.
@@ -117,7 +118,7 @@ export class TelemetryCollection extends EventEmitter {
         if (!historicalProvider) {
             return;
         }
-
+        console.log('historical provider, we have');
         let historicalData;
 
         options.onPartialResponse = this._processNewTelemetry.bind(this);
@@ -131,6 +132,7 @@ export class TelemetryCollection extends EventEmitter {
             options.signal = this.requestAbort.signal;
             this.emit('requestStarted');
             historicalData = await historicalProvider.request(this.domainObject, options);
+            console.log('historical data', historicalData);
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Error requesting telemetry data...');
@@ -172,6 +174,7 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
+        console.log('process', telemetryData);
         performance.mark('tlm:process:start');
         if (telemetryData === undefined) {
             return;
