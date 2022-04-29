@@ -24,6 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding imagery,
 but only assume that example imagery is present.
 */
+/* globals process */
 
 const { test, expect } = require('@playwright/test');
 
@@ -179,14 +180,8 @@ test.describe('Example Imagery', () => {
         expect.soft(resetBoundingBox.height).toEqual(initialBoundingBox.height);
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
-
     test('Image Pan/Zoom alt text is displayed (Linux)', async ({ page }) => {
-        // userAgentData.platform is not available so match against entire userAgent string
-        const userAgent = await page.evaluate('navigator.userAgent');
-        expect(userAgent).toBeTruthy();
-        const regexLinux = /Linux/;
-        test.skip(!regexLinux.test(userAgent));
-
+        test.skip(process.platform !== 'linux');
         const bgImageLocator = await page.locator(backgroundImageSelector);
         await bgImageLocator.hover();
         const zoomInBtn = await page.locator('.t-btn-zoom-in');
@@ -198,12 +193,7 @@ test.describe('Example Imagery', () => {
     });
 
     test('Image Pan/Zoom alt text is displayed (Other Platforms)', async ({ page }) => {
-        // userAgentData.platform is not available so match against entire userAgent string
-        const userAgent = await page.evaluate('navigator.userAgent');
-        expect(userAgent).toBeTruthy();
-        const regexLinux = /Linux/;
-        test.skip(regexLinux.test(userAgent));
-
+        test.skip(process.platform === 'linux');
         const bgImageLocator = await page.locator(backgroundImageSelector);
         await bgImageLocator.hover();
         const zoomInBtn = await page.locator('.t-btn-zoom-in');
