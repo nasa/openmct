@@ -15,21 +15,7 @@ export default function operatorStatusPlugin(config) {
                 const canProvideStatus = await openmct.user.canProvideStatus();
 
                 if (canProvideStatus) {
-                    const operatorStatusElement = new Vue({
-                        components: {
-                            OperatorStatus: OperatorStatusComponent
-                        },
-                        provide: {
-                            openmct
-                        },
-                        data() {
-                            return {
-                                positionX: 0,
-                                positionY: 0
-                            };
-                        },
-                        template: '<operator-status :positionX="positionX" :positionY="positionY" />'
-                    }).$mount();
+                    let operatorStatusElement;
 
                     const operatorIndicator = openmct.indicators.simpleIndicator();
 
@@ -49,6 +35,23 @@ export default function operatorStatusPlugin(config) {
                     });
 
                     openmct.indicators.add(operatorIndicator);
+
+                    operatorStatusElement = new Vue({
+                        components: {
+                            OperatorStatus: OperatorStatusComponent
+                        },
+                        provide: {
+                            openmct,
+                            indicator: operatorIndicator
+                        },
+                        data() {
+                            return {
+                                positionX: 0,
+                                positionY: 0
+                            };
+                        },
+                        template: '<operator-status :positionX="positionX" :positionY="positionY" />'
+                    }).$mount();
                 }
             });
         }

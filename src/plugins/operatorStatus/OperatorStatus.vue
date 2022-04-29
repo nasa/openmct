@@ -27,9 +27,15 @@
 </template>
 
 <script>
+const STATUS_CLASS = {
+    "GO": "icon-check",
+    "NO_GO": "icon-x",
+    "MAYBE": "icon-alert-triangle",
+    "NO_STATUS": "icon-info"
+};
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'indicator'],
     props: {
         positionX: {
             type: Number,
@@ -107,6 +113,7 @@ export default {
         setStatus(status) {
             this.roleStatus = status;
             this.selectedStatus = status.key;
+            this.indicator.iconClass(STATUS_CLASS[status.key.toUpperCase()]);
         },
         findStatusByKey(statusKey) {
             return this.allStatuses.find(possibleMatch => possibleMatch.key === statusKey);
