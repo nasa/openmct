@@ -3,7 +3,7 @@
  */
 
 import OperatorStatusComponent from './OperatorStatus.vue';
-//import PollQuestionComponent from './PollQuestion.vue';
+import PollQuestionComponent from './PollQuestion.vue';
 
 import Vue from 'vue';
 
@@ -11,9 +11,7 @@ export default function operatorStatusPlugin(config) {
     return function install(openmct) {
 
         if (openmct.user.hasProvider()) {
-            openmct.user.getCurrentUser().then(async () => {
-                const canProvideStatus = await openmct.user.canProvideStatus();
-
+            openmct.user.canProvideStatus().then(canProvideStatus => {
                 if (canProvideStatus) {
                     let operatorStatusElement;
 
@@ -31,7 +29,9 @@ export default function operatorStatusPlugin(config) {
 
                         document.addEventListener('click', () => {
                             operatorStatusElement.$el.remove();
-                        }, {once: true});
+                        }, {
+                            once: true
+                        });
                     });
 
                     openmct.indicators.add(operatorIndicator);
@@ -54,47 +54,49 @@ export default function operatorStatusPlugin(config) {
                     }).$mount();
                 }
             });
+
+            openmct.user.canSetPollQuestion().then(canSetPollQuestion => {
+                if (canSetPollQuestion) {
+                    let pollQuestionElement;
+
+                    const pollQuestionIndicator = openmct.indicators.simpleIndicator();
+
+                    pollQuestionIndicator.text("Poll Question");
+                    pollQuestionIndicator.description("Set the current poll question");
+                    pollQuestionIndicator.iconClass('icon-draft');
+                    pollQuestionIndicator.on('click', (event) => {
+                        //Don't propagate, otherwise this event will trigger the listener below and remove itself.
+                        event.stopPropagation();
+                        document.body.appendChild(pollQuestionElement.$el);
+                        pollQuestionElement.positionX = event.clientX;
+                        pollQuestionElement.positionY = event.clientY;
+
+                        document.addEventListener('click', () => {
+                            pollQuestionElement.$el.remove();
+                        }, {
+                            once: true
+                        });
+                    });
+
+                    openmct.indicators.add(pollQuestionIndicator);
+
+                    pollQuestionElement = new Vue({
+                        components: {
+                            PollQuestion: PollQuestionComponent
+                        },
+                        provide: {
+                            openmct
+                        },
+                        data() {
+                            return {
+                                positionX: 0,
+                                positionY: 0
+                            };
+                        },
+                        template: '<poll-question :positionX="positionX" :positionY="positionY" />'
+                    }).$mount();
+                }
+            });
         }
-        /**
-            Operator Status
-         */
-
-        /**
-            Poll Question
-         */
-        // const pollQuestionElement = new Vue({
-        //     components: {
-        //         PollQuestion: PollQuestionComponent
-        //     },
-        //     provide: {
-        //         openmct
-        //     },
-        //     data() {
-        //         return {
-        //             positionX: 0,
-        //             positionY: 0
-        //         }
-        //     },
-        //     template: '<poll-question :positionX="positionX" :positionY="positionY" />'
-        // }).$mount();
-
-        // const pollQuestionIndicator = openmct.indicators.simpleIndicator();
-
-        // pollQuestionIndicator.text("Poll Question");
-        // pollQuestionIndicator.description("Set the current poll question");
-        // pollQuestionIndicator.iconClass('icon-draft');
-        // pollQuestionIndicator.on('click', (event) => {
-        //     //Don't propagate, otherwise this event will trigger the listener below and remove itself.
-        //     event.stopPropagation();
-        //     document.body.appendChild(pollQuestionElement.$el);
-        //     pollQuestionElement.positionX = event.clientX;
-        //     pollQuestionElement.positionY = event.clientY;
-
-        //     document.addEventListener('click', event => {
-        //         pollQuestionElement.$el.remove();
-        //     }, {once: true});
-        // });
-
-        // openmct.indicators.add(pollQuestionIndicator);
     };
-};
+}

@@ -47,6 +47,7 @@ export default class ExampleUserProvider extends EventEmitter {
         this.loggedIn = false;
         this.autoLoginUser = undefined;
         this.status = STATUSES[1];
+        this.pollQuestion = undefined;
 
         this.ExampleUser = createExampleUser(this.openmct.user.User);
         this.loginPromise = undefined;
@@ -69,6 +70,10 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     canProvideStatus() {
+        return Promise.resolve(true);
+    }
+
+    canSetPollQuestion() {
         return Promise.resolve(true);
     }
 
@@ -98,6 +103,14 @@ export default class ExampleUserProvider extends EventEmitter {
             question: 'Do the thing?',
             timestamp: Date.now()
         });
+    }
+
+    setPollQuestion(pollQuestion) {
+        this.pollQuestion = {
+            question: pollQuestion,
+            timestamp: Date.now()
+        };
+        this.emit("pollQuestionChange", this.pollQuestion);
     }
 
     getPossibleStatuses() {

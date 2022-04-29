@@ -107,6 +107,16 @@ class UserAPI extends EventEmitter {
         }
     }
 
+    canSetPollQuestion() {
+        this._noProviderCheck();
+
+        if (this._provider.canSetPollQuestion) {
+            return this._provider.canSetPollQuestion();
+        } else {
+            return false;
+        }
+    }
+
     getActiveStatusRole() {
         this._noProviderCheck();
 
@@ -147,13 +157,33 @@ class UserAPI extends EventEmitter {
         }
     }
 
+    setPollQuestion(questionText) {
+        this._noProviderCheck();
+
+        if (this.canSetPollQuestion()) {
+            return this._provider.setPollQuestion(questionText);
+        } else {
+            this._error("User provider does not support setting polling question");
+        }
+    }
+
     getPollQuestion() {
         this._noProviderCheck();
 
         if (this._provider.getPollQuestion) {
             return this._provider.getPollQuestion();
         } else {
-            this._error("User provider does not support status polling");
+            this._error("User provider does not support polling questions");
+        }
+    }
+
+    clearAllStatuses() {
+        this._noProviderCheck();
+
+        if (this._provider.clearAllStatuses) {
+            return this._provider.clearAllStatuses();
+        } else {
+            this._error("User provider does not support clearing all statuses");
         }
     }
 
