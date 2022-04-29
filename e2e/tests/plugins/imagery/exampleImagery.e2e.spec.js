@@ -180,17 +180,36 @@ test.describe('Example Imagery', () => {
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
 
-    test('Image Pan/Zoom alt text is displayed', async ({ page }) => {
+    test.only('Image Pan/Zoom alt text is displayed (Linux)', async ({ page }) => {
+        // userAgentData.platform is not available so match against entire userAgent string
+        const userAgent = await page.evaluate('navigator.userAgent');
+        expect(userAgent).toBeTruthy();
+        const regexLinux = /Linux/;
+        test.skip(!regexLinux.test(userAgent));
+
         const bgImageLocator = await page.locator(backgroundImageSelector);
         await bgImageLocator.hover();
         const zoomInBtn = await page.locator('.t-btn-zoom-in');
         await zoomInBtn.click();
+
+        const expectedAltText = 'Ctrl+Alt drag to pan';
+        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+        expect(expectedAltText).toEqual(imageryHintsText);
+    });
+
+    test.only('Image Pan/Zoom alt text is displayed (Other Platforms)', async ({ page }) => {
         // userAgentData.platform is not available so match against entire userAgent string
         const userAgent = await page.evaluate('navigator.userAgent');
         expect(userAgent).toBeTruthy();
-
         const regexLinux = /Linux/;
-        const expectedAltText = regexLinux.test(userAgent) ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+        test.skip(regexLinux.test(userAgent));
+
+        const bgImageLocator = await page.locator(backgroundImageSelector);
+        await bgImageLocator.hover();
+        const zoomInBtn = await page.locator('.t-btn-zoom-in');
+        await zoomInBtn.click();
+
+        const expectedAltText = 'Alt drag to pan';
         const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
         expect(expectedAltText).toEqual(imageryHintsText);
     });
