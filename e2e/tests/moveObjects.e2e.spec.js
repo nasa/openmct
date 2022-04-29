@@ -66,7 +66,7 @@ test.describe('Move item tests', () => {
             page.locator('text=OK').click()
         ]);
         // Expect that Folder 2 is in My Items, the root folder
-        await expect(page.locator(`text=My Items >> nth=0:has(text=${folder2})`)).toBeTruthy();
+        expect(page.locator(`text=My Items >> nth=0:has(text=${folder2})`)).toBeTruthy();
     });
     test.fixme('Create a basic object and verify that it cannot be moved to object without Composition Provider', async ({ page }) => {
         //Create and save Telemetry Object
