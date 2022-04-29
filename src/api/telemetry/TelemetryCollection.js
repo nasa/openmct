@@ -187,14 +187,16 @@ export class TelemetryCollection extends EventEmitter {
             parsedValue = this.parseTime(datum);
             beforeStartOfBounds = parsedValue <= this.lastBounds.start;
             afterEndOfBounds = parsedValue >= this.lastBounds.end;
-
+            console.log(`for ${this.domainObject.name}`, parsedValue, 'before', beforeStartOfBounds, 'after', afterEndOfBounds);
             if (!afterEndOfBounds && !beforeStartOfBounds) {
+                console.log(`for ${this.domainObject.name}`, 'in', parsedValue);
                 let isDuplicate = false;
                 let startIndex = this._sortedIndex(datum);
                 let endIndex = undefined;
 
                 // dupe check
                 if (startIndex !== this.boundedTelemetry.length) {
+                    console.log(`for ${this.domainObject.name}`, 'dupe check if');
                     endIndex = _.sortedLastIndexBy(
                         this.boundedTelemetry,
                         datum,
@@ -202,14 +204,17 @@ export class TelemetryCollection extends EventEmitter {
                     );
 
                     if (endIndex > startIndex) {
+                        console.log(`for ${this.domainObject.name}`, 'end > start index');
                         let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
                         isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
                     }
                 } else if (startIndex === this.boundedTelemetry.length) {
+                    console.log(`for ${this.domainObject.name}`, 'dupe check else/if');
                     isDuplicate = _.isEqual(datum, this.boundedTelemetry[this.boundedTelemetry.length - 1]);
                 }
 
                 if (!isDuplicate) {
+                    console.log(`for ${this.domainObject.name}`, 'not a dupe');
                     let index = endIndex || startIndex;
 
                     this.boundedTelemetry.splice(index, 0, datum);
@@ -217,11 +222,13 @@ export class TelemetryCollection extends EventEmitter {
                 }
 
             } else if (afterEndOfBounds) {
+                console.log(`for ${this.domainObject.name}`, 'future buff', afterEndOfBounds);
                 this.futureBuffer.push(datum);
             }
         }
 
         if (added.length) {
+            console.log(`for ${this.domainObject.name}`, 'added length');
             this.emit('add', added);
         }
     }
