@@ -71,7 +71,7 @@ export class TelemetryCollection extends EventEmitter {
         this._watchTimeSystem();
 
         this._requestHistoricalTelemetry();
-        // this._initiateSubscriptionTelemetry();
+        this._initiateSubscriptionTelemetry();
 
         this.loaded = true;
     }
