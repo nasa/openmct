@@ -25,6 +25,7 @@ import EventEmitter from 'EventEmitter';
 export default class StyleRuleManager extends EventEmitter {
     constructor(styleConfiguration, openmct, callback, suppressSubscriptionOnEdit) {
         super();
+
         this.openmct = openmct;
         this.callback = callback;
         this.refreshData = this.refreshData.bind(this);
@@ -152,6 +153,7 @@ export default class StyleRuleManager extends EventEmitter {
 
     updateDomainObjectStyle() {
         if (this.callback) {
+            this.emit('updateStyles', this.currentStyle);
             this.callback(Object.assign({}, this.currentStyle));
         }
     }

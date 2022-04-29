@@ -27,7 +27,7 @@
     :href="url"
 >
     <div class="c-condition-widget__label">
-        {{ internalDomainObject.conditionalLabel || internalDomainObject.label }}
+        {{ label }}
     </div>
 </component>
 </template>
@@ -39,10 +39,16 @@ export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
         return {
-            internalDomainObject: this.domainObject
+            internalDomainObject: this.domainObject,
+            conditionalLabel: ''
         };
     },
     computed: {
+        label() {
+            return this.conditionalLabel.length
+                ? this.conditionalLabel
+                : this.internalDomainObject.label;
+        },
         urlDefined() {
             return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
         },
@@ -52,13 +58,31 @@ export default {
     },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
+
+        this.unobserve = this.openmct.styleManager.observe(this.internalDomainObject.identifier, this.observeStyleManagerChanges.bind(this));
     },
     beforeDestroy() {
         if (this.unlisten) {
             this.unlisten();
         }
+
+        if (this.unobserve) {
+            this.openmct.styleManager.delete(this.internalDomainObject.identifier);
+            this.unobserve();
+        }
     },
     methods: {
+        observeStyleManagerChanges(styleManager) {
+            if (styleManager) {
+                this.styleManager = styleManager;
+                this.styleManager.on('updateStyles', this.updateConditionLabel);
+            } else {
+                this.styleManager.off('updateStyles', this.updateConditionLabel);
+            }
+        },
+        updateConditionLabel(styleObj = {}) {
+            this.conditionalLabel = styleObj.output || '';
+        },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
         }

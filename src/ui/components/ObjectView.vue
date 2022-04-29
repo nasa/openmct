@@ -127,6 +127,10 @@ export default {
     },
     methods: {
         clear() {
+            if (this.domainObject) {
+                this.openmct.styleManager.delete(this.domainObject.identifier);
+            }
+
             if (this.currentView) {
                 this.currentView.destroy();
                 if (this.$refs.objectViewWrapper) {
@@ -213,12 +217,6 @@ export default {
                     }
                 }
             });
-
-            if (this.domainObject && this.domainObject.type === 'conditionWidget' && keys.includes('output')) {
-                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', styleObj.output);
-            } else {
-                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', '');
-            }
         },
         updateView(immediatelySelect) {
             this.clear();
@@ -310,8 +308,10 @@ export default {
             this.initObjectStyles();
         },
         initObjectStyles() {
+            this.styleRuleManager = this.openmct.styleManager.get(this.domainObject.identifier);
             if (!this.styleRuleManager) {
                 this.styleRuleManager = new StyleRuleManager((this.domainObject.configuration && this.domainObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this), true);
+                this.openmct.styleManager.set(this.domainObject.identifier, this.styleRuleManager);
             } else {
                 this.styleRuleManager.updateObjectStyleConfig(this.domainObject.configuration && this.domainObject.configuration.objectStyles);
             }

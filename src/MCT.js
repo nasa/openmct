@@ -232,6 +232,7 @@ define([
         this.actions = new api.ActionsAPI(this);
 
         this.status = new api.StatusAPI(this);
+        this.styleManager = new api.StyleManagerAPI(this);
 
         this.priority = api.PriorityAPI;
 
