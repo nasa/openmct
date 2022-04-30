@@ -27,7 +27,7 @@
     :href="url"
 >
     <div class="c-condition-widget__label">
-        {{ internalDomainObject.conditionalLabel || internalDomainObject.label }}
+        {{ label }}
     </div>
 </component>
 </template>
@@ -39,28 +39,95 @@ export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
         return {
-            internalDomainObject: this.domainObject
+            conditionalLabel: '',
+            conditionSetIdentifier: null,
+            domainObjectLabel: '',
+            url: null,
+            urlDefined: false,
+            useConditionSetOutputAsLabel: false
         };
     },
     computed: {
-        urlDefined() {
-            return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
-        },
-        url() {
-            return this.urlDefined ? sanitizeUrl(this.internalDomainObject.url) : null;
+        label() {
+            return this.useConditionSetOutputAsLabel
+                ? this.conditionalLabel
+                : this.domainObjectLabel
+            ;
+        }
+    },
+    watch: {
+        conditionSetIdentifier: {
+            immediate: false,
+            handler: 'listenToConditionSetChanges'
         }
     },
     mounted() {
-        this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
+        this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+        if (this.domainObject) {
+            this.updateDomainObject(this.domainObject);
+        }
     },
     beforeDestroy() {
         if (this.unlisten) {
             this.unlisten();
         }
+
+        this.stopListeningToConditionSetChanges();
     },
     methods: {
-        updateInternalDomainObject(domainObject) {
-            this.internalDomainObject = domainObject;
+        listenToConditionSetChanges() {
+            const self = this;
+            self.stopListeningToConditionSetChanges();
+
+            if (!self.conditionSetIdentifier) {
+                return;
+            }
+
+            self.openmct.objects.get(self.conditionSetIdentifier)
+                .then(conditionSetDomainObject => {
+                    self.openmct.telemetry.request(conditionSetDomainObject)
+                        .then(output => {
+                            if (output && output.length) {
+                                self.updateConditionLabel(output[0]);
+                            }
+                        });
+
+                    self.stopProvidingTelemetry = self.openmct.telemetry.subscribe(conditionSetDomainObject, self.updateConditionLabel);
+                });
+        },
+        stopListeningToConditionSetChanges() {
+            if (this.stopProvidingTelemetry) {
+                this.stopProvidingTelemetry();
+                this.stopProvidingTelemetry = null;
+            }
+        },
+        updateConditionLabel(styleObj = {}) {
+            this.conditionalLabel = styleObj.output || '';
+        },
+        updateDomainObject(domainObject) {
+            if (this.domainObjectLabel !== domainObject.label) {
+                this.domainObjectLabel = domainObject.label;
+            }
+
+            const urlDefined = domainObject.url && domainObject.url.length > 0;
+            if (this.urlDefined !== urlDefined) {
+                this.urlDefined = urlDefined;
+            }
+
+            const url = this.urlDefined ? sanitizeUrl(domainObject.url) : null;
+            if (this.url !== url) {
+                this.url = url;
+            }
+
+            const conditionSetIdentifier = domainObject.configuration.objectStyles.conditionSetIdentifier;
+            if (this.conditionSetIdentifier !== conditionSetIdentifier) {
+                this.conditionSetIdentifier = conditionSetIdentifier;
+            }
+
+            const useConditionSetOutputAsLabel = this.conditionSetIdentifier && domainObject.configuration.useConditionSetOutputAsLabel;
+            if (this.useConditionSetOutputAsLabel !== useConditionSetOutputAsLabel) {
+                this.useConditionSetOutputAsLabel = useConditionSetOutputAsLabel;
+            }
         }
     }
 };
