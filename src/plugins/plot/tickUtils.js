@@ -78,11 +78,6 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
     return result;
 }
 
-export function getLogTicks2(start, stop, count = 8) {
-    return ticks(antisymlog(start, 10), antisymlog(stop, 10), count)
-        .map(n => symlog(n, 10));
-}
-
 /**
  * Linear tick generation from d3-array.
  */
@@ -131,17 +126,12 @@ export function commonSuffix(a, b) {
     return a.slice(a.length - breakpoint);
 }
 
-export function getFormattedTicks(newTicks, format, formatFloat) {
+export function getFormattedTicks(newTicks, format) {
     newTicks = newTicks
         .map(function (tickValue) {
-            let formattedValue = format(tickValue);
-            if (formatFloat === true && typeof formattedValue === 'number' && !Number.isInteger(formattedValue)) {
-                formattedValue = parseFloat(formattedValue).toFixed(2);
-            }
-
             return {
                 value: tickValue,
-                text: formattedValue
+                text: format(tickValue)
             };
         });
 
