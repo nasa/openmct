@@ -79,8 +79,9 @@ test.describe('Example Imagery', () => {
 
     });
 
-    test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
+    test.only('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
+        const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 
         const bgImageLocator = await page.locator(backgroundImageSelector);
         await bgImageLocator.hover();
@@ -96,53 +97,47 @@ test.describe('Example Imagery', () => {
         // center the mouse pointer
         await page.mouse.move(imageCenterX, imageCenterY);
 
-        let panOptions = '';
-
-        if (process.platform === 'linux') {
-            panOptions = 'Ctrl+Alt';
-        } else {
-            panOptions = 'Alt';
-        }
-
         // Pan Imagery Hints
-        const expectedAltText = 'Ctrl+Alt drag to pan';
+        const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
         const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
         expect(expectedAltText).toEqual(imageryHintsText);
 
         // pan right
-        await page.keyboard.down(panOptions);
+        // await page.keyboard.down(panHotkey);
+        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
         await page.mouse.up();
-        await page.keyboard.up('Alt');
+        // await page.keyboard.up(panHotkey);
+        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
         expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
 
         // pan left
-        await page.keyboard.down('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY, 10);
         await page.mouse.up();
-        await page.keyboard.up('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterLeftPanBoundingBox = await bgImageLocator.boundingBox();
         expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
 
         // pan up
         await page.mouse.move(imageCenterX, imageCenterY);
-        await page.keyboard.down('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
         await page.mouse.up();
-        await page.keyboard.up('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterUpPanBoundingBox = await bgImageLocator.boundingBox();
         expect(afterUpPanBoundingBox.y).toBeGreaterThan(afterLeftPanBoundingBox.y);
 
         // pan down
-        await page.keyboard.down('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
         await page.mouse.up();
-        await page.keyboard.up('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
         expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
 
@@ -203,29 +198,29 @@ test.describe('Example Imagery', () => {
         expect.soft(resetBoundingBox.height).toEqual(initialBoundingBox.height);
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
-    test('Image Pan/Zoom alt text is displayed (Linux)', async ({ page }) => {
-        test.skip(process.platform === 'linux');
-        const bgImageLocator = await page.locator(backgroundImageSelector);
-        await bgImageLocator.hover();
-        const zoomInBtn = await page.locator('.t-btn-zoom-in');
-        await zoomInBtn.click();
+    // test('Image Pan/Zoom alt text is displayed (Linux)', async ({ page }) => {
+    //     test.skip(process.platform === 'linux');
+    //     const bgImageLocator = await page.locator(backgroundImageSelector);
+    //     await bgImageLocator.hover();
+    //     const zoomInBtn = await page.locator('.t-btn-zoom-in');
+    //     await zoomInBtn.click();
 
-        const expectedAltText = 'Ctrl+Alt drag to pan';
-        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-        expect(expectedAltText).toEqual(imageryHintsText);
-    });
+    //     const expectedAltText = 'Ctrl+Alt drag to pan';
+    //     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+    //     expect(expectedAltText).toEqual(imageryHintsText);
+    // });
 
-    test('Image Pan/Zoom alt text is displayed (Other Platforms)', async ({ page }) => {
-        test.skip(process.platform !== 'linux');
-        const bgImageLocator = await page.locator(backgroundImageSelector);
-        await bgImageLocator.hover();
-        const zoomInBtn = await page.locator('.t-btn-zoom-in');
-        await zoomInBtn.click();
+    // test('Image Pan/Zoom alt text is displayed (Other Platforms)', async ({ page }) => {
+    //     test.skip(process.platform !== 'linux');
+    //     const bgImageLocator = await page.locator(backgroundImageSelector);
+    //     await bgImageLocator.hover();
+    //     const zoomInBtn = await page.locator('.t-btn-zoom-in');
+    //     await zoomInBtn.click();
 
-        const expectedAltText = 'Alt drag to pan';
-        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-        expect(expectedAltText).toEqual(imageryHintsText);
-    });
+    //     const expectedAltText = 'Alt drag to pan';
+    //     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+    //     expect(expectedAltText).toEqual(imageryHintsText);
+    // });
 
     //test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     //test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
