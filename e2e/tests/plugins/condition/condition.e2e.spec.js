@@ -65,7 +65,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     test.use({ storageState: './e2e/tests/recycled_storage.json' });
 
     //Begin suite of tests again localStorage
-    test.skip('Condition set object properties persist in main view and inspector', async ({ page }) => {
+    test('Condition set object properties persist in main view and inspector', async ({ page }) => {
         //Navigate to baseURL with injected localStorage
         await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
 
