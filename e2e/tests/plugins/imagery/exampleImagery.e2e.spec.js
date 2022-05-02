@@ -79,7 +79,7 @@ test.describe('Example Imagery', () => {
 
     });
 
-    test.only('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
+    test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
         const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 
