@@ -235,6 +235,8 @@ export default {
         this.telemetryCollection.off('add', this.setLatestValues);
         this.telemetryCollection.off('clear', this.refreshData);
 
+        this.telemetryCollection.destroy();
+
         if (this.mutablePromise) {
             this.mutablePromise.then(() => {
                 this.openmct.objects.destroyMutable(this.domainObject);

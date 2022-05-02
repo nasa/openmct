@@ -57,17 +57,27 @@ export default {
     },
     watch: {
         conditionSetIdentifier: {
-            immediate: false,
-            handler: 'listenToConditionSetChanges'
+            handler(newValue, oldValue) {
+                if (!oldValue || !newValue || !this.openmct.objects.areIdsEqual(newValue, oldValue)) {
+                    return;
+                }
+
+                this.listenToConditionSetChanges();
+            },
+            deep: true
         }
     },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+
         if (this.domainObject) {
             this.updateDomainObject(this.domainObject);
+            this.listenToConditionSetChanges();
         }
     },
     beforeDestroy() {
+        this.conditionSetIdentifier = null;
+
         if (this.unlisten) {
             this.unlisten();
         }
@@ -75,33 +85,40 @@ export default {
         this.stopListeningToConditionSetChanges();
     },
     methods: {
-        listenToConditionSetChanges() {
-            const self = this;
-            self.stopListeningToConditionSetChanges();
+        async listenToConditionSetChanges() {
+            const conditionSetDomainObject = await this.openmct.objects.get(this.conditionSetIdentifier);
+            this.stopListeningToConditionSetChanges();
 
-            if (!self.conditionSetIdentifier) {
+            if (!this.conditionSetIdentifier) {
                 return;
             }
 
-            self.openmct.objects.get(self.conditionSetIdentifier)
-                .then(conditionSetDomainObject => {
-                    self.openmct.telemetry.request(conditionSetDomainObject)
-                        .then(output => {
-                            if (output && output.length) {
-                                self.updateConditionLabel(output[0]);
-                            }
-                        });
+            if (!conditionSetDomainObject) {
+                this.openmct.notifications.alert('Unable to find condition set');
+            }
 
-                    self.stopProvidingTelemetry = self.openmct.telemetry.subscribe(conditionSetDomainObject, self.updateConditionLabel);
-                });
+            this.telemetryCollection = this.openmct.telemetry.requestCollection(conditionSetDomainObject, {
+                size: 1,
+                strategy: 'latest'
+            });
+
+            this.telemetryCollection.on('add', this.updateConditionLabel, this);
+            this.telemetryCollection.load();
         },
         stopListeningToConditionSetChanges() {
-            if (this.stopProvidingTelemetry) {
-                this.stopProvidingTelemetry();
-                this.stopProvidingTelemetry = null;
+            if (this.telemetryCollection) {
+                this.telemetryCollection.off('add', this.updateConditionLabel, this);
+                this.telemetryCollection.destroy();
+                this.telemetryCollection = null;
             }
         },
-        updateConditionLabel(styleObj = {}) {
+        updateConditionLabel([styleObj = {}]) {
+            if (!this.conditionSetIdentifier) {
+                this.stopListeningToConditionSetChanges();
+
+                return;
+            }
+
             this.conditionalLabel = styleObj.output || '';
         },
         updateDomainObject(domainObject) {
