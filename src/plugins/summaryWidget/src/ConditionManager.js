@@ -230,7 +230,7 @@ define ([
 
             self.eventEmitter.emit('add', obj);
 
-            const summaryWidget = document.queerySelector('.w-summary-widget');
+            const summaryWidget = document.querySelector('.w-summary-widget');
             if (summaryWidget) {
                 summaryWidget.classList.remove('s-status-no-data');
             }
