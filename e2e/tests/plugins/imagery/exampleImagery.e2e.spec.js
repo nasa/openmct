@@ -96,8 +96,21 @@ test.describe('Example Imagery', () => {
         // center the mouse pointer
         await page.mouse.move(imageCenterX, imageCenterY);
 
+        let panOptions = '';
+
+        if (process.platform === 'linux') {
+            panOptions = 'Ctrl+Alt';
+        } else {
+            panOptions = 'Alt';
+        }
+
+        // Pan Imagery Hints
+        const expectedAltText = 'Ctrl+Alt drag to pan';
+        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+        expect(expectedAltText).toEqual(imageryHintsText);
+
         // pan right
-        await page.keyboard.down('Alt');
+        await page.keyboard.down(panOptions);
         await page.mouse.down();
         await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
         await page.mouse.up();
