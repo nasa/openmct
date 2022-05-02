@@ -86,12 +86,12 @@ export default {
     },
     methods: {
         async listenToConditionSetChanges() {
-            const conditionSetDomainObject = await this.openmct.objects.get(this.conditionSetIdentifier);
-            this.stopListeningToConditionSetChanges();
-
             if (!this.conditionSetIdentifier) {
                 return;
             }
+
+            const conditionSetDomainObject = await this.openmct.objects.get(this.conditionSetIdentifier);
+            this.stopListeningToConditionSetChanges();
 
             if (!conditionSetDomainObject) {
                 this.openmct.notifications.alert('Unable to find condition set');
@@ -112,14 +112,14 @@ export default {
                 this.telemetryCollection = null;
             }
         },
-        updateConditionLabel([styleObj = {}]) {
+        updateConditionLabel([latestDatum]) {
             if (!this.conditionSetIdentifier) {
                 this.stopListeningToConditionSetChanges();
 
                 return;
             }
 
-            this.conditionalLabel = styleObj.output || '';
+            this.conditionalLabel = latestDatum.output || '';
         },
         updateDomainObject(domainObject) {
             if (this.domainObjectLabel !== domainObject.label) {
