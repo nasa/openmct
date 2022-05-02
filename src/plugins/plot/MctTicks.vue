@@ -231,7 +231,7 @@ export default {
                     step: newTicks[1] - newTicks[0]
                 };
 
-                newTicks = getFormattedTicks(newTicks, format, logMode);
+                newTicks = getFormattedTicks(newTicks, format);
 
                 this.ticks = newTicks;
                 this.shouldCheckWidth = true;
