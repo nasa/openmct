@@ -147,9 +147,11 @@ define([
             self.config[inputKey] = text;
             self.updateDomainObject();
             if (inputKey === 'name') {
-                self.title.html(text);
+                //self.title.html(text);
+                self.title.innerHTML = text;
             } else if (inputKey === 'label') {
-                self.thumbnailLabel.html(text);
+                //self.thumbnailLabel.html(text);
+                self.thumbnailLabel.innerHTML = text;
             }
 
             self.eventEmitter.emit('change');
@@ -176,8 +178,17 @@ define([
          * @private
          */
         function toggleConfig() {
-            self.configArea.toggleClass('expanded');
-            self.toggleConfigButton.toggleClass('c-disclosure-triangle--expanded');
+            if (self.configArea.classList.contains('expanded')) {
+                self.configArea.classList.remove('expanded')
+            } else {
+                self.configArea.classList.add('expanded')
+            }
+
+            if (self.toggleConfigButton.classList.contains('c-disclosure-triangle--expanded')) {
+                self.toggleConfigButton.classList.remove('c-disclosure-triangle--expanded')
+            } else {
+                self.toggleConfigButton.classList.add('c-disclosure-triangle--expanded')
+            }
             self.config.expanded = !self.config.expanded;
         }
 
