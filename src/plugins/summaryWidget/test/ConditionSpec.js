@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(['../src/Condition'], function (Condition) {
-    describe('A summary widget condition', function () {
+    xdescribe('A summary widget condition', function () {
         let testCondition;
         let mockConfig;
         let mockConditionManager;
