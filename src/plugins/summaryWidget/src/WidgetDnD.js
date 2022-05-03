@@ -81,7 +81,8 @@ define([
         let target = '';
 
         ruleOrder.forEach(function (ruleId, index) {
-            offset = rulesById[ruleId].getDOM().offset();
+            const ruleDOM = rulesById[ruleId].getDOM();
+            offset = window.innerWidth - (ruleDOM.offsetLeft + ruleDOM.offsetWidth);
             y = offset.top;
             height = offset.height;
             if (index === 0) {
