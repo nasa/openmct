@@ -275,6 +275,7 @@
 import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
+const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
     name: 'Gauge',
@@ -283,7 +284,7 @@ export default {
         let gaugeController = this.domainObject.configuration.gaugeController;
 
         return {
-            curVal: 0,
+            curVal: DEFAULT_CURRENT_VALUE,
             digits: 3,
             precision: gaugeController.precision,
             displayMinMax: gaugeController.isDisplayMinMax,
@@ -459,13 +460,14 @@ export default {
                 this.unsubscribe = null;
             }
 
-            this.metadata = null;
+            this.curVal = DEFAULT_CURRENT_VALUE;
             this.formats = null;
-            this.valueKey = null;
             this.limitHigh = '';
             this.limitLow = '';
+            this.metadata = null;
             this.rangeHigh = null;
             this.rangeLow = null;
+            this.valueKey = null;
         },
         request(domainObject = this.telemetryObject) {
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
