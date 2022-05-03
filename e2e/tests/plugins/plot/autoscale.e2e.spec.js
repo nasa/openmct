@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /*
-Test for plot autoscale.
+Testsuite for plot autoscale.
 */
 
 const { test: _test, expect } = require('@playwright/test');
@@ -47,7 +47,7 @@ test.use({
 });
 
 test.describe('ExportAsJSON', () => {
-    test('autoscale off causes no error from undefined user range', async ({ page }) => {
+    test('User can set autoscale with a valid range @snapshot', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
         await setTimeRange(page);
@@ -68,14 +68,6 @@ test.describe('ExportAsJSON', () => {
                 .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-prepan.png', { maxDiffPixels: 40 }))
         ]);
 
-        let errorCount = 0;
-
-        function onError() {
-            errorCount++;
-        }
-
-        page.on('pageerror', onError);
-
         await page.keyboard.down('Alt');
 
         await canvas.dragTo(canvas, {
@@ -90,12 +82,6 @@ test.describe('ExportAsJSON', () => {
         });
 
         await page.keyboard.up('Alt');
-
-        page.off('pageerror', onError);
-
-        // There would have been an error at this point. So if there isn't, then
-        // we fixed it.
-        expect(errorCount).toBe(0);
 
         // Ensure the drag worked.
         await Promise.all([
@@ -134,7 +120,7 @@ async function createSinewaveOverlayPlot(page) {
     // add overlay plot with defaults
     await page.locator('li:has-text("Overlay Plot")').click();
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/a9268c6f-45cc-4bcd-a6a0-50ac4036e396?tc.mode=fixed&tc.startBound=1649305424163&tc.endBound=1649307224163&tc.timeSystem=utc&view=plot-overlay' }*/),
+        page.waitForNavigation(),
         page.locator('text=OK').click()
     ]);
 
@@ -148,14 +134,14 @@ async function createSinewaveOverlayPlot(page) {
     // add sine wave generator with defaults
     await page.locator('li:has-text("Sine Wave Generator")').click();
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/a9268c6f-45cc-4bcd-a6a0-50ac4036e396/5cfa5c69-17bc-4a99-9545-4da8125380c5?tc.mode=fixed&tc.startBound=1649305424163&tc.endBound=1649307224163&tc.timeSystem=utc&view=plot-single' }*/),
+        page.waitForNavigation(),
         page.locator('text=OK').click()
     ]);
 
     // focus the overlay plot
     await page.locator('text=Open MCT My Items >> span').nth(3).click();
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/a9268c6f-45cc-4bcd-a6a0-50ac4036e396?tc.mode=fixed&tc.startBound=1649305424163&tc.endBound=1649307224163&tc.timeSystem=utc&view=plot-overlay' }*/),
+        page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()
     ]);
 }
