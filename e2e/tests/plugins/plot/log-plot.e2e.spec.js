@@ -27,7 +27,7 @@ Tests to verify log plot functionality.
 const { test, expect } = require('@playwright/test');
 
 test.describe('Log plot tests', () => {
-    test.only('Can create a log plot.', async ({ page }) => {
+    test('Can create a log plot.', async ({ page }) => {
         await makeOverlayPlot(page);
         await testRegularTicks(page);
         await enableEditMode(page);
@@ -49,7 +49,7 @@ test.describe('Log plot tests', () => {
         await testLogPlotPixels(page);
     });
 
-    test.only('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
+    test('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
         await makeOverlayPlot(page);
         await enableEditMode(page);
         await enableLogMode(page);
@@ -88,7 +88,7 @@ async function makeOverlayPlot(page) {
     await page.locator('button.c-create-button').click();
     await page.locator('li:has-text("Overlay Plot")').click();
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/8caf7072-535b-4af6-8394-edd86e3ea35f?tc.mode=fixed&tc.startBound=1648590633191&tc.endBound=1648592433191&tc.timeSystem=utc&view=plot-overlay' }*/),
+        page.waitForNavigation(),
         page.locator('text=OK').click()
     ]);
 
@@ -116,7 +116,7 @@ async function makeOverlayPlot(page) {
     // Click OK to make generator
 
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/8caf7072-535b-4af6-8394-edd86e3ea35f/6e58b26a-8a73-4df6-b3a6-918decc0bbfa?tc.mode=fixed&tc.startBound=1648590633191&tc.endBound=1648592433191&tc.timeSystem=utc&view=plot-single' }*/),
+        page.waitForNavigation(),
         page.locator('text=OK').click()
     ]);
 
@@ -124,7 +124,7 @@ async function makeOverlayPlot(page) {
 
     await page.locator('text=Open MCT My Items >> span').nth(3).click();
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/8caf7072-535b-4af6-8394-edd86e3ea35f?tc.mode=fixed&tc.startBound=1648590633191&tc.endBound=1648592433191&tc.timeSystem=utc&view=plot-overlay' }*/),
+        page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()
     ]);
 }
