@@ -143,13 +143,13 @@
                 <!-- spacecraft position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
-                    class="c-imagery__age icon-check c-imagery--new"
+                    class="c-imagery__age icon-check c-imagery--new no-animation"
                 >POS</div>
 
                 <!-- camera position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isCameraPositionFresh"
-                    class="c-imagery__age icon-check c-imagery--new"
+                    class="c-imagery__age icon-check c-imagery--new no-animation"
                 >CAM</div>
             </div>
             <div class="h-local-controls">
@@ -331,6 +331,16 @@ export default {
         },
         isImageNew() {
             let cutoff = FIVE_MINUTES;
+            if (this.imageFreshnessOptions) {
+                const { fadeOutDelayTime, fadeOutDurationTime} = this.imageFreshnessOptions;
+                // convert css duration to IS8601 format for parsing
+                const isoFormattedDuration = 'PT' + fadeOutDurationTime.toUpperCase();
+                const isoFormattedDelay = 'PT' + fadeOutDelayTime.toUpperCase();
+                const parsedDuration = moment.duration(isoFormattedDuration).asMilliseconds();
+                const parsedDelay = moment.duration(isoFormattedDelay).asMilliseconds();
+                cutoff = parsedDuration + parsedDelay;
+            }
+
             let age = this.numericDuration;
 
             return age < cutoff && !this.refreshCSS;
@@ -524,6 +534,8 @@ export default {
                 if (!this.isPaused) {
                     this.setFocusedImage(imageIndex);
                     this.scrollToRight();
+                } else {
+                    this.scrollToFocused();
                 }
             },
             deep: true
@@ -987,6 +999,7 @@ export default {
 
             this.setSizedImageDimensions();
             this.calculateViewHeight();
+            this.scrollToFocused();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
