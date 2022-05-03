@@ -45,7 +45,7 @@ define(
                 openmct = new testingUtils.createOpenMct();
                 spyOn(openmct.indicators, 'add');
                 fetchSpy = spyOn(window, 'fetch').and.callFake(() => Promise.resolve({
-                    ok: true,
+                    ok: true
                 }));
             });
 
@@ -53,6 +53,7 @@ define(
                 if (window.fetch.restore) {
                     window.fetch.restore();
                 }
+
                 jasmine.clock().uninstall();
 
                 return testingUtils.resetApplicationState(openmct);
@@ -128,7 +129,7 @@ define(
 
                 it("indicates an error when the server cannot be reached", async function () {
                     fetchSpy.and.callFake(() => Promise.resolve({
-                        ok: false,
+                        ok: false
                     }));
                     jasmine.clock().tick(pluginOptions.interval + 1);
                     await urlIndicator.fetchUrl();
