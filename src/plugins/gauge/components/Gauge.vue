@@ -87,7 +87,7 @@
         >
 
             <g
-                v-if="limitLow !== null && dialLowLimitDeg < getLimitDegree('low', 'max')"
+                v-if="limitLow.length > 0 && dialLowLimitDeg < getLimitDegree('low', 'max')"
                 class="c-dial__limit-low"
                 :style="`transform: rotate(${dialLowLimitDeg}deg)`"
             >
@@ -118,7 +118,7 @@
             </g>
 
             <g
-                v-if="limitHigh !== null && dialHighLimitDeg < getLimitDegree('high', 'max')"
+                v-if="limitHigh.length > 0 && dialHighLimitDeg < getLimitDegree('high', 'max')"
                 class="c-dial__limit-high"
                 :style="`transform: rotate(${dialHighLimitDeg}deg)`"
             >
@@ -216,13 +216,13 @@
                     ></div>
 
                     <div
-                        v-if="limitHigh !== null && meterHighLimitPerc > 0"
+                        v-if="limitHigh.length > 0 && meterHighLimitPerc > 0"
                         class="c-meter__limit-high"
                         :style="`height: ${meterHighLimitPerc}%`"
                     ></div>
 
                     <div
-                        v-if="limitLow !== null && meterLowLimitPerc > 0"
+                        v-if="limitLow.length > 0 && meterLowLimitPerc > 0"
                         class="c-meter__limit-low"
                         :style="`height: ${meterLowLimitPerc}%`"
                     ></div>
@@ -235,13 +235,13 @@
                     ></div>
 
                     <div
-                        v-if="limitHigh !== null && meterHighLimitPerc > 0"
+                        v-if="limitHigh.length > 0 && meterHighLimitPerc > 0"
                         class="c-meter__limit-high"
                         :style="`width: ${meterHighLimitPerc}%`"
                     ></div>
 
                     <div
-                        v-if="limitLow !== null && meterLowLimitPerc > 0"
+                        v-if="limitLow.length > 0 && meterLowLimitPerc > 0"
                         class="c-meter__limit-low"
                         :style="`width: ${meterLowLimitPerc}%`"
                     ></div>
@@ -462,8 +462,8 @@ export default {
             this.metadata = null;
             this.formats = null;
             this.valueKey = null;
-            this.limitHigh = null;
-            this.limitLow = null;
+            this.limitHigh = '';
+            this.limitLow = '';
             this.rangeHigh = null;
             this.rangeLow = null;
         },
@@ -518,13 +518,20 @@ export default {
             } else if (telemetryLimit.WATCH) {
                 limits = telemetryLimit.WATCH;
             } else {
-                this.openmct.notifications.error('No limits definition for given telemetry');
+                this.openmct.notifications.error('No limits definition for given telemetry, hiding low and high limits');
+                this.displayMinMax = false;
+                this.limitHigh = '';
+                this.limitLow = '';
+
+                return;
             }
 
             this.limitHigh = this.round(limits.high[this.valueKey]);
             this.limitLow = this.round(limits.low[this.valueKey]);
             this.rangeHigh = this.round(this.limitHigh + this.limitHigh * LIMIT_PADDING_IN_PERCENT / 100);
             this.rangeLow = this.round(this.limitLow - Math.abs(this.limitLow * LIMIT_PADDING_IN_PERCENT / 100));
+
+            this.displayMinMax = this.domainObject.configuration.gaugeController.isDisplayMinMax;
         },
         updateValue(datum) {
             this.datum = datum;
