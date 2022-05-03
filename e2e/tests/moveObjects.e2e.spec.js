@@ -29,8 +29,7 @@ const { test, expect } = require('@playwright/test');
 test.describe('Move item tests', () => {
     test('Create a basic object and verify that it can be moved to another Folder', async ({ page }) => {
 
-        await page.goto('http://localhost:8080/');
-        await page.goto('http://localhost:8080/#/browse/mine?view=grid&tc.mode=fixed&tc.startBound=1651088948584&tc.endBound=1651090748584&tc.timeSystem=utc');
+        await page.goto('/');
 
         let folder1 = "Folder 1";
         let folder2 = "Folder 2";
@@ -41,7 +40,7 @@ test.describe('Move item tests', () => {
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder1);
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/fae88dc4-99bb-470d-aa2d-4aea0fd37866?tc.mode=fixed&tc.startBound=1651088948584&tc.endBound=1651090748584&tc.timeSystem=utc&view=grid' }*/),
+            page.waitForNavigation(),
             page.locator('text=OK').click()
         ]);
         // Create another folder with a new name at default location, which is currently inside Folder 1
@@ -50,19 +49,20 @@ test.describe('Move item tests', () => {
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder2);
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/fae88dc4-99bb-470d-aa2d-4aea0fd37866/db465c17-5d36-4884-9a92-5b7a958a6639?tc.mode=fixed&tc.startBound=1651088948584&tc.endBound=1651090748584&tc.timeSystem=utc&view=grid' }*/),
+            page.waitForNavigation(),
             page.locator('text=OK').click()
         ]);
         // Move Folder 2 from Folder 1 to My Items
         await page.locator('text=Open MCT My Items >> span').nth(3).click();
         await page.locator('.c-tree__scrollable div div:nth-child(2) .c-tree__item .c-tree__item__view-control').click();
+
         await page.locator(`text=${folder2}`).first().click({
             button: 'right'
         });
         await page.locator('text=Move').first().click();
         await page.locator('form[name="mctForm"] >> text=My Items').click();
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/db465c17-5d36-4884-9a92-5b7a958a6639?tc.mode=fixed&tc.startBound=1651088948584&tc.endBound=1651090748584&tc.timeSystem=utc&view=grid' }*/),
+            page.waitForNavigation(),
             page.locator('text=OK').click()
         ]);
         // Expect that Folder 2 is in My Items, the root folder
