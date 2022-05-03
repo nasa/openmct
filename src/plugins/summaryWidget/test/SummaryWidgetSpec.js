@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(['../src/SummaryWidget'], function (SummaryWidget) {
-    describe('The Summary Widget', function () {
+    xdescribe('The Summary Widget', function () {
         let summaryWidget;
         let mockDomainObject;
         let mockOldDomainObject;
