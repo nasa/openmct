@@ -62,10 +62,10 @@ define([
         this.widgetButton = Array.from(domChildren).filter(function (child) {
             return child.id === 'widget';
         })[0];
-        
+
         this.editing = false;
         this.container = '';
-        this.editListenerUnsubscribe = function() {};
+        this.editListenerUnsubscribe = () => {};
 
         this.outerWrapper = this.domElement.querySelector('.widget-edit-holder');
         this.ruleArea = this.domElement.querySelector('#ruleArea');

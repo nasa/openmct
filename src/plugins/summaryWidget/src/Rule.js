@@ -75,7 +75,7 @@ define([
             name: this.domElement.querySelector('.t-rule-name-input'),
             label: this.domElement.querySelector('.t-rule-label-input'),
             message: this.domElement.querySelector('.t-rule-message-input'),
-            jsCondition: this.domElement.querySelector('.t-rule-js-condition-input'),
+            jsCondition: this.domElement.querySelector('.t-rule-js-condition-input')
         };
 
         this.iconInput = new IconPalette('', container);
@@ -119,6 +119,7 @@ define([
         function encodeMsg(msg) {
             const div = document.createElement('div');
             div.innerHTML = msg;
+
             return div.innerHTML;
         }
 
@@ -189,7 +190,7 @@ define([
             } else {
                 self.toggleConfigButton.classList.add('c-disclosure-triangle--expanded');
             }
-            
+
             self.config.expanded = !self.config.expanded;
         }
 
@@ -419,7 +420,7 @@ define([
 
         this.domElement.querySelectorAll('.t-condition').forEach(condition => {
             condition.remove();
-        })
+        });
 
         this.config.conditions.forEach(function (condition, index) {
             const newCondition = new Condition(condition, index, self.conditionManager);
@@ -433,15 +434,17 @@ define([
             if (this.jsConditionArea) {
                 this.jsConditionArea.style.display = '';
             }
+
             this.addConditionButton.style.display = 'none';
         } else {
             if (this.jsConditionArea) {
                 this.jsConditionArea.style.display = 'none';
             }
+
             this.addConditionButton.style.display = '';
             self.conditions.forEach(function (condition) {
                 $condition = condition.getDOM();
-                const lastOfType = self.conditionArea.querySelector('li:last-of-type')
+                const lastOfType = self.conditionArea.querySelector('li:last-of-type');
                 lastOfType.parentNode.insertBefore($condition, lastOfType);
                 if (loopCnt > 0) {
                     $condition.querySelector('.t-condition-context').innerHTML = triggerContextStr + ' when';

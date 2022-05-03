@@ -139,7 +139,7 @@ define([
      * Hide the appropriate inputs when this is the only item
      */
     TestDataItem.prototype.hideButtons = function () {
-        this.deleteButton.style.display = 'none'; 
+        this.deleteButton.style.display = 'none';
     };
 
     /**

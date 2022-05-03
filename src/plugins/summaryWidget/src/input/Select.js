@@ -79,7 +79,7 @@ define([
 
         this.domElement.querySelector('select').innerHTML = '';
 
-        self.options.forEach(function (option) {            
+        self.options.forEach(function (option) {
             const optionElement = document.createElement('option');
             optionElement.value = option[0];
             optionElement.innerText = `+ ${option[1]}`;

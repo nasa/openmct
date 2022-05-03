@@ -77,7 +77,7 @@ define([
 
         self.domElement.querySelectorAll('.c-palette__item').forEach(item => {
             this.listenTo(item, 'click', handleItemClick);
-        })
+        });
     }
 
     /**
@@ -145,11 +145,11 @@ define([
      * Update the view assoicated with the currently selected item
      */
     Palette.prototype.updateSelected = function (item) {
-        this.domElement.querySelectorAll('.c-palette__item').forEach(item => {
-            if (item.classList.contains('is-selected')) {
-                item.classList.remove('is-selected');
+        this.domElement.querySelectorAll('.c-palette__item').forEach(paletteItem => {
+            if (paletteItem.classList.contains('is-selected')) {
+                paletteItem.classList.remove('is-selected');
             }
-        })
+        });
         this.itemElements[item].classList.add('is-selected');
         if (item === 'nullOption') {
             this.domElement.querySelector('.t-swatch').classList.add('no-selection');

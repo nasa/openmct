@@ -103,8 +103,8 @@ define(['../src/TestDataManager'], function (TestDataManager) {
             mockConditionManager.getObjectName.and.returnValue('Object Name');
             mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
 
-            if (document.readyState === "complete" ||
-                (document.readyState !== "loading" && !document.documentElement.doScroll)
+            if (document.readyState === "complete"
+                || (document.readyState !== "loading" && !document.documentElement.doScroll)
             ) {
                 mockContainer = document.createElement('div');
             } else {

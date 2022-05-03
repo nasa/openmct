@@ -34,13 +34,13 @@ function (
         let domElement;
         const self = this;
 
-        if (document.readyState === "complete" ||
-            (document.readyState !== "loading" && !document.documentElement.doScroll)
+        if (document.readyState === "complete"
+            || (document.readyState !== "loading" && !document.documentElement.doScroll)
         ) {
             domElement = this.palette.getDOM();
         } else {
             document.addEventListener("DOMContentLoaded", () => {
-                domElement = this.palette.getDOM()
+                domElement = this.palette.getDOM();
             });
         }
 

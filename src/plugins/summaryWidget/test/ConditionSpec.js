@@ -33,8 +33,8 @@ define(['../src/Condition'], function (Condition) {
         let generateValuesSpy;
 
         beforeEach(function () {
-            if (document.readyState === "complete" ||
-                (document.readyState !== "loading" && !document.documentElement.doScroll)
+            if (document.readyState === "complete"
+                || (document.readyState !== "loading" && !document.documentElement.doScroll)
             ) {
                 mockContainer = document.createElement('div');
             } else {
@@ -157,7 +157,7 @@ define(['../src/Condition'], function (Condition) {
             testCondition.generateValueInputs('');
 
             inputs = Array.from(mockContainer.querySelectorAll('input'));
-            
+
             expect(inputs[0].valueAsNumber).toEqual(0);
             expect(inputs[1].valueAsNumber).toEqual(0);
             expect(inputs[2].valueAsNumber).toEqual(0);
@@ -183,8 +183,8 @@ define(['../src/Condition'], function (Condition) {
 
             const event = new Event('input', {
                 bubbles: true,
-                cancelable: true,
-            });            
+                cancelable: true
+            });
             const inputs = mockContainer.querySelectorAll('input');
 
             inputs[1].value = 9001;

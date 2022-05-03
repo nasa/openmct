@@ -78,8 +78,8 @@ define(['../src/Rule'], function (Rule) {
                 'dragStart'
             ]);
 
-            if (document.readyState === "complete" ||
-                (document.readyState !== "loading" && !document.documentElement.doScroll)
+            if (document.readyState === "complete"
+                || (document.readyState !== "loading" && !document.documentElement.doScroll)
             ) {
                 mockContainer = document.createElement('div');
             } else {
@@ -206,7 +206,7 @@ define(['../src/Rule'], function (Rule) {
 
             expect(testRule.thumbnail.style['background-color']).toEqual('rgb(67, 67, 67)');
             expect(testRule.thumbnail.style['border-color']).toEqual('rgb(102, 102, 102)');
-            expect(testRule.thumbnail.style['color']).toEqual('rgb(153, 153, 153)');
+            expect(testRule.thumbnail.style.color).toEqual('rgb(153, 153, 153)');
 
             expect(changeSpy).toHaveBeenCalled();
         });
@@ -239,9 +239,9 @@ define(['../src/Rule'], function (Rule) {
             testRule.trigger.value = 'all';
             const event = new Event('change', {
                 bubbles: true,
-                cancelable: true,
+                cancelable: true
             });
-            testRule.trigger.dispatchEvent(event);     
+            testRule.trigger.dispatchEvent(event);
             expect(testRule.config.trigger).toEqual('all');
             expect(conditionChangeSpy).toHaveBeenCalled();
         });
@@ -261,9 +261,9 @@ define(['../src/Rule'], function (Rule) {
         it('initiates a drag event when its grippy is clicked', function () {
             const event = new Event('mousedown', {
                 bubbles: true,
-                cancelable: true,
+                cancelable: true
             });
-            testRule.grippy.dispatchEvent(event);    
+            testRule.grippy.dispatchEvent(event);
 
             expect(mockWidgetDnD.setDragImage).toHaveBeenCalled();
             expect(mockWidgetDnD.dragStart).toHaveBeenCalledWith('mockRule');

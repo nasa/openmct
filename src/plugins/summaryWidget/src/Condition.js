@@ -106,9 +106,9 @@ define([
         });
 
         Object.values(this.selects).forEach(function (select) {
-            self.domElement.querySelector('.t-configuration').append(select.getDOM());;
+            self.domElement.querySelector('.t-configuration').append(select.getDOM());
         });
-        
+
         this.listenTo(this.domElement.querySelector('.t-value-inputs'), 'input', onValueInput);
     }
 
@@ -206,7 +206,7 @@ define([
                     newInput.type = `${inputType}`;
                     newInput.value = `${value}`;
                 }
-                
+
                 this.valueInputs.push(newInput);
                 inputArea.appendChild(newInput);
                 index += 1;

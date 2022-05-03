@@ -48,8 +48,8 @@ define([
 
         let domElement;
 
-        if (document.readyState === "complete" ||
-            (document.readyState !== "loading" && !document.documentElement.doScroll)
+        if (document.readyState === "complete"
+            || (document.readyState !== "loading" && !document.documentElement.doScroll)
         ) {
             domElement = this.palette.getDOM();
         } else {
@@ -66,7 +66,7 @@ define([
 
         domElement.querySelectorAll('.c-palette-item').forEach(item => {
             // eslint-disable-next-line no-invalid-this
-            item.classList.add(elem.dataset.item);
+            item.classList.add(item.dataset.item);
         });
 
         /**
@@ -80,7 +80,7 @@ define([
             }
 
             domElement.querySelector('.icon-swatch').classList.add(self.palette.getCurrent());
-            self.oldIcon = self.palette.getCurrent()
+            self.oldIcon = self.palette.getCurrent();
         }
 
         this.palette.on('change', updateSwatch);

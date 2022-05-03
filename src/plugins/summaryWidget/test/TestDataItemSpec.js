@@ -11,8 +11,8 @@ define(['../src/TestDataItem'], function (TestDataItem) {
         let generateValueSpy;
 
         beforeEach(function () {
-            if (document.readyState === "complete" ||
-                (document.readyState !== "loading" && !document.documentElement.doScroll)
+            if (document.readyState === "complete"
+                || (document.readyState !== "loading" && !document.documentElement.doScroll)
             ) {
                 mockContainer = document.createElement('div');
             } else {
@@ -88,7 +88,7 @@ define(['../src/TestDataItem'], function (TestDataItem) {
         });
 
         it('generates a value input of the appropriate type', function () {
-            let inputs; 
+            let inputs;
 
             mockContainer.append(testDataItem.getDOM());
             mockEvaluator.getInputTypeById.and.returnValue('number');
@@ -112,7 +112,7 @@ define(['../src/TestDataItem'], function (TestDataItem) {
         });
 
         it('ensures reasonable defaults on values if none are provided', function () {
-            let inputs; 
+            let inputs;
 
             mockContainer.append(testDataItem.getDOM());
 
@@ -124,7 +124,7 @@ define(['../src/TestDataItem'], function (TestDataItem) {
             const numberInputs = Array.from(inputs).filter(input => input.type === 'number');
 
             expect(numberInputs.length).toEqual(1);
-            expect(inputs[0].valueAsNumber).toEqual(0);            
+            expect(inputs[0].valueAsNumber).toEqual(0);
             expect(testDataItem.config.value).toEqual(0);
 
             mockEvaluator.getInputTypeById.and.returnValue('text');
@@ -146,10 +146,10 @@ define(['../src/TestDataItem'], function (TestDataItem) {
 
             const event = new Event('input', {
                 bubbles: true,
-                cancelable: true,
+                cancelable: true
             });
 
-            mockContainer.querySelector('input').value = 9001;   
+            mockContainer.querySelector('input').value = 9001;
             mockContainer.querySelector('input').dispatchEvent(event);
 
             expect(changeSpy).toHaveBeenCalledWith({

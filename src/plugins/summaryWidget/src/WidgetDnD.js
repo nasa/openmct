@@ -40,7 +40,7 @@ define([
      */
     WidgetDnD.prototype.destroy = function () {
         this.container.removeEventListener('mousemove', this.drag);
-       document.removeEventListener('mouseup', this.drop);
+        document.removeEventListener('mouseup', this.drop);
     };
 
     /**
