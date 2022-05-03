@@ -198,29 +198,6 @@ test.describe('Example Imagery', () => {
         expect.soft(resetBoundingBox.height).toEqual(initialBoundingBox.height);
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
-    // test('Image Pan/Zoom alt text is displayed (Linux)', async ({ page }) => {
-    //     test.skip(process.platform === 'linux');
-    //     const bgImageLocator = await page.locator(backgroundImageSelector);
-    //     await bgImageLocator.hover();
-    //     const zoomInBtn = await page.locator('.t-btn-zoom-in');
-    //     await zoomInBtn.click();
-
-    //     const expectedAltText = 'Ctrl+Alt drag to pan';
-    //     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-    //     expect(expectedAltText).toEqual(imageryHintsText);
-    // });
-
-    // test('Image Pan/Zoom alt text is displayed (Other Platforms)', async ({ page }) => {
-    //     test.skip(process.platform !== 'linux');
-    //     const bgImageLocator = await page.locator(backgroundImageSelector);
-    //     await bgImageLocator.hover();
-    //     const zoomInBtn = await page.locator('.t-btn-zoom-in');
-    //     await zoomInBtn.click();
-
-    //     const expectedAltText = 'Alt drag to pan';
-    //     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-    //     expect(expectedAltText).toEqual(imageryHintsText);
-    // });
 
     //test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     //test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
