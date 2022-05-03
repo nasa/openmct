@@ -24,13 +24,14 @@
 This test suite is dedicated to tests which verify the basic operations surrounding imagery,
 but only assume that example imagery is present.
 */
+/* globals process */
 
 const { test, expect } = require('@playwright/test');
 
 test.describe('Example Imagery', () => {
 
     test.beforeEach(async ({ page }) => {
-        page.on('console', msg => console.log(msg.text()))
+        page.on('console', msg => console.log(msg.text()));
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -42,10 +43,13 @@ test.describe('Example Imagery', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/dab945d4-5a84-480e-8180-222b4aa730fa?tc.mode=fixed&tc.startBound=1639696164435&tc.endBound=1639697964435&tc.timeSystem=utc&view=conditionSet.view' }*/),
-            page.click('text=OK')
+            page.waitForNavigation({waitUntil: 'networkidle'}),
+            page.click('text=OK'),
+            //Wait for Save Banner to appear
+            page.waitForSelector('.c-message-banner__message')
         ]);
-
+        //Wait until Save Banner is gone
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
     });
 
@@ -77,9 +81,11 @@ test.describe('Example Imagery', () => {
 
     test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
+        const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 
         const bgImageLocator = await page.locator(backgroundImageSelector);
         await bgImageLocator.hover();
+
         // zoom in
         await page.mouse.wheel(0, deltaYStep * 2);
         await bgImageLocator.hover();
@@ -91,40 +97,47 @@ test.describe('Example Imagery', () => {
         // center the mouse pointer
         await page.mouse.move(imageCenterX, imageCenterY);
 
+        // Pan Imagery Hints
+        const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+        expect(expectedAltText).toEqual(imageryHintsText);
+
         // pan right
-        await page.keyboard.down('Alt');
+        // await page.keyboard.down(panHotkey);
+        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
         await page.mouse.up();
-        await page.keyboard.up('Alt');
+        // await page.keyboard.up(panHotkey);
+        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
         expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
 
         // pan left
-        await page.keyboard.down('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY, 10);
         await page.mouse.up();
-        await page.keyboard.up('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterLeftPanBoundingBox = await bgImageLocator.boundingBox();
         expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
 
         // pan up
         await page.mouse.move(imageCenterX, imageCenterY);
-        await page.keyboard.down('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
         await page.mouse.up();
-        await page.keyboard.up('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterUpPanBoundingBox = await bgImageLocator.boundingBox();
         expect(afterUpPanBoundingBox.y).toBeGreaterThan(afterLeftPanBoundingBox.y);
 
         // pan down
-        await page.keyboard.down('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
         await page.mouse.up();
-        await page.keyboard.up('Alt');
+        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
         expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
 
@@ -156,20 +169,26 @@ test.describe('Example Imagery', () => {
 
     test('Can use the reset button to reset the image', async ({ page }) => {
         const bgImageLocator = await page.locator(backgroundImageSelector);
+        // wait for zoom animation to finish
         await bgImageLocator.hover();
+
         const zoomInBtn = await page.locator('.t-btn-zoom-in');
         const zoomResetBtn = await page.locator('.t-btn-zoom-reset');
         const initialBoundingBox = await bgImageLocator.boundingBox();
 
         await zoomInBtn.click();
+        // wait for zoom animation to finish
+        await bgImageLocator.hover();
         await zoomInBtn.click();
         // wait for zoom animation to finish
         await bgImageLocator.hover();
+
         const zoomedInBoundingBox = await bgImageLocator.boundingBox();
         expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
         await zoomResetBtn.click();
+        // wait for zoom animation to finish
         await bgImageLocator.hover();
 
         const resetBoundingBox = await bgImageLocator.boundingBox();
@@ -180,38 +199,38 @@ test.describe('Example Imagery', () => {
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
 
-    //test('Can use Mouse Wheel to zoom in and out of previous image');
-    //test('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    //test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
-    //test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
-    //test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
-    //test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
+    //test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+    //test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    //test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
+    //test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+    //test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
+    //test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
 
 test.describe('Example Imagery in Display layout', () => {
-    test.skip('Can use Mouse Wheel to zoom in and out of previous image');
-    test.skip('Can use alt+drag to move around image once zoomed in');
-    test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
+    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+    test.fixme('Can use alt+drag to move around image once zoomed in');
+    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
 
 test.describe('Example Imagery in Flexible layout', () => {
-    test.skip('Can use Mouse Wheel to zoom in and out of previous image');
-    test.skip('Can use alt+drag to move around image once zoomed in');
-    test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
+    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+    test.fixme('Can use alt+drag to move around image once zoomed in');
+    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
 
 test.describe('Example Imagery in Tabs view', () => {
-    test.skip('Can use Mouse Wheel to zoom in and out of previous image');
-    test.skip('Can use alt+drag to move around image once zoomed in');
-    test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
-    test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
+    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+    test.fixme('Can use alt+drag to move around image once zoomed in');
+    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
+    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
