@@ -179,16 +179,17 @@ define([
          */
         function toggleConfig() {
             if (self.configArea.classList.contains('expanded')) {
-                self.configArea.classList.remove('expanded')
+                self.configArea.classList.remove('expanded');
             } else {
-                self.configArea.classList.add('expanded')
+                self.configArea.classList.add('expanded');
             }
 
             if (self.toggleConfigButton.classList.contains('c-disclosure-triangle--expanded')) {
-                self.toggleConfigButton.classList.remove('c-disclosure-triangle--expanded')
+                self.toggleConfigButton.classList.remove('c-disclosure-triangle--expanded');
             } else {
-                self.toggleConfigButton.classList.add('c-disclosure-triangle--expanded')
+                self.toggleConfigButton.classList.add('c-disclosure-triangle--expanded');
             }
+            
             self.config.expanded = !self.config.expanded;
         }
 
