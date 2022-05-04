@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @keyframes fade-out {
     from {
         background-color: rgba($colorOk, 0.5);
@@ -146,9 +148,12 @@
         animation-name: fade-out;
         animation-timing-function: ease-in;
         animation-iteration-count: 1;
-        animation-fill-mode: forwards;   
+        animation-fill-mode: forwards;
+        &.no-animation {
+            animation: none;
+        }
     }
-    
+
 
     &__layer-image {
         pointer-events: none;
@@ -175,17 +180,11 @@
         flex: 0 1 auto;
         display: flex;
         flex-direction: row;
-        height: 135px;
+        height: 145px;
         overflow-x: auto;
         overflow-y: hidden;
         margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
-
-        .c-thumb:last-child {
-            // Hilite the lastest thumb
-            background: $colorBodyFg;
-            color: $colorBodyBg;
-        }
     }
 
     &__auto-scroll-resume-button {
@@ -242,10 +241,12 @@
 
 /*************************************** THUMBS */
 .c-thumb {
+    $w: $imageThumbsD;
     display: flex;
     flex-direction: column;
     padding: 4px;
-    width: $imageThumbsD;
+    min-width: $w;
+    width: $w;
 
     &:hover {
         background: $colorThumbHoverBg;
@@ -267,11 +268,19 @@
     }
 }
 
-.l-layout,
-.c-fl {
+.is-small-thumbs {
     .c-imagery__thumbs-scroll-area {
-        //  When Imagery is in a layout, hide the thumbs area
-        display: none;
+        height: 60px; // Allow room for scrollbar
+    }
+
+    .c-thumb {
+        $w: math.div($imageThumbsD, 2);
+        min-width: $w;
+        width: $w;
+
+        &__timestamp {
+            display: none;
+        }
     }
 }
 
@@ -282,7 +291,7 @@
         flex-direction: row;
         position: absolute;
         left: $interiorMargin; top: $interiorMargin;
-        z-index: 3;
+        z-index: 70;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
         align-items: center;

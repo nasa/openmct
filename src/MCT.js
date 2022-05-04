@@ -241,7 +241,6 @@ define([
         this.branding = BrandingAPI.default;
 
         // Plugins that are installed by default
-
         this.install(this.plugins.Plot());
         this.install(this.plugins.Chart());
         this.install(this.plugins.TelemetryTable.default());

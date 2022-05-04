@@ -51,18 +51,17 @@
             @startPan="startPan"
             @toggleLayerVisibility="toggleLayerVisibility"
         />
-
-        <div
-            v-if="zoomFactor > 1"
-            class="c-imagery__hints"
-        >
-            Alt-drag to pan
-        </div>
         <div
             ref="imageBG"
             class="c-imagery__main-image__bg"
             @click="expand"
         >
+            <div
+                v-if="zoomFactor > 1"
+                class="c-imagery__hints"
+            >
+                {{ formatImageAltText }}
+            </div>
             <div
                 ref="focusedImageWrapper"
                 class="image-wrapper"
@@ -161,13 +160,13 @@
                 <!-- spacecraft position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
-                    class="c-imagery__age icon-check c-imagery--new"
+                    class="c-imagery__age icon-check c-imagery--new no-animation"
                 >POS</div>
 
                 <!-- camera position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isCameraPositionFresh"
-                    class="c-imagery__age icon-check c-imagery--new"
+                    class="c-imagery__age icon-check c-imagery--new no-animation"
                 >CAM</div>
             </div>
             <div class="h-local-controls">
@@ -181,10 +180,13 @@
         </div>
     </div>
     <div
+        v-if="displayThumbnails"
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused && !isFixed },
-            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused },
+            { 'is-small-thumbs': displayThumbnailsSmall },
+            { 'hide': !displayThumbnails }
         ]"
     >
         <div
@@ -197,6 +199,7 @@
                 :key="image.url + image.time"
                 class="c-imagery__thumb c-thumb"
                 :class="{ selected: focusedImageIndex === index && isPaused }"
+                :title="image.formattedTime"
                 @click="thumbnailClicked(index)"
             >
                 <a
@@ -250,6 +253,8 @@ const ARROW_LEFT = 37;
 const SCROLL_LATENCY = 250;
 
 const ZOOM_SCALE_DEFAULT = 1;
+const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
+const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
 export default {
     components: {
@@ -293,6 +298,7 @@ export default {
             imageContainerHeight: undefined,
             sizedImageWidth: 0,
             sizedImageHeight: 0,
+            viewHeight: 0,
             lockCompass: true,
             resizingWindow: false,
             timeContext: undefined,
@@ -311,7 +317,8 @@ export default {
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
-            imagePanned: false
+            imagePanned: false,
+            forceShowThumbnails: false
         };
     },
     computed: {
@@ -327,6 +334,15 @@ export default {
 
             return compassRoseSizingClasses;
         },
+        displayThumbnails() {
+            return (
+                this.forceShowThumbnails
+                || this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT
+            );
+        },
+        displayThumbnailsSmall() {
+            return this.viewHeight > SHOW_THUMBS_THRESHOLD_HEIGHT && this.viewHeight <= SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT;
+        },
         time() {
             return this.formatTime(this.focusedImage);
         },
@@ -335,6 +351,16 @@ export default {
         },
         isImageNew() {
             let cutoff = FIVE_MINUTES;
+            if (this.imageFreshnessOptions) {
+                const { fadeOutDelayTime, fadeOutDurationTime} = this.imageFreshnessOptions;
+                // convert css duration to IS8601 format for parsing
+                const isoFormattedDuration = 'PT' + fadeOutDurationTime.toUpperCase();
+                const isoFormattedDelay = 'PT' + fadeOutDelayTime.toUpperCase();
+                const parsedDuration = moment.duration(isoFormattedDuration).asMilliseconds();
+                const parsedDelay = moment.duration(isoFormattedDelay).asMilliseconds();
+                cutoff = parsedDuration + parsedDelay;
+            }
+
             let age = this.numericDuration;
 
             return age < cutoff && !this.refreshCSS;
@@ -482,6 +508,16 @@ export default {
                 width: this.sizedImageWidth,
                 height: this.sizedImageHeight
             };
+        },
+        formatImageAltText() {
+            const regexLinux = /Linux/;
+            const navigator = window.navigator.userAgent;
+
+            if (regexLinux.test(navigator)) {
+                return 'Ctrl+Alt drag to pan';
+            }
+
+            return 'Alt drag to pan';
         }
     },
     watch: {
@@ -518,6 +554,8 @@ export default {
                 if (!this.isPaused) {
                     this.setFocusedImage(imageIndex);
                     this.scrollToRight();
+                } else {
+                    this.scrollToFocused();
                 }
             },
             deep: true
@@ -606,6 +644,9 @@ export default {
 
     },
     methods: {
+        calculateViewHeight() {
+            this.viewHeight = this.$el.clientHeight;
+        },
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -1010,6 +1051,8 @@ export default {
             }
 
             this.setSizedImageDimensions();
+            this.calculateViewHeight();
+            this.scrollToFocused();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
@@ -1037,6 +1080,8 @@ export default {
             if (!this.isPaused) {
                 this.scrollToRight('reset');
             }
+
+            this.calculateViewHeight();
 
             this.$nextTick(() => {
                 this.resizingWindow = false;
