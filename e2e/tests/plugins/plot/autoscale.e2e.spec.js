@@ -121,8 +121,11 @@ async function createSinewaveOverlayPlot(page) {
     await page.locator('li:has-text("Overlay Plot")').click();
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('text=OK').click()
+        //Wait for Save Banner to appear1
+        page.waitForSelector('.c-message-banner__message')
     ]);
+    //Wait until Save Banner is gone
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // save (exit edit mode)
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
@@ -135,8 +138,11 @@ async function createSinewaveOverlayPlot(page) {
     await page.locator('li:has-text("Sine Wave Generator")').click();
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('text=OK').click()
+        //Wait for Save Banner to appear1
+        page.waitForSelector('.c-message-banner__message')
     ]);
+    //Wait until Save Banner is gone
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // focus the overlay plot
     await page.locator('text=Open MCT My Items >> span').nth(3).click();
