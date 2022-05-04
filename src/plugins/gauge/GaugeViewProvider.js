@@ -32,7 +32,9 @@ export default function GaugeViewProvider(openmct) {
             return domainObject.type === 'gauge';
         },
         canEdit: function (domainObject) {
-            return false;
+            if (domainObject.type === 'gauge') {
+                return true;
+            }
         },
         view: function (domainObject) {
             let component;

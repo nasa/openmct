@@ -46,6 +46,7 @@ describe("The LAD Table", () => {
 
     let openmct;
     let ladPlugin;
+    let historicalProvider;
     let parent;
     let child;
     let telemetryCount = 3;
@@ -80,6 +81,13 @@ describe("The LAD Table", () => {
         openmct.install(ladPlugin);
 
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+
+        historicalProvider = {
+            request: () => {
+                return Promise.resolve([]);
+            }
+        };
+        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
 
         openmct.time.bounds({
             start: bounds.start,
@@ -147,7 +155,7 @@ describe("The LAD Table", () => {
         // add another telemetry object as composition in lad table to test multi rows
         mockObj.ladTable.composition.push(anotherTelemetryObj.identifier);
 
-        beforeEach(async () => {
+        beforeEach(async (done) => {
             let telemetryRequestResolve;
             let telemetryObjectResolve;
             let anotherTelemetryObjectResolve;
@@ -166,11 +174,12 @@ describe("The LAD Table", () => {
                 callBack();
             });
 
-            openmct.telemetry.request.and.callFake(() => {
+            historicalProvider.request = () => {
                 telemetryRequestResolve(mockTelemetry);
 
                 return telemetryRequestPromise;
-            });
+            };
+
             openmct.objects.get.and.callFake((obj) => {
                 if (obj.key === 'telemetry-object') {
                     telemetryObjectResolve(mockObj.telemetry);
@@ -195,6 +204,8 @@ describe("The LAD Table", () => {
 
             await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
             await Vue.nextTick();
+
+            done();
         });
 
         it("should show one row per object in the composition", () => {

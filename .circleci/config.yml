@@ -64,7 +64,7 @@ commands:
         - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
 orbs:
   node: circleci/node@4.9.0
-  browser-tools: circleci/browser-tools@1.2.3
+  browser-tools: circleci/browser-tools@1.3.0
 jobs:
   npm-audit:
     parameters:
