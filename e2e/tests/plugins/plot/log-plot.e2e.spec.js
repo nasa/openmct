@@ -27,7 +27,7 @@ Tests to verify log plot functionality.
 const { test, expect } = require('@playwright/test');
 
 test.describe('Log plot tests', () => {
-    test('Can create a log plot.', async ({ page }) => {
+    test('Can create a log plot', async ({ page }) => {
         await makeOverlayPlot(page);
         await testRegularTicks(page);
         await enableEditMode(page);
@@ -89,8 +89,12 @@ async function makeOverlayPlot(page) {
     await page.locator('li:has-text("Overlay Plot")').click();
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('text=OK').click()
+        page.locator('text=OK').click(),
+        //Wait for Save Banner to appear1
+        page.waitForSelector('.c-message-banner__message')
     ]);
+    //Wait until Save Banner is gone
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // save the overlay plot
 
@@ -117,8 +121,12 @@ async function makeOverlayPlot(page) {
 
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('text=OK').click()
+        page.locator('text=OK').click(),
+        //Wait for Save Banner to appear1
+        page.waitForSelector('.c-message-banner__message')
     ]);
+    //Wait until Save Banner is gone
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // click on overlay plot
 
@@ -210,7 +218,15 @@ async function disableLogMode(page) {
 async function saveOverlayPlot(page) {
     // save overlay plot
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-    await page.locator('text=Save and Finish Editing').click();
+
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator('text=Save and Finish Editing').click(),
+        //Wait for Save Banner to appear1
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+    //Wait for Save Banner to appear1
+    page.waitForSelector('.c-message-banner__message');
 }
 
 /**
