@@ -27,6 +27,7 @@
         :class="model.cssClass"
     >
         <ToggleSwitch
+            :id="'gaugeToggle'"
             :checked="isUseTelemetryLimits"
             label="Use telemetry limits for minimum and maximum ranges"
             @change="toggleUseTelemetryLimits"
