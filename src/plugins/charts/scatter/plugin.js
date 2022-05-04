@@ -23,9 +23,12 @@ import { SCATTER_PLOT_KEY } from './ScatterPlotConstants.js';
 import ScatterPlotViewProvider from './ScatterPlotViewProvider';
 import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider';
 import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy';
+import Vue from "vue";
+import ScatterPlotForm from "./ScatterPlotForm.vue";
 
 export default function () {
     return function install(openmct) {
+        openmct.forms.addNewFormControl('scatter-plot-form-control', getScatterPlotFormControl(openmct));
 
         openmct.types.addType(SCATTER_PLOT_KEY, {
             key: SCATTER_PLOT_KEY,
@@ -47,45 +50,36 @@ export default function () {
                     control: 'file-input',
                     text: 'Select File...',
                     type: 'application/json',
+                    removable: true,
                     property: [
                         "selectFile"
                     ]
                 },
                 {
-                    name: "Underlay minimum Y axis value",
-                    control: "numberfield",
-                    cssClass: "l-input-sm l-numeric",
+                    name: "Underlay ranges",
+                    control: "scatter-plot-form-control",
+                    cssClass: "l-input",
+                    key: "scatterPlotForm",
+                    required: false,
+                    hideFromInspector: true,
                     property: [
-                        "configuration",
-                        "rangeMin"
-                    ]
-                },
-                {
-                    name: "Underlay maximum Y axis value",
-                    control: "numberfield",
-                    cssClass: "l-input-sm l-numeric",
-                    property: [
-                        "configuration",
-                        "rangeMax"
-                    ]
-                },
-                {
-                    name: "Underlay minimum X axis value",
-                    control: "numberfield",
-                    cssClass: "l-input-sm l-numeric",
-                    property: [
-                        "configuration",
-                        "domainMin"
-                    ]
-                },
-                {
-                    name: "Underlay maximum X axis value",
-                    control: "numberfield",
-                    cssClass: "l-input-sm l-numeric",
-                    property: [
-                        "configuration",
-                        "domainMax"
-                    ]
+                        "configuration"
+                    ],
+                    validate: ({ value }, callback) => {
+                        // const { rangeMin, rangeMax, domainMin, domainMax } = value;
+                        const valid = {
+                            rangeMin: true,
+                            rangeMax: true,
+                            domainMin: true,
+                            domainMax: true
+                        };
+
+                        if (callback) {
+                            callback(valid);
+                        }
+
+                        return valid.rangeMin && valid.rangeMax && valid.domainMin && valid.domainMax;
+                    }
                 }
             ],
             priority: 891
@@ -97,5 +91,30 @@ export default function () {
 
         openmct.composition.addPolicy(new ScatterPlotCompositionPolicy(openmct).allow);
     };
+
+    function getScatterPlotFormControl(openmct) {
+        return {
+            show(element, model, onChange) {
+                const rowComponent = new Vue({
+                    el: element,
+                    components: {
+                        ScatterPlotForm
+                    },
+                    provide: {
+                        openmct
+                    },
+                    data() {
+                        return {
+                            model,
+                            onChange
+                        };
+                    },
+                    template: `<scatter-plot-form :model="model" @onChange="onChange"></scatter-plot-form>`
+                });
+
+                return rowComponent;
+            }
+        };
+    }
 }
 

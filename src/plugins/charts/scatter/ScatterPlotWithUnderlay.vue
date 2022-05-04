@@ -119,17 +119,19 @@ export default {
         },
         observeForUnderlayPlotChanges() {
             this.getUnderlayPlotData();
+            this.updateData();
         },
         getAxisMinMax() {
             if (!this.data.length) {
                 return;
             }
 
-            if (this.data[0].xaxis) {
+            // For now, use x and y axes min, max values only if an underlay is available
+            if (this.shapesData.length && this.data[0].xaxis) {
                 this.xAxisRange = this.data[0].xaxis;
             }
 
-            if (this.data[0].yaxis) {
+            if (this.shapesData.length && this.data[0].yaxis) {
                 this.yAxisRange = this.data[0].yaxis;
             }
         },
