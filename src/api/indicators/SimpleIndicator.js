@@ -111,6 +111,10 @@ class SimpleIndicator extends EventEmitter {
     click(event) {
         this.emit('click', event);
     }
+
+    getElement() {
+        return this.element;
+    }
 }
 
 function compileTemplate(htmlTemplate) {

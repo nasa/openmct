@@ -21,18 +21,22 @@ export default function operatorStatusPlugin(config) {
                     operatorIndicator.description("Set my operator status");
                     operatorIndicator.iconClass('icon-check');
                     operatorIndicator.on('click', (event) => {
-                        //Don't propagate, otherwise this event will trigger the listener below and remove itself.
+                        let triggeredByThisIndicator = true;
+
                         document.body.appendChild(operatorStatusElement.$el);
                         operatorStatusElement.positionX = event.clientX;
                         operatorStatusElement.positionY = event.clientY;
 
-                        document.addEventListener('click', () => {
-                            operatorStatusElement.$el.remove();
-                        }, {
-                            once: true,
-                            // Use the capture phase so this doesn't get triggered in the same event loop iteration as the indicator's onClick
-                            capture: true
-                        });
+                        document.addEventListener('click', clearOperatorPopup);
+
+                        function clearOperatorPopup() {
+                            if (!triggeredByThisIndicator) {
+                                operatorStatusElement.$el.remove();
+                                document.removeEventListener('click', clearOperatorPopup);
+                            }
+
+                            triggeredByThisIndicator = false;
+                        }
                     });
 
                     openmct.indicators.add(operatorIndicator);
@@ -67,17 +71,22 @@ export default function operatorStatusPlugin(config) {
                     pollQuestionIndicator.iconClass('icon-draft');
                     pollQuestionIndicator.on('click', (event) => {
                         //Don't propagate, otherwise this event will trigger the listener below and remove itself.
+                        let triggeredByThisIndicator = true;
+
                         document.body.appendChild(pollQuestionElement.$el);
                         pollQuestionElement.positionX = event.clientX;
                         pollQuestionElement.positionY = event.clientY;
 
-                        document.addEventListener('click', () => {
-                            pollQuestionElement.$el.remove();
-                        }, {
-                            once: true,
-                            // Use the capture phase so this doesn't get triggered in the same event loop iteration as the indicator's onClick
-                            capture: true
-                        });
+                        document.addEventListener('click', clearPollQuestionPopup);
+
+                        function clearPollQuestionPopup() {
+                            if (!triggeredByThisIndicator) {
+                                pollQuestionElement.$el.remove();
+                                document.removeEventListener('click', clearPollQuestionPopup);
+                            }
+
+                            triggeredByThisIndicator = false;
+                        }
                     });
 
                     openmct.indicators.add(pollQuestionIndicator);
