@@ -39,7 +39,7 @@ const STATUSES = [{
 }];
 
 export default class ExampleUserProvider extends EventEmitter {
-    constructor(openmct) {
+    constructor(openmct, {defaultStatusRole}) {
         super();
 
         this.openmct = openmct;
@@ -48,6 +48,7 @@ export default class ExampleUserProvider extends EventEmitter {
         this.autoLoginUser = undefined;
         this.status = STATUSES[1];
         this.pollQuestion = undefined;
+        this.defaultStatusRole = defaultStatusRole;
 
         this.ExampleUser = createExampleUser(this.openmct.user.User);
         this.loginPromise = undefined;
@@ -86,7 +87,7 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     getActiveStatusRole() {
-        return Promise.resolve('Driver');
+        return Promise.resolve(this.defaultStatusRole);
     }
 
     getStatus() {

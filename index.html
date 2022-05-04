@@ -196,7 +196,10 @@
         openmct.install(openmct.plugins.Clock({ enableClockIndicator: true }));
         openmct.install(openmct.plugins.Timer());
         openmct.install(openmct.plugins.Timelist());
-        openmct.install(openmct.plugins.example.ExampleUser());
+        openmct.install(openmct.plugins.example.ExampleUser({
+            autoLoginUser: 'guest',
+            defaultStatusRole: 'Driver'
+        }));
         openmct.install(openmct.plugins.OperatorStatus());
         openmct.start();
     </script>
