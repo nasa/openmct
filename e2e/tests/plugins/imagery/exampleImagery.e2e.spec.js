@@ -98,6 +98,7 @@ test.describe('Example Imagery', () => {
         await page.mouse.move(imageCenterX, imageCenterY);
 
         // Pan Imagery Hints
+        console.log(process.platform);
         const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
         const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
         expect(expectedAltText).toEqual(imageryHintsText);
