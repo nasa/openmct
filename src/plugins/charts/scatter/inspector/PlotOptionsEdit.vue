@@ -143,9 +143,9 @@ export default {
             this.$set(this.plotSeries, this.plotSeries.length, series);
             this.setupOptions();
         },
-        removeSeries(series) {
-            const index = this.plotSeries.find(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
-            if (index !== undefined) {
+        removeSeries(seriesIdentifier) {
+            const index = this.plotSeries.findIndex(plotSeries => this.openmct.objects.areIdsEqual(seriesIdentifier, plotSeries.identifier));
+            if (index >= 0) {
                 this.$delete(this.plotSeries, index);
                 this.setupOptions();
             }
@@ -178,13 +178,15 @@ export default {
                 xKeyOptionIndex = this.xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
                 if (xKeyOptionIndex > -1) {
                     this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                } else {
+                    this.xKey = undefined;
                 }
-            } else {
-                if (this.xKey === undefined) {
-                    update = true;
-                    xKeyOptionIndex = 0;
-                    this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
-                }
+            }
+
+            if (this.xKey === undefined) {
+                update = true;
+                xKeyOptionIndex = 0;
+                this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
             }
 
             if (metadataValues.length > 1) {
@@ -192,13 +194,15 @@ export default {
                     yKeyOptionIndex = this.yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
                     if (yKeyOptionIndex > -1 && yKeyOptionIndex !== xKeyOptionIndex) {
                         this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
+                    } else {
+                        this.yKey = undefined;
                     }
-                } else {
-                    if (this.yKey === undefined) {
-                        update = true;
-                        yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
-                        this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
-                    }
+                }
+
+                if (this.yKey === undefined) {
+                    update = true;
+                    yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
+                    this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
                 }
 
                 this.yKeyOptions = this.yKeyOptions.map((option, index) => {

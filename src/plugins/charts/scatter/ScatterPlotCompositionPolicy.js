@@ -24,9 +24,13 @@ import { SCATTER_PLOT_KEY } from './ScatterPlotConstants';
 
 export default function ScatterPlotCompositionPolicy(openmct) {
     function hasRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']);
+        const rangeValues = metadata.valuesForHints(['range']).map((value) => {
+            return value.source;
+        });
 
-        return rangeValues && rangeValues.length > 0;
+        const uniqueRangeValues = new Set(rangeValues);
+
+        return uniqueRangeValues && uniqueRangeValues.size > 1;
     }
 
     function hasScatterPlotTelemetry(domainObject) {

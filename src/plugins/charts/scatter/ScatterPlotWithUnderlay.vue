@@ -92,7 +92,9 @@ export default {
         this.$refs.plot.on('plotly_relayout', this.zoom);
     },
     beforeDestroy() {
-        this.$refs.plot.off('plotly_relayout', this.zoom);
+        if (this.$refs.plot && this.$refs.plot.off) {
+            this.$refs.plot.off('plotly_relayout', this.zoom);
+        }
 
         if (this.plotResizeObserver) {
             this.plotResizeObserver.unobserve(this.$refs.plotWrapper);

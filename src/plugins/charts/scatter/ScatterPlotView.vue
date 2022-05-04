@@ -32,6 +32,7 @@
 
 <script>
 import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
+import _ from 'lodash';
 
 export default {
     components: {
@@ -64,6 +65,7 @@ export default {
         this.setTimeContext();
         this.loadComposition();
         this.reloadTelemetry = this.reloadTelemetry.bind(this);
+        this.reloadTelemetry = _.debounce(this.reloadTelemetry, 500);
         this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.reloadTelemetry);
     },
     beforeDestroy() {
@@ -75,7 +77,7 @@ export default {
 
         this.removeAllSubscriptions();
 
-        this.composition.off('add', this.addTelemetryObject);
+        this.composition.off('add', this.addToComposition);
         this.composition.off('remove', this.removeTelemetryObject);
         if (this.unobserve) {
             this.unobserve();
@@ -97,6 +99,20 @@ export default {
                 this.timeContext.off('bounds', this.reloadTelemetry);
             }
         },
+        addToComposition(telemetryObject) {
+            if (Object.values(this.telemetryObjects).length > 0) {
+                this.confirmRemoval(telemetryObject);
+            } else {
+                this.addTelemetryObject(telemetryObject);
+            }
+        },
+        removeFromComposition(telemetryObject) {
+            let composition = this.domainObject.composition.filter(id =>
+                !this.openmct.objects.areIdsEqual(id, telemetryObject.identifier)
+            );
+
+            this.openmct.objects.mutate(this.domainObject, 'composition', composition);
+        },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -104,6 +120,33 @@ export default {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
             this.getDataForTelemetry(key);
+        },
+        confirmRemoval(telemetryObject) {
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will replace the current telemetry source. Do you want to continue?',
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: true,
+                        callback: () => {
+                            const oldTelemetryObject = Object.values(this.telemetryObjects)[0];
+                            this.removeFromComposition(oldTelemetryObject);
+                            this.removeTelemetryObject(oldTelemetryObject.identifier);
+                            this.valuesByTimestamp = {};
+                            this.addTelemetryObject(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            this.removeFromComposition(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
         },
         getTelemetryProcessor(keyString) {
             return (telemetry) => {
@@ -129,7 +172,7 @@ export default {
         },
         loadComposition() {
             this.composition = this.openmct.composition.get(this.domainObject);
-            this.composition.on('add', this.addTelemetryObject);
+            this.composition.on('add', this.addToComposition);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
         },
@@ -147,15 +190,21 @@ export default {
             }
 
             const telemetryProcessor = this.getTelemetryProcessor(key);
-            this.openmct.telemetry.request(telemetryObject).then(telemetryProcessor);
+            const options = this.getOptions();
+            this.openmct.telemetry.request(telemetryObject, options).then(telemetryProcessor);
             this.subscribeToObject(telemetryObject);
         },
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
-            delete this.telemetryObjects[key];
+            if (this.telemetryObjects[key]) {
+                delete this.telemetryObjects[key];
+            }
+
             if (this.telemetryObjectFormats && this.telemetryObjectFormats[key]) {
                 delete this.telemetryObjectFormats[key];
             }
+
+            this.removeSubscription(key);
         },
         addDataToGraph(telemetryObject, data) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
