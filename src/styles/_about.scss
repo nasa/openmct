@@ -123,4 +123,11 @@
     h2 {
         font-size: 1.5em;
     }
+    button {
+        color: #aaaaaa;
+        font-size: 0.7em;
+    }
+    button:active {
+        color: $colorBtnBgHov;
+    }
 }

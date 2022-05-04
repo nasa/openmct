@@ -23,8 +23,14 @@
                 <p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
                 <p>Open MCT includes source code licensed under additional open source licenses. See the Open Source Licenses file included with this distribution or <a @click="showLicenses">click here for third party licensing information</a>.</p>
             </div>
-            <h2>Version Information</h2>
-            <ul class="t-info l-info s-info">
+            <h2>Version Information<button
+                class="icon-export"
+                @click="copyVersionToClipboard"
+            ></button></h2>
+            <ul
+                ref="versionInformation"
+                class="t-info l-info s-info"
+            >
                 <li>Version: {{ buildInfo.version || 'Unknown' }}</li>
                 <li>Build Date: {{ buildInfo.buildDate || 'Unknown' }}</li>
                 <li>Revision: {{ buildInfo.revision || 'Unknown' }}</li>
@@ -46,6 +52,11 @@ export default {
     methods: {
         showLicenses() {
             window.open('#/licenses');
+        },
+        copyVersionToClipboard(e) {
+            const versionInfoElement = this.$refs.versionInformation;
+            const versionInfoText = versionInfoElement.innerHTML;
+            window.navigator.clipboard.writeText(versionInfoText);
         }
     }
 };
