@@ -20,6 +20,7 @@ export default function operatorStatusPlugin(config) {
                     operatorIndicator.text("My Operator Status");
                     operatorIndicator.description("Set my operator status");
                     operatorIndicator.iconClass('icon-check');
+                    operatorIndicator.element.classList.add("no-minify");
                     operatorIndicator.on('click', (event) => {
                         let triggeredByThisIndicator = true;
 
@@ -69,6 +70,8 @@ export default function operatorStatusPlugin(config) {
                     pollQuestionIndicator.text("Poll Question");
                     pollQuestionIndicator.description("Set the current poll question");
                     pollQuestionIndicator.iconClass('icon-draft');
+                    pollQuestionIndicator.element.classList.add("no-minify");
+
                     pollQuestionIndicator.on('click', (event) => {
                         //Don't propagate, otherwise this event will trigger the listener below and remove itself.
                         let triggeredByThisIndicator = true;
@@ -96,7 +99,8 @@ export default function operatorStatusPlugin(config) {
                             PollQuestion: PollQuestionComponent
                         },
                         provide: {
-                            openmct
+                            openmct,
+                            indicator: pollQuestionIndicator
                         },
                         data() {
                             return {

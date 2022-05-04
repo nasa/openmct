@@ -86,6 +86,10 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve(this.user.getRoles().includes(roleId));
     }
 
+    clearAllStatuses() {
+        this.setStatus(STATUSES[0]);
+    }
+
     getActiveStatusRole() {
         return Promise.resolve(this.defaultStatusRole);
     }

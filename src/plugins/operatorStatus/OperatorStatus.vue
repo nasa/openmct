@@ -28,10 +28,22 @@
 
 <script>
 const STATUS_CLASS = {
-    "GO": "icon-check",
-    "NO_GO": "icon-x",
-    "MAYBE": "icon-alert-triangle",
-    "NO_STATUS": "icon-info"
+    "GO": {
+        icon: "icon-check",
+        status: "s-status-ok"
+    },
+    "NO_GO": {
+        icon: "icon-x",
+        status: "s-status-error"
+    },
+    "MAYBE": {
+        icon: "icon-alert-triangle",
+        status: "s-status-warning"
+    },
+    "NO_STATUS": {
+        icon: "icon-info",
+        status: ""
+    }
 };
 
 export default {
@@ -113,7 +125,9 @@ export default {
         setStatus(status) {
             this.roleStatus = status;
             this.selectedStatus = status.key;
-            this.indicator.iconClass(STATUS_CLASS[status.key.toUpperCase()]);
+            this.indicator.iconClass(STATUS_CLASS[status.key.toUpperCase()].icon);
+            this.indicator.statusClass(STATUS_CLASS[status.key.toUpperCase()].status);
+            this.indicator.text(status.label);
         },
         findStatusByKey(statusKey) {
             return this.allStatuses.find(possibleMatch => possibleMatch.key === statusKey);

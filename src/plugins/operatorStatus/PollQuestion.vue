@@ -29,7 +29,7 @@
 <script>
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'indicator'],
     props: {
         positionX: {
             type: Number,
@@ -78,6 +78,7 @@ export default {
         setPollQuestion(pollQuestion) {
             this.currentPollQuestion = pollQuestion.question;
             this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
+            this.indicator.text(pollQuestion.question);
         },
         async updatePollQuestion() {
             await this.openmct.user.setPollQuestion(this.newPollQuestion);
