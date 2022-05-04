@@ -7,10 +7,11 @@
 >
     <span
         class="c-list__item__name js-list__item__name"
+        :class="{ 'icon-lock' : section.isLocked }"
         :data-id="section.id"
         @keydown.enter="updateName"
         @blur="updateName"
-    >{{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}</span>
+    >{{ sectionName }}</span>
     <PopupMenu :popup-menu-items="popupMenuItems" />
 </div>
 </template>
@@ -55,6 +56,9 @@ export default {
     computed: {
         isSelected() {
             return this.selectedSectionId === this.section.id;
+        },
+        sectionName() {
+            return this.section.name.length ? this.section.name : `Unnamed ${this.sectionTitle}`
         }
     },
     watch: {

@@ -7,11 +7,15 @@
 >
     <span
         class="c-list__item__name js-list__item__name"
+        :class="{ 'icon-lock' : page.isLocked }"
         :data-id="page.id"
         @keydown.enter="updateName"
         @blur="updateName"
-    >{{ page.name.length ? page.name : `Unnamed ${pageTitle}` }}</span>
-    <PopupMenu :popup-menu-items="popupMenuItems" />
+    >{{ pageName }}</span>
+    <PopupMenu
+        v-if="!page.isLocked"
+        :popup-menu-items="popupMenuItems"
+    />
 </div>
 </template>
 
@@ -55,6 +59,9 @@ export default {
     computed: {
         isSelected() {
             return this.selectedPageId === this.page.id;
+        },
+        pageName() {
+            return this.page.name.length ? this.page.name : `Unnamed ${this.pageTitle}`;
         }
     },
     watch: {

@@ -23,6 +23,7 @@
 <template>
 <div
     class="c-notebook__entry c-ne has-local-controls"
+    :class="{ 'locked': isLocked }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
@@ -52,9 +53,10 @@
             <template v-else>
                 <div
                     :id="entry.id"
-                    class="c-ne__text c-ne__input"
+                    class="c-ne__text"
+                    :class="{ 'c-ne__input' : !isLocked }"
                     tabindex="0"
-                    contenteditable
+                    :contenteditable="!isLocked"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
@@ -75,7 +77,7 @@
         </div>
     </div>
     <div
-        v-if="!readOnly"
+        v-if="!readOnly && !isLocked"
         class="c-ne__local-controls--hidden"
     >
         <button
@@ -159,6 +161,12 @@ export default {
             default() {
                 return true;
             }
+        },
+        isLocked: {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     computed: {
@@ -210,12 +218,18 @@ export default {
         },
         changeCursor() {
             event.preventDefault();
-            event.dataTransfer.dropEffect = "copy";
+            event.dataTransfer.dropEffect = this.isLocked ? "no-drop" : "copy";
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
         async dropOnEntry($event) {
+            if (this.selectedPage.isLocked) {
+                this.openmct.notifications.error('This page is locked, you may not make edits.');
+
+                return;
+            }
+
             event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
@@ -286,6 +300,10 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
+            if (this.selectedPage.isLocked) {
+                return;
+            }
+
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {

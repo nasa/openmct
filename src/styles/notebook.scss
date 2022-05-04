@@ -305,7 +305,7 @@
         padding-right: $inputTextPLeftRight;
 
         @include hover {
-            &:not(:focus) {
+            &:not(:focus, .locked) {
                 background: rgba($colorBodyFg, 0.1);
             }
         }

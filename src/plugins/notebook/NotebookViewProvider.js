@@ -22,51 +22,48 @@
 
 import Vue from 'vue';
 import Notebook from './components/Notebook.vue';
-import { isNotebookType } from './notebook-constants';
 
-export default function NotebookViewProvider(openmct, type, name, icon, configuration, snapshotContainer) {
-    console.log('view provider', configuration, snapshotContainer);
+export default class NotebookViewProvider {
+    constructor(openmct, name, key, type, cssClass, snapshotContainer) {
+        this.openmct = openmct;
+        this.key = key;
+        this.name = `${name} View`;
+        this.type = type;
+        this.cssClass = cssClass;
+        this.snapshotContainer = snapshotContainer;
+    }
 
-    return {
-        key: type,
-        name: `${name} View`,
-        cssClass: icon,
-        canView: function (domainObject) {
-            return isNotebookType(domainObject);
-        },
-        view: (function (config) {
-            console.log('iffy', config);
+    canView(domainObject) {
+        return domainObject.type === this.type;
+    }
 
-            return (domainObject) => {
-                let component;
-                console.log('view', config, snapshotContainer);
+    view(domainObject) {
+        let component;
+        let openmct = this.openmct;
+        let snapshotContainer = this.snapshotContainer;
 
-                return {
-                    show(container) {
-                        console.log('show', config);
-                        component = new Vue({
-                            el: container,
-                            components: {
-                                Notebook
-                            },
-                            provide: {
-                                openmct,
-                                snapshotContainer,
-                                config
-                            },
-                            data() {
-                                return {
-                                    domainObject
-                                };
-                            },
-                            template: `<Notebook :domain-object="domainObject"></Notebook>`
-                        });
+        return {
+            show(container) {
+                component = new Vue({
+                    el: container,
+                    components: {
+                        Notebook
                     },
-                    destroy() {
-                        component.$destroy();
-                    }
-                };
-            };
-        }(configuration))
-    };
+                    provide: {
+                        openmct,
+                        snapshotContainer
+                    },
+                    data() {
+                        return {
+                            domainObject
+                        };
+                    },
+                    template: '<Notebook :domain-object="domainObject"></Notebook>'
+                });
+            },
+            destroy() {
+                component.$destroy();
+            }
+        };
+    }
 }

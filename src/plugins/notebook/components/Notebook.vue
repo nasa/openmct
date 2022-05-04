@@ -119,6 +119,7 @@
                 </div>
             </div>
             <div
+                v-if="!selectedPage.isLocked"
                 class="c-notebook__drag-area icon-plus"
                 @click="newEntry()"
                 @dragover="dragOver"
@@ -142,18 +143,24 @@
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
+                    :is-locked="selectedPage.isLocked"
                     @cancelEdit="cancelTransaction"
                     @editingEntry="startTransaction"
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
                 />
                 <button
-                    v-if="isRestricted"
+                    v-if="isRestricted && !selectedPage.isLocked"
                     class="c-button--major commit-button icon-lock"
                     @click="lockPage()"
                 >
-                    <span class="c-button__label">{{ lockButtonLabel }}</span>
+                    <span class="c-button__label">Lock Page</span>
                 </button>
+                <div
+                    v-if="isRestricted && selectedPage.isLocked"
+                >
+                    locked yo
+                </div>
             </div>
         </div>
     </div>
@@ -184,7 +191,7 @@ export default {
         SearchResults,
         Sidebar
     },
-    inject: ['openmct', 'snapshotContainer', 'config'],
+    inject: ['openmct', 'snapshotContainer'],
     props: {
         domainObject: {
             type: Object,
@@ -200,7 +207,6 @@ export default {
             defaultSort: this.domainObject.configuration.defaultSort,
             focusEntryId: null,
             isRestricted: false,
-            lockButtonLabel: 'Commit Page',
             search: '',
             searchResults: [],
             showTime: this.domainObject.configuration.showTime || 0,
@@ -284,10 +290,6 @@ export default {
         this.setSectionAndPageFromUrl();
 
         this.isRestricted = this.domainObject.type === 'restricted-notebook';
-        console.log('config', this.config, this.isRestricted);
-        if (this.config.lockButtonLabel) {
-            this.lockButtonLabel = this.config.lockButtonLabel;
-        }
 
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
@@ -363,6 +365,7 @@ export default {
         lockPage() {
             let sections = this.getSections();
             this.selectedPage.isLocked = true;
+            this.selectedSection.isLocked = true;
 
             mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
             mutateObject(this.openmct, this.domainObject, 'locked', true);
