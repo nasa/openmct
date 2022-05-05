@@ -228,4 +228,122 @@ describe('the plugin', function () {
         });
     });
 
+    describe("The timestrip composition policy", () => {
+        it("allows composition for plots", () => {
+            const parent = {
+                "composition": [],
+                "configuration": {},
+                "name": "Some timestrip",
+                "type": "time-strip",
+                "location": "mine",
+                "modified": 1631005183584,
+                "persisted": 1631005183502,
+                "identifier": {
+                    "namespace": "",
+                    "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+                }
+            };
+            const testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }]
+                }
+            };
+            const composition = openmct.composition.get(parent);
+            expect(() => {
+                composition.add(testTelemetryObject);
+            }).not.toThrow();
+            expect(parent.composition.length).toBe(1);
+        });
+
+        it("allows composition for plans", () => {
+            const parent = {
+                "composition": [],
+                "configuration": {},
+                "name": "Some time strip",
+                "type": "time-strip",
+                "location": "mine",
+                "modified": 1631005183584,
+                "persisted": 1631005183502,
+                "identifier": {
+                    "namespace": "",
+                    "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+                }
+            };
+            const testPlan = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "plan",
+                name: "Test Object"
+            };
+            const composition = openmct.composition.get(parent);
+            expect(() => {
+                composition.add(testPlan);
+            }).not.toThrow();
+            expect(parent.composition.length).toBe(1);
+        });
+
+        it("disallows composition for non time-based plots", () => {
+            const parent = {
+                "composition": [],
+                "configuration": {},
+                "name": "Some time strip",
+                "type": "time-strip",
+                "location": "mine",
+                "modified": 1631005183584,
+                "persisted": 1631005183502,
+                "identifier": {
+                    "namespace": "",
+                    "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+                }
+            };
+            const testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "telemetry.plot.bar-graph",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }]
+                }
+            };
+            const composition = openmct.composition.get(parent);
+            expect(() => {
+                composition.add(testTelemetryObject);
+            }).toThrow();
+            expect(parent.composition.length).toBe(0);
+        });
+    });
 });

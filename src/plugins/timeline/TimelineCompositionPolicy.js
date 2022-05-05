@@ -24,6 +24,10 @@ const ALLOWED_TYPES = [
     'telemetry.plot.stacked',
     'plan'
 ];
+const DISALLOWED_TYPES = [
+    'telemetry.plot.bar-graph',
+    'telemetry.plot.scatter-plot'
+];
 export default function TimelineCompositionPolicy(openmct) {
     function hasNumericTelemetry(domainObject) {
         const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
@@ -53,7 +57,8 @@ export default function TimelineCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
             if (parent.type === 'time-strip') {
-                if (hasNumericTelemetry(child) || hasImageTelemetry(child) || ALLOWED_TYPES.includes(child.type)) {
+                if (!DISALLOWED_TYPES.includes(child.type)
+                    && (hasNumericTelemetry(child) || hasImageTelemetry(child) || ALLOWED_TYPES.includes(child.type))) {
                     return true;
                 }
 
