@@ -318,10 +318,12 @@ export default {
                     }
                 } else {
                     if (this.yKey === undefined) {
-                        update = true;
                         yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
-                        this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
-                        this.yKeyLabel = this.yKeyOptions[yKeyOptionIndex].name;
+                        if (yKeyOptionIndex > -1) {
+                            update = true;
+                            this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
+                            this.yKeyLabel = this.yKeyOptions[yKeyOptionIndex].name;
+                        }
                     }
                 }
 
