@@ -21,7 +21,7 @@ export default function operatorStatusPlugin(config) {
                     operatorIndicator.description("Set my operator status");
                     operatorIndicator.iconClass('icon-check');
                     operatorIndicator.element.classList.add("no-minify");
-                    operatorIndicator.on('click', (indicatorClickEvent) => {
+                    operatorIndicator.on('click', () => {
                         document.body.appendChild(operatorStatusElement.$el);
 
                         let bb = operatorIndicator.element.getBoundingClientRect();

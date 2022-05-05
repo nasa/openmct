@@ -110,6 +110,7 @@ export default {
         setPollQuestion(pollQuestion) {
             this.currentPollQuestion = pollQuestion.question;
             this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
+            this.indicator.text(pollQuestion.question);
         },
         async fetchMyStatus() {
             const status = await this.openmct.user.getStatus();
@@ -127,7 +128,6 @@ export default {
             this.selectedStatus = status.key;
             this.indicator.iconClass(STATUS_CLASS[status.key.toUpperCase()].icon);
             this.indicator.statusClass(STATUS_CLASS[status.key.toUpperCase()].status);
-            this.indicator.text(status.label);
         },
         findStatusByKey(statusKey) {
             return this.allStatuses.find(possibleMatch => possibleMatch.key === statusKey);
