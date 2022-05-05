@@ -20,20 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class User {
-    constructor(id, name) {
-        this.id = id;
-        this.name = name;
+import { FAULT_MANAGEMENT_VIEW } from './constants';
 
-        this.getId = this.getId.bind(this);
-        this.getName = this.getName.bind(this);
+export default class FaultManagementObjectProvider {
+    constructor(openmct) {
+        this.openmct = openmct;
+        this.namespace = 'taxonomy';
+        this.key = FAULT_MANAGEMENT_VIEW;
+        this.objects = {};
+
+        this.createRootObject();
     }
 
-    getId() {
-        return this.id;
+    createRootObject() {
+        this.rootObject = {
+            identifier: {
+                key: this.key,
+                namespace: this.namespace
+            },
+            name: 'Fault Management',
+            type: FAULT_MANAGEMENT_VIEW,
+            location: 'ROOT'
+        };
+
+        this.openmct.objects.addRoot(this.rootObject.identifier);
     }
 
-    getName() {
-        return this.name;
+    get(identifier) {
+        console.log('identifier', identifier);
+
+        // if (identifier.key === OBJECT_TYPES.EVENTS_OBJECT_TYPE) {
+        return Promise.resolve(this.rootObject);
+        // }
+
+        // return this.getTelemetryDictionary().then(dictionary => {
+        //     return dictionary[identifier.key];
+        // });
     }
 }

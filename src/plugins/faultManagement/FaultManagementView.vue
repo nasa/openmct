@@ -1,16 +1,15 @@
 <template>
-<div class="c-fault-manager">
-    Fault Managment
-    <FaultsListView />
+<div class="c-fault-mgmt">
+    <FaultManagementListView />
 </div>
 </template>
 
 <script>
-import FaultsListView from './FaultsListView.vue';
+import FaultManagementListView from './FaultManagementListView.vue';
 
 export default {
     components: {
-        FaultsListView
+        FaultManagementListView
     },
     inject: ['openmct', 'domainObject'],
     data() {
@@ -20,6 +19,10 @@ export default {
     computed: {
     },
     mounted() {
+        console.log('mounted', this.domainObject);
+        this.openmct.telemetry.request(this.domainObject).then(data => {
+            console.log('after request', data);
+        });
     },
     beforeDestroy() {
     },

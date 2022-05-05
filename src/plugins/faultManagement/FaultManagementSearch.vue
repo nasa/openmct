@@ -1,6 +1,6 @@
 <template>
 <div class="c-fault-mgmt-search">
-    Search
+    Search Bar
 </div>
 </template>
 

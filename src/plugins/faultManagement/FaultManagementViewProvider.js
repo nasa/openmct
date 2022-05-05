@@ -1,17 +1,15 @@
 import FaultManagementView from './FaultManagementView.vue';
-
+import { FAULT_MANAGEMENT_VIEW } from './constants';
 import Vue from 'vue';
-
-export const FAULT_MANAGER_VIEW = 'fault.view';
 
 export default class FaultManagementViewProvider {
     constructor(openmct) {
         this.openmct = openmct;
-        this.key = FAULT_MANAGER_VIEW;
+        this.key = FAULT_MANAGEMENT_VIEW;
     }
 
     canView(domainObject) {
-        return domainObject.type === FAULT_MANAGER_VIEW;
+        return domainObject.type === FAULT_MANAGEMENT_VIEW;
     }
 
     canEdit(domainObject) {

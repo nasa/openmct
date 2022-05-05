@@ -1,6 +1,6 @@
 <template>
 <div class="c-fault-mgmt-toolbar">
-    Toolbar
+    Toolbar (buttons actions)
 </div>
 </template>
 

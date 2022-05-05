@@ -1,6 +1,6 @@
 <template>
 <div class="c-fault-mgmt-list-header">
-    List Header
+    List Header (checkbox, Severity, Name, TripValue, LiveValue, Time)
 </div>
 </template>
 
