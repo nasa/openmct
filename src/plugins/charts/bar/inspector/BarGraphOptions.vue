@@ -385,7 +385,6 @@ export default {
             this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation);
         },
         updateBar(event) {
-            console.log(this.useBar);
             this.openmct.objects.mutate(this.domainObject, `configuration.useBar`, this.useBar === 'true');
         }
     }
