@@ -80,7 +80,7 @@ export default {
             return;
         }
 
-        this.composition.off('add', this.addTelemetryObject);
+        this.composition.off('add', this.addToComposition);
         this.composition.off('remove', this.removeTelemetryObject);
         if (this.unobserve) {
             this.unobserve();
@@ -110,9 +110,48 @@ export default {
                 this.timeContext.off('bounds', this.refreshData);
             }
         },
+        addToComposition(telemetryObject) {
+            if (Object.values(this.telemetryObjects).length > 0) {
+                this.confirmRemoval(telemetryObject);
+            } else {
+                this.addTelemetryObject(telemetryObject);
+            }
+        },
+        confirmRemoval(telemetryObject) {
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will replace the current telemetry source. Do you want to continue?',
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: true,
+                        callback: () => {
+                            const oldTelemetryObject = Object.values(this.telemetryObjects)[0];
+                            this.removeFromComposition(oldTelemetryObject);
+                            this.removeTelemetryObject(oldTelemetryObject.identifier);
+                            this.addTelemetryObject(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            this.removeFromComposition(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        removeFromComposition(telemetryObject) {
+            let composition = this.domainObject.composition.filter(id =>
+                !this.openmct.objects.areIdsEqual(id, telemetryObject.identifier)
+            );
+
+            this.openmct.objects.mutate(this.domainObject, 'composition', composition);
+        },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
-            //TODO: Remove existing telemetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
@@ -195,7 +234,7 @@ export default {
                 return;
             }
 
-            this.composition.on('add', this.addTelemetryObject);
+            this.composition.on('add', this.addToComposition);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
         },
@@ -218,7 +257,10 @@ export default {
         },
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
-            delete this.telemetryObjects[key];
+            if (this.telemetryObjects[key]) {
+                delete this.telemetryObjects[key];
+            }
+
             if (this.telemetryObjectFormats && this.telemetryObjectFormats[key]) {
                 delete this.telemetryObjectFormats[key];
             }
@@ -232,11 +274,13 @@ export default {
                 );
             }
 
-            this.openmct.objects.mutate(
-                this.domainObject,
-                `configuration.axes`,
-                {}
-            );
+            // if (Object.keys(this.telemetryObjects).length <= 0) {
+            //     this.openmct.objects.mutate(
+            //         this.domainObject,
+            //         `configuration.axes`,
+            //         {}
+            //     );
+            // }
 
             this.removeSubscription(key);
 
@@ -253,15 +297,14 @@ export default {
                 return;
             }
 
-            //TODO: check if both xKey and yKey are arrayValues or NOT arrayValues
-            if (!this.domainObject.configuration.axes.xKey || !this.domainObject.configuration.axes.yKey) {
+            if (this.domainObject.configuration.axes.xKey === undefined || this.domainObject.configuration.axes.yKey === undefined) {
                 return;
             }
 
             let xValues = [];
             let yValues = [];
             const xAxisMetadata = axisMetadata.xAxisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
-            if (xAxisMetadata.isArrayValue) {
+            if (xAxisMetadata && xAxisMetadata.isArrayValue) {
                 //populate x and y values
                 let metadataKey = this.domainObject.configuration.axes.xKey;
                 if (data[metadataKey] !== undefined) {
@@ -332,7 +375,8 @@ export default {
         },
         requestDataFor(telemetryObject) {
             const axisMetadata = this.getAxisMetadata(telemetryObject);
-            this.openmct.telemetry.request(telemetryObject)
+            const options = this.getOptions();
+            this.openmct.telemetry.request(telemetryObject, options)
                 .then(data => {
                     data.forEach((datum) => {
                         this.addDataToGraph(telemetryObject, datum, axisMetadata);

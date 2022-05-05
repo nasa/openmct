@@ -63,7 +63,10 @@
                     class="grid-cell value"
                 >{{ xKeyLabel }}</div>
             </li>
-            <li class="grid-row">
+            <li
+                v-if="yKey !== ''"
+                class="grid-row"
+            >
                 <div
                     class="grid-cell label"
                     title="Y axis selection."
@@ -171,8 +174,8 @@ export default {
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            xKey: undefined,
-            yKey: undefined,
+            xKey: this.domainObject.configuration.axes.xKey,
+            yKey: this.domainObject.configuration.axes.yKey,
             xKeyLabel: '',
             yKeyLabel: '',
             plotSeries: [],
@@ -209,7 +212,7 @@ export default {
         registerListeners() {
             this.composition.on('add', this.addSeries);
             this.composition.on('remove', this.removeSeries);
-            this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.setupOptions);
+            this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.setKeysAndSetupOptions);
         },
         stopListening() {
             this.composition.off('add', this.addSeries);
@@ -222,12 +225,17 @@ export default {
             this.$set(this.plotSeries, this.plotSeries.length, series);
             this.setupOptions();
         },
-        removeSeries(series) {
-            const index = this.plotSeries.find(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
-            if (index !== undefined) {
+        removeSeries(seriesIdentifier) {
+            const index = this.plotSeries.findIndex(plotSeries => this.openmct.objects.areIdsEqual(seriesIdentifier, plotSeries.identifier));
+            if (index >= 0) {
                 this.$delete(this.plotSeries, index);
                 this.setupOptions();
             }
+        },
+        setKeysAndSetupOptions() {
+            this.xKey = this.domainObject.configuration.axes.xKey;
+            this.yKey = this.domainObject.configuration.axes.yKey;
+            this.setupOptions();
         },
         setupOptions() {
             this.xKeyOptions = [];
@@ -238,8 +246,10 @@ export default {
 
             let update = false;
             const series = this.plotSeries[0];
-            const metadataValues = this.openmct.telemetry.getMetadata(series).valuesForHints(['range']);
-            metadataValues.forEach((metadataValue) => {
+            const metadataRangeValues = this.openmct.telemetry.getMetadata(series).valuesForHints(['range']);
+            const metadataArrayValues = metadataRangeValues.filter(metadataObj => metadataObj.isArrayValue);
+            const metadataValues = metadataRangeValues.filter(metadataObj => !metadataObj.isArrayValue);
+            metadataArrayValues.forEach((metadataValue) => {
                 this.xKeyOptions.push({
                     name: metadataValue.name || metadataValue.key,
                     value: metadataValue.source || metadataValue.key,
@@ -251,6 +261,20 @@ export default {
                     isArrayValue: metadataValue.isArrayValue
                 });
             });
+
+            //Metadata values that are not array values will be grouped together as x-axis only option.
+            // Here, the y-axis is not relevant.
+            if (metadataValues.length) {
+                this.xKeyOptions.push(
+                    metadataValues.reduce((previousValue, currentValue) => {
+                        return {
+                            name: `${previousValue.name}, ${currentValue.name}`,
+                            value: currentValue.source || currentValue.key,
+                            isArrayValue: currentValue.isArrayValue
+                        };
+                    })
+                );
+            }
 
             let xKeyOptionIndex;
             let yKeyOptionIndex;
@@ -270,7 +294,7 @@ export default {
                 }
             }
 
-            if (metadataValues.length > 1) {
+            if (metadataRangeValues.length > 1) {
                 if (this.domainObject.configuration.axes.yKey) {
                     yKeyOptionIndex = this.yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
                     if (yKeyOptionIndex > -1 && yKeyOptionIndex !== xKeyOptionIndex) {
@@ -316,12 +340,15 @@ export default {
             }
         },
         updateForm(property) {
-            //TODO: Handle xKey and yKey not being arrays
             if (property === 'xKey') {
                 const xKeyOption = this.xKeyOptions.find(option => option.value === this.xKey);
                 if (xKeyOption.swap !== undefined) {
                     //swap
                     this.yKey = this.xKeyOptions[xKeyOption.swap].value;
+                } else if (!xKeyOption.isArrayValue) {
+                    this.yKey = '';
+                } else {
+                    this.yKey = undefined;
                 }
             } else if (property === 'yKey') {
                 const yKeyOption = this.yKeyOptions.find(option => option.value === this.yKey);

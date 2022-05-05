@@ -109,7 +109,6 @@ export default {
         }
     },
     mounted() {
-        this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColorAndName();
         this.removeBarStylesListener = this.openmct.objects.observe(this.domainObject, `configuration.barStyles.series["${this.key}"]`, this.initColorAndName);
     },
@@ -120,6 +119,7 @@ export default {
     },
     methods: {
         initColorAndName() {
+            this.key = this.openmct.objects.makeKeyString(this.item.identifier);
             // this is called before the plot is initialized
             if (!this.domainObject.configuration.barStyles.series[this.key]) {
                 const color = this.colorPalette.getNextColor().asHexString();
