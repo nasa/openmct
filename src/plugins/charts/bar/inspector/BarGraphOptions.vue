@@ -199,7 +199,7 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             colorPalette: this.colorPalette,
             useInterpolation: this.domainObject.configuration.useInterpolation,
-            useBar: this.domainObject.configuration.useBar === true
+            useBar: this.domainObject.configuration.useBar
         };
     },
     computed: {
