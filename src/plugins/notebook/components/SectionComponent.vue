@@ -9,10 +9,14 @@
         class="c-list__item__name js-list__item__name"
         :class="{ 'icon-lock' : section.isLocked }"
         :data-id="section.id"
+        :contenteditable="!section.isLocked"
         @keydown.enter="updateName"
         @blur="updateName"
     >{{ sectionName }}</span>
-    <PopupMenu :popup-menu-items="popupMenuItems" />
+    <PopupMenu
+        v-if="!section.isLocked"
+        :popup-menu-items="popupMenuItems"
+    />
 </div>
 </template>
 
@@ -58,17 +62,17 @@ export default {
             return this.selectedSectionId === this.section.id;
         },
         sectionName() {
-            return this.section.name.length ? this.section.name : `Unnamed ${this.sectionTitle}`
+            return this.section.name.length ? this.section.name : `Unnamed ${this.sectionTitle}`;
         }
     },
-    watch: {
-        section(newSection) {
-            this.toggleContentEditable(newSection);
-        }
-    },
+    // watch: {
+    //     section(newSection) {
+    //         this.toggleContentEditable(newSection);
+    //     }
+    // },
     mounted() {
         this.addPopupMenuItems();
-        this.toggleContentEditable();
+        // this.toggleContentEditable();
     },
     methods: {
         addPopupMenuItems() {
@@ -103,7 +107,7 @@ export default {
             const section = target.closest('.js-list__item');
             const input = section.querySelector('.js-list__item__name');
 
-            if (section.className.indexOf('is-selected') > -1) {
+            if (section.className.indexOf('is-selected') > -1 && !this.section.isLocked) {
                 input.contentEditable = true;
                 input.classList.add('c-input-inline');
 
@@ -118,11 +122,15 @@ export default {
 
             this.$emit('selectSection', id);
         },
-        toggleContentEditable(section = this.section) {
-            const sectionTitle = this.$el.querySelector('span');
-            sectionTitle.contentEditable = section.isSelected;
-        },
+        // toggleContentEditable(section = this.section) {
+        //     const sectionTitle = this.$el.querySelector('span');
+        //     sectionTitle.contentEditable = section.isSelected;
+        // },
         updateName(event) {
+            if (this.section.isLocked) {
+                return;
+            }
+
             const target = event.target;
             target.contentEditable = false;
             target.classList.remove('c-input-inline');

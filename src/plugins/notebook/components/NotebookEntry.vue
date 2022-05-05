@@ -211,6 +211,10 @@ export default {
             this.entry.embeds.push(newEmbed);
         },
         cancelEditMode(event) {
+            if (this.selectedPage.isLocked) {
+                return;
+            }
+
             const isEditing = this.openmct.editor.isEditing();
             if (isEditing) {
                 this.openmct.editor.cancel();

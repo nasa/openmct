@@ -119,7 +119,7 @@
                 </div>
             </div>
             <div
-                v-if="!selectedPage.isLocked"
+                v-if="selectedPage && !selectedPage.isLocked"
                 class="c-notebook__drag-area icon-plus"
                 @click="newEntry()"
                 @dragover="dragOver"
@@ -150,7 +150,7 @@
                     @updateEntry="updateEntry"
                 />
                 <button
-                    v-if="isRestricted && !selectedPage.isLocked"
+                    v-if="showLockButton"
                     class="c-button--major commit-button icon-lock"
                     @click="lockPage()"
                 >
@@ -268,6 +268,11 @@ export default {
             }
 
             return this.sections[0];
+        },
+        showLockButton() {
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+
+            return entries && entries.length > 0 && this.isRestricted && !this.selectedPage.isLocked;
         }
     },
     watch: {

@@ -144,7 +144,7 @@ function RestrictedNotebookPlugin(name = 'Restricted Notebook') {
 
         const type = RESTRICTED_NOTEBOOK_TYPE;
         const icon = 'icon-lock';
-        const description = 'Create and save timestamped notes with embedded object snapshots and the ability to restrict certain functionality.';
+        const description = 'Create and save timestamped notes with embedded object snapshots with the ability to restrict certain functionality.';
         const snapshotContainer = getSnapshotContainer(openmct);
 
         const notebookType = new NotebookType(name, description, icon);
