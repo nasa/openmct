@@ -51,41 +51,29 @@ export default class EditPropertiesAction extends PropertiesAction {
     /**
      * @private
      */
-    async _onSave(changes) {
-        Object.entries(changes).forEach(([key, value]) => {
-            const properties = key.split('.');
-            let object = this.domainObject;
-            const propertiesLength = properties.length;
-            properties.forEach((property, index) => {
-                const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
-                if (isComplexProperty && object[property] !== null) {
-                    object = object[property];
-                } else {
-                    object[property] = value;
-                }
+    _onSave(changes) {
+        try {
+            Object.entries(changes).forEach(([key, value]) => {
+                const properties = key.split('.');
+                let object = this.domainObject;
+                const propertiesLength = properties.length;
+                properties.forEach((property, index) => {
+                    const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
+                    if (isComplexProperty && object[property] !== null) {
+                        object = object[property];
+                    } else {
+                        object[property] = value;
+                    }
+                });
+
+                object = value;
+                this.openmct.objects.mutate(this.domainObject, key, value);
+                this.openmct.notifications.info('Save successful');
             });
-
-            object = value;
-        });
-
-        this.domainObject.modified = Date.now();
-
-        // Show saving progress dialog
-        let dialog = this.openmct.overlays.progressDialog({
-            progressPerc: 'unknown',
-            message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
-            iconClass: 'info',
-            title: 'Saving'
-        });
-
-        const success = await this.openmct.objects.save(this.domainObject);
-        if (success) {
-            this.openmct.notifications.info('Save successful');
-        } else {
+        } catch (error) {
             this.openmct.notifications.error('Error saving objects');
+            console.error(error);
         }
-
-        dialog.dismiss();
     }
 
     /**
