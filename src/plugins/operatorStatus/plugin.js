@@ -21,22 +21,23 @@ export default function operatorStatusPlugin(config) {
                     operatorIndicator.description("Set my operator status");
                     operatorIndicator.iconClass('icon-check');
                     operatorIndicator.element.classList.add("no-minify");
-                    operatorIndicator.on('click', (event) => {
-                        let triggeredByThisIndicator = true;
-
+                    operatorIndicator.on('click', (indicatorClickEvent) => {
                         document.body.appendChild(operatorStatusElement.$el);
-                        operatorStatusElement.positionX = event.clientX;
-                        operatorStatusElement.positionY = event.clientY;
 
-                        document.addEventListener('click', clearOperatorPopup);
+                        let bb = operatorIndicator.element.getBoundingClientRect();
+                        operatorStatusElement.positionX = bb.left;
+                        operatorStatusElement.positionY = bb.bottom;
 
-                        function clearOperatorPopup() {
-                            if (!triggeredByThisIndicator) {
+                        //Use capture so we don't trigger immediately on the same iteration of the event loop
+                        document.addEventListener('click', clearOperatorPopup, {
+                            capture: true
+                        });
+
+                        function clearOperatorPopup(clickAwayEvent) {
+                            if (!operatorStatusElement.$el.contains(clickAwayEvent.target)) {
                                 operatorStatusElement.$el.remove();
                                 document.removeEventListener('click', clearOperatorPopup);
                             }
-
-                            triggeredByThisIndicator = false;
                         }
                     });
 
@@ -72,23 +73,22 @@ export default function operatorStatusPlugin(config) {
                     pollQuestionIndicator.iconClass('icon-draft');
                     pollQuestionIndicator.element.classList.add("no-minify");
 
-                    pollQuestionIndicator.on('click', (event) => {
-                        //Don't propagate, otherwise this event will trigger the listener below and remove itself.
-                        let triggeredByThisIndicator = true;
-
+                    pollQuestionIndicator.on('click', (indicatorClickEvent) => {
                         document.body.appendChild(pollQuestionElement.$el);
-                        pollQuestionElement.positionX = event.clientX;
-                        pollQuestionElement.positionY = event.clientY;
 
-                        document.addEventListener('click', clearPollQuestionPopup);
+                        let bb = pollQuestionIndicator.element.getBoundingClientRect();
+                        pollQuestionElement.positionX = bb.left;
+                        pollQuestionElement.positionY = bb.bottom;
 
-                        function clearPollQuestionPopup() {
-                            if (!triggeredByThisIndicator) {
+                        document.addEventListener('click', clearPollQuestionPopup, {
+                            capture: true
+                        });
+
+                        function clearPollQuestionPopup(clickAwayEvent) {
+                            if (!pollQuestionElement.$el.contains(clickAwayEvent.target)) {
                                 pollQuestionElement.$el.remove();
                                 document.removeEventListener('click', clearPollQuestionPopup);
                             }
-
-                            triggeredByThisIndicator = false;
                         }
                     });
 
