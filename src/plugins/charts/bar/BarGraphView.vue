@@ -337,7 +337,7 @@ export default {
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
                 type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
-                mode: this.domainObject.configuration.useInterpolation !== 'none' ? 'lines' : 'markers',
+                mode: 'lines',
                 line: {
                     shape: this.domainObject.configuration.useInterpolation
                 },

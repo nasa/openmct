@@ -98,8 +98,43 @@
     </div>
     <div class="grid-properties">
         <ul class="l-inspector-part">
-            <h2 title="Use time-based interpolation for telemetry">Line Method</h2>
+            <h2 title="Settings for plot">Settings</h2>
             <li class="grid-row">
+                <div
+                    v-if="isEditing"
+                    class="grid-cell label"
+                    title="Display style for the plot"
+                >Display Style</div>
+                <div
+                    v-if="isEditing"
+                    class="grid-cell value"
+                >
+                    <select
+                        v-model="useBar"
+                        @change="updateBar"
+                    >
+                        <option value="true">Bar</option>
+                        <option value="false">Line</option>
+                    </select>
+                </div>
+                <div
+                    v-if="!isEditing"
+                    class="grid-cell label"
+                    title="Display style for plot"
+                >Display Style</div>
+                <div
+                    v-if="!isEditing"
+                    class="grid-cell value"
+                >{{ {
+                    'true': 'Bar',
+                    'false': 'Line'
+                }[useBar] }}
+                </div>
+            </li>
+            <li
+                v-if="!useBar"
+                class="grid-row"
+            >
                 <div
                     v-if="isEditing"
                     class="grid-cell label"
@@ -113,7 +148,6 @@
                         v-model="useInterpolation"
                         @change="updateInterpolation"
                     >
-                        <option value="none">None</option>
                         <option value="linear">Linear interpolate</option>
                         <option value="hv">Step after</option>
                     </select>
@@ -127,38 +161,19 @@
                     v-if="!isEditing"
                     class="grid-cell value"
                 >{{ {
-                    'none': 'None',
                     'linear': 'Linear interpolation',
                     'hv': 'Step After'
                 }[useInterpolation] }}
                 </div>
             </li>
         </ul>
-        <ul class="l-inspector-part">
-            <h2 title="Use time-based interpolation for telemetry">Bars</h2>
-            <li class="grid-row">
-                <label
-                    v-if="isEditing"
-                    class="c-toggle-switch"
-                >
-                    <input
-                        type="checkbox"
-                        :checked="useBar"
-                        @change="updateBar"
-                    >
-                    <span class="c-toggle-switch__slider"></span>
-                    <span class="c-toggle-switch__label">Show Bars</span>
-                </label>
-                <span
-                    v-if="!isEditing"
-                    class="c-toggle-switch__label grid-cell label"
-                >Show bars:</span>
-                <span
-                    v-if="!isEditing"
-                    class="grid-cell value"
-                >{{ useBar ? 'Yes' : 'No' }}</span>
-            </li>
-        </ul>
+        <!--        <ul-->
+        <!--            v-if="!useBar"-->
+        <!--            class="l-inspector-part"-->
+        <!--        >-->
+        <!--            <h2 title="Use time-based interpolation for telemetry">Line Method</h2>-->
+        <!--            -->
+        <!--        </ul>-->
     </div>
 </div>
 </template>
@@ -370,8 +385,8 @@ export default {
             this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation);
         },
         updateBar(event) {
-            this.useBar = event.target.checked === true;
-            this.openmct.objects.mutate(this.domainObject, `configuration.useBar`, this.useBar === true);
+            console.log(this.useBar);
+            this.openmct.objects.mutate(this.domainObject, `configuration.useBar`, this.useBar === 'true');
         }
     }
 };
