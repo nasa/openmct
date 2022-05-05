@@ -132,7 +132,7 @@
                 </div>
             </li>
             <li
-                v-if="!useBar"
+                v-if="useBar === 'false'"
                 class="grid-row"
             >
                 <div
