@@ -44,14 +44,6 @@ describe("the plugin", function () {
                     key: 'mock-folder',
                     namespace: ''
                 }
-            },
-            {
-                name: 'mock parent folder',
-                type: 'time-strip',
-                identifier: {
-                    key: 'mock-parent-folder',
-                    namespace: ''
-                }
             }
         ];
         const testTelemetry = [
@@ -136,16 +128,17 @@ describe("the plugin", function () {
                     key: "test-plot"
                 },
                 type: "telemetry.plot.scatter-plot",
-                name: "Test Scatter Plot"
+                name: "Test Scatter Plot",
+                configuration: {
+                    axes: {},
+                    styles: {}
+                }
             };
 
             testDomainObject = {
                 identifier: {
                     namespace: "",
                     key: "test-object"
-                },
-                configuration: {
-                    styles: {}
                 },
                 type: "test-object",
                 name: "Test Object",
@@ -234,7 +227,10 @@ describe("the plugin", function () {
         it("allows composition for telemetry that contain at least 2 ranges", () => {
             const parent = {
                 "composition": [],
-                "configuration": {},
+                "configuration": {
+                    axes: {},
+                    styles: {}
+                },
                 "name": "Some Scatter Plot",
                 "type": "telemetry.plot.scatter-plot",
                 "location": "mine",
@@ -284,7 +280,10 @@ describe("the plugin", function () {
         it("disallows composition for telemetry that don't contain at least 2 range hints", () => {
             const parent = {
                 "composition": [],
-                "configuration": {},
+                "configuration": {
+                    axes: {},
+                    styles: {}
+                },
                 "name": "Some Scatter Plot",
                 "type": "telemetry.plot.scatter-plot",
                 "location": "mine",
@@ -376,6 +375,7 @@ describe("the plugin", function () {
                                 },
                                 type: "telemetry.plot.scatter-plot",
                                 configuration: {
+                                    axes: {},
                                     styles: {
                                     }
                                 },
@@ -384,17 +384,6 @@ describe("the plugin", function () {
                                         key: '~Some~foo.scatter'
                                     }
                                 ]
-                            }
-                        }
-                    },
-                    {
-                        context: {
-                            item: {
-                                type: 'time-strip',
-                                identifier: {
-                                    key: 'some-other-key',
-                                    namespace: ''
-                                }
                             }
                         }
                     }
