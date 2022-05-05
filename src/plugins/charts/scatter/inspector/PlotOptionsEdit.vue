@@ -22,7 +22,7 @@
 <template>
 <div class="js-plot-options-edit grid-properties">
     <ul class="l-inspector-part">
-        <h2 title="Y axis settings for this object">X Axis</h2>
+        <h2 title="Object view settings">Settings</h2>
         <li class="grid-row">
             <div
                 class="grid-cell label"
@@ -44,9 +44,6 @@
                 </select>
             </div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Y axis settings for this object">Y Axis</h2>
         <li class="grid-row">
             <div
                 class="grid-cell label"
@@ -68,9 +65,6 @@
                 </select>
             </div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Settings for this object">Color</h2>
         <ColorSwatch
             :current-color="currentColor"
             title="Manually set the line and marker color for this plot."
@@ -79,20 +73,6 @@
             short-label="Color"
             @colorSet="setColor"
         />
-    </ul>
-    <ul class="l-inspector-part">
-        <h2 title="Use time-based interpolation for telemetry">Interpolation</h2>
-        <li class="grid-row">
-            <label class="c-toggle-switch">
-                <input
-                    type="checkbox"
-                    :checked="useInterpolation"
-                    @change="updateInterpolation"
-                >
-                <span class="c-toggle-switch__slider"></span>
-                <span class="c-toggle-switch__label">Use Interpolation</span>
-            </label>
-        </li>
     </ul>
 </div>
 </template>
@@ -110,8 +90,7 @@ export default {
             yKey: undefined,
             xKeyOptions: [],
             yKeyOptions: [],
-            currentColor: undefined,
-            useInterpolation: this.domainObject.configuration.useInterpolation === true
+            currentColor: undefined
         };
     },
     mounted() {
@@ -164,9 +143,9 @@ export default {
             this.$set(this.plotSeries, this.plotSeries.length, series);
             this.setupOptions();
         },
-        removeSeries(series) {
-            const index = this.plotSeries.find(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
-            if (index !== undefined) {
+        removeSeries(seriesIdentifier) {
+            const index = this.plotSeries.findIndex(plotSeries => this.openmct.objects.areIdsEqual(seriesIdentifier, plotSeries.identifier));
+            if (index >= 0) {
                 this.$delete(this.plotSeries, index);
                 this.setupOptions();
             }
@@ -199,13 +178,15 @@ export default {
                 xKeyOptionIndex = this.xKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.xKey);
                 if (xKeyOptionIndex > -1) {
                     this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
+                } else {
+                    this.xKey = undefined;
                 }
-            } else {
-                if (this.xKey === undefined) {
-                    update = true;
-                    xKeyOptionIndex = 0;
-                    this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
-                }
+            }
+
+            if (this.xKey === undefined) {
+                update = true;
+                xKeyOptionIndex = 0;
+                this.xKey = this.xKeyOptions[xKeyOptionIndex].value;
             }
 
             if (metadataValues.length > 1) {
@@ -213,13 +194,15 @@ export default {
                     yKeyOptionIndex = this.yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
                     if (yKeyOptionIndex > -1 && yKeyOptionIndex !== xKeyOptionIndex) {
                         this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
+                    } else {
+                        this.yKey = undefined;
                     }
-                } else {
-                    if (this.yKey === undefined) {
-                        update = true;
-                        yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
-                        this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
-                    }
+                }
+
+                if (this.yKey === undefined) {
+                    update = true;
+                    yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
+                    this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
                 }
 
                 this.yKeyOptions = this.yKeyOptions.map((option, index) => {
@@ -273,10 +256,6 @@ export default {
                 xKey: this.xKey,
                 yKey: this.yKey
             });
-        },
-        updateInterpolation(event) {
-            this.useInterpolation = event.target.checked === true;
-            this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation === true);
         }
     }
 };

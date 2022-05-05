@@ -16,10 +16,8 @@
     <div
         ref="plot"
         class="c-scatter-chart"
-        @plotly_relayout="zoom"
     ></div>
     <div
-        v-if="false"
         ref="localControl"
         class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover"
     >
@@ -90,8 +88,14 @@ export default {
             displayModeBar: false
         });
         this.registerListeners();
+
+        this.$refs.plot.on('plotly_relayout', this.zoom);
     },
     beforeDestroy() {
+        if (this.$refs.plot && this.$refs.plot.off) {
+            this.$refs.plot.off('plotly_relayout', this.zoom);
+        }
+
         if (this.plotResizeObserver) {
             this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
             clearTimeout(this.resizeTimer);
@@ -99,6 +103,10 @@ export default {
 
         if (this.unlistenUnderlay) {
             this.unlistenUnderlay();
+        }
+
+        if (this.unobserveColorChanges) {
+            this.unobserveColorChanges();
         }
     },
     methods: {
@@ -111,17 +119,19 @@ export default {
         },
         observeForUnderlayPlotChanges() {
             this.getUnderlayPlotData();
+            this.updateData();
         },
         getAxisMinMax() {
             if (!this.data.length) {
                 return;
             }
 
-            if (this.data[0].xaxis) {
+            // For now, use x and y axes min, max values only if an underlay is available
+            if (this.shapesData.length && this.data[0].xaxis) {
                 this.xAxisRange = this.data[0].xaxis;
             }
 
-            if (this.data[0].yaxis) {
+            if (this.shapesData.length && this.data[0].yaxis) {
                 this.yAxisRange = this.data[0].yaxis;
             }
         },
@@ -169,8 +179,7 @@ export default {
                     domain: xAxisDomain,
                     range: [this.xAxisRange.min, this.xAxisRange.max],
                     title: this.plotAxisTitle.xAxisTitle,
-                    automargin: true,
-                    fixedrange: true
+                    automargin: true
                 },
                 yaxis: primaryYaxis,
                 margin: {
@@ -192,7 +201,7 @@ export default {
                 const yAxisMetadata = datum.yAxisMetadata;
                 const range = '1';
                 const side = 'left';
-                const name = '';
+                const name = yAxisMetadata.name;
                 const unit = yAxisMetadata.units;
 
                 yAxisMeta[range] = {
@@ -229,7 +238,6 @@ export default {
             const title = `${name} ${unit ? '(' + unit + ')' : ''}`;
             const yaxis = {
                 automargin: true,
-                fixedrange: true,
                 title
             };
 
@@ -252,6 +260,7 @@ export default {
             return yaxis;
         },
         registerListeners() {
+            this.unobserveColorChanges = this.openmct.objects.observe(this.domainObject, 'configuration.styles.color', this.updateColors);
             this.unlistenUnderlay = this.openmct.objects.observe(this.domainObject, 'selectFile', this.observeForUnderlayPlotChanges);
             this.resizeTimer = false;
             if (window.ResizeObserver) {
@@ -265,10 +274,28 @@ export default {
                 this.plotResizeObserver.observe(this.$refs.plotWrapper);
             }
         },
-        reset() {
-            this.updatePlot();
+        updateColors() {
+            const colors = [];
+            const indices = [];
+            this.data.forEach((item, index) => {
+                const colorExists = this.domainObject.configuration.styles.color;
+                indices.push(index);
+                if (colorExists) {
+                    colors.push(this.domainObject.configuration.styles.color);
+                } else {
+                    colors.push(item.marker.color);
+                }
+            });
+            const plotUpdate = {
+                'marker.color': colors
+            };
 
+            Plotly.restyle(this.$refs.plot, plotUpdate, indices);
+        },
+        reset() {
             this.isZoomed = false;
+
+            this.updatePlot();
             this.$emit('subscribe');
         },
         updateData() {
@@ -292,7 +319,7 @@ export default {
             localControl.style.display = 'block';
         },
         updatePlot() {
-            if (!this.$refs || !this.$refs.plot) {
+            if (!this.$refs || !this.$refs.plot || this.isZoomed) {
                 return;
             }
 
@@ -303,9 +330,6 @@ export default {
             const { autosize } = eventData;
 
             if (autosize || autorange) {
-                this.isZoomed = false;
-                this.reset();
-
                 return;
             }
 

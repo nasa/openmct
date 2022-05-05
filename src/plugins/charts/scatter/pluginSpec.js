@@ -22,10 +22,10 @@
 
 import {createOpenMct, resetApplicationState} from "utils/testing";
 import Vue from "vue";
-import BarGraphPlugin from "./plugin";
-import BarGraph from './BarGraphPlot.vue';
+import ScatterPlotPlugin from "./plugin";
+import ScatterPlot from './ScatterPlotView.vue';
 import EventEmitter from "EventEmitter";
-import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './BarGraphConstants';
+import { SCATTER_PLOT_VIEW, SCATTER_PLOT_KEY } from './ScatterPlotConstants';
 
 describe("the plugin", function () {
     let element;
@@ -84,7 +84,7 @@ describe("the plugin", function () {
             return telemetryPromise;
         });
 
-        openmct.install(new BarGraphPlugin());
+        openmct.install(new ScatterPlotPlugin());
 
         element = document.createElement("div");
         element.style.width = "640px";
@@ -122,21 +122,21 @@ describe("the plugin", function () {
         resetApplicationState(openmct).then(done).catch(done);
     });
 
-    describe("The bar graph view", () => {
+    describe("The scatter plot view", () => {
         let testDomainObject;
-        let barGraphObject;
+        let scatterPlotObject;
         // eslint-disable-next-line no-unused-vars
         let component;
         let mockComposition;
 
         beforeEach(async () => {
-            barGraphObject = {
+            scatterPlotObject = {
                 identifier: {
                     namespace: "",
                     key: "test-plot"
                 },
-                type: "telemetry.plot.bar-graph",
-                name: "Test Bar Graph"
+                type: "telemetry.plot.scatter-plot",
+                name: "Test Scatter Plot"
             };
 
             testDomainObject = {
@@ -145,9 +145,7 @@ describe("the plugin", function () {
                     key: "test-object"
                 },
                 configuration: {
-                    barStyles: {
-                        series: {}
-                    }
+                    styles: {}
                 },
                 type: "test-object",
                 name: "Test Object",
@@ -189,98 +187,56 @@ describe("the plugin", function () {
             component = new Vue({
                 el: viewContainer,
                 components: {
-                    BarGraph
+                    ScatterPlot
                 },
                 provide: {
                     openmct: openmct,
-                    domainObject: barGraphObject,
-                    composition: openmct.composition.get(barGraphObject)
+                    domainObject: scatterPlotObject,
+                    composition: openmct.composition.get(scatterPlotObject)
                 },
-                template: "<BarGraph></BarGraph>"
+                template: "<ScatterPlot></ScatterPlot>"
             });
 
             await Vue.nextTick();
         });
 
-        it("provides a bar graph view", () => {
-            const applicableViews = openmct.objectViews.get(barGraphObject, mockObjectPath);
-            const plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
+        it("provides a scatter plot view", () => {
+            const applicableViews = openmct.objectViews.get(scatterPlotObject, mockObjectPath);
+            const plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === SCATTER_PLOT_VIEW);
             expect(plotViewProvider).toBeDefined();
         });
 
-        it("Renders plotly bar graph", () => {
-            let barChartElement = element.querySelectorAll(".plotly");
-            expect(barChartElement.length).toBe(1);
-        });
-
-        it("Handles dots in telemetry id", () => {
-            const dotFullTelemetryObject = {
-                identifier: {
-                    namespace: "someNamespace",
-                    key: "~OpenMCT~outer.test-object.foo.bar"
-                },
-                type: "test-dotful-object",
-                name: "A Dotful Object",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-key.foo.name.45",
-                        name: "Some dotful attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key.bar.344.rad",
-                        name: "Another dotful attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(barGraphObject, mockObjectPath);
-            const plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
-            const barGraphView = plotViewProvider.view(testDomainObject, [testDomainObject]);
-            barGraphView.show(child, true);
-            expect(testDomainObject.configuration.barStyles.series["test-object"].name).toEqual("Test Object");
-            mockComposition.emit('add', dotFullTelemetryObject);
-            expect(testDomainObject.configuration.barStyles.series["someNamespace:~OpenMCT~outer.test-object.foo.bar"].name).toEqual("A Dotful Object");
-            barGraphView.destroy();
+        it("Renders plotly scatter plot", () => {
+            let scatterPlotElement = element.querySelectorAll(".plotly");
+            expect(scatterPlotElement.length).toBe(1);
         });
     });
 
-    describe("the bar graph objects", () => {
+    describe("the scatter plot objects", () => {
         const mockObject = {
-            name: 'A very nice bar graph',
-            key: BAR_GRAPH_KEY,
+            name: 'A very nice scatter plot',
+            key: SCATTER_PLOT_KEY,
             creatable: true
         };
 
-        it('defines a bar graph object type with the correct key', () => {
-            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
+        it('defines a scatter plot object type with the correct key', () => {
+            const objectDef = openmct.types.get(SCATTER_PLOT_KEY).definition;
             expect(objectDef.key).toEqual(mockObject.key);
         });
 
         it('is creatable', () => {
-            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
+            const objectDef = openmct.types.get(SCATTER_PLOT_KEY).definition;
             expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
     });
 
-    describe("The bar graph composition policy", () => {
-        it("allows composition for telemetry that contain at least one range", () => {
+    describe("The scatter plot composition policy", () => {
+        it("allows composition for telemetry that contain at least 2 ranges", () => {
             const parent = {
                 "composition": [],
                 "configuration": {},
-                "name": "Some Bar Graph",
-                "type": "telemetry.plot.bar-graph",
+                "name": "Some Scatter Plot",
+                "type": "telemetry.plot.scatter-plot",
                 "location": "mine",
                 "modified": 1631005183584,
                 "persisted": 1631005183502,
@@ -309,6 +265,12 @@ describe("the plugin", function () {
                         hints: {
                             range: 1
                         }
+                    }, {
+                        key: "some-other-key2",
+                        name: "Another attribute2",
+                        hints: {
+                            range: 2
+                        }
                     }]
                 }
             };
@@ -319,12 +281,12 @@ describe("the plugin", function () {
             expect(parent.composition.length).toBe(1);
         });
 
-        it("disallows composition for telemetry that don't contain any range hints", () => {
+        it("disallows composition for telemetry that don't contain at least 2 range hints", () => {
             const parent = {
                 "composition": [],
                 "configuration": {},
-                "name": "Some Bar Graph",
-                "type": "telemetry.plot.bar-graph",
+                "name": "Some Scatter Plot",
+                "type": "telemetry.plot.scatter-plot",
                 "location": "mine",
                 "modified": 1631005183584,
                 "persisted": 1631005183502,
@@ -343,45 +305,7 @@ describe("the plugin", function () {
                 telemetry: {
                     values: [{
                         key: "some-key",
-                        name: "Some attribute"
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute"
-                    }]
-                }
-            };
-            const composition = openmct.composition.get(parent);
-            expect(() => {
-                composition.add(testTelemetryObject);
-            }).toThrow();
-            expect(parent.composition.length).toBe(0);
-        });
-        it("disallows composition for condition sets", () => {
-            const parent = {
-                "composition": [],
-                "configuration": {},
-                "name": "Some Bar Graph",
-                "type": "telemetry.plot.bar-graph",
-                "location": "mine",
-                "modified": 1631005183584,
-                "persisted": 1631005183502,
-                "identifier": {
-                    "namespace": "",
-                    "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
-                }
-            };
-            const testTelemetryObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-object"
-                },
-                type: "conditionSet",
-                name: "Test Object",
-                telemetry: {
-                    values: [{
-                        key: "some-key",
                         name: "Some attribute",
-                        format: "enum",
                         hints: {
                             domain: 1
                         }
@@ -450,21 +374,14 @@ describe("the plugin", function () {
                                     key: "test-object",
                                     namespace: ''
                                 },
-                                type: "telemetry.plot.bar-graph",
+                                type: "telemetry.plot.scatter-plot",
                                 configuration: {
-                                    barStyles: {
-                                        series: {
-                                            '~Some~foo.bar': {
-                                                name: 'A telemetry object',
-                                                type: 'some-type',
-                                                isAlias: true
-                                            }
-                                        }
+                                    styles: {
                                     }
                                 },
                                 composition: [
                                     {
-                                        key: '~Some~foo.bar'
+                                        key: '~Some~foo.scatter'
                                     }
                                 ]
                             }
@@ -501,7 +418,7 @@ describe("the plugin", function () {
             plotInspectorView.show(viewContainer);
 
             await Vue.nextTick();
-            optionsElement = element.querySelector('.c-bar-graph-options');
+            optionsElement = element.querySelector('.c-scatter-plot-options');
         });
 
         afterEach(() => {
@@ -510,11 +427,6 @@ describe("the plugin", function () {
 
         it('it renders the options', () => {
             expect(optionsElement).toBeDefined();
-        });
-
-        it('shows the name', () => {
-            const seriesEl = optionsElement.querySelector('.c-object-label__name');
-            expect(seriesEl.innerHTML).toEqual('A telemetry object');
         });
     });
 });

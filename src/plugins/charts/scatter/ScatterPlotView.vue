@@ -25,11 +25,14 @@
     class="c-plot c-scatter-chart-view"
     :data="trace"
     :plot-axis-title="plotAxisTitle"
+    @subscribe="subscribeToAll"
+    @unsubscribe="removeAllSubscriptions"
 />
 </template>
 
 <script>
 import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
+import _ from 'lodash';
 
 export default {
     components: {
@@ -39,8 +42,8 @@ export default {
     data() {
         this.telemetryObjects = {};
         this.telemetryObjectFormats = {};
-        this.telemetryCollections = {};
         this.valuesByTimestamp = {};
+        this.subscriptions = [];
 
         return {
             trace: []
@@ -62,17 +65,19 @@ export default {
         this.setTimeContext();
         this.loadComposition();
         this.reloadTelemetry = this.reloadTelemetry.bind(this);
+        this.reloadTelemetry = _.debounce(this.reloadTelemetry, 500);
         this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.reloadTelemetry);
     },
     beforeDestroy() {
         this.stopFollowingTimeContext();
 
-        Object.keys(this.telemetryCollections).forEach(this.removeTelemetryCollection);
         if (!this.composition) {
             return;
         }
 
-        this.composition.off('add', this.addTelemetryObject);
+        this.removeAllSubscriptions();
+
+        this.composition.off('add', this.addToComposition);
         this.composition.off('remove', this.removeTelemetryObject);
         if (this.unobserve) {
             this.unobserve();
@@ -94,13 +99,54 @@ export default {
                 this.timeContext.off('bounds', this.reloadTelemetry);
             }
         },
+        addToComposition(telemetryObject) {
+            if (Object.values(this.telemetryObjects).length > 0) {
+                this.confirmRemoval(telemetryObject);
+            } else {
+                this.addTelemetryObject(telemetryObject);
+            }
+        },
+        removeFromComposition(telemetryObject) {
+            let composition = this.domainObject.composition.filter(id =>
+                !this.openmct.objects.areIdsEqual(id, telemetryObject.identifier)
+            );
+
+            this.openmct.objects.mutate(this.domainObject, 'composition', composition);
+        },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
-            this.addTelemetryCollection(key);
+            this.getDataForTelemetry(key);
+        },
+        confirmRemoval(telemetryObject) {
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will replace the current telemetry source. Do you want to continue?',
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: true,
+                        callback: () => {
+                            const oldTelemetryObject = Object.values(this.telemetryObjects)[0];
+                            this.removeFromComposition(oldTelemetryObject);
+                            this.removeTelemetryObject(oldTelemetryObject.identifier);
+                            this.valuesByTimestamp = {};
+                            this.addTelemetryObject(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            this.removeFromComposition(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
         },
         getTelemetryProcessor(keyString) {
             return (telemetry) => {
@@ -127,52 +173,39 @@ export default {
         },
         loadComposition() {
             this.composition = this.openmct.composition.get(this.domainObject);
-            this.composition.on('add', this.addTelemetryObject);
+            this.composition.on('add', this.addToComposition);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
         },
         reloadTelemetry() {
-            Object.keys(this.telemetryCollections).forEach(key => {
-                this.removeTelemetryCollection(key);
-            });
-
             this.valuesByTimestamp = {};
 
             Object.keys(this.telemetryObjects).forEach(key => {
-                this.addTelemetryCollection(key);
+                this.getDataForTelemetry(key);
             });
         },
-        addTelemetryCollection(key) {
+        getDataForTelemetry(key) {
             const telemetryObject = this.telemetryObjects[key];
             if (!telemetryObject) {
                 return;
             }
 
-            // this.telemetryCollections[key] = this.openmct.telemetry
-            //     .requestCollection(telemetryObject);
-
             const telemetryProcessor = this.getTelemetryProcessor(key);
-            this.openmct.telemetry.request(telemetryObject).then(telemetryProcessor);
-            // this.telemetryCollections[key].on('remove', telemetryRemover);
-            // this.telemetryCollections[key].on('add', telemetryProcessor);
-            // // this.telemetryCollections[key].on('clear', this.clearData);
-            // this.telemetryCollections[key].load();
-        },
-        removeTelemetryCollection(keyString) {
-            if (this.telemetryCollections[keyString]) {
-                this.telemetryCollections[keyString].destroy();
-                this.telemetryCollections[keyString] = undefined;
-                delete this.telemetryCollections[keyString];
-            }
+            const options = this.getOptions();
+            this.openmct.telemetry.request(telemetryObject, options).then(telemetryProcessor);
+            this.subscribeToObject(telemetryObject);
         },
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
-            delete this.telemetryObjects[key];
+            if (this.telemetryObjects[key]) {
+                delete this.telemetryObjects[key];
+            }
+
             if (this.telemetryObjectFormats && this.telemetryObjectFormats[key]) {
                 delete this.telemetryObjectFormats[key];
             }
 
-            this.removeTelemetryCollection(key);
+            this.removeSubscription(key);
         },
         addDataToGraph(telemetryObject, data) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -264,6 +297,44 @@ export default {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];
 
             return formats[metadataKey].parse(datum);
+        },
+        getOptions() {
+            const { start, end } = this.timeContext.bounds();
+
+            return {
+                end,
+                start
+            };
+        },
+        subscribeToObject(telemetryObject) {
+            const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+
+            this.removeSubscription(key);
+
+            const options = this.getOptions();
+            const unsubscribe = this.openmct.telemetry.subscribe(telemetryObject,
+                data => this.addDataToGraph(telemetryObject, data)
+                , options);
+
+            this.subscriptions.push({
+                key,
+                unsubscribe
+            });
+        },
+        subscribeToAll() {
+            const telemetryObjects = Object.values(this.telemetryObjects);
+            telemetryObjects.forEach(this.subscribeToObject);
+        },
+        removeAllSubscriptions() {
+            this.subscriptions.forEach(subscription => subscription.unsubscribe());
+            this.subscriptions = [];
+        },
+        removeSubscription(key) {
+            const found = this.subscriptions.findIndex(subscription => subscription.key === key);
+            if (found > -1) {
+                this.subscriptions[found].unsubscribe();
+                this.subscriptions.splice(found, 1);
+            }
         }
     }
 };
