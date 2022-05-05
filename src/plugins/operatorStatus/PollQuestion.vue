@@ -14,15 +14,13 @@
             @change="updatePollQuestion"
         >
     </div>
-    <div>
-        <div class="c-status-count">3</div>
-        <div class="c-status-count">2</div>
-        <div class="c-status-count">2</div>
+    <div v-if="canGetStatusSummary">
+        <div
+            v-for="entry in statusCounts"
+            :key="entry[0]"
+            class="c-status-count"
+        >{{ entry[1] }}</div>
     </div>
-    <div><button
-        class="c-button"
-        @click="clearAllResponses"
-    > Clear All Responses</button></div>
 </div>
 </template>
 
@@ -44,7 +42,9 @@ export default {
         return {
             pollQuestionUpdated: '--',
             currentPollQuestion: '--',
-            newPollQuestion: undefined
+            newPollQuestion: undefined,
+            canGetStatusSummary: false,
+            statusCounts: []
         };
     },
     computed: {
@@ -56,10 +56,11 @@ export default {
             };
         }
     },
-    mounted() {
+    async mounted() {
         this.unsubscribe = [];
         this.fetchCurrentPoll();
         this.subscribeToPollQuestion();
+        this.canGetStatusSummary = await this.openmct.user.canGetUsersByStatus();
     },
     beforeDestroy() {
         this.unsubscribe.forEach(unsubscribe => unsubscribe);
@@ -83,6 +84,19 @@ export default {
         async updatePollQuestion() {
             await this.openmct.user.setPollQuestion(this.newPollQuestion);
             this.newPollQuestion = undefined;
+        },
+        async fetchStatusSummary() {
+            const allStatuses = await this.openmct.user.getPossibleStatuses();
+            const usersByStatus = await Promise.all(allStatuses.map(status => {
+                return this.openmct.user.getUsersByStatus(status);
+            }));
+            const statusToUserCountMap = allStatuses.reduce((map, status, index) => {
+                map[status] = usersByStatus[index].length;
+
+                return map;
+            }, {});
+
+            this.statusCounts = statusToUserCountMap.entries();
         },
         clearAllResponses() {
             this.openmct.user.clearAllStatuses();

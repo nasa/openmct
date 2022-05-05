@@ -137,11 +137,31 @@ class UserAPI extends EventEmitter {
         }
     }
 
-    getStatus(role) {
+    getStatus() {
         this._noProviderCheck();
 
         if (this._provider.getStatus) {
-            return this._provider.getStatus(role);
+            return this._provider.getStatus();
+        } else {
+            this._error("User provider does not support role status");
+        }
+    }
+
+    canGetUsersByStatus() {
+        this._noProviderCheck();
+
+        if (this._provider.canGetUsersByStatus) {
+            return this._provider.canGetUsersByStatus();
+        } else {
+            return false;
+        }
+    }
+
+    getUsersByStatus(status) {
+        this._noProviderCheck();
+
+        if (this._provider.getUsersByStatus) {
+            return this._provider.getUsersByStatus();
         } else {
             this._error("User provider does not support role status");
         }
