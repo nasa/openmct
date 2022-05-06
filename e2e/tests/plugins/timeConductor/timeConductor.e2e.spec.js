@@ -73,16 +73,21 @@ test.describe('Time counductor input fields real-time mode', () => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
-        // Set a specific time range for consistency, otherwise it will change
-        // on every test to a range based on the current time.
+        // Set realtime "local clock" mode offsets
         const timeInputs = page.locator('input.c-input--datetime');
 
-        // Start time input
-        await timeInputs.first().click();
-        await timeInputs.first().fill('2022-03-29 22:00:00.000Z');
+        // Click Fixed Timespan button
+        await page.locator('.c-button__label >> text=Fixed Timespan').click();
 
-        // End time input
-        await timeInputs.nth(1).click();
-        await timeInputs.nth(1).fill('2022-03-29 22:00:45.000Z');
+        // Click Local Clock
+        await page.locator('.icon-clock >> text=Local Clock').click();
+
+        // // Start time input
+        // await timeInputs.first().click();
+        // await timeInputs.first().fill('2022-03-29 22:00:00.000Z');
+
+        // // End time input
+        // await timeInputs.nth(1).click();
+        // await timeInputs.nth(1).fill('2022-03-29 22:00:45.000Z');
     });
 });
