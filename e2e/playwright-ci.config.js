@@ -28,8 +28,8 @@ const config = {
         {
             name: 'chrome',
             use: {
-                browserName: 'chromium'
-                //...devices['Desktop Chrome']
+                browserName: 'chromium',
+                channel: 'chrome'
             }
         },
         {
