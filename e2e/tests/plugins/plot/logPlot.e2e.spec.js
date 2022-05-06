@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 /*
-Tests to verify log plot functionality.
+Tests to verify log plot functionality. Note this test suite if very much under active development and should not
+necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('@playwright/test');
@@ -43,6 +44,7 @@ test.describe('Log plot tests', () => {
         //await testLogPlotPixels(page);
 
         // refresh page and wait for charts and ticks to load
+        await page.waitForTimeout(1 * 1000);
         await page.reload({ waitUntil: 'networkidle'});
         await page.waitForSelector('.gl-plot-chart-area');
         await page.waitForSelector('.gl-plot-y-tick-label');
