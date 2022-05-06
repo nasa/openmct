@@ -2,13 +2,20 @@ import FaultManagementViewProvider from './FaultManagementViewProvider';
 import FaultManagementTelemetryProvider from './FaultManagementTelemetryProvider';
 import FaultManagementObjectProvider from './FaultManagementObjectProvider';
 
-import { FAULT_MANAGEMENT_VIEW } from './constants';
+import { FAULT_MANAGEMENT_TYPE } from './constants';
 // Non editable and non creatable
 //  check with gatard
 //  check XTCE standard ()
 
 export default function FaultManagementPlugin(config = {}) {
     return function (openmct) {
+        openmct.types.addType(FAULT_MANAGEMENT_TYPE, {
+            name: 'Fault Management',
+            creatable: false,
+            description: 'Fault Management View',
+            cssClass: 'icon-telemetry'
+        });
+
         openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
 
         openmct.objects.addProvider('taxonomy', new FaultManagementObjectProvider(openmct));
@@ -19,13 +26,5 @@ export default function FaultManagementPlugin(config = {}) {
         }
 
         openmct.telemetry.addProvider(faultManagementTelemetryProvider);
-
-        openmct.types.addType(FAULT_MANAGEMENT_VIEW, {
-            name: 'Fault Management',
-            creatable: false,
-            description: 'FAULT_MANAGEMENT_VIEW',
-            cssClass: 'icon-telemetry',
-            initialize: function (object) {}
-        });
     };
 }

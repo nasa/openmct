@@ -1,5 +1,5 @@
 import FaultManagementView from './FaultManagementView.vue';
-import { FAULT_MANAGEMENT_VIEW } from './constants';
+import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
 import Vue from 'vue';
 
 export default class FaultManagementViewProvider {
@@ -9,7 +9,7 @@ export default class FaultManagementViewProvider {
     }
 
     canView(domainObject) {
-        return domainObject.type === FAULT_MANAGEMENT_VIEW;
+        return domainObject.type === FAULT_MANAGEMENT_TYPE;
     }
 
     canEdit(domainObject) {

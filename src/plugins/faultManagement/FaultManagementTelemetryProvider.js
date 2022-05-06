@@ -1,4 +1,4 @@
-import { FAULT_MANAGEMENT_VIEW } from './constants';
+import { FAULT_MANAGEMENT_TYPE } from './constants';
 
 export default class FaultManagementTelemetryProvider {
     constructor(openmct, config) {
@@ -7,11 +7,11 @@ export default class FaultManagementTelemetryProvider {
     }
 
     supportsRequest(domainObject) {
-        return domainObject.type === FAULT_MANAGEMENT_VIEW;
+        return domainObject.type === FAULT_MANAGEMENT_TYPE;
     }
 
     supportsSubscribe(domainObject) {
-        return domainObject.type === FAULT_MANAGEMENT_VIEW;
+        return domainObject.type === FAULT_MANAGEMENT_TYPE;
     }
 
     subscribe(domainObject, callback) {
@@ -22,6 +22,7 @@ export default class FaultManagementTelemetryProvider {
     request(domainObject, options) {
         console.log('TODO request', domainObject);
 
-        return Promise.resolve({});
+        return fetch(this.config.url)
+            .then(res => res.json);
     }
 }

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { FAULT_MANAGEMENT_VIEW } from './constants';
+import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
 
 export default class FaultManagementObjectProvider {
     constructor(openmct) {
@@ -39,7 +39,7 @@ export default class FaultManagementObjectProvider {
                 namespace: this.namespace
             },
             name: 'Fault Management',
-            type: FAULT_MANAGEMENT_VIEW,
+            type: FAULT_MANAGEMENT_TYPE,
             location: 'ROOT'
         };
 
@@ -49,12 +49,6 @@ export default class FaultManagementObjectProvider {
     get(identifier) {
         console.log('identifier', identifier);
 
-        // if (identifier.key === OBJECT_TYPES.EVENTS_OBJECT_TYPE) {
         return Promise.resolve(this.rootObject);
-        // }
-
-        // return this.getTelemetryDictionary().then(dictionary => {
-        //     return dictionary[identifier.key];
-        // });
     }
 }
