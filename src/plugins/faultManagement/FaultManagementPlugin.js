@@ -2,7 +2,7 @@ import FaultManagementViewProvider from './FaultManagementViewProvider';
 import FaultManagementTelemetryProvider from './FaultManagementTelemetryProvider';
 import FaultManagementObjectProvider from './FaultManagementObjectProvider';
 
-import { FAULT_MANAGEMENT_TYPE } from './constants';
+import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_NAMESPACE } from './constants';
 // Non editable and non creatable
 //  check with gatard
 //  check XTCE standard ()
@@ -18,7 +18,7 @@ export default function FaultManagementPlugin(config = {}) {
 
         openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
 
-        openmct.objects.addProvider('taxonomy', new FaultManagementObjectProvider(openmct));
+        openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
 
         let { faultManagementTelemetryProvider } = config;
         if (!faultManagementTelemetryProvider) {

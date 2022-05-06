@@ -20,9 +20,7 @@ export default class FaultManagementTelemetryProvider {
     }
 
     request(domainObject, options) {
-        console.log('TODO request', domainObject);
-
         return fetch(this.config.url)
-            .then(res => res.json);
+            .then(res => res.json());
     }
 }

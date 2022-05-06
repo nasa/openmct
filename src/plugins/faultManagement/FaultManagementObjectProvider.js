@@ -20,19 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
+import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW, FAULT_MANAGEMENT_NAMESPACE } from './constants';
 
 export default class FaultManagementObjectProvider {
     constructor(openmct) {
         this.openmct = openmct;
-        this.namespace = 'taxonomy';
+        this.namespace = FAULT_MANAGEMENT_NAMESPACE;
         this.key = FAULT_MANAGEMENT_VIEW;
         this.objects = {};
 
-        this.createRootObject();
+        this.createFaultManagementRootObject();
     }
 
-    createRootObject() {
+    createFaultManagementRootObject() {
         this.rootObject = {
             identifier: {
                 key: this.key,
@@ -47,7 +47,6 @@ export default class FaultManagementObjectProvider {
     }
 
     get(identifier) {
-        console.log('identifier', identifier);
         if (identifier.key === FAULT_MANAGEMENT_VIEW) {
             return Promise.resolve(this.rootObject);
         }
