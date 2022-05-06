@@ -82,6 +82,13 @@ test.describe('Time counductor input fields real-time mode', () => {
         // Click Local Clock
         await page.locator('.icon-clock >> text=Local Clock').click();
 
+        // Set Time Offset
+        await page.locator('.c-conductor__delta-button >> text=00:30:00').click();
+
+        // Input Time Offset
+        await page.fill('.pr-time-controls__secs', '23');
+        
+
         // // Start time input
         // await timeInputs.first().click();
         // await timeInputs.first().fill('2022-03-29 22:00:00.000Z');
