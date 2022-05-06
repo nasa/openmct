@@ -67,3 +67,22 @@ test.describe('Time counductor operations', () => {
         expect(endDateValidityStatus).not.toBeTruthy();
     });
 });
+
+test.describe('Time counductor input fields real-time mode', () => {
+    test('validate input fields in real-time mode', async ({ page }) => {
+        //Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Set a specific time range for consistency, otherwise it will change
+        // on every test to a range based on the current time.
+        const timeInputs = page.locator('input.c-input--datetime');
+
+        // Start time input
+        await timeInputs.first().click();
+        await timeInputs.first().fill('2022-03-29 22:00:00.000Z');
+
+        // End time input
+        await timeInputs.nth(1).click();
+        await timeInputs.nth(1).fill('2022-03-29 22:00:45.000Z');
+    });
+});
