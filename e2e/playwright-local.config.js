@@ -8,7 +8,7 @@ const { devices } = require('@playwright/test');
 const config = {
     retries: 0,
     testDir: 'tests',
-    timeout: 30 * 1000,
+    timeout: 60 * 1000, //This is total test timeout. Will adjust as needed.
     webServer: {
         command: 'npm run start',
         port: 8080,
