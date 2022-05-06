@@ -48,7 +48,10 @@ export default class FaultManagementObjectProvider {
 
     get(identifier) {
         console.log('identifier', identifier);
+        if (identifier.key === FAULT_MANAGEMENT_VIEW) {
+            return Promise.resolve(this.rootObject);
+        }
 
-        return Promise.resolve(this.rootObject);
+        return Promise.reject();
     }
 }
