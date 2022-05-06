@@ -26,16 +26,23 @@ import createExampleUser from './exampleUserCreator';
 
 const STATUSES = [{
     key: "NO_STATUS",
-    label: "No Status"
+    label: "No Status",
+    iconClass: "icon-info"
 }, {
     key: "NO_GO",
-    label: "No Go"
+    label: "No Go",
+    iconClass: "icon-x",
+    statusClass: "s-status-error"
 }, {
     key: "GO",
-    label: "Go"
+    label: "Go",
+    iconClass: "icon-check",
+    statusClass: "s-status-ok"
 }, {
     key: "MAYBE",
-    label: "Maybe"
+    label: "Maybe",
+    iconClass: "icon-alert-triangle",
+    statusClass: "s-status-warning"
 }];
 
 export default class ExampleUserProvider extends EventEmitter {
@@ -120,6 +127,14 @@ export default class ExampleUserProvider extends EventEmitter {
 
     getPossibleStatuses() {
         return Promise.resolve(STATUSES);
+    }
+
+    getUsersForStatus(status) {
+        return Promise.resolve({
+            "NO_STATUS": ["user1", "user2", "user3"],
+            "NO_GO": ["user4"],
+            "GO": ["user5", "user6"]
+        }[status] || []);
     }
 
     _login() {

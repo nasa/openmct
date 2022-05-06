@@ -147,21 +147,21 @@ class UserAPI extends EventEmitter {
         }
     }
 
-    canGetUsersByStatus() {
+    canGetUsersForStatus() {
         this._noProviderCheck();
 
-        if (this._provider.canGetUsersByStatus) {
-            return this._provider.canGetUsersByStatus();
+        if (this._provider.getUsersForStatus) {
+            return true;
         } else {
             return false;
         }
     }
 
-    getUsersByStatus(status) {
+    getUsersForStatus(status) {
         this._noProviderCheck();
 
-        if (this._provider.getUsersByStatus) {
-            return this._provider.getUsersByStatus();
+        if (this._provider.getUsersForStatus) {
+            return this._provider.getUsersForStatus(status);
         } else {
             this._error("User provider does not support role status");
         }
@@ -177,11 +177,14 @@ class UserAPI extends EventEmitter {
         }
     }
 
-    setPollQuestion(questionText) {
+    async setPollQuestion(questionText) {
         this._noProviderCheck();
 
         if (this.canSetPollQuestion()) {
-            return this._provider.setPollQuestion(questionText);
+            const result = await this._provider.setPollQuestion(questionText);
+            await this.clearAllStatuses();
+
+            return result;
         } else {
             this._error("User provider does not support setting polling question");
         }

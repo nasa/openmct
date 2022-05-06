@@ -6,20 +6,32 @@
 >
     <div>Current Poll Question: {{ currentPollQuestion }}</div>
     <div>Current Poll Date: {{ pollQuestionUpdated }}</div>
-    <div>Set Poll Question:
-        <input
-            v-model="newPollQuestion"
-            type="text"
-            name="newPollQuestion"
-            @change="updatePollQuestion"
-        >
+    <div class="c-form__row">
+        <div class="c-form-row__label">Set Poll Question:</div>
+        <div class="c-form-row__controls">
+            <input
+                v-model="newPollQuestion"
+                type="text"
+                name="newPollQuestion"
+            >
+        </div>
+        <div class="c-form-row__controls">
+            <button
+                class="c-button"
+                @click="updatePollQuestion"
+            >Update</button>
+        </div>
     </div>
-    <div v-if="canGetStatusSummary">
+    <div
+        v-if="canGetStatusSummary"
+        class="c-status-counts"
+    >
         <div
             v-for="entry in statusCounts"
-            :key="entry[0]"
-            class="c-status-count"
-        >{{ entry[1] }}</div>
+            :key="entry.status.key"
+            class="c-status-counts__count"
+            :class="entry.status.statusClass"
+        >{{ entry.userCount }}</div>
     </div>
 </div>
 </template>
@@ -56,11 +68,14 @@ export default {
             };
         }
     },
-    async mounted() {
+    mounted() {
         this.unsubscribe = [];
         this.fetchCurrentPoll();
         this.subscribeToPollQuestion();
-        this.canGetStatusSummary = await this.openmct.user.canGetUsersByStatus();
+        this.canGetStatusSummary = this.openmct.user.canGetUsersForStatus();
+        if (this.canGetStatusSummary) {
+            this.fetchStatusSummary();
+        }
     },
     beforeDestroy() {
         this.unsubscribe.forEach(unsubscribe => unsubscribe);
@@ -88,15 +103,16 @@ export default {
         async fetchStatusSummary() {
             const allStatuses = await this.openmct.user.getPossibleStatuses();
             const usersByStatus = await Promise.all(allStatuses.map(status => {
-                return this.openmct.user.getUsersByStatus(status);
+                return this.openmct.user.getUsersForStatus(status.key);
             }));
-            const statusToUserCountMap = allStatuses.reduce((map, status, index) => {
-                map[status] = usersByStatus[index].length;
+            const statusToUserCount = allStatuses.map((status, index) => {
+                return {
+                    status,
+                    userCount: usersByStatus[index].length
+                };
+            });
 
-                return map;
-            }, {});
-
-            this.statusCounts = statusToUserCountMap.entries();
+            this.statusCounts = statusToUserCount;
         },
         clearAllResponses() {
             this.openmct.user.clearAllStatuses();

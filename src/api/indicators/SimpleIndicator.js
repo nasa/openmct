@@ -39,7 +39,6 @@ class SimpleIndicator extends EventEmitter {
         this.text('New Indicator');
         this.description('');
         this.iconClass(DEFAULT_ICON_CLASS);
-        this.statusClass('');
 
         this.click = this.click.bind(this);
 
@@ -93,12 +92,12 @@ class SimpleIndicator extends EventEmitter {
     }
 
     statusClass(statusClass) {
-        if (statusClass !== undefined && statusClass !== this.statusClassValue) {
+        if (arguments.length === 1 && statusClass !== this.statusClassValue) {
             if (this.statusClassValue) {
                 this.element.classList.remove(this.statusClassValue);
             }
 
-            if (statusClass) {
+            if (statusClass !== undefined) {
                 this.element.classList.add(statusClass);
             }
 
