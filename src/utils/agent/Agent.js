@@ -89,7 +89,17 @@ export default class Agent {
      * @returns {boolean} true in portrait mode
      */
     isPortrait() {
-        return this.window.innerWidth < this.window.innerHeight;
+        const { screen, orientation } = this.window;
+
+        if (screen && screen.orientation) {
+            return screen.orientation.type.includes('portrait');
+        } else if (orientation) {
+            // Use window.orientation API if available (e.g. Safari mobile)
+            // which returns [-90, 0, 90, 180] based on device orientation.
+            return Math.abs(orientation / 90) % 2 === 0;
+        } else {
+            return this.window.innerWidth < this.window.innerHeight;
+        }
     }
     /**
      * Check if the user's device is in a landscape-style
