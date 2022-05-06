@@ -27,16 +27,107 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('@playwright/test');
 
 test.describe('Move item tests', () => {
-    test.fixme('Create a basic object and verify that it can be moved to another Folder', async ({ page }) => {
-        //Create and save Folder
-        //Create and save Domain Object
-        //Verify that the newly created domain object can be moved to Folder from Step 1.
-        //Verify that newly moved object appears in the correct point in Tree
-        //Verify that newly moved object appears correctly in Inspector panel
+    test('Create a basic object and verify that it can be moved to another folder', async ({ page }) => {
+        // Go to Open MCT
+        await page.goto('/');
+
+        // Create a new folder in the root my items folder
+        let folder1 = "Folder 1";
+        await page.locator('button:has-text("Create")').click();
+        await page.locator('li.icon-folder').click();
+
+        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder1);
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click()
+        ]);
+
+        // Create another folder with a new name at default location, which is currently inside Folder 1
+        let folder2 = "Folder 2";
+        await page.locator('button:has-text("Create")').click();
+        await page.locator('li.icon-folder').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder2);
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click()
+        ]);
+
+        // Move Folder 2 from Folder 1 to My Items
+        await page.locator('text=Open MCT My Items >> span').nth(3).click();
+        await page.locator('.c-tree__scrollable div div:nth-child(2) .c-tree__item .c-tree__item__view-control').click();
+
+        await page.locator(`text=${folder2}`).first().click({
+            button: 'right'
+        });
+        await page.locator('li.icon-move').click();
+        await page.locator('form[name="mctForm"] >> text=My Items').click();
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click()
+        ]);
+
+        // Expect that Folder 2 is in My Items, the root folder
+        expect(page.locator(`text=My Items >> nth=0:has(text=${folder2})`)).toBeTruthy();
     });
-    test.fixme('Create a basic object and verify that it cannot be moved to object without Composition Provider', async ({ page }) => {
-        //Create and save Telemetry Object
-        //Create and save Domain Object
-        //Verify that the newly created domain object cannot be moved to Telemetry Object from step 1.
+    test('Create a basic object and verify that it cannot be moved to telemetry object without Composition Provider', async ({ page }) => {
+        // Go to Open MCT
+        await page.goto('/');
+
+        // Create Telemetry Table
+        let telemetryTable = 'Test Telemetry Table';
+        await page.locator('button:has-text("Create")').click();
+        await page.locator('li:has-text("Telemetry Table")').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(telemetryTable);
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click()
+        ]);
+
+        // Finish editing and save Telemetry Table
+        await page.locator('.c-button--menu.c-button--major.icon-save').click();
+        await page.locator('text=Save and Finish Editing').click();
+
+        // Create New Folder Basic Domain Object
+        let folder = 'Test Folder';
+        await page.locator('button:has-text("Create")').click();
+        await page.locator('li:has-text("Folder")').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder);
+
+        // See if it's possible to put the folder in the Telemetry object during creation (Soft Assert)
+        await page.locator(`form[name="mctForm"] >> text=${telemetryTable}`).click();
+        let okButton = await page.locator('button.c-button.c-button--major:has-text("OK")');
+        let okButtonStateDisabled = await okButton.isDisabled();
+        expect.soft(okButtonStateDisabled).toBeTruthy();
+
+        // Continue test regardless of assertion and create it in My Items
+        await page.locator('form[name="mctForm"] >> text=My Items').click();
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click()
+        ]);
+
+        // Open My Items
+        await page.locator('text=Open MCT My Items >> span').nth(3).click();
+
+        // Select Folder Object and select Move from context menu
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator(`a:has-text("${folder}")`).click()
+        ]);
+        await page.locator('.c-tree__item.is-navigated-object .c-tree__item__label .c-tree__item__type-icon').click({
+            button: 'right'
+        });
+        await page.locator('li.icon-move').click();
+
+        // See if it's possible to put the folder in the Telemetry object after creation
+        await page.locator('text=Location Open MCT My Items >> span').nth(3).click();
+        await page.locator(`form[name="mctForm"] >> text=${telemetryTable}`).click();
+        let okButton2 = await page.locator('button.c-button.c-button--major:has-text("OK")');
+        let okButtonStateDisabled2 = await okButton2.isDisabled();
+        expect(okButtonStateDisabled2).toBeTruthy();
     });
 });
