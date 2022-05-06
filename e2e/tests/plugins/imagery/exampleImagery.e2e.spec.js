@@ -79,7 +79,7 @@ test.describe('Example Imagery', () => {
 
     });
 
-    test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
+    test.only('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
         const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 
@@ -98,7 +98,10 @@ test.describe('Example Imagery', () => {
         await page.mouse.move(imageCenterX, imageCenterY);
 
         // Pan Imagery Hints
-        console.log(process.platform);
+        console.log('process.platform is ' + process.platform);
+        const getUA = await page.evaluate(() => navigator.userAgent);
+        // get browser name
+        console.log(getUA);
         const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
         const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
         expect(expectedAltText).toEqual(imageryHintsText);
