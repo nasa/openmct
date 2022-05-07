@@ -107,7 +107,6 @@ test.describe('Time conductor input fields real-time mode', () => {
         await page.locator('.icon-check').click();
 
         // Verify time was updated on preceding time offset button
-        const precedingTimeOffset = page.locator('.c-conductor__delta-button').nth(1);
-        await expect(precedingTimeOffset).toContainText('00:00:31');
+        await expect(page.locator('.c-conductor__delta-button').nth(1)).toContainText('00:00:31');
     });
 });
