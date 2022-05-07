@@ -85,7 +85,7 @@ test.describe('Time counductor input fields real-time mode', () => {
         // Click time offset button
         await page.locator('.c-conductor__delta-button >> text=00:30:00').click();
 
-        // Input time offset
+        // Input start time offset
         await page.fill('.pr-time-controls__secs', '23');
 
         // Click the check button
@@ -97,5 +97,15 @@ test.describe('Time counductor input fields real-time mode', () => {
 
         // Click time offset set preceding now button
         await page.locator('.c-conductor__delta-button >> text=00:00:30').click();
+
+        // Input preceding time offset
+        await page.fill('.pr-time-controls__secs', '31')
+
+        // Click the check buttons
+        await page.locator('.icon-check').click();
+
+        // Verify time was updated on preceding time offset button
+        const precedingTimeOffset = page.locator('.c-conductor__delta-button').nth(1);
+        await expect(precedingTimeOffset).toContainText('00:00:31');
     });
 });
