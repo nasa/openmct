@@ -28,8 +28,7 @@ necessarily be used for reference when writing new tests in this area.
 const { test, expect } = require('@playwright/test');
 
 test.describe('Log plot tests', () => {
-    test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
-        //test.setTimeout(0);
+    test.slow('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
         await makeOverlayPlot(page);
         await testRegularTicks(page);
         await enableEditMode(page);
