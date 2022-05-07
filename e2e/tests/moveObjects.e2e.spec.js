@@ -73,12 +73,8 @@ test.describe('Move item tests', () => {
         await page.locator('form[name="mctForm"] >> text=My Items').click();
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=OK').click(),
-            page.waitForSelector('.c-message-banner__message')
+            page.locator('text=OK').click()
         ]);
-        //Wait until Save Banner is gone
-        await page.locator('.c-message-banner__close-button').click();
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
         // Expect that Folder 2 is in My Items, the root folder
         expect(page.locator(`text=My Items >> nth=0:has(text=${folder2})`)).toBeTruthy();
