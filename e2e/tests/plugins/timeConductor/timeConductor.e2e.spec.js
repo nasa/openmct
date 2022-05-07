@@ -95,8 +95,7 @@ test.describe('Time conductor input fields real-time mode', () => {
         await page.locator('.icon-check').click();
 
         // Verify time was updated on time offset button
-        const startTimeOffset = page.locator('.c-conductor__delta-button').first();
-        await expect(startTimeOffset).toContainText('00:30:23');
+        await expect(page.locator('.c-conductor__delta-button').first()).toContainText('00:30:23');
 
         // Click time offset set preceding now button
         await page.locator('.c-conductor__delta-button >> text=00:00:30').click();
