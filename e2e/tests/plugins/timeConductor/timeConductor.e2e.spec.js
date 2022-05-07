@@ -76,28 +76,26 @@ test.describe('Time counductor input fields real-time mode', () => {
         // Set realtime "local clock" mode offsets
         const timeInputs = page.locator('input.c-input--datetime');
 
-        // Click Fixed Timespan button
+        // Click fixed timespan button
         await page.locator('.c-button__label >> text=Fixed Timespan').click();
 
-        // Click Local Clock 
+        // Click local clock 
         await page.locator('.icon-clock >> text=Local Clock').click();
 
-        // Click Time Offset button
+        // Click time offset button
         await page.locator('.c-conductor__delta-button >> text=00:30:00').click();
 
-        // Input Time Offset
+        // Input time offset
         await page.fill('.pr-time-controls__secs', '23');
 
         // Click the check button
-        await page.locator('.icon-check').click
-        
+        await page.locator('.icon-check').click();
 
-        // // Start time input
-        // await timeInputs.first().click();
-        // await timeInputs.first().fill('2022-03-29 22:00:00.000Z');
+        // Verify time was updated on time offset button
+        const startTimeOffset = page.locator('.c-conductor__delta-button').first();
+        await expect(startTimeOffset).toContainText('00:30:23');
 
-        // // End time input
-        // await timeInputs.nth(1).click();
-        // await timeInputs.nth(1).fill('2022-03-29 22:00:45.000Z');
+        // Click time offset set preceding now button
+        await page.locator('.c-conductor__delta-button >> text=00:00:30').click();
     });
 });
