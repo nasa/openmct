@@ -71,7 +71,7 @@ test.describe('Time counductor operations', () => {
 
 // Testing instructions:
 // Try to change the realtime offsets when in realtime (local clock) mode.
-test.describe('Time counductor input fields real-time mode', () => {
+test.describe('Time conductor input fields real-time mode', () => {
     test('validate input fields in real-time mode', async ({ page }) => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
