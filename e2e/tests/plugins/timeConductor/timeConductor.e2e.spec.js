@@ -79,14 +79,17 @@ test.describe('Time counductor input fields real-time mode', () => {
         // Click Fixed Timespan button
         await page.locator('.c-button__label >> text=Fixed Timespan').click();
 
-        // Click Local Clock
+        // Click Local Clock 
         await page.locator('.icon-clock >> text=Local Clock').click();
 
-        // Set Time Offset
+        // Click Time Offset button
         await page.locator('.c-conductor__delta-button >> text=00:30:00').click();
 
         // Input Time Offset
         await page.fill('.pr-time-controls__secs', '23');
+
+        // Click the check button
+        await page.locator('.icon-check').click
         
 
         // // Start time input
