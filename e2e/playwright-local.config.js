@@ -8,7 +8,7 @@ const { devices } = require('@playwright/test');
 const config = {
     retries: 0,
     testDir: 'tests',
-    timeout: 60 * 1000, //This is total test timeout. Will adjust as needed.
+    timeout: 30 * 1000,
     webServer: {
         command: 'npm run start',
         port: 8080,
@@ -30,11 +30,12 @@ const config = {
             name: 'chrome',
             use: {
                 browserName: 'chromium',
-                ...devices['Desktop Chrome']
+                channel: 'chrome'
             }
         },
         {
             name: 'MMOC',
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
                 viewport: {
