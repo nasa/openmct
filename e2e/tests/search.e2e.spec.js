@@ -26,7 +26,7 @@
 
 const { test, expect } = require("@playwright/test");
 
-test.describe("Search", () => {
+test.describe("Search Tests", () => {
     const searchResultSelector = '.c-tree__scrollable .c-tree__item a';
 
     test('Validate empty search result [no match search]', async ({ page }) => {
@@ -92,7 +92,7 @@ test.describe("Search", () => {
         await waitForSearchCompletion(page);
 
         // Get the search results
-        const searchResults = await page.locator('.c-tree__scrollable .c-tree__item a');
+        const searchResults = await page.locator(searchResultSelector);
 
         // Verify that the search result/s correctly match the search query
         expect(await searchResults.count()).toBe(2);
