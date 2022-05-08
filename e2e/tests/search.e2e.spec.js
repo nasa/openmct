@@ -52,10 +52,11 @@ test.describe("Search", () => {
         await page.goto("/", { waitUntil: "networkidle" });
 
         // Create a folder object
-        await createFolderObject(page, 'testFolder');
+        const folderName = 'testFolder';
+        await createFolderObject(page, folderName);
 
         // Full search for object
-        await page.type("input[type=search]", 'testFolder');
+        await page.type("input[type=search]", folderName);
 
         // Wait for search to complete
         await waitForSearchCompletion(page);
@@ -65,7 +66,7 @@ test.describe("Search", () => {
 
         // Verify that one result is found
         expect(await searchResults.count()).toBe(1);
-        await expect(searchResults).toHaveText('testFolder');
+        await expect(searchResults).toHaveText(folderName);
     });
 
     test("Validate multiple objects in search results [partial search]", async ({ page }) => {
@@ -74,15 +75,15 @@ test.describe("Search", () => {
             description: 'https://github.com/nasa/openmct/issues/4667'
         });
 
-        const testFolderObject = "e928a26e-e924-4ea0";
-        const testFolderObject2 = "e928a26e-e924-4001";
-
         // Go to baseURL
         await page.goto("/", { waitUntil: "networkidle" });
 
         // Create folder objects
-        await createFolderObject(page, testFolderObject);
-        await createFolderObject(page, testFolderObject2);
+        const folderName = "e928a26e-e924-4ea0";
+        const folderName2 = "e928a26e-e924-4001";
+
+        await createFolderObject(page, folderName);
+        await createFolderObject(page, folderName2);
 
         // Partial search for objects
         await page.type("input[type=search]", 'e928a26e');
@@ -95,8 +96,8 @@ test.describe("Search", () => {
 
         // Verify that the search result/s correctly match the search query
         expect(await searchResults.count()).toBe(2);
-        await expect(await searchResults.first()).toHaveText(testFolderObject);
-        await expect(await searchResults.last()).toHaveText(testFolderObject2);
+        await expect(await searchResults.first()).toHaveText(folderName);
+        await expect(await searchResults.last()).toHaveText(folderName2);
     });
 });
 
