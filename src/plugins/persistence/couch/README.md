@@ -32,7 +32,7 @@ Add a line to install the CouchDB plugin for OpenMCT:
 ```
 openmct.install(openmct.plugins.CouchDB("http://localhost:5984/openmct"));
 ```
-6. Enable cors in CouchDB by editing `/usr/local/etc/local.ini` and add: `
+6. Enable cors in CouchDB by editing `~/homebrew/etc/local.ini` and add: `
 ```
 [chttpd]
 enable_cors = true
