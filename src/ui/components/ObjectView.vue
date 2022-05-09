@@ -210,12 +210,6 @@ export default {
                     }
                 }
             });
-
-            if (this.domainObject && this.domainObject.type === 'conditionWidget' && keys.includes('output')) {
-                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', styleObj.output);
-            } else {
-                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', '');
-            }
         },
         updateView(immediatelySelect) {
             this.clear();
@@ -443,4 +437,3 @@ export default {
     }
 };
 </script>
-

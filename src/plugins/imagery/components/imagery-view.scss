@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @keyframes fade-out {
     from {
         background-color: rgba($colorOk, 0.5);
@@ -138,6 +140,9 @@
         animation-timing-function: ease-in;
         animation-iteration-count: 1;
         animation-fill-mode: forwards;
+        &.no-animation {
+            animation: none;
+        }
     }
 
 
@@ -211,7 +216,7 @@
     }
 
     .c-thumb {
-        $w: $imageThumbsD / 2;
+        $w: math.div($imageThumbsD, 2);
         min-width: $w;
         width: $w;
 
