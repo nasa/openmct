@@ -51,6 +51,12 @@ export default {
                 return {};
             }
         },
+        isLocked: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
         isSnapshotContainer: {
             type: Boolean,
             default() {
@@ -96,7 +102,12 @@ export default {
                 callback: this.previewEmbed.bind(this)
             };
 
-            this.popupMenuItems = [removeEmbed, preview];
+            this.popupMenuItems = [preview];
+
+            if (!this.isLocked) {
+                this.popupMenuItems.unshift(removeEmbed);
+            }
+
         },
         annotateSnapshot() {
             const annotateVue = new Vue({

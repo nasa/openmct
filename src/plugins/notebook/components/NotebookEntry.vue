@@ -70,6 +70,7 @@
                     v-for="embed in entry.embeds"
                     :key="embed.id"
                     :embed="embed"
+                    :is-locked="isLocked"
                     @removeEmbed="removeEmbed"
                     @updateEmbed="updateEmbed"
                 />

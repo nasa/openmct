@@ -368,12 +368,24 @@ export default {
             clearDefaultNotebook();
         },
         lockPage() {
+            console.log('lock page');
             let sections = this.getSections();
             this.selectedPage.isLocked = true;
-            this.selectedSection.isLocked = true;
+
+            // cant be default if it's locked
+            if (this.selectedPage.id === this.defaultPageId) {
+                this.cleanupDefaultNotebook();
+            }
+
+            if (!this.selectedSection.isLocked) {
+                this.selectedSection.isLocked = true;
+            }
 
             mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
-            mutateObject(this.openmct, this.domainObject, 'locked', true);
+
+            if (!this.domainObject.locked) {
+                mutateObject(this.openmct, this.domainObject, 'locked', true);
+            }
         },
         setSectionAndPageFromUrl() {
             let sectionId = this.getSectionIdFromUrl() || this.getDefaultSectionId() || this.getSelectedSectionId();
