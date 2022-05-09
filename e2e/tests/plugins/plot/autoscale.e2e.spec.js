@@ -47,7 +47,7 @@ test.use({
 });
 
 test.describe('ExportAsJSON', () => {
-    test('User can set autoscale with a valid range @snapshot', async ({ page }) => {
+    test.slow('User can set autoscale with a valid range @snapshot', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
         await setTimeRange(page);
@@ -121,10 +121,12 @@ async function createSinewaveOverlayPlot(page) {
     await page.locator('li:has-text("Overlay Plot")').click();
     await Promise.all([
         page.waitForNavigation(),
+        page.locator('text=OK').click(),
         //Wait for Save Banner to appear1
         page.waitForSelector('.c-message-banner__message')
     ]);
     //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // save (exit edit mode)
@@ -138,10 +140,12 @@ async function createSinewaveOverlayPlot(page) {
     await page.locator('li:has-text("Sine Wave Generator")').click();
     await Promise.all([
         page.waitForNavigation(),
+        page.locator('text=OK').click(),
         //Wait for Save Banner to appear1
         page.waitForSelector('.c-message-banner__message')
     ]);
     //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // focus the overlay plot
@@ -160,11 +164,18 @@ async function turnOffAutoscale(page) {
     await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
 
     // uncheck autoscale
-    await page.locator('text=Y Axis Scaling Auto scale Padding >> input[type="checkbox"]').uncheck();
+    await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"] >> nth=1').uncheck();
 
     // save
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-    await page.locator('text=Save and Finish Editing').click();
+    await Promise.all([
+        page.locator('text=Save and Finish Editing').click(),
+        //Wait for Save Banner to appear
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+    //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 }
 
 /**
@@ -172,6 +183,7 @@ async function turnOffAutoscale(page) {
  */
 async function testYTicks(page, values) {
     const yTicks = page.locator('.gl-plot-y-tick-label');
+    await page.locator('canvas >> nth=1').hover();
     let promises = [yTicks.count().then(c => expect(c).toBe(values.length))];
 
     for (let i = 0, l = values.length; i < l; i += 1) {
