@@ -126,6 +126,11 @@
 }
 
 .c-indicator {
+    &:before {
+        // Indicator icon
+        color: $colorKey;
+    }
+
     &--operator-status {
         cursor: pointer;
         max-width: 150px;
