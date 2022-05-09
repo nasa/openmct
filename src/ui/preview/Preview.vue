@@ -128,7 +128,7 @@ export default {
                 return;
             }
 
-            const isExistingView = viewProvider.key === this.existingView.key;
+            const isExistingView = viewProvider.key === this.existingView?.key;
 
             this.clear();
 
