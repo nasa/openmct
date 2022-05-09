@@ -175,7 +175,7 @@ import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSectionId, setDefaultNotebookPageId } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
-import { isNotebookViewType } from '../notebook-constants';
+import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
@@ -206,7 +206,7 @@ export default {
             selectedPageId: this.getSelectedPageId(),
             defaultSort: this.domainObject.configuration.defaultSort,
             focusEntryId: null,
-            isRestricted: false,
+            isRestricted: this.domainObject.type === RESTRICTED_NOTEBOOK_TYPE,
             search: '',
             searchResults: [],
             showTime: this.domainObject.configuration.showTime || 0,
@@ -293,8 +293,6 @@ export default {
     mounted() {
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
-
-        this.isRestricted = this.domainObject.type === 'restricted-notebook';
 
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
