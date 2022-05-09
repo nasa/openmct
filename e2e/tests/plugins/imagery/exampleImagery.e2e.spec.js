@@ -97,19 +97,20 @@ test.describe('Example Imagery', () => {
         // center the mouse pointer
         await page.mouse.move(imageCenterX, imageCenterY);
 
+        //Get Diagnostic info about process environment
+        console.log('process.platform is ' + process.platform);
+        const getUA = await page.evaluate(() => navigator.userAgent);
+        console.log('navigator.userAgent ' + getUA);
         // Pan Imagery Hints
-        console.log(process.platform);
         const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
         const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
         expect(expectedAltText).toEqual(imageryHintsText);
 
         // pan right
-        // await page.keyboard.down(panHotkey);
         await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
         await page.mouse.up();
-        // await page.keyboard.up(panHotkey);
         await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
         const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
         expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
