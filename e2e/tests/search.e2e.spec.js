@@ -33,7 +33,7 @@ test.describe("Search Tests", () => {
         // Go to baseURL
         await page.goto("/", { waitUntil: "networkidle" });
 
-        // Partial search for objects
+        // Invalid search for objects
         await page.type("input[type=search]", 'not found');
 
         // Wait for search to complete
@@ -119,9 +119,6 @@ async function createFolderObject(page, folderName) {
 }
 
 async function waitForSearchCompletion(page) {
-    const searching = page.locator('.c-tree-and-search__loading');
-
-    // Wait for search indicator to appear and disappear
-    await searching.waitFor();
-    await searching.waitFor({ state: 'hidden' });
+    // Wait loading spinner to disappear
+    await page.waitForSelector('.c-tree-and-search__loading', { state: 'detached' });
 }
