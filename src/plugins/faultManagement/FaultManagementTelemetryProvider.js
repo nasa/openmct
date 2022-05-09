@@ -15,12 +15,21 @@ export default class FaultManagementTelemetryProvider {
     }
 
     subscribe(domainObject, callback) {
-        console.log('TODO subscribe', domainObject);
         callback({});
     }
 
     request(domainObject, options) {
+        if (this.config.devMode) {
+            return this.getTestData();
+        }
+
         return fetch(this.config.url)
             .then(res => res.json());
+    }
+
+    getTestData() {
+        const faults = localStorage.getItem('faults') || '{}';
+
+        return Promise.resolve(JSON.parse(faults));
     }
 }

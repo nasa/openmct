@@ -1,6 +1,8 @@
 <template>
 <div class="c-fault-mgmt">
-    <FaultManagementListView />
+    <FaultManagementListView
+        :faults-list="faultsList"
+    />
 </div>
 </template>
 
@@ -14,17 +16,16 @@ export default {
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            alarmsData: {}
+            faultsList: []
         };
     },
     computed: {
     },
     mounted() {
-        console.log('mounted', this.domainObject);
-        this.openmct.telemetry.request(this.domainObject)
+        this.openmct.telemetry
+            .request(this.domainObject)
             .then(data => {
-                console.log('after request', data);
-                this.alarmsData = data;
+                this.faultsList = data.alarms;
             });
     },
     beforeDestroy() {
