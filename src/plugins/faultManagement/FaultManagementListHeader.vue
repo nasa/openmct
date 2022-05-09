@@ -13,12 +13,15 @@
     <span>acknowledged</span>
     <span>time</span>
 </div>
+
 </template>
 
 <script>
+import FaultManagementListItem from "./FaultManagementListItem.vue";
 export default {
     components: {
-    },
+    FaultManagementListItem
+},
     inject: ['openmct', 'domainObject'],
     props: {
         selectedFaultsCount: {

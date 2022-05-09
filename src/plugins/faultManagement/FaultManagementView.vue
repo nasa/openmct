@@ -4,7 +4,7 @@
 >
     <FaultManagementListView
         :faults-list="faultsList"
-    />
+    /> 
 </div>
 </template>
 
