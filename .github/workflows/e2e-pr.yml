@@ -30,11 +30,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npx playwright@1.19.2 install
+      - run: npx playwright@1.21.1 install
       - run: npm install
       - run: npm run test:e2e:full
       - name: Archive test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: test-results
       - name: Test success

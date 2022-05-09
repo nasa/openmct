@@ -21,7 +21,7 @@
  *****************************************************************************/
 import ImageryView from './ImageryView';
 
-export default function ImageryViewProvider(openmct) {
+export default function ImageryViewProvider(openmct, options) {
     const type = 'example.imagery';
 
     function hasImageTelemetry(domainObject) {
@@ -43,7 +43,7 @@ export default function ImageryViewProvider(openmct) {
             return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
         },
         view: function (domainObject, objectPath) {
-            return new ImageryView(openmct, domainObject, objectPath);
+            return new ImageryView(openmct, domainObject, objectPath, options);
         }
     };
 }
