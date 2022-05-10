@@ -234,6 +234,7 @@ test.describe('Example Imagery', () => {
 });
 
 test.describe('Example Imagery in Display layout', () => {
+    // Adam you are here.
     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     test.fixme('Can use alt+drag to move around image once zoomed in');
     test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
