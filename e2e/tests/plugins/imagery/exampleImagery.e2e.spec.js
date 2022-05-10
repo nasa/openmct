@@ -26,7 +26,8 @@ but only assume that example imagery is present.
 */
 /* globals process */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Example Imagery', () => {
 

@@ -24,7 +24,8 @@
 Testsuite for plot autoscale.
 */
 
-const { test: _test, expect } = require('@playwright/test');
+const { test: _test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 // create a new `test` API that will not append platform details to snapshot
 // file names, only for the tests in this file, so that the same snapshots will

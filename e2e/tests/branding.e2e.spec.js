@@ -24,16 +24,8 @@
 This test suite is dedicated to tests which verify branding related components.
 */
 
-const { test: base, expect } = require('@playwright/test');
-
-const test = base.extend({
-    page: async ({ baseURL, page }, use) => {
-        const messages = [];
-        page.on('console', msg => messages.push(`[${msg.type()}] ${msg.text()}`));
-        await use(page);
-        expect(messages).not.toContain('error');
-    }
-});
+const { test } = require('../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Branding tests', () => {
     test('About Modal launches with basic branding properties', async ({ page }) => {

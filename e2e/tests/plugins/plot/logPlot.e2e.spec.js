@@ -25,7 +25,8 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Log plot tests', () => {
     test.slow('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
