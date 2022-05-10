@@ -50,17 +50,25 @@
                     />
                 </div>
             </template>
-            <template v-else>
+            <template v-else-if="!isLocked">
                 <div
                     :id="entry.id"
-                    class="c-ne__text"
-                    :class="{ 'c-ne__input' : !isLocked }"
+                    class="c-ne__text c-ne__input"
                     tabindex="0"
-                    :contenteditable="!isLocked"
+                    contenteditable
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
+                    v-text="entry.text"
+                >
+                </div>
+            </template>
+            <template v-else>
+                <div
+                    :id="entry.id"
+                    class="c-ne__text"
+                    tabindex="0"
                     v-text="entry.text"
                 >
                 </div>
