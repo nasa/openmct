@@ -1310,6 +1310,14 @@
           "prevSize": 16,
           "code": 60207,
           "tempChar": ""
+        },
+        {
+          "order": 214,
+          "id": 184,
+          "name": "icon-notebook-restricted",
+          "prevSize": 16,
+          "code": 60209,
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -4215,6 +4223,29 @@
           ],
           "colorPermutations": {
             "12552552551": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 184,
+          "paths": [
+            "M896 110.72c0-79.9-55.38-127.32-123.080-105.36l-772.92 250.64h896v-145.28z",
+            "M896 320h-896v576c0 70.4 57.6 128 128 128h768c70.4 0 128-57.6 128-128v-448c0-70.4-57.6-128-128-128zM256 832h-128v-128h128v128zM256 640h-128v-128h128v128zM896 832h-512v-128h512v128zM896 640h-512v-128h512v128z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-notebook-restricted"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
               {}
             ]
           }
