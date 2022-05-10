@@ -129,11 +129,7 @@ export default {
             const name = target.textContent.toString();
             target.classList.remove('c-input-inline');
 
-            if (this.page.name === name) {
-                return;
-            }
-
-            if (name === '') {
+            if (name === '' || this.page.name === name) {
                 return;
             }
 

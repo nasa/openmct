@@ -131,11 +131,7 @@ export default {
             target.classList.remove('c-input-inline');
             const name = target.textContent.trim();
 
-            if (this.section.name === name) {
-                return;
-            }
-
-            if (name === '') {
+            if (name === '' || this.section.name === name) {
                 return;
             }
 
