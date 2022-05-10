@@ -1,38 +1,58 @@
 <template>
 <div
     :style="position"
-    class="c-menu"
+    class="c-status-poll-panel c-status-poll-panel--admin"
     @click.stop="noop"
 >
-    <div>Current Poll Question: {{ currentPollQuestion }}</div>
-    <div>Current Poll Date: {{ pollQuestionUpdated }}</div>
-    <div class="c-form__row">
-        <div class="c-form-row__label">Set Poll Question:</div>
-        <div class="c-form-row__controls">
+    <div class="c-status-poll-panel__section c-status-poll-panel__top">
+        <div
+            class="c-status-poll-panel__title"
+        >Manage Status Poll</div>
+        <div class="c-status-poll-panel__updated">Last updated: {{ pollQuestionUpdated }}</div>
+    </div>
+
+    <div class="c-status-poll__section c-status-poll-panel__content c-spq">
+        <!-- Grid layout -->
+        <div class="c-spq__label">Current:</div>
+        <div class="c-spq__value c-status-poll-panel__poll-question">{{ currentPollQuestion }}</div>
+
+        <template v-if="canGetStatusSummary">
+            <div class="c-spq__label">Reporting:</div>
+            <div class="c-spq__value c-status-poll-panel__poll-reporting c-status-poll-report">
+                <div
+                    v-for="entry in statusCounts"
+                    :key="entry.status.key"
+                    class="c-status-poll-report__count"
+                    :style="[{
+                        background: entry.status.statusBgColor,
+                        color: entry.status.statusFgColor
+                    }]"
+                >
+                    <div
+                        class="c-status-poll-report__count-type"
+                        :class="entry.status.iconClass"
+                    ></div>
+                    <div class="c-status-poll-report__count-value">
+                        {{ entry.userCount }}
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <div class="c-spq__label">New poll:</div>
+        <div class="c-spq__value c-status-poll-panel__poll-new-question">
             <input
                 v-model="newPollQuestion"
                 type="text"
                 name="newPollQuestion"
             >
-        </div>
-        <div class="c-form-row__controls">
             <button
                 class="c-button"
                 @click="updatePollQuestion"
             >Update</button>
         </div>
     </div>
-    <div
-        v-if="canGetStatusSummary"
-        class="c-status-counts"
-    >
-        <div
-            v-for="entry in statusCounts"
-            :key="entry.status.key"
-            class="c-status-counts__count"
-            :class="entry.status.statusClass"
-        >{{ entry.userCount }}</div>
-    </div>
+
 </div>
 </template>
 

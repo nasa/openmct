@@ -1,14 +1,23 @@
 <template>
 <div
     :style="position"
-    class="c-menu"
+    class="c-status-poll-panel c-status-poll-panel--operator"
     @click.stop="noop"
 >
-    <div>My Role: {{ role }}</div>
-    <div>Current Poll Question: {{ currentPollQuestion }}</div>
-    <div>Current Poll Date: {{ pollQuestionUpdated }}</div>
-    <div>My Status: {{ roleStatus.label }}</div>
-    <div>Set Status:
+    <div class="c-status-poll-panel__section c-status-poll-panel__top">
+        <div
+            class="c-status-poll-panel__title"
+        >Status Poll</div>
+        <div class="c-status-poll-panel__user-role icon-person">{{ role }}</div>
+        <div class="c-status-poll-panel__updated">{{ pollQuestionUpdated }}</div>
+    </div>
+
+    <div class="c-status-poll-panel__section c-status-poll-panel__poll-question">
+        {{ currentPollQuestion }}
+    </div>
+
+    <div class="c-status-poll-panel__section c-status-poll-panel__bottom">
+        <div class="c-status-poll-panel__set-status-label">My status:</div>
         <select
             v-model="selectedStatus"
             name="setStatus"
@@ -108,7 +117,7 @@ export default {
         setStatus(status) {
             this.roleStatus = status;
             this.selectedStatus = status.key;
-            this.indicator.iconClass(status.iconClass);
+            this.indicator.iconClass(status.iconClassPoll);
             this.indicator.statusClass(status.statusClass);
         },
         findStatusByKey(statusKey) {

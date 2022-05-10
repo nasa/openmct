@@ -25,24 +25,34 @@ import uuid from 'uuid';
 import createExampleUser from './exampleUserCreator';
 
 const STATUSES = [{
-    key: "NO_STATUS",
-    label: "No Status",
-    iconClass: "icon-info"
-}, {
-    key: "NO_GO",
-    label: "No Go",
-    iconClass: "icon-x",
-    statusClass: "s-status-error"
-}, {
     key: "GO",
-    label: "Go",
+    label: "GO",
     iconClass: "icon-check",
-    statusClass: "s-status-ok"
+    iconClassPoll: "icon-status-poll-check",
+    statusClass: "s-status-ok",
+    statusBgColor: "#33cc33",
+    statusFgColor: "#000"
 }, {
     key: "MAYBE",
-    label: "Maybe",
+    label: "MAYBE",
     iconClass: "icon-alert-triangle",
-    statusClass: "s-status-warning"
+    iconClassPoll: "icon-status-poll-caution",
+    statusClass: "s-status-warning",
+    statusBgColor: "#ffb66c",
+    statusFgColor: "#000"
+}, {
+    key: "NO_GO",
+    label: "NO GO",
+    iconClass: "icon-circle-slash",
+    iconClassPoll: "icon-status-poll-circle-slash",
+    statusClass: "s-status-error",
+    statusBgColor: "#9900cc",
+    statusFgColor: "#fff"
+}, {
+    key: "NO_STATUS",
+    label: "Not set",
+    iconClass: "icon-question-mark",
+    iconClassPoll: "icon-status-poll-question-mark"
 }];
 
 export default class ExampleUserProvider extends EventEmitter {
@@ -112,7 +122,7 @@ export default class ExampleUserProvider extends EventEmitter {
 
     getPollQuestion() {
         return Promise.resolve({
-            question: 'Do the thing?',
+            question: 'Set "GO" if your position is ready for a boarding action on the Klingon cruiser',
             timestamp: Date.now()
         });
     }

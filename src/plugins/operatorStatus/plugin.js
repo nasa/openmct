@@ -20,6 +20,7 @@ export default function operatorStatusPlugin() {
                     operatorIndicator.text("My Operator Status");
                     operatorIndicator.description("Set my operator status");
                     operatorIndicator.iconClass('icon-check');
+                    operatorIndicator.element.classList.add("c-indicator--operator-status");
                     operatorIndicator.element.classList.add("no-minify");
                     operatorIndicator.on('click', () => {
                         document.body.appendChild(operatorStatusElement.$el);
@@ -70,7 +71,8 @@ export default function operatorStatusPlugin() {
 
                     pollQuestionIndicator.text("Poll Question");
                     pollQuestionIndicator.description("Set the current poll question");
-                    pollQuestionIndicator.iconClass('icon-draft');
+                    pollQuestionIndicator.iconClass('icon-status-poll-edit');
+                    pollQuestionIndicator.element.classList.add("c-indicator--operator-status");
                     pollQuestionIndicator.element.classList.add("no-minify");
 
                     pollQuestionIndicator.on('click', (indicatorClickEvent) => {
