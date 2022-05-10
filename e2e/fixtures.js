@@ -9,7 +9,7 @@ exports.test = base.test.extend({
         const messages = [];
         page.on('console', msg => messages.push(`[${msg.type()}] ${msg.text()}`));
         await use(page);
-        expect(messages).not.toContain('error');
+        await expect.soft(messages.toString()).not.toContain('[error]');
     },
     browser: async ({ playwright, browser }, use, workerInfo) => {
     // Use browserless if configured
