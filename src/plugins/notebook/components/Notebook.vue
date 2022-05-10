@@ -131,6 +131,13 @@
                 </span>
             </div>
             <div
+                v-if="isRestricted && selectedPage.isLocked"
+                class="c-notebook__page-locked"
+            >
+                <div class="icon-lock"></div>
+                <div class="c-notebook__page-locked__message">This page is committed and cannot be changed</div>
+            </div>
+            <div
                 v-if="selectedSection && selectedPage"
                 ref="notebookEntries"
                 class="c-notebook__entries"
@@ -149,19 +156,18 @@
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
                 />
+            </div>
+            <div
+                v-if="showLockButton"
+                class="c-notebook__commit-entries-control"
+            >
                 <button
-                    v-if="showLockButton"
-                    class="c-button--major commit-button icon-lock"
+                    class="c-button c-button--major commit-button icon-lock"
+                    title="Commit entries and lock this page from further changes"
                     @click="lockPage()"
                 >
-                    <span class="c-button__label">Lock Page</span>
-                </button>
-                <div
-                    v-if="isRestricted && selectedPage.isLocked"
-                >
-                    locked yo
-                </div>
-            </div>
+                    <span class="c-button__label">Commit Entries</span>
+                </button></div>
         </div>
     </div>
 </div>

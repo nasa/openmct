@@ -50,16 +50,6 @@ export default class NotebookType {
                 ]
             },
             {
-                key: 'type',
-                name: 'Note book Type',
-                control: 'textfield',
-                cssClass: 'l-inline',
-                property: [
-                    "configuration",
-                    "type"
-                ]
-            },
-            {
                 key: 'sectionTitle',
                 name: 'Section Title',
                 control: 'textfield',

@@ -111,18 +111,23 @@
         flex: 1 1 auto;
     }
 
+
+    &__page-locked,
     &__drag-area {
-        // TODO: recast this element to use c-drop-hint element
-        background: rgba($colorKey, 0.1);
-        border: 1px dashed rgba($colorKey, 0.7);
         border-radius: $controlCr;
-        color: rgba($colorBodyFg, 0.7);
         padding: 10px;
-        cursor: pointer;
 
         &:before {
             margin-right: 7px !important;
         }
+    }
+
+    &__drag-area {
+        // TODO: recast this element to use c-drop-hint element
+        background: rgba($colorKey, 0.1);
+        border: 1px dashed rgba($colorKey, 0.7);
+        color: rgba($colorBodyFg, 0.7);
+        cursor: pointer;
 
         [class*="__label"] {
             font-style: italic;
@@ -224,6 +229,23 @@
                 margin-top: $interiorMargin;
             }
         }
+    }
+
+    /***** RESTRICTED NOTEBOOK */
+    &__page-locked {
+        background: rgba($colorAlert, 0.2);
+        display: flex;
+        padding: 5px;
+
+        > * + * { margin-left: $interiorMargin; }
+
+        [class*='icon'] { flex: 0 0 auto; }
+        [class*='__message'] { flex: 1 1 auto; }
+    }
+
+    &__commit-entries-control {
+        display: flex;
+        justify-content: flex-end;
     }
 }
 
