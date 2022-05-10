@@ -1,6 +1,17 @@
 <template>
-<div class="c-fault-mgmt-list-header">
-    List Header (checkbox, Severity, Name, TripValue, LiveValue, Time)
+<div>
+    <span>
+        <input
+            type="checkbox"
+            @input="selectAll"
+        >
+    </span>
+    <span>severity</span>
+    <span>name</span>
+    <span>trippedValue</span>
+    <span>liveValue</span>
+    <span>acknowledged</span>
+    <span>time</span>
 </div>
 </template>
 
@@ -10,6 +21,12 @@ export default {
     },
     inject: ['openmct', 'domainObject'],
     props: {
+        selectedFaultsCount: {
+            type: Number,
+            default() {
+                return 0;
+            }
+        }
     },
     data() {
         return {
@@ -24,6 +41,9 @@ export default {
     beforeDestroy() {
     },
     methods: {
+        selectAll(e) {
+            this.$emit('selectAll', e.target.checked);
+        }
     }
 };
 </script>

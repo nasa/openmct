@@ -199,7 +199,8 @@
 
         openmct.install(openmct.plugins.FaultManagementPlugin({
             url: `http://localhost:8090/api/processors/myproject/realtime/alarms`,
-            devMode: true
+            devMode: true,
+            devInterval: 5000
         }));
 
         openmct.start();

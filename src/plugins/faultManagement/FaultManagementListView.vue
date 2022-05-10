@@ -1,83 +1,42 @@
 <template>
 <div class="c-faults-list-view">
-    <FaultManagementSearch />
+    <FaultManagementSearch
+        @filterChanged="updateFilter"
+    />
     <FaultManagementToolbar />
 
-    <list-view
-        :items="faultsList"
-        :header-items="headerItems"
-        :default-sort="defaultSort"
-        class="sticky"
+    <FaultManagementListHeader
+        class="header"
+        :total-faults-count="filteredFaultsList.length"
+        @selectAll="selectAll"
     />
+
+    <template v-if="filteredFaultsList.length > 0">
+        <FaultManagementListItem
+            v-for="fault of filteredFaultsList"
+            :key="fault.key"
+            :fault="fault"
+            :is-selected="isSelected(fault)"
+            @toggleSelected="toggleSelected"
+        />
+    </template>
 </div>
 </template>
 
 <script>
-import ListView from '@/ui/components/List/ListView.vue';
-
+import FaultManagementListHeader from './FaultManagementListHeader.vue';
+import FaultManagementListItem from './FaultManagementListItem.vue';
 import FaultManagementSearch from './FaultManagementSearch.vue';
 import FaultManagementToolbar from './FaultManagementToolbar.vue';
 
-import moment from "moment";
-
-const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
-const headerItems = [
-    {
-        defaultDirection: true,
-        isSortable: true,
-        property: 'selectAll',
-        name: 'Select All'
-    },
-    {
-        defaultDirection: true,
-        property: 'severity',
-        name: 'Severity'
-    },
-    {
-        defaultDirection: true,
-        property: 'name',
-        name: 'Name',
-        format: function (value, item) {
-            return `${item.id.namespace}/${item.id.name}`;
-        }
-    },
-    {
-        defaultDirection: true,
-        property: 'trippedValue',
-        name: 'Tripped Value',
-        format: function (value, item) {
-            return item.parameterDetail.triggerValue.engValue.doubleValue;
-        }
-    },
-    {
-        defaultDirection: true,
-        property: 'liveValue',
-        name: 'Live Value',
-        format: function (value, item) {
-            return item.parameterDetail.currentValue.engValue.doubleValue;
-        }
-    },
-    {
-        defaultDirection: true,
-        property: 'time',
-        isSortable: true,
-        name: 'Time',
-        format: function (value) {
-            return `${moment(value).format(TIME_FORMAT)}Z`;
-        }
-    }
-];
-
-const defaultSort = {
-    property: 'time',
-    defaultDirection: true
-};
+import { FILTER_ITEMS } from './constants';
 
 export default {
     components: {
+        FaultManagementListHeader,
+        FaultManagementListItem,
         FaultManagementSearch,
-        FaultManagementToolbar,
-        ListView
+        FaultManagementToolbar
     },
     inject: ['openmct', 'domainObject'],
     props: {
@@ -88,11 +47,23 @@ export default {
     },
     data() {
         return {
-            headerItems,
-            defaultSort
+            selectedFaults: {},
+            filterIndex: 0
         };
     },
     computed: {
+        filteredFaultsList() {
+            const filterName = FILTER_ITEMS[this.filterIndex];
+            if (filterName === 'Ackowledged') {
+                return this.faultsList.filter(fault => fault.acknowledged);
+            }
+
+            if (filterName === 'Shelved') {
+                return this.faultsList.filter(fault => fault.shelved);
+            }
+
+            return this.faultsList;
+        }
     },
     watch: {
     },
@@ -101,6 +72,84 @@ export default {
     beforeDestroy() {
     },
     methods: {
+        getFaultId(fault) {
+            return `${fault.id.name}-${fault.id.namespace}`;
+        },
+        isSelected(fault) {
+            return Boolean(this.selectedFaults[this.getFaultId(fault)]);
+        },
+        selectAll(toggle = false) {
+            this.faultsList.forEach(fault => {
+                const faultData = {
+                    fault,
+                    selected: toggle
+                };
+                this.toggleSelected(faultData);
+            });
+        },
+        toggleSelected({ fault, selected = false}) {
+            const faultId = this.getFaultId(fault);
+            if (selected) {
+                this.$set(this.selectedFaults, faultId, fault);
+            } else {
+                this.$delete(this.selectedFaults, faultId);
+            }
+        },
+        toggleAcknowledgeSelected() {
+            // TODO:
+        },
+        toggleShelveSelected() {
+            // TODO:
+        },
+        updateFilter(filter) {
+            this.filterIndex = filter.model.options.findIndex(option => option.value === filter.value);
+        }
     }
 };
 </script>
+
+<style>
+    .fault-table {
+        border-collapse: collapse;
+    }
+
+    th {
+        min-width: 10px;
+    }
+
+    .fault-table,
+    .fault-table th,
+    .fault-table td {
+        border: 1px solid #ccc;
+    }
+
+    .fault-table th,
+    .fault-table td {
+        padding: 0.5rem;
+    }
+
+    .fault-table th {
+        position: relative;
+    }
+
+    .resizer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 5px;
+        cursor: col-resize;
+        user-select: none;
+    }
+
+    .resizer:hover,
+    .resizing {
+        border-right: 2px solid blue;
+    }
+
+    .resizable {
+        border: 1px solid gray;
+        height: 100px;
+        width: 100px;
+        position: relative;
+    }
+</style>

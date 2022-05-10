@@ -1,6 +1,7 @@
 <template>
 <div class="c-fault-mgmt-toolbar">
-    Toolbar: Actions buttons
+    <button>Acknowledge</button>
+    <button>Shelve</button>
 </div>
 </template>
 

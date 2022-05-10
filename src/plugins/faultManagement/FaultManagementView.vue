@@ -1,5 +1,7 @@
 <template>
-<div class="c-fault-mgmt">
+<div
+    class="c-fault-mgmt"
+>
     <FaultManagementListView
         :faults-list="faultsList"
     />
@@ -8,6 +10,8 @@
 
 <script>
 import FaultManagementListView from './FaultManagementListView.vue';
+
+import uuid from 'uuid';
 
 export default {
     components: {
@@ -25,12 +29,26 @@ export default {
         this.openmct.telemetry
             .request(this.domainObject)
             .then(data => {
-                this.faultsList = data.alarms;
+                this.faultsList = data.alarms.map(alarm => {
+                    alarm.key = uuid();
+
+                    return alarm;
+                });
             });
+
+        this.unsubscribe = this.openmct.telemetry
+            .subscribe(this.domainObject, this.updateFault);
     },
     beforeDestroy() {
+        if (this.unsubscribe) {
+            this.unsubscribe();
+        }
     },
     methods: {
+        updateFault(fault) {
+            fault.key = uuid();
+            this.faultsList.push(fault);
+        }
     }
 };
 </script>

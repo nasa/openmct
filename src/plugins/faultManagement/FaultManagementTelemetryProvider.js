@@ -15,19 +15,36 @@ export default class FaultManagementTelemetryProvider {
     }
 
     subscribe(domainObject, callback) {
+        if (this.config.devMode) {
+            let timerId = setInterval(() => {
+                this._getTestData()
+                    .then(faults => {
+                        callback(faults.alarms[0]);
+                    });
+            }, this.config.devInterval);
+
+            return () => {
+                clearTimeout(timerId);
+            };
+        }
+
         callback({});
+
+        return () => {
+            console.log('unsubscribe');
+        };
     }
 
     request(domainObject, options) {
         if (this.config.devMode) {
-            return this.getTestData();
+            return this._getTestData();
         }
 
         return fetch(this.config.url)
             .then(res => res.json());
     }
 
-    getTestData() {
+    _getTestData() {
         const faults = localStorage.getItem('faults') || '{}';
 
         return Promise.resolve(JSON.parse(faults));
