@@ -113,7 +113,6 @@ export default {
                 callback: this.previewEmbed.bind(this)
             };
 
-
             this.popupMenuItems = [preview];
 
             if (!this.isLocked) {
