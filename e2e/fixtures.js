@@ -1,4 +1,6 @@
 /* eslint-disable no-undef */
+
+// This file extends the base functionality of the playwright test framework
 const base = require('@playwright/test');
 const { expect } = require('@playwright/test');
 
