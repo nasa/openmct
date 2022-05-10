@@ -225,12 +225,6 @@ test.describe('Example Imagery', () => {
         return expect(pausePlayButton).not.toHaveClass(/is-paused/);
     });
 
-    //test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-    //test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    //test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
-    //test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    //test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
-    //test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
 
 
