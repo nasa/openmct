@@ -85,6 +85,15 @@ export default {
                 : this.embed.snapshot.src;
         }
     },
+    watch: {
+        isLocked(value) {
+            if (value === true) {
+                let index = this.popupMenuItems.findIndex((item) => item.id === 'removeEmbed');
+
+                this.$delete(this.popupMenuItems, index);
+            }
+        }
+    },
     mounted() {
         this.addPopupMenuItems();
         this.imageExporter = new ImageExporter(this.openmct);
@@ -92,11 +101,13 @@ export default {
     methods: {
         addPopupMenuItems() {
             const removeEmbed = {
+                id: 'removeEmbed',
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
             };
             const preview = {
+                id: 'preview',
                 cssClass: 'icon-eye-open',
                 name: 'Preview',
                 callback: this.previewEmbed.bind(this)

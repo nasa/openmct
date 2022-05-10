@@ -5,18 +5,27 @@
     :data-id="section.id"
     @click="selectSection"
 >
-    <span
-        class="c-list__item__name js-list__item__name"
-        :class="{ 'icon-lock' : section.isLocked }"
-        :data-id="section.id"
-        :contenteditable="!section.isLocked"
-        @keydown.enter="updateName"
-        @blur="updateName"
-    >{{ sectionName }}</span>
-    <PopupMenu
-        v-if="!section.isLocked"
-        :popup-menu-items="popupMenuItems"
-    />
+    <template v-if="!section.isLocked">
+        <span
+            class="c-list__item__name js-list__item__name"
+            :class="{ 'icon-lock' : section.isLocked }"
+            :data-id="section.id"
+            contenteditable="true"
+            @keydown.enter="updateName"
+            @blur="updateName"
+        >{{ sectionName }}</span>
+        <PopupMenu
+            v-if="!section.isLocked"
+            :popup-menu-items="popupMenuItems"
+        />
+    </template>
+    <template v-else>
+        <span
+            class="c-list__item__name js-list__item__name icon-lock"
+            :data-id="section.id"
+            contenteditable="false"
+        >{{ sectionName }}</span>
+    </template>
 </div>
 </template>
 
@@ -65,14 +74,8 @@ export default {
             return this.section.name.length ? this.section.name : `Unnamed ${this.sectionTitle}`;
         }
     },
-    // watch: {
-    //     section(newSection) {
-    //         this.toggleContentEditable(newSection);
-    //     }
-    // },
     mounted() {
         this.addPopupMenuItems();
-        // this.toggleContentEditable();
     },
     methods: {
         addPopupMenuItems() {
@@ -104,17 +107,18 @@ export default {
         },
         selectSection(event) {
             const target = event.target;
-            const section = target.closest('.js-list__item');
-            const input = section.querySelector('.js-list__item__name');
-
-            if (section.className.indexOf('is-selected') > -1 && !this.section.isLocked) {
-                input.contentEditable = true;
-                input.classList.add('c-input-inline');
-
-                return;
-            }
-
             const id = target.dataset.id;
+
+            if (!this.section.isLocked) {
+                const section = target.closest('.js-list__item');
+                const input = section.querySelector('.js-list__item__name');
+
+                if (section.className.indexOf('is-selected') > -1) {
+                    input.classList.add('c-input-inline');
+
+                    return;
+                }
+            }
 
             if (!id) {
                 return;
@@ -122,25 +126,12 @@ export default {
 
             this.$emit('selectSection', id);
         },
-        // toggleContentEditable(section = this.section) {
-        //     const sectionTitle = this.$el.querySelector('span');
-        //     sectionTitle.contentEditable = section.isSelected;
-        // },
         updateName(event) {
-            if (this.section.isLocked) {
-                return;
-            }
-
             const target = event.target;
-            target.contentEditable = false;
             target.classList.remove('c-input-inline');
             const name = target.textContent.trim();
 
-            if (this.section.name === name) {
-                return;
-            }
-
-            if (name === '') {
+            if (name === '' || this.section.name === name) {
                 return;
             }
 

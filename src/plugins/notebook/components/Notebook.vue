@@ -372,24 +372,41 @@ export default {
             clearDefaultNotebook();
         },
         lockPage() {
-            console.log('lock page');
-            let sections = this.getSections();
-            this.selectedPage.isLocked = true;
+            let prompt = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: "This action will lock this page and disallow any new entries, or editing of existing entries. Do you want to continue?",
+                buttons: [
+                    {
+                        label: 'Lock Page',
+                        callback: () => {
+                            let sections = this.getSections();
+                            this.selectedPage.isLocked = true;
 
-            // cant be default if it's locked
-            if (this.selectedPage.id === this.defaultPageId) {
-                this.cleanupDefaultNotebook();
-            }
+                            // cant be default if it's locked
+                            if (this.selectedPage.id === this.defaultPageId) {
+                                this.cleanupDefaultNotebook();
+                            }
 
-            if (!this.selectedSection.isLocked) {
-                this.selectedSection.isLocked = true;
-            }
+                            if (!this.selectedSection.isLocked) {
+                                this.selectedSection.isLocked = true;
+                            }
 
-            mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
+                            mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
 
-            if (!this.domainObject.locked) {
-                mutateObject(this.openmct, this.domainObject, 'locked', true);
-            }
+                            if (!this.domainObject.locked) {
+                                mutateObject(this.openmct, this.domainObject, 'locked', true);
+                            }
+
+                            prompt.dismiss();
+                        }
+                    }, {
+                        label: 'Cancel',
+                        callback: () => {
+                            prompt.dismiss();
+                        }
+                    }
+                ]
+            });
         },
         setSectionAndPageFromUrl() {
             let sectionId = this.getSectionIdFromUrl() || this.getDefaultSectionId() || this.getSelectedSectionId();

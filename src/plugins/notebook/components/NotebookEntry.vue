@@ -50,17 +50,26 @@
                     />
                 </div>
             </template>
-            <template v-else>
+            <template v-else-if="!isLocked">
                 <div
                     :id="entry.id"
-                    class="c-ne__text"
-                    :class="{ 'c-ne__input' : !isLocked }"
+                    class="c-ne__text c-ne__input"
                     tabindex="0"
-                    :contenteditable="!isLocked"
+                    contenteditable="true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
+                    v-text="entry.text"
+                >
+                </div>
+            </template>
+            <template v-else>
+                <div
+                    :id="entry.id"
+                    class="c-ne__text"
+                    contenteditable="false"
+                    tabindex="0"
                     v-text="entry.text"
                 >
                 </div>
@@ -212,30 +221,26 @@ export default {
             this.entry.embeds.push(newEmbed);
         },
         cancelEditMode(event) {
-            if (this.selectedPage.isLocked) {
-                return;
-            }
-
             const isEditing = this.openmct.editor.isEditing();
             if (isEditing) {
                 this.openmct.editor.cancel();
             }
         },
-        changeCursor() {
+        changeCursor(event) {
             event.preventDefault();
-            event.dataTransfer.dropEffect = this.isLocked ? "no-drop" : "copy";
+
+            if (!this.isLocked) {
+                event.dataTransfer.dropEffect = 'copy';
+            } else {
+                event.dataTransfer.dropEffect = 'none';
+                event.dataTransfer.effectAllowed = 'none';
+            }
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
         async dropOnEntry($event) {
-            if (this.selectedPage.isLocked) {
-                this.openmct.notifications.error('This page is locked, you may not make edits.');
-
-                return;
-            }
-
-            event.stopImmediatePropagation();
+            $event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
@@ -305,10 +310,6 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
-            if (this.selectedPage.isLocked) {
-                return;
-            }
-
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {

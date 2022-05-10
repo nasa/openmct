@@ -5,18 +5,26 @@
     :data-id="page.id"
     @click="selectPage"
 >
-    <span
-        class="c-list__item__name js-list__item__name"
-        :class="{ 'icon-lock' : page.isLocked }"
-        :data-id="page.id"
-        :contenteditable="!page.isLocked"
-        @keydown.enter="updateName"
-        @blur="updateName"
-    >{{ pageName }}</span>
-    <PopupMenu
-        v-if="!page.isLocked"
-        :popup-menu-items="popupMenuItems"
-    />
+    <template v-if="!page.isLocked">
+        <span
+            class="c-list__item__name js-list__item__name"
+            :data-id="page.id"
+            :contenteditable="true"
+            @keydown.enter="updateName"
+            @blur="updateName"
+        >{{ pageName }}</span>
+        <PopupMenu
+            v-if="!page.isLocked"
+            :popup-menu-items="popupMenuItems"
+        />
+    </template>
+    <template v-else>
+        <span
+            class="c-list__item__name js-list__item__name icon-lock"
+            :data-id="page.id"
+            :contenteditable="false"
+        >{{ pageName }}</span>
+    </template>
 </div>
 </template>
 
@@ -61,26 +69,12 @@ export default {
         isSelected() {
             return this.selectedPageId === this.page.id;
         },
-        isEditable() {
-            if (this.page.isLocked) {
-                console.log(this.page.name, 'not editable');
-                return false;
-            }
-            console.log(this.page.name, 'IS editable');
-            return this.page.isSelected;
-        },
         pageName() {
             return this.page.name.length ? this.page.name : `Unnamed ${this.pageTitle}`;
         }
     },
-    // watch: {
-    //     page(newPage) {
-    //         this.toggleContentEditable(newPage);
-    //     }
-    // },
     mounted() {
         this.addPopupMenuItems();
-        // this.toggleContentEditable();
     },
     methods: {
         addPopupMenuItems() {
@@ -111,43 +105,31 @@ export default {
         },
         selectPage(event) {
             const target = event.target;
-            const page = target.closest('.js-list__item');
-            const input = page.querySelector('.js-list__item__name');
+            const id = target.dataset.id;
 
-            if (page.className.indexOf('is-selected') > -1 && !this.page.isLocked) {
-                input.contentEditable = true;
-                input.classList.add('c-input-inline');
+            if (!this.page.isLocked) {
+                const page = target.closest('.js-list__item');
+                const input = page.querySelector('.js-list__item__name');
 
-                return;
+                if (page.className.indexOf('is-selected') > -1) {
+                    input.classList.add('c-input-inline');
+
+                    return;
+                }
             }
 
-            const id = target.dataset.id;
             if (!id) {
                 return;
             }
 
             this.$emit('selectPage', id);
         },
-        // toggleContentEditable(page = this.page) {
-        //     const pageTitle = this.$el.querySelector('span');
-        //     console.log('page', page, pageTitle.contentEditable);
-        //     pageTitle.contentEditable = page.isSelected;
-        // },
         updateName(event) {
-            if (this.page.isLocked) {
-                return;
-            }
-
             const target = event.target;
             const name = target.textContent.toString();
-            target.contentEditable = false;
             target.classList.remove('c-input-inline');
 
-            if (this.page.name === name) {
-                return;
-            }
-
-            if (name === '') {
+            if (name === '' || this.page.name === name) {
                 return;
             }
 
