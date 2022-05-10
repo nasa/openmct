@@ -128,7 +128,6 @@ export default {
         },
         updateName(event) {
             const target = event.target;
-            target.contentEditable = false;
             target.classList.remove('c-input-inline');
             const name = target.textContent.trim();
 

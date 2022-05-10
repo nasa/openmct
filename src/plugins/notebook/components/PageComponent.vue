@@ -127,7 +127,6 @@ export default {
         updateName(event) {
             const target = event.target;
             const name = target.textContent.toString();
-            target.contentEditable = false;
             target.classList.remove('c-input-inline');
 
             if (this.page.name === name) {
