@@ -48,7 +48,10 @@ test.use({
 });
 
 test.describe('ExportAsJSON', () => {
-    test.slow('User can set autoscale with a valid range @snapshot', async ({ page }) => {
+    test('User can set autoscale with a valid range @snapshot', async ({ page }) => {
+        //This is necessary due to the size of the test suite.
+        await test.setTimeout(120 * 1000);
+
         await page.goto('/', { waitUntil: 'networkidle' });
 
         await setTimeRange(page);
