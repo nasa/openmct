@@ -72,10 +72,12 @@ function addLegacyNotebookGetInterceptor(openmct) {
 }
 
 function installBaseNotebookFunctionality(openmct) {
+    console.log('install basic shit', openmct[NOTEBOOK_INSTALLED_KEY], openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]);
     // only need to do this once
     if (openmct[NOTEBOOK_INSTALLED_KEY] || openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]) {
         return;
     }
+    console.log('INSTALLING BASIC SHIT');
 
     const snapshotContainer = getSnapshotContainer(openmct);
     const notebookSnapshotImageType = {
@@ -115,7 +117,7 @@ function installBaseNotebookFunctionality(openmct) {
 
 function NotebookPlugin(name = 'Notebook') {
     return function install(openmct) {
-        if (isTypeInstalled(openmct, NOTEBOOK_INSTALLED_KEY)) {
+        if (openmct[NOTEBOOK_INSTALLED_KEY]) {
             return;
         }
 
@@ -133,12 +135,14 @@ function NotebookPlugin(name = 'Notebook') {
         openmct.objectViews.addProvider(notebookView);
 
         installBaseNotebookFunctionality(openmct);
+
+        openmct[NOTEBOOK_INSTALLED_KEY] = true;
     };
 }
 
 function RestrictedNotebookPlugin(name = 'Restricted Notebook') {
     return function install(openmct) {
-        if (isTypeInstalled(openmct, RESTRICTED_NOTEBOOK_INSTALLED_KEY)) {
+        if (openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]) {
             return;
         }
 
@@ -154,6 +158,8 @@ function RestrictedNotebookPlugin(name = 'Restricted Notebook') {
         openmct.objectViews.addProvider(notebookView);
 
         installBaseNotebookFunctionality(openmct);
+
+        openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY] = true;
     };
 }
 
