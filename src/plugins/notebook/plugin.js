@@ -48,16 +48,6 @@ function getSnapshotContainer(openmct) {
     return notebookSnapshotContainer;
 }
 
-function isTypeInstalled(openmct, type) {
-    if (openmct[type]) {
-        return true;
-    } else {
-        openmct[type] = true;
-
-        return false;
-    }
-}
-
 function addLegacyNotebookGetInterceptor(openmct) {
     openmct.objects.addGetInterceptor({
         appliesTo: (identifier, domainObject) => {
@@ -72,12 +62,10 @@ function addLegacyNotebookGetInterceptor(openmct) {
 }
 
 function installBaseNotebookFunctionality(openmct) {
-    console.log('install basic shit', openmct[NOTEBOOK_INSTALLED_KEY], openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]);
     // only need to do this once
     if (openmct[NOTEBOOK_INSTALLED_KEY] || openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]) {
         return;
     }
-    console.log('INSTALLING BASIC SHIT');
 
     const snapshotContainer = getSnapshotContainer(openmct);
     const notebookSnapshotImageType = {
