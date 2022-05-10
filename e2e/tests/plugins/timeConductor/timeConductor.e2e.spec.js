@@ -67,3 +67,46 @@ test.describe('Time counductor operations', () => {
         expect(endDateValidityStatus).not.toBeTruthy();
     });
 });
+
+
+// Testing instructions:
+// Try to change the realtime offsets when in realtime (local clock) mode.
+test.describe('Time conductor input fields real-time mode', () => {
+    test('validate input fields in real-time mode', async ({ page }) => {
+        //Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Set realtime "local clock" mode offsets
+        const timeInputs = page.locator('input.c-input--datetime');
+
+        // Click fixed timespan button
+        await page.locator('.c-button__label >> text=Fixed Timespan').click();
+
+        // Click local clock 
+        await page.locator('.icon-clock >> text=Local Clock').click();
+
+        // Click time offset button
+        await page.locator('.c-conductor__delta-button >> text=00:30:00').click();
+
+        // Input start time offset
+        await page.fill('.pr-time-controls__secs', '23');
+
+        // Click the check button
+        await page.locator('.icon-check').click();
+
+        // Verify time was updated on time offset button
+        await expect(page.locator('.c-conductor__delta-button').first()).toContainText('00:30:23');
+
+        // Click time offset set preceding now button
+        await page.locator('.c-conductor__delta-button >> text=00:00:30').click();
+
+        // Input preceding time offset
+        await page.fill('.pr-time-controls__secs', '31')
+
+        // Click the check buttons
+        await page.locator('.icon-check').click();
+
+        // Verify time was updated on preceding time offset button
+        await expect(page.locator('.c-conductor__delta-button').nth(1)).toContainText('00:00:31');
+    });
+});
