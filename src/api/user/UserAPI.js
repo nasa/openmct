@@ -40,8 +40,10 @@ class UserAPI extends EventEmitter {
         this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
 
         this._openmct.once('destroy', () => {
-            this._provider.off('statusChange', this.onProviderStatusChange);
-            this._provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
+            if (typeof this._provider.off === 'function') {
+                this._provider.off('statusChange', this.onProviderStatusChange);
+                this._provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
+            }
         });
     }
 
@@ -59,8 +61,10 @@ class UserAPI extends EventEmitter {
         }
 
         this._provider = provider;
-        this._provider.on('statusChange', this.onProviderStatusChange);
-        this._provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
+        if (typeof this._provider.on === 'function') {
+            this._provider.on('statusChange', this.onProviderStatusChange);
+            this._provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
+        }
 
         this.emit('providerAdded', this._provider);
     }
@@ -113,7 +117,7 @@ class UserAPI extends EventEmitter {
         if (this._provider.canSetPollQuestion) {
             return this._provider.canSetPollQuestion();
         } else {
-            return false;
+            return Promise.resolve(false);
         }
     }
 

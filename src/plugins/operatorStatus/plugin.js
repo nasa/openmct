@@ -7,7 +7,7 @@ import PollQuestionComponent from './PollQuestion.vue';
 
 import Vue from 'vue';
 
-export default function operatorStatusPlugin(config) {
+export default function operatorStatusPlugin() {
     return function install(openmct) {
 
         if (openmct.user.hasProvider()) {
