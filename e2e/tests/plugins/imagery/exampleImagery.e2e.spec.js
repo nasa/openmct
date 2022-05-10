@@ -55,7 +55,7 @@ test.describe('Example Imagery', () => {
     });
 
     const backgroundImageSelector = '.c-imagery__main-image__background-image';
-    test.only('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
+    test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
         const bgImageLocator = await page.locator(backgroundImageSelector);
         const deltaYStep = 100; //equivalent to 1x zoom
         await bgImageLocator.hover();
