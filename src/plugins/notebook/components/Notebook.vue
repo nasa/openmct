@@ -368,7 +368,7 @@ export default {
         lockPage() {
             let prompt = this.openmct.overlays.dialog({
                 iconClass: 'alert',
-                message: "This will prevent any further changes being made to this page.",
+                message: "This action will lock this page and disallow any new entries, or editing of existing entries. Do you want to continue?",
                 buttons: [
                     {
                         label: 'Lock Page',
