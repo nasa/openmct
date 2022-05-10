@@ -3,9 +3,6 @@ import FaultManagementTelemetryProvider from './FaultManagementTelemetryProvider
 import FaultManagementObjectProvider from './FaultManagementObjectProvider';
 
 import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_NAMESPACE } from './constants';
-// Non editable and non creatable
-//  check with gatard
-//  check XTCE standard ()
 
 export default function FaultManagementPlugin(config = {}) {
     return function (openmct) {
@@ -20,7 +17,11 @@ export default function FaultManagementPlugin(config = {}) {
 
         openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
 
-        let { faultManagementTelemetryProvider } = config;
+        let { skipTelemetryProvider, faultManagementTelemetryProvider } = config;
+        if (skipTelemetryProvider) {
+            return;
+        }
+
         if (!faultManagementTelemetryProvider) {
             faultManagementTelemetryProvider = new FaultManagementTelemetryProvider(openmct, config);
         }

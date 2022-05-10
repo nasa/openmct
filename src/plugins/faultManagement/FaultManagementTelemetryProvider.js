@@ -14,27 +14,6 @@ export default class FaultManagementTelemetryProvider {
         return domainObject.type === FAULT_MANAGEMENT_TYPE;
     }
 
-    subscribe(domainObject, callback) {
-        if (this.config.devMode) {
-            let timerId = setInterval(() => {
-                this._getTestData()
-                    .then(faults => {
-                        callback(faults.alarms[0]);
-                    });
-            }, this.config.devInterval);
-
-            return () => {
-                clearTimeout(timerId);
-            };
-        }
-
-        callback({});
-
-        return () => {
-            console.log('unsubscribe');
-        };
-    }
-
     request(domainObject, options) {
         if (this.config.devMode) {
             return this._getTestData();
