@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { SCATTER_PLOT_KEY } from './ScatterPlotConstants';
+import { SCATTER_PLOT_KEY } from './scatterPlotConstants';
 
 export default function ScatterPlotCompositionPolicy(openmct) {
     function hasRange(metadata) {

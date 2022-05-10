@@ -105,7 +105,7 @@ export default {
             this.setAxesLabels();
         },
         removeSeries(series) {
-            const index = this.plotSeries.find(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
+            const index = this.plotSeries.findIndex(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
             if (index !== undefined) {
                 this.$delete(this.plotSeries, index);
                 this.setAxesLabels();

@@ -1,4 +1,4 @@
-import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../ScatterPlotConstants';
+import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../scatterPlotConstants';
 import Vue from 'vue';
 import PlotOptions from "./PlotOptions.vue";
 

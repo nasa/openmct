@@ -21,12 +21,12 @@
  *****************************************************************************/
 
 import ScatterPlotView from './ScatterPlotView.vue';
-import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW } from './ScatterPlotConstants.js';
+import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW, TIME_STRIP_KEY } from './scatterPlotConstants.js';
 import Vue from 'vue';
 
 export default function ScatterPlotViewProvider(openmct) {
     function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+        let isChildOfTimeStrip = objectPath.find(object => object.type === TIME_STRIP_KEY);
 
         return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
     }

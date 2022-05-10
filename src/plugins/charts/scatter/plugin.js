@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { SCATTER_PLOT_KEY } from './ScatterPlotConstants.js';
+import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
 import ScatterPlotViewProvider from './ScatterPlotViewProvider';
 import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider';
 import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy';
@@ -40,7 +40,8 @@ export default function () {
                 domainObject.composition = [];
                 domainObject.configuration = {
                     styles: {},
-                    axes: {}
+                    axes: {},
+                    ranges: {}
                 };
             },
             form: [
@@ -51,6 +52,7 @@ export default function () {
                     text: 'Select File...',
                     type: 'application/json',
                     removable: true,
+                    hideFromInspector: true,
                     property: [
                         "selectFile"
                     ]
@@ -61,24 +63,29 @@ export default function () {
                     cssClass: "l-input",
                     key: "scatterPlotForm",
                     required: false,
-                    hideFromInspector: true,
+                    hideFromInspector: false,
                     property: [
-                        "configuration"
+                        "configuration",
+                        "ranges"
                     ],
                     validate: ({ value }, callback) => {
-                        // const { rangeMin, rangeMax, domainMin, domainMax } = value;
+                        const { rangeMin, rangeMax, domainMin, domainMax } = value;
                         const valid = {
-                            rangeMin: true,
-                            rangeMax: true,
-                            domainMin: true,
-                            domainMax: true
+                            rangeMin,
+                            rangeMax,
+                            domainMin,
+                            domainMax
                         };
 
                         if (callback) {
                             callback(valid);
                         }
 
-                        return valid.rangeMin && valid.rangeMax && valid.domainMin && valid.domainMax;
+                        const values = Object.values(valid);
+                        const hasAllValues = values.every(rangeValue => rangeValue !== undefined);
+                        const hasNoValues = values.every(rangeValue => rangeValue === undefined);
+
+                        return hasAllValues || hasNoValues;
                     }
                 }
             ],

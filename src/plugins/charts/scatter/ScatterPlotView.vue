@@ -67,6 +67,7 @@ export default {
         this.reloadTelemetry = this.reloadTelemetry.bind(this);
         this.reloadTelemetry = _.debounce(this.reloadTelemetry, 500);
         this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.reloadTelemetry);
+        this.unobserveUnderlayRanges = this.openmct.objects.observe(this.domainObject, 'configuration.ranges', this.reloadTelemetry);
     },
     beforeDestroy() {
         this.stopFollowingTimeContext();
@@ -81,6 +82,10 @@ export default {
         this.composition.off('remove', this.removeTelemetryObject);
         if (this.unobserve) {
             this.unobserve();
+        }
+
+        if (this.unobserveUnderlayRanges) {
+            this.unobserveUnderlayRanges();
         }
     },
     methods: {
@@ -260,17 +265,17 @@ export default {
                 hoverinfo: 'x+y'
             };
 
-            if (this.domainObject.configuration.domainMin !== undefined && this.domainObject.configuration.domainMax !== undefined) {
+            if (this.domainObject.configuration.ranges.domainMin !== undefined && this.domainObject.configuration.ranges.domainMax !== undefined) {
                 trace.xaxis = {
-                    min: this.domainObject.configuration.domainMin,
-                    max: this.domainObject.configuration.domainMax
+                    min: this.domainObject.configuration.ranges.domainMin,
+                    max: this.domainObject.configuration.ranges.domainMax
                 };
             }
 
-            if (this.domainObject.configuration.rangeMin !== undefined && this.domainObject.configuration.rangeMax !== undefined) {
+            if (this.domainObject.configuration.ranges.rangeMin !== undefined && this.domainObject.configuration.ranges.rangeMax !== undefined) {
                 trace.yaxis = {
-                    min: this.domainObject.configuration.rangeMin,
-                    max: this.domainObject.configuration.rangeMax
+                    min: this.domainObject.configuration.ranges.rangeMin,
+                    max: this.domainObject.configuration.ranges.rangeMax
                 };
             }
 
