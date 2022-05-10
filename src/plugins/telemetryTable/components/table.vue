@@ -499,6 +499,8 @@ export default {
         this.table.tableRows.on('sort', this.updateVisibleRows);
         this.table.tableRows.on('filter', this.updateVisibleRows);
 
+        this.openmct.time.on('bounds', this.boundsChanged);
+
         //Default sort
         this.sortOptions = this.table.tableRows.sortBy();
         this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
@@ -526,6 +528,8 @@ export default {
         this.table.tableRows.off('filter', this.updateVisibleRows);
 
         this.table.configuration.off('change', this.updateConfiguration);
+
+        this.openmct.time.off('bounds', this.boundsChanged);
 
         clearInterval(this.resizePollHandle);
 
@@ -846,6 +850,25 @@ export default {
             }
 
             this.isShowingMarkedRowsOnly = false;
+        },
+        boundsChanged(_bounds, isTick) {
+            if (isTick) {
+                return;
+            }
+
+            this.userBoundsChanged();
+        },
+        userBoundsChanged() {
+            if (this.paused) {
+                this.unpause(false);
+                // Handle the case where the table was paused by button,
+                // but unpaused by a user bounds change.
+                if (this.pausedByButton) {
+                    this.undoMarkedRows();
+                    this.table.unpause();
+                    this.paused = false;
+                }
+            }
         },
         togglePauseByButton() {
             if (this.paused) {
