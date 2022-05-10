@@ -55,7 +55,7 @@
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
                     tabindex="0"
-                    contenteditable
+                    contenteditable="true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
@@ -68,6 +68,7 @@
                 <div
                     :id="entry.id"
                     class="c-ne__text"
+                    contenteditable="false"
                     tabindex="0"
                     v-text="entry.text"
                 >
@@ -220,16 +221,12 @@ export default {
             this.entry.embeds.push(newEmbed);
         },
         cancelEditMode(event) {
-            if (this.selectedPage.isLocked) {
-                return;
-            }
-
             const isEditing = this.openmct.editor.isEditing();
             if (isEditing) {
                 this.openmct.editor.cancel();
             }
         },
-        changeCursor() {
+        changeCursor(event) {
             event.preventDefault();
             event.dataTransfer.dropEffect = this.isLocked ? "no-drop" : "copy";
         },
@@ -243,7 +240,7 @@ export default {
                 return;
             }
 
-            event.stopImmediatePropagation();
+            $event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
@@ -313,10 +310,6 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
-            if (this.selectedPage.isLocked) {
-                return;
-            }
-
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {
