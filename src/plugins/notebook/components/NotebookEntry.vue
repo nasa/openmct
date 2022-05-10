@@ -228,18 +228,18 @@ export default {
         },
         changeCursor(event) {
             event.preventDefault();
-            event.dataTransfer.dropEffect = this.isLocked ? "no-drop" : "copy";
+
+            if (!this.isLocked) {
+                event.dataTransfer.dropEffect = 'copy';
+            } else {
+                event.dataTransfer.dropEffect = 'none';
+                event.dataTransfer.effectAllowed = 'none';
+            }
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
         async dropOnEntry($event) {
-            if (this.selectedPage.isLocked) {
-                this.openmct.notifications.error('This page is locked, you may not make edits.');
-
-                return;
-            }
-
             $event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');

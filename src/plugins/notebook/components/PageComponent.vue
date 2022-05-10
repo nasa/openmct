@@ -104,22 +104,20 @@ export default {
             removeDialog.show();
         },
         selectPage(event) {
-            if (this.page.isLocked) {
-                return;
-            }
-
             const target = event.target;
-            const page = target.closest('.js-list__item');
-            const input = page.querySelector('.js-list__item__name');
+            const id = target.dataset.id;
 
-            if (page.className.indexOf('is-selected') > -1) {
-                input.contentEditable = true;
-                input.classList.add('c-input-inline');
+            if (!this.page.isLocked) {
+                const page = target.closest('.js-list__item');
+                const input = page.querySelector('.js-list__item__name');
 
-                return;
+                if (page.className.indexOf('is-selected') > -1) {
+                    input.classList.add('c-input-inline');
+
+                    return;
+                }
             }
 
-            const id = target.dataset.id;
             if (!id) {
                 return;
             }

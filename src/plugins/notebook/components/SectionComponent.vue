@@ -106,21 +106,19 @@ export default {
             removeDialog.show();
         },
         selectSection(event) {
-            if (this.section.isLocked) {
-                return;
-            }
-
             const target = event.target;
-            const section = target.closest('.js-list__item');
-            const input = section.querySelector('.js-list__item__name');
-
-            if (section.className.indexOf('is-selected') > -1) {
-                input.classList.add('c-input-inline');
-
-                return;
-            }
-
             const id = target.dataset.id;
+
+            if (!this.section.isLocked) {
+                const section = target.closest('.js-list__item');
+                const input = section.querySelector('.js-list__item__name');
+
+                if (section.className.indexOf('is-selected') > -1) {
+                    input.classList.add('c-input-inline');
+
+                    return;
+                }
+            }
 
             if (!id) {
                 return;
