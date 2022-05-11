@@ -1,5 +1,4 @@
 import FaultManagementViewProvider from './FaultManagementViewProvider';
-import FaultManagementTelemetryProvider from './FaultManagementTelemetryProvider';
 import FaultManagementObjectProvider from './FaultManagementObjectProvider';
 
 import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_NAMESPACE } from './constants';
@@ -17,15 +16,10 @@ export default function FaultManagementPlugin(config = {}) {
 
         openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
 
-        let { skipTelemetryProvider, faultManagementTelemetryProvider } = config;
-        if (skipTelemetryProvider) {
+        if (!config.faultManagementTelemetryProvider) {
             return;
         }
 
-        if (!faultManagementTelemetryProvider) {
-            faultManagementTelemetryProvider = new FaultManagementTelemetryProvider(openmct, config);
-        }
-
-        openmct.telemetry.addProvider(faultManagementTelemetryProvider);
+        openmct.telemetry.addProvider(config.faultManagementTelemetryProvider);
     };
 }

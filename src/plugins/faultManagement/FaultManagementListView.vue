@@ -66,6 +66,9 @@ export default {
         }
     },
     watch: {
+        faultsList(newVal) {
+            console.log('faultsList in list view', newVal);
+        }
     },
     mounted() {
     },

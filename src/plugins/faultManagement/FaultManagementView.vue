@@ -10,8 +10,7 @@
 
 <script>
 import FaultManagementListView from './FaultManagementListView.vue';
-
-import uuid from 'uuid';
+import { FAULT_MANAGEMENT_ALARMS, FAULT_MANAGEMENT_GLOBAL_ALARMS } from './constants';
 
 export default {
     components: {
@@ -26,15 +25,8 @@ export default {
     computed: {
     },
     mounted() {
-        this.openmct.telemetry
-            .request(this.domainObject)
-            .then(data => {
-                this.faultsList = data.alarms.map(alarm => {
-                    alarm.key = uuid();
+        this.updateFaultList();
 
-                    return alarm;
-                });
-            });
 
         this.unsubscribe = this.openmct.telemetry
             .subscribe(this.domainObject, this.updateFault);
@@ -45,9 +37,33 @@ export default {
         }
     },
     methods: {
-        updateFault(fault) {
-            fault.key = uuid();
-            this.faultsList.push(fault);
+        generateKey(fault) {
+            return `id-${fault.id.name}-${fault.id.namespace}`;
+        },
+        updateFaultList() {
+            this.openmct.telemetry
+                .request(this.domainObject)
+                .then(data => {
+                    this.faultsList = data.alarms.map(fault => {
+                        fault.key = this.generateKey(fault);
+
+                        return fault;
+                    });
+                });
+        },
+        updateFault({ fault, type }) {
+            if (type === FAULT_MANAGEMENT_GLOBAL_ALARMS) {
+                this.updateFaultList();
+            } else if (type === FAULT_MANAGEMENT_ALARMS) {
+                const key = this.generateKey(fault);
+
+                this.faultsList.forEach((faultValue, i) => {
+                    if (key === faultValue.key) {
+                        fault.key = key;
+                        this.$set(this.faultsList, i, fault);
+                    }
+                });
+            }
         }
     }
 };

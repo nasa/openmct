@@ -200,7 +200,34 @@
         openmct.install(openmct.plugins.FaultManagementPlugin({
             url: `http://localhost:8090/api/processors/myproject/realtime/alarms`,
             devMode: true,
-            devInterval: 5000
+            devInterval: 5000,
+            faultManagementTelemetryProvider: {
+                supportsRequest: (domainObject) => {
+                    return domainObject.type === 'faultManagement';
+                },
+                request(domainObject, options) {
+                    const faults = localStorage.getItem('faults') || '{}';
+
+                    return Promise.resolve(JSON.parse(faults));
+                },
+                supportsSubscribe(domainObject) {
+                    return domainObject.type === 'faultManagement';
+                },
+                subscribe(domainObject, callback) {
+                    const faults = JSON.parse(localStorage.getItem('faults') || '{}');
+                    let id = setInterval(() => {
+                        faults.alarms[0].parameterDetail.currentValue.engValue.doubleValue = Math.random();
+                        callback({
+                            fault: faults.alarms[0],
+                            type: 'alarms'
+                        });
+                    }, 300);
+
+                    return () => {
+                        clearInterval(id);
+                    }
+                }
+            }
         }));
 
         openmct.start();
