@@ -1,14 +1,30 @@
 .c-fault-mgmt-search-row{
-    background: rgba($colorBtnSelectedBg, 0.4);
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    // flex-wrap: wrap;
+    font-size: 1.3em;
+    > * + *{
+       margin-left: 10px;
+       float: right;
+    }
 }
 
 .c-fault-mgmt-search{
-    min-width: 1000px;
+    width: 90%;
+    background: rgba($colorBodyFg, 0.1);
 }
 
 .c-fault-mgmt-toolbar{
-    background: blue;
+    // background: rgb(229, 157, 157) !important;
+    display: flex; 
+    justify-content: center;
+}
+
+.c-fault-mgmt-button-ack{
+    font-size: 1.3em;
+    margin-bottom: 5px;
+}
+
+.c-fault-mgmt-list-item{
+    background: red;
 }

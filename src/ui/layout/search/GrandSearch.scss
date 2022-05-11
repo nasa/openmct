@@ -1,0 +1,69 @@
+.c-gsearch__dropdown {
+    .c-gsearch__dropdown_content {
+      @include menuOuter();
+      min-width: 500px;
+      max-height: 500px;
+    }
+    .c-gsearch__dropdown:hover {
+      display: block;
+  }
+}
+
+.c-gsearch__filter { //hardcoded filter element using button and sup tags
+  button { 
+    color: #0096D7;
+    padding: 4px; 
+    sup { 
+      color: white;
+    }
+  }
+  > button:hover {
+    background-color: #0096D7;
+    color: white;
+  }
+}
+
+.c-gsearch__object {
+  background-color: red;
+}
+
+
+.c-gsearch__results_title {
+  border-bottom: 1px solid rgba(170, 170, 170, 0.2);
+  padding: 2px;
+}
+.c-gsearch-result {
+  display: flex;
+  cursor: pointer;
+  align-items: flex-start;
+  padding-top: 2px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(170, 170, 170, 0.2);
+}
+.c-gsearch-result:hover {
+  background-color: #345461;
+}
+.c-tag-in-search-result {
+  border-radius: 3px;
+  border: 0.25px solid;
+  background-color: black;
+  color: white;
+  padding: 3px;
+  margin-top: 5px;
+  margin-left: 4px;
+}
+.c-gsearch__result_content {
+  padding: 3px;
+}
+.c-gsearch__result_location {
+  padding-left: 3px;
+  font-size: 0.7em;
+
+}
+.c-gsearch__result_label {
+  padding: 2px;
+}
+.c-gsearch__result_content {
+  display: flex;
+  flex-direction: column;
+}

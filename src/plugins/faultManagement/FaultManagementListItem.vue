@@ -13,6 +13,9 @@
     <span>{{ currentValue }}</span>
     <span>{{ acknowledged }}</span>
     <span>{{ triggerTime }}</span>
+<div class="c-fault-mgmt-list-item">
+    {{ fault.id.name }}
+    {{ fault.id.namespace }}
 </div>
 </template>
 

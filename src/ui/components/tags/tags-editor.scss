@@ -1,0 +1,42 @@
+.c-tag__parent {
+  background: purple !important;
+  margin-top: 1px;
+  
+}
+
+.c-tag_selection {
+    display: flex;
+    flex-direction: row;
+    // background: red;
+}
+.c-tag_editor {
+    display: flex;
+    flex-direction: row;
+}
+.c-completed-tag {
+  border-radius: 3px;
+  border: 0.25px solid;
+  background-color: black;
+  color: white;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 3px;
+  padding-right: 1px;
+  margin-top: 5px;
+  margin-left: 4px;
+  max-height: 20px;
+  display: flex;
+  flex-direction: row;
+}
+.c-add-tag-button { // parent button
+  margin-top: 4px;
+  text-align: center;
+  // display: flex;
+}
+.c-add-tag-text { // "add tag" 
+  margin-left: 5px;
+}
+.c-completed-tag-deletion {
+  margin-bottom: 4px;
+  text-align: center;
+}
