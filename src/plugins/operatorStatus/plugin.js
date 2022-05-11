@@ -33,6 +33,10 @@ export default function operatorStatusPlugin() {
                             let indicatorBox = operatorIndicator.element.getBoundingClientRect();
                             operatorStatusElement.positionX = indicatorBox.left;
                             operatorStatusElement.positionY = indicatorBox.bottom;
+
+                            const popupRight = operatorStatusElement.positionX + operatorStatusElement.$el.clientWidth;
+                            const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
+                            operatorStatusElement.positionX = operatorStatusElement.positionX + offsetLeft;
                         });
 
                         positionBox();
@@ -96,7 +100,7 @@ export default function operatorStatusPlugin() {
 
                             const popupRight = pollQuestionElement.positionX + pollQuestionElement.$el.clientWidth;
                             const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
-                            pollQuestionElement.positionX = pollQuestionElement.positionX + offsetLeft;    
+                            pollQuestionElement.positionX = pollQuestionElement.positionX + offsetLeft;
                         });
 
                         positionBox();
