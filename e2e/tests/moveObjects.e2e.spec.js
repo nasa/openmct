@@ -32,7 +32,7 @@ test.describe('Move item tests', () => {
         await page.goto('/');
 
         // Create a new folder in the root my items folder
-        let folder1 = "Folder 1";
+        let folder1 = "Folder1";
         await page.locator('button:has-text("Create")').click();
         await page.locator('li.icon-folder').click();
 
@@ -40,25 +40,33 @@ test.describe('Move item tests', () => {
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder1);
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=OK').click()
+            page.locator('text=OK').click(),
+            page.waitForSelector('.c-message-banner__message')
         ]);
+        //Wait until Save Banner is gone
+        await page.locator('.c-message-banner__close-button').click();
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
         // Create another folder with a new name at default location, which is currently inside Folder 1
-        let folder2 = "Folder 2";
+        let folder2 = "Folder2";
         await page.locator('button:has-text("Create")').click();
         await page.locator('li.icon-folder').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder2);
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=OK').click()
+            page.locator('text=OK').click(),
+            page.waitForSelector('.c-message-banner__message')
         ]);
+        //Wait until Save Banner is gone
+        await page.locator('.c-message-banner__close-button').click();
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
         // Move Folder 2 from Folder 1 to My Items
         await page.locator('text=Open MCT My Items >> span').nth(3).click();
         await page.locator('.c-tree__scrollable div div:nth-child(2) .c-tree__item .c-tree__item__view-control').click();
 
-        await page.locator(`text=${folder2}`).first().click({
+        await page.locator(`a:has-text("${folder2}")`).click({
             button: 'right'
         });
         await page.locator('li.icon-move').click();

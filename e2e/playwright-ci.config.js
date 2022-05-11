@@ -28,12 +28,12 @@ const config = {
         {
             name: 'chrome',
             use: {
-                browserName: 'chromium',
-                ...devices['Desktop Chrome']
+                browserName: 'chromium'
             }
         },
         {
             name: 'MMOC',
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
                 viewport: {
