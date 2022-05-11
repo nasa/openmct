@@ -3,11 +3,11 @@
     background: $sideBarBg;
     display: flex;
     justify-content: stretch;
-    max-width: 300px;
+    max-width: 600px;
 
     &.c-drawer--push.is-expanded {
         margin-right: $interiorMargin;
-        width: 50%;
+        width: 30%;
     }
 
     &.c-drawer--overlays.is-expanded {

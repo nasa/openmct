@@ -128,15 +128,15 @@ function NotebookPlugin(name = 'Notebook') {
     };
 }
 
-function RestrictedNotebookPlugin(name = 'Restricted Notebook') {
+function RestrictedNotebookPlugin(name = 'Notebook Shift Log') {
     return function install(openmct) {
         if (openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]) {
             return;
         }
 
         const type = RESTRICTED_NOTEBOOK_TYPE;
-        const icon = 'icon-lock';
-        const description = 'Create and save timestamped notes with embedded object snapshots with the ability to restrict certain functionality.';
+        const icon = 'icon-notebook-shift-log';
+        const description = 'Create and save timestamped notes with embedded object snapshots with the ability to commit and lock pages.';
         const snapshotContainer = getSnapshotContainer(openmct);
 
         const notebookType = new NotebookType(name, description, icon);

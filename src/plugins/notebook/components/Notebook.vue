@@ -135,7 +135,7 @@
                 class="c-notebook__page-locked"
             >
                 <div class="icon-lock"></div>
-                <div class="c-notebook__page-locked__message">This page is committed and cannot be changed</div>
+                <div class="c-notebook__page-locked__message">This page has been committed and cannot be modified or removed</div>
             </div>
             <div
                 v-if="selectedSection && selectedPage"
