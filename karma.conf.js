@@ -38,6 +38,10 @@ module.exports = (config) => {
             {
                 pattern: 'dist/inMemorySearchWorker.js*',
                 included: false
+            },
+            {
+                pattern: 'dist/generatorWorker.js*',
+                included: false
             }
         ],
         port: 9876,
@@ -92,8 +96,7 @@ module.exports = (config) => {
         },
         webpack: webpackConfig,
         webpackMiddleware: {
-            stats: 'errors-only',
-            logLevel: 'warn'
+            stats: 'errors-warnings'
         },
         concurrency: 1,
         singleRun: true,

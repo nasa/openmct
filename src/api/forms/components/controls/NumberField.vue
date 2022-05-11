@@ -58,7 +58,6 @@ export default {
     },
     methods: {
         updateText() {
-            console.log('updateText', this.field);
             const data = {
                 model: this.model,
                 value: this.field

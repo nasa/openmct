@@ -57,7 +57,7 @@
             />
 
             <drop-hint
-                :key="i"
+                :key="'hint-' + i"
                 class="c-fl-frame__drop-hint"
                 :index="i"
                 :allow-drop="allowDrop"
@@ -66,7 +66,7 @@
 
             <resize-handle
                 v-if="(i !== frames.length - 1)"
-                :key="i"
+                :key="'handle-' + i"
                 :index="i"
                 :orientation="rowsLayout ? 'horizontal' : 'vertical'"
                 :is-editing="isEditing"
