@@ -27,7 +27,6 @@ export default {
     mounted() {
         this.updateFaultList();
 
-
         this.unsubscribe = this.openmct.telemetry
             .subscribe(this.domainObject, this.updateFault);
     },

@@ -215,10 +215,16 @@
                 },
                 subscribe(domainObject, callback) {
                     const faults = JSON.parse(localStorage.getItem('faults') || '{}');
+
+                    function getRandomIndex(start, end) {
+                        return Math.floor(start + (Math.random() * (end - start + 1)));
+                    }
+
                     let id = setInterval(() => {
-                        faults.alarms[0].parameterDetail.currentValue.engValue.doubleValue = Math.random();
+                        const index = getRandomIndex(0, faults.alarms.length - 1);
+                        faults.alarms[index].parameterDetail.currentValue.engValue.doubleValue = Math.random();
                         callback({
-                            fault: faults.alarms[0],
+                            fault: faults.alarms[index],
                             type: 'alarms'
                         });
                     }, 300);

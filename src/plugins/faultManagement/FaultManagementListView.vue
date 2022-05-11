@@ -65,15 +65,9 @@ export default {
             return this.faultsList;
         }
     },
-    watch: {
-        faultsList(newVal) {
-            console.log('faultsList in list view', newVal);
-        }
-    },
-    mounted() {
-    },
-    beforeDestroy() {
-    },
+    watch: {},
+    mounted() {},
+    beforeDestroy() {},
     methods: {
         getFaultId(fault) {
             return `${fault.id.name}-${fault.id.namespace}`;
