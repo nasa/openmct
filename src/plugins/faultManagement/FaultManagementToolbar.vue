@@ -1,7 +1,8 @@
 <template>
 <div class="c-fault-mgmt-toolbar">
-    <button>Acknowledge</button>
-    <button>Shelve</button>
+    <button @click="acknowledgeSelected">Acknowledge</button>
+    <button @click="shelveSelected">Shelve</button>
+    <button></button>
 </div>
 </template>
 
@@ -25,6 +26,14 @@ export default {
     beforeDestroy() {
     },
     methods: {
+        acknowledgeSelected() {
+            console.log('acknowledgeSelected');
+            this.$emit('acknowledgeSelected');
+        },
+        shelveSelected() {
+            console.log('shelveSelected');
+            this.$emit('shelveSelected');
+        }
     }
 };
 </script>

@@ -16,10 +16,17 @@ export default function FaultManagementPlugin(config = {}) {
 
         openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
 
-        if (!config.faultManagementTelemetryProvider) {
-            return;
+        openmct.faults.setConfig(config);
+        if (config.historicaFaultProvider) {
+            openmct.faults.addHistoricalProvider(config.historicaFaultProvider);
         }
 
-        openmct.telemetry.addProvider(config.faultManagementTelemetryProvider);
+        if (config.realtimeFaultProvider) {
+            openmct.faults.addRealtimeProvider(config.realtimeFaultProvider);
+        }
+
+        if (config.faultActionProvider) {
+            openmct.faults.addFaultActionProvider(config.faultActionProvider);
+        }
     };
 }

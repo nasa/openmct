@@ -3,7 +3,10 @@
     <FaultManagementSearch
         @filterChanged="updateFilter"
     />
-    <FaultManagementToolbar />
+    <FaultManagementToolbar
+        @acknowledgeSelected="toggleAcknowledgeSelected"
+        @shelveSelected="toggleShelveSelected"
+    />
 
     <FaultManagementListHeader
         class="header"
@@ -93,10 +96,16 @@ export default {
             }
         },
         toggleAcknowledgeSelected() {
-            // TODO:
+            Object.values(this.selectedFaults)
+                .forEach(selectedFault => {
+                    this.openmct.faults.acknowledgeFault(selectedFault);
+                });
         },
         toggleShelveSelected() {
-            // TODO:
+            Object.values(this.selectedFaults)
+                .forEach(selectedFault => {
+                    this.openmct.faults.shelveFault(selectedFault);
+                });
         },
         updateFilter(filter) {
             this.filterIndex = filter.model.options.findIndex(option => option.value === filter.value);

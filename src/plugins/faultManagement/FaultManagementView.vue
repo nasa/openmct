@@ -27,7 +27,7 @@ export default {
     mounted() {
         this.updateFaultList();
 
-        this.unsubscribe = this.openmct.telemetry
+        this.unsubscribe = this.openmct.faults
             .subscribe(this.domainObject, this.updateFault);
     },
     beforeDestroy() {
@@ -40,7 +40,7 @@ export default {
             return `id-${fault.id.name}-${fault.id.namespace}`;
         },
         updateFaultList() {
-            this.openmct.telemetry
+            this.openmct.faults
                 .request(this.domainObject)
                 .then(data => {
                     this.faultsList = data.alarms.map(fault => {
