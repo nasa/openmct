@@ -215,6 +215,10 @@ export default class YAxisModel extends Model {
 
             const _range = this.get('displayRange');
 
+            if (!_range) {
+                return;
+            }
+
             if (this.get('logMode')) {
                 _range.min = antisymlog(_range.min, 10);
                 _range.max = antisymlog(_range.max, 10);
