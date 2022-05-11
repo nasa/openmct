@@ -1,29 +1,32 @@
 <template>
 <div
     class="c-list__item js-list__item"
-    :class="[{ 'is-selected': isSelected, 'is-notebook-default' : (defaultPageId === page.id) }]"
+    :class="[{
+        'is-selected': isSelected,
+        'is-notebook-default' : (defaultPageId === page.id),
+        'icon-lock' : page.isLocked
+    }]"
     :data-id="page.id"
     @click="selectPage"
 >
     <template v-if="!page.isLocked">
-        <span
+        <div
             class="c-list__item__name js-list__item__name"
             :data-id="page.id"
             :contenteditable="true"
             @keydown.enter="updateName"
             @blur="updateName"
-        >{{ pageName }}</span>
+        >{{ pageName }}</div>
         <PopupMenu
-            v-if="!page.isLocked"
             :popup-menu-items="popupMenuItems"
         />
     </template>
     <template v-else>
-        <span
-            class="c-list__item__name js-list__item__name icon-lock"
+        <div
+            class="c-list__item__name js-list__item__name"
             :data-id="page.id"
             :contenteditable="false"
-        >{{ pageName }}</span>
+        >{{ pageName }}</div>
     </template>
 </div>
 </template>

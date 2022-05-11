@@ -5,10 +5,9 @@
     :data-id="section.id"
     @click="selectSection"
 >
-    <template v-if="!section.isLocked">
+    <template>
         <span
             class="c-list__item__name js-list__item__name"
-            :class="{ 'icon-lock' : section.isLocked }"
             :data-id="section.id"
             contenteditable="true"
             @keydown.enter="updateName"
@@ -18,13 +17,6 @@
             v-if="!section.isLocked"
             :popup-menu-items="popupMenuItems"
         />
-    </template>
-    <template v-else>
-        <span
-            class="c-list__item__name js-list__item__name icon-lock"
-            :data-id="section.id"
-            contenteditable="false"
-        >{{ sectionName }}</span>
     </template>
 </div>
 </template>

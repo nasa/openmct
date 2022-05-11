@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-notebook">
+<div
+    class="c-notebook"
+    :class="[{'c-notebook--restricted' : isRestricted }]"
+>
     <div class="c-notebook__head">
         <Search
             class="c-notebook__search"
