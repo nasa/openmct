@@ -25,6 +25,11 @@ import uuid from 'uuid';
 import createExampleUser from './exampleUserCreator';
 
 const STATUSES = [{
+    key: "NO_STATUS",
+    label: "Not set",
+    iconClass: "icon-question-mark",
+    iconClassPoll: "icon-status-poll-question-mark"
+}, {
     key: "GO",
     label: "GO",
     iconClass: "icon-check",
@@ -48,11 +53,6 @@ const STATUSES = [{
     statusClass: "s-status-error",
     statusBgColor: "#9900cc",
     statusFgColor: "#fff"
-}, {
-    key: "NO_STATUS",
-    label: "Not set",
-    iconClass: "icon-question-mark",
-    iconClassPoll: "icon-status-poll-question-mark"
 }];
 
 export default class ExampleUserProvider extends EventEmitter {

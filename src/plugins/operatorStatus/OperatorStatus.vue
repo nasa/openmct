@@ -117,7 +117,14 @@ export default {
             this.selectedStatus = status.key;
             this.indicator.iconClass(status.iconClassPoll);
             this.indicator.statusClass(status.statusClass);
-            this.indicator.text((this.selectedStatus.indexOf('NO_STATUS') !== -1) ? this.currentPollQuestion : this.roleStatus.label);
+            if (this.isDefaultStatus(status)) {
+                this.indicator.text(this.currentPollQuestion);
+            } else {
+                this.indicator.text(status.label);
+            }
+        },
+        isDefaultStatus(status) {
+            return status.key === this.allStatuses[0].key;
         },
         findStatusByKey(statusKey) {
             return this.allStatuses.find(possibleMatch => possibleMatch.key === statusKey);
