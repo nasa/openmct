@@ -360,5 +360,52 @@ describe("the plugin", () => {
             tableRowCells = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
             expect(tableRowCells.length).toEqual(4);
         });
+
+        it("Pauses the table when a row is marked", async () => {
+            let firstRow = element.querySelector('table.c-telemetry-table__body > tbody > tr');
+            let clickEvent = createMouseEvent('click');
+
+            // Mark a row
+            firstRow.dispatchEvent(clickEvent);
+
+            await Vue.nextTick();
+
+            // Verify table is paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+        });
+
+        it("Unpauses the table on user bounds change", async () => {
+            let firstRow = element.querySelector('table.c-telemetry-table__body > tbody > tr');
+            let clickEvent = createMouseEvent('click');
+
+            // Mark a row
+            firstRow.dispatchEvent(clickEvent);
+
+            await Vue.nextTick();
+
+            // Verify table is paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            const currentBounds = openmct.time.bounds();
+
+            const newBounds = {
+                start: currentBounds.start,
+                end: currentBounds.end - 2
+            };
+
+            // Manually change the time bounds
+            openmct.time.bounds(newBounds);
+
+            await Vue.nextTick();
+
+            // Verify table is no longer paused
+            expect(element.querySelector('div.c-table.is-paused')).toBeNull();
+
+            await Vue.nextTick();
+
+            // Verify table displays the correct number of rows within the new bounds
+            const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(2);
+        });
     });
 });
