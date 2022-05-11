@@ -5,19 +5,17 @@
     :data-id="section.id"
     @click="selectSection"
 >
-    <template>
-        <span
-            class="c-list__item__name js-list__item__name"
-            :data-id="section.id"
-            contenteditable="true"
-            @keydown.enter="updateName"
-            @blur="updateName"
-        >{{ sectionName }}</span>
-        <PopupMenu
-            v-if="!section.isLocked"
-            :popup-menu-items="popupMenuItems"
-        />
-    </template>
+    <span
+        class="c-list__item__name js-list__item__name"
+        :data-id="section.id"
+        contenteditable="true"
+        @keydown.enter="updateName"
+        @blur="updateName"
+    >{{ sectionName }}</span>
+    <PopupMenu
+        v-if="!section.isLocked"
+        :popup-menu-items="popupMenuItems"
+    />
 </div>
 </template>
 
