@@ -19,7 +19,7 @@ export default function operatorStatusPlugin() {
 
                     operatorIndicator.text("My Operator Status");
                     operatorIndicator.description("Set my operator status");
-                    operatorIndicator.iconClass('icon-check');
+                    operatorIndicator.iconClass('icon-status-poll-question-mark');
                     operatorIndicator.element.classList.add("c-indicator--operator-status");
                     operatorIndicator.element.classList.add("no-minify");
                     operatorIndicator.on('click', () => {
