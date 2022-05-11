@@ -24,22 +24,29 @@ export default function operatorStatusPlugin() {
                     operatorIndicator.element.classList.add("no-minify");
                     operatorIndicator.on('click', () => {
                         document.body.appendChild(operatorStatusElement.$el);
-
-                        let bb = operatorIndicator.element.getBoundingClientRect();
-                        operatorStatusElement.positionX = bb.left;
-                        operatorStatusElement.positionY = bb.bottom;
-
                         //Use capture so we don't trigger immediately on the same iteration of the event loop
                         document.addEventListener('click', clearOperatorPopup, {
                             capture: true
                         });
 
+                        const positionBox = throttle(() => {
+                            let indicatorBox = operatorIndicator.element.getBoundingClientRect();
+                            operatorStatusElement.positionX = indicatorBox.left;
+                            operatorStatusElement.positionY = indicatorBox.bottom;
+                        });
+
+                        positionBox();
+                        window.addEventListener('resize', positionBox);
+
                         function clearOperatorPopup(clickAwayEvent) {
                             if (!operatorStatusElement.$el.contains(clickAwayEvent.target)) {
                                 operatorStatusElement.$el.remove();
                                 document.removeEventListener('click', clearOperatorPopup);
+                                window.removeEventListener('resize', positionBox);
                             }
                         }
+
+
                     });
 
                     openmct.indicators.add(operatorIndicator);
@@ -75,23 +82,35 @@ export default function operatorStatusPlugin() {
                     pollQuestionIndicator.element.classList.add("c-indicator--operator-status");
                     pollQuestionIndicator.element.classList.add("no-minify");
 
-                    pollQuestionIndicator.on('click', (indicatorClickEvent) => {
+                    pollQuestionIndicator.on('click', () => {
                         document.body.appendChild(pollQuestionElement.$el);
-
-                        let bb = pollQuestionIndicator.element.getBoundingClientRect();
-                        pollQuestionElement.positionX = bb.left;
-                        pollQuestionElement.positionY = bb.bottom;
 
                         document.addEventListener('click', clearPollQuestionPopup, {
                             capture: true
                         });
 
+                        const positionBox = throttle(() => {
+                            const indicatorBoundingBox = pollQuestionIndicator.element.getBoundingClientRect();
+                            pollQuestionElement.positionX = indicatorBoundingBox.left;
+                            pollQuestionElement.positionY = indicatorBoundingBox.bottom;
+
+                            const popupRight = pollQuestionElement.positionX + pollQuestionElement.$el.clientWidth;
+                            const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
+                            pollQuestionElement.positionX = pollQuestionElement.positionX + offsetLeft;    
+                        });
+
+                        positionBox();
+                        window.addEventListener('resize', positionBox);
+
                         function clearPollQuestionPopup(clickAwayEvent) {
                             if (!pollQuestionElement.$el.contains(clickAwayEvent.target)) {
                                 pollQuestionElement.$el.remove();
                                 document.removeEventListener('click', clearPollQuestionPopup);
+                                window.removeEventListener('resize', positionBox);
                             }
                         }
+
+
                     });
 
                     openmct.indicators.add(pollQuestionIndicator);
@@ -114,6 +133,21 @@ export default function operatorStatusPlugin() {
                     }).$mount();
                 }
             });
+        }
+
+        function throttle(callback) {
+            let rendering = false;
+
+            return () => {
+                if (!rendering) {
+                    rendering = true;
+
+                    requestAnimationFrame(() => {
+                        callback();
+                        rendering = false;
+                    });
+                }
+            };
         }
     };
 }

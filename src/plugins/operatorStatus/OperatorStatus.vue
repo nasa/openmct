@@ -55,8 +55,7 @@ export default {
             role: '--',
             pollQuestionUpdated: '--',
             currentPollQuestion: '--',
-            roleStatus: '--',
-            selectedStatus: 'no-go',
+            selectedStatus: undefined,
             allStatuses: []
         };
     },
@@ -115,7 +114,6 @@ export default {
             this.openmct.user.on('pollQuestionChange', this.setPollQuestion);
         },
         setStatus(status) {
-            this.roleStatus = status;
             this.selectedStatus = status.key;
             this.indicator.iconClass(status.iconClassPoll);
             this.indicator.statusClass(status.statusClass);
@@ -124,8 +122,10 @@ export default {
             return this.allStatuses.find(possibleMatch => possibleMatch.key === statusKey);
         },
         async changeStatus() {
-            if (this.selectedStatus !== undefined && this.selectedStatus !== this.roleStatus.key) {
-                await this.openmct.user.setStatus(this.findStatusByKey(this.selectedStatus));
+            if (this.selectedStatus !== undefined) {
+                const statusObject = this.findStatusByKey(this.selectedStatus);
+
+                await this.openmct.user.setStatus(statusObject);
             }
 
         },
