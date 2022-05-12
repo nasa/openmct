@@ -35,35 +35,55 @@
 
 // FAULT ITEM
 .c-fault-mgmt__list{
-    background: $colorItemBg;
+    background: rgba($colorBodyFg, 0.1);
     font-size: 1.2em;
-    // background: yellow;
+    margin-bottom: 5px;
+    padding: 4px;
     display: flex;
-
     > * + * {
         margin-left: 5px;
+        display: flex;
     }
 
     &-severity{
-       color: $colorBgCriticalityL1;
+        color: $colorBgCriticalityL1;
+        // min-width: 10px;
+     }
+
+    &-content{
+        display: flex;
+        flex-wrap: wrap;
+        > * + * {
+            margin-left: 5px;
+        }
     }
 
     &-pathname{
-        flex-direction: column; 
-        > * {
-            background: blue; 
-        }
+        // flex-direction: column; 
+        flex: 1 1 auto;
+        flex-wrap: wrap;
     }
     &-path{
         font-size: .75em;
     }
     &-trigVal{
+        border-radius: $controlCr;
+        padding: 2px;
+    }
+
+    &-curVal{
         background: rgb(129, 1, 1);
         border-radius: $controlCr;
         padding: 2px;
-
+        width: 160px;
+        justify-content: center;
     }
 
+    &-action-button{
+        justify-content:right;
+        align-items: center;
+        
+    }
 
 }
 

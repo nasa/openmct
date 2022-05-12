@@ -1,6 +1,6 @@
 <template>
 <div class="c-fault-mgmt__list">
-    <span>
+    <span class="c-fault-mgmt__checkbox">
         <input
             type="checkbox"
             :checked="isSelected"
@@ -8,14 +8,17 @@
         >
     </span>
     <span class="c-fault-mgmt__list-severity icon-alert-rect">{{ severity }}</span>
-    <span class="c-fault-mgmt__list-pathname">
-        <div class="c-fault-mgmt__list-path">{{ fault.id.namespace }}</div>
-        <div class="c-fault-mgmt__list-faultname">{{ fault.id.name }}</div>
+    <span class="c-fault-mgmt__list-content">
+        <span class="c-fault-mgmt__list-pathname">
+            <div class="c-fault-mgmt__list-path">{{ fault.id.namespace }}</div>
+            <div class="c-fault-mgmt__list-faultname">{{ fault.id.name }}</div>
+        </span>
+        <span class="c-fault-mgmt__list-trigVal">{{ triggerValue }}</span>
+        <span class="c-fault-mgmt__list-curVal">{{ currentValue }}</span>
+        <!-- <span class="c-fault-mgmt-list-ackStatus">{{ acknowledged }}</span> -->
+        <span class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</span>
     </span>
-    <span class="c-fault-mgmt__list-trigVal">{{ triggerValue }}</span>
-    <span class="c-fault-mgmt__list-curVal">{{ currentValue }}</span>
-    <!-- <span class="c-fault-mgmt-list-ackStatus">{{ acknowledged }}</span> -->
-    <span class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</span>
+    <span class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"></span>
 
 </div>
 </template>

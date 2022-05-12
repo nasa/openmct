@@ -14,21 +14,17 @@
                         <select>
                             <option
                                 value="0"
-                                :selected="showTime === 0"
                             >
                                 Standard View
                             </option>
                             <option
                                 value="1"
-                                :selected="showTime === 1"
                             >Acked</option>
                             <option
                                 value="8"
-                                :selected="showTime === 8"
                             >Unacked</option>
                             <option
                                 value="24"
-                                :selected="showTime === 24"
                             >Cleared</option>
                         </select>
         </div>

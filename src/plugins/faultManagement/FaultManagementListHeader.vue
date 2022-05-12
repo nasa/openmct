@@ -1,18 +1,14 @@
 <template>
-<div class="c-fault-mgmt__list-header">
-    <span class>
+<div>
+    <span>
         <input
             type="checkbox"
             @input="selectAll"
         >
     </span>
-    <span class="c-faults-list__results-count">results</span>
-    <span>severity</span>
-    <span>name</span>
-    <span>trippedValue</span>
-    <span>liveValue</span>
-    <span>acknowledged</span>
-    <span>time</span>
+    <span> Results </span>
+    <span>Trip Value</span>
+    <span>Live Value</span>
 </div>
 
 </template>
