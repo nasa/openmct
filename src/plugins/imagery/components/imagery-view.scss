@@ -197,7 +197,7 @@
     .c-control-menu {
         // Controls on left of flex column layout, close btn on right
         @include menuOuter();
-        //background: $colorItemBgHov;
+
         border-radius: $controlCr;
         display: flex;
         align-items: flex-start;

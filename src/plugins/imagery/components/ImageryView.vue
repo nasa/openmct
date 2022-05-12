@@ -30,13 +30,7 @@
 >
     <div
         class="c-imagery__main-image-wrapper has-local-controls"
-        :class="{
-            'paused unnsynced': isPaused && !isFixed,
-            'stale': false,
-            'pannable': cursorStates.isPannable,
-            'cursor-zoom-in': cursorStates.showCursorZoomIn,
-            'cursor-zoom-out': cursorStates.showCursorZoomOut
-        }"
+        :class="imageWrapperStyle"
         @mousedown="handlePanZoomClick"
     >
         <ImageControls
@@ -75,11 +69,7 @@
                     v-for="(layer, index) in visibleLayers"
                     :key="index"
                     class="layer-image s-image-layer c-imagery__layer-image"
-                    :style="{
-                        'background-image': `url(${layer.source})`,
-                        'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
-                        'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
-                    }"
+                    :style="getVisibleLayerStyles(layer)"
                 >
                 </div>
                 <img
@@ -98,25 +88,7 @@
                     ref="focusedImageElement"
                     class="c-imagery__main-image__background-image"
                     :draggable="!isSelectable"
-                    :style="{
-                        'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
-                        'background-image':
-                            `${imageUrl ? (
-                                `url(${imageUrl}),
-                                    repeating-linear-gradient(
-                                        45deg,
-                                        transparent,
-                                        transparent 4px,
-                                        rgba(125,125,125,.2) 4px,
-                                        rgba(125,125,125,.2) 8px
-                                    )`
-                            ) : ''}`,
-                        'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
-                        'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
-                        'width': `${sizedImageWidth}px`,
-                        'height': `${sizedImageHeight}px`,
-
-                    }"
+                    :style="focusImageStyles"
                 ></div>
                 <Compass
                     v-if="shouldDisplayCompass"
@@ -343,11 +315,40 @@ export default {
         displayThumbnailsSmall() {
             return this.viewHeight > SHOW_THUMBS_THRESHOLD_HEIGHT && this.viewHeight <= SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT;
         },
+        focusImageStyles() {
+            return {
+                'filter': `brightness(${this.filters.brightness}%) contrast(${this.filters.contrast}%)`,
+                'background-image':
+                    `${this.imageUrl ? (
+                        `url(${this.imageUrl}),
+                            repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 4px,
+                                rgba(125,125,125,.2) 4px,
+                                rgba(125,125,125,.2) 8px
+                            )`
+                    ) : ''}`,
+                'transform': `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                'transition': `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
+                'width': `${this.sizedImageWidth}px`,
+                'height': `${this.sizedImageHeight}px`
+            };
+        },
         time() {
             return this.formatTime(this.focusedImage);
         },
         imageUrl() {
             return this.formatImageUrl(this.focusedImage);
+        },
+        imageWrapperStyle() {
+            return {
+                'cursor-zoom-in': this.cursorStates.showCursorZoomIn,
+                'cursor-zoom-out': this.cursorStates.showCursorZoomOut,
+                'pannable': this.cursorStates.isPannable,
+                'paused unnsynced': this.isPaused && !this.isFixed,
+                'stale': false
+            };
         },
         isImageNew() {
             let cutoff = FIVE_MINUTES;
@@ -646,6 +647,13 @@ export default {
     methods: {
         calculateViewHeight() {
             this.viewHeight = this.$el.clientHeight;
+        },
+        getVisibleLayerStyles(layer) {
+            return {
+                'background-image': `url(${layer.source})`,
+                'transform': `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                'transition': `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
+            };
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
