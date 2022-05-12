@@ -25,7 +25,7 @@
                             >Unacked</option>
                             <option
                                 value="24"
-                            >Cleared</option>
+                            >Shelved</option>
                         </select>
         </div>
     </div>

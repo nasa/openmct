@@ -20,6 +20,9 @@
     // background: rgb(229, 157, 157) !important;
     display: flex; 
     justify-content: center;
+    > * {
+        font-size: 1.25em;
+    }
 }
 
 
@@ -40,15 +43,32 @@
     margin-bottom: 5px;
     padding: 4px;
     display: flex;
+    align-items: center;
+
+    > * {
+        justify-content: center;
+        align-items: inherit;
+    }
     > * + * {
         margin-left: 5px;
         display: flex;
     }
-
+    
     &-severity{
         color: $colorBgCriticalityL1;
-        // min-width: 10px;
      }
+
+    &-pathname{
+        flex-wrap: wrap;
+        min-width: 1em;
+    }
+    &-path{
+        font-size: .75em;
+    } 
+
+    &-faultname{
+        font-weight: bold;
+    }
 
     &-content{
         display: flex;
@@ -58,17 +78,12 @@
         }
     }
 
-    &-pathname{
-        // flex-direction: column; 
-        flex: 1 1 auto;
-        flex-wrap: wrap;
-    }
-    &-path{
-        font-size: .75em;
-    }
     &-trigVal{
+        background: rgb(80, 80, 80);
         border-radius: $controlCr;
         padding: 2px;
+        width: 160px;
+        justify-content: center;
     }
 
     &-curVal{
@@ -80,9 +95,8 @@
     }
 
     &-action-button{
-        justify-content:right;
-        align-items: center;
-        
+        display: inline-block;
+        margin-left: auto;
     }
 
 }

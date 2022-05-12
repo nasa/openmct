@@ -7,23 +7,27 @@
             @input="toggleSelected"
         >
     </span>
-    <span class="c-fault-mgmt__list-severity icon-alert-rect">{{ severity }}</span>
+    <span class="c-fault-mgmt__list-severity icon-alert-rect">{{ }}</span>
     <span class="c-fault-mgmt__list-content">
         <span class="c-fault-mgmt__list-pathname">
             <div class="c-fault-mgmt__list-path">{{ fault.id.namespace }}</div>
             <div class="c-fault-mgmt__list-faultname">{{ fault.id.name }}</div>
         </span>
-        <span class="c-fault-mgmt__list-trigVal">{{ triggerValue }}</span>
+        <span class="c-fault-mgmt__list-trigVal icon-arrow-up">{{ triggerValue }}</span>
         <span class="c-fault-mgmt__list-curVal">{{ currentValue }}</span>
         <!-- <span class="c-fault-mgmt-list-ackStatus">{{ acknowledged }}</span> -->
         <span class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</span>
     </span>
-    <span class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"></span>
+    <button 
+        class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
+        title="Disposition Actions"
+    ></button>
 
 </div>
 </template>
 
 <script>
+
 export default {
     components: {
     },
