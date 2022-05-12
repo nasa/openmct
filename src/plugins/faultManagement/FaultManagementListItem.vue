@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="c-fault-mgmt__list">
     <span>
         <input
             type="checkbox"
@@ -7,16 +7,16 @@
             @input="toggleSelected"
         >
     </span>
-    <span>{{ severity }}</span>
-    <span>{{ name }}</span>
-    <span>{{ triggerValue }}</span>
-    <span>{{ currentValue }}</span>
-    <span>{{ acknowledged }}</span>
-    <span>{{ triggerTime }}</span>
-    <div class="c-fault-mgmt-list-item">
-        {{ fault.id.name }}
-        {{ fault.id.namespace }}
-    </div>
+    <span class="c-fault-mgmt__list-severity icon-alert-rect">{{ severity }}</span>
+    <span class="c-fault-mgmt__list-pathname">
+        <div class="c-fault-mgmt__list-path">{{ fault.id.namespace }}</div>
+        <div class="c-fault-mgmt__list-faultname">{{ fault.id.name }}</div>
+    </span>
+    <span class="c-fault-mgmt__list-trigVal">{{ triggerValue }}</span>
+    <span class="c-fault-mgmt__list-curVal">{{ currentValue }}</span>
+    <!-- <span class="c-fault-mgmt-list-ackStatus">{{ acknowledged }}</span> -->
+    <span class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</span>
+
 </div>
 </template>
 

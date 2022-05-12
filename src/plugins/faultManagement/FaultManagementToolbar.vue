@@ -1,34 +1,30 @@
 <template>
-<div class="c-fault-mgmt-toolbar">
-    <button @click="acknowledgeSelected">Acknowledge</button>
-    <button @click="shelveSelected">Shelve</button>
-    <button></button>
-
-     <div class="c-fault-mgmt-button-ack">
-        <button
-            class="c-icon-button icon-bell"
+<div class="c-fault-mgmt__toolbar">
+    <button
+        class="c-icon-button icon-bell"
+        title="Acknowledge selected faults"
+        @click="acknowledgeSelected"
+    >
+        <span
             title="Acknowledge selected faults"
+            class="c-icon-button__label"
         >
-            <span
-                title="Acknowledge selected faults"
-                class="c-icon-button__label"
-            >
-                Acknowledge
-            </span>
-        </button>
+            Acknowledge
+        </span>
+    </button>
 
-        <button
-            class="c-icon-button icon-timer"
-            title="Shelve selected faults"
+    <button
+        class="c-icon-button icon-timer"
+        title="Shelve selected faults"
+        @click="shelveSelected"
+    >
+        <span
+            title="Shelve selected items"
+            class="c-icon-button__label"
         >
-            <span
-                title="Shelve selected items"
-                class="c-icon-button__label"
-            >
-                Shelve
-            </span>
-        </button>
-    </div>
+            Shelve
+        </span>
+    </button>
 </div>
 </template>
 

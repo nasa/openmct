@@ -454,6 +454,14 @@ $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg,0.1);
 $colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
 
+// Fault Management Colors: 
+$colorBgCriticalityL1: #ff0000;
+$colorFgCriticalityL1: #fff;
+$colorBgCriticalityL2: #d17f00;
+$colorFgCriticalityL2: #fff;
+$colorBgCriticalityL3: #0d93cc;
+$colorFgCriticalityL3: #fff;
+
 @mixin discreteItem() {
     background: $colorDiscreteItemBg;
     border: 1px solid $colorInteriorBorder;

@@ -1,16 +1,14 @@
 <template>
-<div class="c-fault-mgmt-search">
-    <input
-        type="search"
-        name="fault-search"
-    >
-    <SelectField
-        :model="model"
-        @onChange="onChange"
-    />
     <div class="c-fault-mgmt-search-row">
-        <div class= "c-fault-mgmt-search c-search"> 
-            Search Bar
+        <div class="c-fault-mgmt-search c-search">
+            <input
+                type="search"
+                name="fault-search"
+            >
+            <!-- <SelectField
+                :model="model"
+                @onChange="onChange"
+            /> -->
         </div>
         <div class="c-fault-mgmt-viewButton">
                         <select>
@@ -33,9 +31,8 @@
                                 :selected="showTime === 24"
                             >Cleared</option>
                         </select>
-                    </div>
+        </div>
     </div>
-</div>
 </template>
 
 <script>

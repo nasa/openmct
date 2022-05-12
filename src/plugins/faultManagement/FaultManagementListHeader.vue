@@ -1,11 +1,12 @@
 <template>
-<div>
-    <span>
+<div class="c-fault-mgmt__list-header">
+    <span class>
         <input
             type="checkbox"
             @input="selectAll"
         >
     </span>
+    <span class="c-faults-list__results-count">results</span>
     <span>severity</span>
     <span>name</span>
     <span>trippedValue</span>

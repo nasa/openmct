@@ -1,30 +1,70 @@
+// SEARCH 
 .c-fault-mgmt-search-row{
     display: flex;
     align-items: center;
     // flex-wrap: wrap;
     font-size: 1.3em;
-    > * + *{
+    > * + * {
        margin-left: 10px;
        float: right;
     }
 }
 
 .c-fault-mgmt-search{
-    width: 90%;
-    background: rgba($colorBodyFg, 0.1);
+    // background: rgba($colorBodyFg, 0.1);
+    width: 95%;
 }
 
-.c-fault-mgmt-toolbar{
+// TOOLBAR
+.c-fault-mgmt__toolbar{
     // background: rgb(229, 157, 157) !important;
     display: flex; 
     justify-content: center;
 }
 
-.c-fault-mgmt-button-ack{
-    font-size: 1.3em;
-    margin-bottom: 5px;
+
+
+// LIST HEADER 
+.c-fault-mgmt__list-header{
+    background: rgb(64, 0, 64);
+    > * + * {
+        margin-left: 30px;
+    }
 }
 
-.c-fault-mgmt-list-item{
-    background: red;
+
+// FAULT ITEM
+.c-fault-mgmt__list{
+    background: $colorItemBg;
+    font-size: 1.2em;
+    // background: yellow;
+    display: flex;
+
+    > * + * {
+        margin-left: 5px;
+    }
+
+    &-severity{
+       color: $colorBgCriticalityL1;
+    }
+
+    &-pathname{
+        flex-direction: column; 
+        > * {
+            background: blue; 
+        }
+    }
+    &-path{
+        font-size: .75em;
+    }
+    &-trigVal{
+        background: rgb(129, 1, 1);
+        border-radius: $controlCr;
+        padding: 2px;
+
+    }
+
+
 }
+
+
