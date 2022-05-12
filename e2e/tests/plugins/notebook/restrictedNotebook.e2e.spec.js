@@ -49,7 +49,7 @@ test.describe('Restricted Notebook', () => {
 
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
-        await page.pause();
+
         //Click the Create button
         await page.click('button:has-text("Create")');
 

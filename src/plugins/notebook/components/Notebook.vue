@@ -134,7 +134,7 @@
                 </span>
             </div>
             <div
-                v-if="isRestricted && selectedPage.isLocked"
+                v-if="isRestricted && (selectedPage && selectedPage.isLocked)"
                 class="c-notebook__page-locked"
             >
                 <div class="icon-lock"></div>
