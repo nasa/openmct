@@ -27,14 +27,80 @@ import {
 
 describe('Telemetry Collection', () => {
     let openmct;
+    let mockMetadataProvider;
+    let mockMetadata = {};
+    let domainObject;
 
     beforeEach(done => {
         openmct = createOpenMct();
         openmct.on('start', done);
+
+        mockMetadataProvider = {
+            key: 'mockMetadataProvider',
+            supportsMetadata() {
+                return true;
+            },
+            getMetadata() {
+                return mockMetadata;
+            }
+        };
+
+        openmct.telemetry.addProvider(mockMetadataProvider);
         openmct.startHeadless();
     });
 
     afterEach(() => {
         return resetApplicationState();
+    });
+
+    it('Warns if telemetry metadata does not match the active timesystem', () => {
+        mockMetadata.values = [
+            {
+                key: 'foo',
+                name: 'Bar',
+                hints: {
+                    domain: 1
+                }
+            }
+        ];
+        domainObject = {
+            identifier: {
+                key: 'a',
+                namespace: 'b'
+            },
+            type: 'sample-type'
+        };
+
+        const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
+        spyOn(telemetryCollection, '_warn');
+        telemetryCollection.load();
+
+        expect(telemetryCollection._warn).toHaveBeenCalled();
+    });
+
+    it('Does not warn if telemetry metadata matches the active timesystem', () => {
+        mockMetadata.values = [
+            {
+                key: 'utc',
+                name: 'Timestamp',
+                format: 'utc',
+                hints: {
+                    domain: 1
+                }
+            }
+        ];
+        domainObject = {
+            identifier: {
+                key: 'a',
+                namespace: 'b'
+            },
+            type: 'sample-type'
+        };
+
+        const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
+        spyOn(telemetryCollection, '_warn');
+        telemetryCollection.load();
+
+        expect(telemetryCollection._warn).not.toHaveBeenCalled();
     });
 });
