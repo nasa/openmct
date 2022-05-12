@@ -24,7 +24,10 @@
     v-if="loaded"
     class="js-plot-options-edit"
 >
-    <ul class="c-tree">
+    <ul
+        v-if="!isStackedPlotObject"
+        class="c-tree"
+    >
         <h2 title="Display properties for this object">Plot Series</h2>
         <li
             v-for="series in plotSeries"
@@ -34,11 +37,14 @@
         </li>
     </ul>
     <y-axis-form
-        v-if="plotSeries.length"
+        v-if="plotSeries.length && !isStackedPlotObject"
         class="grid-properties"
         :y-axis="config.yAxis"
     />
-    <ul class="l-inspector-part">
+    <ul
+        v-if="isStackedPlotObject || !isStackedPlotNestedObject"
+        class="l-inspector-part"
+    >
         <h2 title="Legend options">Legend</h2>
         <legend-form
             v-if="plotSeries.length"
@@ -61,13 +67,21 @@ export default {
         SeriesForm,
         YAxisForm
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     data() {
         return {
             config: {},
             plotSeries: [],
             loaded: false
         };
+    },
+    computed: {
+        isStackedPlotNestedObject() {
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
+        },
+        isStackedPlotObject() {
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+        }
     },
     mounted() {
         eventHelpers.extend(this);

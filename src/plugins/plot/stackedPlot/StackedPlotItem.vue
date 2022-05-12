@@ -56,6 +56,12 @@ export default {
                 return true;
             }
         },
+        showLimitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         plotTickWidth: {
             type: Number,
             default() {
@@ -72,12 +78,22 @@ export default {
         },
         plotTickWidth(width) {
             this.updateComponentProp('plotTickWidth', width);
+        },
+        showLimitLineLabels: {
+            handler(data) {
+                this.updateComponentProp('limitLineLabels', data);
+            },
+            deep: true
         }
     },
     mounted() {
         this.updateView();
     },
     beforeDestroy() {
+        if (this.removeSelectable) {
+            this.removeSelectable();
+        }
+
         if (this.component) {
             this.component.$destroy();
         }
@@ -96,6 +112,9 @@ export default {
             }
 
             const onTickWidthChange = this.onTickWidthChange;
+            const onLockHighlightPointUpdated = this.onLockHighlightPointUpdated;
+            const onHighlightsUpdated = this.onHighlightsUpdated;
+            const onConfigLoaded = this.onConfigLoaded;
             const loadingUpdated = this.loadingUpdated;
             const setStatus = this.setStatus;
 
@@ -121,12 +140,26 @@ export default {
                     return {
                         ...getProps(),
                         onTickWidthChange,
+                        onLockHighlightPointUpdated,
+                        onHighlightsUpdated,
+                        onConfigLoaded,
                         loadingUpdated,
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :options="options" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
+
+            this.setSelection();
+        },
+        onLockHighlightPointUpdated() {
+            this.$emit('lockHighlightPoint', ...arguments);
+        },
+        onHighlightsUpdated() {
+            this.$emit('highlights', ...arguments);
+        },
+        onConfigLoaded() {
+            this.$emit('configLoaded', ...arguments);
         },
         onTickWidthChange() {
             this.$emit('plotTickWidth', ...arguments);
@@ -135,12 +168,24 @@ export default {
             this.status = status;
             this.updateComponentProp('status', status);
         },
+        setSelection() {
+            let childContext = {};
+            childContext.item = this.object;
+            this.context = childContext;
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
+
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el, this.context);
+        },
         loadingUpdated(loaded) {
             this.loading = loaded;
             this.updateComponentProp('loading', loaded);
         },
         getProps() {
             return {
+                limitLineLabels: this.showLimitLineLabels,
                 gridLines: this.gridLines,
                 cursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,

@@ -71,7 +71,7 @@ export default class PlotConfigurationModel extends Model {
             openmct: options.openmct
         });
 
-        if (this.get('domainObject').type === 'telemetry.plot.overlay') {
+        if (this.get('domainObject').type === 'telemetry.plot.overlay' || this.get('domainObject').type === 'telemetry.plot.stacked') {
             this.removeMutationListener = this.openmct.objects.observe(
                 this.get('domainObject'),
                 '*',

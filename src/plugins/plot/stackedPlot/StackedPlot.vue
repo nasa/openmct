@@ -21,7 +21,11 @@
 -->
 
 <template>
-<div class="c-plot c-plot--stacked holder holder-plot has-control-bar">
+<div
+    v-if="loaded"
+    class="c-plot c-plot--stacked holder holder-plot has-control-bar"
+    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+>
     <div
         v-show="!hideExportButtons && !options.compact"
         class="c-control-bar"
@@ -57,6 +61,13 @@
         >
         </button>
     </div>
+    <plot-legend
+        :cursor-locked="!!lockHighlightPoint"
+        :series="seriesModels"
+        :highlights="highlights"
+        :legend="legend"
+        @legendHoverChanged="legendHoverChanged"
+    />
     <div class="l-view-section">
         <stacked-plot-item
             v-for="object in compositionObjects"
@@ -66,9 +77,13 @@
             :options="options"
             :grid-lines="gridLines"
             :cursor-guide="cursorGuide"
+            :show-limit-line-labels="showLimitLineLabels"
             :plot-tick-width="maxTickWidth"
             @plotTickWidth="onTickWidthChange"
             @loadingUpdated="loadingUpdated"
+            @lockHighlightPoint="lockHighlightPointUpdated"
+            @highlights="highlightsUpdated"
+            @configLoaded="registerSeriesListeners"
         />
     </div>
 </div>
@@ -76,12 +91,18 @@
 
 <script>
 
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import configStore from '../configuration/ConfigStore';
+
+import PlotLegend from "../legend/PlotLegend.vue";
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
+import eventHelpers from "@/plugins/plot/lib/eventHelpers";
 
 export default {
     components: {
-        StackedPlotItem
+        StackedPlotItem,
+        PlotLegend
     },
     inject: ['openmct', 'domainObject', 'composition', 'path'],
     props: {
@@ -93,16 +114,34 @@ export default {
         }
     },
     data() {
+        this.seriesConfig = {};
+
         return {
             hideExportButtons: false,
             cursorGuide: false,
             gridLines: true,
             loading: false,
             compositionObjects: [],
-            tickWidthMap: {}
+            tickWidthMap: {},
+            legend: {},
+            loaded: false,
+            lockHighlightPoint: false,
+            highlights: [],
+            seriesModels: [],
+            showLimitLineLabels: undefined
         };
     },
     computed: {
+        plotLegendPositionClass() {
+            return `plot-legend-${this.config.legend.get('position')}`;
+        },
+        plotLegendExpandedStateClass() {
+            if (this.config.legend.get('expanded')) {
+                return 'plot-legend-expanded';
+            } else {
+                return 'plot-legend-collapsed';
+            }
+        },
         maxTickWidth() {
             return Math.max(...Object.values(this.tickWidthMap));
         }
@@ -111,6 +150,13 @@ export default {
         this.destroy();
     },
     mounted() {
+        eventHelpers.extend(this);
+
+        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.config = this.getConfig(configId);
+        this.legend = this.config.legend;
+
+        this.loaded = true;
         this.imageExporter = new ImageExporter(this.openmct);
 
         this.composition.on('add', this.addChild);
@@ -119,10 +165,29 @@ export default {
         this.composition.load();
     },
     methods: {
+        getConfig(configId) {
+            let config = configStore.get(configId);
+            if (!config) {
+                config = new PlotConfigurationModel({
+                    id: configId,
+                    domainObject: this.domainObject,
+                    openmct: this.openmct,
+                    callback: (data) => {
+                        this.data = data;
+                    }
+                });
+                configStore.add(configId, config);
+            }
+
+            return config;
+        },
         loadingUpdated(loaded) {
             this.loading = loaded;
         },
         destroy() {
+            this.stopListening();
+            configStore.deleteStore(this.config.id);
+
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.composition.off('reorder', this.compositionReorder);
@@ -198,6 +263,29 @@ export default {
             }
 
             this.$set(this.tickWidthMap, plotId, width);
+        },
+        legendHoverChanged(data) {
+            this.showLimitLineLabels = data;
+        },
+        lockHighlightPointUpdated(data) {
+            this.lockHighlightPoint = data;
+        },
+        highlightsUpdated(data) {
+            this.highlights = data;
+        },
+        registerSeriesListeners(configId) {
+            this.seriesConfig[configId] = this.getConfig(configId);
+            this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
+            this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
+
+            this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
+        },
+        addSeries(series) {
+            const index = this.seriesModels.length;
+            this.$set(this.seriesModels, index, series);
+        },
+        removeSeries(plotSeries) {
+            this.stopListening(plotSeries);
         }
     }
 };
