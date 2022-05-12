@@ -49,13 +49,13 @@ export default function () {
                         gaugeType: GAUGE_TYPES[0][1],
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
+                        isDisplayUnits: true,
                         isUseTelemetryLimits: true,
                         limitLow: 10,
                         limitHigh: 90,
                         max: 100,
                         min: 0,
-                        precision: 2,
-                        isDisplayUnits: true
+                        precision: 2
                     }
                 };
             },

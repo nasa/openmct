@@ -268,7 +268,7 @@
                         preserveAspectRatio="xMidYMid meet"
                     >
                         <text
-                            class="c-dial__current-value-text"
+                            class="c-dial__current-value-text js-meter-current-value"
                             lengthAdjust="spacing"
                             text-anchor="middle"
                             style="transform: translate(50%, 70%)"
