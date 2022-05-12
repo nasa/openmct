@@ -173,12 +173,18 @@
             grid-column: 1 / 3;
         }
     }
+}
 
-    .is-editing & {
-        .c-inspect-properties {
-            &__value, &__label {
-                line-height: 160%; // Prevent buttons/selects from overlapping when wrapping
-            }
+.is-editing {
+    .c-inspect-properties {
+        &__value, &__label {
+            line-height: 160%; // Prevent buttons/selects from overlapping when wrapping
+        }
+    }
+    .grid-row--pad-label-for-button {
+        // Add extra space at the top of the label grid cell because there's a button to the right
+        [class*='label'] {
+            line-height: 1.8em;
         }
     }
 }

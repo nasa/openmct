@@ -23,7 +23,7 @@
 <div class="c-bar-graph-options js-bar-plot-option">
     <ul class="c-tree">
         <h2 title="Display properties for this object">Bar Graph Series</h2>
-        <li class="grid-row">
+        <li>
             <series-options
                 v-for="series in plotSeries"
                 :key="series.key"
