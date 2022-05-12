@@ -70,7 +70,23 @@
     />
     <div class="l-view-section">
         <stacked-plot-item
-            v-for="object in compositionObjects"
+            v-if="compositionObjectsWithNoSeries.length"
+            :key="domainObjectWithNoConfigObjects.id"
+            class="c-plot--stacked-container"
+            :object="domainObjectWithNoConfigObjects"
+            :options="options"
+            :grid-lines="gridLines"
+            :cursor-guide="cursorGuide"
+            :show-limit-line-labels="showLimitLineLabels"
+            :plot-tick-width="maxTickWidth"
+            @plotTickWidth="onTickWidthChange"
+            @loadingUpdated="loadingUpdated"
+            @lockHighlightPoint="lockHighlightPointUpdated"
+            @highlights="highlightsUpdated"
+            @configLoaded="registerSeriesListeners"
+        />
+        <stacked-plot-item
+            v-for="object in compositionObjectsWithSeries"
             :key="object.id"
             class="c-plot--stacked-container"
             :object="object"
@@ -132,6 +148,15 @@ export default {
         };
     },
     computed: {
+        compositionObjectsWithSeries() {
+            return this.compositionObjects.filter(object => object.configuration && object.configuration.series);
+        },
+        compositionObjectsWithNoSeries() {
+            return this.compositionObjects.filter(object => !object.configuration || !object.configuration.series);
+        },
+        domainObjectWithNoConfigObjects() {
+            return this.domainObject;
+        },
         plotLegendPositionClass() {
             return `plot-legend-${this.config.legend.get('position')}`;
         },
@@ -281,6 +306,10 @@ export default {
             this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
         },
         addSeries(series) {
+            if (!series.domainObject || (series.domainObject.configuration && series.domainObject.configuration.series)) {
+                return;
+            }
+
             const index = this.seriesModels.length;
             this.$set(this.seriesModels, index, series);
         },
