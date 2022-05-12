@@ -4,7 +4,7 @@ export default function (openmct) {
     const apiSave = openmct.objects.save.bind(openmct.objects);
 
     openmct.objects.save = async (domainObject) => {
-        if (isNotebookType(domainObject)) {
+        if (!isNotebookType(domainObject)) {
             return apiSave(domainObject);
         }
 
