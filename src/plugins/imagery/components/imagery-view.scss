@@ -1,3 +1,15 @@
+@use 'sass:math';
+
+@keyframes fade-out {
+    from {
+        background-color: rgba($colorOk, 0.5);
+    }
+    to {
+        background-color: rgba($colorOk, 0);
+        color: inherit;
+    }
+}
+
 .c-imagery {
     display: flex;
     flex-direction: column;
@@ -123,12 +135,20 @@
         // New imagery
         $bgColor: $colorOk;
         color: $colorOkFg;
-        background: rgba($bgColor, 0.5);
-        @include flash($animName: flashImageAge, $iter: 2, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
+        background-color: rgba($bgColor, 0.5);
+        animation-name: fade-out;
+        animation-timing-function: ease-in;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        &.no-animation {
+            animation: none;
+        }
     }
+
 
     &__thumbs-wrapper {
         display: flex; // Uses row layout
+        justify-content: flex-end;
 
         &.is-autoscroll-off {
             background: $colorInteriorBorder;
@@ -146,17 +166,11 @@
         flex: 0 1 auto;
         display: flex;
         flex-direction: row;
-        height: 135px;
+        height: 145px;
         overflow-x: auto;
         overflow-y: hidden;
         margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
-
-        .c-thumb:last-child {
-            // Hilite the lastest thumb
-            background: $colorBodyFg;
-            color: $colorBodyBg;
-        }
     }
 
     &__auto-scroll-resume-button {
@@ -169,10 +183,12 @@
 
 /*************************************** THUMBS */
 .c-thumb {
+    $w: $imageThumbsD;
     display: flex;
     flex-direction: column;
     padding: 4px;
-    width: $imageThumbsD;
+    min-width: $w;
+    width: $w;
 
     &:hover {
         background: $colorThumbHoverBg;
@@ -194,11 +210,19 @@
     }
 }
 
-.l-layout,
-.c-fl {
+.is-small-thumbs {
     .c-imagery__thumbs-scroll-area {
-        //  When Imagery is in a layout, hide the thumbs area
-        display: none;
+        height: 60px; // Allow room for scrollbar
+    }
+
+    .c-thumb {
+        $w: math.div($imageThumbsD, 2);
+        min-width: $w;
+        width: $w;
+
+        &__timestamp {
+            display: none;
+        }
     }
 }
 
@@ -207,7 +231,7 @@
     .h-local-controls--overlay-content {
         position: absolute;
         left: $interiorMargin; top: $interiorMargin;
-        z-index: 2;
+        z-index: 70;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
         max-width: 250px;

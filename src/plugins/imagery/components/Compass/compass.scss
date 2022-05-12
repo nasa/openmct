@@ -14,7 +14,7 @@ $elemBg: rgba(black, 0.7);
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 1;
+    z-index: 2;
     @include userSelectNone;
 }
 

@@ -6,9 +6,9 @@ const { devices } = require('@playwright/test');
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 2,
+    retries: 1,
     testDir: 'tests',
-    timeout: 90 * 1000,
+    timeout: 60 * 1000,
     webServer: {
         command: 'npm run start',
         port: 8080,
@@ -28,12 +28,12 @@ const config = {
         {
             name: 'chrome',
             use: {
-                browserName: 'chromium',
-                ...devices['Desktop Chrome']
+                browserName: 'chromium'
             }
         },
         {
             name: 'MMOC',
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
                 viewport: {
