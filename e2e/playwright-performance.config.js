@@ -5,7 +5,7 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
     retries: 0,
-    testDir: 'tests',
+    testDir: 'tests/performance/',
     timeout: 30 * 1000,
     workers: 1,
     webServer: {
@@ -17,7 +17,7 @@ const config = {
     use: {
         browserName: "chromium",
         baseURL: 'http://localhost:8080/',
-        headless: true,
+        headless: false,
         ignoreHTTPSErrors: true,
         screenshot: 'off',
         trace: 'off',
