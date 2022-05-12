@@ -39,8 +39,6 @@
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 
-const CUSTOM_NAME = 'Custom Name';
-
 test.describe('Restricted Notebook', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -51,13 +49,12 @@ test.describe('Restricted Notebook', () => {
 
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
-
+        await page.pause();
         //Click the Create button
         await page.click('button:has-text("Create")');
-        await page.pause();
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('text=CUSTOM_NAME');
 
         // Click text=OK
         await Promise.all([
@@ -68,7 +65,7 @@ test.describe('Restricted Notebook', () => {
         ]);
         //Wait until Save Banner is gone
         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed CUSTOM_NAME');
     });
 
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
