@@ -37,7 +37,7 @@ export default {
         });
 
         return {
-            items,
+            items: items,
             selectedMenuItem: {},
             opened: false
         };
