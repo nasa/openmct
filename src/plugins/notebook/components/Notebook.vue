@@ -138,6 +138,7 @@
                     v-for="entry in filteredAndSortedEntries"
                     :key="entry.id"
                     :entry="entry"
+                    :annotation="entry.annotation"
                     :domain-object="domainObject"
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
@@ -196,23 +197,11 @@ export default {
             searchResults: [],
             showTime: this.domainObject.configuration.showTime || 0,
             showNav: false,
-            sidebarCoversEntries: false
+            sidebarCoversEntries: false,
+            filteredAndSortedEntries: []
         };
     },
     computed: {
-        filteredAndSortedEntries() {
-            const filterTime = Date.now();
-            const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
-
-            const hours = parseInt(this.showTime, 10);
-            const filteredPageEntriesByTime = hours
-                ? pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000)
-                : pageEntries;
-
-            return this.defaultSort === 'oldest'
-                ? filteredPageEntriesByTime
-                : [...filteredPageEntriesByTime].reverse();
-        },
         pages() {
             return this.getPages() || [];
         },
@@ -276,6 +265,7 @@ export default {
 
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
+        this.filterAndSortEntries();
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -312,6 +302,19 @@ export default {
                     });
                 }
             });
+        },
+        async filterAndSortEntries() {
+            const filterTime = Date.now();
+            const pageEntries = await getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage) || [];
+
+            const hours = parseInt(this.showTime, 10);
+            const filteredPageEntriesByTime = hours
+                ? pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000)
+                : pageEntries;
+
+            this.filteredAndSortedEntries = this.defaultSort === 'oldest'
+                ? filteredPageEntriesByTime
+                : [...filteredPageEntriesByTime].reverse();
         },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
@@ -364,8 +367,8 @@ export default {
                 defaultPageId: page.id
             };
         },
-        deleteEntry(entryId) {
-            const entryPos = getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
+        async deleteEntry(entryId) {
+            const entryPos = await getEntryPosById(this.openmct, entryId, this.domainObject, this.selectedSection, this.selectedPage);
             if (entryPos === -1) {
                 this.openmct.notifications.alert('Warning: unable to delete entry');
                 console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
@@ -380,19 +383,37 @@ export default {
                     {
                         label: "Ok",
                         emphasis: true,
-                        callback: () => {
-                            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+                        callback: async () => {
+                            const entries = await getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage);
                             entries.splice(entryPos, 1);
                             this.updateEntries(entries);
+                            this.filterAndSortEntries();
+                            this.removeAnnotations(entryId);
                             dialog.dismiss();
                         }
                     },
                     {
                         label: "Cancel",
-                        callback: () => dialog.dismiss()
+                        callback: () => {
+                            dialog.dismiss();
+                        }
                     }
                 ]
             });
+        },
+        removeAnnotations(entryId) {
+            this.openmct.annotation.removeNotebookAnnotation(entryId, this.domainObject);
+        },
+        async checkEntryPos(entry) {
+            const entryPos = await getEntryPosById(this.openmct, entry.id, this.domainObject, this.selectedSection, this.selectedPage);
+            if (entryPos === -1) {
+                this.openmct.notifications.alert('Warning: unable to tag entry');
+                console.error(`unable to tag entry ${entry} from section ${this.selectedSection}, page ${this.selectedPage}`);
+
+                return false;
+            }
+
+            return true;
         },
         dragOver(event) {
             event.preventDefault();
@@ -614,13 +635,13 @@ export default {
 
             return section.id;
         },
-        newEntry(embed = null) {
+        async newEntry(embed = null) {
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
-            addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed).then(id => {
-                this.focusEntryId = id;
-            });
+            const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
+            this.focusEntryId = id;
+            this.filterAndSortEntries();
         },
         orientationChange() {
             this.formatSidebar();
@@ -701,9 +722,9 @@ export default {
 
             setDefaultNotebookSectionId(defaultNotebookSectionId);
         },
-        updateEntry(entry) {
-            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-            const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
+        async updateEntry(entry) {
+            const entries = await getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage);
+            const entryPos = await getEntryPosById(this.openmct, entry.id, this.domainObject, this.selectedSection, this.selectedPage);
             entries[entryPos] = entry;
 
             this.updateEntries(entries);

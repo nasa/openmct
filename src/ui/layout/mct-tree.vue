@@ -11,13 +11,6 @@
         ref="search"
         class="c-tree-and-search__search"
     >
-        <search
-            ref="shell-search"
-            class="c-search"
-            :value="searchValue"
-            @input="searchTree"
-            @clear="searchTree"
-        />
     </div>
 
     <!-- search loading -->
@@ -118,7 +111,6 @@
 <script>
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
-import search from '../components/search.vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
@@ -129,7 +121,6 @@ const LOCATOR_ITEM_COUNT_HEIGHT = 10; // how many tree items to make the locator
 export default {
     name: 'MctTree',
     components: {
-        search,
         treeItem
     },
     inject: ['openmct'],

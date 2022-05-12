@@ -230,11 +230,19 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
  *          each resolving to domain objects matching provided search query and options.
  */
 ObjectAPI.prototype.search = function (query, abortSignal) {
+    return this.queryUsingProvider('searchForObjects', query, abortSignal);
+};
+
+ObjectAPI.prototype.queryUsingProvider = function (queryFunction, query, abortSignal) {
     const searchPromises = Object.values(this.providers)
-        .filter(provider => provider.search !== undefined)
-        .map(provider => provider.search(query, abortSignal));
+        .filter(provider => provider[queryFunction] !== undefined)
+        .map(provider => provider[queryFunction](query, abortSignal));
+    if (!this.inMemorySearchProvider[queryFunction]) {
+        throw new Error(`${queryFunction} not implemented in inMemorySearchProvider`);
+    }
+
     // abortSignal doesn't seem to be used in generic search?
-    searchPromises.push(this.inMemorySearchProvider.query(query, null)
+    searchPromises.push(this.inMemorySearchProvider[queryFunction](query, null)
         .then(results => results.hits
             .map(hit => {
                 return hit;

@@ -32,7 +32,7 @@ class CouchSearchProvider {
         this.couchObjectProvider = couchObjectProvider;
     }
 
-    search(query, abortSignal) {
+    searchForObjects(query, abortSignal) {
         const filter = {
             "selector": {
                 "model": {
@@ -45,5 +45,86 @@ class CouchSearchProvider {
 
         return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
     }
+
+    searchForAnnotations(keyString, abortSignal) {
+        const filter = {
+            "selector": {
+                "$and": [
+                    {
+                        "model": {
+                            "targets": {
+                            }
+                        }
+                    },
+                    {
+                        "model.type": {
+                            "$eq": "annotation"
+                        }
+                    }
+                ]
+            }
+        };
+        filter.selector.$and[0].model.targets[keyString] = {
+            "$exists": true
+        };
+
+        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    }
+
+    searchForNotebookAnnotations({targetKeyString, entryId}, abortSignal) {
+        const filter = {
+            "selector": {
+                "$and": [
+                    {
+                        "model.type": {
+                            "$eq": "annotation"
+                        }
+                    },
+                    {
+                        "model.annotationType": {
+                            "$eq": "notebook"
+                        }
+                    },
+                    {
+                        "model": {
+                            "targets": {
+                            }
+                        }
+                    }
+                ]
+            }
+        };
+        filter.selector.$and[2].model.targets[targetKeyString] = {
+            "entryId": {
+                "$eq": entryId
+            }
+        };
+
+        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    }
+
+    searchForTags(tagsArray, abortSignal) {
+        const filter = {
+            "selector": {
+                "$and": [
+                    {
+                        "model.tags": {
+                            "$elemMatch": {
+                                "$eq": `${tagsArray[0]}`
+                            }
+                        }
+                    },
+                    {
+                        "model.type": {
+                            "$eq": "annotation"
+                        }
+                    }
+                ]
+            }
+        };
+
+        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    }
+
 }
 export default CouchSearchProvider;
