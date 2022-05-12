@@ -19,16 +19,32 @@ import objectUtils from 'objectUtils';
 export default {
     inject: ['openmct'],
     data: function () {
+        let items = [];
+
+        this.openmct.types.listKeys().forEach(key => {
+            let menuItem = this.openmct.types.get(key).definition;
+
+            if (menuItem.creatable) {
+                let menuItemTemplate = {
+                    cssClass: menuItem.cssClass,
+                    name: menuItem.name,
+                    description: menuItem.description,
+                    onItemClicked: () => this.create(key)
+                };
+
+                items.push(menuItemTemplate);
+            }
+        });
+
         return {
+            items,
             selectedMenuItem: {},
             opened: false
         };
     },
     computed: {
         sortedItems() {
-            let items = this.getItems();
-
-            return items.slice().sort((a, b) => {
+            return this.items.slice().sort((a, b) => {
                 if (a.name < b.name) {
                     return -1;
                 } else if (a.name > b.name) {
@@ -40,26 +56,6 @@ export default {
         }
     },
     methods: {
-        getItems() {
-            let items = [];
-
-            this.openmct.types.listKeys().forEach(key => {
-                let menuItem = this.openmct.types.get(key).definition;
-
-                if (menuItem.creatable) {
-                    let menuItemTemplate = {
-                        cssClass: menuItem.cssClass,
-                        name: menuItem.name,
-                        description: menuItem.description,
-                        onItemClicked: () => this.create(key)
-                    };
-
-                    items.push(menuItemTemplate);
-                }
-            });
-
-            return items;
-        },
         showCreateMenu() {
             const elementBoundingClientRect = this.$refs.createButton.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
