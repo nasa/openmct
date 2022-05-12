@@ -192,7 +192,6 @@ export default {
 
             if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
                 return getLogTicks(range.min, range.max, number, 4);
-                // return getLogTicks2(range.min, range.max, number);
             } else {
                 return ticks(range.min, range.max, number);
             }
@@ -204,6 +203,7 @@ export default {
 
         updateTicks(forceRegeneration = false) {
             const range = this.axis.get('displayRange');
+
             if (!range) {
                 delete this.min;
                 delete this.max;
