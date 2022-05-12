@@ -35,6 +35,14 @@ describe('Telemetry Collection', () => {
         openmct = createOpenMct();
         openmct.on('start', done);
 
+        domainObject = {
+            identifier: {
+                key: 'a',
+                namespace: 'b'
+            },
+            type: 'sample-type'
+        };
+
         mockMetadataProvider = {
             key: 'mockMetadataProvider',
             supportsMetadata() {
@@ -63,13 +71,6 @@ describe('Telemetry Collection', () => {
                 }
             }
         ];
-        domainObject = {
-            identifier: {
-                key: 'a',
-                namespace: 'b'
-            },
-            type: 'sample-type'
-        };
 
         const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
         spyOn(telemetryCollection, '_warn');
@@ -89,13 +90,6 @@ describe('Telemetry Collection', () => {
                 }
             }
         ];
-        domainObject = {
-            identifier: {
-                key: 'a',
-                namespace: 'b'
-            },
-            type: 'sample-type'
-        };
 
         const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
         spyOn(telemetryCollection, '_warn');
