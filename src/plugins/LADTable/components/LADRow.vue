@@ -148,6 +148,8 @@ export default {
         this.openmct.time.off('timeSystem', this.updateTimeSystem);
         this.telemetryCollection.off('add', this.setLatestValues);
         this.telemetryCollection.off('clear', this.resetValues);
+
+        this.telemetryCollection.destroy();
     },
     methods: {
         updateView() {
