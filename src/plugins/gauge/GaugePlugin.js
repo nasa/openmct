@@ -54,11 +54,29 @@ export default function () {
                         limitHigh: 90,
                         max: 100,
                         min: 0,
-                        precision: 2
+                        precision: 2,
+                        isDisplayUnits: true
                     }
                 };
             },
             form: [
+                {
+                    name: "Gauge type",
+                    options: GAUGE_TYPES.map(type => {
+                        return {
+                            name: type[0],
+                            value: type[1]
+                        };
+                    }),
+                    control: "select",
+                    cssClass: "l-input-sm",
+                    key: "gaugeController",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "gaugeType"
+                    ]
+                },
                 {
                     name: "Display current value",
                     control: "toggleSwitch",
@@ -68,6 +86,17 @@ export default function () {
                         "configuration",
                         "gaugeController",
                         "isDisplayCurVal"
+                    ]
+                },
+                {
+                    name: "Display units",
+                    control: "toggleSwitch",
+                    cssClass: "l-input",
+                    key: "isDisplayUnits",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "isDisplayUnits"
                     ]
                 },
                 {
@@ -90,23 +119,6 @@ export default function () {
                         "configuration",
                         "gaugeController",
                         "precision"
-                    ]
-                },
-                {
-                    name: "Gauge type",
-                    options: GAUGE_TYPES.map(type => {
-                        return {
-                            name: type[0],
-                            value: type[1]
-                        };
-                    }),
-                    control: "select",
-                    cssClass: "l-input-sm",
-                    key: "gaugeController",
-                    property: [
-                        "configuration",
-                        "gaugeController",
-                        "gaugeType"
                     ]
                 },
                 {

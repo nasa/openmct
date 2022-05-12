@@ -64,11 +64,11 @@
         </svg>
 
         <svg
+            v-if="displayCurVal"
             class="c-dial__current-value-text-wrapper"
             viewBox="0 0 512 512"
         >
             <svg
-                v-if="displayCurVal"
                 class="c-dial__current-value-text-sizer"
                 :viewBox="curValViewBox"
             >
@@ -79,13 +79,23 @@
                     style="transform: translate(50%, 70%)"
                 >{{ curVal }}</text>
             </svg>
+            <svg
+                class="c-gauge__units c-dial__units"
+                viewBox="0 0 50 100"
+            >
+                <text
+                    class="c-dial__units-text"
+                    lengthAdjust="spacing"
+                    text-anchor="middle"
+                    style="transform: translate(50%, 72%)"
+                >{{ units }}</text>
+            </svg>
         </svg>
 
         <svg
             class="c-dial__bg"
             viewBox="0 0 10 10"
         >
-
             <g
                 v-if="limitLow !== null && dialLowLimitDeg < getLimitDegree('low', 'max')"
                 class="c-dial__limit-low"
@@ -258,11 +268,27 @@
                         preserveAspectRatio="xMidYMid meet"
                     >
                         <text
-                            class="c-dial__current-value-text js-meter-current-value"
+                            class="c-dial__current-value-text"
                             lengthAdjust="spacing"
                             text-anchor="middle"
                             style="transform: translate(50%, 70%)"
-                        >{{ curVal }}</text>
+                        >
+                            <tspan>{{ curVal }}</tspan>
+                            <tspan
+                                class="c-gauge__units"
+                                font-size="10"
+                                v-if="typeMeterHorizontal && displayUnits"
+                            >{{ units }}</tspan>
+                        </text>
+                        <text
+                            v-if="typeMeterVertical && displayUnits"
+                            dy="12"
+                            class="c-gauge__units"
+                            font-size="10"
+                            lengthAdjust="spacing"
+                            text-anchor="middle"
+                            style="transform: translate(50%, 70%)"
+                        >{{ units }}</text>
                     </svg>
                 </svg>
             </div>
@@ -288,12 +314,15 @@ export default {
             precision: gaugeController.precision,
             displayMinMax: gaugeController.isDisplayMinMax,
             displayCurVal: gaugeController.isDisplayCurVal,
+            displayUnits: gaugeController.isDisplayUnits,
             limitHigh: gaugeController.limitHigh,
             limitLow: gaugeController.limitLow,
             rangeHigh: gaugeController.max,
             rangeLow: gaugeController.min,
             gaugeType: gaugeController.gaugeType,
-            activeTimeSystem: this.openmct.time.timeSystem()
+            showUnits: gaugeController.showUnits,
+            activeTimeSystem: this.openmct.time.timeSystem(),
+            units: null
         };
     },
     computed: {
@@ -484,6 +513,8 @@ export default {
                     const length = values.length;
                     this.updateValue(values[length - 1]);
                 });
+
+            this.units = this.metadata.value(this.valueKey).unit || '';
         },
         round(val, decimals = this.precision) {
             let precision = Math.pow(10, decimals);
