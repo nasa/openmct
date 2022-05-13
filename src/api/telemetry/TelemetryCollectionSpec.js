@@ -24,6 +24,7 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
+import { TIMESYSTEM_KEY_WARNING } from './constants';
 
 describe('Telemetry Collection', () => {
     let openmct;
@@ -76,7 +77,7 @@ describe('Telemetry Collection', () => {
         spyOn(telemetryCollection, '_warn');
         telemetryCollection.load();
 
-        expect(telemetryCollection._warn).toHaveBeenCalled();
+        expect(telemetryCollection._warn).toHaveBeenCalledOnceWith(TIMESYSTEM_KEY_WARNING);
     });
 
     it('Does not warn if telemetry metadata matches the active timesystem', () => {

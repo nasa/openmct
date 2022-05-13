@@ -22,12 +22,7 @@
 
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
-
-const ERRORS = {
-    TIMESYSTEM_KEY: 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.',
-    TIMESYSTEM_KEY_NOTIFICATION: 'Telemetry metadata does not match the active time system.',
-    LOADED: 'Telemetry Collection has already been loaded.'
-};
+import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
 
 /** Class representing a Telemetry Collection. */
 
@@ -62,7 +57,7 @@ export class TelemetryCollection extends EventEmitter {
      */
     load() {
         if (this.loaded) {
-            this._error(ERRORS.LOADED);
+            this._error(LOADED_ERROR);
         }
 
         this._setTimeSystem(this.openmct.time.timeSystem());
@@ -336,8 +331,8 @@ export class TelemetryCollection extends EventEmitter {
         } else {
             this.timeKey = undefined;
 
-            this._warn(ERRORS.TIMESYSTEM_KEY);
-            this.openmct.notifications.alert(ERRORS.TIMESYSTEM_KEY_NOTIFICATION);
+            this._warn(TIMESYSTEM_KEY_WARNING);
+            this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
         }
 
         let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
