@@ -206,7 +206,7 @@
     }
 
     function searchForNotebookAnnotations(data) {
-        let results;
+        let results = [];
         const message = {
             request: 'searchForNotebookAnnotations',
             results: {},
