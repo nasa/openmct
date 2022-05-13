@@ -377,10 +377,10 @@
     align-items: center;
     justify-content: space-between;
 
-    [class*="__"] {
-        // Removes extraneous horizontal white space
-        display: inline-flex;
-    }
+    //[class*="__"] {
+    //    // Removes extraneous horizontal white space
+    //    display: inline-flex;
+    //}
 
     > * + * {
         margin-left: $interiorMarginSm;

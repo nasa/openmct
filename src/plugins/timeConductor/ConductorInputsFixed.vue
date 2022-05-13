@@ -20,59 +20,71 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<form
-    ref="fixedDeltaInput"
-    class="c-conductor__inputs"
->
+<div class="c-compact-tc__bounds">
     <div
-        class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+        v-if="readOnly"
+        class="c-compact-tc__bounds--read-only"
     >
-        <!-- Fixed start -->
-        <div class="c-conductor__start-fixed__label">
-            Start
-        </div>
-        <input
-            ref="startDate"
-            v-model="formattedBounds.start"
-            class="c-input--datetime"
-            type="text"
-            autocorrect="off"
-            spellcheck="false"
-            @change="validateAllBounds('startDate'); submitForm()"
-        >
-        <date-picker
-            v-if="isUTCBased"
-            class="c-ctrl-wrapper--menus-left"
-            :bottom="keyString !== undefined"
-            :default-date-time="formattedBounds.start"
-            :formatter="timeFormatter"
-            @date-selected="startDateSelected"
-        />
+        <div class="c-compact-tc__bounds__start">{{ formattedBounds.start }}</div>
+        <div class="icon-arrows-right-left"></div>
+        <div class="c-compact-tc__bounds__end">{{ formattedBounds.end }}</div>
     </div>
-    <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-        <!-- Fixed end and RT 'last update' display -->
-        <div class="c-conductor__end-fixed__label">
-            End
-        </div>
-        <input
-            ref="endDate"
-            v-model="formattedBounds.end"
-            class="c-input--datetime"
-            type="text"
-            autocorrect="off"
-            spellcheck="false"
-            @change="validateAllBounds('endDate'); submitForm()"
+    <form
+        v-else
+        ref="fixedDeltaInput"
+        class="c-conductor__inputs c-compact-tc__bounds--inputs"
+    >
+        <div
+            class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
         >
-        <date-picker
-            v-if="isUTCBased"
-            class="c-ctrl-wrapper--menus-left"
-            :bottom="keyString !== undefined"
-            :default-date-time="formattedBounds.end"
-            :formatter="timeFormatter"
-            @date-selected="endDateSelected"
-        />
-    </div>
-</form>
+            <!-- Fixed start -->
+            <div class="c-conductor__start-fixed__label">
+                Start
+            </div>
+            <input
+                ref="startDate"
+                v-model="formattedBounds.start"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                @change="validateAllBounds('startDate'); submitForm()"
+            >
+            <date-picker
+                v-if="isUTCBased"
+                class="c-ctrl-wrapper--menus-left"
+                :bottom="keyString !== undefined"
+                :default-date-time="formattedBounds.start"
+                :formatter="timeFormatter"
+                @date-selected="startDateSelected"
+            />
+        </div>
+        <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
+            <!-- Fixed end and RT 'last update' display -->
+            <div class="c-conductor__end-fixed__label">
+                End
+            </div>
+            <input
+                ref="endDate"
+                v-model="formattedBounds.end"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                @change="validateAllBounds('endDate'); submitForm()"
+            >
+            <date-picker
+                v-if="isUTCBased"
+                class="c-ctrl-wrapper--menus-left"
+                :bottom="keyString !== undefined"
+                :default-date-time="formattedBounds.end"
+                :formatter="timeFormatter"
+                @date-selected="endDateSelected"
+            />
+        </div>
+    </form>
+
+</div>
 </template>
 
 <script>
@@ -100,10 +112,10 @@ export default {
                 return undefined;
             }
         },
-        objectPath: {
-            type: Array,
+        readOnly: {
+            type: Boolean,
             default() {
-                return [];
+                return true;
             }
         }
     },

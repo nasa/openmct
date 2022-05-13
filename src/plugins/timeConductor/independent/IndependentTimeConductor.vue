@@ -21,7 +21,7 @@
 -->
 <template>
 <div
-    class="c-conductor"
+    class="c-conductor c-compact-tc"
     :class="[
         isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode'
     ]"
@@ -36,12 +36,16 @@
 
         <ConductorModeIcon />
 
+        <div class="itc__bounds">
+
+        </div>
+
         <div
             v-if="timeOptions && independentTCEnabled"
             class="c-conductor__controls"
         >
             <Mode
-                v-if="mode"
+                v-if="mode && false"
                 class="c-conductor__mode-select"
                 :key-string="domainObject.identifier.key"
                 :mode="timeOptions.mode"
@@ -51,17 +55,21 @@
 
             <conductor-inputs-fixed
                 v-if="isFixed"
+                class="c-compact-tc__bounds--fixed"
                 :key-string="domainObject.identifier.key"
-                :object-path="objectPath"
+                :read-only="true"
                 @updated="saveFixedOffsets"
             />
 
             <conductor-inputs-realtime
                 v-else
+                class="c-compact-tc__bounds--real-time"
                 :key-string="domainObject.identifier.key"
-                :object-path="objectPath"
+                :read-only="true"
                 @updated="saveClockOffsets"
             />
+
+            <button class="c-icon-button icon-gear"></button>
         </div>
     </div>
 </div>

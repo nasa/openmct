@@ -55,6 +55,16 @@
     </div>
 
     <div class="l-browse-bar__end">
+        <div
+            v-if="supportsIndependentTime"
+            class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
+        >
+            <independent-time-conductor
+                :domain-object="domainObject"
+                @stateChanged="updateIndependentTimeState"
+                @updated="saveTimeOptions"
+            />
+        </div>
         <ViewSwitcher
             v-if="!isEditing"
             :current-view="currentView"
@@ -148,11 +158,20 @@
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+
+const SupportedViewTypes = [
+    'plot-stacked',
+    'plot-overlay',
+    'bar-graph.view',
+    'time-strip.view'
+];
 
 const PLACEHOLDER_OBJECT = {};
 
 export default {
     components: {
+        IndependentTimeConductor,
         NotebookMenuSwitcher,
         ViewSwitcher
     },
@@ -212,6 +231,11 @@ export default {
             const hash = this.openmct.router.getCurrentLocation().path;
 
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
+        },
+        supportsIndependentTime() {
+            const viewKey = this.getViewKey();
+
+            return this.domainObject && SupportedViewTypes.includes(viewKey);
         },
         type() {
             const objectType = this.openmct.types.get(this.domainObject.type);
@@ -313,6 +337,14 @@ export default {
         edit() {
             this.openmct.editor.edit();
         },
+        getViewKey() {
+            let viewKey = this.viewKey;
+            if (this.objectViewKey) {
+                viewKey = this.objectViewKey;
+            }
+
+            return viewKey;
+        },
         promptUserandCancelEditing() {
             let dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
@@ -389,6 +421,13 @@ export default {
         },
         setStatus(status) {
             this.status = status;
+        },
+        //Should the domainObject be updated in the Independent Time conductor component itself?
+        updateIndependentTimeState(useIndependentTime) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', useIndependentTime);
+        },
+        saveTimeOptions(options) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
         }
     }
 };

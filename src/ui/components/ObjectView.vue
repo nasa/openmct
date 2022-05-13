@@ -22,7 +22,7 @@
 <template>
 <div>
     <div
-        v-if="supportsIndependentTime"
+        v-if="supportsIndependentTime && false"
         class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
     >
         <independent-time-conductor
@@ -31,7 +31,7 @@
             @stateChanged="updateIndependentTimeState"
             @updated="saveTimeOptions"
         />
-    </div>
+    </div>ITC was here
     <div
         ref="objectViewWrapper"
         class="c-object-view"

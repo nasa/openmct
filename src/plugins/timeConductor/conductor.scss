@@ -242,7 +242,7 @@
     }
 
     .c-conductor__end-fixed {
-        // Displays last RT udpate
+        // Displays last RT update
         color: $colorTime;
 
         input {
@@ -286,7 +286,6 @@
     right: 0;
 }
 
-
 [class^='pr-time'] {
     &[class*='label'] {
         font-size: 0.8em;
@@ -306,5 +305,26 @@
             font-size: 1.25em;
             width: 42px;
         }
+    }
+}
+
+/*********************************************** INDEPENDENT TIME CONDUCTOR */
+.c-compact-tc {
+    background: rgba(deeppink, 0.3);
+    border-radius: $controlCr;
+    padding: 1px $interiorMarginSm;
+
+    // New Time Conductor styling
+    &__bounds {
+
+        &--read-only {
+            display: flex;
+            align-items: center;
+
+            > * + * {
+                margin-left: $interiorMargin;
+            }
+        }
+
     }
 }
