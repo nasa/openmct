@@ -94,6 +94,24 @@ export default {
             } else {
                 this.$delete(this.selectedFaults, faultId);
             }
+
+            const selectedFaults = Object.values(this.selectedFaults);
+            this.openmct.selection.select(
+                [
+                    {
+                        element: this.$el,
+                        context: {
+                            item: this.openmct.router.path[0]
+                        }
+                    },
+                    {
+                        element: this.$el,
+                        context: {
+                            selectedFaults
+                        }
+                    }
+                ],
+                false);
         },
         toggleAcknowledgeSelected() {
             Object.values(this.selectedFaults)

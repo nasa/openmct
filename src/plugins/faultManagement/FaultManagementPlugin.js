@@ -1,5 +1,6 @@
 import FaultManagementViewProvider from './FaultManagementViewProvider';
 import FaultManagementObjectProvider from './FaultManagementObjectProvider';
+import FaultManagementInspectorViewProvider from './FaultManagementInspectorViewProvider';
 
 import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_NAMESPACE } from './constants';
 
@@ -13,7 +14,7 @@ export default function FaultManagementPlugin(config = {}) {
         });
 
         openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
-
+        openmct.inspectorViews.addProvider(new FaultManagementInspectorViewProvider(openmct));
         openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
 
         openmct.faults.setConfig(config);
