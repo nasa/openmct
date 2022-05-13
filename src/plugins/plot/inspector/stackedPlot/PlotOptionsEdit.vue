@@ -32,13 +32,17 @@
             v-for="series in plotSeries"
             :key="series.key"
         >
-            <series-form :series="series" />
+            <series-form
+                :series="series"
+                @seriesUpdated="updateSeriesConfigForObject"
+            />
         </li>
     </ul>
     <y-axis-form
         v-if="plotSeries.length"
         class="grid-properties"
         :y-axis="config.yAxis"
+        @seriesUpdated="updateSeriesConfigForObject"
     />
 </div>
 </template>
@@ -84,18 +88,27 @@ export default {
         },
 
         addSeries(series, index) {
-            //only show items that cannot save their properties
-            const seriesObject = series.domainObject;
-            if (seriesObject.configuration && seriesObject.configuration.series) {
-                return;
-            }
-
             this.$set(this.plotSeries, index, series);
         },
 
         resetAllSeries() {
             this.plotSeries = [];
             this.config.series.forEach(this.addSeries, this);
+        },
+
+        updateSeriesConfigForObject(identifier) {
+            const stackedPlotObject = this.path.find((pathObject) => pathObject.type === 'telemetry.plot.stacked');
+            const seriesConfig = configStore.get(identifier);
+            if (seriesConfig) {
+                const keyString = this.openmct.objects.makeKeyString(identifier);
+
+                this.openmct.objects.mutate(
+                    stackedPlotObject,
+                    `configuration.series.${keyString}`,
+                    seriesConfig
+                );
+            }
+
         }
     }
 };

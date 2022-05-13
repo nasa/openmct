@@ -49,8 +49,8 @@
                 title="Cursor is point locked. Click anywhere in the plot to unlock."
             ></div>
             <plot-legend-item-collapsed
-                v-for="seriesObject in series"
-                :key="seriesObject.keyString"
+                v-for="(seriesObject, seriesIndex) in series"
+                :key="`seriesObject.keyString-${seriesIndex}`"
                 :highlights="highlights"
                 :value-to-show-when-collapsed="legend.get('valueToShowWhenCollapsed')"
                 :series-object="seriesObject"

@@ -38,7 +38,7 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
                         },
                         provide: {
                             openmct,
-                            domainObject: selection[0][1].context.item,
+                            domainObject: selection[0][0].context.item,
                             path: objectPath
                         },
                         template: '<plot-options></plot-options>'

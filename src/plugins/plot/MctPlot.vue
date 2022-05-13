@@ -264,7 +264,7 @@ export default {
     },
     computed: {
         isStackedPlotObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked');
         },
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;

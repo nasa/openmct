@@ -27,6 +27,8 @@
 import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
 import conditionalStylesMixin from "./mixins/objectStyles-mixin";
+import configStore from "@/plugins/plot/configuration/ConfigStore";
+import PlotConfigurationModel from "@/plugins/plot/configuration/PlotConfigurationModel";
 
 export default {
     mixins: [conditionalStylesMixin],
@@ -119,9 +121,10 @@ export default {
             const setStatus = this.setStatus;
 
             const openmct = this.openmct;
-            const object = this.object;
             const path = this.path;
 
+            //If this object is not persistable, then package it with it's parent
+            const object = this.getPlotObject();
             const getProps = this.getProps;
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
@@ -193,6 +196,40 @@ export default {
                 options: this.options,
                 status: this.status
             };
+        },
+        getPlotObject() {
+            if (this.object.configuration && this.object.configuration.series) {
+                //If the object can be persisted, allow initialization of the config from it's persisted config
+                return this.object;
+            } else {
+                // If the  object cannot be persisted, initialize the series config with the persisted config from the stacked plot
+                const configId = this.openmct.objects.makeKeyString(this.object.identifier);
+                let config = configStore.get(configId);
+                if (!config) {
+                    const persistedConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+                        return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.object.identifier);
+                    });
+                    if (persistedConfig) {
+                        config = new PlotConfigurationModel({
+                            id: configId,
+                            domainObject: {
+                                ...this.object,
+                                configuration: {
+                                    ...this.object.configuration,
+                                    series: [persistedConfig]
+                                }
+                            },
+                            openmct: this.openmct,
+                            callback: (data) => {
+                                this.data = data;
+                            }
+                        });
+                        configStore.add(configId, config);
+                    }
+                }
+
+                return this.object;
+            }
         }
     }
 };

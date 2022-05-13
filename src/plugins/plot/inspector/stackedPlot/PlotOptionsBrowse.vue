@@ -152,12 +152,6 @@ export default {
         },
 
         addSeries(series, index) {
-            //only show items that cannot save their properties
-            let seriesObject = series.domainObject;
-            if (seriesObject.configuration && seriesObject.configuration.series) {
-                return;
-            }
-
             this.$set(this.plotSeries, index, series);
             this.initConfiguration();
         },
