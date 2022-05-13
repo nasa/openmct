@@ -289,6 +289,14 @@ export default {
             return this.plotTickWidth || this.tickWidth;
         }
     },
+    watch: {
+        initGridLines(newGridLines) {
+            this.gridLines = newGridLines;
+        },
+        initCursorGuide(newCursorGuide) {
+            this.cursorGuide = newCursorGuide;
+        }
+    },
     mounted() {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
@@ -1149,9 +1157,11 @@ export default {
         },
         toggleCursorGuide() {
             this.cursorGuide = !this.cursorGuide;
+            this.$emit('cursorGuide', this.cursorGuide);
         },
         toggleGridLines() {
             this.gridLines = !this.gridLines;
+            this.$emit('gridLines', this.gridLines);
         }
     }
 };

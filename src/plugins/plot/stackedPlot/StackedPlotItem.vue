@@ -65,10 +65,10 @@ export default {
     },
     watch: {
         gridLines(newGridLines) {
-            this.updateComponentProp('initGridLines', newGridLines);
+            this.updateComponentProp('gridLines', newGridLines);
         },
         cursorGuide(newCursorGuide) {
-            this.updateComponentProp('initCursorGuide', newCursorGuide);
+            this.updateComponentProp('cursorGuide', newCursorGuide);
         },
         plotTickWidth(width) {
             this.updateComponentProp('plotTickWidth', width);
@@ -96,6 +96,8 @@ export default {
             }
 
             const onTickWidthChange = this.onTickWidthChange;
+            const onCursorGuideChange = this.onCursorGuideChange;
+            const onGridLinesChange = this.onGridLinesChange;
             const loadingUpdated = this.loadingUpdated;
             const setStatus = this.setStatus;
 
@@ -121,15 +123,23 @@ export default {
                     return {
                         ...getProps(),
                         onTickWidthChange,
+                        onCursorGuideChange,
+                        onGridLinesChange,
                         loadingUpdated,
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
         },
         onTickWidthChange() {
             this.$emit('plotTickWidth', ...arguments);
+        },
+        onCursorGuideChange() {
+            this.$emit('cursorGuide', ...arguments);
+        },
+        onGridLinesChange() {
+            this.$emit('gridLines', ...arguments);
         },
         setStatus(status) {
             this.status = status;
@@ -141,8 +151,8 @@ export default {
         },
         getProps() {
             return {
-                initGridLines: this.gridLines,
-                initCursorGuide: this.cursorGuide,
+                gridLines: this.gridLines,
+                cursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,
                 loading: this.loading,
                 options: this.options,

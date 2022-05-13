@@ -34,6 +34,8 @@
             :plot-tick-width="maxTickWidth"
             @plotTickWidth="onTickWidthChange"
             @loadingUpdated="loadingUpdated"
+            @cursorGuide="onCursorGuideChange"
+            @gridLines="onGridLinesChange"
         />
     </div>
 </div>
@@ -155,6 +157,12 @@ export default {
             }
 
             this.$set(this.tickWidthMap, plotId, width);
+        },
+        onCursorGuideChange(cursorGuide) {
+            this.cursorGuide = cursorGuide === true;
+        },
+        onGridLinesChange(gridLines) {
+            this.gridLines = gridLines === true;
         },
         getViewContext() {
             return {
