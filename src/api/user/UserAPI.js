@@ -121,6 +121,16 @@ class UserAPI extends EventEmitter {
         }
     }
 
+    canClearAllStatuses() {
+        this._noProviderCheck();
+
+        if (this._provider.clearAllStatuses !== undefined) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     getActiveStatusRole() {
         this._noProviderCheck();
 
@@ -151,21 +161,21 @@ class UserAPI extends EventEmitter {
         }
     }
 
-    canGetUsersForStatus() {
+    canGetRolesInStatus() {
         this._noProviderCheck();
 
-        if (this._provider.getUsersForStatus) {
+        if (this._provider.getRolesInStatus) {
             return true;
         } else {
             return false;
         }
     }
 
-    getUsersForStatus(status) {
+    getRolesInStatus(status) {
         this._noProviderCheck();
 
-        if (this._provider.getUsersForStatus) {
-            return this._provider.getUsersForStatus(status);
+        if (this._provider.getRolesInStatus) {
+            return this._provider.getRolesInStatus(status);
         } else {
             this._error("User provider does not support role status");
         }
@@ -186,7 +196,12 @@ class UserAPI extends EventEmitter {
 
         if (this.canSetPollQuestion()) {
             const result = await this._provider.setPollQuestion(questionText);
-            await this.clearAllStatuses();
+
+            if (this.canClearAllStatuses()) {
+                await this.clearAllStatuses();
+            } else {
+                console.warn("Poll question set but unable to clear operator statuses because user provider does not support it.");
+            }
 
             return result;
         } else {

@@ -139,11 +139,11 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve(STATUSES);
     }
 
-    getUsersForStatus(status) {
+    getRolesInStatus(status) {
         return Promise.resolve({
-            "NO_STATUS": ["user1", "user2", "user3"],
-            "NO_GO": ["user4"],
-            "GO": ["user5", "user6"]
+            "NO_STATUS": ["role1", "role2", "role3"],
+            "NO_GO": ["role4"],
+            "GO": ["role5", "role6"]
         }[status] || []);
     }
 

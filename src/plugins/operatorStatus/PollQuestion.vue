@@ -33,7 +33,7 @@
                         :class="entry.status.iconClass"
                     ></div>
                     <div class="c-status-poll-report__count-value">
-                        {{ entry.userCount }}
+                        {{ entry.roleCount }}
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@ export default {
         this.unsubscribe = [];
         this.fetchCurrentPoll();
         this.subscribeToPollQuestion();
-        this.canGetStatusSummary = this.openmct.user.canGetUsersForStatus();
+        this.canGetStatusSummary = this.openmct.user.canGetRolesInStatus();
         if (this.canGetStatusSummary) {
             this.fetchStatusSummary();
         }
@@ -122,20 +122,17 @@ export default {
         },
         async fetchStatusSummary() {
             const allStatuses = await this.openmct.user.getPossibleStatuses();
-            const usersByStatus = await Promise.all(allStatuses.map(status => {
-                return this.openmct.user.getUsersForStatus(status.key);
+            const rolesByStatus = await Promise.all(allStatuses.map(status => {
+                return this.openmct.user.getRolesInStatus(status.key);
             }));
-            const statusToUserCount = allStatuses.map((status, index) => {
+            const statusToRoleCount = allStatuses.map((status, index) => {
                 return {
                     status,
-                    userCount: usersByStatus[index].length
+                    roleCount: rolesByStatus[index].length
                 };
             });
 
-            this.statusCounts = statusToUserCount;
-        },
-        clearAllResponses() {
-            this.openmct.user.clearAllStatuses();
+            this.statusCounts = statusToRoleCount;
         },
         noop() {}
     }
