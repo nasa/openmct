@@ -46,8 +46,6 @@ export default function StackedPlotViewProvider(openmct) {
             let component;
 
             return {
-                isPlotView: true,
-
                 show: function (element) {
                     let isCompact = isCompactView(objectPath);
 
@@ -69,11 +67,15 @@ export default function StackedPlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<stacked-plot :options="options"></stacked-plot>'
+                        template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
                     });
                 },
-                run(key) {
-                    component.$refs.plot[key]();
+                getViewContext() {
+                    if (!component) {
+                        return {};
+                    }
+
+                    return component.$refs.plotComponent.getViewContext();
                 },
                 destroy: function () {
                     component.$destroy();

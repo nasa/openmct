@@ -149,20 +149,18 @@ export default {
                     this.hideExportButtons = false;
                 }.bind(this));
         },
-
-        toggleCursorGuide() {
-            this.cursorGuide = !this.cursorGuide;
-        },
-
-        toggleGridLines() {
-            this.gridLines = !this.gridLines;
-        },
         onTickWidthChange(width, plotId) {
             if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
                 return;
             }
 
             this.$set(this.tickWidthMap, plotId, width);
+        },
+        getViewContext() {
+            return {
+                exportPNG: this.exportPNG,
+                exportJPG: this.exportJPG
+            };
         }
     }
 };

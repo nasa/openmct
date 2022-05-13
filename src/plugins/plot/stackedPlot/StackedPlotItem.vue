@@ -65,10 +65,10 @@ export default {
     },
     watch: {
         gridLines(newGridLines) {
-            this.updateComponentProp('gridLines', newGridLines);
+            this.updateComponentProp('initGridLines', newGridLines);
         },
         cursorGuide(newCursorGuide) {
-            this.updateComponentProp('cursorGuide', newCursorGuide);
+            this.updateComponentProp('initCursorGuide', newCursorGuide);
         },
         plotTickWidth(width) {
             this.updateComponentProp('plotTickWidth', width);
@@ -125,7 +125,7 @@ export default {
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
         },
         onTickWidthChange() {
@@ -141,8 +141,8 @@ export default {
         },
         getProps() {
             return {
-                gridLines: this.gridLines,
-                cursorGuide: this.cursorGuide,
+                initGridLines: this.gridLines,
+                initCursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,
                 loading: this.loading,
                 options: this.options,

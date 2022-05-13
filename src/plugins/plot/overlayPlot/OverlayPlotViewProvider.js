@@ -46,8 +46,6 @@ export default function OverlayPlotViewProvider(openmct) {
             let component;
 
             return {
-                isPlotView: true,
-
                 show: function (element) {
                     let isCompact = isCompactView(objectPath);
                     component = new Vue({
@@ -67,11 +65,15 @@ export default function OverlayPlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<plot ref="plot" :options="options"></plot>'
+                        template: '<plot ref="plotComponent" :options="options"></plot>'
                     });
                 },
-                run(key) {
-                    component.$refs.plot[key]();
+                getViewContext() {
+                    if (!component) {
+                        return {};
+                    }
+
+                    return component.$refs.plotComponent.getViewContext();
                 },
                 destroy: function () {
                     component.$destroy();

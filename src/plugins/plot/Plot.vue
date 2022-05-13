@@ -35,8 +35,8 @@
             class="c-loading--overlay loading"
         ></div>
         <mct-plot
-            :grid-lines="gridLines"
-            :cursor-guide="cursorGuide"
+            :init-grid-lines="gridLines"
+            :init-cursor-guide="cursorGuide"
             :options="options"
             @loadingUpdated="loadingUpdated"
             @statusUpdated="setStatus"
@@ -100,15 +100,14 @@ export default {
             this.imageExporter.exportPNG(plotElement, 'plot.png', 'export-plot');
         },
 
-        toggleCursorGuide() {
-            this.cursorGuide = !this.cursorGuide;
-        },
-
-        toggleGridLines() {
-            this.gridLines = !this.gridLines;
-        },
         setStatus(status) {
             this.status = status;
+        },
+        getViewContext() {
+            return {
+                exportPNG: this.exportPNG,
+                exportJPG: this.exportJPG
+            };
         }
     }
 };

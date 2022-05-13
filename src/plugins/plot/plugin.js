@@ -25,6 +25,7 @@ import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
+import PlotViewActions from "./actions/ViewActions";
 
 export default function () {
     return function install(openmct) {
@@ -68,53 +69,8 @@ export default function () {
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
 
-        // custom actions
-
-        const actionsCommon = {
-            group: 'view',
-            appliesTo: (objectPath, view) => {
-                return view?.isPlotView;
-            }
-        };
-
-        openmct.actions.register({
-            ...actionsCommon,
-            name: 'Export as PNG',
-            key: 'export-as-png',
-            description: "Export This View's Data as PNG",
-            cssClass: 'c-icon-button icon-download',
-            showInStatusBar: false,
-            invoke: (objectPath, view) => view.run('exportPNG')
-        });
-
-        openmct.actions.register({
-            ...actionsCommon,
-            name: 'Export as JPG',
-            key: 'export-as-jpg',
-            description: "Export This View's Data as JPG",
-            cssClass: 'c-icon-button icon-download',
-            showInStatusBar: false,
-            invoke: (objectPath, view) => view.run('exportJPG')
-        });
-
-        openmct.actions.register({
-            ...actionsCommon,
-            name: 'Toggle cursor guides',
-            key: 'toggle-cursor-guide',
-            description: 'Toggle cursor guide lines',
-            cssClass: 'c-icon-button icon-crosshair',
-            showInStatusBar: true,
-            invoke: (objectPath, view) => view.run('toggleCursorGuide')
-        });
-
-        openmct.actions.register({
-            ...actionsCommon,
-            name: 'Toggle grid lines',
-            key: 'toggle-grid-lines',
-            description: 'Toggle plot grid lines',
-            cssClass: 'c-icon-button icon-grid-on',
-            showInStatusBar: true,
-            invoke: (objectPath, view) => view.run('toggleGridLines')
+        PlotViewActions.forEach(action => {
+            openmct.actions.register(action);
         });
     };
 }
