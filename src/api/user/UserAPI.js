@@ -104,8 +104,8 @@ class UserAPI extends EventEmitter {
     async canProvideStatusForCurrentUser() {
         this._noProviderCheck();
 
-        if (this._provider.getActiveStatusRole) {
-            const activeStatusRole = await this._provider.getActiveStatusRole();
+        if (this._provider.getStatusRoleForCurrentUser) {
+            const activeStatusRole = await this._provider.getStatusRoleForCurrentUser();
 
             return activeStatusRole !== undefined;
         } else {
@@ -133,11 +133,11 @@ class UserAPI extends EventEmitter {
         }
     }
 
-    getActiveStatusRole() {
+    getStatusRoleForCurrentUser() {
         this._noProviderCheck();
 
-        if (this._provider.getActiveStatusRole) {
-            return this._provider.getActiveStatusRole();
+        if (this._provider.getStatusRoleForCurrentUser) {
+            return this._provider.getStatusRoleForCurrentUser();
         } else {
             this._error("User provider cannot provide role status for this user");
         }
@@ -189,11 +189,13 @@ class UserAPI extends EventEmitter {
         if (this.canSetPollQuestion()) {
             const result = await this._provider.setPollQuestion(questionText);
 
-            if (this.canClearAllStatuses()) {
-                await this.clearAllStatuses();
-            } else {
-                console.warn("Poll question set but unable to clear operator statuses because user provider does not support it.");
-            }
+            // TODO re-implement clearing all statuses
+
+            // if (this.canClearAllStatuses()) {
+            //     await this.clearAllStatuses();
+            // } else {
+            //     console.warn("Poll question set but unable to clear operator statuses because user provider does not support it.");
+            // }
 
             return result;
         } else {

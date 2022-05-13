@@ -84,7 +84,7 @@ export default {
     },
     methods: {
         async findFirstApplicableRole() {
-            this.role = await this.openmct.user.getActiveStatusRole();
+            this.role = await this.openmct.user.getStatusRoleForCurrentUser();
         },
         async fetchUser() {
             this.user = await this.openmct.user.getCurrentUser();
@@ -103,7 +103,7 @@ export default {
             this.indicator.text(pollQuestion.question);
         },
         async fetchMyStatus() {
-            const activeStatusRole = await this.openmct.user.getActiveStatusRole();
+            const activeStatusRole = await this.openmct.user.getStatusRoleForCurrentUser();
             const status = await this.openmct.user.getStatusForRole(activeStatusRole);
 
             this.setStatus(status);
@@ -134,7 +134,7 @@ export default {
             if (this.selectedStatus !== undefined) {
                 const statusObject = this.findStatusByKey(this.selectedStatus);
 
-                await this.openmct.user.setStatus(statusObject);
+                await this.openmct.user.setStatusForRole(this.role, statusObject);
             }
 
         },
