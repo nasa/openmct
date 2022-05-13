@@ -184,6 +184,16 @@ class UserAPI extends EventEmitter {
         }
     }
 
+    resetStatusForRole(role) {
+        this._noProviderCheck();
+
+        if (this._provider.resetStatusForRole) {
+            return this._provider.resetStatusForRole(role);
+        } else {
+            this._error("User provider does not support resetting role status");
+        }
+    }
+
     async setPollQuestion(questionText) {
         this._noProviderCheck();
 
@@ -192,16 +202,29 @@ class UserAPI extends EventEmitter {
 
             // TODO re-implement clearing all statuses
 
-            // if (this.canClearAllStatuses()) {
-            //     await this.clearAllStatuses();
-            // } else {
-            //     console.warn("Poll question set but unable to clear operator statuses because user provider does not support it.");
-            // }
+            try {
+                await this.clearAllStatuses();
+            } catch (error) {
+                console.warn("Poll question set but unable to clear operator statuses.");
+                console.error(error);
+            }
 
             return result;
         } else {
             this._error("User provider does not support setting polling question");
         }
+    }
+
+    async getDefaultStatus() {
+        const allStatuses = await this.getPossibleStatuses();
+
+        return allStatuses[0];
+    }
+
+    async clearAllStatuses() {
+        const allStatusRoles = await this.getAllStatusRoles();
+
+        return Promise.all(allStatusRoles.map(role => this.resetStatusForRole(role)));
     }
 
     getPollQuestion() {
