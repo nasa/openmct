@@ -334,6 +334,8 @@ export class TelemetryCollection extends EventEmitter {
             // timeKey is used to create a dummy datum used for sorting
             this.timeKey = domain.source;
         } else {
+            this.timeKey = undefined;
+
             this._warn(ERRORS.TIMESYSTEM_KEY);
             this.openmct.notifications.alert(ERRORS.TIMESYSTEM_KEY_NOTIFICATION);
         }
