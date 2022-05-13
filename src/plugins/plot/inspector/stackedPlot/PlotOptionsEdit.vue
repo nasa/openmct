@@ -96,18 +96,21 @@ export default {
             this.config.series.forEach(this.addSeries, this);
         },
 
-        updateSeriesConfigForObject(identifier) {
+        updateSeriesConfigForObject(config) {
             const stackedPlotObject = this.path.find((pathObject) => pathObject.type === 'telemetry.plot.stacked');
-            const seriesConfig = configStore.get(identifier);
-            if (seriesConfig) {
-                const keyString = this.openmct.objects.makeKeyString(identifier);
-
-                this.openmct.objects.mutate(
-                    stackedPlotObject,
-                    `configuration.series.${keyString}`,
-                    seriesConfig
-                );
+            let index = stackedPlotObject.configuration.series.findIndex((seriesConfig) => {
+                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, config.identifier);
+            });
+            if (index < 0) {
+                index = stackedPlotObject.configuration.series.length;
             }
+
+            const configPath = `configuration.series[${index}].${config.path}`;
+            this.openmct.objects.mutate(
+                stackedPlotObject,
+                configPath,
+                config.value
+            );
 
         }
     }

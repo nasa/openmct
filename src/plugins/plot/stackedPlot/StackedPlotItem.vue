@@ -215,8 +215,14 @@ export default {
                             domainObject: {
                                 ...this.object,
                                 configuration: {
-                                    ...this.object.configuration,
-                                    series: [persistedConfig]
+                                    series: [
+                                        {
+                                            identifier: this.object.identifier,
+                                            ...persistedConfig.series
+                                        }
+                                    ],
+                                    yAxis: persistedConfig.yAxis
+
                                 }
                             },
                             openmct: this.openmct,

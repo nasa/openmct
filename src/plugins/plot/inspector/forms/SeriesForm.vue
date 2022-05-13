@@ -299,7 +299,11 @@ export default {
             this.series.set('color', color);
 
             if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-                this.$emit('seriesUpdated', this.domainObject.identifier);
+                this.$emit('seriesUpdated', {
+                    identifier: this.domainObject.identifier,
+                    path: `series.color`,
+                    value: color.asHexString()
+                });
             } else {
                 const getPath = this.dynamicPathForKey('color');
                 const seriesColorPath = getPath(this.domainObject, this.series);
@@ -315,7 +319,11 @@ export default {
                 otherSeriesWithColor.set('color', oldColor);
 
                 if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-                    this.$emit('seriesUpdated', this.domainObject.identifier);
+                    this.$emit('seriesUpdated', {
+                        identifier: this.domainObject.identifier,
+                        path: `series.color`,
+                        value: oldColor.asHexString()
+                    });
                 } else {
                     const getPath = this.dynamicPathForKey('color');
                     const otherSeriesColorPath = getPath(
@@ -353,7 +361,11 @@ export default {
                 this.series.set(formKey, coerce(newVal, formField.coerce));
                 if (path) {
                     if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-                        this.$emit('seriesUpdated', this.domainObject.identifier);
+                        this.$emit('seriesUpdated', {
+                            identifier: this.domainObject.identifier,
+                            path: `series.${formKey}`,
+                            value: coerce(newVal, formField.coerce)
+                        });
                     } else {
                         this.openmct.objects.mutate(
                             this.domainObject,

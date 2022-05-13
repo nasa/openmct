@@ -39,9 +39,8 @@ export default function () {
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
-                    series: [],
-                    yAxis: {},
-                    xAxis: {}
+                    //series is an array of objects of type: {identifier, series: {color...}, yAxis:{}}
+                    series: []
                 };
             },
             priority: 891
@@ -56,7 +55,9 @@ export default function () {
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
-                    series: []
+                    series: [],
+                    yAxis: {},
+                    xAxis: {}
                 };
             },
             priority: 890

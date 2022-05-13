@@ -231,7 +231,11 @@ export default {
                 this.yAxis.set(formKey, newVal);
                 if (path) {
                     if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-                        this.$emit('seriesUpdated', this.domainObject.identifier);
+                        this.$emit('seriesUpdated', {
+                            identifier: this.domainObject.identifier,
+                            path: `yAxis.${formKey}`,
+                            value: newVal
+                        });
                     } else {
                         this.openmct.objects.mutate(
                             this.domainObject,

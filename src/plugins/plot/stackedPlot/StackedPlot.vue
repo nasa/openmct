@@ -84,6 +84,7 @@
             @lockHighlightPoint="lockHighlightPointUpdated"
             @highlights="highlightsUpdated"
             @configLoaded="registerSeriesListeners"
+            @configRemoved="unRegisterSeriesListeners"
         />
     </div>
 </div>
@@ -197,6 +198,19 @@ export default {
             const id = this.openmct.objects.makeKeyString(child.identifier);
 
             this.$set(this.tickWidthMap, id, 0);
+            const persistedConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, child.identifier);
+            });
+            if (!persistedConfig) {
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    'configuration.series[' + this.compositionObjects.length + ']',
+                    {
+                        identifier: child.identifier
+                    }
+                );
+            }
+
             this.compositionObjects.push(child);
         },
 
@@ -204,6 +218,13 @@ export default {
             const id = this.openmct.objects.makeKeyString(childIdentifier);
 
             this.$delete(this.tickWidthMap, id);
+
+            const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
+                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, childIdentifier);
+            });
+            if (configIndex > -1) {
+                this.domainObject.configuration.series.splice(configIndex, 1);
+            }
 
             const childObj = this.compositionObjects.filter((c) => {
                 const identifier = this.openmct.objects.makeKeyString(c.identifier);
@@ -280,11 +301,19 @@ export default {
 
             this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
         },
+        unRegisterSeriesListeners(configId) {
+            //TODO: is this needed?
+        },
         addSeries(series) {
             const index = this.seriesModels.length;
             this.$set(this.seriesModels, index, series);
         },
         removeSeries(plotSeries) {
+            const index = this.seriesModels.findIndex(seriesModel => this.openmct.objects.areIdsEqual(seriesModel.identifier, plotSeries.identifier));
+            if (index > -1) {
+                this.$delete(this.seriesModels, index);
+            }
+
             this.stopListening(plotSeries);
         }
     }
