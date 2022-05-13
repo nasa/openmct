@@ -26,7 +26,8 @@ but only assume that example imagery is present.
 */
 /* globals process */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Example Imagery', () => {
 
@@ -40,6 +41,9 @@ test.describe('Example Imagery', () => {
 
         // Click text=Example Imagery
         await page.click('text=Example Imagery');
+
+        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
+        await page.click('form[name="mctForm"] a:has-text("My Items")');
 
         // Click text=OK
         await Promise.all([
