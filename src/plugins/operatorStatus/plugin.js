@@ -11,7 +11,7 @@ export default function operatorStatusPlugin() {
     return function install(openmct) {
 
         if (openmct.user.hasProvider()) {
-            openmct.user.canProvideStatus().then(canProvideStatus => {
+            openmct.user.canProvideStatusForCurrentUser().then(canProvideStatus => {
                 if (canProvideStatus) {
                     let operatorStatusElement;
 

@@ -16,11 +16,11 @@
         <div class="c-spq__label">Current:</div>
         <div class="c-spq__value c-status-poll-panel__poll-question">{{ currentPollQuestion }}</div>
 
-        <template v-if="canGetStatusSummary">
+        <template v-if="statusCountViewModel.length > 0">
             <div class="c-spq__label">Reporting:</div>
             <div class="c-spq__value c-status-poll-panel__poll-reporting c-status-poll-report">
                 <div
-                    v-for="entry in statusCounts"
+                    v-for="entry in statusCountViewModel"
                     :key="entry.status.key"
                     class="c-status-poll-report__count"
                     :style="[{
@@ -75,8 +75,7 @@ export default {
             pollQuestionUpdated: '--',
             currentPollQuestion: '--',
             newPollQuestion: undefined,
-            canGetStatusSummary: false,
-            statusCounts: []
+            statusCountViewModel: []
         };
     },
     computed: {
@@ -92,10 +91,7 @@ export default {
         this.unsubscribe = [];
         this.fetchCurrentPoll();
         this.subscribeToPollQuestion();
-        this.canGetStatusSummary = this.openmct.user.canGetRolesInStatus();
-        if (this.canGetStatusSummary) {
-            this.fetchStatusSummary();
-        }
+        this.fetchStatusSummary();
     },
     beforeDestroy() {
         this.unsubscribe.forEach(unsubscribe => unsubscribe);
@@ -122,17 +118,25 @@ export default {
         },
         async fetchStatusSummary() {
             const allStatuses = await this.openmct.user.getPossibleStatuses();
-            const rolesByStatus = await Promise.all(allStatuses.map(status => {
-                return this.openmct.user.getRolesInStatus(status.key);
-            }));
-            const statusToRoleCount = allStatuses.map((status, index) => {
-                return {
-                    status,
-                    roleCount: rolesByStatus[index].length
-                };
+            const statusCountMap = allStatuses.reduce((statusToCountMap, status) => {
+                statusToCountMap.set(status, 0);
+
+                return statusToCountMap;
+            }, new Map());
+            const allStatusRoles = await this.openmct.user.getAllStatusRoles();
+            const statusesForRoles = await Promise.all(allStatusRoles.map(role => this.openmct.user.getStatusForRole(role)));
+
+            statusesForRoles.forEach((status, i) => {
+                const currentCount = statusCountMap.get(status);
+                statusCountMap.set(status, currentCount + 1);
             });
 
-            this.statusCounts = statusToRoleCount;
+            this.statusCountViewModel = allStatuses.map((status, index) => {
+                return {
+                    status,
+                    roleCount: statusCountMap.get(status)
+                };
+            });
         },
         noop() {}
     }

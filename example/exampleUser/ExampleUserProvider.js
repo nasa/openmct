@@ -87,7 +87,7 @@ export default class ExampleUserProvider extends EventEmitter {
         return this.loginPromise;
     }
 
-    canProvideStatus() {
+    canProvideStatusForRole() {
         return Promise.resolve(true);
     }
 
@@ -103,19 +103,19 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve(this.user.getRoles().includes(roleId));
     }
 
-    clearAllStatuses() {
-        this.setStatus(STATUSES[0]);
-    }
-
     getActiveStatusRole() {
         return Promise.resolve(this.defaultStatusRole);
     }
 
-    getStatus() {
+    getAllStatusRoles() {
+        return Promise.resolve([this.defaultStatusRole]);
+    }
+
+    getStatusForRole(role) {
         return Promise.resolve(this.status);
     }
 
-    setStatus(status) {
+    setStatusForRole(role, status) {
         this.status = status;
         this.emit('statusChange', status);
     }
@@ -137,14 +137,6 @@ export default class ExampleUserProvider extends EventEmitter {
 
     getPossibleStatuses() {
         return Promise.resolve(STATUSES);
-    }
-
-    getRolesInStatus(status) {
-        return Promise.resolve({
-            "NO_STATUS": ["role1", "role2", "role3"],
-            "NO_GO": ["role4"],
-            "GO": ["role5", "role6"]
-        }[status] || []);
     }
 
     _login() {

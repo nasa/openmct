@@ -103,7 +103,8 @@ export default {
             this.indicator.text(pollQuestion.question);
         },
         async fetchMyStatus() {
-            const status = await this.openmct.user.getStatus();
+            const activeStatusRole = await this.openmct.user.getActiveStatusRole();
+            const status = await this.openmct.user.getStatusForRole(activeStatusRole);
 
             this.setStatus(status);
         },

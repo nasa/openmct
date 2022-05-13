@@ -101,11 +101,23 @@ class UserAPI extends EventEmitter {
         return this._provider.getCurrentUser();
     }
 
-    canProvideStatus() {
+    async canProvideStatusForCurrentUser() {
         this._noProviderCheck();
 
-        if (this._provider.canProvideStatus) {
-            return this._provider.canProvideStatus();
+        if (this._provider.getActiveStatusRole) {
+            const activeStatusRole = await this._provider.getActiveStatusRole();
+
+            return activeStatusRole !== undefined;
+        } else {
+            return false;
+        }
+    }
+
+    canProvideStatusForRole(role) {
+        this._noProviderCheck();
+
+        if (this._provider.canProvideStatusForRole) {
+            return this._provider.canProvideStatusForRole(role);
         } else {
             return false;
         }
@@ -121,16 +133,6 @@ class UserAPI extends EventEmitter {
         }
     }
 
-    canClearAllStatuses() {
-        this._noProviderCheck();
-
-        if (this._provider.clearAllStatuses !== undefined) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     getActiveStatusRole() {
         this._noProviderCheck();
 
@@ -138,6 +140,16 @@ class UserAPI extends EventEmitter {
             return this._provider.getActiveStatusRole();
         } else {
             this._error("User provider cannot provide role status for this user");
+        }
+    }
+
+    getAllStatusRoles() {
+        this._noProviderCheck();
+
+        if (this._provider.getAllStatusRoles) {
+            return this._provider.getAllStatusRoles();
+        } else {
+            this._error("User provider cannot provide all status roles");
         }
     }
 
@@ -151,41 +163,21 @@ class UserAPI extends EventEmitter {
         }
     }
 
-    getStatus() {
+    getStatusForRole(role) {
         this._noProviderCheck();
 
-        if (this._provider.getStatus) {
-            return this._provider.getStatus();
+        if (this._provider.getStatusForRole) {
+            return this._provider.getStatusForRole(role);
         } else {
             this._error("User provider does not support role status");
         }
     }
 
-    canGetRolesInStatus() {
+    setStatusForRole(role, status) {
         this._noProviderCheck();
 
-        if (this._provider.getRolesInStatus) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    getRolesInStatus(status) {
-        this._noProviderCheck();
-
-        if (this._provider.getRolesInStatus) {
-            return this._provider.getRolesInStatus(status);
-        } else {
-            this._error("User provider does not support role status");
-        }
-    }
-
-    setStatus(status) {
-        this._noProviderCheck();
-
-        if (this._provider.setStatus) {
-            return this._provider.setStatus(status);
+        if (this._provider.setStatusForRole) {
+            return this._provider.setStatusForRole(role, status);
         } else {
             this._error("User provider does not support setting role status");
         }
@@ -216,16 +208,6 @@ class UserAPI extends EventEmitter {
             return this._provider.getPollQuestion();
         } else {
             this._error("User provider does not support polling questions");
-        }
-    }
-
-    clearAllStatuses() {
-        this._noProviderCheck();
-
-        if (this._provider.clearAllStatuses) {
-            return this._provider.clearAllStatuses();
-        } else {
-            this._error("User provider does not support clearing all statuses");
         }
     }
 
