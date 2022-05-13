@@ -407,5 +407,38 @@ describe("the plugin", () => {
             const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
             expect(tableRows.length).toEqual(2);
         });
+
+        it("Unpauses the table on user bounds change if paused by button", async () => {
+            const viewContext = tableView.getViewContext();
+
+            // Pause by button
+            viewContext.togglePauseByButton();
+
+            await Vue.nextTick();
+
+            // Verify table is paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            const currentBounds = openmct.time.bounds();
+
+            const newBounds = {
+                start: currentBounds.start,
+                end: currentBounds.end - 2
+            };
+
+            // Manually change the time bounds
+            openmct.time.bounds(newBounds);
+
+            await Vue.nextTick();
+
+            // Verify table is no longer paused
+            expect(element.querySelector('div.c-table.is-paused')).toBeNull();
+
+            await Vue.nextTick();
+
+            // Verify table displays the correct number of rows within the new bounds
+            const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(2);
+        });
     });
 });
