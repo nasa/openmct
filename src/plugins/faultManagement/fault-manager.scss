@@ -1,17 +1,15 @@
 // SEARCH 
-.c-fault-mgmt-search-row{
+.c-fault-mgmt__search-row{
     display: flex;
     align-items: center;
     // flex-wrap: wrap;
-    font-size: 1.3em;
     > * + * {
        margin-left: 10px;
        float: right;
     }
 }
 
-.c-fault-mgmt-search{
-    // background: rgba($colorBodyFg, 0.1);
+.c-fault-mgmt-search{ //-search__input and -search__view
     width: 95%;
 }
 
@@ -25,13 +23,12 @@
     }
 }
 
-
-
-// LIST HEADER 
-.c-fault-mgmt__list-header{
-    background: rgb(64, 0, 64);
+// LIST VIEW 
+.c-faults-list-view { 
+    display: flex;
+    flex-direction: column;
     > * + * {
-        margin-left: 30px;
+        margin-top: $interiorMargin; 
     }
 }
 
@@ -39,15 +36,13 @@
 // FAULT ITEM
 .c-fault-mgmt__list{
     background: rgba($colorBodyFg, 0.1);
-    font-size: 1.2em;
     margin-bottom: 5px;
     padding: 4px;
     display: flex;
     align-items: center;
 
     > * {
-        justify-content: center;
-        align-items: inherit;
+        // align-items: inherit;
     }
     > * + * {
         margin-left: 5px;
@@ -55,12 +50,13 @@
     }
     
     &-severity{
-        color: $colorBgCriticalityL1;
+        color: $colorStatusError;
+        font-size: 2em;
      }
 
     &-pathname{
         flex-wrap: wrap;
-        min-width: 1em;
+        
     }
     &-path{
         font-size: .75em;
@@ -68,14 +64,18 @@
 
     &-faultname{
         font-weight: bold;
+        font-size: 1.3em;
     }
 
     &-content{
         display: flex;
         flex-wrap: wrap;
-        > * + * {
-            margin-left: 5px;
-        }
+        flex: 1 1 auto;
+        align-items: center;
+    }
+
+    &-content-right{
+        margin-left: auto;
     }
 
     &-trigVal{
@@ -83,7 +83,6 @@
         border-radius: $controlCr;
         padding: 2px;
         width: 160px;
-        justify-content: center;
     }
 
     &-curVal{
@@ -91,14 +90,30 @@
         border-radius: $controlCr;
         padding: 2px;
         width: 160px;
-        justify-content: center;
     }
 
     &-action-button{
-        display: inline-block;
+        flex: 0 0 auto;
         margin-left: auto;
     }
 
 }
+
+// LIST HEADER 
+.c-fault-mgmt__list-header{
+    display: flex;
+    background: none;
+
+    &-tripVal, &-liveVal{
+        background: none;
+    }
+
+}
+
+.c-fault-mgmt-sortButton{
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
 
 

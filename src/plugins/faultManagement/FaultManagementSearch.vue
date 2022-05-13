@@ -1,5 +1,5 @@
 <template>
-    <div class="c-fault-mgmt-search-row">
+    <div class="c-fault-mgmt__search-row">
         <div class="c-fault-mgmt-search c-search">
             <input
                 type="search"

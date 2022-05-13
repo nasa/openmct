@@ -1,14 +1,27 @@
 <template>
-<div>
-    <span>
+<div class="c-fault-mgmt__list-header c-fault-mgmt__list">
+    <span class="c-fault-mgmt__checkbox">
         <input
             type="checkbox"
             @input="selectAll"
         >
     </span>
-    <span> Results </span>
-    <span>Trip Value</span>
-    <span>Live Value</span>
+    <span class="c-fault-mgmt__list-header-results c-fault-mgmt__list-content"> Results </span>
+    <span class="c-fault-mgmt__list-header-tripVal c-fault-mgmt__list-trigVal">Trip Value</span>
+    <span class="c-fault-mgmt__list-header-liveVal c-fault-mgmt__list-curVal">Live Value</span>
+    <div class="c-fault-mgmt-sortButton">
+        <select>
+            <option
+                value="0"
+            > Newest First </option>
+            <option
+                value="1"
+            >Oldest First</option>
+            <option
+                value="2"
+            >Severity</option>
+        </select>
+    </div>
 </div>
 
 </template>
