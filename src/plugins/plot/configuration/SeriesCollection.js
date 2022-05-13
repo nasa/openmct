@@ -74,7 +74,7 @@ export default class SeriesCollection extends Collection {
             seriesConfig = {
                 identifier: domainObject.identifier
             };
-            //TODO: Handle this mutation outside of the config model
+
             if (plotObject.type === 'telemetry.plot.overlay') {
                 this.openmct.objects.mutate(
                     plotObject,
@@ -105,7 +105,6 @@ export default class SeriesCollection extends Collection {
     }
     removeTelemetryObject(identifier) {
         const plotObject = this.plot.get('domainObject');
-        //TODO: Handle this mutation outside of the config model
         if (plotObject.type === 'telemetry.plot.overlay') {
 
             const persistedIndex = plotObject.configuration.series.findIndex(s => {
