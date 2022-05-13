@@ -5,7 +5,10 @@
         'is-editing': isEditing
     }"
 >
-    <div id="splash-screen"></div>
+
+    <div
+        id="splash-screen"
+    ></div>
 
     <div
         class="l-shell__head"
@@ -59,13 +62,15 @@
                 class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
                 title="Collapse all tree items"
                 @click="handleTreeReset"
-            ></button>
+            >
+            </button>
             <button
                 slot="controls"
                 class="c-icon-button l-shell__sync-tree-button icon-target"
                 title="Show selected item in tree"
                 @click="handleSyncTreeNavigation"
-            ></button>
+            >
+            </button>
             <mct-tree
                 :sync-tree-navigation="triggerSync"
                 :reset-tree-navigation="triggerReset"
@@ -77,9 +82,7 @@
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
                 :action-collection="actionCollection"
-                :show-time-conductor="useIndependentTime"
                 @sync-tree-navigation="handleSyncTreeNavigation"
-                @toggleTimeConductor="toggleIndependentTime"
             />
             <toolbar
                 v-if="toolbar"
@@ -90,7 +93,6 @@
                 class="l-shell__main-container js-main-container js-notebook-snapshot-item"
                 data-selectable
                 :show-edit-view="true"
-                :show-time-conductor="useIndependentTime"
                 @change-action-collection="setActionCollection"
             />
             <component
@@ -155,7 +157,6 @@ export default {
             conductorComponent: undefined,
             isEditing: false,
             hasToolbar: false,
-            useIndependentTime: false,
             actionCollection: undefined,
             triggerSync: false,
             triggerReset: false,
@@ -172,39 +173,23 @@ export default {
         }
     },
     mounted() {
-        // HACK: timeout needed because `this.$refs.browseObject.domainObject`
-        // is undefined until ObjectView sets it after a 10ms timeout.
-        // TODO: get rid of hacks. :D
-        setTimeout(() => {
-            this.useIndependentTime = this.$refs.browseObject.domainObject.configuration.useIndependentTime;
-        }, 15);
-
-        this.openmct.editor.on('isEditing', isEditing => {
+        this.openmct.editor.on('isEditing', (isEditing) => {
             this.isEditing = isEditing;
         });
 
         this.openmct.selection.on('change', this.toggleHasToolbar);
     },
     methods: {
-        //Should the domainObject be updated in the Independent Time conductor component itself?
-        toggleIndependentTime() {
-            this.useIndependentTime = !this.useIndependentTime;
-
-            // What's the best way to get domainObject here in Layout?
-            const domainObject = this.$refs.browseObject.domainObject;
-
-            this.openmct.objects.mutate(domainObject, 'configuration.useIndependentTime', this.useIndependentTime);
-        },
         enterFullScreen() {
             let docElm = document.documentElement;
 
             if (docElm.requestFullscreen) {
                 docElm.requestFullscreen();
-            } else if (docElm.mozRequestFullScreen) { // Firefox
+            } else if (docElm.mozRequestFullScreen) { /* Firefox */
                 docElm.mozRequestFullScreen();
-            } else if (docElm.webkitRequestFullscreen) { // Chrome, Safari and Opera
+            } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
                 docElm.webkitRequestFullscreen();
-            } else if (docElm.msRequestFullscreen) { // IE/Edge
+            } else if (docElm.msRequestFullscreen) { /* IE/Edge */
                 docElm.msRequestFullscreen();
             }
         },
@@ -224,9 +209,11 @@ export default {
 
             window.localStorage.setItem(
                 'openmct-shell-head',
-                JSON.stringify({
-                    expanded: this.headExpanded
-                })
+                JSON.stringify(
+                    {
+                        expanded: this.headExpanded
+                    }
+                )
             );
         },
         fullScreenToggle() {

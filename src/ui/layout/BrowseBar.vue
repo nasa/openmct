@@ -1,133 +1,121 @@
 <template>
-<div>
-    <div class="l-browse-bar">
-        <div class="l-browse-bar__start">
-            <button
-                v-if="hasParent"
-                class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
-                title="Navigate up to parent"
-                @click="goToParent"
-            ></button>
+<div class="l-browse-bar">
+    <div class="l-browse-bar__start">
+        <button
+            v-if="hasParent"
+            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
+            title="Navigate up to parent"
+            @click="goToParent"
+        ></button>
+        <div
+            class="l-browse-bar__object-name--w c-object-label"
+            :class="[statusClass]"
+        >
             <div
-                class="l-browse-bar__object-name--w c-object-label"
-                :class="[statusClass]"
+                class="c-object-label__type-icon"
+                :class="type.cssClass"
             >
-                <div
-                    class="c-object-label__type-icon"
-                    :class="type.cssClass"
-                >
-                    <span
-                        class="is-status__indicator"
-                        :title="`This item is ${status}`"
-                    ></span>
-                </div>
                 <span
-                    class="l-browse-bar__object-name c-object-label__name"
-                    :class="{ 'c-input-inline' : isPersistable}"
-                    :contenteditable="isPersistable"
-                    @blur="updateName"
-                    @keydown.enter.prevent
-                    @keyup.enter.prevent="updateNameOnEnterKeyPress"
-                >
-                    {{ domainObject.name }}
-                </span>
+                    class="is-status__indicator"
+                    :title="`This item is ${status}`"
+                ></span>
             </div>
+            <span
+                class="l-browse-bar__object-name c-object-label__name"
+                :class="{ 'c-input-inline' : isPersistable}"
+                :contenteditable="isPersistable"
+                @blur="updateName"
+                @keydown.enter.prevent
+                @keyup.enter.prevent="updateNameOnEnterKeyPress"
+            >
+                {{ domainObject.name }}
+            </span>
         </div>
+    </div>
 
-        <div class="l-browse-bar__end">
-            <template v-if="supportsIndependentTime">
-                <ConductorModeIcon />
-                <toggle-switch
-                    id="tcToggle"
-                    :checked="showTimeConductor"
-                    :title="`${showTimeConductor ? 'Disable' : 'Enable'} independent Time Conductor`"
-                    @change="$emit('toggleTimeConductor', !showTimeConductor)"
-                />
-            </template>
+    <div class="l-browse-bar__end">
+        <ViewSwitcher
+            v-if="!isEditing"
+            :current-view="currentView"
+            :views="views"
+        />
+        <!-- Action buttons -->
+        <NotebookMenuSwitcher
+            v-if="notebookEnabled"
+            :domain-object="domainObject"
+            :object-path="openmct.router.path"
+            class="c-notebook-snapshot-menubutton"
+        />
+        <div class="l-browse-bar__actions">
+            <button
+                v-for="(item, index) in statusBarItems"
+                :key="index"
+                class="c-button"
+                :class="item.cssClass"
+                @click="item.onItemClicked"
+            >
+            </button>
 
-            <ViewSwitcher
-                v-if="!isEditing"
-                :current-view="currentView"
-                :views="views"
-            />
-            <!-- Action buttons -->
-            <NotebookMenuSwitcher
-                v-if="notebookEnabled"
-                :domain-object="domainObject"
-                :object-path="openmct.router.path"
-                class="c-notebook-snapshot-menubutton"
-            />
-            <div class="l-browse-bar__actions">
+            <button
+                v-if="isViewEditable & !isEditing"
+                :title="lockedOrUnlockedTitle"
+                :class="{
+                    'c-button icon-lock': domainObject.locked,
+                    'c-icon-button icon-unlocked': !domainObject.locked
+                }"
+                @click="toggleLock(!domainObject.locked)"
+            ></button>
+
+            <button
+                v-if="isViewEditable && !isEditing && !domainObject.locked"
+                class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
+                title="Edit"
+                @click="edit()"
+            ></button>
+
+            <div
+                v-if="isEditing"
+                class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
+            >
                 <button
-                    v-for="(item, index) in statusBarItems"
-                    :key="index"
-                    class="c-button"
-                    :class="item.cssClass"
-                    @click="item.onItemClicked"
-                >
-                </button>
-
-                <button
-                    v-if="isViewEditable & !isEditing"
-                    :title="lockedOrUnlockedTitle"
-                    :class="{
-                        'c-button icon-lock': domainObject.locked,
-                        'c-icon-button icon-unlocked': !domainObject.locked
-                    }"
-                    @click="toggleLock(!domainObject.locked)"
+                    class="c-button--menu c-button--major icon-save"
+                    title="Save"
+                    @click.stop="toggleSaveMenu"
                 ></button>
-
-                <button
-                    v-if="isViewEditable && !isEditing && !domainObject.locked"
-                    class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
-                    title="Edit"
-                    @click="edit()"
-                ></button>
-
                 <div
-                    v-if="isEditing"
-                    class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
+                    v-show="showSaveMenu"
+                    class="c-menu"
                 >
-                    <button
-                        class="c-button--menu c-button--major icon-save"
-                        title="Save"
-                        @click.stop="toggleSaveMenu"
-                    ></button>
-                    <div
-                        v-show="showSaveMenu"
-                        class="c-menu"
-                    >
-                        <ul>
-                            <li
-                                class="icon-save"
-                                title="Save and Finish Editing"
-                                @click="saveAndFinishEditing"
-                            >
-                                Save and Finish Editing
-                            </li>
-                            <li
-                                class="icon-save"
-                                title="Save and Continue Editing"
-                                @click="saveAndContinueEditing"
-                            >
-                                Save and Continue Editing
-                            </li>
-                        </ul>
-                    </div>
+                    <ul>
+                        <li
+                            class="icon-save"
+                            title="Save and Finish Editing"
+                            @click="saveAndFinishEditing"
+                        >
+                            Save and Finish Editing
+                        </li>
+                        <li
+                            class="icon-save"
+                            title="Save and Continue Editing"
+                            @click="saveAndContinueEditing"
+                        >
+                            Save and Continue Editing
+                        </li>
+                    </ul>
                 </div>
-
-                <button
-                    v-if="isEditing"
-                    class="l-browse-bar__actions c-button icon-x"
-                    title="Cancel Editing"
-                    @click="promptUserandCancelEditing()"
-                ></button>
-                <button
-                    class="l-browse-bar__actions c-icon-button icon-3-dots"
-                    title="More options"
-                    @click.prevent.stop="showMenuItems($event)"
-                ></button>
             </div>
+
+            <button
+                v-if="isEditing"
+                class="l-browse-bar__actions c-button icon-x"
+                title="Cancel Editing"
+                @click="promptUserandCancelEditing()"
+            ></button>
+            <button
+                class="l-browse-bar__actions c-icon-button icon-3-dots"
+                title="More options"
+                @click.prevent.stop="showMenuItems($event)"
+            ></button>
         </div>
     </div>
 </div>
@@ -136,18 +124,13 @@
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
-import ToggleSwitch from '../components/ToggleSwitch.vue';
-import ConductorModeIcon from "@/plugins/timeConductor/ConductorModeIcon.vue";
-import {SupportedIndependentTimeConductorViews} from '../constants';
 
 const PLACEHOLDER_OBJECT = {};
 
 export default {
     components: {
         NotebookMenuSwitcher,
-        ViewSwitcher,
-        ToggleSwitch,
-        ConductorModeIcon
+        ViewSwitcher
     },
     inject: ['openmct'],
     props: {
@@ -156,8 +139,7 @@ export default {
             default: () => {
                 return {};
             }
-        },
-        showTimeConductor: Boolean
+        }
     },
     data: function () {
         return {
@@ -236,12 +218,6 @@ export default {
             } else {
                 return 'Unlocked for editing - click to lock.';
             }
-        },
-        // similar to ObjectView#supportsIndependentTime
-        supportsIndependentTime() {
-            const viewKey = this.viewKey;
-
-            return this.domainObject && SupportedIndependentTimeConductorViews.includes(viewKey);
         }
     },
     watch: {

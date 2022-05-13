@@ -1,14 +1,15 @@
 <template>
 <div>
-    <div :style="'display: ' + (showTimeConductor ? 'contents' : 'none')">
+    <div
+        v-if="supportsIndependentTime"
+        class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
+    >
         <independent-time-conductor
-            v-if="supportsIndependentTime"
             :domain-object="domainObject"
-            :independentTCEnabled="showTimeConductor"
+            @stateChanged="updateIndependentTimeState"
             @updated="saveTimeOptions"
         />
     </div>
-
     <div
         ref="objectViewWrapper"
         class="c-object-view"
@@ -22,8 +23,13 @@ import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
-import {SupportedIndependentTimeConductorViews} from '../constants'
 
+const SupportedViewTypes = [
+    'plot-stacked',
+    'plot-overlay',
+    'bar-graph.view',
+    'time-strip.view'
+];
 export default {
     components: {
         IndependentTimeConductor
@@ -31,7 +37,6 @@ export default {
     inject: ["openmct"],
     props: {
         showEditView: Boolean,
-        showTimeConductor: Boolean,
         defaultObject: {
             type: Object,
             default: undefined
@@ -70,12 +75,10 @@ export default {
         font() {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         },
-        // similar to BrowseBar#supportsIndependentTime
-        // TODO move higher up, pass it down
         supportsIndependentTime() {
             const viewKey = this.getViewKey();
 
-            return this.domainObject && SupportedIndependentTimeConductorViews.includes(viewKey);
+            return this.domainObject && SupportedViewTypes.includes(viewKey);
         },
         objectTypeClass() {
             return this.domainObject && ('is-object-type-' + this.domainObject.type);
@@ -430,6 +433,10 @@ export default {
             if (elemToStyle !== undefined) {
                 elemToStyle.dataset.font = newFont;
             }
+        },
+        //Should the domainObject be updated in the Independent Time conductor component itself?
+        updateIndependentTimeState(useIndependentTime) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', useIndependentTime);
         },
         saveTimeOptions(options) {
             this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
