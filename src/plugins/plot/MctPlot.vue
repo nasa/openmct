@@ -424,6 +424,7 @@ export default {
 
             this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
+            this.startLoading();
             const bounds = this.timeContext.bounds();
             const options = {
                 size: this.$parent.$refs.plotWrapper.offsetWidth,
@@ -432,29 +433,23 @@ export default {
                 end: bounds.end
             };
 
-            if (this.domainObject.type !== 'telemetry.plot.stacked' || (!series.domainObject.configuration || !series.domainObject.configuration.series)) {
-                this.startLoading();
-
-                series.load(options)
-                    .then(this.stopLoading.bind(this));
-            }
+            series.load(options)
+                .then(this.stopLoading.bind(this));
         },
 
         loadMoreData(range, purge) {
             this.config.series.forEach(plotSeries => {
-                if (this.domainObject.type !== 'telemetry.plot.stacked' || (!plotSeries.domainObject.configuration || !plotSeries.domainObject.configuration.series)) {
-                    this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
-                    this.startLoading();
-                    plotSeries.load({
-                        size: this.offsetWidth,
-                        start: range.min,
-                        end: range.max,
-                        domain: this.config.xAxis.get('key')
-                    })
-                        .then(this.stopLoading());
-                    if (purge) {
-                        plotSeries.purgeRecordsOutsideRange(range);
-                    }
+                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+                this.startLoading();
+                plotSeries.load({
+                    size: this.offsetWidth,
+                    start: range.min,
+                    end: range.max,
+                    domain: this.config.xAxis.get('key')
+                })
+                    .then(this.stopLoading());
+                if (purge) {
+                    plotSeries.purgeRecordsOutsideRange(range);
                 }
             });
         },
