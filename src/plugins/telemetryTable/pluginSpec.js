@@ -440,5 +440,31 @@ describe("the plugin", () => {
             const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
             expect(tableRows.length).toEqual(2);
         });
+
+        it("Does not unpause the table on tick", async () => {
+            const viewContext = tableView.getViewContext();
+
+            // Pause by button
+            viewContext.togglePauseByButton();
+
+            await Vue.nextTick();
+
+            // Verify table is paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            // Tick the clock
+            openmct.time.tick(1);
+
+            await Vue.nextTick();
+
+            // Verify table is still paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            await Vue.nextTick();
+
+            // Verify table displays the correct number of rows
+            const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(3);
+        });
     });
 });
