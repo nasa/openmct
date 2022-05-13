@@ -133,9 +133,24 @@ describe("the plugin", () => {
         let tableViewProvider;
         let tableView;
         let tableInstance;
+        let mockClock;
 
         beforeEach(() => {
             openmct.time.timeSystem('utc', {
+                start: 0,
+                end: 4
+            });
+
+            mockClock = jasmine.createSpyObj("clock", [
+                "on",
+                "off",
+                "currentValue"
+            ]);
+            mockClock.key = 'mockClock';
+            mockClock.currentValue.and.returnValue(1);
+
+            openmct.time.addClock(mockClock);
+            openmct.time.clock('mockClock', {
                 start: 0,
                 end: 4
             });
@@ -390,7 +405,7 @@ describe("the plugin", () => {
 
             const newBounds = {
                 start: currentBounds.start,
-                end: currentBounds.end - 2
+                end: currentBounds.end - 3
             };
 
             // Manually change the time bounds
@@ -423,7 +438,7 @@ describe("the plugin", () => {
 
             const newBounds = {
                 start: currentBounds.start,
-                end: currentBounds.end - 2
+                end: currentBounds.end - 3
             };
 
             // Manually change the time bounds
@@ -449,6 +464,10 @@ describe("the plugin", () => {
 
             await Vue.nextTick();
 
+            // Verify table displays the correct number of rows
+            let tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(3);
+
             // Verify table is paused
             expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
 
@@ -463,7 +482,7 @@ describe("the plugin", () => {
             await Vue.nextTick();
 
             // Verify table displays the correct number of rows
-            const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
             expect(tableRows.length).toEqual(3);
         });
     });
