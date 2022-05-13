@@ -181,6 +181,11 @@
             }
         }
     }
+
+    .c-location {
+        // Always make the location element span columns
+        grid-column: 1 / 3;
+    }
 }
 
 /********************************************* INSPECTOR PROPERTIES TAB */
