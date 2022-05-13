@@ -88,13 +88,14 @@ export default {
         }
     },
     mounted() {
-        this.unsubscribe = [];
         this.fetchCurrentPoll();
         this.subscribeToPollQuestion();
         this.fetchStatusSummary();
+        this.openmct.user.on('statusChange', this.fetchStatusSummary);
     },
     beforeDestroy() {
-        this.unsubscribe.forEach(unsubscribe => unsubscribe);
+        this.openmct.user.off('statusChange', this.fetchStatusSummary);
+        this.openmct.user.off('pollQuestionChange', this.setPollQuestion);
     },
     methods: {
         async fetchCurrentPoll() {
@@ -102,7 +103,6 @@ export default {
             if (pollQuestion !== undefined) {
                 this.setPollQuestion(pollQuestion);
             }
-
         },
         subscribeToPollQuestion() {
             this.openmct.user.on('pollQuestionChange', this.setPollQuestion);
@@ -119,22 +119,22 @@ export default {
         async fetchStatusSummary() {
             const allStatuses = await this.openmct.user.getPossibleStatuses();
             const statusCountMap = allStatuses.reduce((statusToCountMap, status) => {
-                statusToCountMap.set(status, 0);
+                statusToCountMap[status.key] = 0;
 
                 return statusToCountMap;
-            }, new Map());
+            }, {});
             const allStatusRoles = await this.openmct.user.getAllStatusRoles();
             const statusesForRoles = await Promise.all(allStatusRoles.map(role => this.openmct.user.getStatusForRole(role)));
 
             statusesForRoles.forEach((status, i) => {
-                const currentCount = statusCountMap.get(status);
-                statusCountMap.set(status, currentCount + 1);
+                const currentCount = statusCountMap[status.key];
+                statusCountMap[status.key] = currentCount + 1;
             });
 
-            this.statusCountViewModel = allStatuses.map((status, index) => {
+            this.statusCountViewModel = allStatuses.map((status) => {
                 return {
                     status,
-                    roleCount: statusCountMap.get(status)
+                    roleCount: statusCountMap[status.key]
                 };
             });
         },

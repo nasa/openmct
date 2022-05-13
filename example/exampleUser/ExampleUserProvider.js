@@ -117,7 +117,10 @@ export default class ExampleUserProvider extends EventEmitter {
 
     setStatusForRole(role, status) {
         this.status = status;
-        this.emit('statusChange', status);
+        this.emit('statusChange', {
+            role,
+            status
+        });
     }
 
     getPollQuestion() {

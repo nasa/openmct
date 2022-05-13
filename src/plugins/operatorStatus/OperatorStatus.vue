@@ -106,7 +106,7 @@ export default {
             const activeStatusRole = await this.openmct.user.getStatusRoleForCurrentUser();
             const status = await this.openmct.user.getStatusForRole(activeStatusRole);
 
-            this.setStatus(status);
+            this.setStatus({status});
         },
         subscribeToMyStatus() {
             this.openmct.user.on('statusChange', this.setStatus);
@@ -114,7 +114,7 @@ export default {
         subscribeToPollQuestion() {
             this.openmct.user.on('pollQuestionChange', this.setPollQuestion);
         },
-        setStatus(status) {
+        setStatus({role, status}) {
             this.selectedStatus = status.key;
             this.indicator.iconClass(status.iconClassPoll);
             this.indicator.statusClass(status.statusClass);

@@ -106,8 +106,9 @@ class UserAPI extends EventEmitter {
 
         if (this._provider.getStatusRoleForCurrentUser) {
             const activeStatusRole = await this._provider.getStatusRoleForCurrentUser();
+            const canProvideStatus = await this.canProvideStatusForRole(activeStatusRole);
 
-            return activeStatusRole !== undefined;
+            return canProvideStatus;
         } else {
             return false;
         }
