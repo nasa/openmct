@@ -21,7 +21,7 @@
 -->
 <template>
 <div
-    class="c-compact-tc"
+    class="c-compact-tc is-expanded"
     :class="[
         { 'is-zooming': isZooming },
         { 'is-panning': isPanning },
