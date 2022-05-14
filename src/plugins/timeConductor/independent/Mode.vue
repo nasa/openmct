@@ -28,7 +28,11 @@
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
         <button
             v-if="selectedMode"
-            class="c-button--menu c-mode-button"
+            class="c-icon-button c-button--menu js-mode-button"
+            :class="[
+                buttonCssClass,
+                selectedMode.cssClass
+            ]"
             @click.prevent.stop="showModesMenu"
         >
             <span class="c-button__label">{{ selectedMode.name }}</span>
@@ -54,6 +58,13 @@ export default {
             type: Boolean,
             default() {
                 return false;
+            }
+        },
+        buttonCssClass: {
+            type: String,
+            required: false,
+            default() {
+                return '';
             }
         }
     },

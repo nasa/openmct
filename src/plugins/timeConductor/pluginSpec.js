@@ -99,12 +99,12 @@ describe('time conductor', () => {
         const dateTimeInputs = fixedModeEl.querySelectorAll('.c-input--datetime');
         expect(dateTimeInputs[0].value).toEqual('1978-01-19 23:30:00.000Z');
         expect(dateTimeInputs[1].value).toEqual('1978-01-20 00:00:00.000Z');
-        expect(fixedModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Fixed Timespan');
+        expect(fixedModeEl.querySelector('.js-mode-button .c-button__label').innerHTML).toEqual('Fixed Timespan');
     });
 
     describe('shows delta inputs in realtime mode', () => {
         beforeEach((done) => {
-            const switcher = appHolder.querySelector('.c-mode-button');
+            const switcher = appHolder.querySelector('.js-mode-button');
             const clickEvent = createMouseEvent("click");
 
             switcher.dispatchEvent(clickEvent);
@@ -122,7 +122,7 @@ describe('time conductor', () => {
             const dateTimeInputs = realtimeModeEl.querySelectorAll('.c-conductor__delta-button');
             expect(dateTimeInputs[0].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:30:00');
             expect(dateTimeInputs[1].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:00:30');
-            expect(realtimeModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Local Clock');
+            expect(realtimeModeEl.querySelector('.js-mode-button .c-button__label').innerHTML).toEqual('Local Clock');
         });
     });
 

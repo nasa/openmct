@@ -26,11 +26,13 @@
     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <button
-        class="c-button--menu c-time-system-button"
-        :class="selectedTimeSystem.cssClass"
+        class="c-button--menu c-button--compact c-time-system-button"
+        :class="[
+            buttonCssClass
+        ]"
         @click.prevent.stop="showTimeSystemMenu"
     >
-        <span class="c-button__label">{{ selectedTimeSystem.name }}</span>
+        {{ selectedTimeSystem.name }}
     </button>
 </div>
 </template>
@@ -38,6 +40,15 @@
 <script>
 export default {
     inject: ['openmct', 'configuration'],
+    props: {
+        buttonCssClass: {
+            type: String,
+            required: false,
+            default() {
+                return '';
+            }
+        }
+    },
     data: function () {
         let activeClock = this.openmct.time.clock();
 

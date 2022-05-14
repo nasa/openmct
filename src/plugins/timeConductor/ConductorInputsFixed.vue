@@ -1,5 +1,5 @@
 <template>
-<div class="c-compact-tc__bounds">
+<div class="c-compact-tc__bounds u-contents">
     <div
         v-if="readOnly"
         class="c-compact-tc__bounds--read-only"
@@ -11,7 +11,7 @@
     <form
         v-else
         ref="fixedDeltaInput"
-        class="c-conductor__inputs c-compact-tc__bounds--inputs"
+        class="c-compact-tc__bounds--inputs"
     >
         <div
             class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
@@ -62,7 +62,6 @@
             />
         </div>
     </form>
-
 </div>
 </template>
 
@@ -94,7 +93,7 @@ export default {
         readOnly: {
             type: Boolean,
             default() {
-                return true;
+                return false;
             }
         }
     },
