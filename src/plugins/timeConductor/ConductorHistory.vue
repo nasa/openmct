@@ -27,7 +27,8 @@
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
         <button
             aria-label="Time Conductor History"
-            class="c-button--menu c-history-button icon-history"
+            class="c-button--menu c-button--compact c-history-button icon-history"
+            :class="buttonCssClass"
             @click.prevent.stop="showHistoryMenu"
         >
             <span class="c-button__label">History</span>
@@ -64,6 +65,13 @@ export default {
         mode: {
             type: String,
             required: true
+        },
+        buttonCssClass: {
+            type: String,
+            required: false,
+            default() {
+                return '';
+            }
         }
     },
     data() {

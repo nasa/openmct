@@ -106,7 +106,7 @@ describe('time conductor', () => {
 
     describe('in realtime mode', () => {
         beforeEach((done) => {
-            const switcher = appHolder.querySelector('.c-mode-button');
+            const switcher = appHolder.querySelector('.js-mode-button');
             const clickEvent = createMouseEvent("click");
 
             switcher.dispatchEvent(clickEvent);
@@ -130,7 +130,7 @@ describe('time conductor', () => {
         it('shows clock options', () => {
             const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
 
-            expect(realtimeModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Local Clock');
+            expect(realtimeModeEl.querySelector('.js-mode-button .c-button__label').innerHTML).toEqual('Local Clock');
         });
 
         it('shows the current time', () => {

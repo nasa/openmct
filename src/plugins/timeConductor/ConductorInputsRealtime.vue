@@ -20,76 +20,85 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<form
-    ref="deltaInput"
-    class="c-conductor__inputs"
->
+<div class="c-compact-tc__bounds">
     <div
-        class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
+        v-if="readOnly"
+        class="c-compact-tc__bounds--read-only"
     >
-        <!-- RT start -->
-        <div class="c-direction-indicator icon-minus"></div>
-        <time-popup
-            v-if="showTCInputStart"
-            class="pr-tc-input-menu--start"
-            :bottom="keyString !== undefined"
-            :type="'start'"
-            :offset="offsets.start"
-            @focus.native="$event.target.select()"
-            @hide="hideAllTimePopups"
-            @update="timePopUpdate"
-        />
-        <button
-            ref="startOffset"
-            class="c-button c-conductor__delta-button"
-            title="Set the time offset after now"
-            data-testid="conductor-start-offset-button"
-            @click.prevent.stop="showTimePopupStart"
-        >
-            {{ offsets.start }}
-        </button>
+        <div class="c-compact-tc__bounds__start">{{ offsets.start }}</div>
+        <div class="icon-arrows-right-left"></div>
+        <div class="c-compact-tc__bounds__end">{{ offsets.end }}</div>
     </div>
-    <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-        <!-- RT 'last update' display -->
-        <div class="c-conductor__end-fixed__label">
-            Current
+    <form
+        v-else
+        ref="deltaInput"
+        class="c-conductor__inputs"
+    >
+        <div
+            class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
+        >
+            <!-- RT start -->
+            <div class="c-direction-indicator icon-minus"></div>
+            <time-popup
+                v-if="showTCInputStart"
+                class="pr-tc-input-menu--start"
+                :bottom="keyString !== undefined"
+                :type="'start'"
+                :offset="offsets.start"
+                @focus.native="$event.target.select()"
+                @hide="hideAllTimePopups"
+                @update="timePopUpdate"
+            />
+            <button
+                ref="startOffset"
+                class="c-button c-button--compact c-conductor__delta-button"
+                title="Set the time offset after now"
+                @click.prevent.stop="showTimePopupStart"
+            >
+                {{ offsets.start }}
+            </button>
         </div>
-        <input
-            ref="endDate"
-            v-model="formattedCurrentValue"
-            class="c-input--datetime"
-            type="text"
-            autocorrect="off"
-            spellcheck="false"
-            :disabled="true"
+        <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
+            <!-- RT 'last update' display -->
+            <div class="c-conductor__end-fixed__label">
+                Current
+            </div>
+            <input
+                ref="endDate"
+                v-model="formattedBounds.end"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                :disabled="true"
+            >
+        </div>
+        <div
+            class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
         >
-    </div>
-    <div
-        class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
-    >
-        <!-- RT end -->
-        <div class="c-direction-indicator icon-plus"></div>
-        <time-popup
-            v-if="showTCInputEnd"
-            class="pr-tc-input-menu--end"
-            :bottom="keyString !== undefined"
-            :type="'end'"
-            :offset="offsets.end"
-            @focus.native="$event.target.select()"
-            @hide="hideAllTimePopups"
-            @update="timePopUpdate"
-        />
-        <button
-            ref="endOffset"
-            class="c-button c-conductor__delta-button"
-            title="Set the time offset preceding now"
-            data-testid="conductor-end-offset-button"
-            @click.prevent.stop="showTimePopupEnd"
-        >
-            {{ offsets.end }}
-        </button>
-    </div>
-</form>
+            <!-- RT end -->
+            <div class="c-direction-indicator icon-plus"></div>
+            <time-popup
+                v-if="showTCInputEnd"
+                class="pr-tc-input-menu--end"
+                :bottom="keyString !== undefined"
+                :type="'end'"
+                :offset="offsets.end"
+                @focus.native="$event.target.select()"
+                @hide="hideAllTimePopups"
+                @update="timePopUpdate"
+            />
+            <button
+                ref="endOffset"
+                class="c-button c-button--compact c-conductor__delta-button"
+                title="Set the time offset preceding now"
+                @click.prevent.stop="showTimePopupEnd"
+            >
+                {{ offsets.end }}
+            </button>
+        </div>
+    </form>
+</div>
 </template>
 
 <script>
@@ -121,6 +130,12 @@ export default {
             type: Object,
             default() {
                 return undefined;
+            }
+        },
+        readOnly: {
+            type: Boolean,
+            default() {
+                return false;
             }
         }
     },

@@ -283,17 +283,6 @@
         flex: 1 1 auto !important;
     }
 
-    &__time-conductor {
-        border-top: 1px solid $colorInteriorBorder;
-        display: flex;
-        flex-direction: column;
-        padding-top: $interiorMargin;
-
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-    }
-
     &__main {
         > .l-pane {
             padding: nth($shellPanePad, 1) 0;

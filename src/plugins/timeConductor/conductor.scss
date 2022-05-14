@@ -9,7 +9,12 @@
 /*********************************************** CONDUCTOR LAYOUT */
 .c-conductor {
     &__inputs {
-        display: contents;
+        display: flex;
+        flex: 0 0 auto;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
     }
 
     &__time-bounds {
@@ -42,13 +47,14 @@
     }
 
     &__ticks {
-        grid-area: tc-ticks;
+        flex: 1 1 auto;
     }
 
     &__controls {
         grid-area: tc-controls;
         display: flex;
         align-items: center;
+
         > * + * {
             margin-left: $interiorMargin;
         }
@@ -107,7 +113,8 @@
                 background: rgba($timeConductorActiveBg, 0.4);
                 border-left-color: $timeConductorActiveBg;
                 border-right-color: $timeConductorActiveBg;
-                top: 0; bottom: 0;
+                top: 0;
+                bottom: 0;
             }
         }
     }
@@ -160,8 +167,8 @@
                 grid-template-areas:
                     "tc-mode-icon tc-start tc-start"
                     "tc-mode-icon tc-end tc-end"
-                }
             }
+        }
 
         &.is-realtime-mode {
             .c-conductor__time-bounds {
@@ -229,7 +236,6 @@
 }
 
 .is-realtime-mode {
-    .c-conductor__controls button,
     .c-conductor__delta-button {
         @include themedButton($colorTimeBg);
         color: $colorTimeFg;
@@ -308,23 +314,50 @@
     }
 }
 
-/*********************************************** INDEPENDENT TIME CONDUCTOR */
+/*********************************************** COMPACT TIME CONDUCTOR */
 .c-compact-tc {
-    background: rgba(deeppink, 0.3);
     border-radius: $controlCr;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     padding: 1px $interiorMarginSm;
 
-    // New Time Conductor styling
-    &__bounds {
+    > * + * {
+        margin-left: $interiorMargin;
+    }
 
-        &--read-only {
-            display: flex;
-            align-items: center;
+    &__bounds--read-only,
+    &__bounds--inputs {
+        display: flex;
+        align-items: center;
 
-            > * + * {
-                margin-left: $interiorMargin;
-            }
+        > * + * {
+            margin-left: $interiorMargin;
         }
 
+        &--read-only {
+
+        }
+
+        &--inputs {
+
+        }
+    }
+
+    .is-fixed-mode &,
+    &.is-fixed-mode.is-expanded {
+        background: pullForward($colorBodyBg, 10%); // TODO: convert to theme constant
+    }
+
+    .is-realtime-mode &,
+    &.is-realtime-mode {
+        background: rgba($colorTimeBg, 0.3);
+    }
+}
+
+.c-compact-tc {
+    &.l-shell__time-conductor {
+        // Main view
+        min-height: 24px;
     }
 }

@@ -525,10 +525,11 @@
     @include cControl();
     @include cControlHov();
     @include themedButton();
+    $pad: $interiorMargin;
     border-radius: $controlCr;
     color: $colorBtnFg;
     cursor: pointer;
-    padding: $interiorMargin floor($interiorMargin * 1.25);
+    padding: $pad floor($pad * 1.25);
 
     &:after,
     > * + * {
@@ -544,6 +545,10 @@
     &[class*='--caution'] {
         background: $colorBtnCautionBg !important;
         color: $colorBtnCautionFg !important;
+    }
+
+    &[class*='--compact'] {
+        padding: floor($pad / 1.5) $pad;
     }
 }
 
@@ -576,7 +581,7 @@
     *:before {
         // *:before handles any nested containers that may contain glyph elements
         // Needed for c-togglebutton.
-        font-size: 1.25em;
+        font-size: 1.15em;
     }
 }
 

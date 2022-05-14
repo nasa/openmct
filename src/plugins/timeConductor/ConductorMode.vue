@@ -26,7 +26,11 @@
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
         <button
-            class="c-button--menu c-mode-button"
+            class="c-button--menu c-button--compact js-mode-button"
+            :class="[
+                buttonCssClass,
+                selectedMode.cssClass
+            ]"
             @click.prevent.stop="showModesMenu"
         >
             <span class="c-button__label">{{ selectedMode.name }}</span>
@@ -41,6 +45,15 @@ import toggleMixin from '../../ui/mixins/toggle-mixin';
 export default {
     mixins: [toggleMixin],
     inject: ['openmct', 'configuration'],
+    props: {
+        buttonCssClass: {
+            type: String,
+            required: false,
+            default() {
+                return '';
+            }
+        }
+    },
     data: function () {
         let activeClock = this.openmct.time.clock();
         if (activeClock !== undefined) {

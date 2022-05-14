@@ -21,14 +21,16 @@
 -->
 <template>
 <div
-    class="c-conductor c-compact-tc"
+    class="c-conductorXX c-compact-tc"
     :class="[
-        isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode'
+        isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
+        { 'is-expanded' : independentTCEnabled }
     ]"
 >
     <div class="c-conductor__time-bounds">
         <toggle-switch
             id="independentTCToggle"
+            class="c-toggle-switch--mini"
             :checked="independentTCEnabled"
             :title="`${independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`"
             @change="toggleIndependentTC"
@@ -36,19 +38,16 @@
 
         <ConductorModeIcon />
 
-        <div class="itc__bounds">
-
-        </div>
-
         <div
             v-if="timeOptions && independentTCEnabled"
             class="c-conductor__controls"
         >
             <Mode
-                v-if="mode && false"
-                class="c-conductor__mode-select"
+                v-if="mode"
+                class="c-button--compact c-conductor__mode-select"
                 :key-string="domainObject.identifier.key"
                 :mode="timeOptions.mode"
+                :button-css-class="'c-button--compact'"
                 :enabled="independentTCEnabled"
                 @modeChanged="saveMode"
             />

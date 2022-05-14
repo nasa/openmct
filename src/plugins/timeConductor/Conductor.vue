@@ -21,7 +21,7 @@
 -->
 <template>
 <div
-    class="c-conductor"
+    class="c-compact-tc"
     :class="[
         { 'is-zooming': isZooming },
         { 'is-panning': isPanning },
@@ -29,40 +29,48 @@
         isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
 >
-    <div class="c-conductor__time-bounds">
-        <conductor-inputs-fixed
-            v-if="isFixed"
-            :input-bounds="viewBounds"
-            @updated="saveFixedOffsets"
-        />
-        <conductor-inputs-realtime
-            v-else
-            :input-bounds="viewBounds"
-            @updated="saveClockOffsets"
-        />
-        <ConductorModeIcon class="c-conductor__mode-icon" />
-        <conductor-axis
-            class="c-conductor__ticks"
-            :view-bounds="viewBounds"
-            :is-fixed="isFixed"
-            :alt-pressed="altPressed"
-            @endPan="endPan"
-            @endZoom="endZoom"
-            @panAxis="pan"
-            @zoomAxis="zoom"
-        />
-    </div>
+    <ConductorModeIcon class="c-conductor__mode-icon" />
+
     <div class="c-conductor__controls">
-        <ConductorMode class="c-conductor__mode-select" />
-        <ConductorTimeSystem class="c-conductor__time-system-select" />
+        <ConductorMode
+            class="c-conductor__mode-select"
+            :button-css-class="'c-icon-button'"
+        />
+        <ConductorTimeSystem
+            class="c-conductor__time-system-select"
+            :button-css-class="'c-icon-button'"
+        />
         <ConductorHistory
             class="c-conductor__history-select"
+            :button-css-class="'c-icon-button'"
             :offsets="openmct.time.clockOffsets()"
             :bounds="bounds"
             :time-system="timeSystem"
             :mode="timeMode"
         />
     </div>
+
+    <conductor-inputs-fixed
+        v-if="isFixed"
+        :input-bounds="viewBounds"
+        @updated="saveFixedOffsets"
+    />
+    <conductor-inputs-realtime
+        v-else
+        :input-bounds="viewBounds"
+        @updated="saveClockOffsets"
+    />
+    <conductor-axis
+        v-if="isFixed"
+        class="c-conductor__ticks"
+        :view-bounds="viewBounds"
+        :is-fixed="isFixed"
+        :alt-pressed="altPressed"
+        @endPan="endPan"
+        @endZoom="endZoom"
+        @panAxis="pan"
+        @zoomAxis="zoom"
+    />
 </div>
 </template>
 
