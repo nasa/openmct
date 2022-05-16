@@ -76,15 +76,14 @@
 
     &-content-right{
         margin-left: auto;
-        > * {
-            
-        }
+        display: flex;
     }
 
     &-trigVal, &-curVal, &-trigTime{
+        @include ellipsize;
         border-radius: $controlCr;
         padding: 2px;
-        // width: 160px;
+        width: 60px;
         // flex: 0 0 auto;
         margin-right: $interiorMarginLg;
 
@@ -101,8 +100,14 @@
     }
 
     &-trigTime{
-        margin-right: 100px;
+        width: 180px;
 
+    }
+
+    &-action-wrapper{
+        display: flex;
+        align-content: right;
+        width: 100px;
     }
 
     &-action-button{
@@ -141,7 +146,6 @@
     &-sortButton{
         flex: 0 0 auto;
         margin-left: auto;
-        margin-right: 0px;
     }
 
 }
