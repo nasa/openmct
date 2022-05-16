@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures');
+const { expect } = require('@playwright/test');
 
 test.describe('Telemetry Table', () => {
     test('unpauses when paused by button and user changes bounds', async ({ page }) => {
