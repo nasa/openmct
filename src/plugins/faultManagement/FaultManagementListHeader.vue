@@ -9,18 +9,21 @@
     <span class="c-fault-mgmt__list-header-results c-fault-mgmt__list-content"> Results </span>
     <span class="c-fault-mgmt__list-header-tripVal c-fault-mgmt__list-trigVal">Trip Value</span>
     <span class="c-fault-mgmt__list-header-liveVal c-fault-mgmt__list-curVal">Live Value</span>
-    <div class="c-fault-mgmt-sortButton">
-        <select>
-            <option
-                value="0"
-            > Newest First </option>
-            <option
-                value="1"
-            >Oldest First</option>
-            <option
-                value="2"
-            >Severity</option>
-        </select>
+    <span class="c-fault-mgmt__list-header-trigTime c-fault-mgmt__list-trigTime">Trigger Time</span>
+    <div class="c-fault-mgmt__list-action-wrapper">
+        <div class="c-fault-mgmt__list-header-sortButton c-fault-mgmt__list-action-button">
+            <select>
+                <option
+                    value="0"
+                > Newest First </option>
+                <option
+                    value="1"
+                >Oldest First</option>
+                <option
+                    value="2"
+                >Severity</option>
+            </select>
+        </div>
     </div>
 </div>
 

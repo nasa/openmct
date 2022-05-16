@@ -1,34 +1,34 @@
 <template>
 <div class="c-fault-mgmt__list data-selectable">
-    <span class="c-fault-mgmt__checkbox">
+    <div class="c-fault-mgmt__checkbox">
         <input
             type="checkbox"
             :checked="isSelected"
             @input="toggleSelected"
         >
-    </span>
-    <span class="c-fault-mgmt__list-severity icon-alert-triangle">
-    </span>
-    <span class="c-fault-mgmt__list-content">
-        <span class="c-fault-mgmt__list-pathname">
+    </div>
+    <div class="c-fault-mgmt__list-severity icon-alert-triangle">
+    </div>
+    <div class="c-fault-mgmt__list-content">
+        <div class="c-fault-mgmt__list-pathname">
             <div class="c-fault-mgmt__list-path">{{ fault.id.namespace }}</div>
             <div class="c-fault-mgmt__list-faultname">{{ fault.id.name }}</div>
-        </span>
-        <span class="c-fault-mgmt__list-content-right">
-            <span 
+        </div>
+        <div class="c-fault-mgmt__list-content-right">
+            <div 
                 class="c-fault-mgmt__list-trigVal icon-arrow-up"
                 :class="[{'is-limit--upr is-limit--yellow' : true}]"
-                >{{ triggerValue }}</span>
-            <span class="c-fault-mgmt__list-curVal">{{ currentValue }}</span>
-            <!-- <span class="c-fault-mgmt-list-ackStatus">{{ acknowledged }}</span> -->
-            <span class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</span>
-        </span>
-    </span>
+                >{{ triggerValue }}</div>
+            <div class="c-fault-mgmt__list-curVal">{{ currentValue }}</div>
+            <!-- <div class="c-fault-mgmt-list-ackStatus">{{ acknowledged }}</div> -->
+            <div class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</div>
+        </div>
+
+    </div>
     <button 
         class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
         title="Disposition Actions"
     ></button>
-
 </div>
 </template>
 
