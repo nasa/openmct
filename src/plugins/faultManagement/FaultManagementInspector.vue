@@ -1,6 +1,21 @@
 <template>
 <div class="c-inspector__properties c-inspect-properties">
     <div class="c-inspect-properties__header">
+        Details
+    </div>
+    <ul
+        v-for="fault of selectedFaults"
+        :key="name(fault)"
+        class="c-inspect-properties__section"
+    >
+        <DetailText 
+            :detail="{ name: 'Occured', value: triggerTime(fault)}" />
+        <DetailText 
+            :detail="{ name: 'Criticality', value: severity(fault)}" />
+        
+
+    </ul>
+    <div class="c-inspect-properties__header">
         Source
     </div>
     <ul
@@ -9,12 +24,16 @@
         class="c-inspect-properties__section"
     >
         <DetailText :detail="{ name: 'Name', value: name(fault) }" />
-        <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
-        <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
-        <DetailText :detail="{ name: 'Trigger Time', value: triggerTime(fault)}" />
+        
+        <div class="c-fault-mgmt__inspector__values c-inspect-properties__row">
+            <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
+            <DetailText 
+                :detail="{ name: 'Live value', value: currentValue(fault)}" />
+        </div>
 
     </ul>
 </div>
+    
 </template>
 
 <script>
@@ -48,6 +67,9 @@ export default {
         },
         name(fault) {
             return `${fault?.id?.name}/${fault?.id?.namespace}`;
+        },
+        severity(fault){
+            return fault?.severity;
         },
         updateSelectedFaults() {
             const selection = this.openmct.selection.get();
