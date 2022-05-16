@@ -12,7 +12,7 @@ The following checklist items should be considered when adding a net new domain 
 Checklist items specific to creating, reading, updating, or deleting interactions.
 
 #### Create
- - A domain object should be visible on the Create Menu with an icon and hoverover helper text
+ - A domain object should be visible on the Create Menu with an icon, larger background icon on hoverover and hoverover helper text
  - A domain object should be creatible with only required fields selected.
  - A domain object should be creatible with optional fields.
  - A newly created domain object should have a selectable Location which can have composition (i.e. Folders)
