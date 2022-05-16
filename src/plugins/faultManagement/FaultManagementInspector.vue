@@ -11,6 +11,8 @@
         <DetailText :detail="{ name: 'Name', value: name(fault) }" />
         <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
         <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
+        <DetailText :detail="{ name: 'Trigger Time', value: triggerTime(fault)}" />
+
     </ul>
 </div>
 </template>
@@ -57,6 +59,9 @@ export default {
         },
         triggerValue(fault) {
             return fault?.parameterDetail?.triggerValue?.engValue?.doubleValue;
+        },
+        triggerTime(fault){
+            return fault?.triggerTime;
         }
     }
 };

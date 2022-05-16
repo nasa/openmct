@@ -1,5 +1,5 @@
 <template>
-<div class="c-fault-mgmt__list data-selectable">
+<div class="c-fault-mgmt__list c-fault-mgmt__list__unacked data-selectable">
     <div class="c-fault-mgmt__checkbox">
         <input
             type="checkbox"

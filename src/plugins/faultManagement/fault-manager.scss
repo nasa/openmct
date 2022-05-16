@@ -114,6 +114,26 @@
         justify-content: right;
     }
 
+    // FAULT TYPES 
+    &__shelved{ // opacity and italics change
+        .c-fault-mgmt__list-content{
+            opacity: 70%;
+            font-style: italic;
+        }
+    }
+
+    &__unacked{ //enabled blinking icons
+        .c-fault-mgmt__list-severity{
+            @include pulse($animName: severityAnim, $dur: 200ms);
+            color: $colorStatusError;
+        }
+    }
+
+    &__acked{ 
+        // disabled blinking icons
+    }
+
+
 }
 
 // LIST HEADER 
@@ -134,6 +154,8 @@
     }
 
 }
+
+// MIXINS 
 
 
 
