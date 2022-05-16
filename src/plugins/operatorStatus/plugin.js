@@ -1,7 +1,3 @@
-/**
- * Could potentially be implemented using the User API to make this "generic" (although only supported from Yamcs initially)
- */
-
 import OperatorStatusComponent from './OperatorStatus.vue';
 import PollQuestionComponent from './PollQuestion.vue';
 
