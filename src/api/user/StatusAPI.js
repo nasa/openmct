@@ -1,4 +1,4 @@
-import { EventEmitter } from "eventemitter3";
+import EventEmitter from "EventEmitter";
 
 export default class StatusAPI extends EventEmitter {
     #userAPI;
@@ -9,22 +9,34 @@ export default class StatusAPI extends EventEmitter {
         this.#userAPI = userAPI;
         this.#openmct = openmct;
 
-        this.#onProviderStatusChange = this.#onProviderStatusChange.bind(this);
-        this.#onProviderPollQuestionChange = this.#onProviderPollQuestionChange.bind(this);
+        this.onProviderStatusChange = this.onProviderStatusChange.bind(this);
+        this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
+        this.listenToStatusEvents = this.listenToStatusEvents.bind(this);
 
         this.#openmct.once('destroy', () => {
-            if (typeof this.#userAPI.getProvider().off === 'function') {
-                this.#userAPI.getProvider().off('statusChange', this.onProviderStatusChange);
-                this.#userAPI.getProvider().off('pollQuestionChange', this.onProviderPollQuestionChange);
+            const provider = this.#userAPI.getProvider();
+
+            if (typeof provider.off === 'function') {
+                provider.off('statusChange', this.onProviderStatusChange);
+                provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
             }
         });
+
+        this.#userAPI.on('providerAdded', this.listenToStatusEvents);
     }
 
-    #onProviderStatusChange(newStatus) {
+    listenToStatusEvents(provider) {
+        if (typeof provider.on === 'function') {
+            provider.on('statusChange', this.onProviderStatusChange);
+            provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
+        }
+    }
+
+    onProviderStatusChange(newStatus) {
         this.emit('statusChange', newStatus);
     }
 
-    #onProviderPollQuestionChange(pollQuestion) {
+    onProviderPollQuestionChange(pollQuestion) {
         this.emit('pollQuestionChange', pollQuestion);
     }
 
@@ -111,7 +123,7 @@ export default class StatusAPI extends EventEmitter {
         }
     }
 
-    resetStatusForRole(role) {
+    async resetStatusForRole(role) {
         const provider = this.#userAPI.getProvider();
         const defaultStatus = await this.getDefaultStatus();
 

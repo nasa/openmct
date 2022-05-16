@@ -7,7 +7,7 @@ export default function operatorStatusPlugin() {
     return function install(openmct) {
 
         if (openmct.user.hasProvider()) {
-            openmct.user.canProvideStatusForCurrentUser().then(canProvideStatus => {
+            openmct.user.status.canProvideStatusForCurrentUser().then(canProvideStatus => {
                 if (canProvideStatus) {
                     let operatorStatusElement;
 
@@ -70,7 +70,7 @@ export default function operatorStatusPlugin() {
                 }
             });
 
-            openmct.user.canSetPollQuestion().then(canSetPollQuestion => {
+            openmct.user.status.canSetPollQuestion().then(canSetPollQuestion => {
                 if (canSetPollQuestion) {
                     let pollQuestionElement;
 

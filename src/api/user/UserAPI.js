@@ -53,11 +53,6 @@ class UserAPI extends EventEmitter {
         }
 
         this._provider = provider;
-        if (typeof this._provider.on === 'function') {
-            this._provider.on('statusChange', this.onProviderStatusChange);
-            this._provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
-        }
-
         this.emit('providerAdded', this._provider);
     }
 
