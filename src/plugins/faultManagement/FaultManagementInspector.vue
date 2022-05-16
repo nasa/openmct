@@ -1,19 +1,28 @@
 <template>
-<div>
-    <div
+<div class="c-inspector__properties c-inspect-properties">
+    <div class="c-inspect-properties__header">
+        Source
+    </div>
+    <ul
         v-for="fault of selectedFaults"
         :key="name(fault)"
+        class="c-inspect-properties__section"
     >
-        <div class="c-fault-mgmt__list-name">Name: {{ name(fault) }}</div>
-        <div class="c-fault-mgmt__list-trigTime">Trip Value: {{ triggerValue(fault) }}</div>
-        <div class="c-fault-mgmt__list-curVal">Live value: {{ currentValue(fault) }}</div>
-    </div>
+        <DetailText :detail="{ name: 'Name', value: name(fault) }" />
+        <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
+        <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
+    </ul>
 </div>
 </template>
 
 <script>
+import DetailText from '@/ui/inspector/details/DetailText.vue';
+
 export default {
     name: 'FaultManagementInspector',
+    components: {
+        DetailText
+    },
     inject: ['openmct', 'selection'],
     props: {
     },
