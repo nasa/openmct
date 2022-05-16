@@ -25,6 +25,7 @@ import {
     MULTIPLE_PROVIDER_ERROR,
     NO_PROVIDER_ERROR
 } from './constants';
+import StatusAPI from './StatusAPI';
 import User from './User';
 
 class UserAPI extends EventEmitter {
@@ -35,16 +36,7 @@ class UserAPI extends EventEmitter {
         this._provider = undefined;
 
         this.User = User;
-
-        this.onProviderStatusChange = this.onProviderStatusChange.bind(this);
-        this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
-
-        this._openmct.once('destroy', () => {
-            if (typeof this._provider.off === 'function') {
-                this._provider.off('statusChange', this.onProviderStatusChange);
-                this._provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
-            }
-        });
+        this.status = new StatusAPI(this, openmct);
     }
 
     /**
@@ -57,7 +49,7 @@ class UserAPI extends EventEmitter {
      */
     setProvider(provider) {
         if (this.hasProvider()) {
-            this._error(MULTIPLE_PROVIDER_ERROR);
+            this.error(MULTIPLE_PROVIDER_ERROR);
         }
 
         this._provider = provider;
@@ -69,12 +61,10 @@ class UserAPI extends EventEmitter {
         this.emit('providerAdded', this._provider);
     }
 
-    onProviderStatusChange(newStatus) {
-        this.emit('statusChange', newStatus);
-    }
+    getProvider() {
+        this.noProviderCheck();
 
-    onProviderPollQuestionChange(pollQuestion) {
-        this.emit('pollQuestionChange', pollQuestion);
+        return this._provider;
     }
 
     /**
@@ -96,145 +86,9 @@ class UserAPI extends EventEmitter {
      * @throws Will throw an error if no user provider is set
      */
     getCurrentUser() {
-        this._noProviderCheck();
+        this.noProviderCheck();
 
         return this._provider.getCurrentUser();
-    }
-
-    async canProvideStatusForCurrentUser() {
-        this._noProviderCheck();
-
-        if (this._provider.getStatusRoleForCurrentUser) {
-            const activeStatusRole = await this._provider.getStatusRoleForCurrentUser();
-            const canProvideStatus = await this.canProvideStatusForRole(activeStatusRole);
-
-            return canProvideStatus;
-        } else {
-            return false;
-        }
-    }
-
-    canProvideStatusForRole(role) {
-        this._noProviderCheck();
-
-        if (this._provider.canProvideStatusForRole) {
-            return this._provider.canProvideStatusForRole(role);
-        } else {
-            return false;
-        }
-    }
-
-    canSetPollQuestion() {
-        this._noProviderCheck();
-
-        if (this._provider.canSetPollQuestion) {
-            return this._provider.canSetPollQuestion();
-        } else {
-            return Promise.resolve(false);
-        }
-    }
-
-    getStatusRoleForCurrentUser() {
-        this._noProviderCheck();
-
-        if (this._provider.getStatusRoleForCurrentUser) {
-            return this._provider.getStatusRoleForCurrentUser();
-        } else {
-            this._error("User provider cannot provide role status for this user");
-        }
-    }
-
-    getAllStatusRoles() {
-        this._noProviderCheck();
-
-        if (this._provider.getAllStatusRoles) {
-            return this._provider.getAllStatusRoles();
-        } else {
-            this._error("User provider cannot provide all status roles");
-        }
-    }
-
-    getPossibleStatuses() {
-        this._noProviderCheck();
-
-        if (this._provider.getPossibleStatuses) {
-            return this._provider.getPossibleStatuses();
-        } else {
-            this._error("User provider cannot provide statuses");
-        }
-    }
-
-    getStatusForRole(role) {
-        this._noProviderCheck();
-
-        if (this._provider.getStatusForRole) {
-            return this._provider.getStatusForRole(role);
-        } else {
-            this._error("User provider does not support role status");
-        }
-    }
-
-    setStatusForRole(role, status) {
-        this._noProviderCheck();
-
-        if (this._provider.setStatusForRole) {
-            return this._provider.setStatusForRole(role, status);
-        } else {
-            this._error("User provider does not support setting role status");
-        }
-    }
-
-    resetStatusForRole(role) {
-        this._noProviderCheck();
-
-        if (this._provider.resetStatusForRole) {
-            return this._provider.resetStatusForRole(role);
-        } else {
-            this._error("User provider does not support resetting role status");
-        }
-    }
-
-    async setPollQuestion(questionText) {
-        this._noProviderCheck();
-
-        if (this.canSetPollQuestion()) {
-            const result = await this._provider.setPollQuestion(questionText);
-
-            // TODO re-implement clearing all statuses
-
-            try {
-                await this.clearAllStatuses();
-            } catch (error) {
-                console.warn("Poll question set but unable to clear operator statuses.");
-                console.error(error);
-            }
-
-            return result;
-        } else {
-            this._error("User provider does not support setting polling question");
-        }
-    }
-
-    async getDefaultStatus() {
-        const allStatuses = await this.getPossibleStatuses();
-
-        return allStatuses[0];
-    }
-
-    async clearAllStatuses() {
-        const allStatusRoles = await this.getAllStatusRoles();
-
-        return Promise.all(allStatusRoles.map(role => this.resetStatusForRole(role)));
-    }
-
-    getPollQuestion() {
-        this._noProviderCheck();
-
-        if (this._provider.getPollQuestion) {
-            return this._provider.getPollQuestion();
-        } else {
-            this._error("User provider does not support polling questions");
-        }
     }
 
     /**
@@ -263,7 +117,7 @@ class UserAPI extends EventEmitter {
      * @throws Will throw an error if no user provider is set
      */
     hasRole(roleId) {
-        this._noProviderCheck();
+        this.noProviderCheck();
 
         return this._provider.hasRole(roleId);
     }
@@ -274,9 +128,9 @@ class UserAPI extends EventEmitter {
      * @private
      * @throws Will throw an error if no user provider is set
      */
-    _noProviderCheck() {
+    noProviderCheck() {
         if (!this.hasProvider()) {
-            this._error(NO_PROVIDER_ERROR);
+            this.error(NO_PROVIDER_ERROR);
         }
     }
 
@@ -287,7 +141,7 @@ class UserAPI extends EventEmitter {
      * @param {string} error description of error
      * @throws Will throw error passed in
      */
-    _error(error) {
+    error(error) {
         throw new Error(error);
     }
 }

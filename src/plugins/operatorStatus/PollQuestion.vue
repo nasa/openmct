@@ -91,21 +91,21 @@ export default {
         this.fetchCurrentPoll();
         this.subscribeToPollQuestion();
         this.fetchStatusSummary();
-        this.openmct.user.on('statusChange', this.fetchStatusSummary);
+        this.openmct.user.status.on('statusChange', this.fetchStatusSummary);
     },
     beforeDestroy() {
-        this.openmct.user.off('statusChange', this.fetchStatusSummary);
-        this.openmct.user.off('pollQuestionChange', this.setPollQuestion);
+        this.openmct.user.status.off('statusChange', this.fetchStatusSummary);
+        this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
     },
     methods: {
         async fetchCurrentPoll() {
-            const pollQuestion = await this.openmct.user.getPollQuestion();
+            const pollQuestion = await this.openmct.user.status.getPollQuestion();
             if (pollQuestion !== undefined) {
                 this.setPollQuestion(pollQuestion);
             }
         },
         subscribeToPollQuestion() {
-            this.openmct.user.on('pollQuestionChange', this.setPollQuestion);
+            this.openmct.user.status.on('pollQuestionChange', this.setPollQuestion);
         },
         setPollQuestion(pollQuestion) {
             this.currentPollQuestion = pollQuestion.question;
@@ -113,18 +113,18 @@ export default {
             this.indicator.text(pollQuestion.question);
         },
         async updatePollQuestion() {
-            await this.openmct.user.setPollQuestion(this.newPollQuestion);
+            await this.openmct.user.status.setPollQuestion(this.newPollQuestion);
             this.newPollQuestion = undefined;
         },
         async fetchStatusSummary() {
-            const allStatuses = await this.openmct.user.getPossibleStatuses();
+            const allStatuses = await this.openmct.user.status.getPossibleStatuses();
             const statusCountMap = allStatuses.reduce((statusToCountMap, status) => {
                 statusToCountMap[status.key] = 0;
 
                 return statusToCountMap;
             }, {});
-            const allStatusRoles = await this.openmct.user.getAllStatusRoles();
-            const statusesForRoles = await Promise.all(allStatusRoles.map(role => this.openmct.user.getStatusForRole(role)));
+            const allStatusRoles = await this.openmct.user.status.getAllStatusRoles();
+            const statusesForRoles = await Promise.all(allStatusRoles.map(role => this.openmct.user.status.getStatusForRole(role)));
 
             statusesForRoles.forEach((status, i) => {
                 const currentCount = statusCountMap[status.key];

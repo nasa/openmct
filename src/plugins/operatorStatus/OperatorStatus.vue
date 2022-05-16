@@ -69,8 +69,8 @@ export default {
         }
     },
     beforeDestroy() {
-        this.openmct.user.off('statusChange', this.setStatus);
-        this.openmct.user.off('pollQuestionChange', this.setPollQuestion);
+        this.openmct.user.status.off('statusChange', this.setStatus);
+        this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
     },
     async mounted() {
         this.unsubscribe = [];
@@ -84,18 +84,18 @@ export default {
     },
     methods: {
         async findFirstApplicableRole() {
-            this.role = await this.openmct.user.getStatusRoleForCurrentUser();
+            this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
         },
         async fetchUser() {
             this.user = await this.openmct.user.getCurrentUser();
         },
         async fetchCurrentPoll() {
-            const pollQuestion = await this.openmct.user.getPollQuestion();
+            const pollQuestion = await this.openmct.user.status.getPollQuestion();
 
             this.setPollQuestion(pollQuestion);
         },
         async fetchPossibleStatusesForUser() {
-            this.allStatuses = await this.openmct.user.getPossibleStatuses();
+            this.allStatuses = await this.openmct.user.status.getPossibleStatuses();
         },
         setPollQuestion(pollQuestion) {
             this.currentPollQuestion = pollQuestion.question;
@@ -103,16 +103,16 @@ export default {
             this.indicator.text(pollQuestion.question);
         },
         async fetchMyStatus() {
-            const activeStatusRole = await this.openmct.user.getStatusRoleForCurrentUser();
-            const status = await this.openmct.user.getStatusForRole(activeStatusRole);
+            const activeStatusRole = await this.openmct.user.status.getStatusRoleForCurrentUser();
+            const status = await this.openmct.user.status.getStatusForRole(activeStatusRole);
 
             this.setStatus({status});
         },
         subscribeToMyStatus() {
-            this.openmct.user.on('statusChange', this.setStatus);
+            this.openmct.user.status.on('statusChange', this.setStatus);
         },
         subscribeToPollQuestion() {
-            this.openmct.user.on('pollQuestionChange', this.setPollQuestion);
+            this.openmct.user.status.on('pollQuestionChange', this.setPollQuestion);
         },
         setStatus({role, status}) {
             this.selectedStatus = status.key;
@@ -134,7 +134,7 @@ export default {
             if (this.selectedStatus !== undefined) {
                 const statusObject = this.findStatusByKey(this.selectedStatus);
 
-                await this.openmct.user.setStatusForRole(this.role, statusObject);
+                await this.openmct.user.status.setStatusForRole(this.role, statusObject);
             }
 
         },
