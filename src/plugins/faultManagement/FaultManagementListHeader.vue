@@ -9,7 +9,8 @@
     <span class="c-fault-mgmt__list-header-results c-fault-mgmt__list-content"> Results </span>
     <span class="c-fault-mgmt__list-header-tripVal c-fault-mgmt__list-trigVal">Trip Value</span>
     <span class="c-fault-mgmt__list-header-liveVal c-fault-mgmt__list-curVal">Live Value</span>
-    <div class="c-fault-mgmt-sortButton">
+    <span class="c-fault-mgmt__list-header-trigTime c-fault-mgmt__list-trigTime">Trigger Time</span>
+    <div class="c-fault-mgmt__list-header-sortButton c-fault-mgmt__list-action-button">
         <select>
             <option
                 value="0"

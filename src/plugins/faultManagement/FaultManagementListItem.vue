@@ -23,12 +23,12 @@
             <!-- <span class="c-fault-mgmt-list-ackStatus">{{ acknowledged }}</span> -->
             <span class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</span>
         </span>
+
     </span>
     <button 
         class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
         title="Disposition Actions"
     ></button>
-
 </div>
 </template>
 

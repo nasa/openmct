@@ -46,7 +46,7 @@
     }
     > * + * {
         margin-left: 5px;
-        display: flex;
+        // display: flex;
     }
     
     &-severity{
@@ -76,25 +76,39 @@
 
     &-content-right{
         margin-left: auto;
+        > * {
+            
+        }
     }
 
-    &-trigVal{
-        background: rgb(80, 80, 80);
+    &-trigVal, &-curVal, &-trigTime{
         border-radius: $controlCr;
         padding: 2px;
-        width: 160px;
+        // width: 160px;
+        // flex: 0 0 auto;
+        margin-right: $interiorMarginLg;
+
+    }
+    &-trigVal{
+        background: rgb(80, 80, 80);
     }
 
     &-curVal{
-        background: rgb(129, 1, 1);
-        border-radius: $controlCr;
-        padding: 2px;
-        width: 160px;
+        background: $colorWarningHi;
+        // width: 200px;
+
+
+    }
+
+    &-trigTime{
+        margin-right: 100px;
+
     }
 
     &-action-button{
         flex: 0 0 auto;
         margin-left: auto;
+        justify-content: right;
     }
 
 }
@@ -103,17 +117,35 @@
 .c-fault-mgmt__list-header{
     display: flex;
     background: none;
+    flex-wrap: wrap;
 
-    &-tripVal, &-liveVal{
+    > * + * {
+        margin-left: auto;
+    }
+
+
+    &-tripVal, &-liveVal, &-trigTime{
+        justify-content: right;
         background: none;
+        width: 160px;
+        
+    }
+
+    &-trigTime {
+        margin-right: 0px;
+    }
+    &-tripVal{
+        justify-content: right;
+    }
+
+    &-sortButton{
+        flex: 0 0 auto;
+        margin-left: auto;
+        margin-right: 0px;
     }
 
 }
 
-.c-fault-mgmt-sortButton{
-    flex: 0 0 auto;
-    margin-left: auto;
-}
 
 
 
