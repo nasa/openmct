@@ -578,10 +578,10 @@ export default {
             this.observers[domainObject.identifier.key] = this.openmct.objects.observe(
                 domainObject,
                 'name',
-                this.updateTreeItems.bind(this, domainObject, parentObjectPath)
+                this.updateTreeItems.bind(this, parentObjectPath)
             );
         },
-        async updateTreeItems(domainObject, parentObjectPath) {
+        async updateTreeItems(parentObjectPath) {
             let children;
 
             if (parentObjectPath.length) {
