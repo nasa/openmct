@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Time counductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
@@ -68,7 +69,6 @@ test.describe('Time counductor operations', () => {
     });
 });
 
-
 // Testing instructions:
 // Try to change the realtime offsets when in realtime (local clock) mode.
 test.describe('Time conductor input fields real-time mode', () => {
@@ -82,7 +82,7 @@ test.describe('Time conductor input fields real-time mode', () => {
         // Click fixed timespan button
         await page.locator('.c-button__label >> text=Fixed Timespan').click();
 
-        // Click local clock 
+        // Click local clock
         await page.locator('.icon-clock >> text=Local Clock').click();
 
         // Click time offset button
@@ -101,7 +101,7 @@ test.describe('Time conductor input fields real-time mode', () => {
         await page.locator('.c-conductor__delta-button >> text=00:00:30').click();
 
         // Input preceding time offset
-        await page.fill('.pr-time-controls__secs', '31')
+        await page.fill('.pr-time-controls__secs', '31');
 
         // Click the check buttons
         await page.locator('.icon-check').click();
