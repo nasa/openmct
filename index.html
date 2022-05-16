@@ -201,9 +201,11 @@
             faultActionProvider: {
                 acknowledgeFault(fault, { comment = '' }) {
                     console.log('acknowledgeFault', fault);
+                    console.log('comment', comment);
                 },
-                shelveFault(fault, { unshelved = true,comment = '', shelveDuration = 900000 }) {
+                shelveFault(fault, shelveData) {
                     console.log('shelveFault', fault);
+                    console.log('shelveData', shelveData);
                 }
             },
             realtimeFaultProvider: {

@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
-import CommentMenu from './components/CommentMenu.vue';
 import MenuComponent from './components/Menu.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
 import Vue from 'vue';
@@ -79,20 +78,6 @@ class Menu extends EventEmitter {
                 options: this.options
             },
             template: '<menu-component />'
-        });
-
-        this.show();
-    }
-
-    showCommentMenu() {
-        this.component = new Vue({
-            components: {
-                CommentMenu
-            },
-            provide: {
-                options: this.options
-            },
-            template: '<comment-menu />'
         });
 
         this.show();
