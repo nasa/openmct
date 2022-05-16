@@ -161,7 +161,7 @@ export default {
                 });
         },
         async toggleShelveSelected(faults = Object.values(this.selectedFaults), shelveData = {}) {
-            const { shelved = false } = shelveData;
+            const { shelved = true } = shelveData;
             if (shelved) {
                 let title = faults.length > 1
                     ? `Shelve ${faults.length} selected faults`
@@ -201,9 +201,22 @@ export default {
                     }
                 };
 
-                const data = await this.openmct.forms.showForm(formStructure);
+                let data;
+                try {
+                    data = await this.openmct.forms.showForm(formStructure);
+                } catch (e) {
+                    // Do nothing
+                    return;
+                }
+
                 shelveData.comment = data.comment || '';
-                shelveData.shelveDuration = data.shelveDuration || 900000;
+                shelveData.shelveDuration = data.shelveDuration !== undefined
+                    ? data.shelveDuration
+                    : FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS[0].value;
+            } else {
+                shelveData = {
+                    shelved: false
+                };
             }
 
             Object.values(faults)

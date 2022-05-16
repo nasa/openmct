@@ -203,11 +203,9 @@
                     console.log('acknowledgeFault', fault);
                     console.log('comment', comment);
                 },
-                shelveFault(fault, { shelved = false, comment = '', shelveDuration = 900000 }) {
+                shelveFault(fault, shelveData) {
                     console.log('shelveFault', fault);
-                    console.log('shelved', shelved);
-                    console.log('comment', comment);
-                    console.log('shelveDuration', shelveDuration);
+                    console.log('shelveData', shelveData);
                 }
             },
             realtimeFaultProvider: {
