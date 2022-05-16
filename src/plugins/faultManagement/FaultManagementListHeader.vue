@@ -6,7 +6,7 @@
             @input="selectAll"
         >
     </div>
-    <div class="c-fault-mgmt__list-header-results c-fault-mgmt__list-content"> Results </div>
+    <div class="c-fault-mgmt__list-header-results c-fault-mgmt__list-content"> {{ totalFaultsCount }} Results </div>
     <div class="c-fault-mgmt__list-header-tripVal c-fault-mgmt__list-trigVal">Trip Value</div>
     <div class="c-fault-mgmt__list-header-liveVal c-fault-mgmt__list-curVal">Live Value</div>
     <div class="c-fault-mgmt__list-header-trigTime c-fault-mgmt__list-trigTime">Trigger Time</div>
@@ -26,18 +26,14 @@
         </div>
     </div>
 </div>
-
 </template>
 
 <script>
-import FaultManagementListItem from "./FaultManagementListItem.vue";
 export default {
-    components: {
-    FaultManagementListItem
-},
+    components: {},
     inject: ['openmct', 'domainObject'],
     props: {
-        selectedFaultsCount: {
+        totalFaultsCount: {
             type: Number,
             default() {
                 return 0;

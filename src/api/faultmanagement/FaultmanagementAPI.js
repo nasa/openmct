@@ -4,28 +4,23 @@ export default class FaultManagementAPI {
         this.config = {};
     }
 
-    setConfig(config) {
-        this.config = config;
+    acknowledgeFault(fault, ackData) {
+        return this.faultActionProvider.acknowledgeFault(fault, ackData);
     }
 
     addHistoricalProvider(provider) {
-        console.log('API: addHistoricalProvider');
         this.historicaFaultProvider = provider;
     }
 
     addRealtimeProvider(provider) {
-        console.log('API: addRealtimeProvider');
         this.realtimeFaultProvider = provider;
     }
 
     addFaultActionProvider(provider) {
-        console.log('API: addFaultActionProvider');
         this.faultActionProvider = provider;
     }
 
     request(domainObject) {
-        console.log('API: request');
-
         if (!this.historicaFaultProvider?.supportsRequest(domainObject)) {
             return Promise.reject();
         }
@@ -33,25 +28,19 @@ export default class FaultManagementAPI {
         return this.historicaFaultProvider.request(domainObject);
     }
 
-    subscribe(domainObject, callback) {
-        console.log('API: subscribe');
+    setConfig(config) {
+        this.config = config;
+    }
 
+    shelveFault(fault, shelveData) {
+        return this.faultActionProvider.shelveFault(fault, shelveData);
+    }
+
+    subscribe(domainObject, callback) {
         if (!this.realtimeFaultProvider?.supportsSubscribe(domainObject)) {
             return Promise.reject();
         }
 
         return this.realtimeFaultProvider.subscribe(domainObject, callback);
-    }
-
-    acknowledgeFault(fault) {
-        console.log('API: acknowledgeFault', fault);
-
-        return this.faultActionProvider.acknowledgeFault(fault);
-    }
-
-    shelveFault(fault, isUnshelve) {
-        console.log('API: shelveFault', fault);
-
-        return this.faultActionProvider.shelveFault(fault, isUnshelve);
     }
 }

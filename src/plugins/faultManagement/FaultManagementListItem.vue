@@ -15,20 +15,20 @@
             <div class="c-fault-mgmt__list-faultname">{{ fault.id.name }}</div>
         </div>
         <div class="c-fault-mgmt__list-content-right">
-            <div 
+            <div
                 class="c-fault-mgmt__list-trigVal icon-arrow-up"
                 :class="[{'is-limit--upr is-limit--yellow' : true}]"
-                >{{ triggerValue }}</div>
+            >{{ triggerValue }}</div>
             <div class="c-fault-mgmt__list-curVal">{{ currentValue }}</div>
-            <!-- <div class="c-fault-mgmt-list-ackStatus">{{ acknowledged }}</div> -->
             <div class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</div>
         </div>
 
     </div>
     <div class="c-fault-mgmt__list-action-wrapper">
-        <button 
+        <button
             class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
             title="Disposition Actions"
+            @click="showActionMenu"
         ></button>
     </div>
 </div>
@@ -92,8 +92,41 @@ export default {
             event.target.checked = !event.target.checked;
 
             this.$emit('toggleSelected', faultData);
-        }
+        },
+        showActionMenu(event) {
+            event.stopPropagation();
 
+            const menuItems = [
+                {
+                    cssClass: 'icon-bell',
+                    isDisabled: this.fault.acknowledged,
+                    name: 'Ack',
+                    description: '',
+                    onItemClicked: (e) => {
+                        this.$emit('acknowledgeSelected', [this.fault]);
+                    }
+                },
+                {
+                    cssClass: 'icon-timer',
+                    name: 'Shelve',
+                    description: '',
+                    onItemClicked: () => {
+                        this.$emit('shelveSelected', [this.fault], { shelved: true });
+                    }
+                },
+                {
+                    cssClass: 'icon-timer',
+                    isDisabled: Boolean(!this.fault.shelveInfo),
+                    name: 'Unshelve',
+                    description: '',
+                    onItemClicked: () => {
+                        this.$emit('shelveSelected', [this.fault], { shelved: false });
+                    }
+                }
+            ];
+
+            this.openmct.menus.showMenu(event.x, event.y, menuItems);
+        }
     }
 };
 </script>

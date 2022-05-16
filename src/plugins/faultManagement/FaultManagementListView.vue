@@ -36,7 +36,7 @@ import FaultManagementListItem from './FaultManagementListItem.vue';
 import FaultManagementSearch from './FaultManagementSearch.vue';
 import FaultManagementToolbar from './FaultManagementToolbar.vue';
 
-import { FILTER_ITEMS } from './constants';
+import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS } from './constants';
 
 export default {
     components: {
@@ -117,16 +117,98 @@ export default {
                 ],
                 false);
         },
-        toggleAcknowledgeSelected() {
-            Object.values(this.selectedFaults)
-                .forEach(selectedFault => {
-                    this.openmct.faults.acknowledgeFault(selectedFault);
+        toggleAcknowledgeSelected(faults = Object.values(this.selectedFaults)) {
+            let title = '';
+            if (faults.length > 1) {
+                title = `Acknowledge ${faults.length} selected faults`;
+            } else {
+                title = `Acknowledge fault: ${faults[0].id.name}`;
+            }
+
+            const formStructure = {
+                title,
+                sections: [
+                    {
+                        rows: [
+                            {
+                                key: 'comment',
+                                control: 'textarea',
+                                name: 'Comment',
+                                pattern: '\\S+',
+                                required: false,
+                                cssClass: 'l-input-lg',
+                                value: ''
+                            }
+                        ]
+                    }
+                ],
+                buttons: {
+                    submit: {
+                        label: 'Acknowledge'
+                    }
+                }
+            };
+
+            this.openmct.forms.showForm(formStructure)
+                .then(data => {
+                    Object.values(faults)
+                        .forEach(selectedFault => {
+                            this.openmct.faults.acknowledgeFault(selectedFault, data);
+                        });
+                })
+                .catch(() => {
+                    // Do nothing
                 });
         },
-        toggleShelveSelected() {
-            Object.values(this.selectedFaults)
+        async toggleShelveSelected(faults = Object.values(this.selectedFaults), shelveData = {}) {
+            const { shelved = false } = shelveData;
+            if (shelved) {
+                let title = faults.length > 1
+                    ? `Shelve ${faults.length} selected faults`
+                    : `Shelve fault: ${faults[0].id.name}`
+                ;
+
+                const formStructure = {
+                    title,
+                    sections: [
+                        {
+                            rows: [
+                                {
+                                    key: 'comment',
+                                    control: 'textarea',
+                                    name: 'Comment',
+                                    pattern: '\\S+',
+                                    required: false,
+                                    cssClass: 'l-input-lg',
+                                    value: ''
+                                },
+                                {
+                                    key: 'shelveDuration',
+                                    control: 'select',
+                                    name: 'Shelve Duration',
+                                    options: FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS,
+                                    required: false,
+                                    cssClass: 'l-input-lg',
+                                    value: FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS[0].value
+                                }
+                            ]
+                        }
+                    ],
+                    buttons: {
+                        submit: {
+                            label: 'Shelve'
+                        }
+                    }
+                };
+
+                const data = await this.openmct.forms.showForm(formStructure);
+                shelveData.comment = data.comment || '';
+                shelveData.shelveDuration = data.shelveDuration || 900000;
+            }
+
+            Object.values(faults)
                 .forEach(selectedFault => {
-                    this.openmct.faults.shelveFault(selectedFault);
+                    this.openmct.faults.shelveFault(selectedFault, shelveData);
                 });
         },
         updateFilter(filter) {
