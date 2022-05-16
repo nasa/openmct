@@ -1,34 +1,18 @@
 <template>
-    <div class="c-fault-mgmt__search-row">
-        <div class="c-fault-mgmt-search c-search">
-            <input
-                type="search"
-                name="fault-search"
-            >
-            <!-- <SelectField
-                :model="model"
-                @onChange="onChange"
-            /> -->
-        </div>
-        <div class="c-fault-mgmt-viewButton">
-                        <select>
-                            <option
-                                value="0"
-                            >
-                                Standard View
-                            </option>
-                            <option
-                                value="1"
-                            >Acked</option>
-                            <option
-                                value="8"
-                            >Unacked</option>
-                            <option
-                                value="24"
-                            >Shelved</option>
-                        </select>
-        </div>
+<div class="c-fault-mgmt__search-row">
+    <div class="c-fault-mgmt-search c-search">
+        <input
+            type="search"
+            name="fault-search"
+        >
     </div>
+
+    <SelectField
+        class="c-fault-mgmt-viewButton"
+        :model="model"
+        @onChange="onChange"
+    />
+</div>
 </template>
 
 <script>
@@ -71,7 +55,6 @@ export default {
     },
     methods: {
         onChange(data) {
-            console.log(data);
             this.$emit('filterChanged', data);
         }
     }

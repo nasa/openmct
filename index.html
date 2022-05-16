@@ -199,11 +199,11 @@
 
         openmct.install(openmct.plugins.FaultManagementPlugin({
             faultActionProvider: {
-                shelveFault(fault) {
+                acknowledgeFault(fault, { comment = '' }) {
                     console.log('acknowledgeFault', fault);
                 },
-                acknowledgeFault(fault) {
-                    console.log('acknowledgeFault', fault);
+                shelveFault(fault, { unshelved = true,comment = '', shelveDuration = 900000 }) {
+                    console.log('shelveFault', fault);
                 }
             },
             realtimeFaultProvider: {

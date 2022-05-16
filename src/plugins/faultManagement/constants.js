@@ -5,7 +5,7 @@ export const FAULT_MANAGEMENT_GLOBAL_ALARMS = 'global-alarm-status';
 export const FAULT_MANAGEMENT_VIEW = 'faultManagement.view';
 export const FAULT_MANAGEMENT_NAMESPACE = 'faults.taxonomy';
 export const FILTER_ITEMS = [
-    'Show All',
+    'Standard View',
     'Ackowledged',
     'Unackowledged',
     'Shelved'

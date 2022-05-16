@@ -94,6 +94,19 @@ class MenuAPI {
      * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions {@link Action} or collection of groups of actions {@link Action}
      * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
      */
+    showCommentsMenu(x, y, actions, menuOptions) {
+        this._createMenuComponent(x, y, actions, menuOptions);
+
+        this.menuComponent.showCommentMenu();
+    }
+
+    /**
+     * Show popup menu with description of item on hover
+     * @param {number} x x-coordinates for popup
+     * @param {number} y x-coordinates for popup
+     * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions {@link Action} or collection of groups of actions {@link Action}
+     * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
+     */
     showSuperMenu(x, y, actions, menuOptions) {
         this._createMenuComponent(x, y, actions, menuOptions);
 

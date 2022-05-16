@@ -49,9 +49,9 @@ export default class FaultManagementAPI {
         return this.faultActionProvider.acknowledgeFault(fault);
     }
 
-    shelveFault(fault) {
+    shelveFault(fault, isUnshelve) {
         console.log('API: shelveFault', fault);
 
-        return this.faultActionProvider.shelveFault(fault);
+        return this.faultActionProvider.shelveFault(fault, isUnshelve);
     }
 }

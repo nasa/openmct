@@ -3,7 +3,9 @@
     <FaultManagementSearch
         @filterChanged="updateFilter"
     />
+
     <FaultManagementToolbar
+        :selected-faults="selectedFaults"
         @acknowledgeSelected="toggleAcknowledgeSelected"
         @shelveSelected="toggleShelveSelected"
     />
@@ -21,6 +23,8 @@
             :fault="fault"
             :is-selected="isSelected(fault)"
             @toggleSelected="toggleSelected"
+            @acknowledgeSelected="toggleAcknowledgeSelected"
+            @shelveSelected="toggleShelveSelected"
         />
     </template>
 </div>
@@ -126,6 +130,8 @@ export default {
                 });
         },
         updateFilter(filter) {
+            this.selectAll();
+
             this.filterIndex = filter.model.options.findIndex(option => option.value === filter.value);
         }
     }
