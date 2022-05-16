@@ -40,6 +40,7 @@ assignees: ''
 - [ ] Is there a workaround available?
 - [ ] Does this impact a critical component?
 - [ ] Is this just a visual bug with no functional impact?
+- [ ] Does this block the execution of e2e tests?
 
 #### Additional Information
 <!--- Include any screenshots, gifs, or logs which will expedite triage -->
