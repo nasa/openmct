@@ -30,7 +30,6 @@ test.describe('Telemetry Table', () => {
         });
 
         const bannerMessage = '.c-message-banner__message';
-        const bannerCloseButton = '.c-message-banner__close-button';
         const createButton = 'button:has-text("Create")';
 
         await page.goto('/', { waitUntil: 'networkidle' });
@@ -44,10 +43,6 @@ test.describe('Telemetry Table', () => {
             // Wait for Save Banner to appear
             page.waitForSelector(bannerMessage)
         ]);
-
-        // Wait until Save Banner is gone
-        await page.locator(bannerCloseButton).click();
-        await page.waitForSelector(bannerMessage, { state: 'detached'});
 
         // Save (exit edit mode)
         await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(3).click();
@@ -64,10 +59,6 @@ test.describe('Telemetry Table', () => {
             // Wait for Save Banner to appear
             page.waitForSelector(bannerMessage)
         ]);
-
-        // Wait until Save Banner is gone
-        await page.locator(bannerCloseButton).click();
-        await page.waitForSelector(bannerMessage, { state: 'detached'});
 
         // focus the Telemetry Table
         await page.locator('text=Open MCT My Items >> span').nth(3).click();
