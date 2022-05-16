@@ -6,12 +6,12 @@
         :disabled="disableAcknowledge"
         @click="acknowledgeSelected"
     >
-        <span
+        <div
             title="Acknowledge selected faults"
             class="c-icon-button__label"
         >
             Acknowledge
-        </span>
+        </div>
     </button>
 
     <button
@@ -20,12 +20,12 @@
         :disabled="disableShelve"
         @click="shelveSelected"
     >
-        <span
+        <div
             title="Shelve selected items"
             class="c-icon-button__label"
         >
             Shelve
-        </span>
+        </div>
     </button>
 </div>
 </template>

@@ -1,15 +1,15 @@
 <template>
 <div class="c-fault-mgmt__list-header c-fault-mgmt__list">
-    <span class="c-fault-mgmt__checkbox">
+    <div class="c-fault-mgmt__checkbox">
         <input
             type="checkbox"
             @input="selectAll"
         >
-    </span>
-    <span class="c-fault-mgmt__list-header-results c-fault-mgmt__list-content"> Results </span>
-    <span class="c-fault-mgmt__list-header-tripVal c-fault-mgmt__list-trigVal">Trip Value</span>
-    <span class="c-fault-mgmt__list-header-liveVal c-fault-mgmt__list-curVal">Live Value</span>
-    <span class="c-fault-mgmt__list-header-trigTime c-fault-mgmt__list-trigTime">Trigger Time</span>
+    </div>
+    <div class="c-fault-mgmt__list-header-results c-fault-mgmt__list-content"> Results </div>
+    <div class="c-fault-mgmt__list-header-tripVal c-fault-mgmt__list-trigVal">Trip Value</div>
+    <div class="c-fault-mgmt__list-header-liveVal c-fault-mgmt__list-curVal">Live Value</div>
+    <div class="c-fault-mgmt__list-header-trigTime c-fault-mgmt__list-trigTime">Trigger Time</div>
     <div class="c-fault-mgmt__list-action-wrapper">
         <div class="c-fault-mgmt__list-header-sortButton c-fault-mgmt__list-action-button">
             <select>

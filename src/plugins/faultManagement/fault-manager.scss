@@ -41,12 +41,8 @@
     display: flex;
     align-items: center;
 
-    > * {
-        // align-items: inherit;
-    }
     > * + * {
         margin-left: 5px;
-        // display: flex;
     }
     
     &-severity{
@@ -77,13 +73,14 @@
     &-content-right{
         margin-left: auto;
         display: flex;
+        flex-wrap: wrap;
     }
 
     &-trigVal, &-curVal, &-trigTime{
         @include ellipsize;
         border-radius: $controlCr;
         padding: 2px;
-        width: 60px;
+        width: 80px;
         // flex: 0 0 auto;
         margin-right: $interiorMarginLg;
 
@@ -101,6 +98,7 @@
 
     &-trigTime{
         width: 180px;
+        margin-right: 3em;
 
     }
 
@@ -123,29 +121,16 @@
     display: flex;
     background: none;
     flex-wrap: wrap;
-
-    > * + * {
-        margin-left: auto;
-    }
-
+    margin-bottom: 0px;
 
     &-tripVal, &-liveVal, &-trigTime{
-        justify-content: right;
         background: none;
-        width: 160px;
-        
-    }
-
-    &-trigTime {
-        margin-right: 0px;
-    }
-    &-tripVal{
-        justify-content: right;
     }
 
     &-sortButton{
         flex: 0 0 auto;
         margin-left: auto;
+        justify-content: right;
     }
 
 }
