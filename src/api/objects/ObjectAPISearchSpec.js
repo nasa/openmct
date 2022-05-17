@@ -17,14 +17,14 @@ describe("The Object API Search Function", () => {
             openmct = createOpenMct();
 
             mockObjectProvider = jasmine.createSpyObj("mock object provider", [
-                "search"
+                "searchForObjects"
             ]);
             anotherMockObjectProvider = jasmine.createSpyObj("another mock object provider", [
-                "search"
+                "searchForObjects"
             ]);
             openmct.objects.addProvider('objects', mockObjectProvider);
             openmct.objects.addProvider('other-objects', anotherMockObjectProvider);
-            mockObjectProvider.search.and.callFake(() => {
+            mockObjectProvider.searchForObjects.and.callFake(() => {
                 return new Promise(resolve => {
                     const mockProviderSearch = {
                         name: MOCK_PROVIDER_KEY,
@@ -38,7 +38,7 @@ describe("The Object API Search Function", () => {
                     }, MOCK_PROVIDER_SEARCH_DELAY);
                 });
             });
-            anotherMockObjectProvider.search.and.callFake(() => {
+            anotherMockObjectProvider.searchForObjects.and.callFake(() => {
                 return new Promise(resolve => {
                     const anotherMockProviderSearch = {
                         name: ANOTHER_MOCK_PROVIDER_KEY,
@@ -61,9 +61,8 @@ describe("The Object API Search Function", () => {
             await resetApplicationState(openmct);
         });
         it("uses each objects given provider's search function", () => {
-            console.trace();
             openmct.objects.search('foo');
-            expect(mockObjectProvider.search).toHaveBeenCalled();
+            expect(mockObjectProvider.searchForObjects).toHaveBeenCalled();
         });
         it("provides each providers results as promises that resolve in parallel", async () => {
             jasmine.clock().install();
@@ -111,8 +110,8 @@ describe("The Object API Search Function", () => {
                 namespace: ''
             });
             openmct.objects.addProvider('foo', defaultObjectProvider);
-            spyOn(openmct.objects.inMemorySearchProvider, "query").and.callThrough();
-            spyOn(openmct.objects.inMemorySearchProvider, "localSearch").and.callThrough();
+            spyOn(openmct.objects.inMemorySearchProvider, "searchForObjects").and.callThrough();
+            spyOn(openmct.objects.inMemorySearchProvider, "localSearchForObjects").and.callThrough();
 
             openmct.on('start', async () => {
                 mockIdentifier1 = {
@@ -156,7 +155,7 @@ describe("The Object API Search Function", () => {
 
         it("can provide indexing without a provider", () => {
             openmct.objects.search('foo');
-            expect(openmct.objects.inMemorySearchProvider.query).toHaveBeenCalled();
+            expect(openmct.objects.inMemorySearchProvider.searchForObjects).toHaveBeenCalled();
         });
 
         it("can do partial search", async () => {
@@ -187,7 +186,7 @@ describe("The Object API Search Function", () => {
             });
             it("calls local search", () => {
                 openmct.objects.search('foo');
-                expect(openmct.objects.inMemorySearchProvider.localSearch).toHaveBeenCalled();
+                expect(openmct.objects.inMemorySearchProvider.localSearchForObjects).toHaveBeenCalled();
             });
 
             it("can do partial search", async () => {
