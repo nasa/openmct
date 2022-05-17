@@ -20,30 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*
-This test suite is dedicated to tests which verify the basic operations surrounding exportAsJSON.
-*/
-
-const { test } = require('../../../fixtures.js');
-const { expect } = require('@playwright/test');
-
-test.describe('ExportAsJSON', () => {
-    test.fixme('Create a basic object and verify that it can be exported as JSON from Tree', async ({ page }) => {
-        //Create domain object
-        //Save Domain Object
-        //Verify that the newly created domain object can be exported as JSON from the Tree
-    });
-    test.fixme('Create a basic object and verify that it can be exported as JSON from 3 dot menu', async ({ page }) => {
-        //Create domain object
-        //Save Domain Object
-        //Verify that the newly created domain object can be exported as JSON from the 3 dot menu
-    });
-    test.fixme('Verify that a nested Object can be exported as JSON', async ({ page }) => {
-        // Create 2 objects with hierarchy
-        // Export as JSON
-        // Verify Hiearchy
-    });
-    test.fixme('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
-        // Other than non-persistible objects
-    });
-});
+export const TIMESYSTEM_KEY_WARNING = 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.';
+export const TIMESYSTEM_KEY_NOTIFICATION = 'Telemetry metadata does not match the active time system.';
+export const LOADED_ERROR = 'Telemetry Collection has already been loaded.';

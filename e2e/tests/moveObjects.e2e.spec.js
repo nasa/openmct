@@ -24,7 +24,8 @@
 This test suite is dedicated to tests which verify the basic operations surrounding moving objects.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Move item tests', () => {
     test('Create a basic object and verify that it can be moved to another folder', async ({ page }) => {
