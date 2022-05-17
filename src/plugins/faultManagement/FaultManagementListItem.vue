@@ -1,5 +1,14 @@
 <template>
-<div class="c-fault-mgmt__list c-fault-mgmt__list__selected c-fault-mgmt__list__unacked data-selectable">
+<div
+    class="c-fault-mgmt__list data-selectable"
+    :class="[
+        'is-criticality-' + fault.severity.toLowerCase(),
+        {'is-selected': isSelected},
+        {'is-acknowledged': fault.acknowledged},
+        {'is-suppressed': fault.shelveInfo},
+        {'is-triggering': fault.triggered}
+    ]"
+>
     <div class="c-fault-mgmt__checkbox">
         <input
             type="checkbox"
