@@ -83,11 +83,18 @@ mct-plot {
     }
 
     .c-plot--stacked-container {
+        border: 1px solid transparent;
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
         min-height: $plotMinH;
         overflow: hidden;
+
+        &[s-selected] {
+            .is-editing & {
+                border: $editMarqueeBorder;
+            }
+        }
     }
 ;
 
