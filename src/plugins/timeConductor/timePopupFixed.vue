@@ -1,141 +1,109 @@
-<!--
- Open MCT, Copyright (c) 2014-2023, United States Government
- as represented by the Administrator of the National Aeronautics and Space
- Administration. All rights reserved.
-
- Open MCT is licensed under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- http://www.apache.org/licenses/LICENSE-2.0.
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- License for the specific language governing permissions and limitations
- under the License.
-
- Open MCT includes source code licensed under additional open source
- licenses. See the Open Source Licenses file (LICENSES.md) included with
- this source code distribution or the Licensing information page available
- at runtime from the About dialog for additional information.
--->
 <template>
 <div
-    class="c-compact-tc__bounds"
-    @click.prevent.stop="showTimePopupStart"
+    class="pr-tc-input-menu"
+    :class="{'pr-tc-input-menu--bottom' : bottom === true}"
+    @keydown.enter.prevent
+    @keyup.enter.prevent="submit"
+    @keydown.esc.prevent
+    @keyup.esc.prevent="hide"
+    @click.stop
 >
     <div
-        class="c-compact-tc__bounds"
+        class="pr-tc-input-menu--fixed"
+        @keydown.enter.prevent
+        @keyup.enter.prevent="submit"
+        @keydown.esc.prevent
+        @keyup.esc.prevent="hide"
+        @click.stop
     >
-        <time-popup-fixed
-            v-if="showTCInputStart"
-            class="pr-tc-input-menu--start"
-            :bottom="keyString !== undefined"
-            :type="'start'"
-            :offset="formattedBounds.start"
-            :mode="'fixed'"
-            @focus.native="$event.target.select()"
-            @hide="hideAllTimePopups"
-            @update="setBoundsFromView"
-        />
-        <div class="c-compact-tc__bounds__start">{{ formattedBounds.start }}</div>
-        <div class="icon-arrows-right-left"></div>
-        <div class="c-compact-tc__bounds__end">{{ formattedBounds.end }}</div>
-    </div>
-    <form
-        style="display: none;"
-        ref="fixedDeltaInput"
-        class="c-compact-tc__bounds--inputs"
-    >
-        <div
-            class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+        <div class="pr-tc-input-menu__options pr-tc-input-menu__options--fixed">
+            Buttons here
+        </div>
+        <!-- PASTED FROM ConductorInputsFixed -->
+        <form
+            ref="fixedDeltaInput"
+            class="c-compact-tc__bounds--inputs"
         >
-            <!-- Fixed start -->
-            <div class="c-conductor__start-fixed__label">
-                Start
-            </div>
-            <input
-                ref="startDate"
-                v-model="formattedBounds.start"
-                class="c-input--datetime"
-                type="text"
-                autocorrect="off"
-                spellcheck="false"
-                @change="validateAllBounds('startDate'); submitForm()"
+            <div
+                class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
             >
-            <date-picker
-                v-if="isUTCBased"
-                class="c-ctrl-wrapper--menus-left"
-                :bottom="keyString !== undefined"
-                :default-date-time="formattedBounds.start"
-                :formatter="timeFormatter"
-                @date-selected="startDateSelected"
-            />
-        </div>
-        <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-            <!-- Fixed end and RT 'last update' display -->
-            <div class="c-conductor__end-fixed__label">
-                End
+                <!-- Fixed start -->
+                <div class="c-conductor__start-fixed__label">
+                    Start
+                </div>
+                <input
+                    ref="startDate"
+                    v-model="formattedBounds.start"
+                    class="c-input--datetime"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    @change="validateAllBounds('startDate'); submitForm()"
+                >
+                <date-picker
+                    v-if="isUTCBased"
+                    class="c-ctrl-wrapper--menus-left"
+                    :bottom="keyString !== undefined"
+                    :default-date-time="formattedBounds.start"
+                    :formatter="timeFormatter"
+                    @date-selected="startDateSelected"
+                />
             </div>
-            <input
-                ref="endDate"
-                v-model="formattedBounds.end"
-                class="c-input--datetime"
-                type="text"
-                autocorrect="off"
-                spellcheck="false"
-                @change="validateAllBounds('endDate'); submitForm()"
-            >
-            <date-picker
-                v-if="isUTCBased"
-                class="c-ctrl-wrapper--menus-left"
-                :bottom="keyString !== undefined"
-                :default-date-time="formattedBounds.end"
-                :formatter="timeFormatter"
-                @date-selected="endDateSelected"
-            />
-        </div>
-    </form>
+            <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
+                <!-- Fixed end and RT 'last update' display -->
+                <div class="c-conductor__end-fixed__label">
+                    End
+                </div>
+                <input
+                    ref="endDate"
+                    v-model="formattedBounds.end"
+                    class="c-input--datetime"
+                    type="text"
+                    autocorrect="off"
+                    spellcheck="false"
+                    @change="validateAllBounds('endDate'); submitForm()"
+                >
+                <date-picker
+                    v-if="isUTCBased"
+                    class="c-ctrl-wrapper--menus-left"
+                    :bottom="keyString !== undefined"
+                    :default-date-time="formattedBounds.end"
+                    :formatter="timeFormatter"
+                    @date-selected="endDateSelected"
+                />
+            </div>
+        </form>
+    </div>
 </div>
 </template>
 
 <script>
-import TimePopupFixed from "./timePopupFixed.vue";
-import DatePicker from "./DatePicker.vue";
 import _ from "lodash";
-
-const DEFAULT_DURATION_FORMATTER = 'duration';
+import DatePicker from "./DatePicker.vue";
 
 export default {
     components: {
-        DatePicker,
-        TimePopupFixed
+        DatePicker
     },
     inject: ['openmct'],
     props: {
-        keyString: {
+        bottom: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
+        type: {
             type: String,
-            default() {
-                return undefined;
-            }
+            required: true
         },
-        inputBounds: {
-            type: Object,
-            default() {
-                return undefined;
-            }
+        offset: {
+            type: String,
+            required: true
         },
-        readOnly: {
-            type: Boolean,
-            default() {
-                return false;
-            }
-        },
-        compact: {
-            type: Boolean,
-            default() {
-                return false;
-            }
+        mode: {
+            type: String,
+            required: true
         }
     },
     data() {
@@ -145,8 +113,8 @@ export default {
         let bounds = this.bounds || this.openmct.time.bounds();
 
         return {
-            showTCInputStart: false,
-            showTCInputEnd: false,
+            showTCInputStart: true,
+            showTCInputEnd: true,
             durationFormatter,
             timeFormatter,
             bounds: {
@@ -185,7 +153,7 @@ export default {
     methods: {
         setTimeContext() {
             this.stopFollowingTimeContext();
-            this.timeContext = this.openmct.time.getContextForView(this.keyString ? this.objectPath : []);
+            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
 
             this.handleNewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.handleNewBounds);
@@ -245,8 +213,8 @@ export default {
             }
         },
         submitForm() {
-        // Allow Vue model to catch up to user input.
-        // Submitting form will cause validation messages to display (but only if triggered by button click)
+            // Allow Vue model to catch up to user input.
+            // Submitting form will cause validation messages to display (but only if triggered by button click)
             this.$nextTick(() => this.setBoundsFromView());
         },
         validateAllBounds(ref) {
@@ -294,7 +262,7 @@ export default {
                 const formattedDate = input === this.$refs.startDate
                     ? this.formattedBounds.start
                     : this.formattedBounds.end
-          ;
+                ;
 
                 if (!this.timeFormatter.validate(formattedDate)) {
                     validationResult = {

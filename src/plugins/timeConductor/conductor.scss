@@ -225,11 +225,6 @@
         margin-right: $interiorMarginSm;
     }
 
-    .c-direction-indicator {
-        // Holds realtime-mode + and - symbols
-        font-size: 0.7em;
-    }
-
     input:invalid {
         background: rgba($colorFormInvalid, 0.5);
     }
@@ -237,25 +232,25 @@
 
 .is-realtime-mode {
     .c-conductor__delta-button {
-        @include themedButton($colorTimeBg);
-        color: $colorTimeFg;
+        //@include themedButton($colorTimeRealtimeBg);
+        color: $colorTimeRealtimeFg;
     }
 
     .c-conductor-input {
         &:before {
-            color: $colorTime;
+            color: $colorTimeRealtimeFgSubtle;
         }
     }
 
     .c-conductor__end-fixed {
         // Displays last RT update
-        color: $colorTime;
+        color: $colorTimeRealtimeFgSubtle;
 
         input {
             // Remove input look
             background: none;
             box-shadow: none;
-            color: $colorTime;
+            color: $colorTimeRealtimeFgSubtle;
             pointer-events: none;
 
             &[disabled] {
@@ -265,8 +260,8 @@
     }
 }
 
-[class^='pr-tc-input-menu'] {
-    // Uses ^= here to target both start and end menus
+.pr-tc-input-menu--start,
+.pr-tc-input-menu--end {
     background: $colorBodyBg;
     border-radius: $controlCr;
     display: grid;
@@ -275,7 +270,7 @@
     grid-row-gap: 4px;
     align-items: start;
     box-shadow: $shdwMenu;
-    padding: $interiorMargin;
+    padding: $interiorMarginLg;
     position: absolute;
     left: 8px;
     bottom: 24px;
@@ -287,29 +282,65 @@
     }
 }
 
+.pr-tc-input-menu {
+    &__options {
+        display: flex;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
+
+    &__input-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+        grid-column-gap: 3px;
+        grid-row-gap: $interiorMargin;
+        align-items: start;
+    }
+}
+
 .l-shell__time-conductor .pr-tc-input-menu--end {
     left: auto;
     right: 0;
 }
 
-[class^='pr-time'] {
-    &[class*='label'] {
+.pr-time-label {
+    font-size: 0.9em;
+    opacity: 0.6;
+    text-transform: uppercase;
+
+    &:before {
         font-size: 0.8em;
-        opacity: 0.6;
-        text-transform: uppercase;
+        margin-right: $interiorMarginSm;
+    }
+}
+
+.pr-time-input {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+
+    input {
+        height: 22px;
+        line-height: 22px;
+        margin-right: $interiorMarginSm;
+        font-size: 1.25em;
+        width: 42px;
     }
 
-    &[class*='controls'] {
-        display: flex;
-        align-items: center;
-        white-space: nowrap;
+    &--buttons {
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
 
-        input {
-            height: 22px;
-            line-height: 22px;
-            margin-right: $interiorMarginSm;
-            font-size: 1.25em;
-            width: 42px;
+    &__start-end-sep {
+        height: 100%;
+        width: 2em;
+
+        svg {
+            fill: rgba($colorBodyFg, 0.4);
         }
     }
 }
@@ -326,7 +357,8 @@
         margin-left: $interiorMargin;
     }
 
-    &__bounds--read-only,
+    &__bounds,
+    &__bounds-value,
     &__bounds--inputs {
         display: flex;
         align-items: center;
@@ -344,6 +376,24 @@
         }
     }
 
+    &__bounds {
+        cursor: pointer;
+    }
+
+    &__bounds-value {
+        color: $colorTimeRealtimeFg;
+        &:before {
+            font-size: 0.85em;
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    .c-direction-indicator {
+        // Holds realtime-mode + and - symbols
+        font-size: 0.7em;
+    }
+
+
     .is-fixed-mode &,
     &.is-fixed-mode.is-expanded {
         background: pullForward($colorBodyBg, 10%); // TODO: convert to theme constant
@@ -351,7 +401,17 @@
 
     .is-realtime-mode &,
     &.is-realtime-mode {
-        background: rgba($colorTimeBg, 0.3);
+        background: rgba($colorTimeRealtimeBg, 1);
+        color: $colorTimeRealtimeFgSubtle;
+
+
+        &__bounds-value {
+            color: $colorTimeRealtimeFg;
+        }
+
+        &__time-value {
+            color: $colorTimeRealtimeFg;
+        }
     }
 }
 

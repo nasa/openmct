@@ -57,6 +57,7 @@
                 class="c-compact-tc__bounds--fixed"
                 :key-string="domainObject.identifier.key"
                 :read-only="true"
+                :compact="true"
                 @updated="saveFixedOffsets"
             />
 
@@ -65,6 +66,7 @@
                 class="c-compact-tc__bounds--real-time"
                 :key-string="domainObject.identifier.key"
                 :read-only="true"
+                :compact="true"
                 @updated="saveClockOffsets"
             />
 
