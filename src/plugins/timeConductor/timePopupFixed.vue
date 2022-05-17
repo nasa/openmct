@@ -1,79 +1,157 @@
 <template>
 <div
-    class="pr-tc-input-menu"
-    :class="{'pr-tc-input-menu--bottom' : bottom === true}"
+    class="c-tc-input-popup"
+    :class="{'c-tc-input-popup--bottom' : bottom === true}"
     @keydown.enter.prevent
     @keyup.enter.prevent="submit"
     @keydown.esc.prevent
     @keyup.esc.prevent="hide"
     @click.stop
 >
-    <div
-        class="pr-tc-input-menu--fixed"
-        @keydown.enter.prevent
-        @keyup.enter.prevent="submit"
-        @keydown.esc.prevent
-        @keyup.esc.prevent="hide"
-        @click.stop
-    >
-        <div class="pr-tc-input-menu__options pr-tc-input-menu__options--fixed">
-            Buttons here
-        </div>
-        <!-- PASTED FROM ConductorInputsFixed -->
-        <form
-            ref="fixedDeltaInput"
-            class="c-compact-tc__bounds--inputs"
-        >
-            <div
-                class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
-            >
-                <!-- Fixed start -->
-                <div class="c-conductor__start-fixed__label">
-                    Start
-                </div>
-                <input
-                    ref="startDate"
-                    v-model="formattedBounds.start"
-                    class="c-input--datetime"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllBounds('startDate'); submitForm()"
-                >
-                <date-picker
-                    v-if="isUTCBased"
-                    class="c-ctrl-wrapper--menus-left"
-                    :bottom="keyString !== undefined"
-                    :default-date-time="formattedBounds.start"
-                    :formatter="timeFormatter"
-                    @date-selected="startDateSelected"
-                />
-            </div>
-            <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-                <!-- Fixed end and RT 'last update' display -->
-                <div class="c-conductor__end-fixed__label">
-                    End
-                </div>
-                <input
-                    ref="endDate"
-                    v-model="formattedBounds.end"
-                    class="c-input--datetime"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllBounds('endDate'); submitForm()"
-                >
-                <date-picker
-                    v-if="isUTCBased"
-                    class="c-ctrl-wrapper--menus-left"
-                    :bottom="keyString !== undefined"
-                    :default-date-time="formattedBounds.end"
-                    :formatter="timeFormatter"
-                    @date-selected="endDateSelected"
-                />
-            </div>
-        </form>
+    <div class="c-tc-input-popup__options c-tc-input-popup__options--fixed">
+        Buttons here
     </div>
+    <!-- PASTED FROM ConductorInputsFixed -->
+    <form
+        ref="fixedDeltaInput"
+        class="c-tc-input-popup__input-grid"
+    >
+        <div class="pr-time-label"><em>Start</em> Date</div>
+        <div class="pr-time-label">Time Z</div>
+        <div class="pr-time-label"></div>
+        <div class="pr-time-label"><em>End</em> Date</div>
+        <div class="pr-time-label">Time Z</div>
+        <div class="pr-time-label"></div>
+
+        <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+            <input
+                ref="startDate"
+                v-model="formattedBounds.start"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                @change="validateAllBounds('startDate'); submitForm()"
+            >
+            <date-picker
+                v-if="isUTCBased"
+                class="c-ctrl-wrapper--menus-left"
+                :bottom="keyString !== undefined"
+                :default-date-time="formattedBounds.start"
+                :formatter="timeFormatter"
+                @date-selected="startDateSelected"
+            />
+        </div>
+
+        <div class="pr-time-input">
+            <input
+                ref="startTime"
+                v-model="formattedBounds.start"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+            >
+        </div>
+
+        <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
+
+        <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+            <input
+                ref="startDate"
+                v-model="formattedBounds.start"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                @change="validateAllBounds('startDate'); submitForm()"
+            >
+            <date-picker
+                v-if="isUTCBased"
+                class="c-ctrl-wrapper--menus-left"
+                :bottom="keyString !== undefined"
+                :default-date-time="formattedBounds.start"
+                :formatter="timeFormatter"
+                @date-selected="startDateSelected"
+            />
+        </div>
+
+        <div class="pr-time-input">
+            <input
+                ref="startTime"
+                v-model="formattedBounds.start"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+            >
+        </div>
+
+        <div class="pr-time-input pr-time-input--buttons">
+            <button
+                class="c-button c-button--major icon-check"
+                :disabled="false"
+                @click.prevent="submit"
+            ></button>
+            <button
+                class="c-button icon-x"
+                @click.prevent="hide"
+            ></button>
+        </div>
+
+        <div
+            v-if="false"
+            class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
+        >
+            <!-- Fixed start -->
+            <div class="c-conductor__start-fixed__label">
+                Start
+            </div>
+            <input
+                ref="startDate"
+                v-model="formattedBounds.start"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                @change="validateAllBounds('startDate'); submitForm()"
+            >
+            <date-picker
+                v-if="isUTCBased"
+                class="c-ctrl-wrapper--menus-left"
+                :bottom="keyString !== undefined"
+                :default-date-time="formattedBounds.start"
+                :formatter="timeFormatter"
+                @date-selected="startDateSelected"
+            />
+        </div>
+        <div
+            v-if="false"
+            class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed"
+        >
+            <!-- Fixed end and RT 'last update' display -->
+            <div class="c-conductor__end-fixed__label">
+                End
+            </div>
+            <input
+                ref="endDate"
+                v-model="formattedBounds.end"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                @change="validateAllBounds('endDate'); submitForm()"
+            >
+            <date-picker
+                v-if="isUTCBased"
+                class="c-ctrl-wrapper--menus-left"
+                :bottom="keyString !== undefined"
+                :default-date-time="formattedBounds.end"
+                :formatter="timeFormatter"
+                @date-selected="endDateSelected"
+            />
+        </div>
+    </form>
 </div>
 </template>
 
