@@ -49,6 +49,7 @@
                 :mode="timeOptions.mode"
                 :button-css-class="'c-button--compact'"
                 :enabled="independentTCEnabled"
+                title="TEMP - MOVE TO POPUP"
                 @modeChanged="saveMode"
             />
 
@@ -69,8 +70,7 @@
                 :compact="true"
                 @updated="saveClockOffsets"
             />
-
-            <button class="c-icon-button icon-gear"></button>
+            <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
         </div>
     </div>
 </div>

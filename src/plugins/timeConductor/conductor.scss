@@ -320,16 +320,22 @@
     align-items: center;
     white-space: nowrap;
 
-    input {
-        height: 22px;
-        line-height: 22px;
-        margin-right: $interiorMarginSm;
-        font-size: 1.25em;
-        width: 42px;
+    > * + * {
+        margin-left: $interiorMarginSm;
     }
 
-    &--date {
-        min-width: 120px;
+    input {
+        height: 22px;
+        line-height: 1em;
+        font-size: 1.25em;
+    }
+
+    &--date input {
+        width: 120px;
+    }
+
+    &--time input {
+        width: 70px;
     }
 
     &--buttons {
@@ -348,46 +354,56 @@
 }
 
 /*********************************************** COMPACT TIME CONDUCTOR */
+.c-compact-tc,
+.c-tc-input-popup {
+    [class*='start-end-sep'] {
+        opacity: 0.5;
+    }
+}
+
 .c-compact-tc {
     border-radius: $controlCr;
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 1px $interiorMarginSm;
+    padding: 2px $interiorMarginSm;
 
     > * + * {
         margin-left: $interiorMargin;
     }
 
     &__bounds,
-    &__bounds-value,
-    &__bounds--inputs {
+    &__bounds-value {
         display: flex;
         align-items: center;
 
         > * + * {
             margin-left: $interiorMargin;
         }
-
-        &--read-only {
-
-        }
-
-        &--inputs {
-
-        }
     }
 
     &__bounds {
         cursor: pointer;
+        flex: 1 1 auto;
+        overflow: hidden;
+
+        > * + * {
+            flex: 0 0 auto;
+        }
     }
 
     &__bounds-value {
         color: $colorTimeRealtimeFg;
+
         &:before {
             font-size: 0.85em;
             margin-right: $interiorMarginSm;
         }
+    }
+
+    &__current-update {
+        @include ellipsize();
+        flex: 0 1 auto;
     }
 
     .c-direction-indicator {
@@ -396,7 +412,7 @@
     }
 }
 
-.is-fixed-mode {
+.is-fixed-mode.is-expanded {
     &.c-compact-tc,
     .c-tc-input-popup {
         background: $colorTimeFixedBg;
@@ -422,16 +438,11 @@
             [class*='label'] {
                 color: $colorTimeRealtimeFg;
             }
-
-            //&[class*='major'] {
-            //    background: $colorTimeFixedBtnBgMajor;
-            //    color: $colorTimeFixedBtnFgMajor;
-            //}
         }
     }
 }
 
-.is-realtime-mode  {
+.is-realtime-mode.is-expanded {
     &.c-compact-tc,
     .c-tc-input-popup {
         background: rgba($colorTimeRealtimeBg, 1);
@@ -457,11 +468,6 @@
             [class*='label'] {
                 color: $colorTimeRealtimeFg;
             }
-
-            //&[class*='major'] {
-            //    background: $colorTimeRealtimeBtnBgMajor;
-            //    color: $colorTimeRealtimeBtnFgMajor;
-            //}
         }
     }
 }
@@ -475,13 +481,11 @@
 
 /*********************************************** INPUTS POPUP DIALOG */
 .c-tc-input-popup {
-    border-radius: $controlCr;
-    box-shadow: $shdwMenu;
+    @include menuOuter();
     padding: $interiorMarginLg;
     position: absolute;
     left: 8px;
     bottom: 24px;
-    z-index: 99;
 
     > * + * {
         margin-top: $interiorMarginLg;
@@ -500,18 +504,22 @@
         }
     }
 
+    &--fixed-mode {
+        .c-tc-input-popup__input-grid {
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+        }
+    }
+
+    &--realtime-mode {
+        .c-tc-input-popup__input-grid {
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+        }
+    }
+
     &__input-grid {
         display: grid;
         grid-column-gap: 3px;
         grid-row-gap: $interiorMargin;
         align-items: start;
-
-        .is-fixed-mode & {
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
-        }
-
-        .is-realtime-mode & {
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
-        }
     }
 }

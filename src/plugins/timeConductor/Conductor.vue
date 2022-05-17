@@ -35,18 +35,23 @@
         <ConductorMode
             class="c-conductor__mode-select"
             :button-css-class="'c-icon-button'"
+            title="TEMP - MOVE TO POPUP"
         />
         <ConductorTimeSystem
+            v-if="false"
             class="c-conductor__time-system-select"
             :button-css-class="'c-icon-button'"
+            title="TEMP - MOVE TO POPUP"
         />
         <ConductorHistory
+            v-if="false"
             class="c-conductor__history-select"
             :button-css-class="'c-icon-button'"
             :offsets="openmct.time.clockOffsets()"
             :bounds="bounds"
             :time-system="timeSystem"
             :mode="timeMode"
+            title="TEMP - MOVE TO POPUP"
         />
     </div>
 
@@ -71,6 +76,11 @@
         @panAxis="pan"
         @zoomAxis="zoom"
     />
+    <div
+        v-else
+        class="u-flex-spreader"
+    ></div>
+    <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
 </div>
 </template>
 

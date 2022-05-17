@@ -20,83 +20,26 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
+<form
+    ref="fixedDeltaInput"
     class="c-compact-tc__bounds"
     @click.prevent.stop="showTimePopupStart"
 >
-    <div
-        class="c-compact-tc__bounds"
-    >
-        <time-popup-fixed
-            v-if="showTCInputStart"
-            class="c-tc-input-popup--start"
-            :bottom="keyString !== undefined"
-            :type="'start'"
-            :offset="formattedBounds.start"
-            :mode="'fixed'"
-            @focus.native="$event.target.select()"
-            @hide="hideAllTimePopups"
-            @update="setBoundsFromView"
-        />
-        <div class="c-compact-tc__bounds__start">{{ formattedBounds.start }}</div>
-        <div class="icon-arrows-right-left"></div>
-        <div class="c-compact-tc__bounds__end">{{ formattedBounds.end }}</div>
-    </div>
-    <form
-        style="display: none;"
-        ref="fixedDeltaInput"
-        class="c-compact-tc__bounds--inputs"
-    >
-        <div
-            class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
-        >
-            <!-- Fixed start -->
-            <div class="c-conductor__start-fixed__label">
-                Start
-            </div>
-            <input
-                ref="startDate"
-                v-model="formattedBounds.start"
-                class="c-input--datetime"
-                type="text"
-                autocorrect="off"
-                spellcheck="false"
-                @change="validateAllBounds('startDate'); submitForm()"
-            >
-            <date-picker
-                v-if="isUTCBased"
-                class="c-ctrl-wrapper--menus-left"
-                :bottom="keyString !== undefined"
-                :default-date-time="formattedBounds.start"
-                :formatter="timeFormatter"
-                @date-selected="startDateSelected"
-            />
-        </div>
-        <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-            <!-- Fixed end and RT 'last update' display -->
-            <div class="c-conductor__end-fixed__label">
-                End
-            </div>
-            <input
-                ref="endDate"
-                v-model="formattedBounds.end"
-                class="c-input--datetime"
-                type="text"
-                autocorrect="off"
-                spellcheck="false"
-                @change="validateAllBounds('endDate'); submitForm()"
-            >
-            <date-picker
-                v-if="isUTCBased"
-                class="c-ctrl-wrapper--menus-left"
-                :bottom="keyString !== undefined"
-                :default-date-time="formattedBounds.end"
-                :formatter="timeFormatter"
-                @date-selected="endDateSelected"
-            />
-        </div>
-    </form>
-</div>
+    <time-popup-fixed
+        v-if="showTCInputStart"
+        class="c-tc-input-popup--fixed-mode"
+        :bottom="keyString !== undefined"
+        :type="'start'"
+        :offset="formattedBounds.start"
+        :mode="'fixed'"
+        @focus.native="$event.target.select()"
+        @hide="hideAllTimePopups"
+        @update="setBoundsFromView"
+    />
+    <div class="c-compact-tc__bounds__start">{{ formattedBounds.start }}</div>
+    <div class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"></div>
+    <div class="c-compact-tc__bounds__end">{{ formattedBounds.end }}</div>
+</form>
 </template>
 
 <script>
@@ -205,8 +148,8 @@ export default {
             [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
         },
         clearValidationForInput(input) {
-            input.setCustomValidity('');
-            input.title = '';
+            // input.setCustomValidity(''); CH TEMP
+            // input.title = ''; CH TEMP
         },
         setBounds(bounds) {
             this.bounds = bounds;

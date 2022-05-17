@@ -25,34 +25,30 @@
     class="c-compact-tc__bounds"
     @click.prevent.stop="showTimePopupStart"
 >
-    <div
-        class="c-compact-tc__bounds"
-    >
-        <time-popup-realtime
-            v-if="showTCInputStart"
-            class="c-tc-input-popup--start"
-            :bottom="keyString !== undefined"
-            :type="'start'"
-            :offset="offsets.start"
-            :mode="'realtime'"
-            @focus.native="$event.target.select()"
-            @hide="hideAllTimePopups"
-            @update="timePopUpdate"
-        />
+    <time-popup-realtime
+        v-if="showTCInputStart"
+        class="c-tc-input-popup--realtime-mode"
+        :bottom="keyString !== undefined"
+        :type="'start'"
+        :offset="offsets.start"
+        :mode="'realtime'"
+        @focus.native="$event.target.select()"
+        @hide="hideAllTimePopups"
+        @update="timePopUpdate"
+    />
 
-        <div class="c-compact-tc__bounds-value c-compact-tc__bounds__start icon-minus">{{ offsets.start }}</div>
-        <div
-            v-if="compact"
-            class="icon-arrows-right-left"
-        ></div>
-        <div
-            v-else
-            class="c-compact-tc__current-update"
-        >
-            LAST UPDATE {{ formattedBounds.end }}
-        </div>
-        <div class="c-compact-tc__bounds-value c-compact-tc__bounds__end icon-plus">{{ offsets.end }}</div>
+    <div class="c-compact-tc__bounds-value c-compact-tc__bounds__start icon-minus">{{ offsets.start }}</div>
+    <div
+        v-if="compact"
+        class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"
+    ></div>
+    <div
+        v-else
+        class="c-compact-tc__current-update"
+    >
+        LAST UPDATE {{ formattedBounds.end }}
     </div>
+    <div class="c-compact-tc__bounds-value c-compact-tc__bounds__end icon-plus">{{ offsets.end }}</div>
 </form>
 </template>
 

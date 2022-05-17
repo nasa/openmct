@@ -31,7 +31,7 @@
             @stateChanged="updateIndependentTimeState"
             @updated="saveTimeOptions"
         />
-    </div>ITC was here
+    </div>
     <div
         ref="objectViewWrapper"
         class="c-object-view"

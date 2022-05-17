@@ -48,7 +48,7 @@
                 @focusout="format('inputHrs')"
                 @wheel="increment($event, 'inputHrs')"
             >
-            :
+            <b>:</b>
         </div>
         <div class="pr-time-input">
             <input
@@ -66,7 +66,7 @@
                 @focusout="format('inputMins')"
                 @wheel="increment($event, 'inputMins')"
             >
-            :
+            <b>:</b>
         </div>
         <div class="pr-time-input">
             <input
@@ -104,7 +104,7 @@
                 @focusout="format('inputHrs')"
                 @wheel="increment($event, 'inputHrs')"
             >
-            :
+            <b>:</b>
         </div>
         <div class="pr-time-input">
             <input
@@ -122,7 +122,7 @@
                 @focusout="format('inputMins')"
                 @wheel="increment($event, 'inputMins')"
             >
-            :
+            <b>:</b>
         </div>
         <div class="pr-time-input">
             <input
