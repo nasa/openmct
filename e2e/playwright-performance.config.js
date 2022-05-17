@@ -23,6 +23,14 @@ const config = {
         trace: 'off',
         video: 'off'
     },
+    projects: [
+        {
+            name: 'chrome',
+            use: {
+                browserName: 'chromium'
+            }
+        }
+    ],
     reporter: [
         ['list'],
         ['json', { outputFile: 'test-results/results.json' }]

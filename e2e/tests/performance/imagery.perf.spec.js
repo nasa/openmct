@@ -83,6 +83,7 @@ test.describe('Performance tests', () => {
         const getAllMeasuresJson = await page.evaluate(() => JSON.stringify(window.performance.getEntriesByType("measure")));
         const getAllMeasures = JSON.parse(getAllMeasuresJson);
         console.log('window.performance.getEntriesByType("measure")', getAllMeasures);
+
     });
     /* The following test will navigate to a previously created Performance Display Layout and measure the
     /  following metrics:
@@ -161,6 +162,9 @@ test.describe('Performance tests', () => {
         // Click Close Icon
         await page.locator('.c-click-icon').click();
         await page.evaluate(() => (window.performance.mark("view-large-close-button")));
+
+        //await client.send('HeapProfiler.enable');
+        await client.send('HeapProfiler.collectGarbage');
 
         let performanceMetrics = await client.send('Performance.getMetrics');
         console.log(performanceMetrics.metrics);
