@@ -93,14 +93,15 @@
     // Modes
     .is-realtime-mode &,
     .is-lad-mode & {
+        $c: $colorTimeRealtimeFgSubtle;
         &:before {
             // Brackets icon
-            color: $colorTime;
+            color: $c;
         }
         div[class*="hand"] {
             animation-name: clock-hands;
             &:before {
-                background: $colorTime;
+                background: $c;
             }
         }
     }
