@@ -1,7 +1,7 @@
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
 describe("The Object API Search Function", () => {
-    describe("The infrastructure", () => {
+    fdescribe("The infrastructure", () => {
         const MOCK_PROVIDER_KEY = 'mockProvider';
         const ANOTHER_MOCK_PROVIDER_KEY = 'anotherMockProvider';
         const MOCK_PROVIDER_SEARCH_DELAY = 15000;
@@ -61,6 +61,7 @@ describe("The Object API Search Function", () => {
             await resetApplicationState(openmct);
         });
         it("uses each objects given provider's search function", () => {
+            console.trace();
             openmct.objects.search('foo');
             expect(mockObjectProvider.search).toHaveBeenCalled();
         });

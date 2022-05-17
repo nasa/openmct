@@ -77,10 +77,6 @@ class InMemorySearchProvider {
                 this.worker.port.close();
             }
 
-            if (this.stopListeningToAnnotationCreation) {
-                this.stopListeningToAnnotationCreation();
-            }
-
             this.destroyObservers(this.indexedIds);
             this.destroyObservers(this.indexedCompositions);
         });
@@ -99,7 +95,7 @@ class InMemorySearchProvider {
             // we must be on iOS
         }
 
-        this.stopListeningToAnnotationCreation = this.openmct.annotation.on('annotationCreated', this.onAnnotationCreation);
+        this.openmct.annotation.on('annotationCreated', this.onAnnotationCreation);
 
     }
 
