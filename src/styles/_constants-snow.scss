@@ -145,13 +145,21 @@ $colorTimeFixedFg: #eee;
 $colorTimeFixedFgSubtle: #B2AA98;
 $colorTimeFixedHov: pullForward($colorTimeFixed, 10%);
 $colorTimeFixedSubtle: pushBack($colorTimeFixed, 20%);
+$colorTimeFixedBtnBg: pullForward($colorTimeFixed, 5%);
+$colorTimeFixedBtnFg: $colorTimeFixedFgSubtle;
+$colorTimeFixedBtnBgMajor: #a09375;
+$colorTimeFixedBtnFgMajor: #fff;
 
 $colorTimeRealtime: #445890;
 $colorTimeRealtimeBg: $colorTimeRealtime;
-$colorTimeRealtimeFg: pullForward($colorTimeRealtimeBg, 60%);
-$colorTimeRealtimeFgSubtle: pullForward($colorTimeRealtimeBg, 30%);
+$colorTimeRealtimeFg: #eee;
+$colorTimeRealtimeFgSubtle: #88B0FF;
 $colorTimeRealtimeHov: pullForward($colorTimeRealtime, 10%);
 $colorTimeRealtimeSubtle: pushBack($colorTimeRealtime, 20%);
+$colorTimeRealtimeBtnBg: pullForward($colorTimeRealtime, 5%);
+$colorTimeRealtimeBtnFg: $colorTimeRealtimeFgSubtle;
+$colorTimeRealtimeBtnBgMajor: #588ffa;
+$colorTimeRealtimeBtnFgMajor: #fff;
 
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov

@@ -9,7 +9,17 @@
     @click.stop
 >
     <div class="c-tc-input-popup__options c-tc-input-popup__options--fixed">
-        Buttons here
+        <button class="c-button c-button--menu icon-clock">
+            <span class="c-button__label">Local Clock</span>
+        </button>
+
+        <button class="c-button c-button--menu">
+            <span class="c-button__label">UTC</span>
+        </button>
+
+        <button class="c-button c-button--menu icon-history">
+            <span class="c-button__label">History</span>
+        </button>
     </div>
     <!-- PASTED FROM ConductorInputsFixed -->
     <form
