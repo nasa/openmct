@@ -57,7 +57,7 @@ define([
         ActionsAPI: ActionsAPI.default,
         CompositionAPI: CompositionAPI,
         EditorAPI: EditorAPI,
-        FaultManagementAPI: FaultManagementAPI.default,
+        FaultManagementAPI: FaultManagementAPI,
         FormsAPI: FormsAPI,
         IndicatorAPI: IndicatorAPI,
         MenuAPI: MenuAPI.default,
