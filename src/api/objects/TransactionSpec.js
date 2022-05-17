@@ -34,24 +34,24 @@ describe("Transaction Class", () => {
     });
 
     it('has no dirty objects', () => {
-        expect(transaction.dirtyObjects.size).toEqual(0);
+        expect(Object.keys(transaction.dirtyObjects).length).toEqual(0);
     });
 
     it('add(), adds object to dirtyObjects', () => {
         const mockDomainObjects = createMockDomainObjects();
         transaction.add(mockDomainObjects[0]);
-        expect(transaction.dirtyObjects.size).toEqual(1);
+        expect(Object.keys(transaction.dirtyObjects).length).toEqual(1);
     });
 
     it('cancel(), clears all dirtyObjects', (done) => {
         const mockDomainObjects = createMockDomainObjects(3);
         mockDomainObjects.forEach(transaction.add.bind(transaction));
 
-        expect(transaction.dirtyObjects.size).toEqual(3);
+        expect(Object.keys(transaction.dirtyObjects).length).toEqual(3);
 
         transaction.cancel()
             .then(success => {
-                expect(transaction.dirtyObjects.size).toEqual(0);
+                expect(Object.keys(transaction.dirtyObjects).length).toEqual(0);
             }).finally(done);
     });
 
@@ -59,12 +59,12 @@ describe("Transaction Class", () => {
         const mockDomainObjects = createMockDomainObjects(3);
         mockDomainObjects.forEach(transaction.add.bind(transaction));
 
-        expect(transaction.dirtyObjects.size).toEqual(3);
+        expect(Object.keys(transaction.dirtyObjects).length).toEqual(3);
         spyOn(objectAPI, 'save').and.callThrough();
 
         transaction.commit()
             .then(success => {
-                expect(transaction.dirtyObjects.size).toEqual(0);
+                expect(Object.keys(transaction.dirtyObjects).length).toEqual(0);
                 expect(objectAPI.save.calls.count()).toEqual(3);
             }).finally(done);
     });
@@ -73,7 +73,7 @@ describe("Transaction Class", () => {
         const mockDomainObjects = createMockDomainObjects();
         transaction.add(mockDomainObjects[0]);
 
-        expect(transaction.dirtyObjects.size).toEqual(1);
+        expect(Object.keys(transaction.dirtyObjects).length).toEqual(1);
         const dirtyObject = transaction.getDirtyObject(mockDomainObjects[0].identifier);
 
         expect(dirtyObject).toEqual(mockDomainObjects[0]);
@@ -82,7 +82,7 @@ describe("Transaction Class", () => {
     it('getDirtyObject(), returns empty dirtyObject for no active transaction', () => {
         const mockDomainObjects = createMockDomainObjects();
 
-        expect(transaction.dirtyObjects.size).toEqual(0);
+        expect(Object.keys(transaction.dirtyObjects).length).toEqual(0);
         const dirtyObject = transaction.getDirtyObject(mockDomainObjects[0].identifier);
 
         expect(dirtyObject).toEqual(undefined);
