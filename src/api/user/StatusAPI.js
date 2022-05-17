@@ -37,7 +37,7 @@ export default class StatusAPI extends EventEmitter {
         this.#openmct.once('destroy', () => {
             const provider = this.#userAPI.getProvider();
 
-            if (typeof provider.off === 'function') {
+            if (typeof provider?.off === 'function') {
                 provider.off('statusChange', this.onProviderStatusChange);
                 provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
             }

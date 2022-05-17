@@ -57,8 +57,6 @@ class UserAPI extends EventEmitter {
     }
 
     getProvider() {
-        this.noProviderCheck();
-
         return this._provider;
     }
 
