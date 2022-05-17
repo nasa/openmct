@@ -27,7 +27,7 @@
     :href="url"
 >
     <div class="c-condition-widget__label">
-        {{ internalDomainObject.conditionalLabel || internalDomainObject.label }}
+        {{ label }}
     </div>
 </component>
 </template>
@@ -39,28 +39,112 @@ export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
         return {
-            internalDomainObject: this.domainObject
+            conditionalLabel: '',
+            conditionSetIdentifier: null,
+            domainObjectLabel: '',
+            url: null,
+            urlDefined: false,
+            useConditionSetOutputAsLabel: false
         };
     },
     computed: {
-        urlDefined() {
-            return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
-        },
-        url() {
-            return this.urlDefined ? sanitizeUrl(this.internalDomainObject.url) : null;
+        label() {
+            return this.useConditionSetOutputAsLabel
+                ? this.conditionalLabel
+                : this.domainObjectLabel
+            ;
+        }
+    },
+    watch: {
+        conditionSetIdentifier: {
+            handler(newValue, oldValue) {
+                if (!oldValue || !newValue || !this.openmct.objects.areIdsEqual(newValue, oldValue)) {
+                    return;
+                }
+
+                this.listenToConditionSetChanges();
+            },
+            deep: true
         }
     },
     mounted() {
-        this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
+        this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+
+        if (this.domainObject) {
+            this.updateDomainObject(this.domainObject);
+            this.listenToConditionSetChanges();
+        }
     },
     beforeDestroy() {
+        this.conditionSetIdentifier = null;
+
         if (this.unlisten) {
             this.unlisten();
         }
+
+        this.stopListeningToConditionSetChanges();
     },
     methods: {
-        updateInternalDomainObject(domainObject) {
-            this.internalDomainObject = domainObject;
+        async listenToConditionSetChanges() {
+            if (!this.conditionSetIdentifier) {
+                return;
+            }
+
+            const conditionSetDomainObject = await this.openmct.objects.get(this.conditionSetIdentifier);
+            this.stopListeningToConditionSetChanges();
+
+            if (!conditionSetDomainObject) {
+                this.openmct.notifications.alert('Unable to find condition set');
+            }
+
+            this.telemetryCollection = this.openmct.telemetry.requestCollection(conditionSetDomainObject, {
+                size: 1,
+                strategy: 'latest'
+            });
+
+            this.telemetryCollection.on('add', this.updateConditionLabel, this);
+            this.telemetryCollection.load();
+        },
+        stopListeningToConditionSetChanges() {
+            if (this.telemetryCollection) {
+                this.telemetryCollection.off('add', this.updateConditionLabel, this);
+                this.telemetryCollection.destroy();
+                this.telemetryCollection = null;
+            }
+        },
+        updateConditionLabel([latestDatum]) {
+            if (!this.conditionSetIdentifier) {
+                this.stopListeningToConditionSetChanges();
+
+                return;
+            }
+
+            this.conditionalLabel = latestDatum.output || '';
+        },
+        updateDomainObject(domainObject) {
+            if (this.domainObjectLabel !== domainObject.label) {
+                this.domainObjectLabel = domainObject.label;
+            }
+
+            const urlDefined = domainObject.url && domainObject.url.length > 0;
+            if (this.urlDefined !== urlDefined) {
+                this.urlDefined = urlDefined;
+            }
+
+            const url = this.urlDefined ? sanitizeUrl(domainObject.url) : null;
+            if (this.url !== url) {
+                this.url = url;
+            }
+
+            const conditionSetIdentifier = domainObject.configuration.objectStyles.conditionSetIdentifier;
+            if (this.conditionSetIdentifier !== conditionSetIdentifier) {
+                this.conditionSetIdentifier = conditionSetIdentifier;
+            }
+
+            const useConditionSetOutputAsLabel = this.conditionSetIdentifier && domainObject.configuration.useConditionSetOutputAsLabel;
+            if (this.useConditionSetOutputAsLabel !== useConditionSetOutputAsLabel) {
+                this.useConditionSetOutputAsLabel = useConditionSetOutputAsLabel;
+            }
         }
     }
 };

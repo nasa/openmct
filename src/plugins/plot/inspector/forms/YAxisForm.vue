@@ -14,9 +14,22 @@
                 @change="updateForm('label')"
             ></div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2>Y Axis Scaling</h2>
+        <li class="grid-row">
+            <div
+                class="grid-cell label"
+                title="Enable log mode."
+            >
+                Log mode
+            </div>
+            <div class="grid-cell value">
+                <!-- eslint-disable-next-line vue/html-self-closing -->
+                <input
+                    v-model="logMode"
+                    type="checkbox"
+                    @change="updateForm('logMode')"
+                />
+            </div>
+        </li>
         <li class="grid-row">
             <div
                 class="grid-cell label"
@@ -52,10 +65,10 @@
         class="l-inspector-part"
     >
         <div
-            v-show="!autoscale && validation.range"
+            v-show="!autoscale && validationErrors.range"
             class="grid-span-all form-error"
         >
-            {{ validation.range }}
+            {{ validationErrors.range }}
         </div>
         <li class="grid-row force-border">
             <div
@@ -88,7 +101,7 @@
 </template>
 
 <script>
-import { objectPath, validate, coerce } from "./formUtil";
+import { objectPath } from "./formUtil";
 import _ from "lodash";
 
 export default {
@@ -105,10 +118,11 @@ export default {
         return {
             label: '',
             autoscale: '',
+            logMode: false,
             autoscalePadding: '',
             rangeMin: '',
             rangeMax: '',
-            validation: {}
+            validationErrors: {}
         };
     },
     mounted() {
@@ -117,38 +131,35 @@ export default {
     },
     methods: {
         initialize: function () {
-            this.fields = [
-                {
-                    modelProp: 'label',
+            this.fields = {
+                label: {
                     objectPath: 'configuration.yAxis.label'
                 },
-                {
-                    modelProp: 'autoscale',
+                autoscale: {
                     coerce: Boolean,
                     objectPath: 'configuration.yAxis.autoscale'
                 },
-                {
-                    modelProp: 'autoscalePadding',
+                autoscalePadding: {
                     coerce: Number,
                     objectPath: 'configuration.yAxis.autoscalePadding'
                 },
-                {
-                    modelProp: 'range',
+                logMode: {
+                    coerce: Boolean,
+                    objectPath: 'configuration.yAxis.logMode'
+                },
+                range: {
                     objectPath: 'configuration.yAxis.range',
                     coerce: function coerceRange(range) {
-                        if (!range) {
-                            return {
-                                min: 0,
-                                max: 0
-                            };
-                        }
+                        const newRange = {
+                            min: -1,
+                            max: 1
+                        };
 
-                        const newRange = {};
-                        if (typeof range.min !== 'undefined' && range.min !== null) {
+                        if (range && typeof range.min !== 'undefined' && range.min !== null) {
                             newRange.min = Number(range.min);
                         }
 
-                        if (typeof range.max !== 'undefined' && range.max !== null) {
+                        if (range && typeof range.max !== 'undefined' && range.max !== null) {
                             newRange.max = Number(range.max);
                         }
 
@@ -178,28 +189,18 @@ export default {
                         if (Number(range.min) > Number(range.max)) {
                             return 'Minimum must be less than Maximum.';
                         }
-
-                        if (model.get('autoscale')) {
-                            return false;
-                        }
-
-                        return true;
                     }
                 }
-            ];
+            };
         },
         initFormValues() {
             this.label = this.yAxis.get('label');
             this.autoscale = this.yAxis.get('autoscale');
+            this.logMode = this.yAxis.get('logMode');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
-            const range = this.yAxis.get('range');
-            if (!range) {
-                this.rangeMin = undefined;
-                this.rangeMax = undefined;
-            } else {
-                this.rangeMin = range.min;
-                this.rangeMax = range.max;
-            }
+            const range = this.yAxis.get('range') ?? this.yAxis.get('displayRange');
+            this.rangeMin = range?.min;
+            this.rangeMax = range?.max;
         },
         updateForm(formKey) {
             let newVal;
@@ -212,26 +213,27 @@ export default {
                 newVal = this[formKey];
             }
 
-            const oldVal = this.yAxis.get(formKey);
-            const formField = this.fields.find((field) => field.modelProp === formKey);
+            let oldVal = this.yAxis.get(formKey);
+            const formField = this.fields[formKey];
 
-            const path = objectPath(formField.objectPath);
-            const validationResult = validate(newVal, this.yAxis, formField.validate);
-            if (validationResult === true) {
-                delete this.validation[formKey];
-            } else {
-                this.validation[formKey] = validationResult;
-
+            const validationError = formField.validate?.(newVal, this.yAxis);
+            this.validationErrors[formKey] = validationError;
+            if (validationError) {
                 return;
             }
 
-            if (!_.isEqual(coerce(newVal, formField.coerce), coerce(oldVal, formField.coerce))) {
-                this.yAxis.set(formKey, coerce(newVal, formField.coerce));
+            newVal = formField.coerce?.(newVal) ?? newVal;
+            oldVal = formField.coerce?.(oldVal) ?? oldVal;
+
+            const path = objectPath(formField.objectPath);
+            if (!_.isEqual(newVal, oldVal)) {
+                // TODO: Why do we mutate yAxis twice, once directly, once via objects.mutate? Or are they different objects?
+                this.yAxis.set(formKey, newVal);
                 if (path) {
                     this.openmct.objects.mutate(
                         this.domainObject,
                         path(this.domainObject, this.yAxis),
-                        coerce(newVal, formField.coerce)
+                        newVal
                     );
                 }
             }

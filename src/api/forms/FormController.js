@@ -1,5 +1,6 @@
 import AutoCompleteField from './components/controls/AutoCompleteField.vue';
 import ClockDisplayFormatField from './components/controls/ClockDisplayFormatField.vue';
+import CheckBoxField from './components/controls/CheckBoxField.vue';
 import Datetime from './components/controls/Datetime.vue';
 import FileInput from './components/controls/FileInput.vue';
 import Locator from './components/controls/Locator.vue';
@@ -7,11 +8,13 @@ import NumberField from './components/controls/NumberField.vue';
 import SelectField from './components/controls/SelectField.vue';
 import TextAreaField from './components/controls/TextAreaField.vue';
 import TextField from './components/controls/TextField.vue';
+import ToggleSwitchField from './components/controls/ToggleSwitchField.vue';
 
 import Vue from 'vue';
 
 export const DEFAULT_CONTROLS_MAP = {
     'autocomplete': AutoCompleteField,
+    'checkbox': CheckBoxField,
     'composite': ClockDisplayFormatField,
     'datetime': Datetime,
     'file-input': FileInput,
@@ -19,7 +22,8 @@ export const DEFAULT_CONTROLS_MAP = {
     'numberfield': NumberField,
     'select': SelectField,
     'textarea': TextAreaField,
-    'textfield': TextField
+    'textfield': TextField,
+    'toggleSwitch': ToggleSwitchField
 };
 
 export default class FormControl {
@@ -65,10 +69,11 @@ export default class FormControl {
      */
     _getControlViewProvider(control) {
         const self = this;
+        let rowComponent;
 
         return {
             show(element, model, onChange) {
-                const rowComponent = new Vue({
+                rowComponent = new Vue({
                     el: element,
                     components: {
                         FormControlComponent: DEFAULT_CONTROLS_MAP[control]
@@ -86,8 +91,10 @@ export default class FormControl {
                 });
 
                 return rowComponent;
+            },
+            destroy() {
+                rowComponent.$destroy();
             }
         };
     }
 }
-

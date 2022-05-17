@@ -389,7 +389,7 @@ describe("the plugin", function () {
                 expect(xAxisElement.length).toBe(1);
 
                 let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(5);
+                expect(ticks.length).toBe(9);
 
                 done();
             });
@@ -571,6 +571,34 @@ describe("the plugin", function () {
                             range: 2
                         }
                     }]
+                },
+                configuration: {
+                    objectStyles: {
+                        staticStyle: {
+                            style: {
+                                backgroundColor: 'rgb(0, 200, 0)',
+                                color: '',
+                                border: ''
+                            }
+                        },
+                        conditionSetIdentifier: {
+                            namespace: '',
+                            key: 'testConditionSetId'
+                        },
+                        selectedConditionId: 'conditionId1',
+                        defaultConditionId: 'conditionId1',
+                        styles: [
+                            {
+                                conditionId: 'conditionId1',
+                                style: {
+                                    backgroundColor: 'rgb(0, 155, 0)',
+                                    color: '',
+                                    output: '',
+                                    border: ''
+                                }
+                            }
+                        ]
+                    }
                 }
             };
 
@@ -666,7 +694,7 @@ describe("the plugin", function () {
 
             Vue.nextTick(() => {
                 let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(5);
+                expect(ticks.length).toBe(9);
 
                 done();
             });
@@ -811,6 +839,20 @@ describe("the plugin", function () {
                     min: 10,
                     max: 20
                 });
+                done();
+            });
+        });
+
+        it("shows styles for telemetry objects if available", (done) => {
+            Vue.nextTick(() => {
+                let conditionalStylesContainer = element.querySelectorAll(".c-plot--stacked-container .js-style-receiver");
+                let hasStyles = 0;
+                conditionalStylesContainer.forEach(el => {
+                    if (el.style.backgroundColor !== '') {
+                        hasStyles++;
+                    }
+                });
+                expect(hasStyles).toBe(1);
                 done();
             });
         });
@@ -1044,7 +1086,9 @@ describe("the plugin", function () {
                 expandControl.dispatchEvent(clickEvent);
 
                 const yAxisProperties = editOptionsEl.querySelectorAll("div.grid-properties:first-of-type .l-inspector-part");
-                expect(yAxisProperties.length).toEqual(3);
+
+                // TODO better test
+                expect(yAxisProperties.length).toEqual(2);
             });
 
             it('renders color palette options', () => {

@@ -24,7 +24,8 @@
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../fixtures.js');
+const { expect } = require('@playwright/test');
 const path = require('path');
 
 // https://github.com/nasa/openmct/issues/4323#issuecomment-1067282651
