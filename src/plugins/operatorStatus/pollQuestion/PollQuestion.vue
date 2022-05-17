@@ -113,7 +113,13 @@ export default {
             this.indicator.text(pollQuestion.question);
         },
         async updatePollQuestion() {
-            await this.openmct.user.status.setPollQuestion(this.newPollQuestion);
+            const result = await this.openmct.user.status.setPollQuestion(this.newPollQuestion);
+            if (result === true) {
+                this.openmct.notifications.info("Successfully set new poll question");
+            } else {
+                this.openmct.notifications.error("Unable to set new poll question.");
+            }
+
             this.newPollQuestion = undefined;
         },
         async fetchStatusSummary() {

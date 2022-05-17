@@ -121,6 +121,8 @@ export default class ExampleUserProvider extends EventEmitter {
             role,
             status
         });
+
+        return true;
     }
 
     getPollQuestion() {
@@ -136,6 +138,8 @@ export default class ExampleUserProvider extends EventEmitter {
             timestamp: Date.now()
         };
         this.emit("pollQuestionChange", this.pollQuestion);
+
+        return true;
     }
 
     getPossibleStatuses() {

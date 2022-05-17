@@ -134,9 +134,14 @@ export default {
             if (this.selectedStatus !== undefined) {
                 const statusObject = this.findStatusByKey(this.selectedStatus);
 
-                await this.openmct.user.status.setStatusForRole(this.role, statusObject);
-            }
+                const result = await this.openmct.user.status.setStatusForRole(this.role, statusObject);
 
+                if (result === true) {
+                    this.openmct.notifications.info("Successfully set operator status");
+                } else {
+                    this.openmct.notifications.error("Unable to set operator status");
+                }
+            }
         },
         noop() {}
     }
