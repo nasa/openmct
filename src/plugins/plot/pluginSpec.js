@@ -389,7 +389,7 @@ describe("the plugin", function () {
                 expect(xAxisElement.length).toBe(1);
 
                 let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(5);
+                expect(ticks.length).toBe(9);
 
                 done();
             });
@@ -694,7 +694,7 @@ describe("the plugin", function () {
 
             Vue.nextTick(() => {
                 let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(5);
+                expect(ticks.length).toBe(9);
 
                 done();
             });
@@ -1086,7 +1086,9 @@ describe("the plugin", function () {
                 expandControl.dispatchEvent(clickEvent);
 
                 const yAxisProperties = editOptionsEl.querySelectorAll("div.grid-properties:first-of-type .l-inspector-part");
-                expect(yAxisProperties.length).toEqual(3);
+
+                // TODO better test
+                expect(yAxisProperties.length).toEqual(2);
             });
 
             it('renders color palette options', () => {

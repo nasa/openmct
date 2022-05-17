@@ -24,7 +24,7 @@ define([
     './actions/ActionsAPI',
     './composition/CompositionAPI',
     './Editor',
-    './faultmanagement/FaultManagementAPI',
+    './faultmanagement/FaultmanagementAPI',
     './forms/FormsAPI',
     './indicators/IndicatorAPI',
     './menu/MenuAPI',
