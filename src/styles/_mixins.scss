@@ -538,8 +538,8 @@
 
     &[class*="--major"],
     &[class*='is-active']{
-        background: $colorBtnMajorBg;
-        color: $colorBtnMajorFg;
+        background: $colorBtnMajorBg !important;
+        color: $colorBtnMajorFg !important;
     }
 
     &[class*='--caution'] {

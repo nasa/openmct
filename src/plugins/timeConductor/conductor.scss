@@ -414,6 +414,20 @@
         &__time-value {
             color: $colorTimeFixedFg;
         }
+
+        [class*='c-button'] {
+            background: $colorTimeFixedBtnBg;
+            color: $colorTimeFixedBtnFg;
+
+            [class*='label'] {
+                color: $colorTimeRealtimeFg;
+            }
+
+            //&[class*='major'] {
+            //    background: $colorTimeFixedBtnBgMajor;
+            //    color: $colorTimeFixedBtnFgMajor;
+            //}
+        }
     }
 }
 
@@ -435,6 +449,20 @@
         &__time-value {
             color: $colorTimeRealtimeFg;
         }
+
+        [class*='c-button'] {
+            background: $colorTimeRealtimeBtnBg;
+            color: $colorTimeRealtimeBtnFg;
+
+            [class*='label'] {
+                color: $colorTimeRealtimeFg;
+            }
+
+            //&[class*='major'] {
+            //    background: $colorTimeRealtimeBtnBgMajor;
+            //    color: $colorTimeRealtimeBtnFgMajor;
+            //}
+        }
     }
 }
 
@@ -454,6 +482,10 @@
     left: 8px;
     bottom: 24px;
     z-index: 99;
+
+    > * + * {
+        margin-top: $interiorMarginLg;
+    }
 
     &[class*='--bottom'] {
         bottom: auto;
