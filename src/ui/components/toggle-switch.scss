@@ -75,5 +75,5 @@
 }
 
 .c-toggle-switch--mini {
-    @include toggleSwitch($d: 9px, $m: 1px);
+    @include toggleSwitch($d: 9px, $m: 0px);
 }
