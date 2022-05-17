@@ -1,7 +1,7 @@
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
 describe("The Object API Search Function", () => {
-    fdescribe("The infrastructure", () => {
+    describe("The infrastructure", () => {
         const MOCK_PROVIDER_KEY = 'mockProvider';
         const ANOTHER_MOCK_PROVIDER_KEY = 'anotherMockProvider';
         const MOCK_PROVIDER_SEARCH_DELAY = 15000;
