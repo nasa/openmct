@@ -139,12 +139,20 @@ $colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
 $colorKeySubtle: pushBack($colorKey, 10%);
 
 // Time Colors
+$colorTimeFixed: #59554C;
+$colorTimeFixedBg: $colorTimeFixed;
+$colorTimeFixedFg: #eee;
+$colorTimeFixedFgSubtle: #B2AA98;
+$colorTimeFixedHov: pullForward($colorTimeFixed, 10%);
+$colorTimeFixedSubtle: pushBack($colorTimeFixed, 20%);
+
 $colorTimeRealtime: #445890;
 $colorTimeRealtimeBg: $colorTimeRealtime;
 $colorTimeRealtimeFg: #eee;
 $colorTimeRealtimeFgSubtle: #88B0FF;
 $colorTimeRealtimeHov: pullForward($colorTimeRealtime, 10%);
 $colorTimeRealtimeSubtle: pushBack($colorTimeRealtime, 20%);
+
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov
 $timeConductorAxisHoverFilter: brightness(1.2);

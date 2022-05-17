@@ -307,7 +307,6 @@
 
 .pr-time-label {
     font-size: 0.9em;
-    opacity: 0.6;
     text-transform: uppercase;
 
     &:before {
@@ -329,6 +328,10 @@
         width: 42px;
     }
 
+    &--date {
+        min-width: 120px;
+    }
+
     &--buttons {
         > * + * {
             margin-left: $interiorMargin;
@@ -337,11 +340,10 @@
 
     &__start-end-sep {
         height: 100%;
-        width: 2em;
+    }
 
-        svg {
-            fill: rgba($colorBodyFg, 0.4);
-        }
+    &--input-and-button {
+        @include wrappedInput();
     }
 }
 
@@ -392,18 +394,39 @@
         // Holds realtime-mode + and - symbols
         font-size: 0.7em;
     }
+}
 
+.is-fixed-mode {
+    &.c-compact-tc,
+    .c-tc-input-popup {
+        background: $colorTimeFixedBg;
+        color: $colorTimeFixedFgSubtle;
 
-    .is-fixed-mode &,
-    &.is-fixed-mode.is-expanded {
-        background: pullForward($colorBodyBg, 10%); // TODO: convert to theme constant
+        em,
+        .pr-time-label:before {
+            color: $colorTimeFixedFg;
+        }
+
+        &__bounds-value {
+            color: $colorTimeFixedFg;
+        }
+
+        &__time-value {
+            color: $colorTimeFixedFg;
+        }
     }
+}
 
-    .is-realtime-mode &,
-    &.is-realtime-mode {
+.is-realtime-mode  {
+    &.c-compact-tc,
+    .c-tc-input-popup {
         background: rgba($colorTimeRealtimeBg, 1);
         color: $colorTimeRealtimeFgSubtle;
 
+        em,
+        .pr-time-label:before {
+            color: $colorTimeRealtimeFg;
+        }
 
         &__bounds-value {
             color: $colorTimeRealtimeFg;
@@ -419,5 +442,44 @@
     &.l-shell__time-conductor {
         // Main view
         min-height: 24px;
+    }
+}
+
+/*********************************************** INPUTS POPUP DIALOG */
+.c-tc-input-popup {
+    border-radius: $controlCr;
+    box-shadow: $shdwMenu;
+    padding: $interiorMarginLg;
+    position: absolute;
+    left: 8px;
+    bottom: 24px;
+    z-index: 99;
+
+    &[class*='--bottom'] {
+        bottom: auto;
+        top: 24px;
+    }
+
+    &__options {
+        display: flex;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
+
+    &__input-grid {
+        display: grid;
+        grid-column-gap: 3px;
+        grid-row-gap: $interiorMargin;
+        align-items: start;
+
+        .is-fixed-mode & {
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+        }
+
+        .is-realtime-mode & {
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+        }
     }
 }

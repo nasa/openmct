@@ -29,7 +29,7 @@
     >
         <time-popup-fixed
             v-if="showTCInputStart"
-            class="pr-tc-input-menu--start"
+            class="c-tc-input-popup--start"
             :bottom="keyString !== undefined"
             :type="'start'"
             :offset="formattedBounds.start"
