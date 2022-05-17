@@ -8,12 +8,11 @@
         :key="name(fault)"
         class="c-inspect-properties__section"
     >
-        <DetailText 
+        <DetailText class="c-fault-mgmt__list-curVal"
             :detail="{ name: 'Occured', value: triggerTime(fault)}" />
         <DetailText 
             :detail="{ name: 'Criticality', value: severity(fault)}" />
-        
-
+    
     </ul>
     <div class="c-inspect-properties__header">
         Source
@@ -25,10 +24,11 @@
     >
         <DetailText :detail="{ name: 'Name', value: name(fault) }" />
         
-        <div class="c-fault-mgmt__inspector__values c-inspect-properties__row">
-            <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
+        <div class="c-inspect-properties__row">
             <DetailText 
-                :detail="{ name: 'Live value', value: currentValue(fault)}" />
+                class="c-fault-mgmt__inspector__values"
+                :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
+            <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
         </div>
 
     </ul>

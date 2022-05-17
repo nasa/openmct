@@ -1,5 +1,5 @@
 <template>
-<div class="c-fault-mgmt__list c-fault-mgmt__list__acked data-selectable">
+<div class="c-fault-mgmt__list c-fault-mgmt__list__selected c-fault-mgmt__list__unacked data-selectable">
     <div class="c-fault-mgmt__checkbox">
         <input
             type="checkbox"
@@ -19,7 +19,7 @@
                 class="c-fault-mgmt__list-trigVal icon-arrow-up"
                 :class="[{'is-limit--upr is-limit--yellow' : true}]"
             >{{ triggerValue }}</div>
-            <div class="c-fault-mgmt__list-curVal">{{ currentValue }}</div>
+            <div class="c-fault-mgmt__list-curVal c-fault-mgmt__list-curVal-alert">{{ currentValue }}</div>
             <div class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</div>
         </div>
 

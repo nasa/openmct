@@ -2,7 +2,6 @@
 .c-fault-mgmt__search-row{
     display: flex;
     align-items: center;
-    // flex-wrap: wrap;
     > * + * {
        margin-left: 10px;
        float: right;
@@ -15,7 +14,6 @@
 
 // TOOLBAR
 .c-fault-mgmt__toolbar{
-    // background: rgb(229, 157, 157) !important;
     display: flex; 
     justify-content: center;
     > * {
@@ -81,17 +79,18 @@
         border-radius: $controlCr;
         padding: 2px;
         width: 80px;
-        // flex: 0 0 auto;
         margin-right: $interiorMarginLg;
 
     }
-    &-trigVal{
-        background: rgb(80, 80, 80);
+    &-trigVal {
+        background: $colorIndicatorDisabled;
     }
 
-    &-curVal{
-        background: $colorWarningHi;
-        // width: 200px;
+    &-curVal {
+        background: $colorIndicatorDisabled;
+        &-alert{
+            background: $colorWarningHi;
+        }
 
 
     }
@@ -133,6 +132,10 @@
         // disabled blinking icons
     }
 
+    &__selected{
+        background: $colorSelectedBg;
+    }
+
 
 }
 
@@ -141,7 +144,7 @@
     display: flex;
     background: none;
     flex-wrap: wrap;
-    margin-bottom: 0px;
+    margin-bottom: none;
 
     &-tripVal, &-liveVal, &-trigTime{
         background: none;
