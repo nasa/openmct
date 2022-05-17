@@ -81,7 +81,7 @@ $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: $colorBodyFg;
 $colorAHov: $colorKey;
 $filterHov: hue-rotate(-10deg) brightness(0.8) contrast(2); // Tree, location items
-$filterHovSubtle: hue-rotate(-8deg) brightness(0.5) contrast(1.2));
+$filterHovSubtle: hue-rotate(-8deg) brightness(0.5) contrast(1.2);
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
