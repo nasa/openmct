@@ -106,20 +106,6 @@
                             @click="zoom('in', 0.2)"
                         >
                         </button>
-                        <button
-                            class="c-button icon-crosshair"
-                            :class="{ 'is-active': cursorGuide }"
-                            title="Toggle cursor guides"
-                            @click="toggleCursorGuide"
-                        >
-                        </button>
-                        <button
-                            class="c-button"
-                            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
-                            title="Toggle grid lines"
-                            @click="toggleGridLines"
-                        >
-                        </button>
                     </div>
                     <div
                         v-if="plotHistory.length && !options.compact"
@@ -165,6 +151,22 @@
                             class="c-button icon-clock"
                             title="Synchronize Time Conductor"
                             @click="showSynchronizeDialog()"
+                        >
+                        </button>
+                    </div>
+                    <div class="c-button-set c-button-set--strip-h">
+                        <button
+                            class="c-button icon-crosshair"
+                            :class="{ 'is-active': cursorGuide }"
+                            title="Toggle cursor guides"
+                            @click="toggleCursorGuide"
+                        >
+                        </button>
+                        <button
+                            class="c-button"
+                            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
+                            title="Toggle grid lines"
+                            @click="toggleGridLines"
                         >
                         </button>
                     </div>
