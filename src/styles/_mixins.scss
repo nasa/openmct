@@ -478,19 +478,27 @@
     }
 }
 
-@mixin cButton() {
-    @include cControl();
-    @include themedButton();
+@mixin cButtonLayout() {
     $pad: $interiorMargin;
-    border-radius: $controlCr;
-    color: $colorBtnFg;
-    cursor: pointer;
     padding: $pad floor($pad * 1.25);
 
     &:after,
     > * + * {
         margin-left: $interiorMarginSm;
     }
+
+    &[class*='--compact'] {
+        padding: floor($pad / 1.5) $pad;
+    }
+}
+
+@mixin cButton() {
+    @include cControl();
+    @include themedButton();
+    @include cButtonLayout();
+    border-radius: $controlCr;
+    color: $colorBtnFg;
+    cursor: pointer;
 
     @include hover() {
         filter: $filterHov;
@@ -505,10 +513,6 @@
     &[class*='--caution'] {
         background: $colorBtnCautionBg !important;
         color: $colorBtnCautionFg !important;
-    }
-
-    &[class*='--compact'] {
-        padding: floor($pad / 1.5) $pad;
     }
 }
 

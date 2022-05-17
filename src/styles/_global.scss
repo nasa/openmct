@@ -63,6 +63,11 @@ div {
     }
 }
 
+.u-flex-spreader {
+    // Pushes against elements in a flex layout to spread them out
+    flex: 1 1 auto;
+}
+
 /******************************************************** BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {
