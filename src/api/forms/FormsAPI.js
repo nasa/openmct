@@ -23,10 +23,13 @@
 import FormController from './FormController';
 import FormProperties from './components/FormProperties.vue';
 
+import EventEmitter from 'EventEmitter';
 import Vue from 'vue';
 
-export default class FormsAPI {
+export default class FormsAPI extends EventEmitter {
     constructor(openmct) {
+        super();
+
         this.openmct = openmct;
         this.formController = new FormController(openmct);
     }
@@ -107,6 +110,8 @@ export default class FormsAPI {
         let onDismiss;
         let onSave;
 
+        const self = this;
+
         const promise = new Promise((resolve, reject) => {
             onSave = onFormSave(resolve);
             onDismiss = onFormDismiss(reject);
@@ -115,7 +120,7 @@ export default class FormsAPI {
         const vm = new Vue({
             components: { FormProperties },
             provide: {
-                openmct: this.openmct
+                openmct: self.openmct
             },
             data() {
                 return {
@@ -132,7 +137,7 @@ export default class FormsAPI {
         if (element) {
             element.append(formElement);
         } else {
-            overlay = this.openmct.overlays.overlay({
+            overlay = self.openmct.overlays.overlay({
                 element: vm.$el,
                 size: 'small',
                 onDestroy: () => vm.$destroy()
@@ -140,6 +145,7 @@ export default class FormsAPI {
         }
 
         function onFormPropertyChange(data) {
+            self.emit('onFormPropertyChange', data);
             if (onChange) {
                 onChange(data);
             }
