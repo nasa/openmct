@@ -170,10 +170,11 @@ export async function getNotebookEntries(openmct, domainObject, selectedSection,
             console.error(`Error loading notebook`, error);
         }
 
-        return {
-            ...entry,
-            annotation: annotation
-        };
+        if (annotation && entry) {
+            entry.annotation = annotation;
+        }
+
+        return entry;
     }));
 
     return specificEntriesWithAnnotations;

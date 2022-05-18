@@ -22,7 +22,7 @@
 
 <template>
 <div
-    class="c-notebook__entry c-ne has-local-controls"
+    class="c-notebook__entry c-ne has-local-controls has-tag-applier"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
@@ -63,6 +63,11 @@
                 >
                 </div>
             </template>
+            <TagEditor
+                :domain-object="domainObject"
+                :annotation="annotation"
+                :entry="entry"
+            />
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed
                     v-for="embed in entry.embeds"
@@ -111,6 +116,7 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
+import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
@@ -120,7 +126,8 @@ import Moment from 'moment';
 export default {
     components: {
         NotebookEmbed,
-        TextHighlight
+        TextHighlight,
+        TagEditor
     },
     inject: ['openmct', 'snapshotContainer'],
     props: {
@@ -154,12 +161,22 @@ export default {
                 return {};
             }
         },
+        annotation: {
+            type: Object,
+            default() {
+                return null;
+            }
+        },
         readOnly: {
             type: Boolean,
             default() {
                 return true;
             }
         }
+    },
+    data() {
+        return {
+        };
     },
     computed: {
         createdOnDate() {
@@ -187,8 +204,12 @@ export default {
             return text;
         }
     },
+    watch: {
+    },
     mounted() {
         this.dropOnEntry = this.dropOnEntry.bind(this);
+    },
+    destroyed() {
     },
     methods: {
         async addNewEmbed(objectPath) {
