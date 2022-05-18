@@ -205,6 +205,26 @@ test.describe('Example Imagery', () => {
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
 
+    test('Using the zoom features does not pause telemetry', async ({ page }) => {
+        const bgImageLocator = page.locator(backgroundImageSelector);
+        const pausePlayButton = page.locator('.c-button.pause-play');
+        // wait for zoom animation to finish
+        await bgImageLocator.hover();
+
+        // open the time conductor drop down
+        await page.locator('.c-conductor__controls button.c-mode-button').click();
+        // Click local clock
+        await page.locator('.icon-clock >> text=Local Clock').click();
+
+        await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
+        const zoomInBtn = page.locator('.t-btn-zoom-in');
+        await zoomInBtn.click();
+        // wait for zoom animation to finish
+        await bgImageLocator.hover();
+
+        return expect(pausePlayButton).not.toHaveClass(/is-paused/);
+    });
+
     //test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     //test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
     //test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
