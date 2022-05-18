@@ -73,40 +73,119 @@ test.describe('Time counductor operations', () => {
 // Try to change the realtime offsets when in realtime (local clock) mode.
 test.describe('Time conductor input fields real-time mode', () => {
     test('validate input fields in real-time mode', async ({ page }) => {
+        const startOffset = {
+            secs: '23'
+        };
+
+        const endOffset = {
+            secs: '31'
+        };
+
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
-        // Set realtime "local clock" mode offsets
-        const timeInputs = page.locator('input.c-input--datetime');
+        // Switch to real-time mode
+        await setTimeConductorMode(page, false);
 
-        // Click fixed timespan button
-        await page.locator('.c-button__label >> text=Fixed Timespan').click();
-
-        // Click local clock
-        await page.locator('.icon-clock >> text=Local Clock').click();
-
-        // Click time offset button
-        await page.locator('.c-conductor__delta-button >> text=00:30:00').click();
-
-        // Input start time offset
-        await page.fill('.pr-time-controls__secs', '23');
-
-        // Click the check button
-        await page.locator('.icon-check').click();
+        // Set start time offset
+        await setOffset(page, startOffset, true);
 
         // Verify time was updated on time offset button
         await expect(page.locator('.c-conductor__delta-button').first()).toContainText('00:30:23');
 
-        // Click time offset set preceding now button
-        await page.locator('.c-conductor__delta-button >> text=00:00:30').click();
-
-        // Input preceding time offset
-        await page.fill('.pr-time-controls__secs', '31');
-
-        // Click the check buttons
-        await page.locator('.icon-check').click();
+        // Set end time offset
+        await setOffset(page, endOffset, false);
 
         // Verify time was updated on preceding time offset button
         await expect(page.locator('.c-conductor__delta-button').nth(1)).toContainText('00:00:31');
     });
+
+    /**
+     * Verify that start and end offsets are preserved when switching between
+     * fixed timespan and real-time mode.
+     */
+    test('preserve offsets when switching between fixed and real-time mode', async ({ page }) => {
+        const startOffset = {
+            secs: '23'
+        };
+
+        const endOffset = {
+            secs: '00'
+        };
+
+        //Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Switch to real-time mode
+        setTimeConductorMode(page, false);
+
+        // Set start time offset
+        await setOffset(page, startOffset, true);
+
+        // Set end time offset
+        await setOffset(page, endOffset, false);
+
+        // Switch to fixed timespan mode
+        setTimeConductorMode(page, true);
+
+        // Switch back to real-time mode
+        setTimeConductorMode(page, false);
+
+        // Verify updated start time offset persists after mode switch
+        await expect(page.locator('.c-conductor__delta-button').first()).toContainText('00:30:23');
+
+        // Verify updated end time offset persists after mode switch
+        await expect(page.locator('.c-conductor__delta-button').nth(1)).toContainText('00:00:00');
+    });
 });
+
+/**
+ * @typedef {Object} OffsetValues
+ * @property {string | undefined} hours
+ * @property {string | undefined} mins
+ * @property {string | undefined} secs
+ */
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {OffsetValues} offset
+ * @param {boolean} isStartOffset
+ */
+async function setOffset(page, {hours, mins, secs}, isStartOffset = true) {
+    if (isStartOffset) {
+        await page.locator('.c-conductor__delta-button').first().click();
+    } else {
+        await page.locator('.c-conductor__delta-button').nth(1).click();
+    }
+
+    if (hours) {
+        await page.fill('.pr-time-controls__hrs', hours);
+    }
+
+    if (mins) {
+        await page.fill('.pr-time-controls__mins', mins);
+    }
+
+    if (secs) {
+        await page.fill('.pr-time-controls__secs', secs);
+    }
+
+    // Click the check button
+    await page.locator('.icon-check').click();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {boolean} isFixedTimespan
+ */
+async function setTimeConductorMode(page, isFixedTimespan = true) {
+    // Click 'mode' button
+    await page.locator('.c-mode-button').click();
+
+    // Switch time conductor mode
+    if (isFixedTimespan) {
+        await page.locator('.icon-tabular >> text=Fixed Timespan').click();
+    } else {
+        await page.locator('.icon-clock >> text=Local Clock').click();
+    }
+}
