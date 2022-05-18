@@ -54,7 +54,9 @@ const STATUSES = [{
     statusBgColor: "#9900cc",
     statusFgColor: "#fff"
 }];
-
+/**
+ * @implements {StatusUserProvider}
+ */
 export default class ExampleUserProvider extends EventEmitter {
     constructor(openmct, {defaultStatusRole}) {
         super();
@@ -194,3 +196,6 @@ export default class ExampleUserProvider extends EventEmitter {
         );
     }
 }
+/**
+ * @typedef {import('@/api/user/StatusUserProvider').default} StatusUserProvider
+ */

@@ -46,21 +46,189 @@ export default class StatusAPI extends EventEmitter {
         this.#userAPI.on('providerAdded', this.listenToStatusEvents);
     }
 
-    listenToStatusEvents(provider) {
-        if (typeof provider.on === 'function') {
-            provider.on('statusChange', this.onProviderStatusChange);
-            provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
+    /**
+     * Fetch the currently defined operator status poll question. When presented with a status poll question, all operators will reply with their current status.
+     * @returns {Promise<PollQuestion>}
+     */
+    getPollQuestion() {
+        const provider = this.#userAPI.getProvider();
+
+        if (provider.getPollQuestion) {
+            return provider.getPollQuestion();
+        } else {
+            this.#userAPI.error("User provider does not support polling questions");
         }
     }
 
-    onProviderStatusChange(newStatus) {
-        this.emit('statusChange', newStatus);
+    /**
+     * Set a poll question for operators to respond to. When presented with a status poll question, all operators will reply with their current status.
+     * @param {String} questionText - The text of the question
+     * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
+     */
+    async setPollQuestion(questionText) {
+        if (this.canSetPollQuestion()) {
+            const provider = this.#userAPI.getProvider();
+
+            const result = await provider.setPollQuestion(questionText);
+
+            // TODO re-implement clearing all statuses
+
+            try {
+                await this.resetAllStatuses();
+            } catch (error) {
+                console.warn("Poll question set but unable to clear operator statuses.");
+                console.error(error);
+            }
+
+            return result;
+        } else {
+            this.#userAPI.error("User provider does not support setting polling question");
+        }
     }
 
-    onProviderPollQuestionChange(pollQuestion) {
-        this.emit('pollQuestionChange', pollQuestion);
+    /**
+     * Can the currently logged in user set the operator status poll question.
+     * @returns {Promise<Boolean>}
+     */
+    canSetPollQuestion() {
+        const provider = this.#userAPI.getProvider();
+
+        if (provider.canSetPollQuestion) {
+            return provider.canSetPollQuestion();
+        } else {
+            return Promise.resolve(false);
+        }
     }
 
+    /**
+     * @returns {Promise<Array<Status>>} the complete list of possible states that an operator can reply to a poll question with.
+     */
+    getPossibleStatuses() {
+        const provider = this.#userAPI.getProvider();
+
+        if (provider.getPossibleStatuses) {
+            return provider.getPossibleStatuses();
+        } else {
+            this.#userAPI.error("User provider cannot provide statuses");
+        }
+    }
+
+    /**
+     * @param {import("./UserAPI").Role} role The role to fetch the current status for.
+     * @returns {Promise<Status>} the current status of the provided role
+     */
+    getStatusForRole(role) {
+        const provider = this.#userAPI.getProvider();
+
+        if (provider.getStatusForRole) {
+            return provider.getStatusForRole(role);
+        } else {
+            this.#userAPI.error("User provider does not support role status");
+        }
+    }
+
+    /**
+     * @param {import("./UserAPI").Role} role
+     * @returns {Promise<Boolean>} true if the configured UserProvider can provide status for the given role
+     * @see StatusUserProvider
+     */
+    canProvideStatusForRole(role) {
+        const provider = this.#userAPI.getProvider();
+
+        if (provider.canProvideStatusForRole) {
+            return provider.canProvideStatusForRole(role);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param {import("./UserAPI").Role} role The role to set the status for.
+     * @param {Status} status The status to set for the provided role
+     * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
+     */
+    setStatusForRole(role, status) {
+        const provider = this.#userAPI.getProvider();
+
+        if (provider.setStatusForRole) {
+            return provider.setStatusForRole(role, status);
+        } else {
+            this.#userAPI.error("User provider does not support setting role status");
+        }
+    }
+
+    /**
+     * Resets the status of the provided role back to its default status.
+     * @param {import("./UserAPI").Role} role The role to set the status for.
+     * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
+     */
+    async resetStatusForRole(role) {
+        const provider = this.#userAPI.getProvider();
+        const defaultStatus = await this.getDefaultStatus();
+
+        if (provider.setStatusForRole) {
+            return provider.setStatusForRole(role, defaultStatus);
+        } else {
+            this.#userAPI.error("User provider does not support resetting role status");
+        }
+    }
+
+    /**
+     * Resets the status of all operators to their default status
+     * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
+     */
+    async resetAllStatuses() {
+        const allStatusRoles = await this.getAllStatusRoles();
+
+        return Promise.all(allStatusRoles.map(role => this.resetStatusForRole(role)));
+    }
+
+    /**
+     * The default status. This is the status that will be used before the user has selected any status.
+     * @returns {Promise<Status>} the default operator status if no other has been set.
+     */
+    async getDefaultStatus() {
+        const allStatuses = await this.getPossibleStatuses();
+
+        return allStatuses[0];
+    }
+
+    /**
+     * All possible status roles. A status role is a user role that can provide status. In some systems
+     * this may be all user roles, but there may be cases where some users are not are not polled
+     * for status if they do not have a real-time operational role.
+     *
+     * @returns {Promise<Array<import("./UserAPI").Role>>} the default operator status if no other has been set.
+     */
+    getAllStatusRoles() {
+        const provider = this.#userAPI.getProvider();
+
+        if (provider.getAllStatusRoles) {
+            return provider.getAllStatusRoles();
+        } else {
+            this.#userAPI.error("User provider cannot provide all status roles");
+        }
+    }
+
+    /**
+     * The status role of the current user. A user may have multiple roles, but will only have one role
+     * that provides status at any time.
+     * @returns {Promise<import("./UserAPI").Role>} the role for which the current user can provide status.
+     */
+    getStatusRoleForCurrentUser() {
+        const provider = this.#userAPI.getProvider();
+
+        if (provider.getStatusRoleForCurrentUser) {
+            return provider.getStatusRoleForCurrentUser();
+        } else {
+            this.#userAPI.error("User provider cannot provide role status for this user");
+        }
+    }
+
+    /**
+     * @returns {Promise<Boolean>} true if the configured UserProvider can provide status for the currently logged in user, false otherwise.
+     * @see StatusUserProvider
+     */
     async canProvideStatusForCurrentUser() {
         const provider = this.#userAPI.getProvider();
 
@@ -74,127 +242,48 @@ export default class StatusAPI extends EventEmitter {
         }
     }
 
-    canProvideStatusForRole(role) {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.canProvideStatusForRole) {
-            return provider.canProvideStatusForRole(role);
-        } else {
-            return false;
+    /**
+     * Private internal function that cannot be made #private because it needs to be registered as a callback to the user provider
+     * @private
+     */
+    listenToStatusEvents(provider) {
+        if (typeof provider.on === 'function') {
+            provider.on('statusChange', this.onProviderStatusChange);
+            provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
         }
     }
 
-    canSetPollQuestion() {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.canSetPollQuestion) {
-            return provider.canSetPollQuestion();
-        } else {
-            return Promise.resolve(false);
-        }
+    /**
+     * @private
+     */
+    onProviderStatusChange(newStatus) {
+        this.emit('statusChange', newStatus);
     }
 
-    getStatusRoleForCurrentUser() {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.getStatusRoleForCurrentUser) {
-            return provider.getStatusRoleForCurrentUser();
-        } else {
-            this.#userAPI.error("User provider cannot provide role status for this user");
-        }
-    }
-
-    getAllStatusRoles() {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.getAllStatusRoles) {
-            return provider.getAllStatusRoles();
-        } else {
-            this.#userAPI.error("User provider cannot provide all status roles");
-        }
-    }
-
-    getPossibleStatuses() {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.getPossibleStatuses) {
-            return provider.getPossibleStatuses();
-        } else {
-            this.#userAPI.error("User provider cannot provide statuses");
-        }
-    }
-
-    getStatusForRole(role) {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.getStatusForRole) {
-            return provider.getStatusForRole(role);
-        } else {
-            this.#userAPI.error("User provider does not support role status");
-        }
-    }
-
-    setStatusForRole(role, status) {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.setStatusForRole) {
-            return provider.setStatusForRole(role, status);
-        } else {
-            this.#userAPI.error("User provider does not support setting role status");
-        }
-    }
-
-    async resetStatusForRole(role) {
-        const provider = this.#userAPI.getProvider();
-        const defaultStatus = await this.getDefaultStatus();
-
-        if (provider.setStatusForRole) {
-            return provider.setStatusForRole(role, defaultStatus);
-        } else {
-            this.#userAPI.error("User provider does not support resetting role status");
-        }
-    }
-
-    getPollQuestion() {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.getPollQuestion) {
-            return provider.getPollQuestion();
-        } else {
-            this.#userAPI.error("User provider does not support polling questions");
-        }
-    }
-
-    async setPollQuestion(questionText) {
-        if (this.canSetPollQuestion()) {
-            const provider = this.#userAPI.getProvider();
-
-            const result = await provider.setPollQuestion(questionText);
-
-            // TODO re-implement clearing all statuses
-
-            try {
-                await this.clearAllStatuses();
-            } catch (error) {
-                console.warn("Poll question set but unable to clear operator statuses.");
-                console.error(error);
-            }
-
-            return result;
-        } else {
-            this.#userAPI.error("User provider does not support setting polling question");
-        }
-    }
-
-    async getDefaultStatus() {
-        const allStatuses = await this.getPossibleStatuses();
-
-        return allStatuses[0];
-    }
-
-    async clearAllStatuses() {
-        const allStatusRoles = await this.getAllStatusRoles();
-
-        return Promise.all(allStatusRoles.map(role => this.resetStatusForRole(role)));
+    /**
+     * @private
+     */
+    onProviderPollQuestionChange(pollQuestion) {
+        this.emit('pollQuestionChange', pollQuestion);
     }
 }
+
+/**
+ * @typedef {import('./UserAPI').UserProvider} UserProvider
+ */
+/**
+ * @typedef {import('./UserAPI').StatusUserProvider} StatusUserProvider
+ */
+/**
+ * The PollQuestion type
+ * @typedef {Object} PollQuestion
+ * @property {String} question - The question to be presented to users
+ * @property {Number} timestamp - The time that the poll question was set.
+ */
+
+/**
+ * The Status type
+ * @typedef {Object} Status
+ * @property {String} key - A unique identifier for this status
+ * @property {Number} label - A human readable label for this status
+ */

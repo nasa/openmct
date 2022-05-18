@@ -140,3 +140,6 @@ class UserAPI extends EventEmitter {
 }
 
 export default UserAPI;
+/**
+ * @typedef {String} Role
+ */
