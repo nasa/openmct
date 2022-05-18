@@ -18,4 +18,44 @@ describe('The raf utility function', () => {
             expect(throttledCallback).toHaveBeenCalledTimes(1);
         });
     });
+    it('Only invokes callback once per animation frame', () => {
+        const throttledCallback = jasmine.createSpy('throttledCallback');
+        const throttledFunction = raf(throttledCallback);
+
+        for (let i = 0; i < 10; i++) {
+            throttledFunction();
+        }
+
+        return new Promise(resolve => {
+            requestAnimationFrame(resolve);
+        }).then(() => {
+            return new Promise(resolve => {
+                requestAnimationFrame(resolve);
+            });
+        }).then(() => {
+            expect(throttledCallback).toHaveBeenCalledTimes(1);
+        });
+    });
+    it('Invokes callback again if called in subsequent animation frame', () => {
+        const throttledCallback = jasmine.createSpy('throttledCallback');
+        const throttledFunction = raf(throttledCallback);
+
+        for (let i = 0; i < 10; i++) {
+            throttledFunction();
+        }
+
+        return new Promise(resolve => {
+            requestAnimationFrame(resolve);
+        }).then(() => {
+            for (let i = 0; i < 10; i++) {
+                throttledFunction();
+            }
+
+            return new Promise(resolve => {
+                requestAnimationFrame(resolve);
+            });
+        }).then(() => {
+            expect(throttledCallback).toHaveBeenCalledTimes(2);
+        });
+    });
 });
