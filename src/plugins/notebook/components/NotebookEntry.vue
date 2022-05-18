@@ -28,12 +28,16 @@
     @drop.prevent="dropOnEntry"
 >
     <div class="c-ne__time-and-content">
-        <div class="c-ne__time">
-            <template v-if="entry.createdBy">
-                <span class="c-icon icon-person">{{ entry.createdBy }}</span>
-            </template>
-            <span>{{ createdOnDate }}</span>
-            <span>{{ createdOnTime }}</span>
+        <div class="c-ne__time-and-creator">
+            <span class="c-ne__created-date">{{ createdOnDate }}</span>
+            <span class="c-ne__created-time">{{ createdOnTime }}</span>
+
+            <span
+                v-if="entry.createdBy"
+                class="c-ne__creator"
+            >
+                <span class="icon-person"></span> {{ entry.createdBy }}
+            </span>
         </div>
         <div class="c-ne__content">
             <template v-if="readOnly && result">
