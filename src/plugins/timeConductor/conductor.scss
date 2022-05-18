@@ -17,7 +17,7 @@
         }
     }
 
-    &__time-bounds {
+/*    &__time-bounds {
         display: grid;
         grid-column-gap: $interiorMargin;
         grid-row-gap: $interiorMargin;
@@ -44,7 +44,7 @@
         grid-area: tc-end;
         display: flex;
         justify-content: flex-end;
-    }
+    }*/
 
     &__ticks {
         flex: 1 1 auto;
@@ -131,7 +131,7 @@
         }
     }
 
-    body.phone.portrait & {
+ /*   body.phone.portrait & {
         .c-conductor__time-bounds {
             grid-row-gap: $interiorMargin;
             grid-template-rows: auto auto;
@@ -182,21 +182,20 @@
                 justify-content: flex-end;
             }
         }
-    }
+    }*/
 }
 
 .c-conductor-holder--compact {
-    min-height: 22px;
+    //min-height: 22px;
+    flex: 0 1 auto;
+    overflow: hidden;
 
     .c-conductor {
         &__inputs,
         &__time-bounds {
             display: flex;
-
-            .c-toggle-switch {
-                // Used in independent Time Conductor
-                flex: 0 0 auto;
-            }
+            flex: 0 1 auto;
+            overflow: hidden;
         }
 
         &__inputs {
@@ -326,6 +325,8 @@
     border-radius: $controlCr;
     display: flex;
     flex-direction: row;
+    flex: 0 1 auto;
+    overflow: hidden;
     align-items: center;
     padding: 2px $interiorMarginSm;
 
@@ -334,7 +335,7 @@
     }
 
     &__bounds,
-    &__bounds-value {
+    &__bounds__value {
         display: flex;
         align-items: center;
 
@@ -345,7 +346,7 @@
 
     &__bounds {
         cursor: pointer;
-        flex: 1 1 auto;
+        flex: 0 1 auto;
         overflow: hidden;
 
         > * + * {
@@ -353,8 +354,10 @@
         }
     }
 
-    &__bounds-value {
+    &__bounds__value {
+        @include ellipsize();
         color: $colorTimeRealtimeFg;
+        flex: 0 1 auto;
 
         &:before {
             font-size: 0.85em;
@@ -371,6 +374,12 @@
         // Holds realtime-mode + and - symbols
         font-size: 0.7em;
     }
+
+    .c-toggle-switch,
+    .c-clock-symbol {
+        // Used in independent Time Conductor
+        flex: 0 0 auto;
+    }
 }
 
 .is-fixed-mode.is-expanded {
@@ -384,7 +393,7 @@
             color: $colorTimeFixedFg;
         }
 
-        &__bounds-value {
+        &__bounds__valuelue {
             color: $colorTimeFixedFg;
         }
 
@@ -414,7 +423,7 @@
             color: $colorTimeRealtimeFg;
         }
 
-        &__bounds-value {
+        &__bounds__valuelue {
             color: $colorTimeRealtimeFg;
         }
 
@@ -445,6 +454,7 @@
     @include menuOuter();
     padding: $interiorMarginLg;
     position: absolute;
+    width: min-content;
     left: 8px;
     bottom: 24px;
 

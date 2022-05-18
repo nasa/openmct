@@ -31,29 +31,27 @@
 >
     <ConductorModeIcon class="c-conductor__mode-icon" />
 
-    <div class="c-conductor__controls">
-        <ConductorMode
-            class="c-conductor__mode-select"
-            :button-css-class="'c-icon-button'"
-            title="TEMP - MOVE TO POPUP"
-        />
-        <ConductorTimeSystem
-            v-if="false"
-            class="c-conductor__time-system-select"
-            :button-css-class="'c-icon-button'"
-            title="TEMP - MOVE TO POPUP"
-        />
-        <ConductorHistory
-            v-if="false"
-            class="c-conductor__history-select"
-            :button-css-class="'c-icon-button'"
-            :offsets="openmct.time.clockOffsets()"
-            :bounds="bounds"
-            :time-system="timeSystem"
-            :mode="timeMode"
-            title="TEMP - MOVE TO POPUP"
-        />
-    </div>
+    <ConductorMode
+        class="c-conductor__mode-select"
+        :button-css-class="'c-icon-button'"
+        title="TEMP - MOVE TO POPUP"
+    />
+    <ConductorTimeSystem
+        v-if="false"
+        class="c-conductor__time-system-select"
+        :button-css-class="'c-icon-button'"
+        title="TEMP - MOVE TO POPUP"
+    />
+    <ConductorHistory
+        v-if="false"
+        class="c-conductor__history-select"
+        :button-css-class="'c-icon-button'"
+        :offsets="openmct.time.clockOffsets()"
+        :bounds="bounds"
+        :time-system="timeSystem"
+        :mode="timeMode"
+        title="TEMP - MOVE TO POPUP"
+    />
 
     <conductor-inputs-fixed
         v-if="isFixed"

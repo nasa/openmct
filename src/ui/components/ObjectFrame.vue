@@ -59,6 +59,16 @@
                 'has-complex-content': complexContent
             }"
         >
+            <div
+                v-if="supportsIndependentTime"
+                class="c-conductor-holder--compact"
+            >
+                <independent-time-conductor
+                    :domain-object="domainObject"
+                    @stateChanged="updateIndependentTimeState"
+                    @updated="saveTimeOptions"
+                />
+            </div>
             <NotebookMenuSwitcher
                 v-if="notebookEnabled"
                 :domain-object="domainObject"
@@ -103,6 +113,7 @@
 <script>
 import ObjectView from './ObjectView.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
 const SIMPLE_CONTENT_TYPES = [
     'clock',
@@ -112,10 +123,18 @@ const SIMPLE_CONTENT_TYPES = [
     'conditionWidget'
 ];
 
+const SupportedViewTypes = [
+    'plot-stacked',
+    'plot-overlay',
+    'bar-graph.view',
+    'time-strip.view'
+];
+
 export default {
     components: {
         ObjectView,
-        NotebookMenuSwitcher
+        NotebookMenuSwitcher,
+        IndependentTimeConductor
     },
     inject: ['openmct'],
     props: {
@@ -159,6 +178,11 @@ export default {
     computed: {
         statusClass() {
             return (this.status) ? `is-status--${this.status}` : '';
+        },
+        supportsIndependentTime() {
+            // const viewKey = this.getViewKey();
+
+            return true; //this.domainObject && SupportedViewTypes.includes(viewKey);
         }
     },
     mounted() {
@@ -207,6 +231,21 @@ export default {
         },
         setStatus(status) {
             this.status = status;
+        },
+        getViewKey() {
+            let viewKey = this.this.$refs.objectView.viewKey;
+            if (this.objectViewKey) {
+                viewKey = this.objectViewKey;
+            }
+
+            return viewKey;
+        },
+        //Should the domainObject be updated in the Independent Time conductor component itself?
+        updateIndependentTimeState(useIndependentTime) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', useIndependentTime);
+        },
+        saveTimeOptions(options) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
         }
     }
 };
