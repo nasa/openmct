@@ -419,6 +419,20 @@
         // Used in independent Time Conductor
         flex: 0 0 auto;
     }
+
+    .c-so-view & {
+        // Time Conductor in a Layout frame
+        .c-clock-symbol {
+            $h: 14px;
+            height: $h;
+            width: $h;
+        }
+
+        [class*='button'] {
+            $p: 0px;
+            padding: $p $p + 1;
+        }
+    }
 }
 
 .is-fixed-mode.is-expanded {
