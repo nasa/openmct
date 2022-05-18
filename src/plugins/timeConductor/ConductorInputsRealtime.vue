@@ -37,7 +37,7 @@
         @update="timePopUpdate"
     />
 
-    <div class="c-compact-tc__bounds-value c-compact-tc__bounds__start icon-minus">{{ offsets.start }}</div>
+    <div class="c-compact-tc__bounds__value icon-minus">{{ offsets.start }}</div>
     <div
         v-if="compact"
         class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"
@@ -48,7 +48,7 @@
     >
         LAST UPDATE {{ formattedBounds.end }}
     </div>
-    <div class="c-compact-tc__bounds-value c-compact-tc__bounds__end icon-plus">{{ offsets.end }}</div>
+    <div class="c-compact-tc__bounds__value icon-plus">{{ offsets.end }}</div>
 </form>
 </template>
 

@@ -36,9 +36,9 @@
         @hide="hideAllTimePopups"
         @update="setBoundsFromView"
     />
-    <div class="c-compact-tc__bounds__start">{{ formattedBounds.start }}</div>
+    <div class="c-compact-tc__bounds__value">{{ formattedBounds.start }}</div>
     <div class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"></div>
-    <div class="c-compact-tc__bounds__end">{{ formattedBounds.end }}</div>
+    <div class="c-compact-tc__bounds__value">{{ formattedBounds.end }}</div>
 </form>
 </template>
 

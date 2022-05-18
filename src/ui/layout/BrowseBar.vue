@@ -232,11 +232,6 @@ export default {
 
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
         },
-        supportsIndependentTime() {
-            const viewKey = this.getViewKey();
-
-            return this.domainObject && SupportedViewTypes.includes(viewKey);
-        },
         type() {
             const objectType = this.openmct.types.get(this.domainObject.type);
             if (!objectType) {
@@ -266,6 +261,11 @@ export default {
             } else {
                 return 'Unlocked for editing - click to lock.';
             }
+        },
+        supportsIndependentTime() {
+            const viewKey = this.getViewKey();
+
+            return this.domainObject && SupportedViewTypes.includes(viewKey);
         }
     },
     watch: {

@@ -21,58 +21,51 @@
 -->
 <template>
 <div
-    class="c-conductorXX c-compact-tc"
+    class="c-compact-tc"
     :class="[
         isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
         { 'is-expanded' : independentTCEnabled }
     ]"
 >
-    <div class="c-conductor__time-bounds">
-        <toggle-switch
-            id="independentTCToggle"
-            class="c-toggle-switch--mini"
-            :checked="independentTCEnabled"
-            :title="`${independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`"
-            @change="toggleIndependentTC"
-        />
+    <toggle-switch
+        id="independentTCToggle"
+        class="c-toggle-switch--mini"
+        :checked="independentTCEnabled"
+        :title="`${independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`"
+        @change="toggleIndependentTC"
+    />
 
-        <ConductorModeIcon />
+    <ConductorModeIcon />
 
-        <div
-            v-if="timeOptions && independentTCEnabled"
-            class="c-conductor__controls"
-        >
-            <Mode
-                v-if="mode"
-                class="c-button--compact c-conductor__mode-select"
-                :key-string="domainObject.identifier.key"
-                :mode="timeOptions.mode"
-                :button-css-class="'c-button--compact'"
-                :enabled="independentTCEnabled"
-                title="TEMP - MOVE TO POPUP"
-                @modeChanged="saveMode"
-            />
+    <Mode
+        v-if="mode"
+        class="c-button--compact c-conductor__mode-select"
+        :key-string="domainObject.identifier.key"
+        :mode="timeOptions.mode"
+        :button-css-class="'c-button--compact'"
+        :enabled="independentTCEnabled"
+        title="TEMP - MOVE TO POPUP"
+        @modeChanged="saveMode"
+    />
 
-            <conductor-inputs-fixed
-                v-if="isFixed"
-                class="c-compact-tc__bounds--fixed"
-                :key-string="domainObject.identifier.key"
-                :read-only="true"
-                :compact="true"
-                @updated="saveFixedOffsets"
-            />
+    <conductor-inputs-fixed
+        v-if="isFixed"
+        class="c-compact-tc__bounds--fixed"
+        :key-string="domainObject.identifier.key"
+        :read-only="true"
+        :compact="true"
+        @updated="saveFixedOffsets"
+    />
 
-            <conductor-inputs-realtime
-                v-else
-                class="c-compact-tc__bounds--real-time"
-                :key-string="domainObject.identifier.key"
-                :read-only="true"
-                :compact="true"
-                @updated="saveClockOffsets"
-            />
-            <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
-        </div>
-    </div>
+    <conductor-inputs-realtime
+        v-else
+        class="c-compact-tc__bounds--real-time"
+        :key-string="domainObject.identifier.key"
+        :read-only="true"
+        :compact="true"
+        @updated="saveClockOffsets"
+    />
+    <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
 </div>
 </template>
 
