@@ -132,12 +132,6 @@ export default {
                     }
                 }
             });
-
-            if (this.object && this.object.type === 'conditionWidget' && keys.includes('output')) {
-                this.openmct.objects.mutate(this.object, 'conditionalLabel', styleObj.output);
-            } else {
-                this.openmct.objects.mutate(this.object, 'conditionalLabel', '');
-            }
         }
     }
 };

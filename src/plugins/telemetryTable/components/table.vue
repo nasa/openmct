@@ -613,6 +613,7 @@ export default {
             this.calculateScrollbarWidth();
         },
         sortBy(columnKey) {
+            performance.mark('table:sort');
             // If sorting by the same column, flip the sort direction.
             if (this.sortOptions.key === columnKey) {
                 if (this.sortOptions.direction === 'asc') {
@@ -669,6 +670,7 @@ export default {
             this.setHeight();
         },
         rowsAdded(rows) {
+            performance.mark('row:added');
             this.setHeight();
 
             let sizingRow;
@@ -690,6 +692,7 @@ export default {
             this.updateVisibleRows();
         },
         rowsRemoved(rows) {
+            performance.mark('row:removed');
             this.setHeight();
             this.updateVisibleRows();
         },
