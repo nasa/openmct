@@ -2,7 +2,7 @@
 <div
     class="c-fault-mgmt__list data-selectable"
     :class="[
-        'is-criticality-' + fault.severity.toLowerCase(),
+        // 'is-criticality-' + fault.severity.toLowerCase(),
         {'is-selected': isSelected},
         {'is-unacknowledged': !fault.acknowledged},
         {'is-shelved': fault.shelveInfo},
@@ -16,7 +16,10 @@
             @input="toggleSelected"
         >
     </div>
-    <div class="c-fault-mgmt__list-severity icon-alert-triangle">
+    <div class="c-fault-mgmt__list-severity"
+        :class="[
+            'is-severity-' + fault.severity.toLowerCase()
+        ]">
     </div>
     <div class="c-fault-mgmt__list-content">
         <div class="c-fault-mgmt__list-pathname">
@@ -28,7 +31,10 @@
                 class="c-fault-mgmt__list-trigVal icon-arrow-up"
                 :class="[{'is-limit--upr is-limit--yellow' : true}]"
             >{{ triggerValue }}</div>
-            <div class="c-fault-mgmt__list-curVal c-fault-mgmt__list-curVal-alert">{{ currentValue }}</div>
+            <div 
+                class="c-fault-mgmt__list-curVal c-fault-mgmt__list-curVal-alert">
+                {{ currentValue }}
+            </div>
             <div class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</div>
         </div>
 

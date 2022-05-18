@@ -27,9 +27,7 @@
             <DetailText :detail="{ name: 'Name', value: name(fault) }" />
             
             <div class="c-inspect-properties__row">
-                <DetailText 
-                    class="c-fault-mgmt__inspector__values"
-                    :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
+                <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
                 <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
             </div>
         </ul>
