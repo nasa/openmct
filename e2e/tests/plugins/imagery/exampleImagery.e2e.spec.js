@@ -319,15 +319,8 @@ test('Example Imagery in Display layout', async ({ page }) => {
    // Verify previous image
    await expect(selectedImage).toBeVisible();
 
-  // Verify real-time/fixed-time imagery will pause
-  await expect(pausePlayButton).toHaveClass('c-button icon-pause pause-play is-paused');
-
   // Wait 20ms to verify no new image has come in
   await page.waitForTimeout(21);
-
-  // Verify next image is Disabled
-  //await nextImageButton.isDisabled();
-  await expect(nextImageButton).isDisabled();
 
   //Get background-image url from background-image css prop
   const backgroundImage = await page.locator('.c-imagery__main-image__background-image');
@@ -336,9 +329,6 @@ test('Example Imagery in Display layout', async ({ page }) => {
   });
   let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
   console.log(backgroundImageUrl1);
-
-  // Click pause play button so it is in play mode
-  await pausePlayButton.click();
 
   // sleep 21ms
   await page.waitForTimeout(21);
