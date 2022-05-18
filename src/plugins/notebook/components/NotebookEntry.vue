@@ -32,8 +32,9 @@
             <span class="c-ne__created-date">{{ createdOnDate }}</span>
             <span class="c-ne__created-time">{{ createdOnTime }}</span>
 
-            <span v-if="entry.createdBy"
-                  class="c-ne__creator"
+            <span
+                v-if="entry.createdBy"
+                class="c-ne__creator"
             >
                 <span class="icon-person"></span> {{ entry.createdBy }}
             </span>
