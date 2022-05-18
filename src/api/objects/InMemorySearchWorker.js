@@ -190,7 +190,10 @@
                 const matchingAnnotations = indexedAnnotationsByTag[matchingTag];
                 if (matchingAnnotations) {
                     matchingAnnotations.forEach(matchingAnnotation => {
-                        if (!results.includes(matchingAnnotation)) {
+                        const existsInResults = results.some(indexedObject => {
+                            return matchingAnnotation.keyString === indexedObject.keyString;
+                        });
+                        if (!existsInResults) {
                             results.push(matchingAnnotation);
                         }
                     });
