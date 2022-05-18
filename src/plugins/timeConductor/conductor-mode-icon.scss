@@ -33,22 +33,17 @@
 
 
 .c-clock-symbol {
-    $c: rgba($colorBodyFg, 0.5); //$colorObjHdrIc;
+    $c: rgba($colorBodyFg, 0.5);
     $d: 16px;
     height: $d;
     width: $d;
     position: relative;
 
-    &:before {
-        font-family: symbolsfont;
-        color: $c;
-        content: $glyph-icon-brackets;
-        font-size: $d;
-        line-height: normal;
-        display: block;
+    &__outer {
+        // SVG brackets shape
         width: 100%;
         height: 100%;
-        z-index: 1;
+        fill: $c;
     }
 
     // Clock hands
@@ -94,9 +89,9 @@
     .is-realtime-mode &,
     .is-lad-mode & {
         $c: $colorTimeRealtimeFgSubtle;
-        &:before {
+        .c-clock-symbol__outer {
             // Brackets icon
-            color: $c;
+            fill: $c;
         }
         div[class*="hand"] {
             animation-name: clock-hands;
