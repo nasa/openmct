@@ -12,6 +12,7 @@
 
     <FaultManagementListHeader
         class="header"
+        :selected-faults="Object.values(selectedFaults)"
         :total-faults-count="filteredFaultsList.length"
         @selectAll="selectAll"
     />

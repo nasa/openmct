@@ -3,6 +3,7 @@
     <div class="c-fault-mgmt__checkbox">
         <input
             type="checkbox"
+            :checked="isSelectAll"
             @input="selectAll"
         >
     </div>
@@ -33,6 +34,12 @@ export default {
     components: {},
     inject: ['openmct', 'domainObject'],
     props: {
+        selectedFaults: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         totalFaultsCount: {
             type: Number,
             default() {
@@ -41,10 +48,12 @@ export default {
         }
     },
     data() {
-        return {
-        };
+        return {};
     },
     computed: {
+        isSelectAll() {
+            return this.totalFaultsCount > 0 && this.selectedFaults.length === this.totalFaultsCount;
+        }
     },
     watch: {
     },
