@@ -42,7 +42,7 @@
         </button>
         <button
             v-if="removable"
-            class="c-click-icon icon-x t-btn-close"
+            class="c-button icon-trash"
             title="Remove file"
             @click="removeFile"
         ></button>
