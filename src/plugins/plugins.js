@@ -77,6 +77,7 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
+    './gauge/GaugePlugin',
     './timelist/plugin'
 ], function (
     _,
@@ -135,6 +136,7 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
+    GaugePlugin,
     TimeList
 ) {
     const plugins = {};
@@ -212,6 +214,7 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
+    plugins.Gauge = GaugePlugin.default;
     plugins.Timelist = TimeList.default;
 
     return plugins;

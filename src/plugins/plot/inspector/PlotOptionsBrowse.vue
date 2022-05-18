@@ -48,11 +48,19 @@
             <li class="grid-row">
                 <div
                     class="grid-cell label"
-                    title="Automatically scale the Y axis to keep all values in view."
-                >Autoscale</div>
+                    title="Enable log mode."
+                >Log mode</div>
                 <div class="grid-cell value">
-                    {{ autoscale ? "Enabled: " : "Disabled" }}
-                    {{ autoscale ? autoscalePadding : "" }}
+                    {{ logMode ? "Enabled" : "Disabled" }}
+                </div>
+            </li>
+            <li class="grid-row">
+                <div
+                    class="grid-cell label"
+                    title="Automatically scale the Y axis to keep all values in view."
+                >Auto scale</div>
+                <div class="grid-cell value">
+                    {{ autoscale ? "Enabled: " + autoscalePadding : "Disabled" }}
                 </div>
             </li>
             <li
@@ -142,6 +150,7 @@ export default {
             config: {},
             label: '',
             autoscale: '',
+            logMode: false,
             autoscalePadding: '',
             rangeMin: '',
             rangeMax: '',
@@ -172,6 +181,7 @@ export default {
         initConfiguration() {
             this.label = this.config.yAxis.get('label');
             this.autoscale = this.config.yAxis.get('autoscale');
+            this.logMode = this.config.yAxis.get('logMode');
             this.autoscalePadding = this.config.yAxis.get('autoscalePadding');
             const range = this.config.yAxis.get('range');
             if (range) {

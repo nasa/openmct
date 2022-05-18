@@ -24,7 +24,8 @@
 This test suite is dedicated to tests which verify the basic operations surrounding exportAsJSON.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('ExportAsJSON', () => {
     test.fixme('Create a basic object and verify that it can be exported as JSON from Tree', async ({ page }) => {
