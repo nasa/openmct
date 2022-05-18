@@ -366,8 +366,8 @@ export default {
                 defaultPageId: page.id
             };
         },
-        async deleteEntry(entryId) {
-            const entryPos = await getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
+        deleteEntry(entryId) {
+            const entryPos = getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
             if (entryPos === -1) {
                 this.openmct.notifications.alert('Warning: unable to delete entry');
                 console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
