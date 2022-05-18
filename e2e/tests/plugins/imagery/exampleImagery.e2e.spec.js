@@ -26,7 +26,8 @@ but only assume that example imagery is present.
 */
 /* globals process */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Example Imagery', () => {
 
@@ -40,6 +41,9 @@ test.describe('Example Imagery', () => {
 
         // Click text=Example Imagery
         await page.click('text=Example Imagery');
+
+        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
+        await page.click('form[name="mctForm"] a:has-text("My Items")');
 
         // Click text=OK
         await Promise.all([
@@ -199,6 +203,26 @@ test.describe('Example Imagery', () => {
 
         expect.soft(resetBoundingBox.height).toEqual(initialBoundingBox.height);
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
+    });
+
+    test('Using the zoom features does not pause telemetry', async ({ page }) => {
+        const bgImageLocator = page.locator(backgroundImageSelector);
+        const pausePlayButton = page.locator('.c-button.pause-play');
+        // wait for zoom animation to finish
+        await bgImageLocator.hover();
+
+        // open the time conductor drop down
+        await page.locator('.c-conductor__controls button.c-mode-button').click();
+        // Click local clock
+        await page.locator('.icon-clock >> text=Local Clock').click();
+
+        await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
+        const zoomInBtn = page.locator('.t-btn-zoom-in');
+        await zoomInBtn.click();
+        // wait for zoom animation to finish
+        await bgImageLocator.hover();
+
+        return expect(pausePlayButton).not.toHaveClass(/is-paused/);
     });
 
     //test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
