@@ -58,7 +58,7 @@ const STATUSES = [{
  * @implements {StatusUserProvider}
  */
 export default class ExampleUserProvider extends EventEmitter {
-    constructor(openmct, {defaultStatusRole}) {
+    constructor(openmct, {defaultStatusRole} = {defaultStatusRole: undefined}) {
         super();
 
         this.openmct = openmct;
