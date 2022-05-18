@@ -51,12 +51,6 @@ export default {
     },
     inject: ['openmct'],
     props: {
-        annotation: {
-            type: Object,
-            default() {
-                return null;
-            }
-        },
         entry: {
             type: Object,
             default() {
@@ -72,6 +66,7 @@ export default {
     },
     data() {
         return {
+            annontation: null,
             addedTags: [],
             userAddingTag: false
         };
@@ -94,7 +89,8 @@ export default {
             deep: true
         }
     },
-    mounted() {
+    async mounted() {
+        this.annotation = await this.openmct.annotation.getNotebookAnnotation(this.entry.id, this.domainObject);
         this.addAnnotationListener(this.annotation);
         if (this.annotation && this.annotation.tags) {
             this.tagsChanged(this.annotation.tags);

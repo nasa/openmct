@@ -65,7 +65,6 @@
             </template>
             <TagEditor
                 :domain-object="domainObject"
-                :annotation="annotation"
                 :entry="entry"
             />
             <div class="c-snapshots c-ne__embeds">
@@ -161,22 +160,12 @@ export default {
                 return {};
             }
         },
-        annotation: {
-            type: Object,
-            default() {
-                return null;
-            }
-        },
         readOnly: {
             type: Boolean,
             default() {
                 return true;
             }
         }
-    },
-    data() {
-        return {
-        };
     },
     computed: {
         createdOnDate() {

@@ -138,7 +138,6 @@
                     v-for="entry in filteredAndSortedEntries"
                     :key="entry.id"
                     :entry="entry"
-                    :annotation="entry.annotation"
                     :domain-object="domainObject"
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
@@ -303,9 +302,9 @@ export default {
                 }
             });
         },
-        async filterAndSortEntries() {
+        filterAndSortEntries() {
             const filterTime = Date.now();
-            const pageEntries = await getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage) || [];
+            const pageEntries = getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage) || [];
 
             const hours = parseInt(this.showTime, 10);
             const filteredPageEntriesByTime = hours
@@ -383,8 +382,8 @@ export default {
                     {
                         label: "Ok",
                         emphasis: true,
-                        callback: async () => {
-                            const entries = await getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage);
+                        callback: () => {
+                            const entries = getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage);
                             entries.splice(entryPos, 1);
                             this.updateEntries(entries);
                             this.filterAndSortEntries();
