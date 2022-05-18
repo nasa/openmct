@@ -265,14 +265,14 @@ export default {
                 hoverinfo: 'x+y'
             };
 
-            if (this.domainObject.configuration.ranges.domainMin !== undefined && this.domainObject.configuration.ranges.domainMax !== undefined) {
+            if (this.domainObject.configuration.ranges !== undefined && this.domainObject.configuration.ranges.domainMin !== undefined && this.domainObject.configuration.ranges.domainMax !== undefined) {
                 trace.xaxis = {
                     min: this.domainObject.configuration.ranges.domainMin,
                     max: this.domainObject.configuration.ranges.domainMax
                 };
             }
 
-            if (this.domainObject.configuration.ranges.rangeMin !== undefined && this.domainObject.configuration.ranges.rangeMax !== undefined) {
+            if (this.domainObject.configuration.ranges !== undefined && this.domainObject.configuration.ranges.rangeMin !== undefined && this.domainObject.configuration.ranges.rangeMax !== undefined) {
                 trace.yaxis = {
                     min: this.domainObject.configuration.ranges.rangeMin,
                     max: this.domainObject.configuration.ranges.rangeMax
