@@ -148,7 +148,8 @@ export default {
             if (clockKey === undefined) {
                 this.openmct.time.stopClock();
             } else {
-                this.openmct.time.clock(clockKey, configuration.clockOffsets);
+                const offsets = this.openmct.time.clockOffsets() || configuration.clockOffsets;
+                this.openmct.time.clock(clockKey, offsets);
             }
         },
 
