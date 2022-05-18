@@ -85,14 +85,13 @@
             class="c-dial__bg"
             viewBox="0 0 10 10"
         >
-
             <g
-                v-if="limitLow.length > 0 && dialLowLimitDeg < getLimitDegree('low', 'max')"
+                v-if="isDialLowLimit"
                 class="c-dial__limit-low"
                 :style="`transform: rotate(${dialLowLimitDeg}deg)`"
             >
                 <rect
-                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q1')"
+                    v-if="isDialLowLimitLow"
                     class="c-dial__low-limit__low"
                     x="5"
                     y="5"
@@ -100,7 +99,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q2')"
+                    v-if="isDialLowLimitMid"
                     class="c-dial__low-limit__mid"
                     x="5"
                     y="0"
@@ -108,7 +107,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q3')"
+                    v-if="isDialLowLimitHigh"
                     class="c-dial__low-limit__high"
                     x="0"
                     y="0"
@@ -118,12 +117,12 @@
             </g>
 
             <g
-                v-if="limitHigh.length > 0 && dialHighLimitDeg < getLimitDegree('high', 'max')"
+                v-if="isDialHighLimit"
                 class="c-dial__limit-high"
                 :style="`transform: rotate(${dialHighLimitDeg}deg)`"
             >
                 <rect
-                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'max')"
+                    v-if="isDialHighLimitLow"
                     class="c-dial__high-limit__low"
                     x="0"
                     y="5"
@@ -131,7 +130,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'q2')"
+                    v-if="isDialHighLimitMid"
                     class="c-dial__high-limit__mid"
                     x="0"
                     y="0"
@@ -139,7 +138,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'q3')"
+                    v-if="isDialHighLimitHigh"
                     class="c-dial__high-limit__high"
                     x="5"
                     y="0"
@@ -159,7 +158,7 @@
                 :style="`transform: rotate(${degValueFilledDial}deg)`"
             >
                 <rect
-                    v-if="degValue >= getLimitDegree('low', 'q1')"
+                    v-if="isDialFilledValueLow"
                     class="c-dial__filled-value__low"
                     x="5"
                     y="5"
@@ -167,7 +166,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="degValue >= getLimitDegree('low', 'q2')"
+                    v-if="isDialFilledValueMid"
                     class="c-dial__filled-value__mid"
                     x="5"
                     y="0"
@@ -175,7 +174,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="degValue >= getLimitDegree('low', 'q3')"
+                    v-if="isDialFilledValueHigh"
                     class="c-dial__filled-value__high"
                     x="0"
                     y="0"
@@ -216,13 +215,13 @@
                     ></div>
 
                     <div
-                        v-if="limitHigh.length > 0 && meterHighLimitPerc > 0"
+                        v-if="isMeterLimitHigh"
                         class="c-meter__limit-high"
                         :style="`height: ${meterHighLimitPerc}%`"
                     ></div>
 
                     <div
-                        v-if="limitLow.length > 0 && meterLowLimitPerc > 0"
+                        v-if="isMeterLimitLow"
                         class="c-meter__limit-low"
                         :style="`height: ${meterLowLimitPerc}%`"
                     ></div>
@@ -235,13 +234,13 @@
                     ></div>
 
                     <div
-                        v-if="limitHigh.length > 0 && meterHighLimitPerc > 0"
+                        v-if="isMeterLimitHigh"
                         class="c-meter__limit-high"
                         :style="`width: ${meterHighLimitPerc}%`"
                     ></div>
 
                     <div
-                        v-if="limitLow.length > 0 && meterLowLimitPerc > 0"
+                        v-if="isMeterLimitLow"
                         class="c-meter__limit-low"
                         :style="`width: ${meterLowLimitPerc}%`"
                     ></div>
@@ -319,6 +318,45 @@ export default {
             const VIEWBOX_STR = '0 0 X 15';
 
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
+        },
+        isDialLowLimit() {
+            return this.limitLow.length > 0 && this.dialLowLimitDeg < getLimitDegree('low', 'max');
+        },
+        isDialLowLimitLow() {
+            return this.dialLowLimitDeg >= getLimitDegree('low', 'q1');
+        },
+        isDialLowLimitMid() {
+            return this.dialLowLimitDeg >= getLimitDegree('low', 'q2');
+        },
+        isDialLowLimitHigh() {
+            return this.dialLowLimitDeg >= getLimitDegree('low', 'q3');
+        },
+        isDialHighLimit() {
+            return this.limitHigh.length > 0 && this.dialHighLimitDeg < getLimitDegree('high', 'max');
+        },
+        isDialHighLimitLow() {
+            return this.dialHighLimitDeg <= getLimitDegree('high', 'max');
+        },
+        isDialHighLimitMid() {
+            return this.dialHighLimitDeg <= getLimitDegree('high', 'q2');
+        },
+        isDialHighLimitHigh() {
+            return this.dialHighLimitDeg <= getLimitDegree('high', 'q3');
+        },
+        isDialFilledValueLow() {
+            return this.degValue >= getLimitDegree('low', 'q1');
+        },
+        isDialFilledValueMid() {
+            return this.degValue >= getLimitDegree('low', 'q2');
+        },
+        isDialFilledValueHigh() {
+            return this.degValue >= getLimitDegree('low', 'q3');
+        },
+        isMeterLimitHigh() {
+            return this.limitHigh.length > 0 && this.meterHighLimitPerc > 0;
+        },
+        isMeterLimitLow() {
+            return this.limitLow.length > 0 && this.meterLowLimitPerc > 0;
         },
         typeDial() {
             return this.matchGaugeType('dial');
