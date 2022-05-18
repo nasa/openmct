@@ -1,39 +1,28 @@
 <template>
-<div>
-    <div v-if="selectedFaults.length > 1" ></div>
-    <div v-else class="c-inspector__properties c-inspect-properties">
-        <div class="c-inspect-properties__header">
-            Details
+<div
+    v-if="selectedFaults.length === 1"
+    class="c-inspector__properties c-inspect-properties"
+>
+    <div class="c-inspect-properties__header">Source</div>
+    <ul
+        v-for="fault of selectedFaults"
+        :key="name(fault)"
+        class="c-inspect-properties__section"
+    >
+        <DetailText :detail="{ name: 'Name', value: name(fault) }" />
+        <div class="c-inspect-properties__row">
+            <DetailText
+                class="c-fault-mgmt__list-curVal"
+                :detail="{ name: 'Occured', value: triggerTime(fault)}"
+            />
+            <DetailText
+                :detail="{ name: 'Criticality', value: severity(fault)}"
+            />
+            <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
+            <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
         </div>
-        <ul
-            v-for="fault of selectedFaults"
-            :key="name(fault)"
-            class="c-inspect-properties__section"
-        >
-            <DetailText class="c-fault-mgmt__list-curVal"
-                :detail="{ name: 'Occured', value: triggerTime(fault)}" />
-            <DetailText 
-                :detail="{ name: 'Criticality', value: severity(fault)}" />
-        
-        </ul>
-        <div class="c-inspect-properties__header">
-            Source
-        </div>
-        <ul
-            v-for="fault of selectedFaults"
-            :key="name(fault)"
-            class="c-inspect-properties__section"
-        >
-            <DetailText :detail="{ name: 'Name', value: name(fault) }" />
-            
-            <div class="c-inspect-properties__row">
-                <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
-                <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
-            </div>
-        </ul>
-    </div>
+    </ul>
 </div>
-    
 </template>
 
 <script>
@@ -68,7 +57,7 @@ export default {
         name(fault) {
             return `${fault?.id?.name}/${fault?.id?.namespace}`;
         },
-        severity(fault){
+        severity(fault) {
             return fault?.severity;
         },
         updateSelectedFaults() {
@@ -79,11 +68,11 @@ export default {
 
             this.selectedFaults = selection[0][1].context.selectedFaults;
         },
+        triggerTime(fault) {
+            return fault?.triggerTime;
+        },
         triggerValue(fault) {
             return fault?.parameterDetail?.triggerValue?.engValue?.doubleValue;
-        },
-        triggerTime(fault){
-            return fault?.triggerTime;
         }
     }
 };
