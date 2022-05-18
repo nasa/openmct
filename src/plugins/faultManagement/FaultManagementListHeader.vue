@@ -13,25 +13,25 @@
     <div class="c-fault-mgmt__list-header-trigTime c-fault-mgmt__list-trigTime">Trigger Time</div>
     <div class="c-fault-mgmt__list-action-wrapper">
         <div class="c-fault-mgmt__list-header-sortButton c-fault-mgmt__list-action-button">
-            <select>
-                <option
-                    value="0"
-                > Newest First </option>
-                <option
-                    value="1"
-                >Oldest First</option>
-                <option
-                    value="2"
-                >Severity</option>
-            </select>
+            <SelectField
+                class="c-fault-mgmt-viewButton"
+                :model="model"
+                @onChange="onChange"
+            />
         </div>
     </div>
 </div>
 </template>
 
 <script>
+import SelectField from '@/api/forms/components/controls/SelectField.vue';
+
+import { SORT_ITEMS } from './constants';
+
 export default {
-    components: {},
+    components: {
+        SelectField
+    },
     inject: ['openmct', 'domainObject'],
     props: {
         selectedFaults: {
@@ -48,7 +48,9 @@ export default {
         }
     },
     data() {
-        return {};
+        return {
+            model: {}
+        };
     },
     computed: {
         isSelectAll() {
@@ -57,11 +59,21 @@ export default {
     },
     watch: {
     },
+    beforeMount() {
+        const options = Object.values(SORT_ITEMS);
+        this.model = {
+            options,
+            value: options[0].value
+        };
+    },
     mounted() {
     },
     beforeDestroy() {
     },
     methods: {
+        onChange(data) {
+            this.$emit('sortChanged', data);
+        },
         selectAll(e) {
             this.$emit('selectAll', e.target.checked);
         }

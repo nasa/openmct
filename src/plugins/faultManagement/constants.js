@@ -28,3 +28,61 @@ export const FILTER_ITEMS = [
     'Unacknowledged',
     'Shelved'
 ];
+
+export const SORT_ITEMS = {
+    'newest-first': {
+        name: 'Newest First',
+        value: 'newest-first',
+        sortFunction: (a, b) => {
+            if (b.triggerTime > a.triggerTime) {
+                return 1;
+            }
+
+            if (a.triggerTime > b.triggerTime) {
+                return -1;
+            }
+
+            return 0;
+        }
+    },
+    'oldest-first': {
+        name: 'Oldest First',
+        value: 'oldest-first',
+        sortFunction: (a, b) => {
+            if (a.triggerTime > b.triggerTime) {
+                return 1;
+            }
+
+            if (a.triggerTime < b.triggerTime) {
+                return -1;
+            }
+
+            return 0;
+        }
+    },
+    'severity': {
+        name: 'Severity',
+        value: 'severity',
+        sortFunction: (a, b) => {
+            return FAULT_SEVERITY[a.severity].priority - FAULT_SEVERITY[b.severity].priority;
+        }
+    }
+};
+
+const FAULT_SEVERITY = {
+    'CRITICAL': {
+        name: 'CRITICAL',
+        value: 'critical',
+        priority: 0
+    },
+    'WARNING': {
+        name: 'WARNING',
+        value: 'warning',
+        priority: 1
+    },
+    'WATCH': {
+        name: 'WATCH',
+        value: 'watch',
+        priority: 2
+    }
+};

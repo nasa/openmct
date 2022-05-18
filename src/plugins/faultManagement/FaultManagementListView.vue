@@ -15,6 +15,7 @@
         :selected-faults="Object.values(selectedFaults)"
         :total-faults-count="filteredFaultsList.length"
         @selectAll="selectAll"
+        @sortChanged="sortChanged"
     />
 
     <template v-if="filteredFaultsList.length > 0">
@@ -37,7 +38,7 @@ import FaultManagementListItem from './FaultManagementListItem.vue';
 import FaultManagementSearch from './FaultManagementSearch.vue';
 import FaultManagementToolbar from './FaultManagementToolbar.vue';
 
-import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS } from './constants';
+import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS, SORT_ITEMS } from './constants';
 
 export default {
     components: {
@@ -56,21 +57,25 @@ export default {
     data() {
         return {
             selectedFaults: {},
-            filterIndex: 0
+            filterIndex: 0,
+            sortBy: Object.values(SORT_ITEMS)[0].value
         };
     },
     computed: {
         filteredFaultsList() {
             const filterName = FILTER_ITEMS[this.filterIndex];
+            let list = this.faultsList;
             if (filterName === 'Ackowledged') {
-                return this.faultsList.filter(fault => fault.acknowledged);
+                list = this.faultsList.filter(fault => fault.acknowledged);
             }
 
             if (filterName === 'Shelved') {
-                return this.faultsList.filter(fault => fault.shelved);
+                list = this.faultsList.filter(fault => fault.shelved);
             }
 
-            return this.faultsList;
+            list.sort(SORT_ITEMS[this.sortBy].sortFunction);
+
+            return list;
         }
     },
     watch: {},
@@ -91,6 +96,9 @@ export default {
                 };
                 this.toggleSelected(faultData);
             });
+        },
+        sortChanged(sort) {
+            this.sortBy = sort.value;
         },
         toggleSelected({ fault, selected = false}) {
             const faultId = this.getFaultId(fault);
