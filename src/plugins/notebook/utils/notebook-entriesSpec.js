@@ -122,6 +122,7 @@ describe('Notebook Entries:', () => {
     });
 
     it('getNotebookEntries has no entries', () => {
+        console.trace();
         const entries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
 
         expect(entries.length).toEqual(0);

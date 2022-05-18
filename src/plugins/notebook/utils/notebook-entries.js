@@ -142,7 +142,7 @@ export async function addNotebookEntry(openmct, domainObject, notebookStorage, e
     return id;
 }
 
-export function getNotebookEntries(openmct, domainObject, selectedSection, selectedPage) {
+export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage || !domainObject.configuration) {
         return;
     }
@@ -165,12 +165,12 @@ export function getNotebookEntries(openmct, domainObject, selectedSection, selec
     return specificEntries;
 }
 
-export function getEntryPosById(openmct, entryId, domainObject, selectedSection, selectedPage) {
+export function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage) {
         return;
     }
 
-    const entries = getNotebookEntries(openmct, domainObject, selectedSection, selectedPage);
+    const entries = getNotebookEntries(domainObject, selectedSection, selectedPage);
     let foundId = -1;
     entries.forEach((element, index) => {
         if (element.id === entryId) {

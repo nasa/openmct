@@ -304,7 +304,7 @@ export default {
         },
         filterAndSortEntries() {
             const filterTime = Date.now();
-            const pageEntries = getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage) || [];
+            const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
 
             const hours = parseInt(this.showTime, 10);
             const filteredPageEntriesByTime = hours
@@ -367,7 +367,7 @@ export default {
             };
         },
         async deleteEntry(entryId) {
-            const entryPos = await getEntryPosById(this.openmct, entryId, this.domainObject, this.selectedSection, this.selectedPage);
+            const entryPos = await getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
             if (entryPos === -1) {
                 this.openmct.notifications.alert('Warning: unable to delete entry');
                 console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
@@ -383,7 +383,7 @@ export default {
                         label: "Ok",
                         emphasis: true,
                         callback: () => {
-                            const entries = getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage);
+                            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
                             entries.splice(entryPos, 1);
                             this.updateEntries(entries);
                             this.filterAndSortEntries();
@@ -403,8 +403,8 @@ export default {
         removeAnnotations(entryId) {
             this.openmct.annotation.removeNotebookAnnotation(entryId, this.domainObject);
         },
-        async checkEntryPos(entry) {
-            const entryPos = await getEntryPosById(this.openmct, entry.id, this.domainObject, this.selectedSection, this.selectedPage);
+        checkEntryPos(entry) {
+            const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
             if (entryPos === -1) {
                 this.openmct.notifications.alert('Warning: unable to tag entry');
                 console.error(`unable to tag entry ${entry} from section ${this.selectedSection}, page ${this.selectedPage}`);
@@ -721,9 +721,9 @@ export default {
 
             setDefaultNotebookSectionId(defaultNotebookSectionId);
         },
-        async updateEntry(entry) {
-            const entries = await getNotebookEntries(this.openmct, this.domainObject, this.selectedSection, this.selectedPage);
-            const entryPos = await getEntryPosById(this.openmct, entry.id, this.domainObject, this.selectedSection, this.selectedPage);
+        updateEntry(entry) {
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+            const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
             entries[entryPos] = entry;
 
             this.updateEntries(entries);
