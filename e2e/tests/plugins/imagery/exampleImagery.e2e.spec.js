@@ -328,7 +328,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
   return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
   });
   let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
-  console.log(backgroundImageUrl1);
+  console.log('backgroundImageUrl1 ' + backgroundImageUrl1)
 
   // sleep 21ms
   await page.waitForTimeout(21);
@@ -338,7 +338,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
   return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
   });
   let backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
-  console.log(backgroundImageUrl2);
+  console.log('backgroundImageUrl2 ' + backgroundImageUrl2)
 
   // Expect backgroundImageUrl2 to be greater then backgroundImageUrl1
   expect(backgroundImageUrl2 >= backgroundImageUrl1);
