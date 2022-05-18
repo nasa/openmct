@@ -4,8 +4,8 @@
     :class="[
         'is-criticality-' + fault.severity.toLowerCase(),
         {'is-selected': isSelected},
-        {'is-acknowledged': fault.acknowledged},
-        {'is-suppressed': fault.shelveInfo},
+        {'is-unacknowledged': !fault.acknowledged},
+        {'is-shelved': fault.shelveInfo},
         {'is-triggering': fault.triggered}
     ]"
 >

@@ -121,21 +121,6 @@
         }
     }
 
-    &__unacked{ //enabled blinking icons
-        .c-fault-mgmt__list-severity{
-            @include pulse($animName: severityAnim, $dur: 200ms);
-            color: $colorStatusError;
-        }
-    }
-
-    &__acked{ 
-        // disabled blinking icons
-    }
-
-    &__selected{
-        background: $colorSelectedBg;
-    }
-
 
 }
 
@@ -158,8 +143,23 @@
 
 }
 
-// MIXINS 
+.is-unacknowledged{
+    .c-fault-mgmt__list-severity{
+        @include pulse($animName: severityAnim, $dur: 200ms);
+        color: $colorStatusError;
+    }
+}
 
+.is-selected { 
+    background: $colorSelectedBg;
+}
+
+.is-shelved{
+    .c-fault-mgmt__list-content{
+        opacity: 70%;
+        font-style: italic;
+    }
+}
 
 
 
