@@ -109,7 +109,6 @@ export default {
             this.domainObject = selection[0][0].context.item;
             let parentObject = selection[0][1];
 
-
             if (!this.domainObject && parentObject && parentObject.context.item) {
                 this.setOriginalPath([parentObject.context.item], true);
                 this.keyString = '';
