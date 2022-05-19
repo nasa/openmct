@@ -24,13 +24,11 @@ import EventEmitter from "EventEmitter";
 export default class StatusAPI extends EventEmitter {
     #userAPI;
     #openmct;
-    #statusStyles;
 
-    constructor(userAPI, openmct, {statusStyles} = {}) {
+    constructor(userAPI, openmct) {
         super();
         this.#userAPI = userAPI;
         this.#openmct = openmct;
-        this.#statusStyles = statusStyles;
 
         this.onProviderStatusChange = this.onProviderStatusChange.bind(this);
         this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
@@ -111,7 +109,7 @@ export default class StatusAPI extends EventEmitter {
         if (provider.getPossibleStatuses) {
             const possibleStatuses = await provider.getPossibleStatuses() || [];
 
-            return possibleStatuses.map(status => this.#applyStyling(status));
+            return possibleStatuses.map(status => status);
         } else {
             this.#userAPI.error("User provider cannot provide statuses");
         }
@@ -127,7 +125,7 @@ export default class StatusAPI extends EventEmitter {
         if (provider.getStatusForRole) {
             const status = await provider.getStatusForRole(role);
             if (status !== undefined) {
-                return this.#applyStyling(status);
+                return status;
             } else {
                 return undefined;
             }
@@ -268,7 +266,7 @@ export default class StatusAPI extends EventEmitter {
      * @private
      */
     onProviderStatusChange(newStatus) {
-        this.emit('statusChange', this.#applyStyling(newStatus));
+        this.emit('statusChange', newStatus);
     }
 
     /**
@@ -276,19 +274,6 @@ export default class StatusAPI extends EventEmitter {
      */
     onProviderPollQuestionChange(pollQuestion) {
         this.emit('pollQuestionChange', pollQuestion);
-    }
-
-    #applyStyling(status) {
-        const stylesForStatus = this.#statusStyles?.[status.label];
-
-        if (stylesForStatus !== undefined) {
-            return {
-                ...status,
-                ...stylesForStatus
-            };
-        } else {
-            return status;
-        }
     }
 }
 

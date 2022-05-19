@@ -59,7 +59,7 @@
 <script>
 
 export default {
-    inject: ['openmct', 'indicator'],
+    inject: ['openmct', 'indicator', 'configuration'],
     props: {
         positionX: {
             type: Number,
@@ -140,6 +140,7 @@ export default {
             this.openmct.user.status.on('pollQuestionChange', this.setPollQuestion);
         },
         setStatus({role, status}) {
+            status = this.applyStyling(status);
             this.selectedStatus = status.key;
             this.indicator.iconClass(status.iconClassPoll);
             this.indicator.statusClass(status.statusClass);
@@ -166,6 +167,18 @@ export default {
                 } else {
                     this.openmct.notifications.error("Unable to set operator status");
                 }
+            }
+        },
+        applyStyling(status) {
+            const stylesForStatus = this.configuration?.statusStyles?.[status.label];
+
+            if (stylesForStatus !== undefined) {
+                return {
+                    ...status,
+                    ...stylesForStatus
+                };
+            } else {
+                return status;
             }
         },
         noop() {}

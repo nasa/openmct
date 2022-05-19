@@ -33,7 +33,8 @@ export default class PollQuestionIndicator extends AbstractStatusIndicator {
             },
             provide: {
                 openmct: this.openmct,
-                indicator: indicator
+                indicator: indicator,
+                configuration: this.getConfiguration()
             },
             data() {
                 return {

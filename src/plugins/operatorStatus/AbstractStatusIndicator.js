@@ -24,9 +24,11 @@ import raf from '@/utils/raf';
 export default class AbstractStatusIndicator {
     #popupComponent;
     #indicator;
+    #configuration;
 
-    constructor(openmct) {
+    constructor(openmct, configuration) {
         this.openmct = openmct;
+        this.#configuration = configuration;
 
         this.showPopup = this.showPopup.bind(this);
         this.clearPopup = this.clearPopup.bind(this);
@@ -92,5 +94,9 @@ export default class AbstractStatusIndicator {
 
     getIndicator() {
         return this.#indicator;
+    }
+
+    getConfiguration() {
+        return this.#configuration;
     }
 }

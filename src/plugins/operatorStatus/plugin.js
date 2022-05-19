@@ -22,13 +22,13 @@
 import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator';
 import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
 
-export default function operatorStatusPlugin() {
+export default function operatorStatusPlugin(configuration) {
     return function install(openmct) {
 
         if (openmct.user.hasProvider()) {
             openmct.user.status.canProvideStatusForCurrentUser().then(canProvideStatus => {
                 if (canProvideStatus) {
-                    const operatorStatusIndicator = new OperatorStatusIndicator(openmct);
+                    const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
 
                     operatorStatusIndicator.install();
                 }
@@ -36,7 +36,7 @@ export default function operatorStatusPlugin() {
 
             openmct.user.status.canSetPollQuestion().then(canSetPollQuestion => {
                 if (canSetPollQuestion) {
-                    const pollQuestionIndicator = new PollQuestionIndicator(openmct);
+                    const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
 
                     pollQuestionIndicator.install();
                 }

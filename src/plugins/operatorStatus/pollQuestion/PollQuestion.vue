@@ -80,7 +80,7 @@
 <script>
 
 export default {
-    inject: ['openmct', 'indicator'],
+    inject: ['openmct', 'indicator', 'configuration'],
     props: {
         positionX: {
             type: Number,
@@ -160,10 +160,22 @@ export default {
 
             this.statusCountViewModel = allStatuses.map((status) => {
                 return {
-                    status,
+                    status: this.applyStyling(status),
                     roleCount: statusCountMap[status.key]
                 };
             });
+        },
+        applyStyling(status) {
+            const stylesForStatus = this.configuration?.statusStyles?.[status.label];
+
+            if (stylesForStatus !== undefined) {
+                return {
+                    ...status,
+                    ...stylesForStatus
+                };
+            } else {
+                return status;
+            }
         },
         noop() {}
     }

@@ -31,7 +31,7 @@ import User from './User';
 class UserAPI extends EventEmitter {
     /**
      * @param {OpenMCT} openmct
-     * @param {UserAPIConfiguration} config 
+     * @param {UserAPIConfiguration} config
      */
     constructor(openmct, config) {
         super();
