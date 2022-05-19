@@ -3,26 +3,41 @@
     v-if="selectedFaults.length === 1"
     class="c-inspector__properties c-inspect-properties"
 >
-    <div class="c-inspect-properties__header">Source</div>
-    <ul
-        v-for="fault of selectedFaults"
-        :key="name(fault)"
-        class="c-inspect-properties__section"
-    >
-        <DetailText :detail="{ name: 'Name', value: name(fault) }" />
-        <div class="c-inspect-properties__row">
+    <div class="c-inspect-properties__header">Fault Details</div>
+        <ul
+            v-for="fault of selectedFaults"
+            :key="name(fault)"
+            class="c-inspect-properties__section"
+        >   
             <DetailText
-                class="c-fault-mgmt__list-curVal"
                 :detail="{ name: 'Occured', value: triggerTime(fault)}"
             />
             <DetailText
                 :detail="{ name: 'Criticality', value: severity(fault)}"
             />
+        </ul>
+    <div class="c-inspect-properties__header">System</div>
+        <ul
+            v-for="fault of selectedFaults"
+            :key="name(fault)"
+            class="c-inspect-properties__section"
+        >   
+            <DetailText 
+                :detail="{ name: 'System', value: pathname(fault) }" />
+        </ul>
+    <div class="c-inspect-properties__header">Source</div>
+        <ul
+            v-for="fault of selectedFaults"
+            :key="name(fault)"
+            class="c-inspect-properties__section"
+        >   
+            <DetailText 
+                :detail="{ name: 'Source', value: name(fault) }" />
             <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
             <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
-        </div>
-    </ul>
-</div>
+            <DetailText :detail="{ name: 'Description', value: description(fault)}" />
+        </ul>
+    </div>
 </template>
 
 <script>
@@ -54,8 +69,14 @@ export default {
         currentValue(fault) {
             return fault?.parameterDetail?.currentValue?.engValue?.doubleValue;
         },
-        name(fault) {
+        entireName(fault) {
             return `${fault?.id?.name}/${fault?.id?.namespace}`;
+        },
+        name(fault){
+            return fault?.id?.name;
+        },
+        pathname(fault){
+            return fault?.id?.namespace;
         },
         severity(fault) {
             return fault?.severity;
@@ -73,6 +94,9 @@ export default {
         },
         triggerValue(fault) {
             return fault?.parameterDetail?.triggerValue?.engValue?.doubleValue;
+        },
+        description(fault){
+            return fault?.parameterDetail?.parameter?.shortDescription;
         }
     }
 };
