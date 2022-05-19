@@ -242,6 +242,8 @@ async function saveOverlayPlot(page) {
 /**
  * @param {import('@playwright/test').Page} page
  */
+// FIXME: Remove this eslint exception once implemented
+// eslint-disable-next-line no-unused-vars
 async function testLogPlotPixels(page) {
     const pixelsMatch = await page.evaluate(async () => {
         // TODO get canvas pixels at a few locations to make sure they're the correct color, to test that the plot comes out as expected.
