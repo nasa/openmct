@@ -101,17 +101,22 @@ test.describe('Time conductor input fields real-time mode', () => {
     });
 
     /**
-     * Verify that start and end offsets are preserved when switching between
-     * fixed timespan and real-time mode.
+     * Verify that offsets and url params are preserved when switching
+     * between fixed timespan and real-time mode.
      */
-    test('preserve offsets when switching between fixed and real-time mode', async ({ page }) => {
+    test('preserve offsets and url params when switching between fixed and real-time mode', async ({ page }) => {
         const startOffset = {
+            mins: '30',
             secs: '23'
         };
 
         const endOffset = {
-            secs: '00'
+            secs: '01'
         };
+
+        // Convert offsets to milliseconds
+        const startDelta = (30 * 60 * 1000) + (23 * 1000);
+        const endDelta = (1 * 1000);
 
         // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
@@ -135,39 +140,9 @@ test.describe('Time conductor input fields real-time mode', () => {
         await expect(page.locator('data-testid=conductor-start-offset-button')).toContainText('00:30:23');
 
         // Verify updated end time offset persists after mode switch
-        await expect(page.locator('data-testid=conductor-end-offset-button')).toContainText('00:00:00');
-    });
+        await expect(page.locator('data-testid=conductor-end-offset-button')).toContainText('00:00:01');
 
-    /**
-     * Verify that the URL parameters (startDelta, endDelta) are correctly updated on offset change
-     */
-    test('url parameters are updated properly on time offset change', async ({ page }) => {
-        const startOffset = {
-            mins: '30',
-            secs: '23'
-        };
-
-        const endOffset = {
-            secs: '31'
-        };
-
-        // Convert offsets to milliseconds
-        const startDelta = (30 * 60 * 1000) + (23 * 1000);
-        const endDelta = (31 * 1000);
-
-        // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
-
-        // Switch to real-time mode
-        await setTimeConductorMode(page, false);
-
-        // Set start time offset
-        await setTimeConductorOffset(page, startOffset, true);
-
-        // Set end time offset
-        await setTimeConductorOffset(page, endOffset, false);
-
-        // Verify url parameters are updated on time offset button click
+        // Verify url parameters persist after mode switch
         await page.waitForNavigation();
         expect(page.url()).toContain(`startDelta=${startDelta}`);
         expect(page.url()).toContain(`endDelta=${endDelta}`);
