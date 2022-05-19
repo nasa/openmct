@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-    "created": 1643998589907
+    "created": 1650916650636
   },
   "iconSets": [
     {
@@ -1254,6 +1254,14 @@
           "prevSize": 16,
           "code": 60207,
           "tempChar": ""
+        },
+        {
+          "order": 205,
+          "id": 176,
+          "name": "icon-plot-scatter",
+          "prevSize": 16,
+          "code": 60208,
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -4000,6 +4008,26 @@
               {}
             ]
           }
+        },
+        {
+          "id": 176,
+          "paths": [
+            "M192 0c-105.6 0-192 86.4-192 192v640c0 105.6 86.4 192 192 192h640c105.6 0 192-86.4 192-192v-640c0-105.6-86.4-192-192-192zM128 352c0-53.019 42.981-96 96-96s96 42.981 96 96c0 53.019-42.981 96-96 96v0c-53.019 0-96-42.981-96-96v0zM288 832c-53.019 0-96-42.981-96-96s42.981-96 96-96c53.019 0 96 42.981 96 96v0c0 53.019-42.981 96-96 96v0zM544 640c-53.019 0-96-42.981-96-96s42.981-96 96-96c53.019 0 96 42.981 96 96v0c0 53.019-42.981 96-96 96v0zM544 320c-53.019 0-96-42.981-96-96s42.981-96 96-96c53.019 0 96 42.981 96 96v0c0 53.019-42.981 96-96 96v0zM800 832c-53.019 0-96-42.981-96-96s42.981-96 96-96c53.019 0 96 42.981 96 96v0c0 53.019-42.981 96-96 96v0z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-plot-scatter"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
         }
       ],
       "invisible": false,
@@ -4034,11 +4062,12 @@
         "fontFamily": "Open-MCT-Symbols-16px",
         "majorVersion": 5,
         "minorVersion": 1,
-        "designer": "Charles Hacskaylo"
+        "designer": "Charles Hacskaylo",
+        "description": "Change to 5% baseline height"
       },
       "metrics": {
         "emSize": 1024,
-        "baseline": 20,
+        "baseline": 10,
         "whitespace": 0
       },
       "embed": false,
