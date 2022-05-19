@@ -117,6 +117,12 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve(this.status);
     }
 
+    async getDefaultStatusForRole(role) {
+        const allRoles = await this.getPossibleStatuses();
+
+        return allRoles?.[0];
+    }
+
     setStatusForRole(role, status) {
         this.status = status;
         this.emit('statusChange', {

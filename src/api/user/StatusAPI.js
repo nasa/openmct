@@ -24,11 +24,13 @@ import EventEmitter from "EventEmitter";
 export default class StatusAPI extends EventEmitter {
     #userAPI;
     #openmct;
+    #statusStyles;
 
-    constructor(userAPI, openmct) {
+    constructor(userAPI, openmct, {statusStyles} = {}) {
         super();
         this.#userAPI = userAPI;
         this.#openmct = openmct;
+        this.#statusStyles = statusStyles;
 
         this.onProviderStatusChange = this.onProviderStatusChange.bind(this);
         this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
@@ -103,11 +105,13 @@ export default class StatusAPI extends EventEmitter {
     /**
      * @returns {Promise<Array<Status>>} the complete list of possible states that an operator can reply to a poll question with.
      */
-    getPossibleStatuses() {
+    async getPossibleStatuses() {
         const provider = this.#userAPI.getProvider();
 
         if (provider.getPossibleStatuses) {
-            return provider.getPossibleStatuses();
+            const possibleStatuses = await provider.getPossibleStatuses() || [];
+
+            return possibleStatuses.map(status => this.#applyStyling(status));
         } else {
             this.#userAPI.error("User provider cannot provide statuses");
         }
@@ -117,11 +121,16 @@ export default class StatusAPI extends EventEmitter {
      * @param {import("./UserAPI").Role} role The role to fetch the current status for.
      * @returns {Promise<Status>} the current status of the provided role
      */
-    getStatusForRole(role) {
+    async getStatusForRole(role) {
         const provider = this.#userAPI.getProvider();
 
         if (provider.getStatusForRole) {
-            return provider.getStatusForRole(role);
+            const status = await provider.getStatusForRole(role);
+            if (status !== undefined) {
+                return this.#applyStyling(status);
+            } else {
+                return undefined;
+            }
         } else {
             this.#userAPI.error("User provider does not support role status");
         }
@@ -185,12 +194,14 @@ export default class StatusAPI extends EventEmitter {
 
     /**
      * The default status. This is the status that will be used before the user has selected any status.
+     * @param {import("./UserAPI").Role} role
      * @returns {Promise<Status>} the default operator status if no other has been set.
      */
-    async getDefaultStatus() {
-        const allStatuses = await this.getPossibleStatuses();
+    async getDefaultStatusForRole(role) {
+        const provider = this.#userAPI.getProvider();
+        const defaultStatus = await provider.getDefaultStatusForRole(role);
 
-        return allStatuses[0];
+        return defaultStatus;
     }
 
     /**
@@ -257,7 +268,7 @@ export default class StatusAPI extends EventEmitter {
      * @private
      */
     onProviderStatusChange(newStatus) {
-        this.emit('statusChange', newStatus);
+        this.emit('statusChange', this.#applyStyling(newStatus));
     }
 
     /**
@@ -265,6 +276,19 @@ export default class StatusAPI extends EventEmitter {
      */
     onProviderPollQuestionChange(pollQuestion) {
         this.emit('pollQuestionChange', pollQuestion);
+    }
+
+    #applyStyling(status) {
+        const stylesForStatus = this.#statusStyles?.[status.label];
+
+        if (stylesForStatus !== undefined) {
+            return {
+                ...status,
+                ...stylesForStatus
+            };
+        } else {
+            return status;
+        }
     }
 }
 

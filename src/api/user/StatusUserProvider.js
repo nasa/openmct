@@ -56,6 +56,11 @@ export default class StatusUserProvider extends UserProvider {
     async getStatusForRole(role) {}
     /**
      * @param {import("./UserAPI").Role} role
+     * @returns {Promise<import("./StatusAPI").Status}
+     */
+    async getDefaultStatusForRole(role) {}
+    /**
+     * @param {import("./UserAPI").Role} role
      * @param {*} status
      * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
      */
