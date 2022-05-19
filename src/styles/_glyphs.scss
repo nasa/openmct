@@ -195,6 +195,7 @@
 .icon-map {  @include glyphBefore($glyph-icon-map); }
 .icon-plan {  @include glyphBefore($glyph-icon-plan); }
 .icon-timelist {  @include glyphBefore($glyph-icon-timelist); }
+.icon-plot-scatter {  @include glyphBefore($glyph-icon-plot-scatter); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
@@ -210,9 +211,6 @@
 .bg-icon-alert-triangle { @include glyphBg($bg-icon-alert-triangle); }
 .bg-icon-bell { @include glyphBg($bg-icon-bell); }
 .bg-icon-info { @include glyphBg($bg-icon-info); }
-.bg-icon-activity { @include glyphBg($bg-icon-activity); }
-.bg-icon-activity-mode { @include glyphBg($bg-icon-activity-mode); }
-.bg-icon-autoflow-tabular { @include glyphBg($bg-icon-autoflow-tabular); }
 .bg-icon-plus { @include glyphBg($bg-icon-plus); }
 .bg-icon-grippy-ew { @include glyphBg($bg-icon-grippy-ew); }
 .bg-icon-chain-links { @include glyphBg($bg-icon-chain-links); }
@@ -258,3 +256,4 @@
 .bg-icon-map { @include glyphBg($bg-icon-map); }
 .bg-icon-plan { @include glyphBg($bg-icon-plan); }
 .bg-icon-timelist { @include glyphBg($bg-icon-timelist); }
+.bg-icon-plot-scatter { @include glyphBg($bg-icon-plot-scatter); }

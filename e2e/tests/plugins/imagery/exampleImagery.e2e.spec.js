@@ -225,21 +225,123 @@ test.describe('Example Imagery', () => {
         return expect(pausePlayButton).not.toHaveClass(/is-paused/);
     });
 
-    //test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-    //test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    //test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
-    //test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    //test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
-    //test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
 
-test.describe('Example Imagery in Display layout', () => {
-    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-    test.fixme('Can use alt+drag to move around image once zoomed in');
-    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
+// The following test case will cover these scenarios
+// ('Can use Mouse Wheel to zoom in and out of previous image');
+// ('Can use alt+drag to move around image once zoomed in');
+// ('Clicking on the left arrow should pause the imagery and go to previous image');
+// ('If the imagery view is in pause mode, it should not be updated when new images come in');
+// ('If the imagery view is not in pause mode, it should be updated when new images come in');
+const backgroundImageSelector = '.c-imagery__main-image__background-image';
+test('Example Imagery in Display layout', async ({ page }) => {
+  // Go to baseURL
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // Click the Create button
+  await page.click('button:has-text("Create")');
+
+  // Click text=Example Imagery
+  await page.click('text=Example Imagery');
+
+  // Clear and set Image load delay (milliseconds)
+  await page.click('input[type="number"]', {clickCount: 3})
+  await page.type('input[type="number"]', "20")
+
+  // Click text=OK
+  await Promise.all([
+      page.waitForNavigation({waitUntil: 'networkidle'}),
+      page.click('text=OK'),
+      //Wait for Save Banner to appear
+      page.waitForSelector('.c-message-banner__message')
+  ]);
+  // Wait until Save Banner is gone
+  await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+  await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+  const bgImageLocator = await page.locator(backgroundImageSelector);
+  await bgImageLocator.hover();
+
+  // Click previous image button
+  const previousImageButton = await page.locator('.c-nav--prev');
+  await previousImageButton.click();
+
+  // Verify previous image 
+  const selectedImage = page.locator('.selected');
+  await expect(selectedImage).toBeVisible();
+
+  // Zoom in
+  const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
+  await bgImageLocator.hover();
+  const deltaYStep = 100; // equivalent to 1x zoom
+  await page.mouse.wheel(0, deltaYStep * 2);
+  const zoomedBoundingBox = await bgImageLocator.boundingBox();
+  const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+  const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+
+  // Wait for zoom animation to finish 
+  await bgImageLocator.hover();
+  const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+  expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+  expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+
+  // Center the mouse pointer
+  await page.mouse.move(imageCenterX, imageCenterY);
+
+  // Pan Imagery Hints
+  console.log('process.platform is '+process.platform);
+  const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+  const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+  expect(expectedAltText).toEqual(imageryHintsText);
+
+  // Click next image button
+  const nextImageButton = await page.locator('.c-nav--next');
+  await nextImageButton.click();
+
+  // Click fixed timespan button
+  await page.locator('.c-button__label >> text=Fixed Timespan').click();
+
+  // Click local clock 
+  await page.locator('.icon-clock >> text=Local Clock').click();
+
+  // Zoom in on next image
+  await bgImageLocator.hover();
+  await page.mouse.wheel(0, deltaYStep * 2);
+
+  // Wait for zoom animation to finish
+  await bgImageLocator.hover();
+  const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+  expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+  expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+
+   // Click previous image button
+   await previousImageButton.click();
+
+   // Verify previous image
+   await expect(selectedImage).toBeVisible();
+
+  // Wait 20ms to verify no new image has come in
+  await page.waitForTimeout(21);
+
+  //Get background-image url from background-image css prop
+  const backgroundImage = await page.locator('.c-imagery__main-image__background-image');
+  let backgroundImageUrl = await backgroundImage.evaluate((el) => {
+  return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+  });
+  let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
+  console.log('backgroundImageUrl1 ' + backgroundImageUrl1)
+
+  // sleep 21ms
+  await page.waitForTimeout(21);
+
+  // Verify next image has updated
+  let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
+  return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+  });
+  let backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
+  console.log('backgroundImageUrl2 ' + backgroundImageUrl2)
+
+  // Expect backgroundImageUrl2 to be greater then backgroundImageUrl1
+  expect(backgroundImageUrl2 >= backgroundImageUrl1);
 });
 
 test.describe('Example Imagery in Flexible layout', () => {
