@@ -54,18 +54,13 @@
     display: flex;
     align-items: center;
 
-    > * + * {
-        margin-left: 5px;
+    > * {
+        margin-left: $interiorMargin;
     }
     
     &-severity{
         font-size: 2em;
-        .is-criticality-critical{
-            @include glyphBefore($glyph-icon-alert-triangle);
-            color: $colorStatusError;
-        }
-        // @include glyphBefore($glyph-icon-alert-triangle);
-        // color: $colorStatusError;
+        margin-left: $interiorMarginLg;
      }
 
     &-pathname{
