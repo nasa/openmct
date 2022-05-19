@@ -147,9 +147,10 @@ test.describe('Time conductor input fields real-time mode', () => {
  */
 
 /**
+ * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode
  * @param {import('@playwright/test').Page} page
  * @param {OffsetValues} offset
- * @param {boolean} isStartOffset
+ * @param {boolean} [isStartOffset=true] true if setting start time offset, otherwise set end time offset; default is true
  */
 async function setTimeConductorOffset(page, {hours, mins, secs}, isStartOffset = true) {
     if (isStartOffset) {
@@ -175,8 +176,9 @@ async function setTimeConductorOffset(page, {hours, mins, secs}, isStartOffset =
 }
 
 /**
+ * Set the time conductor mode to either fixed timespan or realtime mode.
  * @param {import('@playwright/test').Page} page
- * @param {boolean} isFixedTimespan
+ * @param {boolean} [isFixedTimespan=true] true for fixed timespan mode, false for realtime mode; default is true
  */
 async function setTimeConductorMode(page, isFixedTimespan = true) {
     // Click 'mode' button
