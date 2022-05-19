@@ -9,33 +9,21 @@
             :key="name(fault)"
             class="c-inspect-properties__section"
         >   
-            <DetailText
-                :detail="{ name: 'Occured', value: triggerTime(fault)}"
-            />
-            <DetailText
-                :detail="{ name: 'Criticality', value: severity(fault)}"
-            />
+            <DetailText :detail="{ name: 'Source', value: name(fault) }" />
+            <DetailText :detail="{ name: 'Occured', value: triggerTime(fault)}"/>
+            <DetailText :detail="{ name: 'Criticality', value: severity(fault)}"/>
+            <DetailText :detail="{ name: 'Description', value: description(fault)}" />
         </ul>
-    <div class="c-inspect-properties__header">System</div>
+
+    <div class="c-inspect-properties__header">Telemetry</div>
         <ul
             v-for="fault of selectedFaults"
             :key="name(fault)"
             class="c-inspect-properties__section"
         >   
-            <DetailText 
-                :detail="{ name: 'System', value: pathname(fault) }" />
-        </ul>
-    <div class="c-inspect-properties__header">Source</div>
-        <ul
-            v-for="fault of selectedFaults"
-            :key="name(fault)"
-            class="c-inspect-properties__section"
-        >   
-            <DetailText 
-                :detail="{ name: 'Source', value: name(fault) }" />
+            <DetailText :detail="{ name: 'System', value: pathname(fault) }" />
             <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
             <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
-            <DetailText :detail="{ name: 'Description', value: description(fault)}" />
         </ul>
     </div>
 </template>

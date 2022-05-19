@@ -92,12 +92,13 @@
     &-trigVal, &-curVal, &-trigTime{
         @include ellipsize;
         border-radius: $controlCr;
-        padding: 2px;
+        padding: $interiorMargin;
         width: 80px;
         margin-right: $interiorMarginLg;
 
     }
     &-trigVal {
+        // @include glyphBefore($glyph-icon-arrow-down);
         background: $colorIndicatorDisabled;
     }
 
