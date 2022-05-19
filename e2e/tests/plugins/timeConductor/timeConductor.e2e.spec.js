@@ -23,13 +23,6 @@
 const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
 
-const SELECTOR = {
-    START_OFFSET_BUTTON: 'data-testid=conductor-start-offset-button',
-    END_OFFSET_BUTTON: 'data-testid=conductor-end-offset-button',
-    FIXED_MODE_OPTION: 'data-testid=conductor-modeOption-fixed',
-    REALTIME_MODE_OPTION: 'data-testid=conductor-modeOption-realtime'
-};
-
 test.describe('Time counductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
         //Go to baseURL
@@ -98,13 +91,13 @@ test.describe('Time conductor input fields real-time mode', () => {
         await setTimeConductorOffset(page, startOffset, true);
 
         // Verify time was updated on time offset button
-        await expect(page.locator(SELECTOR.START_OFFSET_BUTTON)).toContainText('00:30:23');
+        await expect(page.locator('data-testid=conductor-start-offset-button')).toContainText('00:30:23');
 
         // Set end time offset
         await setTimeConductorOffset(page, endOffset, false);
 
         // Verify time was updated on preceding time offset button
-        await expect(page.locator(SELECTOR.END_OFFSET_BUTTON)).toContainText('00:00:31');
+        await expect(page.locator('data-testid=conductor-end-offset-button')).toContainText('00:00:31');
     });
 
     /**
@@ -139,10 +132,10 @@ test.describe('Time conductor input fields real-time mode', () => {
         await setTimeConductorMode(page, false);
 
         // Verify updated start time offset persists after mode switch
-        await expect(page.locator(SELECTOR.START_OFFSET_BUTTON)).toContainText('00:30:23');
+        await expect(page.locator('data-testid=conductor-start-offset-button')).toContainText('00:30:23');
 
         // Verify updated end time offset persists after mode switch
-        await expect(page.locator(SELECTOR.END_OFFSET_BUTTON)).toContainText('00:00:00');
+        await expect(page.locator('data-testid=conductor-end-offset-button')).toContainText('00:00:00');
     });
 });
 
@@ -160,9 +153,9 @@ test.describe('Time conductor input fields real-time mode', () => {
  */
 async function setTimeConductorOffset(page, {hours, mins, secs}, isStartOffset = true) {
     if (isStartOffset) {
-        await page.locator(SELECTOR.START_OFFSET_BUTTON).click();
+        await page.locator('data-testid=conductor-start-offset-button').click();
     } else {
-        await page.locator(SELECTOR.END_OFFSET_BUTTON).click();
+        await page.locator('data-testid=conductor-end-offset-button').click();
     }
 
     if (hours) {
@@ -191,8 +184,8 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
 
     // Switch time conductor mode
     if (isFixedTimespan) {
-        await page.locator(SELECTOR.FIXED_MODE_OPTION).click();
+        await page.locator('data-testid=conductor-modeOption-fixed').click();
     } else {
-        await page.locator(SELECTOR.REALTIME_MODE_OPTION).click();
+        await page.locator('data-testid=conductor-modeOption-realtime').click();
     }
 }
