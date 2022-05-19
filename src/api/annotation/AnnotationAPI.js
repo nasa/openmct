@@ -62,7 +62,7 @@ export default class AnnotationAPI extends EventEmitter {
     */
     async create(name, domainObject, annotationType, tags, contentText, targets) {
         console.debug(`🍉 Creating annotation 🍉`);
-        if (Object.keys(this.ANNOTATION_TYPES).includes(annotationType)) {
+        if (!Object.keys(this.ANNOTATION_TYPES).includes(annotationType.toUpperCase())) {
             throw new Error(`Unknown annotation type: ${annotationType}`);
         }
 
