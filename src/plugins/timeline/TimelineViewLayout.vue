@@ -61,7 +61,7 @@
 import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-import { getValidatedPlan } from "../plan/util";
+import { getValidatedData } from "../plan/util";
 
 const unknownObjectType = {
     definition: {
@@ -110,7 +110,7 @@ export default {
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let rowCount = 0;
             if (domainObject.type === 'plan') {
-                rowCount = Object.keys(getValidatedPlan(domainObject)).length;
+                rowCount = Object.keys(getValidatedData(domainObject)).length;
             }
 
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
