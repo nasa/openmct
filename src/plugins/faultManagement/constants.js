@@ -42,7 +42,7 @@ export const FAULT_MANAGEMENT_VIEW = 'faultManagement.view';
 export const FAULT_MANAGEMENT_NAMESPACE = 'faults.taxonomy';
 export const FILTER_ITEMS = [
     'Standard View',
-    'Ackowledged',
+    'Acknowledged',
     'Unacknowledged',
     'Shelved'
 ];

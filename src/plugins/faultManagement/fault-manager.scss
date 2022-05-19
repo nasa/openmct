@@ -8,7 +8,7 @@
     color: $colorStatusAlert;
 }
 
-.is-severity-alert{
+.is-severity-watch{
     @include glyphBefore($glyph-icon-info);
     color: $colorCommand;
 }
