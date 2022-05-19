@@ -40,11 +40,13 @@ describe("The User API", () => {
     });
 
     afterEach(() => {
+        const activeOverlays = openmct.overlays.activeOverlays;
+        activeOverlays.forEach(overlay => overlay.dismiss());
+
         return resetApplicationState(openmct);
     });
 
     describe('with regard to user providers', () => {
-
         it('allows you to specify a user provider', () => {
             openmct.user.on('providerAdded', (provider) => {
                 expect(provider).toBeInstanceOf(ExampleUserProvider);
