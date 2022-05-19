@@ -23,7 +23,7 @@
 const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
 
-test.describe('Time counductor operations', () => {
+test.describe('Time conductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
