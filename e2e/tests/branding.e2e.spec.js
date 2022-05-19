@@ -28,7 +28,7 @@ const { test } = require('../fixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Branding tests', () => {
-    test('About Modal launches with basic branding properties', async ({ page }) => {
+    test.only('About Modal launches with basic branding properties', async ({ page }) => {
         // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -58,6 +58,6 @@ test.describe('Branding tests', () => {
             page.waitForEvent('popup'),
             page.locator('text=click here for third party licensing information').click()
         ]);
-        expect(page2.waitForURL('**\/licenses**')).toBeTruthy();
+        expect(page2.waitForURL('**/licenses**')).toBeTruthy();
     });
 });
