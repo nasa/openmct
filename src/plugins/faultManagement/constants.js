@@ -1,3 +1,21 @@
+const FAULT_SEVERITY = {
+    'CRITICAL': {
+        name: 'CRITICAL',
+        value: 'critical',
+        priority: 0
+    },
+    'WARNING': {
+        name: 'WARNING',
+        value: 'warning',
+        priority: 1
+    },
+    'WATCH': {
+        name: 'WATCH',
+        value: 'watch',
+        priority: 2
+    }
+};
+
 export const FAULT_MANAGEMENT_TYPE = 'faultManagement';
 export const FAULT_MANAGEMENT_INSPECTOR = 'faultManagementInspector';
 export const FAULT_MANAGEMENT_ALARMS = 'alarms';
@@ -66,23 +84,5 @@ export const SORT_ITEMS = {
         sortFunction: (a, b) => {
             return FAULT_SEVERITY[a.severity].priority - FAULT_SEVERITY[b.severity].priority;
         }
-    }
-};
-
-const FAULT_SEVERITY = {
-    'CRITICAL': {
-        name: 'CRITICAL',
-        value: 'critical',
-        priority: 0
-    },
-    'WARNING': {
-        name: 'WARNING',
-        value: 'warning',
-        priority: 1
-    },
-    'WATCH': {
-        name: 'WATCH',
-        value: 'watch',
-        priority: 2
     }
 };

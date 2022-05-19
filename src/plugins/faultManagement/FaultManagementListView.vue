@@ -70,7 +70,7 @@ export default {
             }
 
             if (filterName === 'Shelved') {
-                list = this.faultsList.filter(fault => fault.shelved);
+                list = this.faultsList.filter(fault => fault.shelveInfo);
             }
 
             list.sort(SORT_ITEMS[this.sortBy].sortFunction);
@@ -168,6 +168,8 @@ export default {
                 .catch(() => {
                     // Do nothing
                 });
+
+            this.selectedFaults = {};
         },
         async toggleShelveSelected(faults = Object.values(this.selectedFaults), shelveData = {}) {
             const { shelved = true } = shelveData;
@@ -232,6 +234,8 @@ export default {
                 .forEach(selectedFault => {
                     this.openmct.faults.shelveFault(selectedFault, shelveData);
                 });
+
+            this.selectedFaults = {};
         },
         updateFilter(filter) {
             this.selectAll();
