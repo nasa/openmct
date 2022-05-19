@@ -134,8 +134,6 @@
             font-style: italic;
         }
     }
-
-
 }
 
 // LIST HEADER 
@@ -160,7 +158,6 @@
 .is-unacknowledged{
     .c-fault-mgmt__list-severity{
         @include pulse($animName: severityAnim, $dur: 200ms);
-        // color: $colorStatusError;
     }
 }
 

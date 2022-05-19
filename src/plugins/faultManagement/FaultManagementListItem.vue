@@ -17,6 +17,7 @@
     </div>
     <div
         class="c-fault-mgmt__list-severity"
+        :title= fault.severity.toLowerCase()
         :class="[
             'is-severity-' + fault.severity.toLowerCase()
         ]"
@@ -30,14 +31,18 @@
         <div class="c-fault-mgmt__list-content-right">
             <div
                 class="c-fault-mgmt__list-trigVal icon-arrow-up"
-                :class="[{'is-limit--upr is-limit--yellow' : true}]"
+                 title= "Trip Value"
             >{{ triggerValue }}</div>
             <div
                 class="c-fault-mgmt__list-curVal c-fault-mgmt__list-curVal-alert"
+                title= "Live Value"
             >
                 {{ currentValue }}
             </div>
-            <div class="c-fault-mgmt__list-trigTime">{{ triggerTime }}</div>
+            <div 
+                class="c-fault-mgmt__list-trigTime"
+                > {{ triggerTime }}
+            </div>
         </div>
 
     </div>

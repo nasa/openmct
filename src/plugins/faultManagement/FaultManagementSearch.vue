@@ -9,6 +9,7 @@
 
     <SelectField
         class="c-fault-mgmt-viewButton"
+        title= "View Filter"
         :model="model"
         @onChange="onChange"
     />

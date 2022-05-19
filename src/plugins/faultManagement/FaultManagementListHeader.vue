@@ -15,6 +15,7 @@
         <div class="c-fault-mgmt__list-header-sortButton c-fault-mgmt__list-action-button">
             <SelectField
                 class="c-fault-mgmt-viewButton"
+                title= "Sort By"
                 :model="model"
                 @onChange="onChange"
             />
