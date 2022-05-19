@@ -7,7 +7,7 @@ Testing for Open MCT includes:
 * _Smoke testing_: Brief, informal testing to verify that no major issues
   or regressions are present in the software, or in specific features of
   the software.
-* _Unit testing_: Automated verification of the performance of individual
+* _Automated Testing_: Automated verification of the performance of individual
   software components.
 * _User testing_: Testing with a representative user base to verify
   that application behaves usably and as specified.
@@ -19,13 +19,23 @@ Testing for Open MCT includes:
 
 Manual, non-rigorous testing of the software and/or specific features
 of interest. Verifies that the software runs and that basic functionality
-is present. The outcome of Smoke Testing should be a simplified list of Acceptance Tests which could be executed by another team member with sufficient context.
+is present. 
+
+The outcome of Smoke Testing should be a simplified list of Acceptance Tests which could be executed by another team member with sufficient context. Those could also be used to feed into our e2e testing suite.
 
 ### Unit Testing
 
 Unit tests are automated tests which exercise individual software
 components. Tests are subject to code review along with the actual
 implementation, to ensure that tests are applicable and useful.
+
+Unit tests should meet
+[test standards](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md#test-standards)
+as described in the contributing guide.
+
+### Automated Acceptance Testing
+
+Automated Acceptance Tests can be considered a compliment to unit tests with the key benefit that they test the application at the same layer as a user. Historically, these tests have been considered slow and unreliable, but with recent modernization and standardization of testing frameworks, those considerations can be avoided with low effort. More on our
 
 Unit tests should meet
 [test standards](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#test-standards)
@@ -89,11 +99,11 @@ Before changes are merged, the author of the changes must perform:
 
 * _Smoke testing_ (both generally, and for areas which interact with
   the new changes.)
-* _Unit testing_ (as part of the automated build step.)
+* _PR Checks_ (outlined in the [CI Document](docs/src/process/ci.md))
 
 Changes are not merged until the author has affirmed that both
 forms of testing have been performed successfully; this is documented
-by the [Author Checklist](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#author-checklist).
+by the [Author Checklist](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md#author-checklist).
 
 ### Per-sprint Testing
 
