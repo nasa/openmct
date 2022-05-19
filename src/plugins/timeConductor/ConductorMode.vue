@@ -105,6 +105,7 @@ export default {
                     name: 'Fixed Timespan',
                     description: 'Query and explore data that falls between two fixed datetimes.',
                     cssClass: 'icon-tabular',
+                    testId: 'conductor-modeOption-fixed',
                     onItemClicked: () => this.setOption(key)
                 };
             } else {
@@ -116,6 +117,7 @@ export default {
                     description: "Monitor streaming data in real-time. The Time "
                     + "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
                     cssClass: clock.cssClass || 'icon-clock',
+                    testId: 'conductor-modeOption-realtime',
                     onItemClicked: () => this.setOption(key)
                 };
             }
