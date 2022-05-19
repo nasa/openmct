@@ -5,10 +5,10 @@
 >
     <div class="c-inspect-properties__header">Fault Details</div>
         <ul
-            v-for="fault of selectedFaults"
-            :key="name(fault)"
+            v-for="(fault) of selectedFaults"
+            :key="name(fault, uuid())"
             class="c-inspect-properties__section"
-        >   
+        >
             <DetailText
                 :detail="{ name: 'Occured', value: triggerTime(fault)}"
             />
@@ -19,20 +19,18 @@
     <div class="c-inspect-properties__header">System</div>
         <ul
             v-for="fault of selectedFaults"
-            :key="name(fault)"
+            :key="name(fault, uuid())"
             class="c-inspect-properties__section"
-        >   
-            <DetailText 
-                :detail="{ name: 'System', value: pathname(fault) }" />
+        >
+            <DetailText :detail="{ name: 'System', value: pathname(fault) }" />
         </ul>
     <div class="c-inspect-properties__header">Source</div>
         <ul
             v-for="fault of selectedFaults"
-            :key="name(fault)"
+            :key="name(fault, uuid())"
             class="c-inspect-properties__section"
-        >   
-            <DetailText 
-                :detail="{ name: 'Source', value: name(fault) }" />
+        >
+            <DetailText :detail="{ name: 'Source', value: name(fault) }" />
             <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
             <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
             <DetailText :detail="{ name: 'Description', value: description(fault)}" />
@@ -42,6 +40,8 @@
 
 <script>
 import DetailText from '@/ui/inspector/details/DetailText.vue';
+
+import uuid from 'uuid';
 
 export default {
     name: 'FaultManagementInspector',
@@ -66,14 +66,15 @@ export default {
         this.updateSelectedFaults();
     },
     methods: {
+        uuid: uuid,
         currentValue(fault) {
             return fault?.parameterDetail?.currentValue?.engValue?.doubleValue;
         },
         entireName(fault) {
             return `${fault?.id?.name}/${fault?.id?.namespace}`;
         },
-        name(fault){
-            return fault?.id?.name;
+        name(fault, uuid = ''){
+            return fault?.id?.name + uuid;
         },
         pathname(fault){
             return fault?.id?.namespace;
