@@ -65,6 +65,7 @@
 
     &-pathname{
         flex-wrap: wrap;
+        flex: 1 1 auto;
         
     }
     &-path{
@@ -98,7 +99,6 @@
 
     }
     &-trigVal {
-        // @include glyphBefore($glyph-icon-arrow-down);
         background: $colorIndicatorDisabled;
     }
 
@@ -111,8 +111,8 @@
     }
 
     &-trigTime{
-        width: 180px;
-        margin-right: 3em;
+        width: auto;
+        // margin-right: 3em;
 
     }
 
@@ -141,17 +141,22 @@
 .c-fault-mgmt__list-header{
     display: flex;
     background: none;
-    flex-wrap: wrap;
-    margin-bottom: none;
+    // flex-wrap: nowrap !important;
 
     &-tripVal, &-liveVal, &-trigTime{
         background: none;
     }
 
+    &-trigTime{
+        width: 160px;
+    }
     &-sortButton{
         flex: 0 0 auto;
         margin-left: auto;
         justify-content: right;
+        display: flex;
+        align-content: right;
+        width: 100px;
     }
 
 }

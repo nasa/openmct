@@ -65,7 +65,7 @@ export default {
         filteredFaultsList() {
             const filterName = FILTER_ITEMS[this.filterIndex];
             let list = this.faultsList;
-            if (filterName === 'Ackowledged') {
+            if (filterName === 'Acknowledged') {
                 list = this.faultsList.filter(fault => fault.acknowledged);
             }
 
