@@ -887,10 +887,6 @@ export default {
             this.imageTranslateY = 0;
         },
         handlePanZoomUpdate({ newScaleFactor, screenClientX, screenClientY }) {
-            if (!this.isPaused) {
-                this.paused(true);
-            }
-
             if (!(screenClientX || screenClientY)) {
                 return this.updatePanZoom(newScaleFactor, 0, 0);
             }
@@ -1040,9 +1036,6 @@ export default {
         },
         wheelZoom(e) {
             e.preventDefault();
-            if (!this.isPaused) {
-                this.paused(true);
-            }
 
             this.$refs.imageControls.wheelZoom(e);
         },

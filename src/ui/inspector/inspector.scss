@@ -197,17 +197,17 @@
         }
     }
 
-    li.grid-row + li.grid-row {
+    .grid-row + .grid-row {
         > * {
             border-top: 1px solid $colorInspectorSectionHeaderBg;
         }
     }
 
-    li.grid-row .label {
+    .grid-row .label {
         color: $colorInspectorPropName;
     }
 
-    li.grid-row .value {
+    .grid-row .value {
         color: $colorInspectorPropVal;
         word-break: break-all;
         &:first-child {
