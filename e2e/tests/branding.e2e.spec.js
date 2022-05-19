@@ -28,7 +28,7 @@ const { test } = require('../fixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Branding tests', () => {
-    test.only('About Modal launches with basic branding properties', async ({ page }) => {
+    test('About Modal launches with basic branding properties', async ({ page }) => {
         // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
