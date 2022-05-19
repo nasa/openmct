@@ -25,7 +25,7 @@ const { expect } = require('@playwright/test');
 
 test.describe('Time conductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
-        //Go to baseURL
+        // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
         const year = new Date().getFullYear();
 
@@ -81,7 +81,7 @@ test.describe('Time conductor input fields real-time mode', () => {
             secs: '31'
         };
 
-        //Go to baseURL
+        // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
         // Switch to real-time mode
@@ -113,7 +113,7 @@ test.describe('Time conductor input fields real-time mode', () => {
             secs: '00'
         };
 
-        //Go to baseURL
+        // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
         // Switch to real-time mode
@@ -136,6 +136,41 @@ test.describe('Time conductor input fields real-time mode', () => {
 
         // Verify updated end time offset persists after mode switch
         await expect(page.locator('data-testid=conductor-end-offset-button')).toContainText('00:00:00');
+    });
+
+    /**
+     * Verify that the URL parameters (startDelta, endDelta) are correctly updated on offset change
+     */
+    test('url parameters are updated properly on time offset change', async ({ page }) => {
+        const startOffset = {
+            mins: '30',
+            secs: '23'
+        };
+
+        const endOffset = {
+            secs: '31'
+        };
+
+        // Convert offsets to milliseconds
+        const startDelta = (30 * 60 * 1000) + (23 * 1000);
+        const endDelta = (31 * 1000);
+
+        // Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Switch to real-time mode
+        await setTimeConductorMode(page, false);
+
+        // Set start time offset
+        await setTimeConductorOffset(page, startOffset, true);
+
+        // Set end time offset
+        await setTimeConductorOffset(page, endOffset, false);
+
+        // Verify url parameters are updated on time offset button click
+        await page.waitForNavigation();
+        expect(page.url()).toContain(`startDelta=${startDelta}`);
+        expect(page.url()).toContain(`endDelta=${endDelta}`);
     });
 });
 
