@@ -9,6 +9,7 @@ const { devices } = require('@playwright/test');
 const config = {
     retries: 0,
     testDir: 'tests',
+    testIgnore: '**.perf.spec.js',
     timeout: 30 * 1000,
     webServer: {
         command: 'npm run start',
