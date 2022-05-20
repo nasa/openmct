@@ -749,6 +749,12 @@ mct-plot {
     overflow: hidden;
 }
 
+/***************** SCATTER PLOTS */
+.c-scatter-chart {
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
 /***************** CURSOR GUIDES */
 [class*='c-cursor-guide'] {
     box-shadow: $shdwCursorGuide;
