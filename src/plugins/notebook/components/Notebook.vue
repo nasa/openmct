@@ -177,7 +177,7 @@ export default {
         SearchResults,
         Sidebar
     },
-    inject: ['openmct', 'snapshotContainer'],
+    inject: ['agent', 'openmct', 'snapshotContainer'],
     props: {
         domainObject: {
             type: Object,
@@ -455,12 +455,9 @@ export default {
                 - tablet portrait
                 - in a layout frame (within .c-so-view)
             */
-            const classList = document.querySelector('body').classList;
-            const isPhone = Array.from(classList).includes('phone');
-            const isTablet = Array.from(classList).includes('tablet');
-            // address in https://github.com/nasa/openmct/issues/4875
-            // eslint-disable-next-line compat/compat
-            const isPortrait = window.screen.orientation.type.includes('portrait');
+            const isPhone = this.agent.isPhone();
+            const isTablet = this.agent.isTablet();
+            const isPortrait = this.agent.isPortrait();
             const isInLayout = Boolean(this.$el.closest('.c-so-view'));
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
             this.sidebarCoversEntries = sidebarCoversEntries;
