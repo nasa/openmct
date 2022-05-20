@@ -25,6 +25,7 @@ import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
+import PlotViewActions from "./actions/ViewActions";
 
 export default function () {
     return function install(openmct) {
@@ -67,6 +68,9 @@ export default function () {
 
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
+
+        PlotViewActions.forEach(action => {
+            openmct.actions.register(action);
+        });
     };
 }
-
