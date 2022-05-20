@@ -123,6 +123,8 @@ export default {
             const onLockHighlightPointUpdated = this.onLockHighlightPointUpdated;
             const onHighlightsUpdated = this.onHighlightsUpdated;
             const onConfigLoaded = this.onConfigLoaded;
+            const onCursorGuideChange = this.onCursorGuideChange;
+            const onGridLinesChange = this.onGridLinesChange;
             const loadingUpdated = this.loadingUpdated;
             const setStatus = this.setStatus;
 
@@ -152,11 +154,13 @@ export default {
                         onLockHighlightPointUpdated,
                         onHighlightsUpdated,
                         onConfigLoaded,
+                        onCursorGuideChange,
+                        onGridLinesChange,
                         loadingUpdated,
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
 
             this.setSelection();
@@ -172,6 +176,12 @@ export default {
         },
         onTickWidthChange() {
             this.$emit('plotTickWidth', ...arguments);
+        },
+        onCursorGuideChange() {
+            this.$emit('cursorGuide', ...arguments);
+        },
+        onGridLinesChange() {
+            this.$emit('gridLines', ...arguments);
         },
         setStatus(status) {
             this.status = status;

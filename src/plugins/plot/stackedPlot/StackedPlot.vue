@@ -26,41 +26,6 @@
     class="c-plot c-plot--stacked holder holder-plot has-control-bar"
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <div
-        v-show="!hideExportButtons && !options.compact"
-        class="c-control-bar"
-    >
-        <span class="c-button-set c-button-set--strip-h">
-            <button
-                class="c-button icon-download"
-                title="Export This View's Data as PNG"
-                @click="exportPNG()"
-            >
-                <span class="c-button__label">PNG</span>
-            </button>
-            <button
-                class="c-button"
-                title="Export This View's Data as JPG"
-                @click="exportJPG()"
-            >
-                <span class="c-button__label">JPG</span>
-            </button>
-        </span>
-        <button
-            class="c-button icon-crosshair"
-            :class="{ 'is-active': cursorGuide }"
-            title="Toggle cursor guides"
-            @click="toggleCursorGuide"
-        >
-        </button>
-        <button
-            class="c-button"
-            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
-            title="Toggle grid lines"
-            @click="toggleGridLines"
-        >
-        </button>
-    </div>
     <plot-legend
         :cursor-locked="!!lockHighlightPoint"
         :series="seriesModels"
@@ -82,6 +47,8 @@
             :plot-tick-width="maxTickWidth"
             @plotTickWidth="onTickWidthChange"
             @loadingUpdated="loadingUpdated"
+            @cursorGuide="onCursorGuideChange"
+            @gridLines="onGridLinesChange"
             @lockHighlightPoint="lockHighlightPointUpdated"
             @highlights="highlightsUpdated"
             @configLoaded="registerSeriesListeners"
@@ -273,14 +240,6 @@ export default {
                     this.hideExportButtons = false;
                 }.bind(this));
         },
-
-        toggleCursorGuide() {
-            this.cursorGuide = !this.cursorGuide;
-        },
-
-        toggleGridLines() {
-            this.gridLines = !this.gridLines;
-        },
         onTickWidthChange(width, plotId) {
             if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
                 return;
@@ -305,7 +264,7 @@ export default {
             this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
         },
         unRegisterSeriesListeners(configId) {
-            //TODO: is this needed?
+        //TODO: is this needed?
         },
         addSeries(series) {
             const index = this.seriesModels.length;
@@ -318,6 +277,18 @@ export default {
             }
 
             this.stopListening(plotSeries);
+        },
+        onCursorGuideChange(cursorGuide) {
+            this.cursorGuide = cursorGuide === true;
+        },
+        onGridLinesChange(gridLines) {
+            this.gridLines = gridLines === true;
+        },
+        getViewContext() {
+            return {
+                exportPNG: this.exportPNG,
+                exportJPG: this.exportJPG
+            };
         }
     }
 };
