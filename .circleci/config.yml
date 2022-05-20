@@ -175,7 +175,6 @@ workflows:
           node-version: lts/gallium
           suite: ci
       - perf-test:
-          name: e2e-ci
           node-version: lts/gallium
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
