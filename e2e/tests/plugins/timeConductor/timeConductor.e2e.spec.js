@@ -67,6 +67,25 @@ test.describe('Time counductor operations', () => {
         const endDateValidityStatus = await endTimeLocator.evaluate((element) => element.checkValidity());
         expect(endDateValidityStatus).not.toBeTruthy();
     });
+
+    test.fixme('mode, bounds, offsets, and time system are reflected correctly in URL params', async ({ page }) => {
+        // Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Verify that initial mode is fixed-timespan
+        // Verify that URL params reflect fixed-timespan mode
+        // Verify that URL params reflect initial start and end bounds
+        // Verify that URL params reflect initial time system
+        // Change start and end bounds
+        // Verify that URL params reflect new start and end bounds
+        // Change mode to real-time mode
+        // Verify that URL params reflect real-time mode
+        // Verify that URL params reflect existing start and end offsets
+        // Change start and end offsets
+        // Verify that URL params reflect new start and end offsets
+        // Change time system
+        // Verify that URL params reflect new time system
+    });
 });
 
 // Testing instructions:
