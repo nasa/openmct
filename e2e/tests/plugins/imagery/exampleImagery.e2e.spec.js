@@ -417,10 +417,8 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
         // Fill #mct-input-id-103
         await page.locator('#mct-input-id-103').fill('50');
 
-        await Promise.all([
-            expect.soft(thumbsWrapperLocator.isVisible()).toBeTruthy(),
-            expect.soft(thumbsWrapperLocator).toHaveClass(/is-small-thumbs/)
-        ]);
+        expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
+        await expect(thumbsWrapperLocator).toHaveClass(/is-small-thumbs/);
 
         // Resize the example imagery vertically to change the thumbnail visibility
         // Click #mct-input-id-103
@@ -429,10 +427,8 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
         // Fill #mct-input-id-103
         await page.locator('#mct-input-id-103').fill('100');
 
-        await Promise.all([
-            expect.soft(thumbsWrapperLocator.isVisible()).toBeTruthy(),
-            expect.soft(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/)
-        ]);
+        expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
+        await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
 
     });
 
