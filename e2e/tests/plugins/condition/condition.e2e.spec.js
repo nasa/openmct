@@ -26,7 +26,8 @@ suite is sharing state between tests which is considered an anti-pattern. Implim
 demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
