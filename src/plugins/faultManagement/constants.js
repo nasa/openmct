@@ -82,7 +82,20 @@ export const SORT_ITEMS = {
         name: 'Severity',
         value: 'severity',
         sortFunction: (a, b) => {
-            return FAULT_SEVERITY[a.severity].priority - FAULT_SEVERITY[b.severity].priority;
+            const diff = FAULT_SEVERITY[a.severity].priority - FAULT_SEVERITY[b.severity].priority;
+            if (diff !== 0) {
+                return diff;
+            }
+
+            if (b.triggerTime > a.triggerTime) {
+                return 1;
+            }
+
+            if (a.triggerTime > b.triggerTime) {
+                return -1;
+            }
+
+            return 0;
         }
     }
 };
