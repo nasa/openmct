@@ -95,8 +95,8 @@
                 </thead>
                 <tbody>
                     <plot-legend-item-expanded
-                        v-for="seriesObject in series"
-                        :key="seriesObject.keyString"
+                        v-for="(seriesObject, seriesIndex) in series"
+                        :key="`seriesObject.keyString-${seriesIndex}`"
                         :series-object="seriesObject"
                         :highlights="highlights"
                         :legend="legend"
