@@ -57,8 +57,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
         resolveFunction = () => {
             oldHash = window.location.hash;
             expect(window.location.hash.includes('tc.mode=fixed')).toBe(true);
-
-            openmct.router.removeListener('change:hash', resolveFunction);
             done();
         };
 
@@ -80,8 +78,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
             success = hasStartDelta && hasEndDelta && hasLocalClock;
             if (success) {
                 expect(success).toBe(true);
-
-                openmct.router.removeListener('change:hash', resolveFunction);
                 done();
             }
         };
