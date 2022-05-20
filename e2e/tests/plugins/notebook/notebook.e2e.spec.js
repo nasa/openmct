@@ -65,7 +65,7 @@ async function dragAndDropEmbed(page) {
     return;
 }
 
-test.describe('Notebook Operations', () => {
+test.describe.skip('Notebook Operations', () => {
 
     test.beforeEach(async ({ page }) => {
 
@@ -85,7 +85,7 @@ test.describe('Notebook Operations', () => {
         await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed Notebook`);
     });
 
-    test.only('Can search for page, section, and entry', async ({ page }) => {
+    test.skip('Can search for page, section, and entry', async ({ page }) => {
         await page.pause();
     });
 
