@@ -22,41 +22,6 @@
 
 <template>
 <div class="c-plot c-plot--stacked holder holder-plot has-control-bar">
-    <div
-        v-show="!hideExportButtons && !options.compact"
-        class="c-control-bar"
-    >
-        <span class="c-button-set c-button-set--strip-h">
-            <button
-                class="c-button icon-download"
-                title="Export This View's Data as PNG"
-                @click="exportPNG()"
-            >
-                <span class="c-button__label">PNG</span>
-            </button>
-            <button
-                class="c-button"
-                title="Export This View's Data as JPG"
-                @click="exportJPG()"
-            >
-                <span class="c-button__label">JPG</span>
-            </button>
-        </span>
-        <button
-            class="c-button icon-crosshair"
-            :class="{ 'is-active': cursorGuide }"
-            title="Toggle cursor guides"
-            @click="toggleCursorGuide"
-        >
-        </button>
-        <button
-            class="c-button"
-            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
-            title="Toggle grid lines"
-            @click="toggleGridLines"
-        >
-        </button>
-    </div>
     <div class="l-view-section">
         <stacked-plot-item
             v-for="object in compositionObjects"
@@ -69,6 +34,8 @@
             :plot-tick-width="maxTickWidth"
             @plotTickWidth="onTickWidthChange"
             @loadingUpdated="loadingUpdated"
+            @cursorGuide="onCursorGuideChange"
+            @gridLines="onGridLinesChange"
         />
     </div>
 </div>
@@ -184,20 +151,24 @@ export default {
                     this.hideExportButtons = false;
                 }.bind(this));
         },
-
-        toggleCursorGuide() {
-            this.cursorGuide = !this.cursorGuide;
-        },
-
-        toggleGridLines() {
-            this.gridLines = !this.gridLines;
-        },
         onTickWidthChange(width, plotId) {
             if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
                 return;
             }
 
             this.$set(this.tickWidthMap, plotId, width);
+        },
+        onCursorGuideChange(cursorGuide) {
+            this.cursorGuide = cursorGuide === true;
+        },
+        onGridLinesChange(gridLines) {
+            this.gridLines = gridLines === true;
+        },
+        getViewContext() {
+            return {
+                exportPNG: this.exportPNG,
+                exportJPG: this.exportJPG
+            };
         }
     }
 };

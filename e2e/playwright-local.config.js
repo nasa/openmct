@@ -2,6 +2,7 @@
 // playwright.config.js
 // @ts-check
 
+// eslint-disable-next-line no-unused-vars
 const { devices } = require('@playwright/test');
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
@@ -29,12 +30,12 @@ const config = {
         {
             name: 'chrome',
             use: {
-                browserName: 'chromium',
-                ...devices['Desktop Chrome']
+                browserName: 'chromium'
             }
         },
         {
             name: 'MMOC',
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
                 viewport: {
