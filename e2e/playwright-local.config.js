@@ -53,8 +53,7 @@ const config = {
         }*/
     ],
     reporter: [
-        ['list'],
-        ['allure-playwright']
+        ['list']
     ]
 };
 
