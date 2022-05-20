@@ -97,8 +97,6 @@ export default {
             classname += ' ';
             classname += this.getRangeMonitoringResultClassname(currentValue.monitoringResult);
 
-            console.log('liveValueClassname', this.liveValue, classname);
-
             return classname.trim();
         },
         name() {
@@ -123,7 +121,6 @@ export default {
             classname += ' ';
             classname += this.getRangeMonitoringResultClassname(triggerValue.monitoringResult);
 
-            console.log('tripValueClassname', classname);
             return classname.trim();
         }
     },
