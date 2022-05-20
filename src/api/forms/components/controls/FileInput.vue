@@ -40,6 +40,12 @@
         >
             {{ name }}
         </button>
+        <button
+            v-if="removable"
+            class="c-button icon-trash"
+            title="Remove file"
+            @click="removeFile"
+        ></button>
     </span>
 </span>
 </template>
@@ -63,6 +69,9 @@ export default {
             const fileInfo = this.fileInfo || this.model.value;
 
             return fileInfo && fileInfo.name || this.model.text;
+        },
+        removable() {
+            return (this.fileInfo || this.model.value) && this.model.removable;
         }
     },
     mounted() {
@@ -97,6 +106,15 @@ export default {
         },
         selectFile() {
             this.$refs.fileInput.click();
+        },
+        removeFile() {
+            this.model.value = undefined;
+            this.fileInfo = undefined;
+            const data = {
+                model: this.model,
+                value: undefined
+            };
+            this.$emit('onChange', data);
         }
     }
 };
