@@ -128,16 +128,32 @@ jobs:
       suite:
         type: string
     executor: pw-focal-development
+    parallelism: 2
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: npx playwright install
-      - run: npm run test:e2e:<<parameters.suite>>
+      - run: "npm run test:e2e:<<parameters.suite>> -- shard=${CIRCLE_NODE_INDEX}/2"
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
           path: test-results
       - generate_and_store_version_and_filesystem_artifacts
+  perf-test:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: npx playwright install
+      - run: npm run test:perf
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - generate_and_store_version_and_filesystem_artifacts      
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
@@ -151,10 +167,6 @@ workflows:
           post-steps:
             - upload_code_covio
       - unit-test:
-          name: node16-chrome
-          node-version: lts/gallium
-          browser: ChromeHeadless
-      - unit-test:
           name: node18-chrome
           node-version: "18"
           browser: ChromeHeadless
@@ -162,6 +174,9 @@ workflows:
           name: e2e-ci
           node-version: lts/gallium
           suite: ci
+      - perf-test:
+          name: e2e-ci
+          node-version: lts/gallium
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:

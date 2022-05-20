@@ -33,6 +33,7 @@ const config = {
     ],
     reporter: [
         ['list'],
+        ['junit', { outputFile: 'test-results/results.xml' }],
         ['json', { outputFile: 'test-results/results.json' }]
     ]
 };
