@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures');
+const { expect } = require('@playwright/test');
 const path = require('path');
 
 const TEST_TEXT = 'Testing text for entries.';
@@ -28,11 +29,35 @@ const TEST_TEXT_NAME = 'Test Page';
 const CUSTOM_NAME = 'CUSTOM_NAME';
 const COMMIT_BUTTON_TEXT = 'button:has-text("Commit Entries")';
 const SINE_WAVE_GENERATOR = 'text=Unnamed Sine Wave Generator';
-const DROP_AREA = '.c-notebook__drag-area';
+const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function startAndAddNotebookObject(page) {
+    // eslint-disable-next-line no-undef
+    await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+    // Click text=CUSTOME_NAME
+    await page.click(`text=${CUSTOM_NAME}`); // secondarily tests renamability also
+    // Click text=OK
+    await Promise.all([
+        page.waitForNavigation({waitUntil: 'networkidle'}),
+        page.click('text=OK')
+    ]);
+
+    return;
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function enterTextEntry(page) {
     // Click .c-notebook__drag-area
-    await page.locator(DROP_AREA).click();
+    await page.locator(NOTEBOOK_DROP_AREA).click();
 
     // enter text
     await page.locator('div.c-ne__text').click();
@@ -42,6 +67,9 @@ async function enterTextEntry(page) {
     return;
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function dragAndDropEmbed(page) {
     // Click button:has-text("Create")
     await page.locator('button:has-text("Create")').click();
@@ -59,11 +87,14 @@ async function dragAndDropEmbed(page) {
         page.locator('text=Unnamed CUSTOM_NAME').click()
     ]);
 
-    await page.dragAndDrop(SINE_WAVE_GENERATOR, DROP_AREA);
+    await page.dragAndDrop(SINE_WAVE_GENERATOR, NOTEBOOK_DROP_AREA);
 
     return;
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function lockPage(page) {
     const commitButton = page.locator(COMMIT_BUTTON_TEXT);
     await commitButton.click();
@@ -74,8 +105,11 @@ async function lockPage(page) {
     return;
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function openContextMenuRestrictedNotebook(page) {
-    // Click text=Open MCT My Items >> span >> nth=3
+    // Click text=Open MCT My Items (This expands the My Items folder to show it's chilren in the tree)
     await page.locator('text=Open MCT My Items >> span').nth(3).click();
 
     // Click a:has-text("Unnamed CUSTOM_NAME")
@@ -89,29 +123,10 @@ async function openContextMenuRestrictedNotebook(page) {
 test.describe('Restricted Notebook', () => {
 
     test.beforeEach(async ({ page }) => {
-        // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, 'addRestrictedNotebook.js') });
+        await startAndAddNotebookObject(page);
+    });
 
-        page.on('console', msg => console.log(msg.text()));
-
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
-
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-
-        // Click text=Example Imagery
-        await page.click(`text=${CUSTOM_NAME}`); // this inherently tests renamability
-
-        // Click text=OK
-        await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
-            //Wait for Save Banner to appear
-            page.waitForSelector('.c-message-banner__message')
-        ]);
-        //Wait until Save Banner is gone
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    test('Can be renamed', async ({ page }) => {
         await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed ${CUSTOM_NAME}`);
     });
 
@@ -131,97 +146,99 @@ test.describe('Restricted Notebook', () => {
         expect.soft(await commitButton.count()).toEqual(1);
     });
 
-    test.describe('With at least one entry and with the page locked', () => {
+});
 
-        test.beforeEach(async ({ page }) => {
-            await enterTextEntry(page);
-            await lockPage(page);
+test.describe('Restricted Notebook with at least one entry and with the page locked', () => {
 
-            // open sidebar
-            await page.locator('button.c-notebook__toggle-nav-button').click();
-        });
+    test.beforeEach(async ({ page }) => {
+        await startAndAddNotebookObject(page);
+        await enterTextEntry(page);
+        await lockPage(page);
 
-        test('The page should now be in a locked state', async ({ page }) => {
-            // main lock message on page
-            const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
-            expect.soft(await lockMessage.count()).toEqual(1);
-
-            // lock icon on page in sidebar
-            const pageLockIcon = page.locator('ul.c-notebook__pages li div.icon-lock');
-            expect.soft(await pageLockIcon.count()).toEqual(1);
-
-            // no way to remove a restricted notebook with a locked page
-            await openContextMenuRestrictedNotebook(page);
-
-            const menuOptions = page.locator('.c-menu ul');
-
-            await expect.soft(menuOptions).not.toContainText('Remove');
-
-        });
-
-        test('Can still: add page, rename, add entry, delete unlocked pages', async ({ page }) => {
-            // Click text=Page Add >> button
-            await Promise.all([
-                page.waitForNavigation(),
-                page.locator('text=Page Add >> button').click()
-            ]);
-            // Click text=Unnamed Page >> nth=1
-            await page.locator('text=Unnamed Page').nth(1).click();
-            // Press a with modifiers
-            await page.locator('text=Unnamed Page').nth(1).fill(TEST_TEXT_NAME);
-
-            // expect to be able to rename unlocked pages
-            const newPageElement = page.locator(`text=${TEST_TEXT_NAME}`);
-            const newPageCount = await newPageElement.count();
-            await newPageElement.press('Enter'); // exit contenteditable state
-            expect.soft(newPageCount).toEqual(1);
-
-            // enter test text
-            await enterTextEntry(page);
-
-            // expect new page to be lockable
-            const commitButton = page.locator(COMMIT_BUTTON_TEXT);
-            expect.soft(await commitButton.count()).toEqual(1);
-
-            // Click text=Unnamed PageTest Page >> button
-            await page.locator('text=Unnamed PageTest Page >> button').click();
-            // Click text=Delete Page
-            await page.locator('text=Delete Page').click();
-            // Click text=Ok
-            await Promise.all([
-                page.waitForNavigation(),
-                page.locator('text=Ok').click()
-            ]);
-
-            // deleted page, should no longer exist
-            const deletedPageElement = page.locator(`text=${TEST_TEXT_NAME}`);
-            expect.soft(await deletedPageElement.count()).toEqual(0);
-        });
+        // open sidebar
+        await page.locator('button.c-notebook__toggle-nav-button').click();
     });
 
-    test.describe('With a page with embeds', () => {
+    test('Locked page should now be in a locked state', async ({ page }) => {
+        // main lock message on page
+        const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
+        expect.soft(await lockMessage.count()).toEqual(1);
 
-        test.beforeEach(async ({ page }) => {
-            await dragAndDropEmbed(page);
-        });
+        // lock icon on page in sidebar
+        const pageLockIcon = page.locator('ul.c-notebook__pages li div.icon-lock');
+        expect.soft(await pageLockIcon.count()).toEqual(1);
 
-        test('Allows embeds to be deleted if page unlocked', async ({ page }) => {
+        // no way to remove a restricted notebook with a locked page
+        await openContextMenuRestrictedNotebook(page);
 
-            // Click .c-ne__embed__name .c-popup-menu-button
-            await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
+        const menuOptions = page.locator('.c-menu ul');
 
-            const embedMenu = page.locator('body >> .c-menu');
-            await expect.soft(embedMenu).toContainText('Remove This Embed');
-        });
-
-        test('Disallows embeds to be deleted if page locked', async ({ page }) => {
-            await lockPage(page);
-            // Click .c-ne__embed__name .c-popup-menu-button
-            await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
-
-            const embedMenu = page.locator('body >> .c-menu');
-            await expect.soft(embedMenu).not.toContainText('Remove This Embed');
-        });
+        await expect.soft(menuOptions).not.toContainText('Remove');
 
     });
+
+    test('Can still: add page, rename, add entry, delete unlocked pages', async ({ page }) => {
+        // Click text=Page Add >> button
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=Page Add >> button').click()
+        ]);
+        // Click text=Unnamed Page >> nth=1
+        await page.locator('text=Unnamed Page').nth(1).click();
+        // Press a with modifiers
+        await page.locator('text=Unnamed Page').nth(1).fill(TEST_TEXT_NAME);
+
+        // expect to be able to rename unlocked pages
+        const newPageElement = page.locator(`text=${TEST_TEXT_NAME}`);
+        const newPageCount = await newPageElement.count();
+        await newPageElement.press('Enter'); // exit contenteditable state
+        expect.soft(newPageCount).toEqual(1);
+
+        // enter test text
+        await enterTextEntry(page);
+
+        // expect new page to be lockable
+        const commitButton = page.locator(COMMIT_BUTTON_TEXT);
+        expect.soft(await commitButton.count()).toEqual(1);
+
+        // Click text=Unnamed PageTest Page >> button
+        await page.locator('text=Unnamed PageTest Page >> button').click();
+        // Click text=Delete Page
+        await page.locator('text=Delete Page').click();
+        // Click text=Ok
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=Ok').click()
+        ]);
+
+        // deleted page, should no longer exist
+        const deletedPageElement = page.locator(`text=${TEST_TEXT_NAME}`);
+        expect.soft(await deletedPageElement.count()).toEqual(0);
+    });
+});
+
+test.describe('Restricted Notebook with a page locked and with an embed', () => {
+
+    test.beforeEach(async ({ page }) => {
+        await startAndAddNotebookObject(page);
+        await dragAndDropEmbed(page);
+    });
+
+    test('Allows embeds to be deleted if page unlocked', async ({ page }) => {
+        // Click .c-ne__embed__name .c-popup-menu-button
+        await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
+
+        const embedMenu = page.locator('body >> .c-menu');
+        await expect.soft(embedMenu).toContainText('Remove This Embed');
+    });
+
+    test('Disallows embeds to be deleted if page locked', async ({ page }) => {
+        await lockPage(page);
+        // Click .c-ne__embed__name .c-popup-menu-button
+        await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
+
+        const embedMenu = page.locator('body >> .c-menu');
+        await expect.soft(embedMenu).not.toContainText('Remove This Embed');
+    });
+
 });

@@ -14,5 +14,5 @@ export function isNotebookType(domainObject) {
 }
 
 export function isNotebookViewType(view) {
-    return [NOTEBOOK_VIEW_TYPE, NOTEBOOK_VIEW_TYPE].includes(view);
+    return [NOTEBOOK_VIEW_TYPE, RESTRICTED_NOTEBOOK_VIEW_TYPE].includes(view);
 }
