@@ -367,7 +367,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/7f960280-ff54-44b0-8123-b7353e72ca5b?tc.mode=fixed&tc.startBound=1653059038449&tc.endBound=1653060838449&tc.timeSystem=utc&view=layout.view' }*/),
+            page.waitForNavigation(),
             page.locator('text=OK').click()
         ]);
 
@@ -391,13 +391,13 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/7f960280-ff54-44b0-8123-b7353e72ca5b/0f14df02-aea0-4ca5-8605-929a5706da0c?tc.mode=fixed&tc.startBound=1653059038449&tc.endBound=1653060838449&tc.timeSystem=utc&view=example.imagery' }*/),
+            page.waitForNavigation(),
             page.locator('text=OK').click()
         ]);
 
         // Click text=Thumbnail Example Imagery Imagery Layout Snapshot >> button >> nth=0
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/7f960280-ff54-44b0-8123-b7353e72ca5b?tc.mode=fixed&tc.startBound=1653059038449&tc.endBound=1653060838449&tc.timeSystem=utc&view=layout.view' }*/),
+            page.waitForNavigation(),
             page.locator('text=Thumbnail Example Imagery Imagery Layout Snapshot >> button').first().click()
         ]);
 
