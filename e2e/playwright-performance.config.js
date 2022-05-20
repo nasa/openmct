@@ -17,7 +17,7 @@ const config = {
     use: {
         browserName: "chromium",
         baseURL: 'http://localhost:8080/',
-        headless: true,
+        headless: Boolean(process.env.CI), //Only if running locally
         ignoreHTTPSErrors: true,
         screenshot: 'off',
         trace: 'off',
