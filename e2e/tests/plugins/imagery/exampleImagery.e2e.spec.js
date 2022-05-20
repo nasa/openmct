@@ -344,6 +344,100 @@ test('Example Imagery in Display layout', async ({ page }) => {
   expect(backgroundImageUrl2 >= backgroundImageUrl1);
 });
 
+test.describe('Example imagery thumbnails resize in display layouts', () => {
+
+    test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        const thumbsWrapperLocator = await page.locator('.c-imagery__thumbs-wrapper');
+        // Click button:has-text("Create")
+        await page.locator('button:has-text("Create")').click();
+
+        // Click li:has-text("Display Layout")
+        await page.locator('li:has-text("Display Layout")').click();
+
+        // Double click text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]
+        await page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]').dblclick();
+
+        // Double click text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]
+        await page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]').dblclick();
+
+        // Fill text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]
+        await page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]').fill('Thumbnail Display Layout');
+
+        // Click text=OK
+        await Promise.all([
+            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/7f960280-ff54-44b0-8123-b7353e72ca5b?tc.mode=fixed&tc.startBound=1653059038449&tc.endBound=1653060838449&tc.timeSystem=utc&view=layout.view' }*/),
+            page.locator('text=OK').click()
+        ]);
+
+        // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
+        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+
+        // Click text=Save and Finish Editing
+        await page.locator('text=Save and Finish Editing').click();
+
+        // Click button:has-text("Create")
+        await page.locator('button:has-text("Create")').click();
+
+        // Click li:has-text("Example Imagery")
+        await page.locator('li:has-text("Example Imagery")').click();
+
+        // Click text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]
+        await page.locator('text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]').click();
+
+        // Fill text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]
+        await page.locator('text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]').fill('Thumbnail Example Imagery');
+
+        // Click text=OK
+        await Promise.all([
+            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/7f960280-ff54-44b0-8123-b7353e72ca5b/0f14df02-aea0-4ca5-8605-929a5706da0c?tc.mode=fixed&tc.startBound=1653059038449&tc.endBound=1653060838449&tc.timeSystem=utc&view=example.imagery' }*/),
+            page.locator('text=OK').click()
+        ]);
+
+        // Click text=Thumbnail Example Imagery Imagery Layout Snapshot >> button >> nth=0
+        await Promise.all([
+            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/7f960280-ff54-44b0-8123-b7353e72ca5b?tc.mode=fixed&tc.startBound=1653059038449&tc.endBound=1653060838449&tc.timeSystem=utc&view=layout.view' }*/),
+            page.locator('text=Thumbnail Example Imagery Imagery Layout Snapshot >> button').first().click()
+        ]);
+
+        // Edit mode
+        await page.locator('text=Thumbnail Display Layout Snapshot >> button').nth(3).click();
+
+        // Click on example imagery to expose toolbar
+        await page.locator('text=Thumbnail Example Imagery Snapshot Large View').click();
+
+        // expect thumbnails not be visible when first added
+        await expect.soft(thumbsWrapperLocator.isHidden()).toBeTruthy();
+
+        // Resize the example imagery vertically to change the thumbnail visibility
+        // Click #mct-input-id-103
+        await page.locator('#mct-input-id-103').click();
+
+        // Fill #mct-input-id-103
+        await page.locator('#mct-input-id-103').fill('50');
+
+        await Promise.all([
+            expect.soft(thumbsWrapperLocator.isVisible()).toBeTruthy(),
+            expect.soft(thumbsWrapperLocator).toHaveClass(/is-small-thumbs/)
+        ]);
+
+        // Resize the example imagery vertically to change the thumbnail visibility
+        // Click #mct-input-id-103
+        await page.locator('#mct-input-id-103').click();
+
+        // Fill #mct-input-id-103
+        await page.locator('#mct-input-id-103').fill('100');
+
+        await Promise.all([
+            expect.soft(thumbsWrapperLocator.isVisible()).toBeTruthy(),
+            expect.soft(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/)
+        ]);
+
+    });
+
+});
+
 test.describe('Example Imagery in Flexible layout', () => {
     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     test.fixme('Can use alt+drag to move around image once zoomed in');
