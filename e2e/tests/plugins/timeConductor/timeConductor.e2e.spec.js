@@ -76,9 +76,6 @@ test.describe('Time conductor input fields real-time mode', () => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
-        // Set realtime "local clock" mode offsets
-        const timeInputs = page.locator('input.c-input--datetime');
-
         // Click fixed timespan button
         await page.locator('.c-button__label >> text=Fixed Timespan').click();
 
