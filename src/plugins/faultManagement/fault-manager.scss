@@ -98,16 +98,19 @@
         margin-right: $interiorMarginLg;
 
     }
+
     &-trigVal {
+        @include isLimit();
         background: $colorIndicatorDisabled;
     }
 
     &-curVal {
+        @include isLimit();
+
         background: $colorIndicatorDisabled;
         &-alert{
             background: $colorWarningHi;
         }
-
     }
 
     &-trigTime{

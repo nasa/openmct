@@ -30,14 +30,16 @@
         </div>
         <div class="c-fault-mgmt__list-content-right">
             <div
-                class="c-fault-mgmt__list-trigVal icon-arrow-up"
+                class="c-fault-mgmt__list-trigVal"
+                :class="tripValueClassname"
                 title="Trip Value"
             >{{ triggerValue }}</div>
             <div
-                class="c-fault-mgmt__list-curVal c-fault-mgmt__list-curVal-alert"
+                class="c-fault-mgmt__list-curVal"
+                :class="liveValueClassname"
                 title="Live Value"
             >
-                {{ currentValue }}
+                {{ liveValue }}
             </div>
             <div
                 class="c-fault-mgmt__list-trigTime"
@@ -82,8 +84,22 @@ export default {
         acknowledged() {
             return this.fault?.acknowledged;
         },
-        currentValue() {
+        liveValue() {
             return this.fault?.parameterDetail?.currentValue?.engValue?.doubleValue;
+        },
+        liveValueClassname() {
+            const currentValue = this.fault?.parameterDetail?.currentValue;
+            if (!currentValue || currentValue.monitoringResult === 'IN_LIMITS') {
+                return '';
+            }
+
+            let classname = this.getRangeConditionBasedClassname(currentValue.rangeCondition);
+            classname += ' ';
+            classname += this.getRangeMonitoringResultClassname(currentValue.monitoringResult);
+
+            console.log('liveValueClassname', this.liveValue, classname);
+
+            return classname.trim();
         },
         name() {
             return `${this.fault?.id?.name}/${this.fault?.id?.namespace}`;
@@ -96,6 +112,19 @@ export default {
         },
         triggerValue() {
             return this.fault?.parameterDetail?.triggerValue?.engValue?.doubleValue;
+        },
+        tripValueClassname() {
+            const triggerValue = this.fault?.parameterDetail?.triggerValue;
+            if (!triggerValue || triggerValue.monitoringResult === 'IN_LIMITS') {
+                return '';
+            }
+
+            let classname = this.getRangeConditionBasedClassname(triggerValue.rangeCondition);
+            classname += ' ';
+            classname += this.getRangeMonitoringResultClassname(triggerValue.monitoringResult);
+
+            console.log('tripValueClassname', classname);
+            return classname.trim();
         }
     },
     watch: {
@@ -105,6 +134,32 @@ export default {
     beforeDestroy() {
     },
     methods: {
+        getRangeConditionBasedClassname(rangeCondition) {
+            if (rangeCondition === 'LOW') {
+                return 'is-limit--lwr';
+            }
+
+            if (rangeCondition === 'HIGH') {
+                return 'is-limit--upr';
+            }
+
+            return '';
+        },
+        getRangeMonitoringResultClassname(monitoringResult) {
+            if (monitoringResult === 'CRITICAL') {
+                return 'is-limit--red';
+            }
+
+            if (monitoringResult === 'WARNING') {
+                return 'is-limit--yellow';
+            }
+
+            if (monitoringResult === 'WATCH') {
+                return 'is-limit--cyan';
+            }
+
+            return '';
+        },
         toggleSelected(event) {
             const faultData = {
                 fault: this.fault,
