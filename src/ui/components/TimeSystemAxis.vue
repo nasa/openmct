@@ -123,7 +123,7 @@ export default {
             }
         },
         drawAxis(bounds, timeSystem) {
-            let viewBounds = Object.assign({}, bounds);
+            let viewBounds = Object.create(bounds);
 
             this.setScale(viewBounds, timeSystem);
             this.setAxis(viewBounds);

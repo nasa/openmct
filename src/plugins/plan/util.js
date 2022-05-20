@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export function getValidatedPlan(domainObject) {
+export function getValidatedData(domainObject) {
     let sourceMap = domainObject.sourceMap;
     let body = domainObject.selectFile.body;
     let json = {};
