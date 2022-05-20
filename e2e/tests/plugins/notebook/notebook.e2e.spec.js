@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 const path = require('path');
 
 const TEST_TEXT = 'Testing text for entries.';
@@ -64,9 +65,7 @@ async function dragAndDropEmbed(page) {
     return;
 }
 
-test.describe('Notebook CRUD Operations', () => {
-
-    test
+test.describe('Notebook Operations', () => {
 
     test.beforeEach(async ({ page }) => {
 
@@ -77,20 +76,21 @@ test.describe('Notebook CRUD Operations', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click(`text=${CUSTOM_NAME}`); // this inherently tests renamability
-
+        await page.click('text=Notebook');
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
             page.click('text=OK')
-            //Wait for Save Banner to appear
         ]);
-        //Wait until Save Banner is gone
-        await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed ${CUSTOM_NAME}`);
+        await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed Notebook`);
     });
 
-    test('Can still: add page, rename, add entry, delete unlocked pages', async ({ page }) => {
-        // Click text=Page Add >> button
+    test.only('Can search for page, section, and entry', async ({ page }) => {
+        await page.pause();
+    });
+
+    test('Can add page, rename, add entry, delete unlocked pages', async ({ page }) => {
+    // Click text=Page Add >> button
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=Page Add >> button').click()
@@ -104,7 +104,7 @@ test.describe('Notebook CRUD Operations', () => {
         const newPageElement = page.locator(`text=${TEST_TEXT_NAME}`);
         const newPageCount = await newPageElement.count();
         await newPageElement.press('Enter'); // exit contenteditable state
-        expect.soft(newPageCount).toEqual(1);
+        await expect.soft(newPageCount).toEqual(1);
 
         // enter test text
         await enterTextEntry(page);
