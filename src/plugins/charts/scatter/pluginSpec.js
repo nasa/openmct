@@ -25,7 +25,7 @@ import Vue from "vue";
 import ScatterPlotPlugin from "./plugin";
 import ScatterPlot from './ScatterPlotView.vue';
 import EventEmitter from "EventEmitter";
-import { SCATTER_PLOT_VIEW, SCATTER_PLOT_KEY } from './ScatterPlotConstants';
+import { SCATTER_PLOT_VIEW, SCATTER_PLOT_KEY } from './scatterPlotConstants';
 
 describe("the plugin", function () {
     let element;

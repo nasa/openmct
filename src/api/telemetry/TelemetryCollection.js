@@ -22,11 +22,7 @@
 
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
-
-const ERRORS = {
-    TIMESYSTEM_KEY: 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.',
-    LOADED: 'Telemetry Collection has already been loaded.'
-};
+import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
 
 /** Class representing a Telemetry Collection. */
 
@@ -61,7 +57,7 @@ export class TelemetryCollection extends EventEmitter {
      */
     load() {
         if (this.loaded) {
-            this._error(ERRORS.LOADED);
+            this._error(LOADED_ERROR);
         }
 
         this._setTimeSystem(this.openmct.time.timeSystem());
@@ -267,6 +263,10 @@ export class TelemetryCollection extends EventEmitter {
         this.lastBounds = bounds;
 
         if (isTick) {
+            if (this.timeKey === undefined) {
+                return;
+            }
+
             // need to check futureBuffer and need to check
             // if anything has fallen out of bounds
             let startIndex = 0;
@@ -306,7 +306,6 @@ export class TelemetryCollection extends EventEmitter {
             if (added.length > 0) {
                 this.emit('add', added);
             }
-
         } else {
             // user bounds change, reset
             this._reset();
@@ -326,12 +325,16 @@ export class TelemetryCollection extends EventEmitter {
         let domains = this.metadata.valuesForHints(['domain']);
         let domain = domains.find((d) => d.key === timeSystem.key);
 
-        if (domain === undefined) {
-            this._error(ERRORS.TIMESYSTEM_KEY);
+        if (domain !== undefined) {
+            // timeKey is used to create a dummy datum used for sorting
+            this.timeKey = domain.source;
+        } else {
+            this.timeKey = undefined;
+
+            this._warn(TIMESYSTEM_KEY_WARNING);
+            this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
         }
 
-        // timeKey is used to create a dummy datum used for sorting
-        this.timeKey = domain.source; // this defaults to key if no source is set
         let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
@@ -401,5 +404,9 @@ export class TelemetryCollection extends EventEmitter {
      */
     _error(message) {
         throw new Error(message);
+    }
+
+    _warn(message) {
+        console.warn(message);
     }
 }

@@ -105,6 +105,10 @@ export default {
             this.unlistenUnderlay();
         }
 
+        if (this.unlistenUnderlayRanges) {
+            this.unlistenUnderlayRanges();
+        }
+
         if (this.unobserveColorChanges) {
             this.unobserveColorChanges();
         }
@@ -142,7 +146,7 @@ export default {
             const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
             const xAxisDomain = this.getXAxisDomain(yAxesMeta);
 
-            const shapes = this.shapesData.map((shapeData, index1) => {
+            const shapes = this.shapesData.map((shapeData, index) => {
                 if (!shapeData.x || !shapeData.y
                 || !shapeData.x.length || !shapeData.y.length
                 || shapeData.x.length !== shapeData.y.length) {
@@ -150,9 +154,9 @@ export default {
                 }
 
                 let path = `M ${shapeData.x[0]},${shapeData.y[0]}`;
-                shapeData.x.forEach((point, index) => {
-                    if (index > 0) {
-                        path = `${path} L${point},${shapeData.y[index]}`;
+                shapeData.x.forEach((point, shapeIndex) => {
+                    if (shapeIndex > 0) {
+                        path = `${path} L${point},${shapeData.y[shapeIndex]}`;
                     }
                 });
 
@@ -160,7 +164,7 @@ export default {
                     path,
                     type: 'path',
                     line: {
-                        color: PATH_COLORS[index1]
+                        color: PATH_COLORS[index]
                     },
                     opacity: 0.5
                 };
@@ -262,6 +266,7 @@ export default {
         registerListeners() {
             this.unobserveColorChanges = this.openmct.objects.observe(this.domainObject, 'configuration.styles.color', this.updateColors);
             this.unlistenUnderlay = this.openmct.objects.observe(this.domainObject, 'selectFile', this.observeForUnderlayPlotChanges);
+            this.unlistenUnderlayRanges = this.openmct.objects.observe(this.domainObject, 'configuration.ranges', this.updateData);
             this.resizeTimer = false;
             if (window.ResizeObserver) {
                 this.plotResizeObserver = new ResizeObserver(() => {
@@ -341,7 +346,7 @@ export default {
                 x: [],
                 y: []
             };
-            const shapes = this.shapesData.map((shapeData, index1) => {
+            const shapes = this.shapesData.map((shapeData, index) => {
                 if (!shapeData.x || !shapeData.y
               || !shapeData.x.length || !shapeData.y.length
               || shapeData.x.length !== shapeData.y.length) {
@@ -364,7 +369,7 @@ export default {
                     textfont: {
                         family: 'Helvetica Neue, Helvetica, Arial, sans-serif',
                         size: '12px',
-                        color: PATH_COLORS[index1]
+                        color: PATH_COLORS[index]
                     },
                     opacity: 0.5
                 };

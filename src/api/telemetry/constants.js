@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,38 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { SCATTER_PLOT_KEY } from './scatterPlotConstants';
-
-export default function ScatterPlotCompositionPolicy(openmct) {
-    function hasRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']).map((value) => {
-            return value.source;
-        });
-
-        const uniqueRangeValues = new Set(rangeValues);
-
-        return uniqueRangeValues && uniqueRangeValues.size > 1;
-    }
-
-    function hasScatterPlotTelemetry(domainObject) {
-        if (!openmct.telemetry.isTelemetryObject(domainObject)) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasRange(metadata);
-    }
-
-    return {
-        allow: function (parent, child) {
-            if (parent.type === SCATTER_PLOT_KEY) {
-                if ((child.type === 'conditionSet') || (!hasScatterPlotTelemetry(child))) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    };
-}
+export const TIMESYSTEM_KEY_WARNING = 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.';
+export const TIMESYSTEM_KEY_NOTIFICATION = 'Telemetry metadata does not match the active time system.';
+export const LOADED_ERROR = 'Telemetry Collection has already been loaded.';
