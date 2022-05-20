@@ -128,12 +128,12 @@ jobs:
       suite:
         type: string
     executor: pw-focal-development
-    parallelism: 3
+    parallelism: 4
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: npx playwright install
-      - run: "npm run test:e2e:<<parameters.suite>> -- shard=${CIRCLE_NODE_INDEX}/3"
+      - run: "npm run test:e2e:<<parameters.suite>> -- shard=${CIRCLE_NODE_INDEX}/${CIRCLE_NODE_TOTAL}"
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
