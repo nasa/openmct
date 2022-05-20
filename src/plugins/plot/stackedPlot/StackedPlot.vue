@@ -76,6 +76,7 @@
             :object="object"
             :options="options"
             :grid-lines="gridLines"
+            :color-palette="colorPalette"
             :cursor-guide="cursorGuide"
             :show-limit-line-labels="showLimitLineLabels"
             :plot-tick-width="maxTickWidth"
@@ -94,6 +95,7 @@
 
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import configStore from '../configuration/ConfigStore';
+import ColorPalette from "@/ui/color/ColorPalette";
 
 import PlotLegend from "../legend/PlotLegend.vue";
 import StackedPlotItem from './StackedPlotItem.vue';
@@ -129,7 +131,8 @@ export default {
             lockHighlightPoint: false,
             highlights: [],
             seriesModels: [],
-            showLimitLineLabels: undefined
+            showLimitLineLabels: undefined,
+            colorPalette: new ColorPalette()
         };
     },
     computed: {
@@ -198,7 +201,7 @@ export default {
             const id = this.openmct.objects.makeKeyString(child.identifier);
 
             this.$set(this.tickWidthMap, id, 0);
-            const persistedConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+            const persistedConfig = this.domainObject.configuration.series && this.domainObject.configuration.series.find((seriesConfig) => {
                 return this.openmct.objects.areIdsEqual(seriesConfig.identifier, child.identifier);
             });
             if (!persistedConfig) {

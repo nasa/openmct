@@ -237,6 +237,12 @@ export default {
             default() {
                 return {};
             }
+        },
+        colorPalette: {
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -372,6 +378,7 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
+                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
