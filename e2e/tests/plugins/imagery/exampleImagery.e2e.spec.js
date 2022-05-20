@@ -355,15 +355,10 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 
         // Click li:has-text("Display Layout")
         await page.locator('li:has-text("Display Layout")').click();
+        const displayLayoutTitleField = page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]');
+        await displayLayoutTitleField.click();
 
-        // Double click text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]
-        await page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]').dblclick();
-
-        // Double click text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]
-        await page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]').dblclick();
-
-        // Fill text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]
-        await page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]').fill('Thumbnail Display Layout');
+        await displayLayoutTitleField.fill('Thumbnail Display Layout');
 
         // Click text=OK
         await Promise.all([
@@ -383,11 +378,12 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
         // Click li:has-text("Example Imagery")
         await page.locator('li:has-text("Example Imagery")').click();
 
+        const imageryTitleField = page.locator('text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]');
         // Click text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]
-        await page.locator('text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]').click();
+        await imageryTitleField.click();
 
         // Fill text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]
-        await page.locator('text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]').fill('Thumbnail Example Imagery');
+        await imageryTitleField.fill('Thumbnail Example Imagery');
 
         // Click text=OK
         await Promise.all([
@@ -411,6 +407,11 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
         await expect.soft(thumbsWrapperLocator.isHidden()).toBeTruthy();
 
         // Resize the example imagery vertically to change the thumbnail visibility
+        /*
+        The following arbitrary values are added to observe the separate visual
+        conditions of the thumbnails (hidden, small thumbnails, regular thumbnails).
+        Specifically, height is set to 50px for small thumbs and 100px for regular
+        */
         // Click #mct-input-id-103
         await page.locator('#mct-input-id-103').click();
 
