@@ -67,8 +67,15 @@ export default function StackedPlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<stacked-plot :options="options"></stacked-plot>'
+                        template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
                     });
+                },
+                getViewContext() {
+                    if (!component) {
+                        return {};
+                    }
+
+                    return component.$refs.plotComponent.getViewContext();
                 },
                 destroy: function () {
                     component.$destroy();
