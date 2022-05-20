@@ -20,11 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="u-contents">
-    <div
-        v-if="canEdit"
-        class="grid-row"
-    >
+<div class="grid-row">
+    <template v-if="canEdit">
         <div
             class="grid-cell label"
             :title="editTitle"
@@ -63,11 +60,8 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div
-        v-else
-        class="grid-row"
-    >
+    </template>
+    <template v-else>
         <div
             class="grid-cell label"
             :title="viewTitle"
@@ -81,7 +75,7 @@
             >
             </span>
         </div>
-    </div>
+    </template>
 </div>
 </template>
 
