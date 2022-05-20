@@ -167,13 +167,6 @@
                 </div>
             </li>
         </ul>
-        <!--        <ul-->
-        <!--            v-if="!useBar"-->
-        <!--            class="l-inspector-part"-->
-        <!--        >-->
-        <!--            <h2 title="Use time-based interpolation for telemetry">Line Method</h2>-->
-        <!--            -->
-        <!--        </ul>-->
     </div>
 </div>
 </template>

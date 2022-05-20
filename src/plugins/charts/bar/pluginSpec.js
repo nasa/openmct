@@ -135,6 +135,14 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-plot"
                 },
+                configuration: {
+                    barStyles: {
+                        series: {}
+                    },
+                    axes: {},
+                    useInterpolation: 'linear',
+                    useBar: 'true'
+                },
                 type: "telemetry.plot.bar-graph",
                 name: "Test Bar Graph"
             };
@@ -142,12 +150,7 @@ describe("the plugin", function () {
             testDomainObject = {
                 identifier: {
                     namespace: "",
-                    key: "test-object"
-                },
-                configuration: {
-                    barStyles: {
-                        series: {}
-                    }
+                    key: "test-telemetry-object"
                 },
                 type: "test-object",
                 name: "Test Object",
@@ -177,9 +180,7 @@ describe("the plugin", function () {
 
             mockComposition = new EventEmitter();
             mockComposition.load = () => {
-                mockComposition.emit('add', testDomainObject);
-
-                return [testDomainObject];
+                return [];
             };
 
             spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
@@ -247,11 +248,10 @@ describe("the plugin", function () {
 
             const applicableViews = openmct.objectViews.get(barGraphObject, mockObjectPath);
             const plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
-            const barGraphView = plotViewProvider.view(testDomainObject, [testDomainObject]);
+            const barGraphView = plotViewProvider.view(barGraphObject, [barGraphObject]);
             barGraphView.show(child, true);
-            expect(testDomainObject.configuration.barStyles.series["test-object"].name).toEqual("Test Object");
             mockComposition.emit('add', dotFullTelemetryObject);
-            expect(testDomainObject.configuration.barStyles.series["someNamespace:~OpenMCT~outer.test-object.foo.bar"].name).toEqual("A Dotful Object");
+            expect(barGraphObject.configuration.barStyles.series["someNamespace:~OpenMCT~outer.test-object.foo.bar"].name).toEqual("A Dotful Object");
             barGraphView.destroy();
         });
     });
@@ -412,7 +412,7 @@ describe("the plugin", function () {
             testDomainObject = {
                 identifier: {
                     namespace: "",
-                    key: "test-object"
+                    key: "~Some~foo.bar"
                 },
                 type: "test-object",
                 name: "Test Object",
@@ -460,11 +460,16 @@ describe("the plugin", function () {
                                                 isAlias: true
                                             }
                                         }
-                                    }
+                                    },
+                                    axes: {},
+                                    useInterpolation: 'linear',
+                                    useBar: 'true'
                                 },
                                 composition: [
                                     {
-                                        key: '~Some~foo.bar'
+                                        identifier: {
+                                            key: '~Some~foo.bar'
+                                        }
                                     }
                                 ]
                             }

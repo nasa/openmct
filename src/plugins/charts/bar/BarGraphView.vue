@@ -228,12 +228,6 @@ export default {
         loadComposition() {
             this.composition = this.openmct.composition.get(this.domainObject);
 
-            if (!this.composition) {
-                this.addTelemetryObject(this.domainObject);
-
-                return;
-            }
-
             this.composition.on('add', this.addToComposition);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
