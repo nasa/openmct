@@ -1,7 +1,9 @@
 <template>
 <div class="c-faults-list-view">
     <FaultManagementSearch
+        :searchTerm="searchTerm"
         @filterChanged="updateFilter"
+        @updateSearchTerm="updateSearchTerm"
     />
 
     <FaultManagementToolbar
@@ -56,8 +58,9 @@ export default {
     },
     data() {
         return {
-            selectedFaults: {},
             filterIndex: 0,
+            searchTerm: '',
+            selectedFaults: {},
             sortBy: Object.values(SORT_ITEMS)[0].value
         };
     },
@@ -73,6 +76,10 @@ export default {
                 list = this.faultsList.filter(fault => fault.shelveInfo);
             }
 
+            if (this.searchTerm.length > 0) {
+                list = list.filter(this.filterUsingSearchTerm);
+            }
+
             list.sort(SORT_ITEMS[this.sortBy].sortFunction);
 
             return list;
@@ -82,6 +89,32 @@ export default {
     mounted() {},
     beforeDestroy() {},
     methods: {
+        filterUsingSearchTerm(fault) {
+            if (fault?.id?.name?.toString().toLowerCase().includes(this.searchTerm)) {
+                return true;
+            }
+
+            if (fault?.id?.namespace?.toString().toLowerCase().includes(this.searchTerm)) {
+                return true;
+            }
+
+            if (fault?.parameterDetail?.triggerValue?.engValue?.doubleValue.toString().toLowerCase().includes(this.searchTerm)) {
+                return true;
+            }
+
+            if (fault?.parameterDetail?.currentValue?.engValue?.doubleValue.toString().toLowerCase().includes(this.searchTerm)) {
+                return true;
+            }
+
+            if (fault?.triggerTime.toString().toLowerCase().includes(this.searchTerm)) {
+                return true;
+            }
+            if (fault?.severity.toString().toLowerCase().includes(this.searchTerm)) {
+                return true;
+            }
+
+            return false;
+        },
         getFaultId(fault) {
             return `${fault.id.name}-${fault.id.namespace}`;
         },
@@ -241,6 +274,9 @@ export default {
             this.selectAll();
 
             this.filterIndex = filter.model.options.findIndex(option => option.value === filter.value);
+        },
+        updateSearchTerm(term = '') {
+            this.searchTerm =  term.toLowerCase();
         }
     }
 };

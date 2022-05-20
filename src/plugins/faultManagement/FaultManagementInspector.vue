@@ -8,7 +8,7 @@
             v-for="(fault) of selectedFaults"
             :key="name(fault, uuid())"
             class="c-inspect-properties__section"
-        >   
+        >
             <DetailText :detail="{ name: 'Source', value: name(fault) }" />
             <DetailText :detail="{ name: 'Occured', value: triggerTime(fault)}"/>
             <DetailText :detail="{ name: 'Criticality', value: severity(fault)}"/>
@@ -20,7 +20,7 @@
             v-for="fault of selectedFaults"
             :key="name(fault, uuid())"
             class="c-inspect-properties__section"
-        >   
+        >
             <DetailText :detail="{ name: 'System', value: pathname(fault) }" />
             <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
             <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />

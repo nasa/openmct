@@ -1,15 +1,15 @@
 <template>
 <div class="c-fault-mgmt__search-row">
-    <div class="c-fault-mgmt-search c-search">
-        <input
-            type="search"
-            name="fault-search"
-        >
-    </div>
+    <Search
+        class="c-fault-mgmt-search"
+        :value="searchTerm"
+        @input="updateSearchTerm"
+        @clear="updateSearchTerm"
+    />
 
     <SelectField
         class="c-fault-mgmt-viewButton"
-        title= "View Filter"
+        title="View Filter"
         :model="model"
         @onChange="onChange"
     />
@@ -18,15 +18,21 @@
 
 <script>
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
+import Search from '@/ui/components/search.vue';
 
 import { FILTER_ITEMS } from './constants';
 
 export default {
     components: {
-        SelectField
+        SelectField,
+        Search
     },
     inject: ['openmct', 'domainObject'],
     props: {
+        searchTerm: {
+            type: String,
+            default: ''
+        }
     },
     data() {
         return {
@@ -57,6 +63,9 @@ export default {
     methods: {
         onChange(data) {
             this.$emit('filterChanged', data);
+        },
+        updateSearchTerm(searchTerm) {
+            this.$emit('updateSearchTerm', searchTerm);
         }
     }
 };
