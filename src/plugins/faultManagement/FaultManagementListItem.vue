@@ -122,7 +122,7 @@ export default {
                 {
                     cssClass: 'icon-bell',
                     isDisabled: this.fault.acknowledged,
-                    name: 'Ack',
+                    name: 'Acknowledge',
                     description: '',
                     onItemClicked: (e) => {
                         this.$emit('acknowledgeSelected', [this.fault]);
