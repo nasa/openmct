@@ -140,7 +140,9 @@
 // LIST HEADER 
 .c-fault-mgmt__list-header{
     display: flex;
-    background: none;
+    background: rgba($colorBodyFg, .25);
+    border-radius: $controlCr;
+
     // flex-wrap: nowrap !important;
 
     &-tripVal, &-liveVal, &-trigTime{
