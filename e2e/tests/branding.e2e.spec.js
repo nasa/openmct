@@ -58,6 +58,6 @@ test.describe('Branding tests', () => {
             page.waitForEvent('popup'),
             page.locator('text=click here for third party licensing information').click()
         ]);
-        expect(page2.waitForURL('**\/licenses**')).toBeTruthy();
+        expect(page2.waitForURL('**/licenses**')).toBeTruthy();
     });
 });

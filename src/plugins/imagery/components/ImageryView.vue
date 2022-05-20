@@ -55,7 +55,7 @@
             <div
                 v-if="zoomFactor > 1"
                 class="c-imagery__hints"
-            >{{formatImageAltText}}</div>
+            >{{ formatImageAltText }}</div>
             <div
                 ref="focusedImageWrapper"
                 class="image-wrapper"
