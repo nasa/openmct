@@ -13,6 +13,24 @@
     color: $colorCommand;
 }
 
+.is-unacknowledged{
+    .c-fault-mgmt__list-severity{
+        @include pulse($animName: severityAnim, $dur: 200ms);
+    }
+}
+
+.is-selected { 
+    background: $colorSelectedBg;
+}
+
+.is-shelved{
+    .c-fault-mgmt__list-content{
+        opacity: 50%;
+        font-style: italic;
+    }
+}
+
+
 // SEARCH 
 .c-fault-mgmt__search-row{
     display: flex;
@@ -101,13 +119,12 @@
 
     &-trigVal {
         @include isLimit();
-        background: $colorIndicatorDisabled;
+        background: rgba($colorBodyFg, 0.25);
     }
 
     &-curVal {
         @include isLimit();
-
-        background: $colorIndicatorDisabled;
+        background: rgba($colorBodyFg, 0.25);
         &-alert{
             background: $colorWarningHi;
         }
@@ -143,7 +160,7 @@
 // LIST HEADER 
 .c-fault-mgmt__list-header{
     display: flex;
-    background: rgba($colorBodyFg, .25);
+    background: rgba($colorBodyFg, .23);
     border-radius: $controlCr;
 
     // flex-wrap: nowrap !important;
@@ -166,22 +183,6 @@
 
 }
 
-.is-unacknowledged{
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: severityAnim, $dur: 200ms);
-    }
-}
-
-.is-selected { 
-    background: $colorSelectedBg;
-}
-
-.is-shelved{
-    .c-fault-mgmt__list-content{
-        opacity: 70%;
-        font-style: italic;
-    }
-}
 
 
 
