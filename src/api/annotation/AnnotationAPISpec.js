@@ -21,7 +21,11 @@ describe("The Annotation API", () => {
             "update",
             "get"
         ]);
-        mockObjectProvider.get.and.returnValue(Promise.resolve(true));
+        // eslint-disable-next-line require-await
+        mockObjectProvider.get = async () => {
+            return mockDomainObject;
+        };
+
         mockObjectProvider.create.and.returnValue(Promise.resolve(true));
         mockObjectProvider.update.and.returnValue(Promise.resolve(true));
 
