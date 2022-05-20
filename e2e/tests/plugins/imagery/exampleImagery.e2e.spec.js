@@ -452,15 +452,6 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
     });
 });
 
-test.describe('Example Imagery in Flexible layout', () => {
-    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-    test.fixme('Can use alt+drag to move around image once zoomed in');
-    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
-});
-
 test.describe('Example Imagery in Tabs view', () => {
     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     test.fixme('Can use alt+drag to move around image once zoomed in');
