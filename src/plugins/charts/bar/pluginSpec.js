@@ -57,18 +57,18 @@ describe("the plugin", function () {
         const testTelemetry = [
             {
                 'utc': 1,
-                'some-key': 'some-value 1',
-                'some-other-key': 'some-other-value 1'
+                'some-key': ['1.3222'],
+                'some-other-key': [1]
             },
             {
                 'utc': 2,
-                'some-key': 'some-value 2',
-                'some-other-key': 'some-other-value 2'
+                'some-key': ['2.555'],
+                'some-other-key': [2]
             },
             {
                 'utc': 3,
-                'some-key': 'some-value 3',
-                'some-other-key': 'some-other-value 3'
+                'some-key': ['3.888'],
+                'some-other-key': [3]
             }
         ];
 
@@ -123,7 +123,6 @@ describe("the plugin", function () {
     });
 
     describe("The bar graph view", () => {
-        let testDomainObject;
         let barGraphObject;
         // eslint-disable-next-line no-unused-vars
         let component;
@@ -141,41 +140,10 @@ describe("the plugin", function () {
                     },
                     axes: {},
                     useInterpolation: 'linear',
-                    useBar: 'true'
+                    useBar: true
                 },
                 type: "telemetry.plot.bar-graph",
                 name: "Test Bar Graph"
-            };
-
-            testDomainObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-telemetry-object"
-                },
-                type: "test-object",
-                name: "Test Object",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
             };
 
             mockComposition = new EventEmitter();
@@ -253,6 +221,108 @@ describe("the plugin", function () {
             mockComposition.emit('add', dotFullTelemetryObject);
             expect(barGraphObject.configuration.barStyles.series["someNamespace:~OpenMCT~outer.test-object.foo.bar"].name).toEqual("A Dotful Object");
             barGraphView.destroy();
+        });
+    });
+
+    describe("The spectral plot view for telemetry objects with array values", () => {
+        let barGraphObject;
+        // eslint-disable-next-line no-unused-vars
+        let component;
+        let mockComposition;
+
+        beforeEach(async () => {
+            barGraphObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-plot"
+                },
+                configuration: {
+                    barStyles: {
+                        series: {}
+                    },
+                    axes: {
+                        xKey: 'some-key',
+                        yKey: 'some-other-key'
+                    },
+                    useInterpolation: 'linear',
+                    useBar: false
+                },
+                type: "telemetry.plot.bar-graph",
+                name: "Test Bar Graph"
+            };
+
+            mockComposition = new EventEmitter();
+            mockComposition.load = () => {
+                return [];
+            };
+
+            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
+            let viewContainer = document.createElement("div");
+            child.append(viewContainer);
+            component = new Vue({
+                el: viewContainer,
+                components: {
+                    BarGraph
+                },
+                provide: {
+                    openmct: openmct,
+                    domainObject: barGraphObject,
+                    composition: openmct.composition.get(barGraphObject)
+                },
+                template: "<BarGraph></BarGraph>"
+            });
+
+            await Vue.nextTick();
+        });
+
+        it("Renders spectral plots", (done) => {
+            const dotFullTelemetryObject = {
+                identifier: {
+                    namespace: "someNamespace",
+                    key: "~OpenMCT~outer.test-object.foo.bar"
+                },
+                type: "test-dotful-object",
+                name: "A Dotful Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        formatString: '%0.2f[]',
+                        hints: {
+                            range: 1
+                        },
+                        source: 'some-key'
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        format: "number[]",
+                        hints: {
+                            range: 2
+                        },
+                        source: 'some-other-key'
+                    }]
+                }
+            };
+
+            const applicableViews = openmct.objectViews.get(barGraphObject, mockObjectPath);
+            const plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
+            const barGraphView = plotViewProvider.view(barGraphObject, [barGraphObject]);
+            barGraphView.show(child, true);
+            mockComposition.emit('add', dotFullTelemetryObject);
+            Vue.nextTick().then(() => {
+                const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
+                expect(plotElement).not.toBeNull();
+                barGraphView.destroy();
+                done();
+            });
         });
     });
 
@@ -463,7 +533,7 @@ describe("the plugin", function () {
                                     },
                                     axes: {},
                                     useInterpolation: 'linear',
-                                    useBar: 'true'
+                                    useBar: true
                                 },
                                 composition: [
                                     {
