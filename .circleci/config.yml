@@ -133,7 +133,7 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: npx playwright install
-      - run: "npm run test:e2e:<<parameters.suite>> -- shard=${CIRCLE_NODE_INDEX}/${CIRCLE_NODE_TOTAL}"
+      - run: "CIRCLE_NODE_INDEX=${CIRCLE_NODE_INDEX}+1; npm run test:e2e:<<parameters.suite>> -- --shard=${CIRCLE_NODE_INDEX}/${CIRCLE_NODE_TOTAL}"
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
