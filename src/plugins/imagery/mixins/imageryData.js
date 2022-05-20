@@ -46,7 +46,6 @@ export default {
 
         // kickoff
         this.subscribe();
-        this.requestHistory();
     },
     beforeDestroy() {
         if (this.unsubscribe) {
@@ -169,8 +168,6 @@ export default {
             // splice array to encourage garbage collection
             this.imageHistory.splice(0, this.imageHistory.length);
 
-            // requesting history effectively clears imageHistory array
-            return this.requestHistory();
         },
         timeSystemChange() {
             this.timeSystem = this.timeContext.timeSystem();
