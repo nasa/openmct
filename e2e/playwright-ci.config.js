@@ -16,6 +16,7 @@ const config = {
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
     },
+    maxFailures: process.env.CI ? 5 : undefined, //Limits failures to 10 to reduce CI Waste
     workers: 2, //Limit to 2 for CircleCI Agent
     use: {
         baseURL: 'http://localhost:8080/',
@@ -54,7 +55,6 @@ const config = {
     reporter: [
         ['list'],
         ['junit', { outputFile: 'test-results/results.xml' }],
-        ['allure-playwright'],
         ['github']
     ]
 };
