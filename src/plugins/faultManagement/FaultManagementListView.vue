@@ -67,9 +67,13 @@ export default {
     computed: {
         filteredFaultsList() {
             const filterName = FILTER_ITEMS[this.filterIndex];
-            let list = this.faultsList;
+            let list = this.faultsList.filter(fault => !fault.shelveInfo);
             if (filterName === 'Acknowledged') {
                 list = this.faultsList.filter(fault => fault.acknowledged);
+            }
+
+            if (filterName === 'Unacknowledged') {
+                list = this.faultsList.filter(fault => !fault.acknowledged);
             }
 
             if (filterName === 'Shelved') {
