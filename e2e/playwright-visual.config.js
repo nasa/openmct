@@ -4,10 +4,10 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 0,
-    testDir: 'tests',
+    retries: 0, // visual tests should never retry due to snapshot comparison errors
+    testDir: 'tests/visual',
     timeout: 90 * 1000,
-    workers: 1,
+    workers: 1, // visual tests should never run in parallel due to test pollution
     webServer: {
         command: 'npm run start',
         port: 8080,
@@ -17,7 +17,7 @@ const config = {
     use: {
         browserName: "chromium",
         baseURL: 'http://localhost:8080/',
-        headless: true,
+        headless: true, // this needs to remain headless to avoid visual changes due to GPU
         ignoreHTTPSErrors: true,
         screenshot: 'on',
         trace: 'off',
@@ -25,8 +25,7 @@ const config = {
     },
     reporter: [
         ['list'],
-        ['junit', { outputFile: 'test-results/results.xml' }],
-        ['allure-playwright']
+        ['junit', { outputFile: 'test-results/results.xml' }]
     ]
 };
 
