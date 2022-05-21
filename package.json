@@ -48,7 +48,7 @@
     "karma-sourcemap-loader": "0.3.8",
     "karma-spec-reporter": "0.0.34",
     "karma-webpack": "5.0.0",
-    "lighthouse": "9.5.0",
+    "lighthouse": "9.6.1",
     "location-bar": "3.0.1",
     "lodash": "4.17.21",
     "mini-css-extract-plugin": "2.6.0",
