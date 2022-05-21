@@ -347,7 +347,7 @@ export default {
             const timeSystemKey = this.timeContext.timeSystem().key;
             //TODO: this is causing issues in VIPER - investigation needed
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
+            let metadataValue = metadata.value(timeSystemKey) || { key: timeSystemKey };
 
             let currentTimestamp = this.parse(key, metadataValue.source || metadataValue.key, datum);
 
