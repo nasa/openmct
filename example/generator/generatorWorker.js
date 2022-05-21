@@ -77,8 +77,8 @@
                             utc: nextStep,
                             yesterday: nextStep - 60 * 60 * 24 * 1000,
                             sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
-                            wavelengths: ['20', '25', '30', '40'],
-                            intensities: [1.2, 1.1, 0.8, 0.5],
+                            wavelengths: wavelengths(),
+                            intensities: intensities(),
                             cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
                         }
                     });
@@ -127,8 +127,8 @@
                 utc: nextStep,
                 yesterday: nextStep - 60 * 60 * 24 * 1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),
-                wavelengths: ['20', '25', '30', '40'],
-                intensities: [1.2, 1.1, 0.8, 0.5],
+                wavelengths: wavelengths(),
+                intensities: intensities(),
                 cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
@@ -154,6 +154,30 @@
     function sin(timestamp, period, amplitude, offset, phase, randomness) {
         return amplitude
             * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+    }
+
+    function wavelengths() {
+        let values = [];
+        while (values.length < 5) {
+            const randomValue = Math.random() * 100;
+            if (!values.includes(randomValue)) {
+                values.push(String(randomValue));
+            }
+        }
+
+        return values;
+    }
+
+    function intensities() {
+        let values = [];
+        while (values.length < 5) {
+            const randomValue = Math.random() * 10;
+            if (!values.includes(randomValue)) {
+                values.push(String(randomValue));
+            }
+        }
+
+        return values;
     }
 
     function sendError(error, message) {

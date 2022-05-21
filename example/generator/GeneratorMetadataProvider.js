@@ -31,7 +31,7 @@ define([
                 {
                     key: "wavelengths",
                     name: "Wavelength",
-                    unit: "Hz",
+                    unit: "nm",
                     format: 'string[]',
                     hints: {
                         range: 4
