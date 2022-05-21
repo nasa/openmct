@@ -118,9 +118,9 @@ define([
          */
         function encodeMsg(msg) {
             const div = document.createElement('div');
-            div.innerHTML = msg;
+            div.innerText = msg;
 
-            return div.innerHTML;
+            return div.innerText;
         }
 
         /**
@@ -148,11 +148,9 @@ define([
             self.config[inputKey] = text;
             self.updateDomainObject();
             if (inputKey === 'name') {
-                //self.title.html(text);
-                self.title.innerHTML = text;
+                self.title.innerText = text;
             } else if (inputKey === 'label') {
-                //self.thumbnailLabel.html(text);
-                self.thumbnailLabel.innerHTML = text;
+                self.thumbnailLabel.innerText = text;
             }
 
             self.eventEmitter.emit('change');
@@ -203,7 +201,7 @@ define([
 
         // Initialize thumbs when first loading
         this.thumbnailIcon.className = `${THUMB_ICON_CLASS + ' ' + self.config.icon}`;
-        this.thumbnailLabel.innerHTML = self.config.label;
+        this.thumbnailLabel.innerText = self.config.label;
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
             const input = self.colorInputs[inputKey];
