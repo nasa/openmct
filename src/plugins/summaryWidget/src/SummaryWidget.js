@@ -58,10 +58,7 @@ define([
         this.toggleRulesControl = this.domElement.querySelector('.t-view-control-rules');
         this.toggleTestDataControl = this.domElement.querySelector('.t-view-control-test-data');
 
-        const domChildren = this.domElement.children;
-        this.widgetButton = Array.from(domChildren).filter(function (child) {
-            return child.id === 'widget';
-        })[0];
+        this.widgetButton = this.domElement.querySelector(':scope > #widget');
 
         this.editing = false;
         this.container = '';
