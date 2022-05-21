@@ -111,19 +111,8 @@ define([
          * @private
          */
         function toggleRules() {
-            //self.outerWrapper.toggleClass('expanded-widget-rules');
-            if (self.outerWrapper.classList.contains('expanded-widget-rules')) {
-                self.outerWrapper.classList.remove('expanded-widget-rules');
-            } else {
-                self.outerWrapper.classList.add('expanded-widget-rules');
-            }
-
-            //self.toggleRulesControl.toggleClass('c-disclosure-triangle--expanded');
-            if (self.toggleRulesControl.classList.contains('c-disclosure-triangle--expanded')) {
-                self.toggleRulesControl.classList.remove('c-disclosure-triangle--expanded');
-            } else {
-                self.toggleRulesControl.classList.add('c-disclosure-triangle--expanded');
-            }
+            templateHelpers.toggleClass(self.outerWrapper, 'expanded-widget-rules');
+            templateHelpers.toggleClass(self.toggleRulesControl, 'c-disclosure-triangle--expanded');
         }
 
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
