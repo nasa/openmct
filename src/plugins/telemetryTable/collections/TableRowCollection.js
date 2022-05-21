@@ -61,28 +61,38 @@ define(
                 this.emit('remove', removed);
             }
 
-            addRows(rows, type = 'add') {
-                if (this.sortOptions === undefined) {
-                    throw 'Please specify sort options';
-                }
-
-                let isFilterTriggeredReset = type === 'filter';
-                let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
-                let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
-
-                // if type is filter, then it's a reset of all rows,
-                // need to wipe current rows
-                if (isFilterTriggeredReset) {
-                    this.rows = [];
-                }
+            addRows(rows) {
+                let rowsToAdd = this.manageRowsFromTables(rows);
 
                 this.sortAndMergeRows(rowsToAdd);
 
                 // we emit filter no matter what to trigger
                 // an update of visible rows
-                if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
-                    this.emit(type, rowsToAdd);
+                if (rowsToAdd.length > 0) {
+                    this.emit('add', rowsToAdd);
                 }
+            }
+
+            clearRowsFromTableAndFilter(rows) {
+
+                let rowsToAdd = this.manageRowsFromTables(rows);
+                // Reset of all rows, need to wipe current rows
+                this.rows = [];
+
+                this.sortAndMergeRows(rowsToAdd);
+
+                // we emit filter and update of visible rows
+                this.emit('filter', rowsToAdd);
+            }
+
+            manageRowsFromTables(rows) {
+                if (this.sortOptions === undefined) {
+                    throw 'Please specify sort options';
+                }
+
+                let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
+
+                return !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
             }
 
             sortAndMergeRows(rows) {
