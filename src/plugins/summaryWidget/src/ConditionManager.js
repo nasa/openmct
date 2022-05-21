@@ -257,7 +257,7 @@ define ([
         this.eventEmitter.emit('remove', identifier);
 
         if (_.isEmpty(this.compositionObjs)) {
-            const summaryWidget = document.queerySelector('.w-summary-widget');
+            const summaryWidget = document.querySelector('.w-summary-widget');
             if (summaryWidget) {
                 summaryWidget.classList.add('s-status-no-data');
             }
