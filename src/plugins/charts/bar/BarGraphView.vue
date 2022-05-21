@@ -349,7 +349,7 @@ export default {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
 
-            let currentTimestamp = this.parse(key, metadataValue, datum);
+            let currentTimestamp = this.parse(key, metadataValue.source || metadataValue.key, datum);
 
             return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
         },
