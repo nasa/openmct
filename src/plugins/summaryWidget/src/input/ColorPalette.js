@@ -31,18 +31,8 @@ function (
 
         this.palette.setNullOption('rgba(0,0,0,0)');
 
-        let domElement;
+        const domElement = this.palette.getDOM();
         const self = this;
-
-        if (document.readyState === "complete"
-            || (document.readyState !== "loading" && !document.documentElement.doScroll)
-        ) {
-            domElement = this.palette.getDOM();
-        } else {
-            document.addEventListener("DOMContentLoaded", () => {
-                domElement = this.palette.getDOM();
-            });
-        }
 
         domElement.querySelector('.c-button--menu').classList.add('c-button--swatched');
         domElement.querySelector('.t-swatch').classList.add('color-swatch');

@@ -103,15 +103,7 @@ define(['../src/TestDataManager'], function (TestDataManager) {
             mockConditionManager.getObjectName.and.returnValue('Object Name');
             mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
 
-            if (document.readyState === "complete"
-                || (document.readyState !== "loading" && !document.documentElement.doScroll)
-            ) {
-                mockContainer = document.createElement('div');
-            } else {
-                document.addEventListener("DOMContentLoaded", () => {
-                    mockContainer = document.createElement('div');
-                });
-            }
+            mockContainer = document.createElement('div');
 
             testDataManager = new TestDataManager(mockDomainObject, mockConditionManager, mockOpenMCT);
         });

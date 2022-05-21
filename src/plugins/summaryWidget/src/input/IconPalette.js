@@ -46,18 +46,7 @@ define([
         this.palette.setNullOption('');
         this.oldIcon = this.palette.current || '';
 
-        let domElement;
-
-        if (document.readyState === "complete"
-            || (document.readyState !== "loading" && !document.documentElement.doScroll)
-        ) {
-            domElement = this.palette.getDOM();
-        } else {
-            document.addEventListener("DOMContentLoaded", () => {
-                domElement = this.palette.getDOM();
-            });
-        }
-
+        const domElement = this.palette.getDOM();
         const self = this;
 
         domElement.querySelector('.c-button--menu').classList.add('c-button--swatched');
