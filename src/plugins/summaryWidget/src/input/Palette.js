@@ -45,7 +45,7 @@ define([
         if (this.cssClass) {
             self.button.classList.add(this.cssClass);
         }
-        
+
         self.setNullOption(this.nullOption);
 
         self.items.forEach(function (item) {
