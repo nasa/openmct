@@ -113,8 +113,8 @@
                         v-model="useBar"
                         @change="updateBar"
                     >
-                        <option value="true">Bar</option>
-                        <option value="false">Line</option>
+                        <option :value="true">Bar</option>
+                        <option :value="false">Line</option>
                     </select>
                 </div>
                 <div
@@ -132,7 +132,7 @@
                 </div>
             </li>
             <li
-                v-if="useBar === 'false'"
+                v-if="!useBar"
                 class="grid-row"
             >
                 <div
@@ -380,7 +380,7 @@ export default {
             this.openmct.objects.mutate(this.domainObject, `configuration.useInterpolation`, this.useInterpolation);
         },
         updateBar(event) {
-            this.openmct.objects.mutate(this.domainObject, `configuration.useBar`, this.useBar === 'true');
+            this.openmct.objects.mutate(this.domainObject, `configuration.useBar`, this.useBar);
         }
     }
 };

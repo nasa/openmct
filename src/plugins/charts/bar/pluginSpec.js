@@ -276,7 +276,7 @@ describe("the plugin", function () {
             await Vue.nextTick();
         });
 
-        it("Renders spectral plots", (done) => {
+        it("Renders spectral plots", () => {
             const dotFullTelemetryObject = {
                 identifier: {
                     namespace: "someNamespace",
@@ -317,11 +317,11 @@ describe("the plugin", function () {
             const barGraphView = plotViewProvider.view(barGraphObject, [barGraphObject]);
             barGraphView.show(child, true);
             mockComposition.emit('add', dotFullTelemetryObject);
-            Vue.nextTick().then(() => {
+
+            return Vue.nextTick().then(() => {
                 const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
                 expect(plotElement).not.toBeNull();
                 barGraphView.destroy();
-                done();
             });
         });
     });

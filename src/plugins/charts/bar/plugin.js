@@ -38,7 +38,7 @@ export default function () {
                     barStyles: { series: {} },
                     axes: {},
                     useInterpolation: 'linear',
-                    useBar: 'true'
+                    useBar: true
                 };
             },
             priority: 891
