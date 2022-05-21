@@ -48,7 +48,7 @@ define([
             //metadata format could have array formats ex. string[]/number[]
             const arrayRegex = /\[\]$/g;
             if (value && value.match(arrayRegex)) {
-                return value.replace('[]', '');
+                return value.replace(arrayRegex, '');
             }
 
             return value;
