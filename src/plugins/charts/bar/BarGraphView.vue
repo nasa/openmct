@@ -346,10 +346,10 @@ export default {
         isDataInTimeRange(datum, key, telemetryObject) {
             const timeSystemKey = this.timeContext.timeSystem().key;
             //TODO: this is causing issues in VIPER - investigation needed
-            // const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            // let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
+            const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
 
-            let currentTimestamp = this.parse(key, timeSystemKey, datum);
+            let currentTimestamp = this.parse(key, metadataValue, datum);
 
             return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
         },
