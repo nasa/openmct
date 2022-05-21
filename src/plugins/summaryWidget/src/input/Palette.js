@@ -42,7 +42,10 @@ define([
 
         this.hideMenu = this.hideMenu.bind(this);
 
-        self.button.className += ` ${this.cssClass}`;
+        if (this.cssClass) {
+            self.button.classList.add(this.cssClass);
+        }
+        
         self.setNullOption(this.nullOption);
 
         self.items.forEach(function (item) {
