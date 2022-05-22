@@ -111,11 +111,7 @@ define([
             return hints.every(hasHint, metadata);
         }
 
-        const matchingMetadata = this.valueMetadatas.filter(hasHints).map(metadata => {
-            metadata.isArrayValue = this.isArrayValue(metadata) === true;
-
-            return metadata;
-        });
+        const matchingMetadata = this.valueMetadatas.filter(hasHints).map(this.addArrayFlag.bind(this));
         let iteratees = hints.map(hint => {
             return (metadata) => {
                 return metadata.hints[hint];
@@ -125,10 +121,14 @@ define([
         return _.sortBy(matchingMetadata, ...iteratees);
     };
 
+    TelemetryMetadataManager.prototype.addArrayFlag = function (metadata) {
+        metadata.isArrayValue = this.isArrayValue(metadata) === true;
+
+        return metadata;
+    };
+
     /**
-     * Get an array of valueMetadatas that posess array formats (ex. string[]/number[]) requested.
-     * Array is sorted based on hint priority.
-     *
+     * check out of a given metadata has array values
      */
     TelemetryMetadataManager.prototype.isArrayValue = function (metadata) {
         const regex = /\[\]$/g;

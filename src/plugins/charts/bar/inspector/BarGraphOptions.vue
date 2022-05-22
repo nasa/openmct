@@ -303,7 +303,7 @@ export default {
             }
 
             if (metadataRangeValues.length > 1) {
-                if (this.domainObject.configuration.axes.yKey) {
+                if (this.domainObject.configuration.axes.yKey && this.domainObject.configuration.axes.yKey !== 'none') {
                     yKeyOptionIndex = this.yKeyOptions.findIndex(option => option.value === this.domainObject.configuration.axes.yKey);
                     if (yKeyOptionIndex > -1 && yKeyOptionIndex !== xKeyOptionIndex) {
                         this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
@@ -356,7 +356,7 @@ export default {
                     //swap
                     this.yKey = this.xKeyOptions[xKeyOption.swap].value;
                 } else if (!xKeyOption.isArrayValue) {
-                    this.yKey = '';
+                    this.yKey = 'none';
                 } else {
                     this.yKey = undefined;
                 }
