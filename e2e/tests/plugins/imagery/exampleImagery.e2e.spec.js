@@ -344,6 +344,97 @@ test('Example Imagery in Display layout', async ({ page }) => {
     expect(backgroundImageUrl2 >= backgroundImageUrl1);
 });
 
+test.describe('Example imagery thumbnails resize in display layouts', () => {
+
+    test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        const thumbsWrapperLocator = await page.locator('.c-imagery__thumbs-wrapper');
+        // Click button:has-text("Create")
+        await page.locator('button:has-text("Create")').click();
+
+        // Click li:has-text("Display Layout")
+        await page.locator('li:has-text("Display Layout")').click();
+        const displayLayoutTitleField = page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]');
+        await displayLayoutTitleField.click();
+
+        await displayLayoutTitleField.fill('Thumbnail Display Layout');
+
+        // Click text=OK
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click()
+        ]);
+
+        // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
+        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+
+        // Click text=Save and Finish Editing
+        await page.locator('text=Save and Finish Editing').click();
+
+        // Click button:has-text("Create")
+        await page.locator('button:has-text("Create")').click();
+
+        // Click li:has-text("Example Imagery")
+        await page.locator('li:has-text("Example Imagery")').click();
+
+        const imageryTitleField = page.locator('text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]');
+        // Click text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]
+        await imageryTitleField.click();
+
+        // Fill text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]
+        await imageryTitleField.fill('Thumbnail Example Imagery');
+
+        // Click text=OK
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click()
+        ]);
+
+        // Click text=Thumbnail Example Imagery Imagery Layout Snapshot >> button >> nth=0
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=Thumbnail Example Imagery Imagery Layout Snapshot >> button').first().click()
+        ]);
+
+        // Edit mode
+        await page.locator('text=Thumbnail Display Layout Snapshot >> button').nth(3).click();
+
+        // Click on example imagery to expose toolbar
+        await page.locator('text=Thumbnail Example Imagery Snapshot Large View').click();
+
+        // expect thumbnails not be visible when first added
+        await expect.soft(thumbsWrapperLocator.isHidden()).toBeTruthy();
+
+        // Resize the example imagery vertically to change the thumbnail visibility
+        /*
+        The following arbitrary values are added to observe the separate visual
+        conditions of the thumbnails (hidden, small thumbnails, regular thumbnails).
+        Specifically, height is set to 50px for small thumbs and 100px for regular
+        */
+        // Click #mct-input-id-103
+        await page.locator('#mct-input-id-103').click();
+
+        // Fill #mct-input-id-103
+        await page.locator('#mct-input-id-103').fill('50');
+
+        expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
+        await expect(thumbsWrapperLocator).toHaveClass(/is-small-thumbs/);
+
+        // Resize the example imagery vertically to change the thumbnail visibility
+        // Click #mct-input-id-103
+        await page.locator('#mct-input-id-103').click();
+
+        // Fill #mct-input-id-103
+        await page.locator('#mct-input-id-103').fill('100');
+
+        expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
+        await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
+
+    });
+
+});
+
 test.describe('Example Imagery in Flexible layout', () => {
     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     test.fixme('Can use alt+drag to move around image once zoomed in');
