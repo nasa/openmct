@@ -79,7 +79,7 @@ describe("The Annotation API", () => {
         });
     });
 
-    fdescribe("Search", () => {
+    describe("Search", () => {
         let sharedWorkerToRestore;
         beforeEach(async () => {
             // use local worker
