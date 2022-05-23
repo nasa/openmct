@@ -40,6 +40,14 @@ export default {
         BarGraph
     },
     inject: ['openmct', 'domainObject', 'path'],
+    props: {
+        options: {
+            type: Object,
+            default() {
+                return {};
+            }
+        }
+    },
     data() {
         this.telemetryObjects = {};
         this.telemetryObjectFormats = {};
@@ -247,7 +255,7 @@ export default {
                 }
             });
 
-            const trace = {
+            let trace = {
                 key,
                 name: telemetryObject.name,
                 x: xValues,
@@ -255,12 +263,17 @@ export default {
                 text: yValues.map(String),
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: 'bar',
+                type: this.options.type ? this.options.type : 'bar',
                 marker: {
                     color: this.domainObject.configuration.barStyles.series[key].color
                 },
                 hoverinfo: 'skip'
             };
+
+            if (this.options.type) {
+                trace.mode = 'markers';
+                trace.hoverinfo = 'x+y';
+            }
 
             this.addTrace(trace, key);
         },
