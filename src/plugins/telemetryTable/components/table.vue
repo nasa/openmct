@@ -856,9 +856,6 @@ export default {
                 return;
             }
 
-            this.userBoundsChanged();
-        },
-        userBoundsChanged() {
             if (this.paused) {
                 // Unpause the table and reset flags
                 this.unpause(true);
