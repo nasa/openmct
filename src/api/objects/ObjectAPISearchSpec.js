@@ -177,12 +177,18 @@ describe("The Object API Search Function", () => {
         });
 
         describe("Without Shared Workers", () => {
+            let sharedWorkerToRestore;
             beforeEach(async () => {
+                // use local worker
+                sharedWorkerToRestore = openmct.objects.inMemorySearchProvider.worker;
                 openmct.objects.inMemorySearchProvider.worker = null;
                 // reindex locally
                 await openmct.objects.inMemorySearchProvider.index(mockDomainObject1);
                 await openmct.objects.inMemorySearchProvider.index(mockDomainObject2);
                 await openmct.objects.inMemorySearchProvider.index(mockDomainObject3);
+            });
+            afterEach(() => {
+                openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
             });
             it("calls local search", () => {
                 openmct.objects.search('foo');

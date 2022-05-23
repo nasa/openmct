@@ -6,7 +6,7 @@ describe("The Annotation API", () => {
     let mockDomainObject;
     let mockAnnotationObject;
 
-    beforeEach(async () => {
+    beforeEach((done) => {
         openmct = createOpenMct();
         const availableTags = openmct.annotation.getAvailableTags();
         mockDomainObject = {
@@ -53,12 +53,11 @@ describe("The Annotation API", () => {
         mockObjectProvider.update.and.returnValue(Promise.resolve(true));
 
         openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
+        openmct.on('start', done);
         openmct.startHeadless();
-        await openmct.on('start');
-        await openmct.objects.inMemorySearchProvider.index(mockDomainObject);
-        await openmct.objects.inMemorySearchProvider.index(mockAnnotationObject);
     });
     afterEach(async () => {
+        openmct.objects.providers = {};
         await resetApplicationState(openmct);
     });
     it("is defined", () => {
@@ -82,6 +81,17 @@ describe("The Annotation API", () => {
     });
 
     describe("Search", () => {
+        let sharedWorkerToRestore;
+        beforeEach(async () => {
+            // use local worker
+            sharedWorkerToRestore = openmct.objects.inMemorySearchProvider.worker;
+            openmct.objects.inMemorySearchProvider.worker = null;
+            await openmct.objects.inMemorySearchProvider.index(mockDomainObject);
+            await openmct.objects.inMemorySearchProvider.index(mockAnnotationObject);
+        });
+        afterEach(() => {
+            openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
+        });
         it("can search for tags", async () => {
             console.trace();
             const results = await openmct.annotation.searchForTags('S');
