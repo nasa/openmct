@@ -9,7 +9,7 @@ const { devices } = require('@playwright/test');
 const config = {
     retries: 1,
     testDir: 'tests',
-    testIgnore: '**.perf.spec.js',
+    testIgnore: '**.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
     webServer: {
         command: 'npm run start',
@@ -17,7 +17,7 @@ const config = {
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
     },
-    maxFailures: process.env.CI ? 5 : undefined, //Limits failures to 10 to reduce CI Waste
+    maxFailures: process.env.CI ? 5 : undefined, //Limits failures to 5 to reduce CI Waste
     workers: 2, //Limit to 2 for CircleCI Agent
     use: {
         baseURL: 'http://localhost:8080/',

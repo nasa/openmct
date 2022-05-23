@@ -7,7 +7,7 @@ const config = {
     retries: 0,
     testDir: 'tests/performance/',
     timeout: 30 * 1000,
-    workers: 1,
+    workers: 1, //Only run in serial with 1 worker
     webServer: {
         command: 'npm run start',
         port: 8080,
