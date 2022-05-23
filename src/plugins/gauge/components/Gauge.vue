@@ -322,7 +322,7 @@ export default {
             gaugeType: gaugeController.gaugeType,
             showUnits: gaugeController.showUnits,
             activeTimeSystem: this.openmct.time.timeSystem(),
-            units: null
+            units: ''
         };
     },
     computed: {
