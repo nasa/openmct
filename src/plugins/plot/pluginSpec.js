@@ -389,7 +389,7 @@ describe("the plugin", function () {
                 expect(xAxisElement.length).toBe(1);
 
                 let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(5);
+                expect(ticks.length).toBe(9);
 
                 done();
             });
@@ -571,6 +571,34 @@ describe("the plugin", function () {
                             range: 2
                         }
                     }]
+                },
+                configuration: {
+                    objectStyles: {
+                        staticStyle: {
+                            style: {
+                                backgroundColor: 'rgb(0, 200, 0)',
+                                color: '',
+                                border: ''
+                            }
+                        },
+                        conditionSetIdentifier: {
+                            namespace: '',
+                            key: 'testConditionSetId'
+                        },
+                        selectedConditionId: 'conditionId1',
+                        defaultConditionId: 'conditionId1',
+                        styles: [
+                            {
+                                conditionId: 'conditionId1',
+                                style: {
+                                    backgroundColor: 'rgb(0, 155, 0)',
+                                    color: '',
+                                    output: '',
+                                    border: ''
+                                }
+                            }
+                        ]
+                    }
                 }
             };
 
@@ -666,7 +694,7 @@ describe("the plugin", function () {
 
             Vue.nextTick(() => {
                 let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(5);
+                expect(ticks.length).toBe(9);
 
                 done();
             });
@@ -696,16 +724,16 @@ describe("the plugin", function () {
         });
 
         it("turns on cursor Guides all telemetry objects", (done) => {
-            expect(plotViewComponentObject.cursorGuide).toBeFalse();
-            plotViewComponentObject.toggleCursorGuide();
+            expect(plotViewComponentObject.$children[0].cursorGuide).toBeFalse();
+            plotViewComponentObject.$children[0].cursorGuide = true;
             Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[0].component.$children[0].cursorGuide).toBeTrue();
+                expect(plotViewComponentObject.$children[0].cursorGuide).toBeTrue();
                 done();
             });
         });
 
         it("shows grid lines for all telemetry objects", () => {
-            expect(plotViewComponentObject.gridLines).toBeTrue();
+            expect(plotViewComponentObject.$children[0].gridLines).toBeTrue();
             let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
             let visible = 0;
             gridLinesContainer.forEach(el => {
@@ -717,10 +745,10 @@ describe("the plugin", function () {
         });
 
         it("hides grid lines for all telemetry objects", (done) => {
-            expect(plotViewComponentObject.gridLines).toBeTrue();
-            plotViewComponentObject.toggleGridLines();
+            expect(plotViewComponentObject.$children[0].gridLines).toBeTrue();
+            plotViewComponentObject.$children[0].gridLines = false;
             Vue.nextTick(() => {
-                expect(plotViewComponentObject.gridLines).toBeFalse();
+                expect(plotViewComponentObject.$children[0].gridLines).toBeFalse();
                 let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
                 let visible = 0;
                 gridLinesContainer.forEach(el => {
@@ -811,6 +839,20 @@ describe("the plugin", function () {
                     min: 10,
                     max: 20
                 });
+                done();
+            });
+        });
+
+        it("shows styles for telemetry objects if available", (done) => {
+            Vue.nextTick(() => {
+                let conditionalStylesContainer = element.querySelectorAll(".c-plot--stacked-container .js-style-receiver");
+                let hasStyles = 0;
+                conditionalStylesContainer.forEach(el => {
+                    if (el.style.backgroundColor !== '') {
+                        hasStyles++;
+                    }
+                });
+                expect(hasStyles).toBe(1);
                 done();
             });
         });
@@ -1044,7 +1086,9 @@ describe("the plugin", function () {
                 expandControl.dispatchEvent(clickEvent);
 
                 const yAxisProperties = editOptionsEl.querySelectorAll("div.grid-properties:first-of-type .l-inspector-part");
-                expect(yAxisProperties.length).toEqual(3);
+
+                // TODO better test
+                expect(yAxisProperties.length).toEqual(2);
             });
 
             it('renders color palette options', () => {

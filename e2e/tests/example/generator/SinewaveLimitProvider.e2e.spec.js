@@ -24,7 +24,8 @@
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Sine Wave Generator', () => {
     test('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page }) => {
@@ -157,5 +158,10 @@ test.describe('Sine Wave Generator', () => {
                 y: 28
             }
         });
+
+        // Verify that where we click on canvas shows the number we clicked on
+        // Note that any number will do, we just care that a number exists
+        await expect(page.locator('.value-to-display-nearestValue')).toContainText(/[+-]?([0-9]*[.])?[0-9]+/);
+
     });
 });

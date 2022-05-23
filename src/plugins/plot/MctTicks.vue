@@ -30,8 +30,8 @@
         class="gl-plot-tick-wrapper"
     >
         <div
-            v-for="tick in ticks"
-            :key="tick.value"
+            v-for="(tick, i) in ticks"
+            :key="'tick-left' + i"
             class="gl-plot-tick gl-plot-x-tick-label"
             :style="{
                 left: (100 * (tick.value - min) / interval) + '%'
@@ -46,8 +46,8 @@
         class="gl-plot-tick-wrapper"
     >
         <div
-            v-for="tick in ticks"
-            :key="tick.value"
+            v-for="(tick, i) in ticks"
+            :key="'tick-top' + i"
             class="gl-plot-tick gl-plot-y-tick-label"
             :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
             :title="tick.fullText || tick.text"
@@ -59,8 +59,8 @@
     <!-- grid lines follow -->
     <template v-if="position === 'right'">
         <div
-            v-for="tick in ticks"
-            :key="tick.value"
+            v-for="(tick, i) in ticks"
+            :key="'tick-right' + i"
             class="gl-plot-hash hash-v"
             :style="{
                 right: (100 * (max - tick.value) / interval) + '%',
@@ -71,8 +71,8 @@
     </template>
     <template v-if="position === 'bottom'">
         <div
-            v-for="tick in ticks"
-            :key="tick.value"
+            v-for="(tick, i) in ticks"
+            :key="'tick-bottom' + i"
             class="gl-plot-hash hash-h"
             :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
         >
@@ -83,7 +83,7 @@
 
 <script>
 import eventHelpers from "./lib/eventHelpers";
-import { ticks, getFormattedTicks } from "./tickUtils";
+import { ticks, getLogTicks, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
 
 export default {
@@ -95,6 +95,13 @@ export default {
                 return '';
             },
             required: true
+        },
+        // Make it a prop, then later we can allow user to change it via UI input
+        tickCount: {
+            type: Number,
+            default() {
+                return 6;
+            }
         },
         position: {
             required: true,
@@ -112,9 +119,12 @@ export default {
     mounted() {
         eventHelpers.extend(this);
 
+        if (!this.axisType) {
+            throw new Error("axis-type prop expected");
+        }
+
         this.axis = this.getAxisFromConfig();
 
-        this.tickCount = 4;
         this.tickUpdate = false;
         this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
         this.listenTo(this.axis, 'change:format', this.updateTicks, this);
@@ -126,15 +136,16 @@ export default {
     },
     methods: {
         getAxisFromConfig() {
-            if (!this.axisType) {
-                return;
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            /** @type {import('./configuration/PlotConfigurationModel').default} */
+            let config = configStore.get(configId);
+
+            if (!config) {
+                throw new Error('config is missing');
             }
 
-            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            let config = configStore.get(configId);
-            if (config) {
-                return config[this.axisType];
-            }
+            return config[this.axisType];
         },
         /**
        * Determine whether ticks should be regenerated for a given range.
@@ -179,7 +190,11 @@ export default {
                 }, this);
             }
 
-            return ticks(range.min, range.max, number);
+            if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
+                return getLogTicks(range.min, range.max, number, 4);
+            } else {
+                return ticks(range.min, range.max, number);
+            }
         },
 
         updateTicksForceRegeneration() {
@@ -188,6 +203,7 @@ export default {
 
         updateTicks(forceRegeneration = false) {
             const range = this.axis.get('displayRange');
+
             if (!range) {
                 delete this.min;
                 delete this.max;
@@ -210,8 +226,8 @@ export default {
             if (this.shouldRegenerateTicks(range, forceRegeneration)) {
                 let newTicks = this.getTicks();
                 this.tickRange = {
-                    min: Math.min.apply(Math, newTicks),
-                    max: Math.max.apply(Math, newTicks),
+                    min: Math.min(...newTicks),
+                    max: Math.max(...newTicks),
                     step: newTicks[1] - newTicks[0]
                 };
 

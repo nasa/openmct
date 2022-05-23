@@ -22,14 +22,14 @@
 
 /*
 Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct's app.js started by `npm run start` within the 
+are only meant to run against openmct's app.js started by `npm run start` within the
 `./e2e/playwright-visual.config.js` file.
 
-These should only use functional expect statements to verify assumptions about the state 
+These should only use functional expect statements to verify assumptions about the state
 in a test and not for functional verification of correctness. Visual tests are not supposed
 to "fail" on assertions. Instead, they should be used to detect changes between builds or branches.
 
-Note: Larger testsuite sizes are OK due to the setup time associated with these tests. 
+Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
 const { test, expect } = require('@playwright/test');
@@ -47,7 +47,10 @@ test.beforeEach(async ({ context }) => {
         path: path.join(__dirname, '../../..', './node_modules/sinon/pkg/sinon.js')
     });
     await context.addInitScript(() => {
-        window.__clock = sinon.useFakeTimers(); //Set browser clock to UNIX Epoch
+        window.__clock = sinon.useFakeTimers({
+            now: 0,
+            shouldAdvanceTime: true
+        }); //Set browser clock to UNIX Epoch
     });
 });
 
@@ -169,4 +172,25 @@ test('Visual - Sine Wave Generator Form', async ({ page }) => {
     // Validate red x mark
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'removed amplitude property value');
+});
+
+test('Visual - Save Successful Banner', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    //NOTE Something other than example imagery
+    await page.click('text=Timer');
+
+    // Click text=OK
+    await page.click('text=OK');
+    await page.locator('.c-message-banner__message').hover({ trial: true });
+    await percySnapshot(page, 'Banner message shown');
+
+    //Wait until Save Banner is gone
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    await percySnapshot(page, 'Banner message gone');
+
 });
