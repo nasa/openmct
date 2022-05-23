@@ -68,7 +68,7 @@ describe("The Agent", function () {
         expect(agent.isTablet()).toBeTruthy();
     });
 
-    it("detects display orientation", function () {
+    it("detects display orientation by innerHeight and innerWidth", function () {
         agent = new Agent(testWindow);
         testWindow.innerWidth = 1024;
         testWindow.innerHeight = 400;
@@ -76,6 +76,34 @@ describe("The Agent", function () {
         expect(agent.isLandscape()).toBeTruthy();
         testWindow.innerWidth = 400;
         testWindow.innerHeight = 1024;
+        expect(agent.isPortrait()).toBeTruthy();
+        expect(agent.isLandscape()).toBeFalsy();
+    });
+
+    it("detects display orientation by screen.orientation", function () {
+        agent = new Agent(testWindow);
+        testWindow.screen = {
+            orientation: {
+                type: "landscape-primary"
+            }
+        };
+        expect(agent.isPortrait()).toBeFalsy();
+        expect(agent.isLandscape()).toBeTruthy();
+        testWindow.screen = {
+            orientation: {
+                type: "portrait-primary"
+            }
+        };
+        expect(agent.isPortrait()).toBeTruthy();
+        expect(agent.isLandscape()).toBeFalsy();
+    });
+
+    it("detects display orientation by window.orientation", function () {
+        agent = new Agent(testWindow);
+        testWindow.orientation = 90;
+        expect(agent.isPortrait()).toBeFalsy();
+        expect(agent.isLandscape()).toBeTruthy();
+        testWindow.orientation = 0;
         expect(agent.isPortrait()).toBeTruthy();
         expect(agent.isLandscape()).toBeFalsy();
     });
