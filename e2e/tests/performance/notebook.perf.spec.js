@@ -71,9 +71,6 @@ test.describe('Performance tests', () => {
         /* Measurement Section
         / The following section includes a block of performance measurements.
         */
-        //Get time difference between viewlarge actionability and evaluate time
-        await page.evaluate(() => (window.performance.measure("machine-time-difference", "viewlarge.start", "button-view-large-click-test")));
-
         //Get All Performance Marks
         const getAllMarksJson = await page.evaluate(() => JSON.stringify(window.performance.getEntriesByType("mark")));
         const getAllMarks = JSON.parse(getAllMarksJson);
@@ -90,7 +87,7 @@ test.describe('Performance tests', () => {
     /  - ElementResourceTiming
     /  - Interaction Timing
     */
-    test('Notebook Search, Add Entry, Update Entry are performant', async ({ page, browser }) => {
+    test.only('Notebook Search, Add Entry, Update Entry are performant', async ({ page, browser }) => {
         const client = await page.context().newCDPSession(page);
         // Tell the DevTools session to record performance metrics
         // https://chromedevtools.github.io/devtools-protocol/tot/Performance/#method-getMetrics
@@ -120,16 +117,31 @@ test.describe('Performance tests', () => {
         await page.waitForSelector('.c-notebook__entry >> nth=0', { state: 'visible'});
         await page.evaluate(() => (window.performance.mark("notebook-entry-appears")));
 
-        // Click .c-notebook__drag-area
+        // Click Add new Notebook Entry
         await page.locator('.c-notebook__drag-area').click();
-        // Press Enter
-        await page.locator('id=entry-*').fill('blah');
-        // Click .c-notebook__entries div:nth-child(4)
-        await page.locator('.c-notebook__entries div:nth-child(4)').click();
+        await page.evaluate(() => (window.performance.mark("new-notebook-entry-created")));
 
-        // Click Close Icon
-        await page.locator('.c-click-icon').click();
-        await page.evaluate(() => (window.performance.mark("view-large-close-button")));
+        // Enter Notebook Entry text
+        await page.locator('div.c-ne__text').last().fill('New Entry');
+        await page.keyboard.press('Enter');
+        await page.evaluate(() => (window.performance.mark("new-notebook-entry-filled")));
+
+        await page.evaluate(() => (window.performance.mark("notebook-search-start")));
+        await page.locator('input[type=search]').fill('Existing Entry');
+        await page.evaluate(() => (window.performance.mark("notebook-search-filled")));
+        await page.waitForSelector('text=Search Results (3)', { state: 'visible'});
+        await page.evaluate(() => (window.performance.mark("notebook-search-processed")));
+
+        await page.evaluate(() => (window.performance.mark("notebook-search-processed")));
+
+        // Hover on Last
+        await page.evaluate(() => (window.performance.mark("new-notebook-entry-delete")));
+        await page.locator('div.c-ne__time-and-content').last().hover();
+        await page.locator('button[title="Delete this entry"]').last().click();
+        await page.locator('button:has-text("Ok")').click();
+        await page.waitForSelector('.c-notebook__entry >> nth=3', { state: 'detached'});
+        await page.evaluate(() => (window.performance.mark("new-notebook-entry-deleted")));
+
 
         //await client.send('HeapProfiler.enable');
         await client.send('HeapProfiler.collectGarbage');
