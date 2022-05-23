@@ -123,7 +123,7 @@ test.describe('Performance tests', () => {
         // Click .c-notebook__drag-area
         await page.locator('.c-notebook__drag-area').click();
         // Press Enter
-        await page.locator('#entry-1652922030690').press('Enter');
+        await page.locator('id=entry-*').fill('blah');
         // Click .c-notebook__entries div:nth-child(4)
         await page.locator('.c-notebook__entries div:nth-child(4)').click();
 
