@@ -27,7 +27,7 @@ describe("The Annotation API", () => {
                 namespace: 'fooNameSpace'
             },
             targets: {
-                mockDomainObject: {
+                'fooNameSpace:some-object': {
                     entryId: 'fooBarEntry'
                 }
             }
@@ -79,7 +79,7 @@ describe("The Annotation API", () => {
         });
     });
 
-    describe("Search", () => {
+    fdescribe("Search", () => {
         let sharedWorkerToRestore;
         beforeEach(async () => {
             // use local worker
@@ -95,6 +95,11 @@ describe("The Annotation API", () => {
             const results = await openmct.annotation.searchForTags('S');
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
+        });
+        it("can get for notebook annotation", async () => {
+            const results = await openmct.annotation.getNotebookAnnotation('fooBarEntry', mockDomainObject);
+            expect(results).toBeDefined();
+            expect(results.tags.length).toEqual(2);
         });
     });
 });
