@@ -12,6 +12,7 @@
                 :key="action.name"
                 :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
                 :title="action.description"
+                :data-testid="action.testId || false"
                 @click="action.onItemClicked"
             >
                 {{ action.name }}
@@ -37,6 +38,7 @@
             :key="action.name"
             :class="action.cssClass"
             :title="action.description"
+            :data-testid="action.testId || false"
             @click="action.onItemClicked"
         >
             {{ action.name }}
