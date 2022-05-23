@@ -174,7 +174,6 @@ class InMemorySearchProvider {
      * @private
      */
     async onWorkerMessage(event) {
-        console.debug('⚙️ Received worker message ⚙️', event);
         const pendingQuery = this.pendingQueries[event.data.queryId];
         const modelResults = {
             total: event.data.total
@@ -261,8 +260,6 @@ class InMemorySearchProvider {
 
     onAnnotationCreation(annotationObject) {
         const provider = this;
-        console.debug(`🍋 annotation created 🍋`, annotationObject);
-
         provider.index(annotationObject);
     }
 
@@ -274,7 +271,6 @@ class InMemorySearchProvider {
     }
 
     onTagMutation(domainObject, newTags) {
-        console.debug(`🍉 Tag mutation `, domainObject);
         domainObject.oldTags = domainObject.tags;
         domainObject.tags = newTags;
         const provider = this;

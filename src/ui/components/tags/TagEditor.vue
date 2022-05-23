@@ -124,11 +124,9 @@ export default {
             this.userAddingTag = true;
         },
         async tagRemoved(tagToRemove) {
-            console.debug(`removing tag ${tagToRemove}`);
             await this.openmct.annotation.removeNotebookAnnotationTag(this.entry.id, this.domainObject, tagToRemove, '');
         },
         async tagAdded(newTag) {
-            console.debug(`🍋 user selected`, newTag);
             const newAnnotation = await this.openmct.annotation.addNotebookAnnotationTag(this.entry.id, this.domainObject, newTag);
             if (!this.annotation) {
                 this.addAnnotationListener(newAnnotation);

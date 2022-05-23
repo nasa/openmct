@@ -80,7 +80,6 @@ export default {
         async getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
-            console.debug(`🖲 Would be searching for ${this.searchValue}`);
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
             try {
@@ -92,8 +91,6 @@ export default {
                     return result.type !== 'annotation';
                 });
                 this.objectSearchResults = filterAnnotations;
-                console.debug('annotation results have returned', this.annotationSearchResults);
-                console.debug('object results have returned', this.objectSearchResults);
                 this.showSearchResults();
             } catch (error) {
                 console.error(`😞 Error searching`, error);

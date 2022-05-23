@@ -67,7 +67,6 @@ export default {
     },
     methods: {
         selectedResult() {
-            console.debug(`selected a result, need to hide search dropdown`);
             this.resultsShown = false;
         },
         showResults(passedAnnotationResults, passedObjectResults) {

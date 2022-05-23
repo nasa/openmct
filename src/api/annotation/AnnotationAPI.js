@@ -61,7 +61,6 @@ export default class AnnotationAPI extends EventEmitter {
     *          has been created, or be rejected if it cannot be saved
     */
     async create(name, domainObject, annotationType, tags, contentText, targets) {
-        console.debug(`🍉 Creating annotation 🍉`);
         if (!Object.keys(this.ANNOTATION_TYPES).includes(annotationType.toUpperCase())) {
             throw new Error(`Unknown annotation type: ${annotationType}`);
         }
@@ -184,7 +183,6 @@ export default class AnnotationAPI extends EventEmitter {
     }
 
     async addNotebookAnnotationTag(entryId, targetDomainObject, tag) {
-        console.debug(`Going to add ${tag}`);
         let existingAnnotation = await this.getNotebookAnnotation(entryId, targetDomainObject);
 
         if (!existingAnnotation) {
@@ -204,7 +202,6 @@ export default class AnnotationAPI extends EventEmitter {
     }
 
     async removeNotebookAnnotationTag(entryId, targetDomainObject, tagToRemove) {
-        console.debug(`Going to remove tag ${tagToRemove}`);
         let existingAnnotation = await this.getNotebookAnnotation(entryId, targetDomainObject);
 
         if (existingAnnotation && existingAnnotation.tags.includes(tagToRemove)) {
@@ -282,7 +279,6 @@ export default class AnnotationAPI extends EventEmitter {
     }
 
     async searchForTags(query, abortController) {
-        console.debug(`🦁`);
         // get matching tags first
         const matchingTagKeys = this.getMatchingTags(query);
         const searchResults = (await Promise.all(this.openmct.objects.queryUsingProvider('searchForTags', matchingTagKeys, abortController))).flat();

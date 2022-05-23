@@ -67,7 +67,6 @@ describe("The Annotation API", () => {
     describe("Creation", () => {
         it("can create annotations", async () => {
             const annotationObject = await openmct.annotation.create('Test Annotation', mockDomainObject, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, ['sometag'], "fooContext", {'fooTarget': {}});
-            console.debug(`annotationObject`, annotationObject);
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
         });
@@ -93,9 +92,7 @@ describe("The Annotation API", () => {
             openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
         });
         it("can search for tags", async () => {
-            console.trace();
             const results = await openmct.annotation.searchForTags('S');
-            console.debug(`results`, results);
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
         });
