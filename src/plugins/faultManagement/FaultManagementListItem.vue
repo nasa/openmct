@@ -5,7 +5,6 @@
         {'is-selected': isSelected},
         {'is-unacknowledged': !fault.acknowledged}, 
         {'is-shelved': fault.shelveInfo}, 
-        {'is-test': fault.shelveInfo && !fault.acknowledged},
         {'is-triggering': fault.triggered}
     ]"
 >
