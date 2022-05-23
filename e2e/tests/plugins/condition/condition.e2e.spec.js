@@ -171,12 +171,6 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         //Expect Unnamed Condition Set to be removed in Main View
         const numberOfConditionSetsAtEnd = await page.locator('a:has-text("Unnamed Condition Set Condition Set")').count();
         expect(numberOfConditionSetsAtEnd).toEqual(numberOfConditionSetsToStart - 1);
-        await page.locator('[aria-label="OpenMCT Search"] a').click();
-        // Search for Unnamed Condition Set
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed Condition Set');
-        // Expect Unnamed Condition Set to be removed
-        const searchResultsCount = await page.locator('[aria-label="Domain Object Search Result"]').count();
-        expect(searchResultsCount).toEqual(numberOfConditionSetsAtEnd);
 
         //Feature?
         //Domain Object is still available by direct URL after delete
