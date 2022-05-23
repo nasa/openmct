@@ -72,7 +72,7 @@ test.describe('Performance tests', () => {
         / The following section includes a block of performance measurements.
         */
         //Get time difference between viewlarge actionability and evaluate time
-        await page.evaluate(() => (window.performance.measure("machine-time-difference", "viewlarge.start", "button-view-large-click-test")));
+        await page.evaluate(() => (window.performance.measure("machine-time-difference", "viewlarge.start", "viewLarge.start.test")));
 
         //Get All Performance Marks
         const getAllMarksJson = await page.evaluate(() => JSON.stringify(window.performance.getEntriesByType("mark")));
@@ -122,18 +122,18 @@ test.describe('Performance tests', () => {
             return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
         });
         backgroundImageUrl = backgroundImageUrl.slice(1, -1); //forgive me, padre
-        console.log(backgroundImageUrl);
+        console.log('backgroundImageurl ' + backgroundImageUrl);
 
         //Get ResourceTiming of background-image jpg
         const resourceTimingJson = await page.evaluate((bgImageUrl) =>
             JSON.stringify(window.performance.getEntriesByName(bgImageUrl).pop()),
         backgroundImageUrl
         );
-        console.log(resourceTimingJson);
+        console.log('resourceTimingJson ' + resourceTimingJson);
 
         //Open Large view
         await page.locator('button:has-text("Large View")').click(); //This action includes the performance.mark named 'viewLarge.start'
-        await page.evaluate(() => (window.performance.mark("button-view-large-click-test")));
+        await page.evaluate(() => (window.performance.mark("viewLarge.start.test"))); //This is a mark only to compare evaluate timing
 
         //Time to Imagery Rendered in Large Frame
         await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});

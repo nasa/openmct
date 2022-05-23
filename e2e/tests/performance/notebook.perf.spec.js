@@ -126,12 +126,17 @@ test.describe('Performance tests', () => {
         await page.keyboard.press('Enter');
         await page.evaluate(() => (window.performance.mark("new-notebook-entry-filled")));
 
+        //Individual Notebook Entry Search
         await page.evaluate(() => (window.performance.mark("notebook-search-start")));
-        await page.locator('input[type=search]').fill('Existing Entry');
+        await page.locator('.c-notebook__search >> input').fill('Existing Entry');
         await page.evaluate(() => (window.performance.mark("notebook-search-filled")));
         await page.waitForSelector('text=Search Results (3)', { state: 'visible'});
         await page.evaluate(() => (window.performance.mark("notebook-search-processed")));
+        await page.waitForSelector('.c-notebook__entry >> nth=2', { state: 'visible'});
+        await page.evaluate(() => (window.performance.mark("notebook-search-processed")));
 
+        //Clear Search
+        await page.locator('.c-search.c-notebook__search .c-search__clear-input').click();
         await page.evaluate(() => (window.performance.mark("notebook-search-processed")));
 
         // Hover on Last
