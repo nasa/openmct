@@ -860,14 +860,8 @@ export default {
         },
         userBoundsChanged() {
             if (this.paused) {
-                this.unpause(false);
-                // Handle the case where the table was paused by button,
-                // but unpaused by a user bounds change.
-                if (this.pausedByButton) {
-                    this.undoMarkedRows();
-                    this.table.unpause();
-                    this.paused = false;
-                }
+                // Unpause the table and reset flags
+                this.unpause(true);
             }
         },
         togglePauseByButton() {
