@@ -24,7 +24,10 @@
 This test suite is dedicated to tests which verify the basic operations surrounding importAsJSON.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+// FIXME: Remove this eslint exception once tests are implemented
+// eslint-disable-next-line no-unused-vars
+const { expect } = require('@playwright/test');
 
 test.describe('ExportAsJSON', () => {
     test.fixme('Verify that domain object can be importAsJSON from Tree', async ({ page }) => {

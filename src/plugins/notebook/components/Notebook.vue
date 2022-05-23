@@ -35,6 +35,8 @@
         ref="searchResults"
         :domain-object="domainObject"
         :results="searchResults"
+        @cancelEdit="cancelTransaction"
+        @editingEntry="startTransaction"
         @changeSectionPage="changeSelectedSection"
         @updateEntries="updateEntries"
     />
@@ -140,6 +142,8 @@
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
+                    @cancelEdit="cancelTransaction"
+                    @editingEntry="startTransaction"
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
                 />
@@ -173,7 +177,7 @@ export default {
         SearchResults,
         Sidebar
     },
-    inject: ['openmct', 'snapshotContainer'],
+    inject: ['agent', 'openmct', 'snapshotContainer'],
     props: {
         domainObject: {
             type: Object,
@@ -451,12 +455,9 @@ export default {
                 - tablet portrait
                 - in a layout frame (within .c-so-view)
             */
-            const classList = document.querySelector('body').classList;
-            const isPhone = Array.from(classList).includes('phone');
-            const isTablet = Array.from(classList).includes('tablet');
-            // address in https://github.com/nasa/openmct/issues/4875
-            // eslint-disable-next-line compat/compat
-            const isPortrait = window.screen.orientation.type.includes('portrait');
+            const isPhone = this.agent.isPhone();
+            const isTablet = this.agent.isTablet();
+            const isPortrait = this.agent.isPortrait();
             const isInLayout = Boolean(this.$el.closest('.c-so-view'));
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
             this.sidebarCoversEntries = sidebarCoversEntries;
@@ -710,6 +711,8 @@ export default {
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
             mutateObject(this.openmct, this.domainObject, 'configuration.entries', notebookEntries);
+
+            this.saveTransaction();
         },
         getPageIdFromUrl() {
             return this.openmct.router.getParams().pageId;
@@ -746,6 +749,39 @@ export default {
             this.selectPage(pageId);
 
             this.syncUrlWithPageAndSection();
+        },
+        activeTransaction() {
+            return this.openmct.objects.getActiveTransaction();
+        },
+        startTransaction() {
+            if (!this.openmct.editor.isEditing()) {
+                this.openmct.objects.startTransaction();
+            }
+        },
+        saveTransaction() {
+            const transaction = this.activeTransaction();
+
+            if (!transaction || this.openmct.editor.isEditing()) {
+                return;
+            }
+
+            return transaction.commit()
+                .catch(error => {
+                    throw error;
+                }).finally(() => {
+                    this.openmct.objects.endTransaction();
+                });
+        },
+        cancelTransaction() {
+            if (!this.openmct.editor.isEditing()) {
+                const transaction = this.activeTransaction();
+                transaction.cancel()
+                    .catch(error => {
+                        throw error;
+                    }).finally(() => {
+                        this.openmct.objects.endTransaction();
+                    });
+            }
         }
     }
 };
