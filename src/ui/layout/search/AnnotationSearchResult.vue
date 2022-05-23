@@ -6,7 +6,10 @@
         class="c-gsearch-result__type-icon"
         :class="resultTypeIcon"
     ></div>
-    <div class="c-gsearch-result__body">
+    <div
+        class="c-gsearch-result__body"
+        aria-label="Annotation Search Result"
+    >
         <div
             class="c-gsearch-result__title"
             @click="clickedResult"

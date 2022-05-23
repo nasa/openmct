@@ -1,6 +1,7 @@
 <template>
 <div
     ref="GrandSearch"
+    aria-label="OpenMCT Search"
     class="c-gsearch"
 >
     <search

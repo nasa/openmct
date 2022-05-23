@@ -6,7 +6,10 @@
         class="c-gsearch-result__type-icon"
         :class="resultTypeIcon"
     ></div>
-    <div class="c-gsearch-result__body">
+    <div
+        class="c-gsearch-result__body"
+        aria-label="Domain Object Search Result"
+    >
         <div
             class="c-gsearch-result__title"
             @click="clickedResult"
@@ -55,7 +58,6 @@ export default {
                 item: this.result
             }
         };
-        console.log('result', this.result);
         this.$refs.objectpath.updateSelection([[selectionObject]]);
     },
     methods: {
