@@ -2,6 +2,7 @@
 // playwright.config.js
 // @ts-check
 
+// eslint-disable-next-line no-unused-vars
 const { devices } = require('@playwright/test');
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
