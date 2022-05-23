@@ -25,10 +25,14 @@
 
 .is-shelved{
     .c-fault-mgmt__list-content{
-        opacity: 50%;
+        opacity: 50% !important;
         font-style: italic;
     }
+    .c-fault-mgmt__list-severity{
+        @include pulse($animName: shelvedAnim, $dur: 0ms);
+    }
 }
+
 
 
 // SEARCH 
