@@ -175,5 +175,7 @@ export default class FormsAPI extends EventEmitter {
                 }
             };
         }
+
+        return promise;
     }
 }
