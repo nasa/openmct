@@ -28,6 +28,7 @@ const config = {
     output: {
         globalObject: "this",
         filename: '[name].js',
+        path: path.resolve(__dirname, 'dist'),
         library: '[name]',
         libraryTarget: 'umd',
         publicPath: '',
