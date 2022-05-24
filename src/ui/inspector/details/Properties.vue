@@ -25,39 +25,60 @@
     <div class="c-inspect-properties__header">
         Details
     </div>
-    <ul
-        v-if="hasDetails"
-        class="c-inspect-properties__section"
-    >
-        <Component
-            :is="getComponent(detail)"
-            v-for="detail in details"
-            :key="detail.name"
-            :detail="detail"
+        <ObjectView
+            style="min-height:300px;"
+            :default-object="defaultObject"
+            :show-edit-view="showEditView"
+            :object-view-key="objectViewKey"
         />
-
-    </ul>
-    <div
-        v-else
-        class="c-inspect-properties__row--span-all"
-    >
-        {{ noDetailsMessage }}
-    </div>
 </div>
 </template>
 
 <script>
 import Moment from 'moment';
-import DetailText from './DetailText.vue';
+import ObjectView from '../../components/ObjectView.vue';
 
 export default {
     components: {
-        DetailText
+        ObjectView
     },
     inject: ['openmct'],
     data() {
+        const STACKED_PLOT_TYPE_KEY = 'telemetry.plot.stacked';
+        const stackedPlotType = this.openmct.types.get(STACKED_PLOT_TYPE_KEY);
+        const composition = [
+            'b66a22b6-7f12-4358-bd95-a9092486ddd3',
+            '0072d390-12b6-4ecc-93e5-2598df36b6d7'
+        ];
+        const tempStackedPlot = {
+            identifier: {
+                namespace: '',
+                key: 'temporary-stacked-plot'
+            },
+            name: 'Data Pivot',
+            type: STACKED_PLOT_TYPE_KEY
+        };
+
+        stackedPlotType.definition.initialize(tempStackedPlot);
+        tempStackedPlot.configuration = {
+            useIndependentTime: true,
+            timeOptions: {
+                mode: {
+                    key: "fixed" //'local'
+                },
+                fixedOffsets: {
+                    start: 1653334980000, //timestamp
+                    end: 1653335080000
+                }
+            }
+        };
+        tempStackedPlot.composition.push(...composition);
+
         return {
-            selection: undefined
+            selection: undefined,
+            defaultObject: tempStackedPlot,
+            showEditView: false,
+            objectViewKey: 'plot-stacked'
         };
     },
     computed: {
@@ -200,6 +221,7 @@ export default {
     mounted() {
         this.openmct.selection.on('change', this.updateSelection);
         this.updateSelection(this.openmct.selection.get());
+
     },
     beforeDestroy() {
         this.openmct.selection.off('change', this.updateSelection);
