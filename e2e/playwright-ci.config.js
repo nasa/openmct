@@ -23,9 +23,9 @@ const config = {
         baseURL: 'http://localhost:8080/',
         headless: true,
         ignoreHTTPSErrors: true,
-        screenshot: 'on',
-        trace: 'on',
-        video: 'on'
+        screenshot: 'only-on-failure',
+        trace: 'on-first-retry',
+        video: 'on-first-retry'
     },
     projects: [
         {
