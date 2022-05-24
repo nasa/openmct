@@ -60,7 +60,7 @@ test.describe('Performance tests', () => {
         //Create a Chrome Performance Timeline trace to store as a test artifact
         console.log("\n==== Devtools: startTracing ====\n");
         await browser.startTracing(page, {
-            path: `${testInfo.outputPath()}trace.json`,
+            path: `${testInfo.outputPath()}-trace.json`,
             screenshots: true
         });
     });
