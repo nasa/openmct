@@ -34,7 +34,7 @@ import DefaultClock from '../../utils/clock/DefaultClock';
 export default class RemoteClock extends DefaultClock {
     constructor(openmct, identifier) {
         super();
-
+        console.log('remote clock installed');
         this.key = 'remote-clock';
 
         this.openmct = openmct;
