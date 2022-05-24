@@ -25,7 +25,7 @@ Checklist items specific to creating, reading, updating, or deleting interaction
 - Can edit all properties from 'Edit properties' action
 
 #### Delete
-- Can delete domain object with 'Remove Object' action
+- Can delete domain object with 'Remove Object' action (unless locked)
 - Once removed, object is no longer visible in tree, no traces remain as links, and the object is not returned in Search
 
 ### Interaction with first order domain objects
