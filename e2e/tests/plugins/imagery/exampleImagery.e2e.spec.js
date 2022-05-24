@@ -430,9 +430,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 
         expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
         await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
-
     });
-
 });
 
 test.describe('Example Imagery in Flexible layout', () => {
