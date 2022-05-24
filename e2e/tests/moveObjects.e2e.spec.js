@@ -102,10 +102,7 @@ test.describe('Move item tests', () => {
         // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
         await page.click('form[name="mctForm"] a:has-text("My Items")');
 
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click()
-        ]);
+        await page.locator('text=OK').click();
 
         // Finish editing and save Telemetry Table
         await page.locator('.c-button--menu.c-button--major.icon-save').click();
@@ -126,10 +123,7 @@ test.describe('Move item tests', () => {
 
         // Continue test regardless of assertion and create it in My Items
         await page.locator('form[name="mctForm"] >> text=My Items').click();
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click()
-        ]);
+        await page.locator('text=OK').click();
 
         // Open My Items
         await page.locator('text=Open MCT My Items >> span').nth(3).click();
