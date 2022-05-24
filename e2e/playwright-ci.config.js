@@ -57,7 +57,7 @@ const config = {
         ['list'],
         ['html', {
             open: 'never',
-            outputFolder: 'test-results'
+            outputFolder: '../test-results'
         }],
         ['junit', { outputFile: 'test-results/results.xml' }],
         ['github']

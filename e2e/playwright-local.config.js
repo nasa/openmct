@@ -57,7 +57,7 @@ const config = {
         ['list'],
         ['html', {
             open: 'on-failure',
-            outputFolder: 'test-results'
+            outputFolder: '../test-results'
         }]
     ]
 };
