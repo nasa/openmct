@@ -57,7 +57,7 @@ test.describe('Log plot tests', () => {
         //await testLogPlotPixels(page);
     });
 
-    test.skip('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
+    test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
         await makeOverlayPlot(page);
         await enableEditMode(page);
         await enableLogMode(page);
