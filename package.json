@@ -5,7 +5,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.16.3",
     "@braintree/sanitize-url": "6.0.0",
-    "@percy/cli": "1.0.4",
+    "@percy/cli": "1.2.1",
     "@percy/playwright": "1.0.3",
     "@playwright/test": "1.21.1",
     "@types/eventemitter3": "^1.0.0",
@@ -43,7 +43,7 @@
     "karma-coverage": "2.2.0",
     "karma-coverage-istanbul-reporter": "3.0.3",
     "karma-firefox-launcher": "2.1.2",
-    "karma-jasmine": "4.0.1",
+    "karma-jasmine": "5.0.1",
     "karma-junit-reporter": "2.0.1",
     "karma-sourcemap-loader": "0.3.8",
     "karma-spec-reporter": "0.0.34",
