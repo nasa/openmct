@@ -1,3 +1,26 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/*********************************************** FAULT PROPERTIES */
 .is-severity-critical{
     @include glyphBefore($glyph-icon-alert-triangle);
     color: $colorStatusError;
@@ -35,7 +58,7 @@
 
 
 
-// SEARCH 
+/*********************************************** SEARCH  */
 .c-fault-mgmt__search-row{
     display: flex;
     align-items: center;
@@ -45,11 +68,11 @@
     }
 }
 
-.c-fault-mgmt-search{ //-search__input and -search__view
+.c-fault-mgmt-search{
     width: 95%;
 }
 
-// TOOLBAR
+/*********************************************** TOOLBAR */
 .c-fault-mgmt__toolbar{
     display: flex; 
     justify-content: center;
@@ -58,7 +81,7 @@
     }
 }
 
-// LIST VIEW 
+/*********************************************** LIST VIEW */
 .c-faults-list-view { 
     display: flex;
     flex-direction: column;
@@ -68,7 +91,7 @@
 }
 
 
-// FAULT ITEM
+/*********************************************** FAULT ITEM */
 .c-fault-mgmt__list{
     background: rgba($colorBodyFg, 0.1);
     margin-bottom: 5px;
@@ -136,8 +159,6 @@
 
     &-trigTime{
         width: auto;
-        // margin-right: 3em;
-
     }
 
     &-action-wrapper{
@@ -151,23 +172,13 @@
         margin-left: auto;
         justify-content: right;
     }
-
-    // FAULT TYPES 
-    &__shelved{ // opacity and italics change
-        .c-fault-mgmt__list-content{
-            opacity: 70%;
-            font-style: italic;
-        }
-    }
 }
 
-// LIST HEADER 
+/*********************************************** LIST HEADER */
 .c-fault-mgmt__list-header{
     display: flex;
     background: rgba($colorBodyFg, .23);
     border-radius: $controlCr;
-
-    // flex-wrap: nowrap !important;
 
     &-tripVal, &-liveVal, &-trigTime{
         background: none;
@@ -221,7 +232,3 @@
         @include pulse($animName: shelvedAnim, $dur: 0ms);
     }
 }
-
-
-
-
