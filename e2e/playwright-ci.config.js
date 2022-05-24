@@ -55,6 +55,10 @@ const config = {
     ],
     reporter: [
         ['list'],
+        ['html', {
+            open: 'never',
+            outputFolder: 'test-results'
+        }],
         ['junit', { outputFile: 'test-results/results.xml' }],
         ['github']
     ]
