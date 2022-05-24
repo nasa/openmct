@@ -59,16 +59,16 @@
         >
         </button>
     </div>
-
     <div
         ref="plotContainer"
         class="l-view-section u-style-receiver js-style-receiver"
         :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced'}"
     >
-        <div
+        <progress-bar
             v-show="!!loading"
-            class="c-loading--overlay loading"
-        ></div>
+            class="c-telemetry-table__progress-bar"
+            :model="progressLoad"
+        />
         <mct-plot
             :grid-lines="gridLines"
             :cursor-guide="cursorGuide"
@@ -84,10 +84,12 @@
 import eventHelpers from './lib/eventHelpers';
 import ImageExporter from '../../exporters/ImageExporter';
 import MctPlot from './MctPlot.vue';
+import ProgressBar from "../../ui/components/ProgressBar.vue";
 
 export default {
     components: {
-        MctPlot
+        MctPlot,
+        ProgressBar
     },
     inject: ['openmct', 'domainObject', 'path'],
     props: {
@@ -109,6 +111,13 @@ export default {
             loading: false,
             status: ''
         };
+    },
+    computed: {
+        progressLoad() {
+            return {
+                progressPerc: undefined
+            };
+        }
     },
     mounted() {
         eventHelpers.extend(this);
