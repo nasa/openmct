@@ -25,41 +25,6 @@
     class="c-plot holder holder-plot has-control-bar"
 >
     <div
-        v-if="!options.compact"
-        class="c-control-bar"
-    >
-        <span class="c-button-set c-button-set--strip-h">
-            <button
-                class="c-button icon-download"
-                title="Export This View's Data as PNG"
-                @click="exportPNG()"
-            >
-                <span class="c-button__label">PNG</span>
-            </button>
-            <button
-                class="c-button"
-                title="Export This View's Data as JPG"
-                @click="exportJPG()"
-            >
-                <span class="c-button__label">JPG</span>
-            </button>
-        </span>
-        <button
-            class="c-button icon-crosshair"
-            :class="{ 'is-active': cursorGuide }"
-            title="Toggle cursor guides"
-            @click="toggleCursorGuide"
-        >
-        </button>
-        <button
-            class="c-button"
-            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
-            title="Toggle grid lines"
-            @click="toggleGridLines"
-        >
-        </button>
-    </div>
-    <div
         ref="plotContainer"
         class="l-view-section u-style-receiver js-style-receiver"
         :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced'}"
@@ -70,8 +35,8 @@
             :model="progressLoad"
         />
         <mct-plot
-            :grid-lines="gridLines"
-            :cursor-guide="cursorGuide"
+            :init-grid-lines="gridLines"
+            :init-cursor-guide="cursorGuide"
             :options="options"
             @loadingUpdated="loadingUpdated"
             @statusUpdated="setStatus"
@@ -144,15 +109,14 @@ export default {
             this.imageExporter.exportPNG(plotElement, 'plot.png', 'export-plot');
         },
 
-        toggleCursorGuide() {
-            this.cursorGuide = !this.cursorGuide;
-        },
-
-        toggleGridLines() {
-            this.gridLines = !this.gridLines;
-        },
         setStatus(status) {
             this.status = status;
+        },
+        getViewContext() {
+            return {
+                exportPNG: this.exportPNG,
+                exportJPG: this.exportJPG
+            };
         }
     }
 };
