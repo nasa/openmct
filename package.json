@@ -5,7 +5,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.16.3",
     "@braintree/sanitize-url": "6.0.0",
-    "@percy/cli": "1.0.4",
+    "@percy/cli": "1.2.1",
     "@percy/playwright": "1.0.3",
     "@playwright/test": "1.21.1",
     "@types/eventemitter3": "^1.0.0",
