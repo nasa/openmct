@@ -147,7 +147,6 @@ test.describe('Performance tests', () => {
         await page.waitForSelector('.c-notebook__entry >> nth=3', { state: 'detached'});
         await page.evaluate(() => (window.performance.mark("new-notebook-entry-deleted")));
 
-
         //await client.send('HeapProfiler.enable');
         await client.send('HeapProfiler.collectGarbage');
 
