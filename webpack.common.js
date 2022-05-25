@@ -26,14 +26,16 @@ const config = {
         maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'
     },
     output: {
-        globalObject: "this",
+        globalObject: 'this',
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
-        library: '[name]',
+        library: 'openmct',
         libraryTarget: 'umd',
         publicPath: '',
         hashFunction: 'xxhash64',
-        clean: true
+        clean: true,
+        devtoolModuleFilenameTemplate: '[resource-path]',
+        devtoolFallbackModuleFilenameTemplate: '[resource-path]?[hash]'
     },
     resolve: {
         alias: {
