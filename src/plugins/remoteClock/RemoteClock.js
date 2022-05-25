@@ -43,7 +43,7 @@ export default class RemoteClock extends DefaultClock {
         this.name = 'Remote Clock';
         this.description = "Provides telemetry based timestamps from a configurable source.";
 
-        this.timeTelemetryObject = undefined;
+        // this.timeTelemetryObject = undefined;
         this.parseTime = undefined;
         this.metadata = undefined;
 
@@ -55,10 +55,10 @@ export default class RemoteClock extends DefaultClock {
     start() {
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
-            this.timeTelemetryObject = domainObject;
+            // this.timeTelemetryObject = domainObject;
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
             this._timeSystemChange();
-            this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
+            this.telemetryCollection = this.openmct.telemetry.requestCollection(domainObject, {
                 size: 1,
                 strategy: 'latest'
             });
