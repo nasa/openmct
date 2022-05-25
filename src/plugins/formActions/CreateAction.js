@@ -23,7 +23,7 @@
 import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
 
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export default class CreateAction extends PropertiesAction {
     constructor(openmct, type, parentDomainObject) {
