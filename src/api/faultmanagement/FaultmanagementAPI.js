@@ -37,6 +37,32 @@ export default class FaultManagementAPI {
         this.faultActionProvider = provider;
     }
 
+    getFaultModel(faultData) {
+        return {
+            type: faultData.type,
+            fault: {
+                acknowledged: Boolean(faultData?.acknowledged),
+                currentValueInfo: {
+                    value: faultData?.parameterDetail?.currentValue?.engValue?.doubleValue,
+                    rangeCondition: faultData?.parameterDetail?.currentValue?.rangeCondition,
+                    monitoringResult: faultData?.parameterDetail?.currentValue?.monitoringResult
+                },
+                id: `id-${faultData.id.namespace}-${faultData.id.name}`,
+                name: faultData?.id?.name,
+                namespace: faultData?.id?.namespace,
+                severity: faultData?.severity,
+                shelved: Boolean(faultData?.shelveInfo),
+                shortDescription: faultData?.parameterDetail?.parameter?.shortDescription,
+                triggerTime: faultData?.triggerTime,
+                triggerValueInfo: {
+                    value: faultData?.parameterDetail?.triggerValue?.engValue?.doubleValue,
+                    rangeCondition: faultData?.parameterDetail?.triggerValue?.rangeCondition,
+                    monitoringResult: faultData?.parameterDetail?.triggerValue?.monitoringResult
+                }
+            }
+        };
+    }
+
     request(domainObject) {
         if (!this.provider?.supportsRequest(domainObject)) {
             return Promise.reject();

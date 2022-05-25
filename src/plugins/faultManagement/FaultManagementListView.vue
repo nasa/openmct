@@ -46,7 +46,7 @@
     <template v-if="filteredFaultsList.length > 0">
         <FaultManagementListItem
             v-for="fault of filteredFaultsList"
-            :key="fault.key"
+            :key="fault.id"
             :fault="fault"
             :is-selected="isSelected(fault)"
             @toggleSelected="toggleSelected"
@@ -90,7 +90,7 @@ export default {
     computed: {
         filteredFaultsList() {
             const filterName = FILTER_ITEMS[this.filterIndex];
-            let list = this.faultsList.filter(fault => !fault.shelveInfo);
+            let list = this.faultsList.filter(fault => !fault.shelved);
             if (filterName === 'Acknowledged') {
                 list = this.faultsList.filter(fault => fault.acknowledged);
             }
@@ -100,7 +100,7 @@ export default {
             }
 
             if (filterName === 'Shelved') {
-                list = this.faultsList.filter(fault => fault.shelveInfo);
+                list = this.faultsList.filter(fault => fault.shelved);
             }
 
             if (this.searchTerm.length > 0) {
@@ -119,19 +119,15 @@ export default {
     },
     methods: {
         filterUsingSearchTerm(fault) {
-            if (fault?.id?.name?.toString().toLowerCase().includes(this.searchTerm)) {
+            if (fault?.id?.toString().toLowerCase().includes(this.searchTerm)) {
                 return true;
             }
 
-            if (fault?.id?.namespace?.toString().toLowerCase().includes(this.searchTerm)) {
+            if (fault?.triggerValue?.toString().toLowerCase().includes(this.searchTerm)) {
                 return true;
             }
 
-            if (fault?.parameterDetail?.triggerValue?.engValue?.doubleValue.toString().toLowerCase().includes(this.searchTerm)) {
-                return true;
-            }
-
-            if (fault?.parameterDetail?.currentValue?.engValue?.doubleValue.toString().toLowerCase().includes(this.searchTerm)) {
+            if (fault?.currentValue?.toString().toLowerCase().includes(this.searchTerm)) {
                 return true;
             }
 
@@ -149,7 +145,7 @@ export default {
             return `${fault.id.name}-${fault.id.namespace}`;
         },
         isSelected(fault) {
-            return Boolean(this.selectedFaults[this.getFaultId(fault)]);
+            return Boolean(this.selectedFaults[fault.id]);
         },
         selectAll(toggle = false) {
             this.faultsList.forEach(fault => {
@@ -164,11 +160,10 @@ export default {
             this.sortBy = sort.value;
         },
         toggleSelected({ fault, selected = false}) {
-            const faultId = this.getFaultId(fault);
             if (selected) {
-                this.$set(this.selectedFaults, faultId, fault);
+                this.$set(this.selectedFaults, fault.id, fault);
             } else {
-                this.$delete(this.selectedFaults, faultId);
+                this.$delete(this.selectedFaults, fault.id);
             }
 
             const selectedFaults = Object.values(this.selectedFaults);

@@ -71,13 +71,13 @@ export default {
         currentValueDetails() {
             return {
                 name: 'Live value',
-                value: this.selectedFault?.parameterDetail?.currentValue?.engValue?.doubleValue
+                value: this.selectedFault?.currentValueInfo?.value
             };
         },
         descriptionDetails() {
             return {
                 name: 'Description',
-                value: this.selectedFault?.parameterDetail?.parameter?.shortDescription
+                value: this.selectedFault?.shortDescription
             };
         },
         occuredDetails() {
@@ -89,19 +89,19 @@ export default {
         sourceDetails() {
             return {
                 name: 'Source',
-                value: this.selectedFault?.id?.name
+                value: this.selectedFault?.name
             };
         },
         systemDetails() {
             return {
                 name: 'System',
-                value: this.selectedFault?.id?.namespace
+                value: this.selectedFault?.namespace
             };
         },
         tripValueDetails() {
             return {
                 name: 'Trip Value',
-                value: this.selectedFault?.parameterDetail?.triggerValue?.engValue?.doubleValue
+                value: this.selectedFault?.triggerValueInfo?.value
             };
         }
     },

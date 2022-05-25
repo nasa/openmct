@@ -77,7 +77,7 @@ export default {
             let disableShelve = true;
 
             selectedfaults.forEach(fault => {
-                if (!fault.shelveInfo) {
+                if (!fault.shelved) {
                     disableShelve = false;
                 }
 

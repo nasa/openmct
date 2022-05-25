@@ -26,8 +26,7 @@
     :class="[
         {'is-selected': isSelected},
         {'is-unacknowledged': !fault.acknowledged},
-        {'is-shelved': fault.shelveInfo},
-        {'is-triggering': fault.triggered}
+        {'is-shelved': fault.shelved}
     ]"
 >
     <div class="c-fault-mgmt__checkbox">
@@ -39,33 +38,33 @@
     </div>
     <div
         class="c-fault-mgmt__list-severity"
-        :title="severity"
+        :title="fault.severity"
         :class="[
-            'is-severity-' + severity
+            'is-severity-' + fault.severity
         ]"
     >
     </div>
     <div class="c-fault-mgmt__list-content">
         <div class="c-fault-mgmt__list-pathname">
-            <div class="c-fault-mgmt__list-path">{{ fault.id.namespace }}</div>
-            <div class="c-fault-mgmt__list-faultname">{{ fault.id.name }}</div>
+            <div class="c-fault-mgmt__list-path">{{ fault.namespace }}</div>
+            <div class="c-fault-mgmt__list-faultname">{{ fault.name }}</div>
         </div>
         <div class="c-fault-mgmt__list-content-right">
             <div
                 class="c-fault-mgmt__list-trigVal"
                 :class="tripValueClassname"
                 title="Trip Value"
-            >{{ triggerValue }}</div>
+            >{{ fault.triggerValueInfo.value }}</div>
             <div
                 class="c-fault-mgmt__list-curVal"
                 :class="liveValueClassname"
                 title="Live Value"
             >
-                {{ liveValue }}
+                {{ fault.currentValueInfo.value }}
             </div>
             <div
                 class="c-fault-mgmt__list-trigTime"
-            >{{ triggerTime }}
+            >{{ fault.triggerTime }}
             </div>
         </div>
     </div>
@@ -95,21 +94,15 @@ export default {
         }
     },
     computed: {
-        acknowledged() {
-            return this.fault?.acknowledged;
-        },
-        liveValue() {
-            return this.fault?.parameterDetail?.currentValue?.engValue?.doubleValue;
-        },
         liveValueClassname() {
-            const currentValue = this.fault?.parameterDetail?.currentValue;
-            if (!currentValue || currentValue.monitoringResult === 'IN_LIMITS') {
+            const currentValueInfo = this.fault?.currentValueInfoInfo;
+            if (!currentValueInfo || currentValueInfo.monitoringResult === 'IN_LIMITS') {
                 return '';
             }
 
-            let classname = this.getRangeConditionBasedClassname(currentValue.rangeCondition);
+            let classname = this.getRangeConditionBasedClassname(currentValueInfo.rangeCondition);
             classname += ' ';
-            classname += this.getRangeMonitoringResultClassname(currentValue.monitoringResult);
+            classname += this.getRangeMonitoringResultClassname(currentValueInfo.monitoringResult);
 
             return classname.trim();
         },
@@ -123,17 +116,17 @@ export default {
             return this.fault?.triggerTime;
         },
         triggerValue() {
-            return this.fault?.parameterDetail?.triggerValue?.engValue?.doubleValue;
+            return this.fault?.triggerValueInfo?.value;
         },
         tripValueClassname() {
-            const triggerValue = this.fault?.parameterDetail?.triggerValue;
-            if (!triggerValue || triggerValue.monitoringResult === 'IN_LIMITS') {
+            const triggerValueInfo = this.fault?.triggerValueInfo;
+            if (!triggerValueInfo || triggerValueInfo.monitoringResult === 'IN_LIMITS') {
                 return '';
             }
 
-            let classname = this.getRangeConditionBasedClassname(triggerValue.rangeCondition);
+            let classname = this.getRangeConditionBasedClassname(triggerValueInfo.rangeCondition);
             classname += ' ';
-            classname += this.getRangeMonitoringResultClassname(triggerValue.monitoringResult);
+            classname += this.getRangeMonitoringResultClassname(triggerValueInfo.monitoringResult);
 
             return classname.trim();
         }
@@ -188,7 +181,7 @@ export default {
                 },
                 {
                     cssClass: 'icon-timer',
-                    isDisabled: Boolean(!this.fault.shelveInfo),
+                    isDisabled: Boolean(!this.fault.shelved),
                     name: 'Unshelve',
                     description: '',
                     onItemClicked: () => {

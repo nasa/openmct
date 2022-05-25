@@ -22,6 +22,8 @@
 
 export default function () {
     return function install(openmct) {
+        const getFaultModel = openmct.faults.getFaultModel;
+
         openmct.install(openmct.plugins.FaultManagement());
 
         openmct.faults.addFaultActionProvider({
@@ -47,20 +49,22 @@ export default function () {
             request(domainObject, options) {
                 const faults = localStorage.getItem('faults') || '{}';
 
-                return Promise.resolve(JSON.parse(faults));
+                return Promise.resolve(JSON.parse(faults).alarms.map(getFaultModel));
             },
             subscribe(domainObject, callback) {
-                const faults = JSON.parse(localStorage.getItem('faults') || '{}');
+                const faultsData = JSON.parse(localStorage.getItem('faults') || '{}').alarms.map(getFaultModel);
 
                 function getRandomIndex(start, end) {
                     return Math.floor(start + (Math.random() * (end - start + 1)));
                 }
 
                 let id = setInterval(() => {
-                    const index = getRandomIndex(0, faults.alarms.length - 1);
-                    faults.alarms[index].parameterDetail.currentValue.engValue.doubleValue = Math.random();
+                    const index = getRandomIndex(0, faultsData.length - 1);
+                    const randomFaultData = faultsData[index];
+                    const randomFault = randomFaultData.fault;
+                    randomFault.currentValueInfo.value = Math.random();
                     callback({
-                        fault: faults.alarms[index],
+                        fault: randomFault,
                         type: 'alarms'
                     });
                 }, 300);

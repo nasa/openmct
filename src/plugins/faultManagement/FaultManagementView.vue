@@ -54,18 +54,12 @@ export default {
         }
     },
     methods: {
-        generateKey(fault) {
-            return `id-${fault.id.name}-${fault.id.namespace}`;
-        },
         updateFault({ fault, type }) {
             if (type === FAULT_MANAGEMENT_GLOBAL_ALARMS) {
                 this.updateFaultList();
             } else if (type === FAULT_MANAGEMENT_ALARMS) {
-                const key = this.generateKey(fault);
-
                 this.faultsList.forEach((faultValue, i) => {
-                    if (key === faultValue.key) {
-                        fault.key = key;
+                    if (fault.id === faultValue.id) {
                         this.$set(this.faultsList, i, fault);
                     }
                 });
@@ -74,12 +68,8 @@ export default {
         updateFaultList() {
             this.openmct.faults
                 .request(this.domainObject)
-                .then(data => {
-                    this.faultsList = data.alarms.map(fault => {
-                        fault.key = this.generateKey(fault);
-
-                        return fault;
-                    });
+                .then(faultsData => {
+                    this.faultsList = faultsData.map(fd => fd.fault);
                 });
         }
     }
