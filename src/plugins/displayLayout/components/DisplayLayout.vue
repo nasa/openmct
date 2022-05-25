@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 import SubobjectView from './SubobjectView.vue';
 import TelemetryView from './TelemetryView.vue';
 import BoxView from './BoxView.vue';

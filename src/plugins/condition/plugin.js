@@ -23,7 +23,7 @@ import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 import ConditionSetCompositionPolicy from "./ConditionSetCompositionPolicy";
 import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
 import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
-import uuid from "uuid";
+import { v4 as uuid } from 'uuid';
 
 export default function ConditionPlugin() {
 
