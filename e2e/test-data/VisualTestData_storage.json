@@ -1,0 +1,22 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:8080",
+      "localStorage": [
+        {
+          "name": "tcHistory",
+          "value": "{\"utc\":[{\"start\":1653500978046,\"end\":1653502778046}]}"
+        },
+        {
+          "name": "mct",
+          "value": "{\"mine\":{\"identifier\":{\"key\":\"mine\",\"namespace\":\"\"},\"name\":\"My Items\",\"type\":\"folder\",\"composition\":[{\"key\":\"798651ab-2def-4fed-b3b7-825090466997\",\"namespace\":\"\"}],\"location\":\"ROOT\",\"persisted\":1653502779222,\"modified\":1653502779222},\"798651ab-2def-4fed-b3b7-825090466997\":{\"identifier\":{\"key\":\"798651ab-2def-4fed-b3b7-825090466997\",\"namespace\":\"\"},\"name\":\"Unnamed Overlay Plot\",\"type\":\"telemetry.plot.overlay\",\"composition\":[{\"key\":\"e12c99f3-9f36-452f-9fd0-a81103902653\",\"namespace\":\"\"}],\"configuration\":{\"series\":[{\"identifier\":{\"key\":\"e12c99f3-9f36-452f-9fd0-a81103902653\",\"namespace\":\"\"}}],\"yAxis\":{},\"xAxis\":{}},\"modified\":1653502780295,\"location\":\"mine\",\"persisted\":1653502780296},\"e12c99f3-9f36-452f-9fd0-a81103902653\":{\"name\":\"Unnamed Sine Wave Generator\",\"type\":\"generator\",\"identifier\":{\"key\":\"e12c99f3-9f36-452f-9fd0-a81103902653\",\"namespace\":\"\"},\"telemetry\":{\"period\":10,\"amplitude\":1,\"offset\":0,\"dataRateInHz\":1,\"phase\":0,\"randomness\":0},\"modified\":1653502780288,\"location\":\"798651ab-2def-4fed-b3b7-825090466997\",\"persisted\":1653502780288}}"
+        },
+        {
+          "name": "mct-tree-expanded",
+          "value": "[\"/browse/mine\"]"
+        }
+      ]
+    }
+  ]
+}
