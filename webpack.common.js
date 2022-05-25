@@ -33,9 +33,7 @@ const config = {
         libraryTarget: 'umd',
         publicPath: '',
         hashFunction: 'xxhash64',
-        clean: true,
-        devtoolModuleFilenameTemplate: '[resource-path]',
-        devtoolFallbackModuleFilenameTemplate: '[resource-path]?[hash]'
+        clean: true
     },
     resolve: {
         alias: {

@@ -13,7 +13,7 @@ module.exports = merge(common, {
     },
     plugins: [
         new webpack.DefinePlugin({
-            __OPENMCT_ROOT_RELATIVE__: '"dist"'
+            __OPENMCT_ROOT_RELATIVE__: '""'
         })
     ],
     devtool: 'eval-source-map'
