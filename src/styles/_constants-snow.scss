@@ -464,7 +464,6 @@ $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg,0.1);
 $colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
 
-
 @mixin discreteItem() {
     background: $colorDiscreteItemBg;
     border: 1px solid $colorInteriorBorder;
@@ -487,5 +486,3 @@ $colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
 @mixin themedButton($c: $colorBtnBg) {
     background: $c;
 }
-
-
