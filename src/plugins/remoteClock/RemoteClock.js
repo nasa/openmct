@@ -34,7 +34,7 @@ import DefaultClock from '../../utils/clock/DefaultClock';
 export default class RemoteClock extends DefaultClock {
     constructor(openmct, identifier) {
         super();
-        console.log('remote clock installed');
+
         this.key = 'remote-clock';
 
         this.openmct = openmct;
@@ -43,10 +43,11 @@ export default class RemoteClock extends DefaultClock {
         this.name = 'Remote Clock';
         this.description = "Provides telemetry based timestamps from a configurable source.";
 
-        // this.timeTelemetryObject = undefined;
-        this.telemetryCollection = undefined;
+        this.timeTelemetryObject = undefined;
         this.parseTime = undefined;
         this.metadata = undefined;
+
+        this.rendering = false;
 
         this.lastTick = 0;
 
@@ -56,17 +57,11 @@ export default class RemoteClock extends DefaultClock {
     start() {
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
-            // this.timeTelemetryObject = domainObject;
+            this.timeTelemetryObject = domainObject;
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
             this._timeSystemChange();
-            this.telemetryCollection = this.openmct.telemetry.requestCollection(domainObject, {
-                size: 1,
-                strategy: 'latest'
-            });
-            this.telemetryCollection.on('add', (data) => { console.log('wtf', this._processDatum), this._processDatum(data) });
-            this.telemetryCollection.load();
-            // this._requestLatest();
-            // this._subscribe();
+            this._requestLatest();
+            this._subscribe();
         }).catch((error) => {
             throw new Error(error);
         });
@@ -74,11 +69,9 @@ export default class RemoteClock extends DefaultClock {
 
     stop() {
         this.openmct.time.off('timeSystem', this._timeSystemChange);
-        this.telemetryCollection.off('add', this._processDatum);
-        this.telemetryCollection.destroy();
-        // if (this._unsubscribe) {
-        //     this._unsubscribe();
-        // }
+        if (this._unsubscribe) {
+            this._unsubscribe();
+        }
 
         this.removeAllListeners();
     }
@@ -117,10 +110,17 @@ export default class RemoteClock extends DefaultClock {
      * @private
      */
     _processDatum(datum) {
-        let time = this.parseTime(datum[datum.length -1]);
+        if (!this.rendering) {
+            this.rendering = true;
+            requestAnimationFrame(() => {
+                let time = this.parseTime(datum);
 
-        if (time > this.lastTick) {
-            this.tick(time);
+                if (time > this.lastTick) {
+                    this.tick(time);
+                }
+
+                this.rendering = false;
+            });
         }
     }
 
