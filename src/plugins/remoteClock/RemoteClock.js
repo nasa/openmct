@@ -63,7 +63,7 @@ export default class RemoteClock extends DefaultClock {
                 size: 1,
                 strategy: 'latest'
             });
-            this.telemetryCollection.on('add', this._processDatum);
+            this.telemetryCollection.on('add', (data) => { console.log('wtf', this._processDatum), this._processDatum(data) });
             this.telemetryCollection.load();
             // this._requestLatest();
             // this._subscribe();
