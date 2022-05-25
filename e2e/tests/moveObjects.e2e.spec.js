@@ -80,10 +80,8 @@ test.describe('Move item tests', () => {
         });
         await page.locator('li.icon-move').click();
         await page.locator('form[name="mctForm"] >> text=My Items').click();
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click()
-        ]);
+
+        await page.locator('text=OK').click();
 
         // Expect that Folder 2 is in My Items, the root folder
         expect(page.locator(`text=My Items >> nth=0:has(text=${folder2})`)).toBeTruthy();
