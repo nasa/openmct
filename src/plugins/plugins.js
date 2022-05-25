@@ -32,6 +32,7 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    '../../example/faultManagment/exampleFaultManagement',
     './imagery/plugin',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
@@ -93,6 +94,7 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ExampleFaultManagement,
     ImageryPlugin,
     SummaryWidget,
     URLIndicatorPlugin,
@@ -148,6 +150,7 @@ define([
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
     plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.ExampleFaultManagement = ExampleFaultManagement.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
     plugins.example.Generator = () => GeneratorPlugin;
 
@@ -185,7 +188,7 @@ define([
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
-    plugins.FaultManagementPlugin = FaultManagementPlugin.default;
+    plugins.FaultManagement = FaultManagementPlugin.default;
     plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;

@@ -1,12 +1,35 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div class="c-faults-list-view">
     <FaultManagementSearch
-        :searchTerm="searchTerm"
+        :search-term="searchTerm"
         @filterChanged="updateFilter"
         @updateSearchTerm="updateSearchTerm"
     />
 
     <FaultManagementToolbar
+        v-if="showToolbar"
         :selected-faults="selectedFaults"
         @acknowledgeSelected="toggleAcknowledgeSelected"
         @shelveSelected="toggleShelveSelected"
@@ -87,11 +110,13 @@ export default {
             list.sort(SORT_ITEMS[this.sortBy].sortFunction);
 
             return list;
+        },
+        showToolbar() {
+            const faultActionProvider = this.openmct.faults.faultActionProvider;
+
+            return faultActionProvider?.acknowledgeFault && faultActionProvider?.shelveFault;
         }
     },
-    watch: {},
-    mounted() {},
-    beforeDestroy() {},
     methods: {
         filterUsingSearchTerm(fault) {
             if (fault?.id?.name?.toString().toLowerCase().includes(this.searchTerm)) {
@@ -113,6 +138,7 @@ export default {
             if (fault?.triggerTime.toString().toLowerCase().includes(this.searchTerm)) {
                 return true;
             }
+
             if (fault?.severity.toString().toLowerCase().includes(this.searchTerm)) {
                 return true;
             }
@@ -201,9 +227,6 @@ export default {
                         .forEach(selectedFault => {
                             this.openmct.faults.acknowledgeFault(selectedFault, data);
                         });
-                })
-                .catch(() => {
-                    // Do nothing
                 });
 
             this.selectedFaults = {};
@@ -253,7 +276,6 @@ export default {
                 try {
                     data = await this.openmct.forms.showForm(formStructure);
                 } catch (e) {
-                    // Do nothing
                     return;
                 }
 
@@ -280,54 +302,8 @@ export default {
             this.filterIndex = filter.model.options.findIndex(option => option.value === filter.value);
         },
         updateSearchTerm(term = '') {
-            this.searchTerm =  term.toLowerCase();
+            this.searchTerm = term.toLowerCase();
         }
     }
 };
 </script>
-
-<style>
-    .fault-table {
-        border-collapse: collapse;
-    }
-
-    th {
-        min-width: 10px;
-    }
-
-    .fault-table,
-    .fault-table th,
-    .fault-table td {
-        border: 1px solid #ccc;
-    }
-
-    .fault-table th,
-    .fault-table td {
-        padding: 0.5rem;
-    }
-
-    .fault-table th {
-        position: relative;
-    }
-
-    .resizer {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 5px;
-        cursor: col-resize;
-        user-select: none;
-    }
-
-    .resizer:hover,
-    .resizing {
-        border-right: 2px solid blue;
-    }
-
-    .resizable {
-        border: 1px solid gray;
-        height: 100px;
-        width: 100px;
-        position: relative;
-    }
-</style>

@@ -1,10 +1,32 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div
     class="c-fault-mgmt__list data-selectable"
     :class="[
         {'is-selected': isSelected},
-        {'is-unacknowledged': !fault.acknowledged}, 
-        {'is-shelved': fault.shelveInfo}, 
+        {'is-unacknowledged': !fault.acknowledged},
+        {'is-shelved': fault.shelveInfo},
         {'is-triggering': fault.triggered}
     ]"
 >
@@ -17,9 +39,9 @@
     </div>
     <div
         class="c-fault-mgmt__list-severity"
-        :title="fault.severity.toLowerCase()"
+        :title="severity"
         :class="[
-            'is-severity-' + fault.severity.toLowerCase()
+            'is-severity-' + severity
         ]"
     >
     </div>
@@ -46,7 +68,6 @@
             >{{ triggerTime }}
             </div>
         </div>
-
     </div>
     <div class="c-fault-mgmt__list-action-wrapper">
         <button
@@ -59,10 +80,7 @@
 </template>
 
 <script>
-
 export default {
-    components: {
-    },
     inject: ['openmct', 'domainObject'],
     props: {
         fault: {
@@ -75,10 +93,6 @@ export default {
                 return false;
             }
         }
-    },
-    data() {
-        return {
-        };
     },
     computed: {
         acknowledged() {
@@ -103,7 +117,7 @@ export default {
             return `${this.fault?.id?.name}/${this.fault?.id?.namespace}`;
         },
         severity() {
-            return this.fault?.severity;
+            return this.fault?.severity?.toLowerCase();
         },
         triggerTime() {
             return this.fault?.triggerTime;
@@ -123,12 +137,6 @@ export default {
 
             return classname.trim();
         }
-    },
-    watch: {
-    },
-    mounted() {
-    },
-    beforeDestroy() {
     },
     methods: {
         getRangeConditionBasedClassname(rangeCondition) {
@@ -156,16 +164,6 @@ export default {
             }
 
             return '';
-        },
-        toggleSelected(event) {
-            const faultData = {
-                fault: this.fault,
-                selected: event.target.checked
-            };
-
-            event.target.checked = !event.target.checked;
-
-            this.$emit('toggleSelected', faultData);
         },
         showActionMenu(event) {
             event.stopPropagation();
@@ -200,6 +198,16 @@ export default {
             ];
 
             this.openmct.menus.showMenu(event.x, event.y, menuItems);
+        },
+        toggleSelected(event) {
+            const faultData = {
+                fault: this.fault,
+                selected: event.target.checked
+            };
+
+            event.target.checked = !event.target.checked;
+
+            this.$emit('toggleSelected', faultData);
         }
     }
 };

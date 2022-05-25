@@ -75,7 +75,6 @@
         const TWO_HOURS = ONE_HOUR * 2;
         const ONE_DAY = ONE_HOUR * 24;
 
-
         openmct.install(openmct.plugins.LocalStorage());
 
         openmct.install(openmct.plugins.example.Generator());
@@ -197,53 +196,7 @@
         openmct.install(openmct.plugins.Timer());
         openmct.install(openmct.plugins.Timelist());
 
-        openmct.install(openmct.plugins.FaultManagementPlugin({
-            faultActionProvider: {
-                acknowledgeFault(fault, { comment = '' }) {
-                    console.log('acknowledgeFault', fault);
-                    console.log('comment', comment);
-                },
-                shelveFault(fault, shelveData) {
-                    console.log('shelveFault', fault);
-                    console.log('shelveData', shelveData);
-                }
-            },
-            realtimeFaultProvider: {
-                supportsSubscribe(domainObject) {
-                    return domainObject.type === 'faultManagement';
-                },
-                subscribe(domainObject, callback) {
-                    const faults = JSON.parse(localStorage.getItem('faults') || '{}');
-
-                    function getRandomIndex(start, end) {
-                        return Math.floor(start + (Math.random() * (end - start + 1)));
-                    }
-
-                    let id = setInterval(() => {
-                        const index = getRandomIndex(0, faults.alarms.length - 1);
-                        faults.alarms[index].parameterDetail.currentValue.engValue.doubleValue = Math.random();
-                        callback({
-                            fault: faults.alarms[index],
-                            type: 'alarms'
-                        });
-                    }, 300);
-
-                    return () => {
-                        clearInterval(id);
-                    }
-                }
-            },
-            historicaFaultProvider: {
-                supportsRequest: (domainObject) => {
-                    return domainObject.type === 'faultManagement';
-                },
-                request(domainObject, options) {
-                    const faults = localStorage.getItem('faults') || '{}';
-
-                    return Promise.resolve(JSON.parse(faults));
-                }
-            }
-        }));
+        openmct.install(openmct.plugins.example.ExampleFaultManagement());
 
         openmct.start();
     </script>

@@ -1,37 +1,53 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div
-    v-if="selectedFaults.length === 1"
+    v-if="isShowDetails"
     class="c-inspector__properties c-inspect-properties"
 >
     <div class="c-inspect-properties__header">Fault Details</div>
-        <ul
-            v-for="(fault) of selectedFaults"
-            :key="name(fault, uuid())"
-            class="c-inspect-properties__section"
-        >
-            <DetailText :detail="{ name: 'Source', value: name(fault) }" />
-            <DetailText :detail="{ name: 'Occured', value: triggerTime(fault)}"/>
-            <DetailText :detail="{ name: 'Criticality', value: severity(fault)}"/>
-            <DetailText :detail="{ name: 'Description', value: description(fault)}" />
-        </ul>
+    <ul
+        class="c-inspect-properties__section"
+    >
+        <DetailText :detail="sourceDetails" />
+        <DetailText :detail="occuredDetails" />
+        <DetailText :detail="criticalityDetails" />
+        <DetailText :detail="descriptionDetails" />
+    </ul>
 
     <div class="c-inspect-properties__header">Telemetry</div>
-        <ul
-            v-for="fault of selectedFaults"
-            :key="name(fault, uuid())"
-            class="c-inspect-properties__section"
-        >
-            <DetailText :detail="{ name: 'System', value: pathname(fault) }" />
-            <DetailText :detail="{ name: 'Trip Value', value: triggerValue(fault)}" />
-            <DetailText :detail="{ name: 'Live value', value: currentValue(fault)}" />
-        </ul>
-    </div>
+    <ul
+        class="c-inspect-properties__section"
+    >
+        <DetailText :detail="systemDetails" />
+        <DetailText :detail="tripValueDetails" />
+        <DetailText :detail="currentValueDetails" />
+    </ul>
+</div>
 </template>
 
 <script>
 import DetailText from '@/ui/inspector/details/DetailText.vue';
-
-import uuid from 'uuid';
 
 export default {
     name: 'FaultManagementInspector',
@@ -39,55 +55,75 @@ export default {
         DetailText
     },
     inject: ['openmct', 'selection'],
-    props: {
-    },
-    data: function () {
+    data() {
         return {
+            isShowDetails: false,
             selectedFaults: []
         };
     },
     computed: {
-    },
-    watch: {
-    },
-    destroyed() {
+        criticalityDetails() {
+            return {
+                name: 'Criticality',
+                value: this.selectedFault?.severity
+            };
+        },
+        currentValueDetails() {
+            return {
+                name: 'Live value',
+                value: this.selectedFault?.parameterDetail?.currentValue?.engValue?.doubleValue
+            };
+        },
+        descriptionDetails() {
+            return {
+                name: 'Description',
+                value: this.selectedFault?.parameterDetail?.parameter?.shortDescription
+            };
+        },
+        occuredDetails() {
+            return {
+                name: 'Occured',
+                value: this.selectedFault?.triggerTime
+            };
+        },
+        sourceDetails() {
+            return {
+                name: 'Source',
+                value: this.selectedFault?.id?.name
+            };
+        },
+        systemDetails() {
+            return {
+                name: 'System',
+                value: this.selectedFault?.id?.namespace
+            };
+        },
+        tripValueDetails() {
+            return {
+                name: 'Trip Value',
+                value: this.selectedFault?.parameterDetail?.triggerValue?.engValue?.doubleValue
+            };
+        }
     },
     mounted() {
         this.updateSelectedFaults();
     },
     methods: {
-        uuid: uuid,
-        currentValue(fault) {
-            return fault?.parameterDetail?.currentValue?.engValue?.doubleValue;
-        },
-        entireName(fault) {
-            return `${fault?.id?.name}/${fault?.id?.namespace}`;
-        },
-        name(fault, uuid = ''){
-            return fault?.id?.name + uuid;
-        },
-        pathname(fault){
-            return fault?.id?.namespace;
-        },
-        severity(fault) {
-            return fault?.severity;
-        },
         updateSelectedFaults() {
             const selection = this.openmct.selection.get();
+            this.isShowDetails = false;
+
             if (selection.length === 0 || selection[0].length < 2) {
                 return;
             }
 
-            this.selectedFaults = selection[0][1].context.selectedFaults;
-        },
-        triggerTime(fault) {
-            return fault?.triggerTime;
-        },
-        triggerValue(fault) {
-            return fault?.parameterDetail?.triggerValue?.engValue?.doubleValue;
-        },
-        description(fault){
-            return fault?.parameterDetail?.parameter?.shortDescription;
+            const selectedFaults = selection[0][1].context.selectedFaults;
+            if (selectedFaults.length !== 1) {
+                return;
+            }
+
+            this.isShowDetails = true;
+            this.selectedFault = selectedFaults[0];
         }
     }
 };
