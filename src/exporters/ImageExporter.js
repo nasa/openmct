@@ -33,7 +33,7 @@ function replaceDotsWithUnderscores(filename) {
 
 import {saveAs} from 'saveAs';
 import html2canvas from 'html2canvas';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 class ImageExporter {
     constructor(openmct) {
