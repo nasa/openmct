@@ -57,8 +57,7 @@ export default {
     inject: ['openmct', 'selection'],
     data() {
         return {
-            isShowDetails: false,
-            selectedFaults: []
+            isShowDetails: false
         };
     },
     computed: {

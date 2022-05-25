@@ -198,8 +198,6 @@ export default {
                 selected: event.target.checked
             };
 
-            event.target.checked = !event.target.checked;
-
             this.$emit('toggleSelected', faultData);
         }
     }
