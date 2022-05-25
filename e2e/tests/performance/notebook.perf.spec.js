@@ -22,13 +22,12 @@
 
 /*
 This test suite is dedicated to performance tests to ensure that testability of performance
-is not broken upstream on Open MCT. Any assumptions made downstream will be tested here
+is not broken upstream on Open MCT. Any assumptions made downstream will be tested here.
 
 TODO:
  - Update resolution of performance config
  - Add Performance Observer on init to push all performance marks
  - Move client CDP connection to before or to a fixture
- -
 
 */
 
@@ -71,6 +70,9 @@ test.describe('Performance tests', () => {
         /* Measurement Section
         / The following section includes a block of performance measurements.
         */
+        const startTime = await page.evaluate(() => window.performance.timing.navigationStart);
+        console.log('window.performance.timing.navigationStart', startTime);
+
         //Get All Performance Marks
         const getAllMarksJson = await page.evaluate(() => JSON.stringify(window.performance.getEntriesByType("mark")));
         const getAllMarks = JSON.parse(getAllMarksJson);
@@ -97,61 +99,60 @@ test.describe('Performance tests', () => {
 
         // To to Search Available after Launch
         await page.locator('input[type="search"]').click();
-        await page.evaluate(() => (window.performance.mark("search-available")));
+        await page.evaluate(() => window.performance.mark("search-available"));
         // Fill Search input
         await page.locator('input[type="search"]').fill('Performance Notebook');
-        await page.evaluate(() => (window.performance.mark("search-entered")));
+        await page.evaluate(() => window.performance.mark("search-entered"));
         //Search Result Appears and is clicked
         await Promise.all([
             page.waitForNavigation(),
             page.locator('a:has-text("Performance Notebook")').first().click(),
-            page.evaluate(() => (window.performance.mark("click-search-result")))
+            page.evaluate(() => window.performance.mark("click-search-result"))
         ]);
 
         await page.waitForSelector('.c-tree__item c-tree-and-search__loading loading', {state: 'hidden'});
-        await page.evaluate(() => (window.performance.mark("search-spinner-gone")));
+        await page.evaluate(() => window.performance.mark("search-spinner-gone"));
 
         await page.waitForSelector('.l-browse-bar__object-name', { state: 'visible'});
-        await page.evaluate(() => (window.performance.mark("object-title-appears")));
+        await page.evaluate(() => window.performance.mark("object-title-appears"));
 
         await page.waitForSelector('.c-notebook__entry >> nth=0', { state: 'visible'});
-        await page.evaluate(() => (window.performance.mark("notebook-entry-appears")));
+        await page.evaluate(() => window.performance.mark("notebook-entry-appears"));
 
         // Click Add new Notebook Entry
         await page.locator('.c-notebook__drag-area').click();
-        await page.evaluate(() => (window.performance.mark("new-notebook-entry-created")));
+        await page.evaluate(() => window.performance.mark("new-notebook-entry-created"));
 
         // Enter Notebook Entry text
         await page.locator('div.c-ne__text').last().fill('New Entry');
         await page.keyboard.press('Enter');
-        await page.evaluate(() => (window.performance.mark("new-notebook-entry-filled")));
+        await page.evaluate(() => window.performance.mark("new-notebook-entry-filled"));
 
         //Individual Notebook Entry Search
-        await page.evaluate(() => (window.performance.mark("notebook-search-start")));
+        await page.evaluate(() => window.performance.mark("notebook-search-start"));
         await page.locator('.c-notebook__search >> input').fill('Existing Entry');
-        await page.evaluate(() => (window.performance.mark("notebook-search-filled")));
+        await page.evaluate(() => window.performance.mark("notebook-search-filled"));
         await page.waitForSelector('text=Search Results (3)', { state: 'visible'});
-        await page.evaluate(() => (window.performance.mark("notebook-search-processed")));
+        await page.evaluate(() => window.performance.mark("notebook-search-processed"));
         await page.waitForSelector('.c-notebook__entry >> nth=2', { state: 'visible'});
-        await page.evaluate(() => (window.performance.mark("notebook-search-processed")));
+        await page.evaluate(() => window.performance.mark("notebook-search-processed"));
 
         //Clear Search
         await page.locator('.c-search.c-notebook__search .c-search__clear-input').click();
-        await page.evaluate(() => (window.performance.mark("notebook-search-processed")));
+        await page.evaluate(() => window.performance.mark("notebook-search-processed"));
 
         // Hover on Last
-        await page.evaluate(() => (window.performance.mark("new-notebook-entry-delete")));
+        await page.evaluate(() => window.performance.mark("new-notebook-entry-delete"));
         await page.locator('div.c-ne__time-and-content').last().hover();
         await page.locator('button[title="Delete this entry"]').last().click();
         await page.locator('button:has-text("Ok")').click();
         await page.waitForSelector('.c-notebook__entry >> nth=3', { state: 'detached'});
-        await page.evaluate(() => (window.performance.mark("new-notebook-entry-deleted")));
+        await page.evaluate(() => window.performance.mark("new-notebook-entry-deleted"));
 
         //await client.send('HeapProfiler.enable');
         await client.send('HeapProfiler.collectGarbage');
 
         let performanceMetrics = await client.send('Performance.getMetrics');
         console.log(performanceMetrics.metrics);
-
     });
 });

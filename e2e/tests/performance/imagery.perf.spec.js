@@ -74,6 +74,10 @@ test.describe('Performance tests', () => {
         //Get time difference between viewlarge actionability and evaluate time
         await page.evaluate(() => (window.performance.measure("machine-time-difference", "viewlarge.start", "viewLarge.start.test")));
 
+        //Get StartTime
+        const startTime = await page.evaluate(() => window.performance.timing.navigationStart);
+        console.log('window.performance.timing.navigationStart', startTime);
+
         //Get All Performance Marks
         const getAllMarksJson = await page.evaluate(() => JSON.stringify(window.performance.getEntriesByType("mark")));
         const getAllMarks = JSON.parse(getAllMarksJson);
@@ -98,17 +102,17 @@ test.describe('Performance tests', () => {
         // Go to baseURL
         await page.goto('/');
 
-        // To to Search Available after Launch
+        // Search Available after Launch
         await page.locator('input[type="search"]').click();
-        await page.evaluate(() => (window.performance.mark("search-available")));
+        await page.evaluate(() => window.performance.mark("search-available"));
         // Fill Search input
         await page.locator('input[type="search"]').fill('Performance Display Layout');
-        await page.evaluate(() => (window.performance.mark("search-entered")));
+        await page.evaluate(() => window.performance.mark("search-entered"));
         //Search Result Appears and is clicked
         await Promise.all([
             page.waitForNavigation(),
             page.locator('a:has-text("Performance Display Layout")').first().click(),
-            page.evaluate(() => (window.performance.mark("click-search-result")))
+            page.evaluate(() => window.performance.mark("click-search-result"))
         ]);
 
         //Time to Example Imagery Frame loads within Display Layout
@@ -133,15 +137,15 @@ test.describe('Performance tests', () => {
 
         //Open Large view
         await page.locator('button:has-text("Large View")').click(); //This action includes the performance.mark named 'viewLarge.start'
-        await page.evaluate(() => (window.performance.mark("viewLarge.start.test"))); //This is a mark only to compare evaluate timing
+        await page.evaluate(() => window.performance.mark("viewLarge.start.test")); //This is a mark only to compare evaluate timing
 
         //Time to Imagery Rendered in Large Frame
         await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
-        await page.evaluate(() => (window.performance.mark("background-image-frame")));
+        await page.evaluate(() => window.performance.mark("background-image-frame"));
 
         //Time to Example Imagery object loads
         await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
-        await page.evaluate(() => (window.performance.mark("background-image-visible")));
+        await page.evaluate(() => window.performance.mark("background-image-visible"));
 
         // Get Current number of images in thumbstrip
         await page.waitForSelector('.c-imagery__thumb');
@@ -161,7 +165,7 @@ test.describe('Performance tests', () => {
 
         // Click Close Icon
         await page.locator('.c-click-icon').click();
-        await page.evaluate(() => (window.performance.mark("view-large-close-button")));
+        await page.evaluate(() => window.performance.mark("view-large-close-button"));
 
         //await client.send('HeapProfiler.enable');
         await client.send('HeapProfiler.collectGarbage');
