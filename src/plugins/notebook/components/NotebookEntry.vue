@@ -197,12 +197,8 @@ export default {
             return text;
         }
     },
-    watch: {
-    },
     mounted() {
         this.dropOnEntry = this.dropOnEntry.bind(this);
-    },
-    destroyed() {
     },
     methods: {
         async addNewEmbed(objectPath) {
