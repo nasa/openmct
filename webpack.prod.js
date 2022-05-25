@@ -5,7 +5,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = merge(common, {
-    mode: 'development',
+    mode: 'production',
     resolve: {
         alias: {
             "vue": path.join(__dirname, "node_modules/vue/dist/vue.min.js")
@@ -16,5 +16,5 @@ module.exports = merge(common, {
             __OPENMCT_ROOT_RELATIVE__: '"dist"'
         })
     ],
-    devtool: 'eval-source-map'
+    devtool: 'source-map'
 });
