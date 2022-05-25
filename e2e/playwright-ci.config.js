@@ -9,6 +9,7 @@ const { devices } = require('@playwright/test');
 const config = {
     retries: 1,
     testDir: 'tests',
+    testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
     webServer: {
         command: 'npm run start',
@@ -16,14 +17,15 @@ const config = {
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
     },
+    maxFailures: process.env.CI ? 5 : undefined, //Limits failures to 5 to reduce CI Waste
     workers: 2, //Limit to 2 for CircleCI Agent
     use: {
         baseURL: 'http://localhost:8080/',
         headless: true,
         ignoreHTTPSErrors: true,
-        screenshot: 'on',
-        trace: 'on',
-        video: 'on'
+        screenshot: 'only-on-failure',
+        trace: 'on-first-retry',
+        video: 'on-first-retry'
     },
     projects: [
         {
@@ -53,8 +55,11 @@ const config = {
     ],
     reporter: [
         ['list'],
+        ['html', {
+            open: 'never',
+            outputFolder: '../test-results/html/'
+        }],
         ['junit', { outputFile: 'test-results/results.xml' }],
-        ['allure-playwright'],
         ['github']
     ]
 };
