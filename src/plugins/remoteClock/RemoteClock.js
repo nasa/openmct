@@ -44,6 +44,7 @@ export default class RemoteClock extends DefaultClock {
         this.description = "Provides telemetry based timestamps from a configurable source.";
 
         // this.timeTelemetryObject = undefined;
+        this.telemetryCollection = undefined;
         this.parseTime = undefined;
         this.metadata = undefined;
 
