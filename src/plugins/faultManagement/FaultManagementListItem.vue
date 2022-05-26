@@ -79,6 +79,18 @@
 </template>
 
 <script>
+
+const RANGE_CONDITION_CLASS = {
+    'LOW': 'is-limit--lwr',
+    'HIGH': 'is-limit--upr'
+};
+
+const SEVERITY_CLASS = {
+    'CRITICAL': 'is-limit--red',
+    'WARNING': 'is-limit--yellow',
+    'WATCH': 'is-limit--cyan'
+};
+
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
@@ -95,14 +107,14 @@ export default {
     },
     computed: {
         liveValueClassname() {
-            const currentValueInfo = this.fault?.currentValueInfoInfo;
+            const currentValueInfo = this.fault?.currentValueInfo;
             if (!currentValueInfo || currentValueInfo.monitoringResult === 'IN_LIMITS') {
                 return '';
             }
 
-            let classname = this.getRangeConditionBasedClassname(currentValueInfo.rangeCondition);
+            let classname = RANGE_CONDITION_CLASS[currentValueInfo.rangeCondition] || '';
             classname += ' ';
-            classname += this.getRangeMonitoringResultClassname(currentValueInfo.monitoringResult);
+            classname += SEVERITY_CLASS[currentValueInfo.monitoringResult] || '';
 
             return classname.trim();
         },
@@ -124,40 +136,14 @@ export default {
                 return '';
             }
 
-            let classname = this.getRangeConditionBasedClassname(triggerValueInfo.rangeCondition);
+            let classname = RANGE_CONDITION_CLASS[triggerValueInfo.rangeCondition] || '';
             classname += ' ';
-            classname += this.getRangeMonitoringResultClassname(triggerValueInfo.monitoringResult);
+            classname += SEVERITY_CLASS[triggerValueInfo.monitoringResult] || '';
 
             return classname.trim();
         }
     },
     methods: {
-        getRangeConditionBasedClassname(rangeCondition) {
-            if (rangeCondition === 'LOW') {
-                return 'is-limit--lwr';
-            }
-
-            if (rangeCondition === 'HIGH') {
-                return 'is-limit--upr';
-            }
-
-            return '';
-        },
-        getRangeMonitoringResultClassname(monitoringResult) {
-            if (monitoringResult === 'CRITICAL') {
-                return 'is-limit--red';
-            }
-
-            if (monitoringResult === 'WARNING') {
-                return 'is-limit--yellow';
-            }
-
-            if (monitoringResult === 'WATCH') {
-                return 'is-limit--cyan';
-            }
-
-            return '';
-        },
         showActionMenu(event) {
             event.stopPropagation();
 

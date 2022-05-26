@@ -54,7 +54,7 @@ export default {
     components: {
         DetailText
     },
-    inject: ['openmct', 'selection'],
+    inject: ['openmct'],
     data() {
         return {
             isShowDetails: false

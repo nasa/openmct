@@ -51,8 +51,7 @@ export default function FaultManagementInspectorViewProvider(openmct) {
                             FaultManagementInspector
                         },
                         provide: {
-                            openmct,
-                            selection
+                            openmct
                         },
                         template: '<FaultManagementInspector></FaultManagementInspector>'
                     });
