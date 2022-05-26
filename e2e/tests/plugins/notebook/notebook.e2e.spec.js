@@ -32,16 +32,8 @@ test.describe('Notebook CRUD Operations', () => {
         //Create domain object
         //Newly created notebook should have one Section and one page, 'Unnamed Section'/'Unnamed Page'
     });
-    test.fixme('Can update a Notebook Object', async ({ page }) => {
-        //Create domain object
-        //Save Domain Object
-        //Verify that the newly created domain object can be exported as JSON from the 3 dot menu
-    });
-    test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {
-        // Create 2 objects with hierarchy
-        // Export as JSON
-        // Verify Hiearchy
-    });
+    test.fixme('Can update a Notebook Object', async ({ page }) => {});
+    test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
     test.fixme('Can Delete a Notebook Object', async ({ page }) => {
         // Other than non-persistible objects
     });
@@ -116,34 +108,69 @@ test.describe('Notebook page tests', () => {
     });
 });
 
-//Notebook Search tests
-//
-// ## III. Entries:
-// 1.  - Add new entry into page should create entry and focus on it
-// 1.  - Drag and drop any telmetry object on 'drop object'
-//     - new entry gets created with telemtry object
-// 1.  - Add new entry into page
-//     - drop any telmetry object on this entry
-//     - telmetry object appears inside this entry
-// 1.  - Add new entry into page, enter text
-//     - navigate away and return
-//     - edit entry text
-//     - navigate away and return back
-//     - confirm text is correct
-// 1.  - delete previously created entry
+test.describe('Notebook search tests', () => {
+    test.fixme('Can search for a single result', async ({ page }) => {});
+    test.fixme('Can search for many results', async ({ page }) => {});
+    test.fixme('Can search for new and recently modified entries', async ({ page }) => {});
+    test.fixme('Can search for section text', async ({ page }) => {});
+    test.fixme('Can search for page text', async ({ page }) => {});
+    test.fixme('Can search for entry text', async ({ page }) => {});
+});
 
-// ## IV: Snapshot Menu:
-// 1.  - There should be no default notebook
-//     - Clear default notebook if exists using `localStorage.setItem('notebook-storage', null);`
-//     - refresh page
-//     - Click on 'Notebook Snaphot Menu'
-//     - Following popup option should be there
-//         1. save to Notebook Snapshots
-// 1.  - Check for default notebook if there is one, else add some entry into one of notebook to make it default
-//     - Click on 'Notebook Snaphot Menu'
-//     - Following popup options should be there
-//         1. save to Default Notebook
-//         1. save to Notebook Snapshots
+test.describe('Notebook entry tests', () => {
+    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
+    test.fixme('When a telemetry object is dropped into a notebook, a new entry is created and it should be focused', async ({ page }) => {
+        // Drag and drop any telmetry object on 'drop object'
+        // new entry gets created with telemtry object
+    });
+    test.fixme('When a telemetry object is dropped into a notebooks existing entry, it should be focused', async ({ page }) => {
+        // Drag and drop any telemetry object onto existing entry
+        // Entry updated with object and snapshot
+    });
+    test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
+    test.fixme('previous and new entries can be deleted', async ({ page }) => {});
+});
+
+test.describe('Notebook entry tests', () => {
+    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
+    test.fixme('When a telemetry object is dropped into a notebook, a new entry is created and it should be focused', async ({ page }) => {
+        // Drag and drop any telmetry object on 'drop object'
+        // new entry gets created with telemtry object
+    });
+    test.fixme('When a telemetry object is dropped into a notebooks existing entry, it should be focused', async ({ page }) => {
+        // Drag and drop any telemetry object onto existing entry
+        // Entry updated with object and snapshot
+    });
+    test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
+    test.fixme('previous and new entries can be deleted', async ({ page }) => {});
+});
+
+test.describe('Snapshot Menu tests', () => {
+    test.fixme('When no default notebook is selected, Snapshot Menu dropdown should only have a single option', async ({ page }) => {
+        // There should be no default notebook
+        // Clear default notebook if exists using `localStorage.setItem('notebook-storage', null);`
+        // refresh page
+        // Click on 'Notebook Snaphot Menu'
+        // 'save to Notebook Snapshots' should be only option there
+    });
+    test.fixme('When default notebook is updated selected, Snapshot Menu dropdown should list it as the newest option', async ({ page }) => {
+        // Create 2a notebooks
+        // Set Notebook A as Default
+        // Open Snapshot Menu and note that Notebook A is listed
+        // Close Snapshot Menu
+        // Set Default Notebook to Notebook B
+        // Open Snapshot Notebook and note that Notebook B is listed
+        // Select Default Notebook Option and verify that Snapshot is added to Notebook B
+    });
+    test.fixme('Can add Snapshots via Snapshot Menu and details are correct', async ({ page }) => {
+        //Note this should be a visual test, too
+        // Create A notebooks
+        // Select Default Notebook Option and verify that Snapshot is added to Notebook A
+        // Verify Snapshot Details
+    });
+
+});
+
 // 1.  - Select any telemetry object eg: SWG
 //     - From 'Notebook Snaphot Menu' click on 'save to Default Notebook'
 //     - Navigate to default notebook - section - page and verify that SWG snaphot has been added with correct details
