@@ -9,6 +9,7 @@ const { devices } = require('@playwright/test');
 const config = {
     retries: 0,
     testDir: 'tests',
+    testIgnore: '**/*.perf.spec.js',
     timeout: 30 * 1000,
     webServer: {
         command: 'npm run start',
@@ -22,9 +23,9 @@ const config = {
         baseURL: 'http://localhost:8080/',
         headless: false,
         ignoreHTTPSErrors: true,
-        screenshot: 'on',
-        trace: 'on',
-        video: 'on'
+        screenshot: 'only-on-failure',
+        trace: 'retain-on-failure',
+        video: 'retain-on-failure'
     },
     projects: [
         {
@@ -54,7 +55,10 @@ const config = {
     ],
     reporter: [
         ['list'],
-        ['allure-playwright']
+        ['html', {
+            open: 'on-failure',
+            outputFolder: '../test-results'
+        }]
     ]
 };
 

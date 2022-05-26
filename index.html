@@ -80,6 +80,7 @@
         openmct.install(openmct.plugins.example.Generator());
         openmct.install(openmct.plugins.example.EventGeneratorPlugin());
         openmct.install(openmct.plugins.example.ExampleImagery());
+        openmct.install(openmct.plugins.example.ExampleFaultManagement());
 
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
@@ -190,14 +191,13 @@
         openmct.install(openmct.plugins.ObjectMigration());
         openmct.install(openmct.plugins.ClearData(
             ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked', 'example.imagery'],
-            {indicator: true}
+            { indicator: true }
         ));
         openmct.install(openmct.plugins.Clock({ enableClockIndicator: true }));
         openmct.install(openmct.plugins.Timer());
         openmct.install(openmct.plugins.Timelist());
-
-        openmct.install(openmct.plugins.example.ExampleFaultManagement());
-
+        openmct.install(openmct.plugins.BarChart());
+        openmct.install(openmct.plugins.ScatterPlot());
         openmct.start();
     </script>
 </html>
