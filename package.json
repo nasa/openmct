@@ -81,7 +81,7 @@
     "clean": "rm -rf ./dist ./node_modules ./package-lock.json",
     "clean-test-lint": "npm run clean; npm install; npm run test; npm run lint",
     "start": "node app.js",
-    "lint": "eslint example src e2e --ext .js,.vue openmct.js",
+    "lint": "eslint example src e2e --ext .js,.vue openmct.js --max-warnings=0",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
     "build:prod": "cross-env webpack --config webpack.prod.js",
     "build:dev": "webpack --config webpack.dev.js",

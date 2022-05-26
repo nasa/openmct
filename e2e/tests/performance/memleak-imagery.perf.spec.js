@@ -36,6 +36,7 @@ const { test, expect } = require('@playwright/test');
 
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 
+// eslint-disable-next-line playwright/no-skipped-test
 test.describe.skip('Memory Performance tests', () => {
     test.beforeEach(async ({ page, browser }, testInfo) => {
         // Go to baseURL
@@ -58,7 +59,7 @@ test.describe.skip('Memory Performance tests', () => {
         await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
     });
 
-    test.skip('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
+    test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
 
         await page.goto('/', {waitUntil: 'networkidle'});
 
