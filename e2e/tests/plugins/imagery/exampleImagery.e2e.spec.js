@@ -235,6 +235,11 @@ test.describe('Example Imagery', () => {
 // ('If the imagery view is not in pause mode, it should be updated when new images come in');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 test('Example Imagery in Display layout', async ({ page }) => {
+    test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/5265'
+    });
+
     // Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -245,9 +250,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.click('text=Example Imagery');
 
     // Clear and set Image load delay to minimum value
-    // FIXME: This defaults to 5000 ms in execution, but there's a bug
-    // which causes the historical images to not populate for certain delay values.
-    // Update the value to 5000 ms when the bug is fixed.
+    // FIXME: Update the value to 5000 ms when this bug is fixed.
     // See: https://github.com/nasa/openmct/issues/5265
     await page.locator('input[type="number"]').fill('');
     await page.locator('input[type="number"]').fill('0');
@@ -259,6 +262,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
+
     // Wait until Save Banner is gone
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
     await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
@@ -322,26 +326,21 @@ test('Example Imagery in Display layout', async ({ page }) => {
     // Verify previous image
     await expect(selectedImage).toBeVisible();
 
-    let imageCount = await page.locator('.c-imagery__thumb').count();
-    try {
-        // Wait for at least one new image to stream in
-        await page.waitForFunction(prevImageCount => {
-            const newImageCount = document.querySelectorAll('.c-imagery__thumb').length;
+    const imageCount = await page.locator('.c-imagery__thumb').count();
+    await expect.poll(async () => {
+        const newImageCount = await page.locator('.c-imagery__thumb').count();
 
-            return newImageCount > prevImageCount;
-        }, imageCount, { timeout: 5000});
-    } catch (error) {
-        if (error.name === 'TimeoutError') {
-            // Bypass timeout and fail on the next assert so we get some details
-            return;
-        }
-    }
-
-    let currentImageCount = await page.locator('.c-imagery__thumb').count();
-    expect(currentImageCount).toBeGreaterThan(imageCount);
+        return newImageCount;
+    }, {
+        message: "verify that new images still stream in",
+        timeout: 6000
+    }).toBeGreaterThan(imageCount);
 
     // Verify selected image is still displayed
     await expect(selectedImage).toBeVisible();
+
+    // Unpause imagery
+    await page.locator('.pause-play').click();
 
     //Get background-image url from background-image css prop
     const backgroundImage = page.locator('.c-imagery__main-image__background-image');
@@ -351,15 +350,20 @@ test('Example Imagery in Display layout', async ({ page }) => {
     let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
     console.log('backgroundImageUrl1 ' + backgroundImageUrl1);
 
-    // Verify next image has updated
-    let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
-        return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-    });
-    let backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
-    console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
+    let backgroundImageUrl2;
+    await expect.poll(async () => {
+        // Verify next image has updated
+        let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
+            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+        });
+        backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
 
-    // Expect backgroundImageUrl2 to be greater then backgroundImageUrl1
-    expect(backgroundImageUrl2 >= backgroundImageUrl1);
+        return backgroundImageUrl2;
+    }, {
+        message: "verify next image has updated",
+        timeout: 6000
+    }).not.toBe(backgroundImageUrl1);
+    console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
