@@ -171,3 +171,11 @@ test('Visual - Sine Wave Generator Form', async ({ page }) => {
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'removed amplitude property value');
 });
+
+test.fixme('Visual - Notebook with embedded Telemetry', async ({ page }) => {
+    //Create a notebook and telemetry object
+    //Open Notebook object
+    //Snapshot of default notebook in default state
+    //Add Embedded Telemetry Snapshot into Entry 1
+    //Snapshot of Telemetry snapshot in notebook
+});
