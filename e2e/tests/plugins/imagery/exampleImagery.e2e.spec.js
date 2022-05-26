@@ -322,8 +322,26 @@ test('Example Imagery in Display layout', async ({ page }) => {
     // Verify previous image
     await expect(selectedImage).toBeVisible();
 
-    // Wait 20ms to verify no new image has come in
-    await page.waitForTimeout(21);
+    let imageCount = await page.locator('.c-imagery__thumb').count();
+    try {
+        // Wait for at least one new image to stream in
+        await page.waitForFunction(prevImageCount => {
+            const newImageCount = document.querySelectorAll('.c-imagery__thumb').length;
+
+            return newImageCount > prevImageCount;
+        }, imageCount, { timeout: 5000});
+    } catch (error) {
+        if (error.name === 'TimeoutError') {
+            // Bypass timeout and fail on the next assert so we get some details
+            return;
+        }
+    }
+
+    let currentImageCount = await page.locator('.c-imagery__thumb').count();
+    expect(currentImageCount).toBeGreaterThan(imageCount);
+
+    // Verify selected image is still displayed
+    await expect(selectedImage).toBeVisible();
 
     //Get background-image url from background-image css prop
     const backgroundImage = page.locator('.c-imagery__main-image__background-image');
