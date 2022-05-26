@@ -26,9 +26,10 @@ const config = {
         maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'
     },
     output: {
-        globalObject: "this",
+        globalObject: 'this',
         filename: '[name].js',
-        library: '[name]',
+        path: path.resolve(__dirname, 'dist'),
+        library: 'openmct',
         libraryTarget: 'umd',
         publicPath: '',
         hashFunction: 'xxhash64',
