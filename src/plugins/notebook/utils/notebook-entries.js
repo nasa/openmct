@@ -1,5 +1,5 @@
 import objectLink from '../../../ui/mixins/object-link';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 async function getUsername(openmct) {
     let username = '';
