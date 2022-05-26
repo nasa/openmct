@@ -333,7 +333,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
         return newImageCount;
     }, {
         message: "verify that new images still stream in",
-        timeout: 6000
+        timeout: 6 * 1000
     }).toBeGreaterThan(imageCount);
 
     // Verify selected image is still displayed
@@ -361,7 +361,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
         return backgroundImageUrl2;
     }, {
         message: "verify next image has updated",
-        timeout: 6000
+        timeout: 6 * 1000
     }).not.toBe(backgroundImageUrl1);
     console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
 });
