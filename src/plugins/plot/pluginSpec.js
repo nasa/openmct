@@ -724,16 +724,16 @@ describe("the plugin", function () {
         });
 
         it("turns on cursor Guides all telemetry objects", (done) => {
-            expect(plotViewComponentObject.cursorGuide).toBeFalse();
-            plotViewComponentObject.toggleCursorGuide();
+            expect(plotViewComponentObject.$children[0].cursorGuide).toBeFalse();
+            plotViewComponentObject.$children[0].cursorGuide = true;
             Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[0].component.$children[0].cursorGuide).toBeTrue();
+                expect(plotViewComponentObject.$children[0].cursorGuide).toBeTrue();
                 done();
             });
         });
 
         it("shows grid lines for all telemetry objects", () => {
-            expect(plotViewComponentObject.gridLines).toBeTrue();
+            expect(plotViewComponentObject.$children[0].gridLines).toBeTrue();
             let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
             let visible = 0;
             gridLinesContainer.forEach(el => {
@@ -745,10 +745,10 @@ describe("the plugin", function () {
         });
 
         it("hides grid lines for all telemetry objects", (done) => {
-            expect(plotViewComponentObject.gridLines).toBeTrue();
-            plotViewComponentObject.toggleGridLines();
+            expect(plotViewComponentObject.$children[0].gridLines).toBeTrue();
+            plotViewComponentObject.$children[0].gridLines = false;
             Vue.nextTick(() => {
-                expect(plotViewComponentObject.gridLines).toBeFalse();
+                expect(plotViewComponentObject.$children[0].gridLines).toBeFalse();
                 let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
                 let visible = 0;
                 gridLinesContainer.forEach(el => {

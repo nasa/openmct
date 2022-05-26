@@ -24,7 +24,8 @@
 This test suite is dedicated to tests which verify the basic operations surrounding moving objects.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Move item tests', () => {
     test('Create a basic object and verify that it can be moved to another folder', async ({ page }) => {
@@ -38,6 +39,10 @@ test.describe('Move item tests', () => {
 
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder1);
+
+        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
+        await page.click('form[name="mctForm"] a:has-text("My Items")');
+
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=OK').click(),
@@ -53,6 +58,10 @@ test.describe('Move item tests', () => {
         await page.locator('li.icon-folder').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder2);
+
+        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
+        await page.click('form[name="mctForm"] a:has-text("My Items")');
+
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=OK').click(),
@@ -71,10 +80,8 @@ test.describe('Move item tests', () => {
         });
         await page.locator('li.icon-move').click();
         await page.locator('form[name="mctForm"] >> text=My Items').click();
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click()
-        ]);
+
+        await page.locator('text=OK').click();
 
         // Expect that Folder 2 is in My Items, the root folder
         expect(page.locator(`text=My Items >> nth=0:has(text=${folder2})`)).toBeTruthy();
@@ -89,10 +96,11 @@ test.describe('Move item tests', () => {
         await page.locator('li:has-text("Telemetry Table")').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(telemetryTable);
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click()
-        ]);
+
+        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
+        await page.click('form[name="mctForm"] a:has-text("My Items")');
+
+        await page.locator('text=OK').click();
 
         // Finish editing and save Telemetry Table
         await page.locator('.c-button--menu.c-button--major.icon-save').click();
@@ -113,10 +121,7 @@ test.describe('Move item tests', () => {
 
         // Continue test regardless of assertion and create it in My Items
         await page.locator('form[name="mctForm"] >> text=My Items').click();
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click()
-        ]);
+        await page.locator('text=OK').click();
 
         // Open My Items
         await page.locator('text=Open MCT My Items >> span').nth(3).click();

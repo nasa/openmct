@@ -156,6 +156,22 @@
                         >
                         </button>
                     </div>
+                    <div class="c-button-set c-button-set--strip-h">
+                        <button
+                            class="c-button icon-crosshair"
+                            :class="{ 'is-active': cursorGuide }"
+                            title="Toggle cursor guides"
+                            @click="toggleCursorGuide"
+                        >
+                        </button>
+                        <button
+                            class="c-button"
+                            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
+                            title="Toggle grid lines"
+                            @click="toggleGridLines"
+                        >
+                        </button>
+                    </div>
                 </div>
 
                 <!--Cursor guides-->
@@ -216,16 +232,16 @@ export default {
                 };
             }
         },
-        gridLines: {
+        initGridLines: {
             type: Boolean,
             default() {
                 return true;
             }
         },
-        cursorGuide: {
+        initCursorGuide: {
             type: Boolean,
             default() {
-                return true;
+                return false;
             }
         },
         plotTickWidth: {
@@ -257,7 +273,9 @@ export default {
             isTimeOutOfSync: false,
             showLimitLineLabels: undefined,
             isFrozenOnMouseDown: false,
-            hasSameRangeValue: true
+            hasSameRangeValue: true,
+            cursorGuide: this.initCursorGuide,
+            gridLines: this.initGridLines
         };
     },
     computed: {
@@ -276,6 +294,14 @@ export default {
         },
         plotWidth() {
             return this.plotTickWidth || this.tickWidth;
+        }
+    },
+    watch: {
+        initGridLines(newGridLines) {
+            this.gridLines = newGridLines;
+        },
+        initCursorGuide(newCursorGuide) {
+            this.cursorGuide = newCursorGuide;
         }
     },
     mounted() {
@@ -1246,6 +1272,14 @@ export default {
         },
         legendHoverChanged(data) {
             this.showLimitLineLabels = data;
+        },
+        toggleCursorGuide() {
+            this.cursorGuide = !this.cursorGuide;
+            this.$emit('cursorGuide', this.cursorGuide);
+        },
+        toggleGridLines() {
+            this.gridLines = !this.gridLines;
+            this.$emit('gridLines', this.gridLines);
         }
     }
 };
