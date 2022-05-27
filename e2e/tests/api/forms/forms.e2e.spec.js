@@ -43,8 +43,6 @@ test.describe('forms set', () => {
         await page.fill('text=Properties Title Notes >> input[type="text"]', '');
         // Press Tab
         await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
-        // Click text=OK Cancel
-        await page.click('text=OK', { force: true });
 
         const okButton = page.locator('text=OK');
 
