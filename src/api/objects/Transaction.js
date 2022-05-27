@@ -22,12 +22,14 @@
 
 export default class Transaction {
     constructor(objectAPI) {
-        this.dirtyObjects = new Set();
+        this.dirtyObjects = {};
         this.objectAPI = objectAPI;
     }
 
     add(object) {
-        this.dirtyObjects.add(object);
+        const key = this.objectAPI.makeKeyString(object.identifier);
+
+        this.dirtyObjects[key] = object;
     }
 
     cancel() {
@@ -37,7 +39,8 @@ export default class Transaction {
     commit() {
         const promiseArray = [];
         const save = this.objectAPI.save.bind(this.objectAPI);
-        this.dirtyObjects.forEach(object => {
+
+        Object.values(this.dirtyObjects).forEach(object => {
             promiseArray.push(this.createDirtyObjectPromise(object, save));
         });
 
@@ -48,7 +51,9 @@ export default class Transaction {
         return new Promise((resolve, reject) => {
             action(object)
                 .then((success) => {
-                    this.dirtyObjects.delete(object);
+                    const key = this.objectAPI.makeKeyString(object.identifier);
+
+                    delete this.dirtyObjects[key];
                     resolve(success);
                 })
                 .catch(reject);
@@ -57,7 +62,8 @@ export default class Transaction {
 
     getDirtyObject(identifier) {
         let dirtyObject;
-        this.dirtyObjects.forEach(object => {
+
+        Object.values(this.dirtyObjects).forEach(object => {
             const areIdsEqual = this.objectAPI.areIdsEqual(object.identifier, identifier);
             if (areIdsEqual) {
                 dirtyObject = object;
@@ -67,14 +73,11 @@ export default class Transaction {
         return dirtyObject;
     }
 
-    start() {
-        this.dirtyObjects = new Set();
-    }
-
     _clear() {
         const promiseArray = [];
         const refresh = this.objectAPI.refresh.bind(this.objectAPI);
-        this.dirtyObjects.forEach(object => {
+
+        Object.values(this.dirtyObjects).forEach(object => {
             promiseArray.push(this.createDirtyObjectPromise(object, refresh));
         });
 

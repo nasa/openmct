@@ -8,6 +8,7 @@ import { notebookImageMigration, IMAGE_MIGRATION_VER } from '../notebook/utils/n
 import { NOTEBOOK_TYPE } from './notebook-constants';
 
 import Vue from 'vue';
+import Agent from '@/utils/agent/Agent';
 
 export default function NotebookPlugin() {
     return function install(openmct) {
@@ -18,7 +19,7 @@ export default function NotebookPlugin() {
         }
 
         openmct.actions.register(new CopyToNotebookAction(openmct));
-
+        const agent = new Agent(window);
         const notebookType = {
             name: 'Notebook',
             description: 'Create and save timestamped notes with embedded object snapshots.',
@@ -142,6 +143,7 @@ export default function NotebookPlugin() {
                                 Notebook
                             },
                             provide: {
+                                agent,
                                 openmct,
                                 snapshotContainer
                             },

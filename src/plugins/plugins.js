@@ -37,7 +37,8 @@ define([
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
-    './charts/plugin',
+    './charts/bar/plugin',
+    './charts/scatter/plugin',
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
@@ -77,6 +78,7 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
+    './gauge/GaugePlugin',
     './timelist/plugin'
 ], function (
     _,
@@ -95,7 +97,8 @@ define([
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
-    ChartPlugin,
+    BarChartPlugin,
+    ScatterPlotPlugin,
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
@@ -135,6 +138,7 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
+    GaugePlugin,
     TimeList
 ) {
     const plugins = {};
@@ -170,7 +174,8 @@ define([
 
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
-    plugins.Chart = ChartPlugin.default;
+    plugins.BarChart = BarChartPlugin.default;
+    plugins.ScatterPlot = ScatterPlotPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
@@ -212,6 +217,7 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
+    plugins.Gauge = GaugePlugin.default;
     plugins.Timelist = TimeList.default;
 
     return plugins;

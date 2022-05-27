@@ -51,7 +51,7 @@ class ImageExporter {
         const overlays = this.openmct.overlays;
         const dialog = overlays.dialog({
             iconClass: 'info',
-            message: 'Caputuring an image',
+            message: 'Capturing image, please wait...',
             buttons: [
                 {
                     label: 'Cancel',
