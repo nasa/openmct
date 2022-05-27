@@ -164,42 +164,50 @@ test.describe('Snapshot Menu tests', () => {
     });
     test.fixme('Can add Snapshots via Snapshot Menu and details are correct', async ({ page }) => {
         //Note this should be a visual test, too
-        // Create A notebooks
+        // Create Telemetry object
+        // Create A notebook with many pages and sections.
+        // Set page and section defaults to be between first and last of many. i.e. 3 of 5
+        // Navigate to Telemetry object
         // Select Default Notebook Option and verify that Snapshot is added to Notebook A
-        // Verify Snapshot Details
+        // Verify Snapshot Details appear correctly
     });
-
+    test.fixme('Snapshots adjust time conductor', async ({ page }) => {
+        // Create Telemetry object
+        // Set Telemetry object's timeconductor to Fixed time with Start and Endtimes are recorded
+        // Embed Telemetry object into notebook
+        // Set Time Conductor to Local clock
+        // Click into embedded telemetry object and verify object appears with same fixed time from record
+    });
 });
 
-// 1.  - Select any telemetry object eg: SWG
-//     - From 'Notebook Snaphot Menu' click on 'save to Default Notebook'
-//     - Navigate to default notebook - section - page and verify that SWG snaphot has been added with correct details
-
-// ## V: Snapshot container:
-// 1.  - Select any telemetry object eg: SWG
-//     - Click on 'Notebook Snaphot Menu'
-//     - from popup options click on 'save to Notebook Snapshots'
-//     - Snapshots indicator should blink, click on it to view snapshots
-//     - drag and drop snapshot on droppable area for new enrty
-//     - this should create a new entry with given snaphot has been added to it
-// 1.  - Select any telemetry object eg: SWG
-//     - Click on 'Notebook Snaphot Menu'
-//     - from popup options click on 'save to Notebook Snapshots'
-//     - Snapshots indicator should blink, click on it to view snapshots
-//     - goto any notebook with pre exisintg entry (if not create new entry)
-//     - drag and drop snapshot on exisintg entry
-//     - this should add a given snaphot inside that entry
-
-// ## VI: Embeds:
-// 1.  - Add SWG using snapshot to notebook
-//     - Go to that entry
-//     - click on thumbnail image
-//     - should open image with PNG, JPG and Annotate buttons
-//     - verify they all work as intended
-// 1.  - Add SWG using snapshot to notebook
-//     - note down start and end time on time conductor and Fixed Timestamp/Local Clock
-//     - Go to that entry
-//     - change start and end time on time conductor if Local Clock
-//     - click on embed Name/Text
-//     - should take to that object
-//     - also verify that start and end time on time conductor (also should automatically switch to Fixed timestamp)*/
+test.describe('Snapshot Container tests', () => {
+    test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
+    test.fixme('5 Snapshots can be added to a container and Deleted with Delete All action', async ({ page }) => {});
+    test.fixme('A snapshot can be Deleted from Container', async ({ page }) => {});
+    test.fixme('A snapshot can be Previewed from Container', async ({ page }) => {});
+    test.fixme('A snapshot Container can be open and closed', async ({ page }) => {});
+    test.fixme('Can add object to Snapshot container and pull into notebook and create a new entry', async ({ page }) => {
+        //Create Notebook
+        //Create Telemetry Object
+        //From Telemetry Object, use 'save to Notebook Snapshots'
+        //Snapshots indicator should blink, click on it to view snapshots
+        //Navigate to Notebook
+        //Drag and Drop onto droppable area for new entry
+        //New Entry created with given snapshot added
+        //Snapshot removed from container?
+    });
+    test.fixme('Can add object to Snapshot container and pull into notebook and existing entry', async ({ page }) => {
+        //Create Notebook
+        //Create Telemetry Object
+        //From Telemetry Object, use 'save to Notebook Snapshots'
+        //Snapshots indicator should blink, click on it to view snapshots
+        //Navigate to Notebook
+        //Drag and Drop into exiting entry
+        //Existing Entry updated with given snapshot
+        //Snapshot removed from container?
+    });
+    test.fixme('Verify Embedded options for PNG, JPG, and Annotate work correctly', async ({ page }) => {
+        //Add snapshot to container
+        //Verify PNG, JPG, and Annotate buttons work correctly
+    });
+});
