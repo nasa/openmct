@@ -152,8 +152,8 @@ test.describe('Example Imagery', () => {
     test('Can use + - buttons to zoom on the image', async ({ page }) => {
         const bgImageLocator = page.locator(backgroundImageSelector);
         await bgImageLocator.hover();
-        const zoomInBtn = page.locator('.t-btn-zoom-in');
-        const zoomOutBtn = page.locator('.t-btn-zoom-out');
+        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
+        const zoomOutBtn = page.locator('.t-btn-zoom-out').nth(0);
         const initialBoundingBox = await bgImageLocator.boundingBox();
 
         await zoomInBtn.click();
@@ -178,8 +178,8 @@ test.describe('Example Imagery', () => {
         // wait for zoom animation to finish
         await bgImageLocator.hover();
 
-        const zoomInBtn = page.locator('.t-btn-zoom-in');
-        const zoomResetBtn = page.locator('.t-btn-zoom-reset');
+        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
+        const zoomResetBtn = page.locator('.t-btn-zoom-reset').nth(0);
         const initialBoundingBox = await bgImageLocator.boundingBox();
 
         await zoomInBtn.click();
@@ -217,7 +217,7 @@ test.describe('Example Imagery', () => {
         await page.locator('.icon-clock >> text=Local Clock').click();
 
         await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
-        const zoomInBtn = page.locator('.t-btn-zoom-in');
+        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
         await zoomInBtn.click();
         // wait for zoom animation to finish
         await bgImageLocator.hover();

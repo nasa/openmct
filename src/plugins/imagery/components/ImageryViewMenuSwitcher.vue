@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import {v1 as uuid} from 'uuid';
+import {v4 as uuid} from 'uuid';
 
 export default {
     inject: ['openmct'],
