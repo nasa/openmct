@@ -50,6 +50,7 @@ export default class FaultManagementAPI {
                 id: `id-${faultData?.id?.namespace}-${faultData?.id?.name}`,
                 name: faultData?.id?.name,
                 namespace: faultData?.id?.namespace,
+                seqNum: faultData?.seqNum,
                 severity: faultData?.severity,
                 shelved: Boolean(faultData?.shelveInfo),
                 shortDescription: faultData?.parameterDetail?.parameter?.shortDescription,
