@@ -131,20 +131,6 @@ test.describe('Notebook entry tests', () => {
     test.fixme('previous and new entries can be deleted', async ({ page }) => {});
 });
 
-test.describe('Notebook entry tests', () => {
-    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
-    test.fixme('When a telemetry object is dropped into a notebook, a new entry is created and it should be focused', async ({ page }) => {
-        // Drag and drop any telmetry object on 'drop object'
-        // new entry gets created with telemtry object
-    });
-    test.fixme('When a telemetry object is dropped into a notebooks existing entry, it should be focused', async ({ page }) => {
-        // Drag and drop any telemetry object onto existing entry
-        // Entry updated with object and snapshot
-    });
-    test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
-    test.fixme('previous and new entries can be deleted', async ({ page }) => {});
-});
-
 test.describe('Snapshot Menu tests', () => {
     test.fixme('When no default notebook is selected, Snapshot Menu dropdown should only have a single option', async ({ page }) => {
         // There should be no default notebook
