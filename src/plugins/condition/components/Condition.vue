@@ -214,7 +214,7 @@
 import Criterion from './Criterion.vue';
 import ConditionDescription from "./ConditionDescription.vue";
 import { TRIGGER, TRIGGER_LABEL } from "@/plugins/condition/utils/constants";
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export default {
     components: {

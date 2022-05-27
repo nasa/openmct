@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 import createExampleUser from './exampleUserCreator';
 
 export default class ExampleUserProvider extends EventEmitter {

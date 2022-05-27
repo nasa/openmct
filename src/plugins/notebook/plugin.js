@@ -38,6 +38,7 @@ import {
 } from './notebook-constants';
 
 import Vue from 'vue';
+import Agent from '@/utils/agent/Agent';
 
 let notebookSnapshotContainer;
 function getSnapshotContainer(openmct) {

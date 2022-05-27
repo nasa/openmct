@@ -4,10 +4,10 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 0, // visual tests should never retry due to snapshot comparison errors
-    testDir: 'tests/visual',
-    timeout: 90 * 1000,
-    workers: 1, // visual tests should never run in parallel due to test pollution
+    retries: 0,
+    testDir: 'tests/performance/',
+    timeout: 30 * 1000,
+    workers: 1, //Only run in serial with 1 worker
     webServer: {
         command: 'npm run start',
         port: 8080,
@@ -17,15 +17,24 @@ const config = {
     use: {
         browserName: "chromium",
         baseURL: 'http://localhost:8080/',
-        headless: true, // this needs to remain headless to avoid visual changes due to GPU
+        headless: Boolean(process.env.CI), //Only if running locally
         ignoreHTTPSErrors: true,
-        screenshot: 'on',
+        screenshot: 'off',
         trace: 'off',
-        video: 'on'
+        video: 'off'
     },
+    projects: [
+        {
+            name: 'chrome',
+            use: {
+                browserName: 'chromium'
+            }
+        }
+    ],
     reporter: [
         ['list'],
-        ['junit', { outputFile: 'test-results/results.xml' }]
+        ['junit', { outputFile: 'test-results/results.xml' }],
+        ['json', { outputFile: 'test-results/results.json' }]
     ]
 };
 
