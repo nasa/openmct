@@ -46,8 +46,11 @@ test.describe('Log plot tests', () => {
         await testLogTicks(page);
         //await testLogPlotPixels(page);
 
-        // refresh page and wait for charts and ticks to load
+        // FIXME: Get rid of the waitForTimeout() and lint warning exception.
+        // eslint-disable-next-line playwright/no-wait-for-timeout
         await page.waitForTimeout(1 * 1000);
+
+        // refresh page and wait for charts and ticks to load
         await page.reload({ waitUntil: 'networkidle'});
         await page.waitForSelector('.gl-plot-chart-area');
         await page.waitForSelector('.gl-plot-y-tick-label');
@@ -57,7 +60,9 @@ test.describe('Log plot tests', () => {
         //await testLogPlotPixels(page);
     });
 
-    test.skip('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
+    // Leaving test as 'TODO' for now.
+    // NOTE: Not eligible for community contributions.
+    test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
         await makeOverlayPlot(page);
         await enableEditMode(page);
         await enableLogMode(page);
