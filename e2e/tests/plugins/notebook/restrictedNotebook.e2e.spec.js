@@ -134,8 +134,23 @@ test.describe('Restricted Notebook', () => {
         await openContextMenuRestrictedNotebook(page);
 
         const menuOptions = page.locator('.c-menu ul');
-
         await expect.soft(menuOptions).toContainText('Remove');
+
+        const restrictedNotebookTreeObject = page.locator(`a:has-text("Unnamed ${CUSTOM_NAME}")`);
+
+        // notbook tree object exists
+        expect.soft(await restrictedNotebookTreeObject.count()).toEqual(1);
+
+        // Click text=Remove
+        await page.locator('text=Remove').click();
+        // Click text=OK
+        await Promise.all([
+            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine?tc.mode=fixed&tc.startBound=1653671067340&tc.endBound=1653672867340&tc.timeSystem=utc&view=grid' }*/),
+            page.locator('text=OK').click()
+        ]);
+
+        // has been deleted
+        expect.soft(await restrictedNotebookTreeObject.count()).toEqual(0);
     });
 
     test('Can be locked if at least one page has one entry', async ({ page }) => {
