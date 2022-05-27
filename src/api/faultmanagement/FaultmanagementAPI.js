@@ -37,9 +37,9 @@ export default class FaultManagementAPI {
         this.faultActionProvider = provider;
     }
 
-    getFaultModel(faultData) {
+    getFaultModel(faultData, type) {
         return {
-            type: faultData.type,
+            type: type || faultData?.type,
             fault: {
                 acknowledged: Boolean(faultData?.acknowledged),
                 currentValueInfo: {
@@ -47,7 +47,7 @@ export default class FaultManagementAPI {
                     rangeCondition: faultData?.parameterDetail?.currentValue?.rangeCondition,
                     monitoringResult: faultData?.parameterDetail?.currentValue?.monitoringResult
                 },
-                id: `id-${faultData.id.namespace}-${faultData.id.name}`,
+                id: `id-${faultData?.id?.namespace}-${faultData?.id?.name}`,
                 name: faultData?.id?.name,
                 namespace: faultData?.id?.namespace,
                 severity: faultData?.severity,
