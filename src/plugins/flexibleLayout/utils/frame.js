@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 class Frame {
     constructor(domainObjectIdentifier, size) {
