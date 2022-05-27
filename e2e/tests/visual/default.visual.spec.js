@@ -59,8 +59,7 @@ test('Visual - Root and About', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     // Verify that Create button is actionable
-    const createButtonLocator = page.locator('button:has-text("Create")');
-    await expect(createButtonLocator).toBeEnabled();
+    await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
     // Take a snapshot of the Dashboard
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
