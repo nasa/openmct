@@ -452,7 +452,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
     });
 });
 
-// test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+    // test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     // test.fixme('Can use alt+drag to move around image once zoomed in');
     // test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
     // test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
@@ -526,10 +526,72 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             await Promise.all([
                 page.click('text=OK'),
                 //Wait for Save Banner to appear
-                page.waitForSelector('.c-message-banner__message')
             ]);
 
-            // Cant figure out how to zoom in here after the image is in flexable layout. 
+            // Save template
+            await page.locator('.c-button--menu.c-button--major.icon-save').click();
+            await page.locator('text=Save and Finish Editing').click();
+
+            // Zoom in
+            const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
+            await bgImageLocator.hover();
+            const deltaYStep = 100; // equivalent to 1x zoom
+            await page.mouse.wheel(0, deltaYStep * 2);
+            const zoomedBoundingBox = await bgImageLocator.boundingBox();
+            const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+            const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+
+            // Wait for zoom animation to finish
+            await bgImageLocator.hover();
+            const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+            expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+            expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+
+            // Center the mouse pointer
+            await page.mouse.move(imageCenterX, imageCenterY);
+
+             // Pan Imagery Hints
+             const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+             const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+             const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+             expect(expectedAltText).toEqual(imageryHintsText);
+
+            // pan right
+            await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+            await page.mouse.down();
+            await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
+            await page.mouse.up();
+            await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+            const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
+            expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
+
+            // pan left
+            await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+            await page.mouse.down();
+            await page.mouse.move(imageCenterX, imageCenterY, 10);
+            await page.mouse.up();
+            await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+            const afterLeftPanBoundingBox = await bgImageLocator.boundingBox();
+            expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
+
+            // pan up
+            await page.mouse.move(imageCenterX, imageCenterY);
+            await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+            await page.mouse.down();
+            await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
+            await page.mouse.up();
+            await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+            const afterUpPanBoundingBox = await bgImageLocator.boundingBox();
+            expect(afterUpPanBoundingBox.y).toBeGreaterThanOrEqual(afterLeftPanBoundingBox.y);
+
+            // pan down
+            await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+            await page.mouse.down();
+            await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
+            await page.mouse.up();
+            await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+            const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
+            expect(afterDownPanBoundingBox.y).toBeLessThanOrEqual(afterUpPanBoundingBox.y);
 
         });
     });
