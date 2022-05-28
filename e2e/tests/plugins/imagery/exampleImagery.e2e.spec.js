@@ -498,7 +498,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             await expect(page.locator('.js-form-title')).toHaveText('Create a New Flexible Layout');
 
             // Click text=OK
-            page.click('text=OK'),
+            page.click('text=OK');
 
             // Wait until Save Banner is gone
             await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
@@ -511,6 +511,23 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 
             // Click My Items
             await page.locator('.c-disclosure-triangle').click();
+
+            // Right click example imagery
+            await page.click(('text=Unnamed Example Imagery'), { button: 'right' });
+
+            // Click move
+            await page.locator('.icon-move').click();
+
+            // Click triangle to open sub menu
+            await page.locator('.c-form__section .c-disclosure-triangle').click();
+
+            // Had to use Xpath here i could not click this with css. Click unnamed flexview
+            await page.locator('xpath=//div[2]/div/div[2]/div/div/form/div/div[2]/div/div[3]/div/div[2]/div[2]/div/div[3]/div/a').click();
+
+            // Click text=OK
+            page.click('text=OK');
+
+            //div[2]/div/div[2]/div/div/form/div/div[2]/div/div[3]/div/div[2]/div[2]/div/div[3]/div/a
 
             // Adam you are here.
 
