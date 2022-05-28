@@ -22,6 +22,7 @@
 
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
+import CouchStatusIndicator, { PENDING, CONNECTED, DISCONNECTED } from "./CouchStatusIndicator";
 import { NOTEBOOK_TYPE } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
@@ -33,6 +34,11 @@ class CouchObjectProvider {
     constructor(openmct, options, namespace) {
         options = this._normalize(options);
         this.openmct = openmct;
+
+        const simpleIndicator = openmct.indicators.simpleIndicator();
+        this.openmct.indicators.add(simpleIndicator);
+
+        this.indicator = new CouchStatusIndicator(simpleIndicator);
         this.url = options.url;
         this.namespace = namespace;
         this.objectQueue = {};
@@ -82,6 +88,8 @@ class CouchObjectProvider {
     onSharedWorkerMessage(event) {
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
+        } else if (event.data.type === 'state') {
+            this.setIndicatorState(event.data.state);
         } else {
             let objectChanges = event.data.objectChanges;
             const objectIdentifier = {
@@ -100,6 +108,20 @@ class CouchObjectProvider {
                     }
                 });
             }
+        }
+    }
+
+    setIndicatorState(state) {
+        switch (state) {
+        case 'open':
+            this.indicator.setIndicatorToState(CONNECTED);
+            break;
+        case 'close':
+            this.indicator.setIndicatorToState(DISCONNECTED);
+            break;
+        case 'pending':
+            this.indicator.setIndicatorToState(PENDING);
+            break;
         }
     }
 
@@ -135,7 +157,11 @@ class CouchObjectProvider {
                     throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
                 }
 
+                this.indicator.setIndicatorToState(CONNECTED);
+
                 return response.json();
+            }).catch((err) => {
+                this.indicator.setIndicatorToState(DISCONNECTED);
             });
     }
 
@@ -363,6 +389,7 @@ class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
+        console.log('observe');
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);

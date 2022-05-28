@@ -43,11 +43,18 @@
     };
 
     self.onerror = function (error) {
+        self.updateCouchStateIndicator();
         console.error('🚨 Error on CouchDB feed 🚨', error);
     };
 
+    self.onopen = function () {
+        self.updateCouchStateIndicator();
+    };
+
     self.onCouchMessage = function (event) {
+        self.updateCouchStateIndicator();
         console.debug('📩 Received message from CouchDB 📩');
+
         const objectChanges = JSON.parse(event.data);
         connections.forEach(function (connection) {
             connection.postMessage({
@@ -61,10 +68,34 @@
 
         couchEventSource = new EventSource(url);
         couchEventSource.onerror = self.onerror;
+        couchEventSource.onopen = self.onopen;
 
         // start listening for events
         couchEventSource.addEventListener('message', self.onCouchMessage);
         connected = true;
         console.debug('⇿ Opened connection ⇿');
+    };
+
+    self.updateCouchStateIndicator = function () {
+        const { readyState } = couchEventSource;
+        let message = {
+            type: 'state',
+            state: 'pending'
+        };
+        switch (readyState) {
+        case EventSource.CONNECTING:
+            message.status = 'pending';
+            break;
+        case EventSource.OPEN:
+            message.status = 'open';
+            break;
+        case EventSource.CLOSED:
+            message.status = 'close';
+            break;
+        }
+
+        connections.forEach(function (connection) {
+            connection.postMessage(message);
+        });
     };
 }());
