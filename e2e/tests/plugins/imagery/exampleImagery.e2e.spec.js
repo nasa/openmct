@@ -473,8 +473,6 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             await page.click('input[type="number"]', {clickCount: 3});
             await page.type('input[type="number"]', "20");
 
-            // await page.locator('.c-object-label__name >> text=My Items').click();
-
             // Click text=OK
             await Promise.all([
                 page.waitForNavigation({waitUntil: 'networkidle'}),
@@ -526,11 +524,12 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 
             // Click text=OK
             await Promise.all([
-                page.waitForNavigation({waitUntil: 'networkidle'}),
                 page.click('text=OK'),
                 //Wait for Save Banner to appear
                 page.waitForSelector('.c-message-banner__message')
             ]);
+
+            // Cant figure out how to zoom in here after the image is in flexable layout. 
 
         });
     });
