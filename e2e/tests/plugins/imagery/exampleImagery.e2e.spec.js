@@ -454,9 +454,8 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 
     // test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
     // test.fixme('Can use alt+drag to move around image once zoomed in');
-    // test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
     // test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    // test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
+    // test.fixme('If the imagery view is in pause mode, images still come in');
     // test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
     test.describe('Example Imagery in Flexible layout', () => {
         test('Example Imagery in Flexible layout', async ({ page }) => {
@@ -519,7 +518,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             // Click triangle to open sub menu
             await page.locator('.c-form__section .c-disclosure-triangle').click();
 
-            // Had to use Xpath here i could not click this with css. Click unnamed flexview
+            // Had to use Xpath here I could not click this with css. Click unnamed flexview
             await page.locator('xpath=//div[2]/div/div[2]/div/div/form/div/div[2]/div/div[3]/div/div[2]/div[2]/div/div[3]/div/a').click();
 
             // Click text=OK
@@ -550,13 +549,13 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             // Center the mouse pointer
             await page.mouse.move(imageCenterX, imageCenterY);
 
-             // Pan Imagery Hints
-             const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
-             const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
-             const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-             expect(expectedAltText).toEqual(imageryHintsText);
+            // Pan Imagery Hints
+            const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+            const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+            const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+            expect(expectedAltText).toEqual(imageryHintsText);
 
-            // pan right
+            // Pan right
             await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
             await page.mouse.down();
             await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
@@ -565,7 +564,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
             expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
 
-            // pan left
+            // Pan left
             await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
             await page.mouse.down();
             await page.mouse.move(imageCenterX, imageCenterY, 10);
@@ -574,7 +573,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             const afterLeftPanBoundingBox = await bgImageLocator.boundingBox();
             expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
 
-            // pan up
+            // Pan up
             await page.mouse.move(imageCenterX, imageCenterY);
             await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
             await page.mouse.down();
@@ -584,7 +583,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             const afterUpPanBoundingBox = await bgImageLocator.boundingBox();
             expect(afterUpPanBoundingBox.y).toBeGreaterThanOrEqual(afterLeftPanBoundingBox.y);
 
-            // pan down
+            // Pan down
             await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
             await page.mouse.down();
             await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
@@ -593,6 +592,51 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
             const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
             expect(afterDownPanBoundingBox.y).toBeLessThanOrEqual(afterUpPanBoundingBox.y);
 
+            // Click previous image button
+            const previousImageButton = page.locator('.c-nav--prev');
+            await previousImageButton.click();
+
+            // Verify previous image
+            const selectedImage = page.locator('.selected');
+            await expect(selectedImage).toBeVisible();
+
+            // Click time conductor mode button
+            await page.locator('.c-mode-button').click();
+
+            // Select local clock mode
+            await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+
+            // Zoom in on next image
+            await bgImageLocator.hover();
+            await page.mouse.wheel(0, deltaYStep * 2);
+
+            // Wait for zoom animation to finish
+            await bgImageLocator.hover();
+            const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+            expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+            expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+
+            // Click previous image button
+            await previousImageButton.click();
+
+            // Verify previous image
+            await expect(selectedImage).toBeVisible();
+
+            const imageCount = await page.locator('.c-imagery__thumb').count();
+            await expect.poll(async () => {
+                const newImageCount = await page.locator('.c-imagery__thumb').count();
+
+                return newImageCount;
+            }, {
+                message: "verify that new images still stream in",
+                timeout: 6 * 1000
+            }).toBeGreaterThan(imageCount);
+
+            // Verify selected image is still displayed
+            await expect(selectedImage).toBeVisible();
+
+            // Unpause imagery
+            await page.locator('.pause-play').click();
         });
     });
 
