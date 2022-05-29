@@ -503,7 +503,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         // Click My Items
         await page.locator('form[name="mctForm"] >> text=My Items').click();
         await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
+            page.waitForNavigation({waitUntil: 'networkidle'})
         ]);
 
         // Click My Items
@@ -523,7 +523,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 
         // Click text=OK
         await Promise.all([
-            page.click('text=OK'),
+            page.click('text=OK')
             //Wait for Save Banner to appear
         ]);
 
