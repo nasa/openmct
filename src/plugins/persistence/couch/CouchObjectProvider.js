@@ -89,7 +89,8 @@ class CouchObjectProvider {
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else if (event.data.type === 'state') {
-            this.setIndicatorState(event.data.state);
+            const state = this._messageToIndicatorState(event.data.state);
+            this.indicator.setIndicatorToState(state);
         } else {
             let objectChanges = event.data.objectChanges;
             const objectIdentifier = {
@@ -111,18 +112,21 @@ class CouchObjectProvider {
         }
     }
 
-    setIndicatorState(state) {
-        switch (state) {
+    _messageToIndicatorState(message) {
+        let state = PENDING;
+        switch (message) {
         case 'open':
-            this.indicator.setIndicatorToState(CONNECTED);
+            state = CONNECTED;
             break;
         case 'close':
-            this.indicator.setIndicatorToState(DISCONNECTED);
+            state = DISCONNECTED;
             break;
         case 'pending':
-            this.indicator.setIndicatorToState(PENDING);
+            state = PENDING;
             break;
         }
+
+        return state;
     }
 
     //backwards compatibility, options used to be a url. Now it's an object
