@@ -340,27 +340,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.locator('.pause-play').click();
 
     //Get background-image url from background-image css prop
-    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
-    let backgroundImageUrl = await backgroundImage.evaluate((el) => {
-        return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-    });
-    let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
-    console.log('backgroundImageUrl1 ' + backgroundImageUrl1);
-
-    let backgroundImageUrl2;
-    await expect.poll(async () => {
-        // Verify next image has updated
-        let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-        });
-        backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
-
-        return backgroundImageUrl2;
-    }, {
-        message: "verify next image has updated",
-        timeout: 6 * 1000
-    }).not.toBe(backgroundImageUrl1);
-    console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
+    await assertBackgroundImageUrlFromBackgroundCss(page);
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
@@ -522,14 +502,10 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.locator('xpath=//div[2]/div/div[2]/div/div/form/div/div[2]/div/div[3]/div/div[2]/div[2]/div/div[3]/div/a').click();
 
         // Click text=OK
-        await Promise.all([
-            page.click('text=OK')
-            //Wait for Save Banner to appear
-        ]);
+        await page.locator('text=OK').click()
 
         // Save template
-        await page.locator('.c-button--menu.c-button--major.icon-save').click();
-        await page.locator('text=Save and Finish Editing').click();
+        await saveTemplate(page);
 
         // Zoom in
         const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
@@ -637,8 +613,46 @@ test.describe('Example Imagery in Flexible layout', () => {
 
         // Unpause imagery
         await page.locator('.pause-play').click();
+
+        //Get background-image url from background-image css prop
+        await assertBackgroundImageUrlFromBackgroundCss(page);
     });
 });
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+ async function saveTemplate(page) {
+    await page.locator('.c-button--menu.c-button--major.icon-save').click();
+    await page.locator('text=Save and Finish Editing').click();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+ async function assertBackgroundImageUrlFromBackgroundCss(page) {
+    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+    let backgroundImageUrl = await backgroundImage.evaluate((el) => {
+        return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+    });
+    let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
+    console.log('backgroundImageUrl1 ' + backgroundImageUrl1);
+
+    let backgroundImageUrl2;
+    await expect.poll(async () => {
+        // Verify next image has updated
+        let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
+            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+        });
+        backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
+
+        return backgroundImageUrl2;
+    }, {
+        message: "verify next image has updated",
+        timeout: 6 * 1000
+    }).not.toBe(backgroundImageUrl1);
+    console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
+}
 
 test.describe('Example Imagery in Tabs view', () => {
     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
