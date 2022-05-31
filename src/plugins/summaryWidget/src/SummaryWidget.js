@@ -89,14 +89,12 @@ define([
          * @private
          */
         function toggleTestData() {
-            //self.outerWrapper.toggleClass('expanded-widget-test-data');
             if (self.outerWrapper.classList.contains('expanded-widget-test-data')) {
                 self.outerWrapper.classList.remove('expanded-widget-test-data');
             } else {
                 self.outerWrapper.classList.add('expanded-widget-test-data');
             }
 
-            //self.toggleTestDataControl.toggleClass('c-disclosure-triangle--expanded');
             if (self.toggleTestDataControl.classList.contains('c-disclosure-triangle--expanded')) {
                 self.toggleTestDataControl.classList.remove('c-disclosure-triangle--expanded');
             } else {
