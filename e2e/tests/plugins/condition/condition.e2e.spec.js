@@ -42,6 +42,9 @@ test('Create new Condition Set object and store @localStorage', async ({ page, c
     // Click text=Condition Set
     await page.click('text=Condition Set');
 
+    // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
+    await page.click('form[name="mctForm"] a:has-text("My Items")');
+
     // Click text=OK
     await Promise.all([
         page.waitForNavigation(),

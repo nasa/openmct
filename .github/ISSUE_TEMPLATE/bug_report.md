@@ -41,6 +41,7 @@ assignees: ''
 - [ ] Does this impact a critical component?
 - [ ] Is this just a visual bug with no functional impact?
 - [ ] Does this block the execution of e2e tests?
+- [ ] Does this have an impact on Performance?
 
 #### Additional Information
 <!--- Include any screenshots, gifs, or logs which will expedite triage -->
