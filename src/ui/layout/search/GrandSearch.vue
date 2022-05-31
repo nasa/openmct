@@ -3,10 +3,12 @@
     ref="GrandSearch"
     aria-label="OpenMCT Search"
     class="c-gsearch"
+    role="searchbox"
 >
     <search
         ref="shell-search"
         class="c-gsearch__input"
+        tabindex="0"
         :value="searchValue"
         @input="searchEverything"
         @clear="searchEverything"
