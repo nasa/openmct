@@ -22,7 +22,7 @@
 
 import Condition from "./Condition";
 import { getLatestTimestamp } from './utils/time';
-import uuid from "uuid";
+import { v4 as uuid } from 'uuid';
 import EventEmitter from 'EventEmitter';
 
 export default class ConditionManager extends EventEmitter {

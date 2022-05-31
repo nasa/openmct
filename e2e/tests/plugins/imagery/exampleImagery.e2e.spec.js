@@ -59,7 +59,7 @@ test.describe('Example Imagery', () => {
 
     const backgroundImageSelector = '.c-imagery__main-image__background-image';
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
-        const bgImageLocator = await page.locator(backgroundImageSelector);
+        const bgImageLocator = page.locator(backgroundImageSelector);
         const deltaYStep = 100; //equivalent to 1x zoom
         await bgImageLocator.hover();
         const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
@@ -87,7 +87,7 @@ test.describe('Example Imagery', () => {
         const deltaYStep = 100; //equivalent to 1x zoom
         const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 
-        const bgImageLocator = await page.locator(backgroundImageSelector);
+        const bgImageLocator = page.locator(backgroundImageSelector);
         await bgImageLocator.hover();
 
         // zoom in
@@ -150,10 +150,10 @@ test.describe('Example Imagery', () => {
     });
 
     test('Can use + - buttons to zoom on the image', async ({ page }) => {
-        const bgImageLocator = await page.locator(backgroundImageSelector);
+        const bgImageLocator = page.locator(backgroundImageSelector);
         await bgImageLocator.hover();
-        const zoomInBtn = await page.locator('.t-btn-zoom-in');
-        const zoomOutBtn = await page.locator('.t-btn-zoom-out');
+        const zoomInBtn = page.locator('.t-btn-zoom-in');
+        const zoomOutBtn = page.locator('.t-btn-zoom-out');
         const initialBoundingBox = await bgImageLocator.boundingBox();
 
         await zoomInBtn.click();
@@ -174,12 +174,12 @@ test.describe('Example Imagery', () => {
     });
 
     test('Can use the reset button to reset the image', async ({ page }) => {
-        const bgImageLocator = await page.locator(backgroundImageSelector);
+        const bgImageLocator = page.locator(backgroundImageSelector);
         // wait for zoom animation to finish
         await bgImageLocator.hover();
 
-        const zoomInBtn = await page.locator('.t-btn-zoom-in');
-        const zoomResetBtn = await page.locator('.t-btn-zoom-reset');
+        const zoomInBtn = page.locator('.t-btn-zoom-in');
+        const zoomResetBtn = page.locator('.t-btn-zoom-reset');
         const initialBoundingBox = await bgImageLocator.boundingBox();
 
         await zoomInBtn.click();
@@ -235,6 +235,11 @@ test.describe('Example Imagery', () => {
 // ('If the imagery view is not in pause mode, it should be updated when new images come in');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 test('Example Imagery in Display layout', async ({ page }) => {
+    test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/5265'
+    });
+
     // Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -244,9 +249,11 @@ test('Example Imagery in Display layout', async ({ page }) => {
     // Click text=Example Imagery
     await page.click('text=Example Imagery');
 
-    // Clear and set Image load delay (milliseconds)
-    await page.click('input[type="number"]', {clickCount: 3});
-    await page.type('input[type="number"]', "20");
+    // Clear and set Image load delay to minimum value
+    // FIXME: Update the value to 5000 ms when this bug is fixed.
+    // See: https://github.com/nasa/openmct/issues/5265
+    await page.locator('input[type="number"]').fill('');
+    await page.locator('input[type="number"]').fill('0');
 
     // Click text=OK
     await Promise.all([
@@ -255,14 +262,15 @@ test('Example Imagery in Display layout', async ({ page }) => {
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
+
     // Wait until Save Banner is gone
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
     await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-    const bgImageLocator = await page.locator(backgroundImageSelector);
+    const bgImageLocator = page.locator(backgroundImageSelector);
     await bgImageLocator.hover();
 
     // Click previous image button
-    const previousImageButton = await page.locator('.c-nav--prev');
+    const previousImageButton = page.locator('.c-nav--prev');
     await previousImageButton.click();
 
     // Verify previous image
@@ -288,20 +296,19 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.mouse.move(imageCenterX, imageCenterY);
 
     // Pan Imagery Hints
-    console.log('process.platform is ' + process.platform);
     const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
     expect(expectedAltText).toEqual(imageryHintsText);
 
     // Click next image button
-    const nextImageButton = await page.locator('.c-nav--next');
+    const nextImageButton = page.locator('.c-nav--next');
     await nextImageButton.click();
 
-    // Click fixed timespan button
-    await page.locator('.c-button__label >> text=Fixed Timespan').click();
+    // Click time conductor mode button
+    await page.locator('.c-mode-button').click();
 
-    // Click local clock
-    await page.locator('.icon-clock >> text=Local Clock').click();
+    // Select local clock mode
+    await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
     // Zoom in on next image
     await bgImageLocator.hover();
@@ -319,29 +326,44 @@ test('Example Imagery in Display layout', async ({ page }) => {
     // Verify previous image
     await expect(selectedImage).toBeVisible();
 
-    // Wait 20ms to verify no new image has come in
-    await page.waitForTimeout(21);
+    const imageCount = await page.locator('.c-imagery__thumb').count();
+    await expect.poll(async () => {
+        const newImageCount = await page.locator('.c-imagery__thumb').count();
+
+        return newImageCount;
+    }, {
+        message: "verify that new images still stream in",
+        timeout: 6 * 1000
+    }).toBeGreaterThan(imageCount);
+
+    // Verify selected image is still displayed
+    await expect(selectedImage).toBeVisible();
+
+    // Unpause imagery
+    await page.locator('.pause-play').click();
 
     //Get background-image url from background-image css prop
-    const backgroundImage = await page.locator('.c-imagery__main-image__background-image');
+    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
     let backgroundImageUrl = await backgroundImage.evaluate((el) => {
         return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
     });
     let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
     console.log('backgroundImageUrl1 ' + backgroundImageUrl1);
 
-    // sleep 21ms
-    await page.waitForTimeout(21);
+    let backgroundImageUrl2;
+    await expect.poll(async () => {
+        // Verify next image has updated
+        let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
+            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+        });
+        backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
 
-    // Verify next image has updated
-    let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
-        return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-    });
-    let backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
+        return backgroundImageUrl2;
+    }, {
+        message: "verify next image has updated",
+        timeout: 6 * 1000
+    }).not.toBe(backgroundImageUrl1);
     console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
-
-    // Expect backgroundImageUrl2 to be greater then backgroundImageUrl1
-    expect(backgroundImageUrl2 >= backgroundImageUrl1);
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
@@ -349,7 +371,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
     test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
-        const thumbsWrapperLocator = await page.locator('.c-imagery__thumbs-wrapper');
+        const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
         // Click button:has-text("Create")
         await page.locator('button:has-text("Create")').click();
 
@@ -404,7 +426,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
         await page.locator('text=Thumbnail Example Imagery Snapshot Large View').click();
 
         // expect thumbnails not be visible when first added
-        await expect.soft(thumbsWrapperLocator.isHidden()).toBeTruthy();
+        expect.soft(thumbsWrapperLocator.isHidden()).toBeTruthy();
 
         // Resize the example imagery vertically to change the thumbnail visibility
         /*
