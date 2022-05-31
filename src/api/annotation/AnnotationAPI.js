@@ -28,6 +28,7 @@ export default class AnnotationAPI extends EventEmitter {
     constructor(openmct) {
         super();
         this.openmct = openmct;
+        // For public use
         this.ANNOTATION_TYPES = Object.freeze({
             NOTEBOOK: 'notebook',
             GEOSPATIAL: 'geospatial',
