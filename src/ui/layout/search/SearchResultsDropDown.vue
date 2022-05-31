@@ -27,6 +27,7 @@
                 <object-search-result
                     v-for="(objectResult, index) in objectResults"
                     :key="index"
+                    aria-labelledby="objectResult"
                     :result="objectResult"
                     @click.native="selectedResult"
                 />
