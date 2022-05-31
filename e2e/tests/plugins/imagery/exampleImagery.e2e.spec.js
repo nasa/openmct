@@ -502,7 +502,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.locator('xpath=//div[2]/div/div[2]/div/div/form/div/div[2]/div/div[3]/div/div[2]/div[2]/div/div[3]/div/a').click();
 
         // Click text=OK
-        await page.locator('text=OK').click()
+        await page.locator('text=OK').click();
 
         // Save template
         await saveTemplate(page);
@@ -622,7 +622,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 /**
  * @param {import('@playwright/test').Page} page
  */
- async function saveTemplate(page) {
+async function saveTemplate(page) {
     await page.locator('.c-button--menu.c-button--major.icon-save').click();
     await page.locator('text=Save and Finish Editing').click();
 }
@@ -630,7 +630,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 /**
  * @param {import('@playwright/test').Page} page
  */
- async function assertBackgroundImageUrlFromBackgroundCss(page) {
+async function assertBackgroundImageUrlFromBackgroundCss(page) {
     const backgroundImage = page.locator('.c-imagery__main-image__background-image');
     let backgroundImageUrl = await backgroundImage.evaluate((el) => {
         return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
