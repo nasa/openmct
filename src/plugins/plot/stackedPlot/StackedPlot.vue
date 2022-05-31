@@ -52,7 +52,6 @@
             @lockHighlightPoint="lockHighlightPointUpdated"
             @highlights="highlightsUpdated"
             @configLoaded="registerSeriesListeners"
-            @configRemoved="unRegisterSeriesListeners"
         />
     </div>
 </div>
@@ -171,7 +170,7 @@ export default {
             const persistedConfig = this.domainObject.configuration.series && this.domainObject.configuration.series.find((seriesConfig) => {
                 return this.openmct.objects.areIdsEqual(seriesConfig.identifier, child.identifier);
             });
-            if (!persistedConfig) {
+            if (persistedConfig === undefined) {
                 this.openmct.objects.mutate(
                     this.domainObject,
                     'configuration.series[' + this.compositionObjects.length + ']',
@@ -262,9 +261,6 @@ export default {
             this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
 
             this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
-        },
-        unRegisterSeriesListeners(configId) {
-        //TODO: is this needed?
         },
         addSeries(series) {
             const index = this.seriesModels.length;
