@@ -515,7 +515,7 @@ export default {
 
         this.table.initialize();
     },
-    destroyed() {
+    beforeDestroy() {
         this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
         this.table.off('historical-rows-processed', this.checkForMarkedRows);
@@ -827,16 +827,16 @@ export default {
             this.visibleRows = [];
             this.$nextTick().then(this.updateVisibleRows);
         },
-        pause(pausedByButton) {
-            if (pausedByButton) {
+        pause(byButton) {
+            if (byButton) {
                 this.pausedByButton = true;
             }
 
             this.paused = true;
             this.table.pause();
         },
-        unpause(unpausedByButton) {
-            if (unpausedByButton) {
+        unpause(byButtonOrUserBoundsChange) {
+            if (byButtonOrUserBoundsChange) {
                 this.undoMarkedRows();
                 this.table.unpause();
                 this.paused = false;
@@ -856,8 +856,8 @@ export default {
                 return;
             }
 
+            // User bounds change.
             if (this.paused) {
-                // Unpause the table and reset flags
                 this.unpause(true);
             }
         },
@@ -868,7 +868,7 @@ export default {
                 this.pause(true);
             }
         },
-        undoMarkedRows(unpause) {
+        undoMarkedRows() {
             this.markedRows.forEach(r => r.marked = false);
             this.markedRows = [];
         },
