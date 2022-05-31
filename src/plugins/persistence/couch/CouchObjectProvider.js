@@ -136,7 +136,7 @@ class CouchObjectProvider {
         return options;
     }
 
-    request(subPath, method, body, signal) {
+    async request(subPath, method, body, signal) {
         let fetchOptions = {
             method,
             body,
@@ -151,18 +151,17 @@ class CouchObjectProvider {
             };
         }
 
-        return fetch(this.url + '/' + subPath, fetchOptions)
-            .then((response) => {
-                if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
-                    throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
-                }
+        try {
+            const response = await fetch(this.url + '/' + subPath, fetchOptions);
 
-                this.indicator.setIndicatorToState(CONNECTED);
+            if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
+                throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+            }
 
-                return response.json();
-            }).catch((err) => {
-                this.indicator.setIndicatorToState(DISCONNECTED);
-            });
+            return await response.json();
+        } catch (err) {
+            this.indicator.setIndicatorToState(DISCONNECTED);
+        }
     }
 
     /**
@@ -501,6 +500,7 @@ class CouchObjectProvider {
 
         // start listening for events
         couchEventSource.addEventListener('message', this.onEventMessage);
+
         console.debug('⇿ Opened connection ⇿');
     }
 
@@ -604,5 +604,7 @@ class CouchObjectProvider {
 }
 
 CouchObjectProvider.HTTP_CONFLICT = 409;
+CouchObjectProvider.HTTP_NOT_FOUND = 404;
+CouchObjectProvider.HTTP_SERVER_ERROR = 500;
 
 export default CouchObjectProvider;
