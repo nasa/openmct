@@ -153,7 +153,7 @@ function getImageUrlListFromConfig(configuration) {
 }
 
 function getImageLoadDelay(domainObject) {
-    const imageLoadDelay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+    const imageLoadDelay = parseInt(domainObject.configuration.imageLoadDelayInMilliSeconds, 10);
     if (!imageLoadDelay) {
         openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS);
 
