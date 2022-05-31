@@ -684,7 +684,7 @@ export default {
 
             mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
-            return mostRecent[valueKey];
+            return mostRecent ? mostRecent[valueKey] : undefined;
         },
         // will subscribe to data for this key if not already done
         subscribeToDataForKey(key) {
@@ -721,7 +721,7 @@ export default {
                     let valuesOnTelemetry = this.relatedTelemetry[key].hasTelemetryOnDatum;
                     let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
-                    if (!valuesOnTelemetry) {
+                    if (!valuesOnTelemetry && this.imageHistory[this.focusedImageIndex]) {
                         this.$set(this.imageHistory[this.focusedImageIndex], key, value); // manually add to telemetry
                     }
 
