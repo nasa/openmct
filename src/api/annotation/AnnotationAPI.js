@@ -119,7 +119,7 @@ export default class AnnotationAPI extends EventEmitter {
     */
     async get(targetDomainObject) {
         if (!targetDomainObject) {
-            return [];
+            throw new Error('😢 Asked to get an annotation, but was passed a null domain object');
         }
 
         const targetKeyString = this.openmct.objects.makeKeyString(targetDomainObject.identifier);
