@@ -43,8 +43,8 @@ describe("The URLTimeSettingsSynchronizer", () => {
     });
 
     afterEach(() => {
-        openmct.router.removeListener('change:hash', resolveFunction);
         openmct.time.stopClock();
+        openmct.router.removeListener('change:hash', resolveFunction);
 
         appHolder = undefined;
         openmct = undefined;
@@ -57,60 +57,84 @@ describe("The URLTimeSettingsSynchronizer", () => {
         resolveFunction = () => {
             oldHash = window.location.hash;
             expect(window.location.hash.includes('tc.mode=fixed')).toBe(true);
+
+            openmct.router.removeListener('change:hash', resolveFunction);
             done();
         };
 
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    // very flakey test
     xit("when the clock is set via the time API, it is reflected in the URL", (done) => {
+        let success;
+
         resolveFunction = () => {
             openmct.time.clock('local', {
                 start: -2000,
                 end: 200
             });
-            const locationHash = window.location.hash;
-            expect(locationHash).toContain('tc.startDelta=2000');
-            expect(locationHash).toContain('tc.endDelta=200');
-            expect(locationHash).toContain('tc.mode=local');
-            done();
+
+            const hasStartDelta = window.location.hash.includes('tc.startDelta=2000');
+            const hasEndDelta = window.location.hash.includes('tc.endDelta=200');
+            const hasLocalClock = window.location.hash.includes('tc.mode=local');
+            success = hasStartDelta && hasEndDelta && hasLocalClock;
+            if (success) {
+                expect(success).toBe(true);
+
+                openmct.router.removeListener('change:hash', resolveFunction);
+                done();
+            }
         };
 
         openmct.router.on('change:hash', resolveFunction);
     });
 
     it("when the clock mode is set to local, it is reflected in the URL", (done) => {
+        let success;
+
         resolveFunction = () => {
             let hash = window.location.hash;
             hash = hash.replace('tc.mode=fixed', 'tc.mode=local');
             window.location.hash = hash;
 
-            expect(window.location.hash).toContain('tc.mode=local');
-            done();
+            success = window.location.hash.includes('tc.mode=local');
+            if (success) {
+                expect(success).toBe(true);
+                done();
+            }
         };
 
         openmct.router.on('change:hash', resolveFunction);
     });
 
     it("when the clock mode is set to local, it is reflected in the URL", (done) => {
+        let success;
+
         resolveFunction = () => {
             let hash = window.location.hash;
 
             hash = hash.replace('tc.mode=fixed', 'tc.mode=local');
             window.location.hash = hash;
-            expect(window.location.hash).toContain('tc.mode=local');
-            done();
+            success = window.location.hash.includes('tc.mode=local');
+            if (success) {
+                expect(success).toBe(true);
+                done();
+            }
         };
 
         openmct.router.on('change:hash', resolveFunction);
     });
 
     it("reset hash", (done) => {
+        let success;
+
         window.location.hash = oldHash;
         resolveFunction = () => {
-            expect(window.location.hash).toEqual(oldHash);
-            done();
+            success = window.location.hash === oldHash;
+            if (success) {
+                expect(success).toBe(true);
+                done();
+            }
         };
 
         openmct.router.on('change:hash', resolveFunction);
