@@ -24,7 +24,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-describe("The URLTimeSettingsSynchronizer", () => {
+xdescribe("The URLTimeSettingsSynchronizer", () => {
     let appHolder;
     let openmct;
     let resolveFunction;
@@ -65,7 +65,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    xit("when the clock is set via the time API, it is reflected in the URL", (done) => {
+    it("when the clock is set via the time API, it is reflected in the URL", (done) => {
         let success;
 
         resolveFunction = () => {
