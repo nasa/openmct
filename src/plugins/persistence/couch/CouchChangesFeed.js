@@ -84,13 +84,13 @@
         };
         switch (readyState) {
         case EventSource.CONNECTING:
-            message.status = 'pending';
+            message.state = 'pending';
             break;
         case EventSource.OPEN:
-            message.status = 'open';
+            message.state = 'open';
             break;
         case EventSource.CLOSED:
-            message.status = 'close';
+            message.state = 'close';
             break;
         }
 
