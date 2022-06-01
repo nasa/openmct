@@ -97,13 +97,31 @@ export default {
             };
         },
         selectedBackgroundColor() {
-            return this.getAvailableTagByID(this.selectedTag).backgroundColor;
+            const selectedTag = this.getAvailableTagByID(this.selectedTag);
+            if (selectedTag) {
+                return selectedTag.backgroundColor;
+            } else {
+                // missing available tag color, use default
+                return '#00000';
+            }
         },
         selectedForegroundColor() {
-            return this.getAvailableTagByID(this.selectedTag).foregroundColor;
+            const selectedTag = this.getAvailableTagByID(this.selectedTag);
+            if (selectedTag) {
+                return selectedTag.foregroundColor;
+            } else {
+                // missing available tag color, use default
+                return '#FFFFF';
+            }
         },
         selectedTagLabel() {
-            return this.getAvailableTagByID(this.selectedTag).label;
+            const selectedTag = this.getAvailableTagByID(this.selectedTag);
+            if (selectedTag) {
+                return selectedTag.label;
+            } else {
+                // missing available tag color, use default
+                return '¡UNKNOWN!';
+            }
         }
     },
     mounted() {

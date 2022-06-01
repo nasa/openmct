@@ -21,25 +21,43 @@
  *****************************************************************************/
 
 import { v4 as uuid } from 'uuid';
-import availableTags from '../../../example/tags/tags.json';
+import availableTags from 'availableTags';
 import EventEmitter from 'EventEmitter';
 
+/**
+ * @readonly
+ * @enum {String} AnnotationType
+ * @property {String} NOTEBOOK The notebook annotation type
+ * @property {String} GEOSPATIAL The geospatial annotation type
+ * @property {String} PIXEL_SPATIAL The pixel-spatial annotation type
+ * @property {String} TEMPORAL The temporal annotation type
+ * @property {String} PLOT_SPATIAL The plot-spatial annotation type
+ */
+const ANNOTATION_TYPES = Object.freeze({
+    NOTEBOOK: 'notebook',
+    GEOSPATIAL: 'geospatial',
+    PIXEL_SPATIAL: 'pixelspatial',
+    TEMPORAL: 'temporal',
+    PLOT_SPATIAL: 'plotspatial'
+});
+
+/**
+ * @typedef {Object} Tag
+ * @property {String} key a unique identifier for the tag
+ * @property {String} backgroundColor eg. "#cc0000"
+ * @property {String} foregroundColor eg. "#ffffff"
+ */
 export default class AnnotationAPI extends EventEmitter {
     constructor(openmct) {
         super();
         this.openmct = openmct;
-        this.ANNOTATION_TYPES = Object.freeze({
-            NOTEBOOK: 'notebook',
-            GEOSPATIAL: 'geospatial',
-            PIXEL_SPATIAL: 'pixelspatial',
-            TEMPORAL: 'temporal',
-            PLOT_SPATIAL: 'plotspatial'
-        });
+
+        this.ANNOTATION_TYPES = ANNOTATION_TYPES;
 
         this.openmct.types.addType('annotation', {
             name: 'Annotation',
             description: 'A user created note or comment about time ranges, pixel space, and geospatial features.',
-            creatable: true,
+            creatable: false,
             cssClass: 'icon-notebook',
             initialize: function (domainObject) {
                 domainObject.targets = domainObject.targets || {};
@@ -53,14 +71,21 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * Create the a generic annotation
-    *
+    * @typedef {Object} CreateAnnotationOptions
+    * @property {String} name a name for the new parameter
+    * @property {import('../objects/ObjectAPI').DomainObject} domainObject the domain object to create
+    * @property {ANNOTATION_TYPES} annotationType the type of annotation to create
+    * @property {Tag[]} tags
+    * @property {String} contentText
+    * @property {import('../objects/ObjectAPI').Identifier[]} targets
+    */
+    /**
     * @method create
-    * @param {module:openmct.DomainObject} domainObject the domain object to
-    *        create
-    * @returns {Promise} a promise which will resolve when the domain object
+    * @param {CreateAnnotationOptions} options
+    * @returns {Promise<import('../objects/ObjectAPI').DomainObject>} a promise which will resolve when the domain object
     *          has been created, or be rejected if it cannot be saved
     */
-    async create(name, domainObject, annotationType, tags, contentText, targets) {
+    async create({name, domainObject, annotationType, tags, contentText, targets}) {
         if (!Object.keys(this.ANNOTATION_TYPES).includes(annotationType.toUpperCase())) {
             throw new Error(`Unknown annotation type: ${annotationType}`);
         }
@@ -73,8 +98,6 @@ export default class AnnotationAPI extends EventEmitter {
         const originalPathObjects = await this.openmct.objects.getOriginalPath(domainObjectKeyString);
         const originalContextPath = this.openmct.objects.getRelativePath(originalPathObjects);
         const namespace = domainObject.identifier.namespace;
-        // const location = this.openmct.objects.makeKeyString(domainObject.identifier);
-        const location = originalContextPath;
         const type = 'annotation';
         const typeDefinition = this.openmct.types.get(type);
         const definition = typeDefinition.definition;
@@ -89,8 +112,7 @@ export default class AnnotationAPI extends EventEmitter {
             tags,
             annotationType,
             contentText,
-            originalContextPath,
-            location
+            originalContextPath
         };
 
         if (definition.initialize) {
@@ -121,13 +143,13 @@ export default class AnnotationAPI extends EventEmitter {
     */
     async get(targetDomainObject) {
         if (!targetDomainObject) {
-            return [];
+            throw new Error('😢 Asked to get an annotation, but was passed a null domain object');
         }
 
         const targetKeyString = this.openmct.objects.makeKeyString(targetDomainObject.identifier);
         let foundAnnotations = null;
 
-        const searchResults = await (await Promise.all(this.openmct.objects.queryUsingProvider('searchForAnnotations', targetKeyString))).flat();
+        const searchResults = (await Promise.all(this.openmct.objects.search(targetKeyString, null, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS))).flat();
         if (searchResults) {
             foundAnnotations = searchResults;
         }
@@ -174,7 +196,7 @@ export default class AnnotationAPI extends EventEmitter {
             targetKeyString,
             entryId
         };
-        const searchResults = (await Promise.all(this.openmct.objects.queryUsingProvider('searchForNotebookAnnotations', query))).flat();
+        const searchResults = (await Promise.all(this.openmct.objects.search(query, null, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS))).flat();
         if (searchResults) {
             foundAnnotation = searchResults[0];
         }
@@ -191,8 +213,15 @@ export default class AnnotationAPI extends EventEmitter {
             targets[targetKeyString] = {
                 entryId: entryId
             };
-
-            existingAnnotation = await this.create('notebook entry tag', targetDomainObject, this.ANNOTATION_TYPES.NOTEBOOK, [], 'notebook entry tag', targets);
+            const annotationCreationArguments = {
+                name: 'notebook entry tag',
+                domainObject: targetDomainObject,
+                annotationType: this.ANNOTATION_TYPES.NOTEBOOK,
+                tags: [],
+                contentText: 'notebook entry tag',
+                targets
+            };
+            existingAnnotation = await this.create(annotationCreationArguments);
         }
 
         const tagArray = [tag, ...existingAnnotation.tags];
@@ -281,7 +310,7 @@ export default class AnnotationAPI extends EventEmitter {
     async searchForTags(query, abortController) {
         // get matching tags first
         const matchingTagKeys = this.getMatchingTags(query);
-        const searchResults = (await Promise.all(this.openmct.objects.queryUsingProvider('searchForTags', matchingTagKeys, abortController))).flat();
+        const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
         const appliedTagSearchResults = this.addTagMetaInformationToResults(searchResults, matchingTagKeys);
         const appliedTargetsModels = await this.addTargetModelsToResults(appliedTagSearchResults);
 
