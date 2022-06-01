@@ -74,8 +74,6 @@ export default class AnnotationAPI extends EventEmitter {
         const originalPathObjects = await this.openmct.objects.getOriginalPath(domainObjectKeyString);
         const originalContextPath = this.openmct.objects.getRelativePath(originalPathObjects);
         const namespace = domainObject.identifier.namespace;
-        // const location = this.openmct.objects.makeKeyString(domainObject.identifier);
-        const location = originalContextPath;
         const type = 'annotation';
         const typeDefinition = this.openmct.types.get(type);
         const definition = typeDefinition.definition;
@@ -90,8 +88,7 @@ export default class AnnotationAPI extends EventEmitter {
             tags,
             annotationType,
             contentText,
-            originalContextPath,
-            location
+            originalContextPath
         };
 
         if (definition.initialize) {
