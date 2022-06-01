@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { v4 as uuid } from 'uuid';
-import availableTags from '../../../example/tags/tags.json';
+import availableTags from 'availableTags';
 import EventEmitter from 'EventEmitter';
 
 export default class AnnotationAPI extends EventEmitter {
