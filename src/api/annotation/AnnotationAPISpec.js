@@ -66,7 +66,15 @@ describe("The Annotation API", () => {
 
     describe("Creation", () => {
         it("can create annotations", async () => {
-            const annotationObject = await openmct.annotation.create('Test Annotation', mockDomainObject, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, ['sometag'], "fooContext", {'fooTarget': {}});
+            const annotationCreationArguments = {
+                name: 'Test Annotation',
+                domainObject: mockDomainObject,
+                annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                tags: ['sometag'],
+                contentText: "fooContext",
+                targets: {'fooTarget': {}}
+            };
+            const annotationObject = await openmct.annotation.create(annotationCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
         });

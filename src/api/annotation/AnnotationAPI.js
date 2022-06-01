@@ -40,7 +40,7 @@ export default class AnnotationAPI extends EventEmitter {
         this.openmct.types.addType('annotation', {
             name: 'Annotation',
             description: 'A user created note or comment about time ranges, pixel space, and geospatial features.',
-            creatable: true,
+            creatable: false,
             cssClass: 'icon-notebook',
             initialize: function (domainObject) {
                 domainObject.targets = domainObject.targets || {};
@@ -61,7 +61,7 @@ export default class AnnotationAPI extends EventEmitter {
     * @returns {Promise} a promise which will resolve when the domain object
     *          has been created, or be rejected if it cannot be saved
     */
-    async create(name, domainObject, annotationType, tags, contentText, targets) {
+    async create({name, domainObject, annotationType, tags, contentText, targets}) {
         if (!Object.keys(this.ANNOTATION_TYPES).includes(annotationType.toUpperCase())) {
             throw new Error(`Unknown annotation type: ${annotationType}`);
         }
@@ -192,8 +192,16 @@ export default class AnnotationAPI extends EventEmitter {
             targets[targetKeyString] = {
                 entryId: entryId
             };
+            const annotationCreationArguments = {
+                name: 'notebook entry tag',
+                domainObject: targetDomainObject,
+                annotationType: this.ANNOTATION_TYPES.NOTEBOOK,
+                tags: [],
+                contentText: 'notebook entry tag',
+                targets
+            };
 
-            existingAnnotation = await this.create('notebook entry tag', targetDomainObject, this.ANNOTATION_TYPES.NOTEBOOK, [], 'notebook entry tag', targets);
+            existingAnnotation = await this.create(annotationCreationArguments);
         }
 
         const tagArray = [tag, ...existingAnnotation.tags];
