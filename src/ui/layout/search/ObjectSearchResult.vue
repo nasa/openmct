@@ -1,6 +1,7 @@
 <template>
 <div
     class="c-gsearch-result c-gsearch-result--object"
+    role="presentation"
 >
     <div
         class="c-gsearch-result__type-icon"
@@ -8,16 +9,20 @@
     ></div>
     <div
         class="c-gsearch-result__body"
-        aria-label="Domain Object Search Result"
+        role="option"
+        :aria-label="`${resultName} ${resultType} result`"
     >
         <div
             class="c-gsearch-result__title"
+            :name="resultName"
             @click="clickedResult"
         >
             {{ resultName }}
         </div>
 
-        <ObjectPath ref="objectpath" />
+        <ObjectPath
+            ref="objectpath"
+        />
     </div>
     <div class="c-gsearch-result__more-options-button">
         <button class="c-icon-button icon-3-dots"></button>
@@ -50,6 +55,9 @@ export default {
         },
         resultTypeIcon() {
             return this.openmct.types.get(this.result.type).definition.cssClass;
+        },
+        resultType() {
+            return this.result.type;
         }
     },
     mounted() {
