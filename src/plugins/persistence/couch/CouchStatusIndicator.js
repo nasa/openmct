@@ -26,13 +26,24 @@
 // DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
 // PENDING: Still trying to connect, and haven't failed yet.
 export const CONNECTED = {
-    statusClass: "s-status-on"
+    statusClass: "s-status-on",
+    text: "CouchDB is connected.",
+    description: "CouchDB is online and accepting requests."
 };
 export const PENDING = {
-    statusClass: "s-status-warning-lo"
+    statusClass: "s-status-warning-lo",
+    text: "Attempting to connect to CouchDB...",
+    description: "Checking status of CouchDB, please stand by..."
 };
 export const DISCONNECTED = {
-    statusClass: "s-status-warning-hi"
+    statusClass: "s-status-warning-hi",
+    text: "CouchDB is offline.",
+    description: "CouchDB is offline and unavailable for requests."
+};
+export const MAINTENANCE = {
+    statusClass: "s-status-warning-lo",
+    text: "CouchDB is in maintenance mode",
+    description: "CouchDB is online, but not currently accepting requests."
 };
 
 /**
@@ -53,26 +64,8 @@ export default class CouchStatusIndicator {
      * @param {*} state
      */
     setIndicatorToState(state) {
-        switch (state) {
-        case CONNECTED: {
-            this.indicator.text("CouchDB is connected");
-            // this.indicator.description(this.label + " is online, checking status every " + this.interval + " milliseconds.");
-            break;
-        }
-
-        case PENDING: {
-            this.indicator.text("Attempting to connect to CouchDB...");
-            // this.indicator.description("Checking status of " + this.label + " please stand by...");
-            break;
-        }
-
-        case DISCONNECTED: {
-            this.indicator.text("CouchDB is offline");
-            // this.indicator.description(this.label + " is offline, checking status every " + this.interval + " milliseconds");
-            break;
-        }
-        }
-
+        this.indicator.text(state.text);
+        this.indicator.description(state.description);
         this.indicator.statusClass(state.statusClass);
     }
 }

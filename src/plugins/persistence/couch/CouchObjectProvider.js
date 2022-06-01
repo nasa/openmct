@@ -22,7 +22,7 @@
 
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
-import CouchStatusIndicator, { PENDING, CONNECTED, DISCONNECTED } from "./CouchStatusIndicator";
+import { PENDING, CONNECTED, DISCONNECTED, MAINTENANCE } from "./CouchStatusIndicator";
 import { NOTEBOOK_TYPE } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
@@ -31,14 +31,10 @@ const HEARTBEAT = 50000;
 const ALL_DOCS = "_all_docs?include_docs=true";
 
 class CouchObjectProvider {
-    constructor(openmct, options, namespace) {
+    constructor(openmct, options, namespace, indicator) {
         options = this._normalize(options);
         this.openmct = openmct;
-
-        const simpleIndicator = openmct.indicators.simpleIndicator();
-        this.openmct.indicators.add(simpleIndicator);
-
-        this.indicator = new CouchStatusIndicator(simpleIndicator);
+        this.indicator = indicator;
         this.url = options.url;
         this.namespace = namespace;
         this.objectQueue = {};
@@ -157,9 +153,12 @@ class CouchObjectProvider {
 
         try {
             const response = await fetch(this.url + '/' + subPath, fetchOptions);
-
+            this.indicator.setIndicatorToState(CONNECTED);
             if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
                 throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+            } else if (response.status === CouchObjectProvider.HTTP_NOT_FOUND
+                || response.status === CouchObjectProvider.HTTP_SERVER_ERROR) {
+                this.indicator.setIndicatorToState(MAINTENANCE);
             }
 
             return await response.json();
