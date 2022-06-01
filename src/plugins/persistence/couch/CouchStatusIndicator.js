@@ -23,8 +23,9 @@
 // Set of connection states; changing among these states will be
 // reflected in the indicator's appearance.
 // CONNECTED: Everything nominal, expect to be able to read/write
-// DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
+// DISCONNECTED: HTTP request failed (network error). Unable to reach server at all.
 // PENDING: Still trying to connect, and haven't failed yet.
+// MAINTENANCE: CouchDB is connected but not accepting requests.
 export const CONNECTED = {
     statusClass: "s-status-on",
     text: "CouchDB is connected.",
@@ -55,12 +56,15 @@ export default class CouchStatusIndicator {
         this.setDefaults();
     }
 
+    /**
+     * Set the default values for the indicator.
+     */
     setDefaults() {
         this.setIndicatorToState(PENDING);
     }
 
     /**
-     *
+     * Set the indicator to the given state.
      * @param {*} state
      */
     setIndicatorToState(state) {
