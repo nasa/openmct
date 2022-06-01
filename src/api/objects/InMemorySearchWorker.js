@@ -37,13 +37,13 @@
             const requestType = event.data.request;
             if (requestType === 'index') {
                 indexItem(event.data.keyString, event.data.model);
-            } else if (requestType === 'searchForObjects') {
+            } else if (requestType === 'OBJECTS') {
                 port.postMessage(searchForObjects(event.data));
-            } else if (requestType === 'searchForAnnotations') {
+            } else if (requestType === 'ANNOTATIONS') {
                 port.postMessage(searchForAnnotations(event.data));
-            } else if (requestType === 'searchForTags') {
+            } else if (requestType === 'TAGS') {
                 port.postMessage(searchForTags(event.data));
-            } else if (requestType === 'searchForNotebookAnnotations') {
+            } else if (requestType === 'NOTEBOOK_ANNOTATIONS') {
                 port.postMessage(searchForNotebookAnnotations(event.data));
             } else {
                 throw new Error(`Unknown request ${event.data.request}`);

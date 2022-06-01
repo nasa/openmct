@@ -40,6 +40,12 @@ export default class ObjectAPI {
     constructor(typeRegistry, openmct) {
         this.openmct = openmct;
         this.typeRegistry = typeRegistry;
+        this.SEARCH_TYPES = Object.freeze({
+            OBJECTS: 'OBJECTS',
+            ANNOTATIONS: 'ANNOTATIONS',
+            NOTEBOOK_ANNOTATIONS: 'NOTEBOOK_ANNOTATIONS',
+            TAGS: 'TAGS'
+        });
         this.eventEmitter = new EventEmitter();
         this.providers = {};
         this.rootRegistry = new RootRegistry(openmct);
@@ -57,16 +63,7 @@ export default class ObjectAPI {
     }
 
     /**
-     * Set fallback provider, this is an internal API for legacy reasons.
-     * @private
-     */
-    supersecretSetFallbackProvider(p) {
-        this.fallbackProvider = p;
-    }
-
-    /**
      * Retrieve the provider for a given identifier.
-     * @private
      */
     getProvider(identifier) {
         if (identifier.key === 'ROOT') {
@@ -225,24 +222,26 @@ export default class ObjectAPI {
      * @memberof module:openmct.ObjectAPI#
      * @param {string} query the term to search for
      * @param {AbortController.signal} abortSignal (optional) signal to cancel downstream fetch requests
+     * @param {string} searchType the type of search as defined by SEARCH_TYPES
      * @returns {Array.<Promise.<module:openmct.DomainObject>>}
      *          an array of promises returned from each object provider's search function
      *          each resolving to domain objects matching provided search query and options.
      */
-    search(query, abortSignal) {
-        return this.queryUsingProvider('searchForObjects', query, abortSignal);
-    }
-
-    queryUsingProvider(queryFunction, query, abortSignal) {
-        const searchPromises = Object.values(this.providers)
-            .filter(provider => provider[queryFunction] !== undefined)
-            .map(provider => provider[queryFunction](query, abortSignal));
-        if (!this.inMemorySearchProvider[queryFunction]) {
-            throw new Error(`${queryFunction} not implemented in inMemorySearchProvider`);
+    search(query, abortSignal, searchType = this.SEARCH_TYPES.OBJECTS) {
+        if (!Object.keys(this.SEARCH_TYPES).includes(searchType.toUpperCase())) {
+            throw new Error(`Unknown search type: ${searchType}`);
         }
 
-        // abortSignal doesn't seem to be used in generic search?
-        searchPromises.push(this.inMemorySearchProvider[queryFunction](query, null)
+        const searchPromises = Object.values(this.providers)
+            .filter(provider => {
+                return ((provider.supportsSearchType !== undefined) && provider.supportsSearchType(searchType));
+            })
+            .map(provider => provider.search(query, abortSignal, searchType));
+        if (!this.inMemorySearchProvider.supportsSearchType(searchType)) {
+            throw new Error(`${searchType} not implemented in inMemorySearchProvider`);
+        }
+
+        searchPromises.push(this.inMemorySearchProvider.search(query, searchType)
             .then(results => results.hits
                 .map(hit => {
                     return hit;
@@ -307,9 +306,8 @@ export default class ObjectAPI {
     }
 
     /**
-     * Save this domain object in its current state. EXPERIMENTAL
+     * Save this domain object in its current state.
      *
-     * @private
      * @memberof module:openmct.ObjectAPI#
      * @param {module:openmct.DomainObject} domainObject the domain object to
      *        save
@@ -324,7 +322,7 @@ export default class ObjectAPI {
 
         if (!this.isPersistable(domainObject.identifier)) {
             result = Promise.reject('Object provider does not support saving');
-        } else if (this.hasAlreadyBeenPersisted(domainObject)) {
+        } else if (this.#hasAlreadyBeenPersisted(domainObject)) {
             result = Promise.resolve(true);
         } else {
             const persistedTime = Date.now();
@@ -405,7 +403,7 @@ export default class ObjectAPI {
      * Retrieve the interceptors for a given domain object.
      * @private
      */
-    listGetInterceptors(identifier, object) {
+    #listGetInterceptors(identifier, object) {
         return this.interceptorRegistry.getInterceptors(identifier, object);
     }
 
@@ -414,7 +412,7 @@ export default class ObjectAPI {
      * @private
      */
     applyGetInterceptors(identifier, domainObject) {
-        const interceptors = this.listGetInterceptors(identifier, domainObject);
+        const interceptors = this.#listGetInterceptors(identifier, domainObject);
         interceptors.forEach(interceptor => {
             domainObject = interceptor.invoke(identifier, domainObject);
         });
@@ -639,7 +637,7 @@ export default class ObjectAPI {
      * @memberof module:openmct
      */
 
-    hasAlreadyBeenPersisted(domainObject) {
+    #hasAlreadyBeenPersisted(domainObject) {
         const result = domainObject.persisted !== undefined
             && domainObject.persisted >= domainObject.modified;
 

@@ -39,9 +39,7 @@ class InMemorySearchProvider {
          * If max results is not specified in query, use this as default.
          */
         this.DEFAULT_MAX_RESULTS = 100;
-
         this.openmct = openmct;
-
         this.indexedIds = {};
         this.indexedCompositions = {};
         this.indexedTags = {};
@@ -84,6 +82,11 @@ class InMemorySearchProvider {
 
     startIndexing() {
         const rootObject = this.openmct.objects.rootProvider.rootObject;
+
+        this.searchTypes = this.openmct.objects.SEARCH_TYPES;
+
+        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.NOTEBOOK_ANNOTATIONS, this.searchTypes.TAGS];
+
         this.scheduleForIndexing(rootObject.identifier);
 
         this.indexAnnotations();
@@ -128,45 +131,42 @@ class InMemorySearchProvider {
         return intermediateResponse;
     }
 
-    search(input, queryType, localQueryFallBack, maxResults) {
-        if (!maxResults) {
-            maxResults = this.DEFAULT_MAX_RESULTS;
-        }
-
+    search(query, searchType) {
         const queryId = uuid();
         const pendingQuery = this.getIntermediateResponse();
         this.pendingQueries[queryId] = pendingQuery;
+        const searchOptions = {
+            queryId,
+            searchType,
+            query,
+            maxResults: this.DEFAULT_MAX_RESULTS
+        };
 
         if (this.worker) {
-            this.dispatchSearch(queryId, queryType, input, maxResults);
+            this.#dispatchSearchToWorker(searchOptions);
         } else {
-            localQueryFallBack(queryId, input, maxResults);
+            this.#localQueryFallBack(searchOptions);
         }
 
         return pendingQuery.promise;
     }
 
-    /**
-     * Query the search provider for results.
-     *
-     * @param {String} input the string to search by.
-     * @param {Number} maxResults max number of results to return.
-     * @returns {Promise} a promise for a modelResults object.
-     */
-    searchForObjects(input, maxResults) {
-        return this.search(input, 'searchForObjects', this.localSearchForObjects, maxResults);
+    #localQueryFallBack({queryId, searchType, query, maxResults}) {
+        if (searchType === this.searchTypes.OBJECTS) {
+            return this.localSearchForObjects(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.ANNOTATIONS) {
+            return this.localSearchForAnnotations(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.NOTEBOOK_ANNOTATIONS) {
+            return this.localSearchForNotebookAnnotations(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.TAGS) {
+            return this.localSearchForTags(queryId, query, maxResults);
+        } else {
+            throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+        }
     }
 
-    searchForAnnotations(input, maxResults) {
-        return this.search(input, 'searchForAnnotations', this.localSearchForAnnotations, maxResults);
-    }
-
-    searchForTags(input, maxResults) {
-        return this.search(input, 'searchForTags', this.localSearchForTags, maxResults);
-    }
-
-    searchForNotebookAnnotations(input, maxResults) {
-        return this.search(input, 'searchForNotebookAnnotations', this.localSearchForNotebookAnnotations, maxResults);
+    supportsSearchType(searchType) {
+        return this.supportedSearchTypes.includes(searchType);
     }
 
     /**
@@ -379,10 +379,10 @@ class InMemorySearchProvider {
      * @private
      * @returns {String} a unique query Id for the query.
      */
-    dispatchSearch(queryId, searchType, searchInput, maxResults) {
+    #dispatchSearchToWorker({queryId, searchType, query, maxResults}) {
         const message = {
-            request: searchType,
-            input: searchInput,
+            request: searchType.toString(),
+            input: query,
             maxResults,
             queryId
         };

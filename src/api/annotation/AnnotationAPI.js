@@ -125,7 +125,7 @@ export default class AnnotationAPI extends EventEmitter {
         const targetKeyString = this.openmct.objects.makeKeyString(targetDomainObject.identifier);
         let foundAnnotations = null;
 
-        const searchResults = await (await Promise.all(this.openmct.objects.queryUsingProvider('searchForAnnotations', targetKeyString))).flat();
+        const searchResults = (await Promise.all(this.openmct.objects.search(targetKeyString, null, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS))).flat();
         if (searchResults) {
             foundAnnotations = searchResults;
         }
@@ -172,7 +172,7 @@ export default class AnnotationAPI extends EventEmitter {
             targetKeyString,
             entryId
         };
-        const searchResults = (await Promise.all(this.openmct.objects.queryUsingProvider('searchForNotebookAnnotations', query))).flat();
+        const searchResults = (await Promise.all(this.openmct.objects.search(query, null, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS))).flat();
         if (searchResults) {
             foundAnnotation = searchResults[0];
         }
@@ -287,7 +287,7 @@ export default class AnnotationAPI extends EventEmitter {
     async searchForTags(query, abortController) {
         // get matching tags first
         const matchingTagKeys = this.getMatchingTags(query);
-        const searchResults = (await Promise.all(this.openmct.objects.queryUsingProvider('searchForTags', matchingTagKeys, abortController))).flat();
+        const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
         const appliedTagSearchResults = this.addTagMetaInformationToResults(searchResults, matchingTagKeys);
         const appliedTargetsModels = await this.addTargetModelsToResults(appliedTagSearchResults);
 
