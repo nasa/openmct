@@ -24,18 +24,35 @@ import { v4 as uuid } from 'uuid';
 import availableTags from 'availableTags';
 import EventEmitter from 'EventEmitter';
 
+/**
+ * @readonly
+ * @enum {String} AnnotationType
+ * @property {String} NOTEBOOK The notebook annotation type
+ * @property {String} GEOSPATIAL The geospatial annotation type
+ * @property {String} PIXEL_SPATIAL The pixel-spatial annotation type
+ * @property {String} TEMPORAL The temporal annotation type
+ * @property {String} PLOT_SPATIAL The plot-spatial annotation type
+ */
+const ANNOTATION_TYPES = Object.freeze({
+    NOTEBOOK: 'notebook',
+    GEOSPATIAL: 'geospatial',
+    PIXEL_SPATIAL: 'pixelspatial',
+    TEMPORAL: 'temporal',
+    PLOT_SPATIAL: 'plotspatial'
+});
+
+/**
+ * @typedef {Object} Tag
+ * @property {String} key a unique identifier for the tag
+ * @property {String} backgroundColor eg. "#cc0000"
+ * @property {String} foregroundColor eg. "#ffffff"
+ */
 export default class AnnotationAPI extends EventEmitter {
     constructor(openmct) {
         super();
         this.openmct = openmct;
-        // For public use
-        this.ANNOTATION_TYPES = Object.freeze({
-            NOTEBOOK: 'notebook',
-            GEOSPATIAL: 'geospatial',
-            PIXEL_SPATIAL: 'pixelspatial',
-            TEMPORAL: 'temporal',
-            PLOT_SPATIAL: 'plotspatial'
-        });
+
+        this.ANNOTATION_TYPES = ANNOTATION_TYPES;
 
         this.openmct.types.addType('annotation', {
             name: 'Annotation',
@@ -54,11 +71,18 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * Create the a generic annotation
-    *
+    * @typedef {Object} CreateAnnotationOptions
+    * @property {String} name a name for the new parameter
+    * @property {import('../objects/ObjectAPI').DomainObject} domainObject the domain object to create
+    * @property {ANNOTATION_TYPES} annotationType the type of annotation to create
+    * @property {Tag[]} tags
+    * @property {String} contentText
+    * @property {import('../objects/ObjectAPI').Identifier[]} targets
+    */
+    /**
     * @method create
-    * @param {module:openmct.DomainObject} domainObject the domain object to
-    *        create
-    * @returns {Promise} a promise which will resolve when the domain object
+    * @param {CreateAnnotationOptions} options
+    * @returns {Promise<import('../objects/ObjectAPI').DomainObject>} a promise which will resolve when the domain object
     *          has been created, or be rejected if it cannot be saved
     */
     async create({name, domainObject, annotationType, tags, contentText, targets}) {
@@ -197,7 +221,6 @@ export default class AnnotationAPI extends EventEmitter {
                 contentText: 'notebook entry tag',
                 targets
             };
-
             existingAnnotation = await this.create(annotationCreationArguments);
         }
 
