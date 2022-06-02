@@ -23,7 +23,7 @@
 define([
     'uuid'
 ], function (
-    uuid
+    { v4: uuid }
 ) {
     return function Migrations(openmct) {
         function getColumnNameKeyMap(domainObject) {
