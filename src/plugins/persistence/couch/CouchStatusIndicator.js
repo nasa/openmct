@@ -28,7 +28,7 @@
 // MAINTENANCE: CouchDB is connected but not accepting requests.
 export const CONNECTED = {
     statusClass: "s-status-on",
-    text: "CouchDB is connected.",
+    text: "CouchDB is connected",
     description: "CouchDB is online and accepting requests."
 };
 export const PENDING = {
@@ -38,7 +38,7 @@ export const PENDING = {
 };
 export const DISCONNECTED = {
     statusClass: "s-status-warning-hi",
-    text: "CouchDB is offline.",
+    text: "CouchDB is offline",
     description: "CouchDB is offline and unavailable for requests."
 };
 export const MAINTENANCE = {
