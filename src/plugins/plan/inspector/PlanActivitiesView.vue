@@ -33,7 +33,7 @@
 <script>
 import PlanActivityView from "./PlanActivityView.vue";
 import { getPreciseDuration } from "utils/duration";
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 const propertyLabels = {
     'start': 'Start DateTime',
