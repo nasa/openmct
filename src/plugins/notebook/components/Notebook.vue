@@ -521,9 +521,9 @@ export default {
                 - tablet portrait
                 - in a layout frame (within .c-so-view)
             */
-            const isPhone = this.agent?.isPhone();
-            const isTablet = this.agent?.isTablet();
-            const isPortrait = this.agent?.isPortrait();
+            const isPhone = this.agent.isPhone();
+            const isTablet = this.agent.isTablet();
+            const isPortrait = this.agent.isPortrait();
             const isInLayout = Boolean(this.$el.closest('.c-so-view'));
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
             this.sidebarCoversEntries = sidebarCoversEntries;

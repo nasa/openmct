@@ -22,6 +22,7 @@
 
 import Vue from 'vue';
 import Notebook from './components/Notebook.vue';
+import Agent from '@/utils/agent/Agent';
 
 export default class NotebookViewProvider {
     constructor(openmct, name, key, type, cssClass, snapshotContainer) {
@@ -41,6 +42,7 @@ export default class NotebookViewProvider {
         let component;
         let openmct = this.openmct;
         let snapshotContainer = this.snapshotContainer;
+        let agent = new Agent(window);
 
         return {
             show(container) {
@@ -51,7 +53,8 @@ export default class NotebookViewProvider {
                     },
                     provide: {
                         openmct,
-                        snapshotContainer
+                        snapshotContainer,
+                        agent
                     },
                     data() {
                         return {
