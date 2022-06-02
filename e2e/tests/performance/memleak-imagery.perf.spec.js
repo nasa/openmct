@@ -37,7 +37,7 @@ const { test, expect } = require('@playwright/test');
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 
 // eslint-disable-next-line playwright/no-skipped-test
-test.describe.skip('Memory Performance tests', () => {
+test.describe('Memory Performance tests', () => {
     test.beforeEach(async ({ page, browser }, testInfo) => {
         // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
@@ -59,59 +59,73 @@ test.describe.skip('Memory Performance tests', () => {
         await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
     });
 
-    test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
+    test.only('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
 
-        await page.goto('/', {waitUntil: 'networkidle'});
+        // // To to Search Available after Launch
+        // await page.locator('input[type="search"]').click();
+        // // Fill Search input
+        // await page.locator('input[type="search"]').fill('Performance Display Layout');
+        // //Search Result Appears and is clicked
+        // await Promise.all([
+        //     page.waitForNavigation(),
+        //     page.locator('a:has-text("Performance Display Layout")').first().click()
+        // ]);
 
-        // To to Search Available after Launch
-        await page.locator('input[type="search"]').click();
-        // Fill Search input
-        await page.locator('input[type="search"]').fill('Performance Display Layout');
-        //Search Result Appears and is clicked
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('a:has-text("Performance Display Layout")').first().click()
-        ]);
-
-        //Time to Example Imagery Frame loads within Display Layout
-        await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
-        //Time to Example Imagery object loads
-        await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
+        // //Time to Example Imagery Frame loads within Display Layout
+        // await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
+        // //Time to Example Imagery object loads
+        // await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
 
         const client = await page.context().newCDPSession(page);
         await client.send('HeapProfiler.enable');
-        await client.send('HeapProfiler.startSampling');
-        // await client.send('HeapProfiler.collectGarbage');
+        // await client.send('HeapProfiler.startSampling');
         await client.send('Performance.enable');
+        await client.send('HeapProfiler.collectGarbage');
 
         let performanceMetricsBefore = await client.send('Performance.getMetrics');
-        console.log(performanceMetricsBefore.metrics);
+        //console.log(performanceMetricsBefore.metrics);
+
+        await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
+        await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
+        await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
+        await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
+        await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
 
         //await client.send('Performance.disable');
 
         //Open Large view
-        await page.locator('button:has-text("Large View")').click();
-        await client.send('HeapProfiler.takeHeapSnapshot');
+        // await page.locator('button:has-text("Large View")').click();
+        //await client.send('HeapProfiler.takeHeapSnapshot');
 
-        //Time to Imagery Rendered in Large Frame
-        await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
+        // //Time to Imagery Rendered in Large Frame
+        // await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
 
-        //Time to Example Imagery object loads
-        await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
+        // //Time to Example Imagery object loads
+        // await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
 
-        // Click Close Icon
-        await page.locator('.c-click-icon').click();
+        // // Click Close Icon
+        // await page.locator('.c-click-icon').click();
 
-        //Time to Example Imagery Frame loads within Display Layout
-        await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
-        //Time to Example Imagery object loads
-        await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
-
+        // //Time to Example Imagery Frame loads within Display Layout
+        // await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
+        // //Time to Example Imagery object loads
+        // await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
         await client.send('HeapProfiler.collectGarbage');
-        //await client.send('Performance.enable');
+
 
         let performanceMetricsAfter = await client.send('Performance.getMetrics');
-        console.log(performanceMetricsAfter.metrics);
+        console.log('performanceMetricsAfter ' + performanceMetricsAfter);
+        let JSHeapUsedSizeAfterObject = performanceMetricsAfter.metrics.filter(c => c.name === 'JSHeapUsedSize');
+        console.log(JSHeapUsedSizeAfterObject[0].value);
+        console.log('performanceMetricsAfter.metrics.JSHeapUsedSize ' + performanceMetricsAfter.metrics.JSHeapUsedSize);
+
+
+        //assert.ok(performanceMetricsAfter.JSHeapUsedSize < performanceMetricsBefore.JSHeapUsedSize * 1.1);
+
+
+        //console.log(performanceMetricsAfter.entries(JSEventListeners).toString());
+        //performanceMetricsAfter.entries(k1).toString() === Object.entries(k2).toString();
+
 
         //await client.send('Performance.disable');
 
