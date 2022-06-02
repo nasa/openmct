@@ -65,7 +65,6 @@ mct-plot {
 .c-plot {
     @include abs($mainViewPad);
     display: flex;
-    flex-direction: column;
     overflow: hidden;
     min-height: $plotMinH;
 
