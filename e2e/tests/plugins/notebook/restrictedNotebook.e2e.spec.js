@@ -102,6 +102,11 @@ async function lockPage(page) {
     // confirmation dialog click
     await page.locator('text=Lock Page').click();
 
+    // waiting for mutation of locked page
+    await new Promise((resolve, reject) => {
+        setTimeout(resolve, 1000);
+    });
+
     return;
 }
 
