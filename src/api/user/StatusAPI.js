@@ -66,12 +66,12 @@ export default class StatusAPI extends EventEmitter {
      * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
      */
     async setPollQuestion(questionText) {
-        if (this.canSetPollQuestion()) {
+        const canSetPollQuestion = await this.canSetPollQuestion();
+
+        if (canSetPollQuestion) {
             const provider = this.#userAPI.getProvider();
 
             const result = await provider.setPollQuestion(questionText);
-
-            // TODO re-implement clearing all statuses
 
             try {
                 await this.resetAllStatuses();
@@ -124,11 +124,8 @@ export default class StatusAPI extends EventEmitter {
 
         if (provider.getStatusForRole) {
             const status = await provider.getStatusForRole(role);
-            if (status !== undefined) {
-                return status;
-            } else {
-                return undefined;
-            }
+
+            return status;
         } else {
             this.#userAPI.error("User provider does not support role status");
         }
