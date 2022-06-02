@@ -194,3 +194,16 @@ test('Visual - Save Successful Banner', async ({ page }) => {
     await percySnapshot(page, 'Banner message gone');
 
 });
+
+test('Visual - Display Layout Icon is correct', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    //Hover on Display Layout option.
+    await page.locator('text=Display Layout').hover();
+    await percySnapshot(page, 'Display Layout Create Menu');
+
+});
