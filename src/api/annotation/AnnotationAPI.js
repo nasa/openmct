@@ -135,13 +135,13 @@ export default class AnnotationAPI extends EventEmitter {
     /**
     * Get annotations for a given domain object
     *
-    * @method get
+    * @method getAnnotationsForTarget
     * @param {module:openmct.DomainObject} domainObject the domain object to
     *        create
     * @returns {Promise} a promise which will resolve when the domain object
     *          has been created, or be rejected if it cannot be saved
     */
-    async get(targetDomainObject) {
+    async getAnnotationsForTarget(targetDomainObject) {
         if (!targetDomainObject) {
             throw new Error('😢 Asked to get an annotation, but was passed a null domain object');
         }
@@ -159,7 +159,7 @@ export default class AnnotationAPI extends EventEmitter {
                 const childIdentifierObject = {
                     identifier: targetDomainObject.composition[i]
                 };
-                const childAnnotations = await this.openmct.annotation.get(childIdentifierObject);
+                const childAnnotations = await this.openmct.annotation.getAnnotationsForTarget(childIdentifierObject);
                 if (childAnnotations && childAnnotations.length) {
                     childAnnotations.forEach(childAnnotation => {
                         // check if unique
