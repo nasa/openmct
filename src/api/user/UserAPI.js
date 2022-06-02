@@ -25,16 +25,22 @@ import {
     MULTIPLE_PROVIDER_ERROR,
     NO_PROVIDER_ERROR
 } from './constants';
+import StatusAPI from './StatusAPI';
 import User from './User';
 
 class UserAPI extends EventEmitter {
-    constructor(openmct) {
+    /**
+     * @param {OpenMCT} openmct
+     * @param {UserAPIConfiguration} config
+     */
+    constructor(openmct, config) {
         super();
 
         this._openmct = openmct;
         this._provider = undefined;
 
         this.User = User;
+        this.status = new StatusAPI(this, openmct, config);
     }
 
     /**
@@ -47,12 +53,15 @@ class UserAPI extends EventEmitter {
      */
     setProvider(provider) {
         if (this.hasProvider()) {
-            this._error(MULTIPLE_PROVIDER_ERROR);
+            this.error(MULTIPLE_PROVIDER_ERROR);
         }
 
         this._provider = provider;
-
         this.emit('providerAdded', this._provider);
+    }
+
+    getProvider() {
+        return this._provider;
     }
 
     /**
@@ -74,7 +83,7 @@ class UserAPI extends EventEmitter {
      * @throws Will throw an error if no user provider is set
      */
     getCurrentUser() {
-        this._noProviderCheck();
+        this.noProviderCheck();
 
         return this._provider.getCurrentUser();
     }
@@ -105,7 +114,7 @@ class UserAPI extends EventEmitter {
      * @throws Will throw an error if no user provider is set
      */
     hasRole(roleId) {
-        this._noProviderCheck();
+        this.noProviderCheck();
 
         return this._provider.hasRole(roleId);
     }
@@ -116,9 +125,9 @@ class UserAPI extends EventEmitter {
      * @private
      * @throws Will throw an error if no user provider is set
      */
-    _noProviderCheck() {
+    noProviderCheck() {
         if (!this.hasProvider()) {
-            this._error(NO_PROVIDER_ERROR);
+            this.error(NO_PROVIDER_ERROR);
         }
     }
 
@@ -129,9 +138,26 @@ class UserAPI extends EventEmitter {
      * @param {string} error description of error
      * @throws Will throw error passed in
      */
-    _error(error) {
+    error(error) {
         throw new Error(error);
     }
 }
 
 export default UserAPI;
+/**
+ * @typedef {String} Role
+ */
+/**
+ * @typedef {Object} OpenMCT
+ */
+/**
+ * @typedef {{statusStyles: Object.<string, StatusStyleDefinition>}} UserAPIConfiguration
+ */
+/**
+ * @typedef {Object} StatusStyleDefinition
+ * @property {String} iconClass The icon class to apply to the status indicator when this status is active "icon-circle-slash",
+ * @property {String} iconClassPoll The icon class to apply to the poll question indicator when this style is active eg. "icon-status-poll-question-mark"
+ * @property {String} statusClass The class to apply to the indicator when this status is active eg. "s-status-error"
+ * @property {String} statusBgColor The background color to apply in the status summary section of the poll question popup for this status eg."#9900cc"
+ * @property {String} statusFgColor The foreground color to apply in the status summary section of the poll question popup for this status eg. "#fff"
+ */
