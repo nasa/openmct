@@ -532,13 +532,8 @@ test.describe('Example Imagery in Flexible layout', () => {
         expect(expectedAltText).toEqual(imageryHintsText);
 
         // Pan right
-        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
-        await page.mouse.down();
-        await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
-        await page.mouse.up();
-        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-        const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
-        expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
+        await panRight(page);
+       
 
         // Pan left
         await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
@@ -652,6 +647,26 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
         timeout: 6 * 1000
     }).not.toBe(backgroundImageUrl1);
     console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+ async function panRight(page) {
+    const backgroundImageSelector = '.c-imagery__main-image__background-image';
+    const bgImageLocator = page.locator(backgroundImageSelector);
+    const zoomedBoundingBox = await bgImageLocator.boundingBox();
+    const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+    const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+    const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+   
+    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await page.mouse.down();
+    await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
+    await page.mouse.up();
+    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+    const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
+    expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
 }
 
 test.describe('Example Imagery in Tabs view', () => {
