@@ -242,8 +242,6 @@ define([
 
         // Plugins that are installed by default
         this.install(this.plugins.Plot());
-        this.install(this.plugins.ScatterPlot());
-        this.install(this.plugins.BarChart());
         this.install(this.plugins.TelemetryTable.default());
         this.install(PreviewPlugin.default());
         this.install(LicensesPlugin.default());
