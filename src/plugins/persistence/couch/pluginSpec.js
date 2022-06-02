@@ -74,10 +74,11 @@ describe('the plugin', () => {
         spyOn(provider, 'get').and.callThrough();
         spyOn(provider, 'create').and.callThrough();
         spyOn(provider, 'update').and.callThrough();
-        spyOn(provider, 'startSharedWorker').and.callThrough();
+        spyOn(provider, 'observe').and.callThrough();
         spyOn(provider, 'fetchChanges').and.callThrough();
         spyOn(provider, 'onSharedWorkerMessage').and.callThrough();
         spyOn(provider, 'onEventMessage').and.callThrough();
+        spyOn(provider, 'isObservingObjectChanges').and.callThrough();
     });
 
     afterEach(() => {
@@ -109,7 +110,7 @@ describe('the plugin', () => {
         it('creates an object and starts shared worker', async () => {
             const result = await openmct.objects.save(mockDomainObject);
             expect(provider.create).toHaveBeenCalled();
-            expect(provider.startSharedWorker).toHaveBeenCalled();
+            expect(provider.observe).toHaveBeenCalled();
             expect(result).toBeTrue();
         });
 
@@ -165,7 +166,9 @@ describe('the plugin', () => {
             const result = await openmct.objects.save(mockDomainObject);
             expect(result).toBeTrue();
             expect(provider.create).toHaveBeenCalled();
-            expect(provider.startSharedWorker).not.toHaveBeenCalled();
+            expect(provider.observe).toHaveBeenCalled();
+            expect(provider.isObservingObjectChanges).toHaveBeenCalled();
+            expect(provider.isObservingObjectChanges.calls.mostRecent().returnValue).toBe(true);
 
             //Set modified timestamp it detects a change and persists the updated model.
             mockDomainObject.modified = mockDomainObject.persisted + 1;
