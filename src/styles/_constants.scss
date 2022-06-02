@@ -156,6 +156,13 @@ $glyph-icon-notebook-page: '\e92c';
 $glyph-icon-unlocked: '\e92d';
 $glyph-icon-circle: '\e92e';
 $glyph-icon-draft: '\e92f';
+$glyph-icon-circle-slash: '\e930';
+$glyph-icon-question-mark: '\e931';
+$glyph-icon-status-poll-check: '\e932';
+$glyph-icon-status-poll-caution: '\e933';
+$glyph-icon-status-poll-circle-slash: '\e934';
+$glyph-icon-status-poll-question-mark: '\e935';
+$glyph-icon-status-poll-edit: '\e936';
 $glyph-icon-arrows-right-left: '\ea00';
 $glyph-icon-arrows-up-down: '\ea01';
 $glyph-icon-bullet: '\ea02';
@@ -264,6 +271,7 @@ $glyph-icon-bar-chart: '\eb2c';
 $glyph-icon-map: '\eb2d';
 $glyph-icon-plan: '\eb2e';
 $glyph-icon-timelist: '\eb2f';
+$glyph-icon-notebook-shift-log: '\eb31';
 $glyph-icon-plot-scatter: '\eb30';
 
 /************************** GLYPHS AS DATA URI */
@@ -317,4 +325,5 @@ $bg-icon-bar-chart: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://w
 $bg-icon-map: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M448 32.7 384 64v448l64-31.3c35.2-17.21 64-60.1 64-95.3v-320c0-35.2-28.8-49.91-64-32.7ZM160 456l193.6 48.4v-448L160 8v448zM129.6.4 128 0 64 31.3C28.8 48.51 0 91.4 0 126.6v320c0 35.2 28.8 49.91 64 32.7l64-31.3 1.6.4Z'/%3e%3c/svg%3e");
 $bg-icon-plan: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cg data-name='Layer 2'%3e%3cg data-name='Layer 1'%3e%3cpath fill='%23000000' d='M128 96V64a64.19 64.19 0 0 1 64-64h128a64.19 64.19 0 0 1 64 64v32Z'/%3e%3cpath fill='%23000000' d='M416 64v64H96V64c-52.8 0-96 43.2-96 96v256c0 52.8 43.2 96 96 96h320c52.8 0 96-43.2 96-96V160c0-52.8-43.2-96-96-96ZM64 288v-64h128v64Zm256 128H128v-64h192Zm128 0h-64v-64h64Zm0-128H256v-64h192Z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e");
 $bg-icon-timelist: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cg data-name='Layer 2'%3e%3cpath d='M448 0H64A64.19 64.19 0 0 0 0 64v384a64.19 64.19 0 0 0 64 64h384a64.19 64.19 0 0 0 64-64V64a64.19 64.19 0 0 0-64-64ZM213.47 266.73a24 24 0 0 1-32.2 10.74L104 238.83V128a24 24 0 0 1 48 0v81.17l50.73 25.36a24 24 0 0 1 10.74 32.2ZM448 448H288v-64h160Zm0-96H288v-64h160Zm0-96H288v-64h160Zm0-96H288V96h160Z' data-name='Layer 1'/%3e%3c/g%3e%3c/svg%3e");
+$bg-icon-notebook-shift-log: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath d='M448 55.36c0-39.95-27.69-63.66-61.54-52.68L0 128h448V55.36ZM448 160H0v288c0 35.2 28.8 64 64 64h384c35.2 0 64-28.8 64-64V224c0-35.2-28.8-64-64-64ZM128 416H64v-64h64v64Zm0-96H64v-64h64v64Zm320 96H192v-64h256v64Zm0-96H192v-64h256v64Z'/%3e%3c/svg%3e");
 $bg-icon-plot-scatter: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cg data-name='Layer 2'%3e%3cpath d='M96 0C43.2 0 0 43.2 0 96v320c0 52.8 43.2 96 96 96h320c52.8 0 96-43.2 96-96V96c0-52.8-43.2-96-96-96ZM64 176a48 48 0 1 1 48 48 48 48 0 0 1-48-48Zm80 240a48 48 0 1 1 48-48 48 48 0 0 1-48 48Zm128-96a48 48 0 1 1 48-48 48 48 0 0 1-48 48Zm0-160a48 48 0 1 1 48-48 48 48 0 0 1-48 48Zm128 256a48 48 0 1 1 48-48 48 48 0 0 1-48 48Z' data-name='Layer 1'/%3e%3c/g%3e%3c/svg%3e");
