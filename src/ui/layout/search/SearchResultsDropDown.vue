@@ -22,12 +22,12 @@
                 v-if="objectResults && objectResults.length"
                 ref="objectResults"
                 class="c-gsearch__results-section"
+                role="listbox"
             >
                 <div class="c-gsearch__results-section-title">Object Results</div>
                 <object-search-result
                     v-for="(objectResult, index) in objectResults"
                     :key="index"
-                    aria-labelledby="objectResult"
                     :result="objectResult"
                     @click.native="selectedResult"
                 />
