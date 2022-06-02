@@ -107,7 +107,10 @@ export default {
             type: Number,
             required: true
         },
-        imageUrl: String
+        imageUrl: {
+            type: String,
+            default: ''
+        }
     },
     data() {
         return {
