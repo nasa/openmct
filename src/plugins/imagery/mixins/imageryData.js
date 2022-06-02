@@ -46,7 +46,6 @@ export default {
 
         // kickoff
         this.subscribe();
-        this.requestHistory();
     },
     beforeDestroy() {
         if (this.unsubscribe) {
