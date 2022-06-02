@@ -41,7 +41,7 @@ define([
         this.widgetDnD = widgetDnD;
         this.container = container;
 
-        this.domElement = templateHelpers.convertTemplateToHTML(ruleTemplate).firstChild;
+        this.domElement = templateHelpers.convertTemplateToHTML(ruleTemplate)[0];
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change', 'conditionChange'];
         this.conditions = [];

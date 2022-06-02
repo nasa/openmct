@@ -20,7 +20,7 @@ define([
 
         const self = this;
 
-        this.domElement = templateHelpers.convertTemplateToHTML(selectTemplate).firstChild;
+        this.domElement = templateHelpers.convertTemplateToHTML(selectTemplate)[0];
 
         this.options = [];
         this.eventEmitter = new EventEmitter();

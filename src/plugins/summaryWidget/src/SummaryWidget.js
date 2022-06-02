@@ -54,7 +54,7 @@ define([
 
         this.activeId = 'default';
         this.rulesById = {};
-        this.domElement = templateHelpers.convertTemplateToHTML(widgetTemplate).firstChild;
+        this.domElement = templateHelpers.convertTemplateToHTML(widgetTemplate)[0];
         this.toggleRulesControl = this.domElement.querySelector('.t-view-control-rules');
         this.toggleTestDataControl = this.domElement.querySelector('.t-view-control-test-data');
 

@@ -19,7 +19,7 @@ define([
         this.ruleOrder = ruleOrder;
         this.rulesById = rulesById;
 
-        this.imageContainer = templateHelpers.convertTemplateToHTML(ruleImageTemplate).firstChild;
+        this.imageContainer = templateHelpers.convertTemplateToHTML(ruleImageTemplate)[0];
         this.image = this.imageContainer.querySelector('.t-drag-rule-image');
         this.draggingId = '';
         this.draggingRulePrevious = '';

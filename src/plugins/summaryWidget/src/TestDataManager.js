@@ -28,7 +28,7 @@ define([
         this.openmct = openmct;
 
         this.evaluator = this.manager.getEvaluator();
-        this.domElement = templateHelpers.convertTemplateToHTML(testDataTemplate).firstChild;
+        this.domElement = templateHelpers.convertTemplateToHTML(testDataTemplate)[0];
         this.config = this.domainObject.configuration.testDataConfig;
         this.testCache = {};
 

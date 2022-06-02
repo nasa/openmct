@@ -31,7 +31,7 @@ define([
         this.index = index;
         this.conditionManager = conditionManager;
 
-        this.domElement = templateHelpers.convertTemplateToHTML(itemTemplate).firstChild;
+        this.domElement = templateHelpers.convertTemplateToHTML(itemTemplate)[0];
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change'];
 
