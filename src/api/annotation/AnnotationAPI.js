@@ -154,26 +154,22 @@ export default class AnnotationAPI extends EventEmitter {
             foundAnnotations = searchResults;
         }
 
-        if (targetDomainObject.composition && targetDomainObject.composition.length) {
-            for (let i = 0; i < targetDomainObject.composition.length; i += 1) {
-                const childIdentifierObject = {
-                    identifier: targetDomainObject.composition[i]
-                };
-                const childAnnotations = await this.openmct.annotation.getAnnotationsForTarget(childIdentifierObject);
-                if (childAnnotations && childAnnotations.length) {
-                    childAnnotations.forEach(childAnnotation => {
-                        // check if unique
-                        const annotationExists = foundAnnotations.some(existingAnnotation => {
-                            return this.openmct.objects.areIdsEqual(existingAnnotation.identifier, childAnnotation.identifier);
-                        });
-                        if (!annotationExists) {
-                            foundAnnotations.push(childAnnotation);
-                        }
-                    });
+        const composition = await this.openmct.composition.get(targetDomainObject).load();
 
-                }
+        Promise.all(composition.map(async childObject => {
+            const childAnnotations = await this.openmct.annotation.getAnnotationsForTarget(childObject);
+            if (childAnnotations && childAnnotations.length) {
+                childAnnotations.forEach(childAnnotation => {
+                    // check if unique
+                    const annotationExists = foundAnnotations.some(existingAnnotation => {
+                        return this.openmct.objects.areIdsEqual(existingAnnotation.identifier, childAnnotation.identifier);
+                    });
+                    if (!annotationExists) {
+                        foundAnnotations.push(childAnnotation);
+                    }
+                });
             }
-        }
+        }));
 
         return foundAnnotations;
     }
