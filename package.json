@@ -113,7 +113,8 @@
     "node": ">=14.19.1"
   },
   "overrides": {
-    "core-js": "3.21.1"
+    "core-js": "3.21.1",
+    "terser-webpack-plugin": "5.3.3"
   },
   "browserslist": [
     "Firefox ESR",
