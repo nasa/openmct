@@ -85,7 +85,7 @@ class CouchObjectProvider {
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else if (event.data.type === 'state') {
-            const state = this._messageToIndicatorState(event.data.state);
+            const state = this.#messageToIndicatorState(event.data.state);
             this.indicator.setIndicatorToState(state);
         } else {
             let objectChanges = event.data.objectChanges;
@@ -108,8 +108,13 @@ class CouchObjectProvider {
         }
     }
 
-    _messageToIndicatorState(message) {
-        let state = PENDING;
+    /**
+     * @private
+     * @param {*} message
+     * @returns
+     */
+    #messageToIndicatorState(message) {
+        let state;
         switch (message) {
         case 'open':
             state = CONNECTED;
@@ -118,6 +123,9 @@ class CouchObjectProvider {
             state = DISCONNECTED;
             break;
         case 'pending':
+            state = PENDING;
+            break;
+        default:
             state = PENDING;
             break;
         }

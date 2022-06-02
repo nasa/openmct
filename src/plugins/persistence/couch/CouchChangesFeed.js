@@ -92,6 +92,11 @@
         case EventSource.CLOSED:
             message.state = 'close';
             break;
+        default:
+            // Assume connection is closed
+            message.state = 'close';
+            console.error('🚨 Received unexpected readyState value from CouchDB EventSource feed: 🚨', readyState);
+            break;
         }
 
         connections.forEach(function (connection) {
