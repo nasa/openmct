@@ -508,60 +508,16 @@ test.describe('Example Imagery in Flexible layout', () => {
         await saveTemplate(page);
 
         // Zoom in
-        const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-        await bgImageLocator.hover();
-        const deltaYStep = 100; // equivalent to 1x zoom
-        await page.mouse.wheel(0, deltaYStep * 2);
+        await mouseZoomIn(page);
+
+        // Center the mouse pointer
         const zoomedBoundingBox = await bgImageLocator.boundingBox();
         const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
         const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
-
-        // Wait for zoom animation to finish
-        await bgImageLocator.hover();
-        const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-        expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-        expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
-
-        // Center the mouse pointer
         await page.mouse.move(imageCenterX, imageCenterY);
 
-        // Pan Imagery Hints
-        const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
-        const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
-        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-        expect(expectedAltText).toEqual(imageryHintsText);
-
-        // Pan right
-        await panRight(page);
-       
-
-        // Pan left
-        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
-        await page.mouse.down();
-        await page.mouse.move(imageCenterX, imageCenterY, 10);
-        await page.mouse.up();
-        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-        const afterLeftPanBoundingBox = await bgImageLocator.boundingBox();
-        expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
-
-        // Pan up
-        await page.mouse.move(imageCenterX, imageCenterY);
-        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
-        await page.mouse.down();
-        await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
-        await page.mouse.up();
-        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-        const afterUpPanBoundingBox = await bgImageLocator.boundingBox();
-        expect(afterUpPanBoundingBox.y).toBeGreaterThanOrEqual(afterLeftPanBoundingBox.y);
-
-        // Pan down
-        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
-        await page.mouse.down();
-        await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
-        await page.mouse.up();
-        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-        const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
-        expect(afterDownPanBoundingBox.y).toBeLessThanOrEqual(afterUpPanBoundingBox.y);
+        // Pan zoom
+        await panZoomAndAssertImageProperties(page);
 
         // Click previous image button
         const previousImageButton = page.locator('.c-nav--prev');
@@ -578,14 +534,16 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
         // Zoom in on next image
+        const deltaYStep = 100; // equivalent to 1x zoom
         await bgImageLocator.hover();
         await page.mouse.wheel(0, deltaYStep * 2);
 
         // Wait for zoom animation to finish
         await bgImageLocator.hover();
+        const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
         const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-        expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-        expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+        expect(imageNextMouseZoomedIn.height).toBeGreaterThanOrEqual(originalImageDimensions.height);
+        expect(imageNextMouseZoomedIn.width).toBeGreaterThanOrEqual(originalImageDimensions.width);
 
         // Click previous image button
         await previousImageButton.click();
@@ -652,14 +610,19 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
 /**
  * @param {import('@playwright/test').Page} page
  */
- async function panRight(page) {
+ async function panZoomAndAssertImageProperties(page) {
+    const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+    const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+    const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+    expect(expectedAltText).toEqual(imageryHintsText);
     const backgroundImageSelector = '.c-imagery__main-image__background-image';
     const bgImageLocator = page.locator(backgroundImageSelector);
     const zoomedBoundingBox = await bgImageLocator.boundingBox();
-    const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+    
    
+    // Pan right
     await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
     await page.mouse.down();
     await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
@@ -667,7 +630,56 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
     await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
     const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
     expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
+
+    // Pan left
+    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await page.mouse.down();
+    await page.mouse.move(imageCenterX, imageCenterY, 10);
+    await page.mouse.up();
+    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+    const afterLeftPanBoundingBox = await bgImageLocator.boundingBox();
+    expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
+
+    // Pan up
+    await page.mouse.move(imageCenterX, imageCenterY);
+    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await page.mouse.down();
+    await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
+    await page.mouse.up();
+    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+    const afterUpPanBoundingBox = await bgImageLocator.boundingBox();
+    expect(afterUpPanBoundingBox.y).toBeGreaterThanOrEqual(afterLeftPanBoundingBox.y);
+
+    // Pan down
+    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await page.mouse.down();
+    await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
+    await page.mouse.up();
+    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+    const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
+    expect(afterDownPanBoundingBox.y).toBeLessThanOrEqual(afterUpPanBoundingBox.y);
 }
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+ async function mouseZoomIn(page) {
+    const bgImageLocator = await page.locator(backgroundImageSelector);
+    // Zoom in
+    const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
+    await bgImageLocator.hover();
+    const deltaYStep = 100; // equivalent to 1x zoom
+    await page.mouse.wheel(0, deltaYStep * 2);
+    const zoomedBoundingBox = await bgImageLocator.boundingBox();
+    const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+    const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+
+    // Wait for zoom animation to finish
+    await bgImageLocator.hover();
+    const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+    expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+    expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+ }
 
 test.describe('Example Imagery in Tabs view', () => {
     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
