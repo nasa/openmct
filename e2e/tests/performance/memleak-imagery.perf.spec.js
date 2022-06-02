@@ -33,6 +33,7 @@ Best path forward: https://github.com/cowchimp/headless-devtools/blob/master/src
 */
 
 const { test, expect } = require('@playwright/test');
+const { isEqual, differenceWith, intersectionWith } = require('lodash');
 
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 
@@ -112,14 +113,16 @@ test.describe('Memory Performance tests', () => {
         // await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
         await client.send('HeapProfiler.collectGarbage');
 
-
         let performanceMetricsAfter = await client.send('Performance.getMetrics');
-        console.log('performanceMetricsAfter ' + performanceMetricsAfter);
+        console.log('typeOf performanceMetricsAfter ' + typeof performanceMetricsAfter);
         let JSHeapUsedSizeAfterObject = performanceMetricsAfter.metrics.filter(c => c.name === 'JSHeapUsedSize');
+        console.log('JSHeapUsedSizeAfterObject ' + JSON.stringify(JSHeapUsedSizeAfterObject));
         console.log(JSHeapUsedSizeAfterObject[0].value);
         console.log('performanceMetricsAfter.metrics.JSHeapUsedSize ' + performanceMetricsAfter.metrics.JSHeapUsedSize);
 
 
+        let myDifferences = intersectionWith(performanceMetricsBefore, performanceMetricsAfter, isEqual);
+        console.log(myDifferences);
         //assert.ok(performanceMetricsAfter.JSHeapUsedSize < performanceMetricsBefore.JSHeapUsedSize * 1.1);
 
 
