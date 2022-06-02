@@ -22,7 +22,7 @@
 
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
-import { PENDING, CONNECTED, DISCONNECTED, MAINTENANCE } from "./CouchStatusIndicator";
+import { PENDING, CONNECTED, DISCONNECTED } from "./CouchStatusIndicator";
 import { NOTEBOOK_TYPE } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
@@ -159,20 +159,32 @@ class CouchObjectProvider {
             };
         }
 
+        let response = null;
         try {
-            const response = await fetch(this.url + '/' + subPath, fetchOptions);
+            response = await fetch(this.url + '/' + subPath, fetchOptions);
             this.indicator.setIndicatorToState(CONNECTED);
+
             if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
                 throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
-            } else if (response.status === CouchObjectProvider.HTTP_NOT_FOUND
-                || response.status === CouchObjectProvider.HTTP_SERVER_ERROR) {
-                this.indicator.setIndicatorToState(MAINTENANCE);
+            } else if (response.status === CouchObjectProvider.HTTP_BAD_REQUEST
+                || response.status === CouchObjectProvider.HTTP_UNAUTHORIZED
+                || response.status === CouchObjectProvider.HTTP_NOT_FOUND
+                || response.status === CouchObjectProvider.HTTP_PRECONDITION_FAILED) {
+                const error = await response.json();
+                throw new Error(`CouchDB Error: "${error.error}: ${error.reason}"`);
+            } else if (response.status === CouchObjectProvider.HTTP_SERVER_ERROR) {
+                throw new Error('CouchDB Error: "500 Internal Server Error"');
             }
 
             return await response.json();
-        } catch (err) {
+        } catch (error) {
+            // Network error, CouchDB unreachable.
+            if (response === null) {
                 this.indicator.setIndicatorToState(DISCONNECTED);
             }
+
+            console.error(error.message);
+        }
     }
 
     /**
@@ -614,8 +626,11 @@ class CouchObjectProvider {
     }
 }
 
-CouchObjectProvider.HTTP_CONFLICT = 409;
+CouchObjectProvider.HTTP_BAD_REQUEST = 400;
+CouchObjectProvider.HTTP_UNAUTHORIZED = 401;
 CouchObjectProvider.HTTP_NOT_FOUND = 404;
+CouchObjectProvider.HTTP_CONFLICT = 409;
+CouchObjectProvider.HTTP_PRECONDITION_FAILED = 412;
 CouchObjectProvider.HTTP_SERVER_ERROR = 500;
 
 export default CouchObjectProvider;
