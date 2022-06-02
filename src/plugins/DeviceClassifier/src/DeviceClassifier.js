@@ -52,7 +52,6 @@ export default (agent, document) => {
     if (agent.isMobile()) {
         const mediaQuery = window.matchMedia("(orientation: landscape)");
         function eventHandler(event) {
-            console.log("changed");
             if (event.matches) {
                 body.classList.remove("portrait");
                 body.classList.add("landscape");

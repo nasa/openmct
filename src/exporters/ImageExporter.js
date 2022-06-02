@@ -33,7 +33,7 @@ function replaceDotsWithUnderscores(filename) {
 
 import {saveAs} from 'saveAs';
 import html2canvas from 'html2canvas';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 class ImageExporter {
     constructor(openmct) {
@@ -51,7 +51,7 @@ class ImageExporter {
         const overlays = this.openmct.overlays;
         const dialog = overlays.dialog({
             iconClass: 'info',
-            message: 'Caputuring an image',
+            message: 'Capturing image, please wait...',
             buttons: [
                 {
                     label: 'Cancel',

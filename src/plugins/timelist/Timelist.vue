@@ -35,14 +35,14 @@
 </template>
 
 <script>
-import {getValidatedPlan} from "../plan/util";
+import {getValidatedData} from "../plan/util";
 import ListView from '../../ui/components/List/ListView.vue';
 import {getPreciseDuration} from "../../utils/duration";
 import ticker from 'utils/clock/Ticker';
 import {SORT_ORDER_OPTIONS} from "./constants";
 
 import moment from "moment";
-import uuid from "uuid";
+import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
 const ROW_HEIGHT = 30;
@@ -164,7 +164,7 @@ export default {
             }
         },
         getPlanData(domainObject) {
-            this.planData = getValidatedPlan(domainObject);
+            this.planData = getValidatedData(domainObject);
         },
         setViewBounds() {
             const pastEventsIndex = this.domainObject.configuration.pastEventsIndex;
