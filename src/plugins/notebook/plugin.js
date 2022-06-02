@@ -109,7 +109,6 @@ function NotebookPlugin(name = 'Notebook') {
             return;
         }
 
-        const type = NOTEBOOK_TYPE;
         const icon = 'icon-notebook';
         const description = 'Create and save timestamped notes with embedded object snapshots.';
         const snapshotContainer = getSnapshotContainer(openmct);
@@ -117,7 +116,7 @@ function NotebookPlugin(name = 'Notebook') {
         addLegacyNotebookGetInterceptor(openmct);
 
         const notebookType = new NotebookType(name, description, icon);
-        openmct.types.addType(type, notebookType);
+        openmct.types.addType(NOTEBOOK_TYPE, notebookType);
 
         const notebookView = new NotebookViewProvider(openmct, name, NOTEBOOK_VIEW_TYPE, NOTEBOOK_TYPE, icon, snapshotContainer);
         openmct.objectViews.addProvider(notebookView);
@@ -133,14 +132,13 @@ function RestrictedNotebookPlugin(name = 'Notebook Shift Log') {
         if (openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]) {
             return;
         }
-
-        const type = RESTRICTED_NOTEBOOK_TYPE;
+;
         const icon = 'icon-notebook-shift-log';
         const description = 'Create and save timestamped notes with embedded object snapshots with the ability to commit and lock pages.';
         const snapshotContainer = getSnapshotContainer(openmct);
 
         const notebookType = new NotebookType(name, description, icon);
-        openmct.types.addType(type, notebookType);
+        openmct.types.addType(RESTRICTED_NOTEBOOK_TYPE, notebookType);
 
         const notebookView = new NotebookViewProvider(openmct, name, RESTRICTED_NOTEBOOK_VIEW_TYPE, RESTRICTED_NOTEBOOK_TYPE, icon, snapshotContainer);
         openmct.objectViews.addProvider(notebookView);
