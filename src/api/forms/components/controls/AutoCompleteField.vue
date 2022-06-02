@@ -202,7 +202,6 @@ export default {
         },
         keyDown($event) {
             this.showFilteredOptions = true;
-            // this.showOptions();
             if (this.filteredOptions) {
                 let keyCode = $event.keyCode;
                 switch (keyCode) {
