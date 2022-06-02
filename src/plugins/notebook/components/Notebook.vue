@@ -249,6 +249,7 @@ export default {
         },
         defaultSort() {
             mutateObject(this.openmct, this.domainObject, 'configuration.defaultSort', this.defaultSort);
+            this.filterAndSortEntries();
         },
         showTime() {
             mutateObject(this.openmct, this.domainObject, 'configuration.showTime', this.showTime);
@@ -757,6 +758,7 @@ export default {
 
             this.selectedPageId = pageId;
             this.syncUrlWithPageAndSection();
+            this.filterAndSortEntries();
         },
         selectSection(sectionId) {
             if (!sectionId) {
@@ -769,6 +771,7 @@ export default {
             this.selectPage(pageId);
 
             this.syncUrlWithPageAndSection();
+            this.filterAndSortEntries();
         },
         activeTransaction() {
             return this.openmct.objects.getActiveTransaction();
