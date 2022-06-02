@@ -24,10 +24,19 @@
 export default {
     inject: ['openmct'],
 
+    beforeDestroy() {
+        this.openmct.indicators.off('addIndicator', this.addIndicator);
+    },
     mounted() {
-        this.openmct.indicators.getIndicatorObjectsByPriority().forEach((indicator) => {
+        this.openmct.indicators.getIndicatorObjectsByPriority().forEach(this.addIndicator);
+
+        this.openmct.indicators.on('addIndicator', this.addIndicator);
+    },
+    methods: {
+        addIndicator(indicator) {
             this.$el.appendChild(indicator.element);
-        });
+        }
     }
+
 };
 </script>
