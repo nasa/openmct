@@ -216,10 +216,10 @@ export default {
         },
         getPlotObject() {
             if (this.object.configuration && this.object.configuration.series) {
-                //If the object can be persisted, allow initialization of the config from it's persisted config
+                //If the object has a configuration, allow initialization of the config from it's persisted config
                 return this.object;
             } else {
-                // If the  object cannot be persisted, initialize the series config with the persisted config from the stacked plot
+                // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
                 const configId = this.openmct.objects.makeKeyString(this.object.identifier);
                 let config = configStore.get(configId);
                 if (!config) {

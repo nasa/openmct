@@ -26,7 +26,7 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend
-        v-if="!isStackedPlotObject"
+        v-if="!isNestedWithinAStackedPlot"
         :cursor-locked="!!lockHighlightPoint"
         :series="seriesModels"
         :highlights="highlights"
@@ -287,7 +287,7 @@ export default {
         };
     },
     computed: {
-        isStackedPlotObject() {
+        isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
 
             return !isNavigatedObject && this.path.find((pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked');
@@ -296,10 +296,10 @@ export default {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         plotLegendPositionClass() {
-            return !this.isStackedPlotObject ? `plot-legend-${this.config.legend.get('position')}` : '';
+            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
         },
         plotLegendExpandedStateClass() {
-            if (this.isStackedPlotObject) {
+            if (this.isNestedWithinAStackedPlot) {
                 return '';
             }
 
@@ -338,7 +338,7 @@ export default {
         this.config = this.getConfig();
         this.legend = this.config.legend;
 
-        if (this.isStackedPlotObject) {
+        if (this.isNestedWithinAStackedPlot) {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             this.$emit('configLoaded', configId);
         }
