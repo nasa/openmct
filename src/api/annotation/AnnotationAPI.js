@@ -281,7 +281,7 @@ export default class AnnotationAPI extends EventEmitter {
         return tagsAddedToResults;
     }
 
-    async addTargetModelsToResults(results) {
+    async #addTargetModelsToResults(results) {
         const modelAddedToResults = await Promise.all(results.map(async result => {
             const targetModels = await Promise.all(Object.keys(result.targets).map(async (targetID) => {
                 const targetModel = await this.openmct.objects.get(targetID);
@@ -308,7 +308,7 @@ export default class AnnotationAPI extends EventEmitter {
         const matchingTagKeys = this.getMatchingTags(query);
         const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
         const appliedTagSearchResults = this.addTagMetaInformationToResults(searchResults, matchingTagKeys);
-        const appliedTargetsModels = await this.addTargetModelsToResults(appliedTagSearchResults);
+        const appliedTargetsModels = await this.#addTargetModelsToResults(appliedTagSearchResults);
 
         return appliedTargetsModels;
     }
