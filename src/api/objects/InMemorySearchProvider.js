@@ -92,7 +92,6 @@ class InMemorySearchProvider {
         this.indexAnnotations();
 
         if (typeof SharedWorker !== 'undefined') {
-        // if (false) {
             this.worker = this.startSharedWorker();
         } else {
             // we must be on iOS
