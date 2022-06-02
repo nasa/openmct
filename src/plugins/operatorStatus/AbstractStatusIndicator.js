@@ -26,6 +26,10 @@ export default class AbstractStatusIndicator {
     #indicator;
     #configuration;
 
+    /**
+     * @param {*} openmct the Open MCT API (proper jsdoc to come)
+     * @param {import('@/api/user/UserAPI').UserAPIConfiguration} configuration Per-deployment status styling. See the type definition in UserAPI
+     */
     constructor(openmct, configuration) {
         this.openmct = openmct;
         this.#configuration = configuration;

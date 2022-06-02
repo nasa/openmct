@@ -22,6 +22,10 @@
 import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator';
 import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
 
+/**
+ * @param {import('@/api/user/UserAPI').UserAPIConfiguration} configuration
+ * @returns {function} The plugin install function
+ */
 export default function operatorStatusPlugin(configuration) {
     return function install(openmct) {
 

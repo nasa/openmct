@@ -278,10 +278,10 @@ export default class StatusAPI extends EventEmitter {
 }
 
 /**
- * @typedef {import('./UserAPI').UserProvider} UserProvider
+ * @typedef {import('./UserProvider')} UserProvider
  */
 /**
- * @typedef {import('./UserAPI').StatusUserProvider} StatusUserProvider
+ * @typedef {import('./StatusUserProvider')} StatusUserProvider
  */
 /**
  * The PollQuestion type
