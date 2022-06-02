@@ -5,9 +5,9 @@ define([
     './TestDataManager',
     './WidgetDnD',
     './eventHelpers',
+    '../../../utils/template/templateHelpers',
     'objectUtils',
     'lodash',
-    'zepto',
     '@braintree/sanitize-url'
 ], function (
     widgetTemplate,
@@ -16,9 +16,9 @@ define([
     TestDataManager,
     WidgetDnD,
     eventHelpers,
+    templateHelpers,
     objectUtils,
     _,
-    $,
     urlSanitizeLib
 ) {
 
@@ -54,20 +54,22 @@ define([
 
         this.activeId = 'default';
         this.rulesById = {};
-        this.domElement = $(widgetTemplate);
-        this.toggleRulesControl = $('.t-view-control-rules', this.domElement);
-        this.toggleTestDataControl = $('.t-view-control-test-data', this.domElement);
-        this.widgetButton = this.domElement.children('#widget');
+        this.domElement = templateHelpers.convertTemplateToHTML(widgetTemplate)[0];
+        this.toggleRulesControl = this.domElement.querySelector('.t-view-control-rules');
+        this.toggleTestDataControl = this.domElement.querySelector('.t-view-control-test-data');
+
+        this.widgetButton = this.domElement.querySelector(':scope > #widget');
+
         this.editing = false;
         this.container = '';
-        this.editListenerUnsubscribe = $.noop;
+        this.editListenerUnsubscribe = () => {};
 
-        this.outerWrapper = $('.widget-edit-holder', this.domElement);
-        this.ruleArea = $('#ruleArea', this.domElement);
-        this.configAreaRules = $('.widget-rules-wrapper', this.domElement);
+        this.outerWrapper = this.domElement.querySelector('.widget-edit-holder');
+        this.ruleArea = this.domElement.querySelector('#ruleArea');
+        this.configAreaRules = this.domElement.querySelector('.widget-rules-wrapper');
 
-        this.testDataArea = $('.widget-test-data', this.domElement);
-        this.addRuleButton = $('#addRule', this.domElement);
+        this.testDataArea = this.domElement.querySelector('.widget-test-data');
+        this.addRuleButton = this.domElement.querySelector('#addRule');
 
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.testDataManager = new TestDataManager(this.domainObject, this.conditionManager, this.openmct);
@@ -87,8 +89,17 @@ define([
          * @private
          */
         function toggleTestData() {
-            self.outerWrapper.toggleClass('expanded-widget-test-data');
-            self.toggleTestDataControl.toggleClass('c-disclosure-triangle--expanded');
+            if (self.outerWrapper.classList.contains('expanded-widget-test-data')) {
+                self.outerWrapper.classList.remove('expanded-widget-test-data');
+            } else {
+                self.outerWrapper.classList.add('expanded-widget-test-data');
+            }
+
+            if (self.toggleTestDataControl.classList.contains('c-disclosure-triangle--expanded')) {
+                self.toggleTestDataControl.classList.remove('c-disclosure-triangle--expanded');
+            } else {
+                self.toggleTestDataControl.classList.add('c-disclosure-triangle--expanded');
+            }
         }
 
         this.listenTo(this.toggleTestDataControl, 'click', toggleTestData);
@@ -98,8 +109,8 @@ define([
          * @private
          */
         function toggleRules() {
-            self.outerWrapper.toggleClass('expanded-widget-rules');
-            self.toggleRulesControl.toggleClass('c-disclosure-triangle--expanded');
+            templateHelpers.toggleClass(self.outerWrapper, 'expanded-widget-rules');
+            templateHelpers.toggleClass(self.toggleRulesControl, 'c-disclosure-triangle--expanded');
         }
 
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
@@ -113,15 +124,15 @@ define([
      */
     SummaryWidget.prototype.addHyperlink = function (url, openNewTab) {
         if (url) {
-            this.widgetButton.attr('href', urlSanitizeLib.sanitizeUrl(url));
+            this.widgetButton.href = urlSanitizeLib.sanitizeUrl(url);
         } else {
-            this.widgetButton.removeAttr('href');
+            this.widgetButton.removeAttribute('href');
         }
 
         if (openNewTab === 'newTab') {
-            this.widgetButton.attr('target', '_blank');
+            this.widgetButton.target = '_blank';
         } else {
-            this.widgetButton.removeAttr('target');
+            this.widgetButton.removeAttribute('target');
         }
     };
 
@@ -149,8 +160,8 @@ define([
     SummaryWidget.prototype.show = function (container) {
         const self = this;
         this.container = container;
-        $(container).append(this.domElement);
-        $('.widget-test-data', this.domElement).append(this.testDataManager.getDOM());
+        this.container.append(this.domElement);
+        this.domElement.querySelector('.widget-test-data').append(this.testDataManager.getDOM());
         this.widgetDnD = new WidgetDnD(this.domElement, this.domainObject.configuration.ruleOrder, this.rulesById);
         this.initRule('default', 'Default');
         this.domainObject.configuration.ruleOrder.forEach(function (ruleId) {
@@ -190,7 +201,7 @@ define([
         const self = this;
         const ruleOrder = self.domainObject.configuration.ruleOrder;
         const rules = self.rulesById;
-        self.ruleArea.html('');
+        self.ruleArea.innerHTML = '';
         Object.values(ruleOrder).forEach(function (ruleId) {
             self.ruleArea.append(rules[ruleId].getDOM());
         });
@@ -205,9 +216,9 @@ define([
 
         rules.forEach(function (ruleKey, index, array) {
             if (array.length > 2 && index > 0) {
-                $('.t-grippy', rulesById[ruleKey].domElement).show();
+                rulesById[ruleKey].domElement.querySelector('.t-grippy').style.display = '';
             } else {
-                $('.t-grippy', rulesById[ruleKey].domElement).hide();
+                rulesById[ruleKey].domElement.querySelector('.t-grippy').style.display = 'none';
             }
         });
     };
@@ -218,10 +229,10 @@ define([
     SummaryWidget.prototype.updateWidget = function () {
         const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
         const activeRule = this.rulesById[this.activeId];
-        this.applyStyle($('#widget', this.domElement), activeRule.getProperty('style'));
-        $('#widget', this.domElement).prop('title', activeRule.getProperty('message'));
-        $('#widgetLabel', this.domElement).html(activeRule.getProperty('label'));
-        $('#widgetIcon', this.domElement).removeClass().addClass(WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon'));
+        this.applyStyle(this.domElement.querySelector('#widget'), activeRule.getProperty('style'));
+        this.domElement.querySelector('#widget').title = activeRule.getProperty('message');
+        this.domElement.querySelector('#widgetLabel').innerHTML = activeRule.getProperty('label');
+        this.domElement.querySelector('#widgetIcon').classList = WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon');
     };
 
     /**
@@ -356,7 +367,7 @@ define([
      */
     SummaryWidget.prototype.applyStyle = function (elem, style) {
         Object.keys(style).forEach(function (propId) {
-            elem.css(propId, style[propId]);
+            elem.style[propId] = style[propId];
         });
     };
 
