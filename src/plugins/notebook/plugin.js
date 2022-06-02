@@ -132,7 +132,7 @@ function RestrictedNotebookPlugin(name = 'Notebook Shift Log') {
         if (openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]) {
             return;
         }
-;
+
         const icon = 'icon-notebook-shift-log';
         const description = 'Create and save timestamped notes with embedded object snapshots with the ability to commit and lock pages.';
         const snapshotContainer = getSnapshotContainer(openmct);

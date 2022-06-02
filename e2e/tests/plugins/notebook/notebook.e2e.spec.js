@@ -25,7 +25,6 @@ This test suite is dedicated to tests which verify the basic operations surround
 */
 
 const { test } = require('../../../fixtures');
-const { expect } = require('@playwright/test');
 
 test.describe('Notebook CRUD Operations', () => {
     test.fixme('Can create a Notebook Object', async ({ page }) => {
