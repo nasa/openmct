@@ -144,7 +144,7 @@ export default {
             });
         },
         removeFromComposition(telemetryObject) {
-            this.openmct.composition.remove(telemetryObject);
+            this.composition.remove(telemetryObject);
         },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
