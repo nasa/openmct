@@ -71,6 +71,10 @@ export default {
             }
         },
         isDatumValid(datum) {
+            if (!datum) {
+                return false;
+            }
+
             // const [lastHistoryItem] = this.imageHistory.slice(-1);
             const lastHistoryItem = this.imageHistory[this.imageHistory.length - 1];
             const datumURL = this.formatImageUrl(datum);
