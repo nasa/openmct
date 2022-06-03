@@ -59,7 +59,7 @@ define([
         EditorAPI: EditorAPI,
         FaultManagementAPI: FaultManagementAPI,
         FormsAPI: FormsAPI,
-        IndicatorAPI: IndicatorAPI,
+        IndicatorAPI: IndicatorAPI.default,
         MenuAPI: MenuAPI.default,
         NotificationAPI: NotificationAPI.default,
         ObjectAPI: ObjectAPI,
