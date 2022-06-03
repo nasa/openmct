@@ -119,7 +119,7 @@ export default {
             return classname.trim();
         },
         name() {
-            return `${this.fault?.id?.name}/${this.fault?.id?.namespace}`;
+            return `${this.fault?.name}/${this.fault?.namespace}`;
         },
         severity() {
             return this.fault?.severity?.toLowerCase();
