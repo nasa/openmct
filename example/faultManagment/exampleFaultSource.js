@@ -22,18 +22,16 @@
 
 export default function () {
     return function install(openmct) {
-        const getFaultModel = openmct.faults.getFaultModel;
-
         openmct.install(openmct.plugins.FaultManagement());
 
         openmct.faults.addProvider({
             request(domainObject, options) {
-                const faults = localStorage.getItem('faults') || '{}';
+                const faults = JSON.parse(localStorage.getItem('faults'));
 
-                return Promise.resolve(JSON.parse(faults).alarms.map(getFaultModel));
+                return Promise.resolve(faults.alarms);
             },
             subscribe(domainObject, callback) {
-                const faultsData = JSON.parse(localStorage.getItem('faults') || '{}').alarms.map(getFaultModel);
+                const faultsData = JSON.parse(localStorage.getItem('faults')).alarms;
 
                 function getRandomIndex(start, end) {
                     return Math.floor(start + (Math.random() * (end - start + 1)));
@@ -55,10 +53,14 @@ export default function () {
                 };
             },
             supportsRequest(domainObject) {
-                return domainObject.type === 'faultManagement';
+                const faults = localStorage.getItem('faults');
+
+                return faults && domainObject.type === 'faultManagement';
             },
             supportsSubscribe(domainObject) {
-                return domainObject.type === 'faultManagement';
+                const faults = localStorage.getItem('faults');
+
+                return faults && domainObject.type === 'faultManagement';
             },
             acknowledgeFault(fault, { comment = '' }) {
                 console.log('acknowledgeFault', fault);
