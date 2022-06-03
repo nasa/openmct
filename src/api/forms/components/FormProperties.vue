@@ -44,18 +44,14 @@
             >
                 {{ section.name }}
             </h2>
-            <div
+            <FormRow
                 v-for="(row, index) in section.rows"
                 :key="row.id"
-                class="u-contents"
-            >
-                <FormRow
-                    :css-class="section.cssClass"
-                    :first="index < 1"
-                    :row="row"
-                    @onChange="onChange"
-                />
-            </div>
+                :css-class="row.cssClass"
+                :first="index < 1"
+                :row="row"
+                @onChange="onChange"
+            />
         </div>
     </form>
 

@@ -12,6 +12,7 @@
         class="c-tree-and-search__search"
     >
         <search
+            v-show="isSelectorTree"
             ref="shell-search"
             class="c-search"
             :value="searchValue"

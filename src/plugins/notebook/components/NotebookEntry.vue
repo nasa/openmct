@@ -22,7 +22,7 @@
 
 <template>
 <div
-    class="c-notebook__entry c-ne has-local-controls"
+    class="c-notebook__entry c-ne has-local-controls has-tag-applier"
     :class="{ 'locked': isLocked }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
@@ -68,6 +68,7 @@
                 >
                 </div>
             </template>
+
             <template v-else>
                 <div
                     :id="entry.id"
@@ -78,6 +79,15 @@
                 >
                 </div>
             </template>
+
+            <TagEditor
+                :domain-object="domainObject"
+                :annotation-query="annotationQuery"
+                :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
+                :annotation-search-type="openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS"
+                :target-specific-details="{entryId: entry.id}"
+            />
+
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed
                     v-for="embed in entry.embeds"
@@ -127,6 +137,7 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
+import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
@@ -136,7 +147,8 @@ import Moment from 'moment';
 export default {
     components: {
         NotebookEmbed,
-        TextHighlight
+        TextHighlight,
+        TagEditor
     },
     inject: ['openmct', 'snapshotContainer'],
     props: {
@@ -186,6 +198,14 @@ export default {
     computed: {
         createdOnDate() {
             return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
+        },
+        annotationQuery() {
+            const targetKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return {
+                targetKeyString,
+                entryId: this.entry.id
+            };
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
