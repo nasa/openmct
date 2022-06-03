@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import { v4 as uuid } from 'uuid';
-import availableTags from 'availableTags';
 import EventEmitter from 'EventEmitter';
 
 /**
@@ -51,6 +50,7 @@ export default class AnnotationAPI extends EventEmitter {
     constructor(openmct) {
         super();
         this.openmct = openmct;
+        this.availableTags = {};
 
         this.ANNOTATION_TYPES = ANNOTATION_TYPES;
 
@@ -132,15 +132,23 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
-    getAvailableTags() {
-        const rearrangedToArray = Object.keys(availableTags.tags).map(tagKey => {
-            return {
-                id: tagKey,
-                ...availableTags.tags[tagKey]
-            };
-        });
+    defineTag(tagKey, tagsDefinition) {
+        this.availableTags[tagKey] = tagsDefinition;
+    }
 
-        return rearrangedToArray;
+    getAvailableTags() {
+        if (this.availableTags) {
+            const rearrangedToArray = Object.keys(this.availableTags).map(tagKey => {
+                return {
+                    id: tagKey,
+                    ...this.availableTags[tagKey]
+                };
+            });
+
+            return rearrangedToArray;
+        } else {
+            return [];
+        }
     }
 
     async getAnnotation(query, searchType) {
@@ -198,10 +206,9 @@ export default class AnnotationAPI extends EventEmitter {
             return [];
         }
 
-        const allTags = availableTags.tags;
-        const matchingTags = Object.keys(allTags).filter(tagKey => {
-            if (allTags[tagKey] && allTags[tagKey].label) {
-                return allTags[tagKey].label.toLowerCase().includes(query.toLowerCase());
+        const matchingTags = Object.keys(this.availableTags).filter(tagKey => {
+            if (this.availableTags[tagKey] && this.availableTags[tagKey].label) {
+                return this.availableTags[tagKey].label.toLowerCase().includes(query.toLowerCase());
             }
 
             return false;
@@ -213,7 +220,7 @@ export default class AnnotationAPI extends EventEmitter {
     #addTagMetaInformationToResults(results, matchingTagKeys) {
         const tagsAddedToResults = results.map(result => {
             const fullTagModels = result.tags.map(tagKey => {
-                const tagModel = availableTags.tags[tagKey];
+                const tagModel = this.availableTags[tagKey];
                 tagModel.tagID = tagKey;
 
                 return tagModel;
