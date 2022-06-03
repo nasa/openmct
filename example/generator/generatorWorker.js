@@ -115,6 +115,7 @@
         var dataRateInHz = request.dataRateInHz;
         var phase = request.phase;
         var randomness = request.randomness;
+        var loadDelay = request.loadDelay;
 
         var step = 1000 / dataRateInHz;
         var nextStep = start - (start % step) + step;
@@ -131,7 +132,7 @@
             });
         }
 
-        self.postMessage({
+        setTimeout(() => {self.postMessage({
             id: message.id,
             data: request.spectra ? {
                 wavelength: data.map((item) => {
@@ -141,7 +142,7 @@
                     return item.cos;
                 })
             } : data
-        });
+        })}, loadDelay);
     }
 
     function cos(timestamp, period, amplitude, offset, phase, randomness) {
