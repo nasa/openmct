@@ -19,11 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import Vue from 'vue';
 import CouchPlugin from './plugin.js';
 import {
     createOpenMct,
     resetApplicationState, spyOnBuiltins
 } from 'utils/testing';
+import { CONNECTED, DISCONNECTED } from './CouchStatusIndicator';
 
 describe('the plugin', () => {
     let openmct;
@@ -277,6 +279,86 @@ describe('the plugin', () => {
 
             expect(requestPayload).toBeDefined();
             expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
+        });
+    });
+});
+
+describe('the view', () => {
+    let openmct;
+    let options;
+    let appHolder;
+    let testPath = 'http://localhost:9990/openmct';
+    let provider;
+    let mockDomainObject;
+    beforeEach((done) => {
+        openmct = createOpenMct();
+        spyOnBuiltins(['fetch'], window);
+        options = {
+            url: testPath,
+            filter: {}
+        };
+        mockDomainObject = {
+            identifier: {
+                namespace: '',
+                key: 'some-value'
+            },
+            type: 'notebook',
+            modified: 0
+        };
+        openmct.install(new CouchPlugin(options));
+        appHolder = document.createElement('div');
+        document.body.appendChild(appHolder);
+        openmct.on('start', done);
+        openmct.start(appHolder);
+        provider = openmct.objects.getProvider(mockDomainObject.identifier);
+        spyOn(provider, 'onSharedWorkerMessage').and.callThrough();
+    });
+
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
+
+    describe('updates CouchDB status indicator', () => {
+        function assertCouchIndicatorStatus(status) {
+            const indicator = appHolder.querySelector('.c-indicator--simple');
+            expect(indicator).not.toBeNull();
+            expect(indicator).toHaveClass(status.statusClass);
+            expect(indicator.textContent).toMatch(new RegExp(status.text, 'i'));
+            expect(indicator.title).toMatch(new RegExp(status.title, 'i'));
+        }
+
+        let mockPromise;
+
+        it("to 'connected' on successful request", async () => {
+            mockPromise = Promise.resolve({
+                status: 200,
+                json: () => {
+                    return {
+                        ok: true,
+                        _id: 'some-value',
+                        id: 'some-value',
+                        _rev: 1,
+                        model: {}
+                    };
+                }
+            });
+            fetch.and.returnValue(mockPromise);
+            await openmct.objects.get({
+                namespace: '',
+                key: 'object-1'
+            });
+            await Vue.nextTick();
+            assertCouchIndicatorStatus(CONNECTED);
+        });
+
+        it("to 'disconnected' on failed request", async () => {
+            fetch.and.throwError(new TypeError('ERR_CONNECTION_REFUSED'));
+            await openmct.objects.get({
+                namespace: '',
+                key: 'object-1'
+            });
+            await Vue.nextTick();
+            assertCouchIndicatorStatus(DISCONNECTED);
         });
     });
 });
