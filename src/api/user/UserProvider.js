@@ -19,32 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
-import ExampleUserProvider from './ExampleUserProvider';
-
-describe("The Example User Plugin", () => {
-    let openmct;
-
-    beforeEach(() => {
-        openmct = createOpenMct();
-    });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
-    });
-
-    it('is not installed by default', () => {
-        expect(openmct.user.hasProvider()).toBeFalse();
-    });
-
-    it('can be installed', () => {
-        openmct.user.on('providerAdded', (provider) => {
-            expect(provider).toBeInstanceOf(ExampleUserProvider);
-        });
-        openmct.install(openmct.plugins.example.ExampleUser());
-    });
-});
+export default class UserProvider {
+    /**
+     * @returns {Promise<User>} A promise that resolves with the currently logged in user
+     */
+    getCurrentUser() {}
+    /**
+     * @returns {Boolean} true if a user is currently logged in, otherwise false
+     */
+    isLoggedIn() {}
+    /**
+    * @param {String} role
+    * @returns {Promise<Boolean>} true if the current user has the given role
+    */
+    hasRole(role) {}
+}
