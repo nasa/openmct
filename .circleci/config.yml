@@ -31,7 +31,7 @@ commands:
         type: string
     steps:
       - when:
-          condition: 
+          condition:
             equal: [false, << pipeline.parameters.BUST_CACHE >> ]
           steps:
             - restore_cache:
@@ -41,7 +41,7 @@ commands:
     parameters:
       node-version:
         type: string
-    steps:    
+    steps:
       - save_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
@@ -61,7 +61,7 @@ commands:
   upload_code_covio:
     description: "Command to upload code coverage reports to codecov.io"
     steps:
-        - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
+        - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov
 orbs:
   node: circleci/node@4.9.0
   browser-tools: circleci/browser-tools@1.3.0
@@ -101,7 +101,7 @@ jobs:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
-                version: "91.7.1esr" #https://archive.mozilla.org/pub/firefox/releases/          
+                version: "91.7.1esr" #https://archive.mozilla.org/pub/firefox/releases/
       - when:
           condition:
             equal: [ "FirefoxHeadless", <<parameters.browser>> ]
@@ -158,7 +158,7 @@ workflows:
       - lint:
           name: node16-lint
           node-version: lts/gallium
-      - unit-test: 
+      - unit-test:
           name: node14-chrome
           node-version: lts/fermium
           browser: ChromeHeadless
