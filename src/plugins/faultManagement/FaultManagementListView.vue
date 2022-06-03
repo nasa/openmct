@@ -121,11 +121,11 @@ export default {
                 return true;
             }
 
-            if (fault?.triggerValue?.toString().toLowerCase().includes(this.searchTerm)) {
+            if (fault?.triggerValueInfo?.toString().toLowerCase().includes(this.searchTerm)) {
                 return true;
             }
 
-            if (fault?.currentValue?.toString().toLowerCase().includes(this.searchTerm)) {
+            if (fault?.currentValueInfo?.toString().toLowerCase().includes(this.searchTerm)) {
                 return true;
             }
 
@@ -138,9 +138,6 @@ export default {
             }
 
             return false;
-        },
-        getFaultId(fault) {
-            return `${fault.id.name}-${fault.id.namespace}`;
         },
         isSelected(fault) {
             return Boolean(this.selectedFaults[fault.id]);
@@ -187,7 +184,7 @@ export default {
             if (faults.length > 1) {
                 title = `Acknowledge ${faults.length} selected faults`;
             } else {
-                title = `Acknowledge fault: ${faults[0].id.name}`;
+                title = `Acknowledge fault: ${faults[0].name}`;
             }
 
             const formStructure = {
@@ -229,7 +226,7 @@ export default {
             if (shelved) {
                 let title = faults.length > 1
                     ? `Shelve ${faults.length} selected faults`
-                    : `Shelve fault: ${faults[0].id.name}`
+                    : `Shelve fault: ${faults[0].name}`
                 ;
 
                 const formStructure = {
