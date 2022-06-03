@@ -594,18 +594,17 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
 /**
  * @param {import('@playwright/test').Page} page
  */
- async function panZoomAndAssertImageProperties(page) {
+async function panZoomAndAssertImageProperties(page) {
     const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
     const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
     expect(expectedAltText).toEqual(imageryHintsText);
-    const backgroundImageSelector = '.c-imagery__main-image__background-image';
     const bgImageLocator = page.locator(backgroundImageSelector);
     const zoomedBoundingBox = await bgImageLocator.boundingBox();
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
-    
-   
+
+
     // Pan right
     await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
     await page.mouse.down();
@@ -646,8 +645,8 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
 
 /**
  * @param {import('@playwright/test').Page} page
- */
- async function mouseZoomIn(page) {
+*/
+async function mouseZoomIn(page) {
     const bgImageLocator = await page.locator(backgroundImageSelector);
     // Zoom in
     const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
@@ -658,12 +657,15 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
 
+    // center the mouse pointer
+    await page.mouse.move(imageCenterX, imageCenterY);
+
     // Wait for zoom animation to finish
     await bgImageLocator.hover();
     const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
     expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
     expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
- }
+}
 
 test.describe('Example Imagery in Tabs view', () => {
     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
