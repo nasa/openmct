@@ -124,7 +124,7 @@ define([
         if (_.isObject(datum)) {
             const objectDatum = datum[this.valueMetadata.source];
             if (Array.isArray(objectDatum)) {
-                return datum.map((item) => {
+                return objectDatum.map((item) => {
                     return this.formatter.parse(item);
                 });
             } else {

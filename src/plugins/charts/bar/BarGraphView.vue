@@ -67,7 +67,7 @@ export default {
         this.setTimeContext();
 
         this.loadComposition();
-        this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.refreshData);
+        this.unobserveAxes = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.refreshData);
         this.unobserveInterpolation = this.openmct.objects.observe(this.domainObject, 'configuration.useInterpolation', this.refreshData);
         this.unobserveBar = this.openmct.objects.observe(this.domainObject, 'configuration.useBar', this.refreshData);
     },
@@ -82,8 +82,8 @@ export default {
 
         this.composition.off('add', this.addToComposition);
         this.composition.off('remove', this.removeTelemetryObject);
-        if (this.unobserve) {
-            this.unobserve();
+        if (this.unobserveAxes) {
+            this.unobserveAxes();
         }
 
         if (this.unobserveInterpolation) {
@@ -144,11 +144,7 @@ export default {
             });
         },
         removeFromComposition(telemetryObject) {
-            let composition = this.domainObject.composition.filter(id =>
-                !this.openmct.objects.areIdsEqual(id, telemetryObject.identifier)
-            );
-
-            this.openmct.objects.mutate(this.domainObject, 'composition', composition);
+            this.openmct.composition.remove(telemetryObject);
         },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
@@ -268,14 +264,6 @@ export default {
                 );
             }
 
-            // if (Object.keys(this.telemetryObjects).length <= 0) {
-            //     this.openmct.objects.mutate(
-            //         this.domainObject,
-            //         `configuration.axes`,
-            //         {}
-            //     );
-            // }
-
             this.removeSubscription(key);
 
             this.trace = this.trace.filter(t => t.key !== key);
@@ -297,25 +285,30 @@ export default {
 
             let xValues = [];
             let yValues = [];
-            const xAxisMetadata = axisMetadata.xAxisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
+            let xAxisMetadata = axisMetadata.xAxisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
             if (xAxisMetadata && xAxisMetadata.isArrayValue) {
                 //populate x and y values
                 let metadataKey = this.domainObject.configuration.axes.xKey;
                 if (data[metadataKey] !== undefined) {
-                    xValues = this.format(key, metadataKey, data);
+                    xValues = this.parse(key, metadataKey, data);
                 }
 
                 metadataKey = this.domainObject.configuration.axes.yKey;
                 if (data[metadataKey] !== undefined) {
-                    yValues = this.format(key, metadataKey, data);
+                    yValues = this.parse(key, metadataKey, data);
                 }
             } else {
                 //populate X and Y values for plotly
                 axisMetadata.xAxisMetadata.filter(metadataObj => !metadataObj.isArrayValue).forEach((metadata) => {
+                    if (!xAxisMetadata) {
+                        //Assign the first metadata to use for any formatting
+                        xAxisMetadata = metadata;
+                    }
+
                     xValues.push(metadata.name);
-                    if (data[metadata.key]) {
-                        const formattedValue = this.format(key, metadata.key, data);
-                        yValues.push(formattedValue);
+                    if (data[metadata.source]) {
+                        const parsedValue = this.parse(key, metadata.source, data);
+                        yValues.push(parsedValue);
                     } else {
                         yValues.push(null);
                     }
@@ -327,8 +320,7 @@ export default {
                 name: telemetryObject.name,
                 x: xValues,
                 y: yValues,
-                text: yValues.map(String),
-                xAxisMetadata: axisMetadata.xAxisMetadata,
+                xAxisMetadata: xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
                 type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
                 mode: 'lines',
@@ -348,7 +340,7 @@ export default {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             let metadataValue = metadata.value(timeSystemKey) || { key: timeSystemKey };
 
-            let currentTimestamp = this.parse(key, metadataValue.source || metadataValue.key, datum);
+            let currentTimestamp = this.parse(key, metadataValue.source, datum);
 
             return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
         },

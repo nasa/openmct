@@ -259,13 +259,13 @@ export default {
             const metadataValues = metadataRangeValues.filter(metadataObj => !metadataObj.isArrayValue);
             metadataArrayValues.forEach((metadataValue) => {
                 this.xKeyOptions.push({
-                    name: metadataValue.name || metadataValue.key,
-                    value: metadataValue.source || metadataValue.key,
+                    name: metadataValue.name || metadataValue.source,
+                    value: metadataValue.source,
                     isArrayValue: metadataValue.isArrayValue
                 });
                 this.yKeyOptions.push({
-                    name: metadataValue.name || metadataValue.key,
-                    value: metadataValue.source || metadataValue.key,
+                    name: metadataValue.name || metadataValue.source,
+                    value: metadataValue.source,
                     isArrayValue: metadataValue.isArrayValue
                 });
             });
@@ -277,7 +277,7 @@ export default {
                     metadataValues.reduce((previousValue, currentValue) => {
                         return {
                             name: `${previousValue.name}, ${currentValue.name}`,
-                            value: currentValue.source || currentValue.key,
+                            value: currentValue.source,
                             isArrayValue: currentValue.isArrayValue
                         };
                     })
