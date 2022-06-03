@@ -186,12 +186,6 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
-    async removeNotebookAnnotationTags(entryId, targetDomainObject) {
-        // just removes tags on the annotation as we can't really delete objects
-        const notebookAnnotationToRemove = await this.getNotebookAnnotation(entryId, targetDomainObject);
-        this.removeAnnotationTags(notebookAnnotationToRemove);
-    }
-
     removeAnnotationTags(existingAnnotation) {
         // just removes tags on the annotation as we can't really delete objects
         if (existingAnnotation && existingAnnotation.tags) {
@@ -199,7 +193,7 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
-    getMatchingTags(query) {
+    #getMatchingTags(query) {
         if (!query) {
             return [];
         }
@@ -216,7 +210,7 @@ export default class AnnotationAPI extends EventEmitter {
         return matchingTags;
     }
 
-    addTagMetaInformationToResults(results, matchingTagKeys) {
+    #addTagMetaInformationToResults(results, matchingTagKeys) {
         const tagsAddedToResults = results.map(result => {
             const fullTagModels = result.tags.map(tagKey => {
                 const tagModel = availableTags.tags[tagKey];
@@ -257,11 +251,16 @@ export default class AnnotationAPI extends EventEmitter {
         return modelAddedToResults;
     }
 
+    /**
+    * @method searchForTags
+    * @param {String} query A query to match against tags. E.g., "dr" will match the tags "drilling" and "driving"
+    * @param {Object} abortController An optional abort method to stop the query
+    * @returns {Promise} returns a model of matching tags with their target domain objects attached
+    */
     async searchForTags(query, abortController) {
-        // get matching tags first
-        const matchingTagKeys = this.getMatchingTags(query);
+        const matchingTagKeys = this.#getMatchingTags(query);
         const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
-        const appliedTagSearchResults = this.addTagMetaInformationToResults(searchResults, matchingTagKeys);
+        const appliedTagSearchResults = this.#addTagMetaInformationToResults(searchResults, matchingTagKeys);
         const appliedTargetsModels = await this.#addTargetModelsToResults(appliedTagSearchResults);
 
         return appliedTargetsModels;
