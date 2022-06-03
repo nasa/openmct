@@ -32,7 +32,7 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
-    '../../example/faultManagment/exampleFaultManagement',
+    '../../example/faultManagment/exampleFaultSource',
     './imagery/plugin',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
@@ -95,7 +95,7 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
-    ExampleFaultManagement,
+    ExampleFaultSource,
     ImageryPlugin,
     SummaryWidget,
     URLIndicatorPlugin,
@@ -152,7 +152,7 @@ define([
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
     plugins.example.ExampleImagery = ExampleImagery.default;
-    plugins.example.ExampleFaultManagement = ExampleFaultManagement.default;
+    plugins.example.ExampleFaultSource = ExampleFaultSource.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
     plugins.example.Generator = () => GeneratorPlugin;
 
