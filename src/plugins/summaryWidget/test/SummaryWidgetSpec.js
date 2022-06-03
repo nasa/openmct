@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
+define(['../src/SummaryWidget'], function (SummaryWidget) {
     xdescribe('The Summary Widget', function () {
         let summaryWidget;
         let mockDomainObject;
@@ -111,7 +111,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
         });
 
         it('builds rules and rule placeholders in view from configuration', function () {
-            expect($('.l-widget-rule', summaryWidget.ruleArea).get().length).toEqual(2);
+            expect(summaryWidget.ruleArea.querySelectorAll('.l-widget-rule').length).toEqual(2);
         });
 
         it('allows initializing a new rule with a particular identifier', function () {
@@ -130,7 +130,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             mockDomainObject.configuration.ruleOrder.forEach(function (ruleId) {
                 expect(mockDomainObject.configuration.ruleConfigById[ruleId]).toBeDefined();
             });
-            expect($('.l-widget-rule', summaryWidget.ruleArea).get().length).toEqual(6);
+            expect(summaryWidget.ruleArea.querySelectorAll('.l-widget-rule').length).toEqual(6);
         });
 
         it('allows duplicating a rule from source configuration', function () {
@@ -186,10 +186,10 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
         it('adds hyperlink to the widget button and sets newTab preference', function () {
             summaryWidget.addHyperlink('https://www.nasa.gov', 'newTab');
 
-            const widgetButton = $('#widget', mockContainer);
+            const widgetButton = mockContainer.querySelector('#widget');
 
-            expect(widgetButton.attr('href')).toEqual('https://www.nasa.gov');
-            expect(widgetButton.attr('target')).toEqual('_blank');
+            expect(widgetButton.href).toEqual('https://www.nasa.gov/');
+            expect(widgetButton.target).toEqual('_blank');
         });
     });
 });
