@@ -23,7 +23,7 @@ commands:
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
-      - run: npm install
+      - run: npm install --prefer-offline --no-audit --progress=false
   restore_cache_cmd:
     description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
     parameters:
@@ -31,7 +31,7 @@ commands:
         type: string
     steps:
       - when:
-          condition: 
+          condition:
             equal: [false, << pipeline.parameters.BUST_CACHE >> ]
           steps:
             - restore_cache:
@@ -41,7 +41,7 @@ commands:
     parameters:
       node-version:
         type: string
-    steps:    
+    steps:
       - save_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
@@ -61,7 +61,7 @@ commands:
   upload_code_covio:
     description: "Command to upload code coverage reports to codecov.io"
     steps:
-        - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
+        - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov
 orbs:
   node: circleci/node@4.9.0
   browser-tools: circleci/browser-tools@1.3.0
@@ -101,7 +101,7 @@ jobs:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
-                version: "91.7.1esr" #https://archive.mozilla.org/pub/firefox/releases/          
+                version: "91.7.1esr" #https://archive.mozilla.org/pub/firefox/releases/
       - when:
           condition:
             equal: [ "FirefoxHeadless", <<parameters.browser>> ]
@@ -128,32 +128,42 @@ jobs:
       suite:
         type: string
     executor: pw-focal-development
+    parallelism: 4
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npx playwright install
-      - run: npm run test:e2e:<<parameters.suite>>
+      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
           path: test-results
       - generate_and_store_version_and_filesystem_artifacts
+  perf-test:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: npm run test:perf
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - generate_and_store_version_and_filesystem_artifacts      
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
           name: node16-lint
           node-version: lts/gallium
-      - unit-test: 
+      - unit-test:
           name: node14-chrome
           node-version: lts/fermium
           browser: ChromeHeadless
           post-steps:
             - upload_code_covio
-      - unit-test:
-          name: node16-chrome
-          node-version: lts/gallium
-          browser: ChromeHeadless
       - unit-test:
           name: node18-chrome
           node-version: "18"
@@ -162,6 +172,8 @@ workflows:
           name: e2e-ci
           node-version: lts/gallium
           suite: ci
+      - perf-test:
+          node-version: lts/gallium
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:

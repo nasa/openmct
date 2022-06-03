@@ -1,0 +1,142 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+ $statusCountWidth: 30px;
+
+.c-status-poll-panel {
+    @include menuOuter();
+    display: flex;
+    flex-direction: column;
+    padding: $interiorMarginLg;
+    min-width: 350px;
+    max-width: 35%;
+
+    > * + * {
+        margin-top: $interiorMarginLg;
+    }
+
+    *:before {
+        font-size: 0.8em;
+        margin-right: $interiorMarginSm;
+    }
+
+    &__section {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+
+        > * + * {
+            margin-left: $interiorMarginLg;
+        }
+    }
+
+    &__top {
+        text-transform: uppercase;
+    }
+
+    &__user-role,
+    &__updated {
+        opacity: 50%;
+    }
+
+    &__updated {
+        flex: 1 1 auto;
+        text-align: right;
+    }
+
+    &__poll-question {
+        background: $colorBodyFg;
+        color: $colorBodyBg;
+        border-radius: $controlCr;
+        font-weight: bold;
+        padding: $interiorMarginSm $interiorMargin;
+
+        .c-status-poll-panel--admin & {
+            background: rgba($colorBodyFg, 0.1);
+            color: $colorBodyFg;
+        }
+    }
+
+    /****** Admin interface */
+    &__content {
+        $m: $interiorMargin;
+        display: grid;
+        grid-template-columns: min-content 1fr;
+        grid-column-gap: $m;
+        grid-row-gap: $m;
+
+        [class*='__label'] {
+            padding: 3px 0;
+        }
+
+        [class*='new-question'] {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            > * + * { margin-left: $interiorMargin; }
+
+            input {
+                flex: 1 1 auto;
+                height: $btnStdH;
+            }
+
+            button { flex: 0 0 auto; }
+        }
+    }
+}
+
+.c-status-poll-report {
+    display: flex;
+    flex-direction: row;
+    > * + * { margin-left: $interiorMargin; }
+
+    &__count {
+        background: rgba($colorBodyFg, 0.2);
+        border-radius: $controlCr;
+        display: flex;
+        flex-direction: row;
+        font-size: 1.25em;
+        align-items: center;
+        padding: $interiorMarginSm $interiorMarginLg;
+
+        &-type {
+            line-height: 1em;
+            opacity: 0.6;
+        }
+    }
+}
+
+.c-indicator {
+    &:before {
+        // Indicator icon
+        color: $colorKey;
+    }
+
+    &--operator-status {
+        cursor: pointer;
+        max-width: 150px;
+
+        @include hover() {
+            background: $colorIndicatorBgHov;
+        }
+    }
+}
