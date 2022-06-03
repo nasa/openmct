@@ -19,32 +19,32 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator';
+import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
-import ExampleUserProvider from './ExampleUserProvider';
+/**
+ * @param {import('@/api/user/UserAPI').UserAPIConfiguration} configuration
+ * @returns {function} The plugin install function
+ */
+export default function operatorStatusPlugin(configuration) {
+    return function install(openmct) {
 
-describe("The Example User Plugin", () => {
-    let openmct;
+        if (openmct.user.hasProvider()) {
+            openmct.user.status.canProvideStatusForCurrentUser().then(canProvideStatus => {
+                if (canProvideStatus) {
+                    const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
 
-    beforeEach(() => {
-        openmct = createOpenMct();
-    });
+                    operatorStatusIndicator.install();
+                }
+            });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
-    });
+            openmct.user.status.canSetPollQuestion().then(canSetPollQuestion => {
+                if (canSetPollQuestion) {
+                    const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
 
-    it('is not installed by default', () => {
-        expect(openmct.user.hasProvider()).toBeFalse();
-    });
-
-    it('can be installed', () => {
-        openmct.user.on('providerAdded', (provider) => {
-            expect(provider).toBeInstanceOf(ExampleUserProvider);
-        });
-        openmct.install(openmct.plugins.example.ExampleUser());
-    });
-});
+                    pollQuestionIndicator.install();
+                }
+            });
+        }
+    };
+}
