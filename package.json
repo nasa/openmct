@@ -25,7 +25,7 @@
     "eslint": "8.13.0",
     "eslint-plugin-compat": "4.0.2",
     "eslint-plugin-playwright": "0.9.0",
-    "eslint-plugin-vue": "8.5.0",
+    "eslint-plugin-vue": "9.1.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "6.12.0",
     "eventemitter3": "1.2.0",
     "express": "4.13.1",
