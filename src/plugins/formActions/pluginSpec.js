@@ -27,7 +27,7 @@ import {
 
 import { debounce } from 'lodash';
 
-fdescribe('EditPropertiesAction plugin', () => {
+describe('EditPropertiesAction plugin', () => {
     let editPropertiesAction;
     let openmct;
     let element;
