@@ -254,7 +254,12 @@ export default {
 
             let update = false;
             const series = this.plotSeries[0];
-            const metadataRangeValues = this.openmct.telemetry.getMetadata(series).valuesForHints(['range']);
+            const metadata = this.openmct.telemetry.getMetadata(series);
+            const metadataRangeValues = metadata.valuesForHints(['range']).map((metaDatum) => {
+                metaDatum.isArrayValue = metadata.isArrayValue(metaDatum);
+
+                return metaDatum;
+            });
             const metadataArrayValues = metadataRangeValues.filter(metadataObj => metadataObj.isArrayValue);
             const metadataValues = metadataRangeValues.filter(metadataObj => !metadataObj.isArrayValue);
             metadataArrayValues.forEach((metadataValue) => {

@@ -111,7 +111,7 @@ define([
             return hints.every(hasHint, metadata);
         }
 
-        const matchingMetadata = this.valueMetadatas.filter(hasHints).map(this.addArrayFlag.bind(this));
+        const matchingMetadata = this.valueMetadatas.filter(hasHints);
         let iteratees = hints.map(hint => {
             return (metadata) => {
                 return metadata.hints[hint];
@@ -119,12 +119,6 @@ define([
         });
 
         return _.sortBy(matchingMetadata, ...iteratees);
-    };
-
-    TelemetryMetadataManager.prototype.addArrayFlag = function (metadata) {
-        metadata.isArrayValue = this.isArrayValue(metadata) === true;
-
-        return metadata;
     };
 
     /**

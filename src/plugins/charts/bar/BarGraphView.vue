@@ -206,7 +206,12 @@ export default {
 
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
             //Exclude 'name' and 'time' based metadata specifically, from the x-Axis values by using range hints only
-            const xAxisMetadata = metadata.valuesForHints(['range']);
+            const xAxisMetadata = metadata.valuesForHints(['range'])
+                .map((metaDatum) => {
+                    metaDatum.isArrayValue = metadata.isArrayValue(metaDatum);
+
+                    return metaDatum;
+                });
 
             return {
                 xAxisMetadata,
