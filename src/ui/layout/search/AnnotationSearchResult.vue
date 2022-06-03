@@ -39,7 +39,10 @@
             {{ getResultName }}
         </div>
 
-        <ObjectPath ref="location" />
+        <ObjectPath
+            ref="location"
+            :read-only="true"
+        />
 
         <div class="c-gsearch-result__tags">
             <div

@@ -33,6 +33,7 @@
         <object-label
             :domain-object="pathObject.domainObject"
             :object-path="pathObject.objectPath"
+            :read-only="readOnly"
         />
     </li>
 </ul>
@@ -52,6 +53,13 @@ export default {
             required: false,
             default() {
                 return true;
+            }
+        },
+        readOnly: {
+            type: Boolean,
+            required: false,
+            default() {
+                return false;
             }
         }
     },

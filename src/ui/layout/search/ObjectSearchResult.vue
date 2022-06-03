@@ -44,6 +44,7 @@
 
         <ObjectPath
             ref="objectpath"
+            :read-only="true"
         />
     </div>
     <div class="c-gsearch-result__more-options-button">
