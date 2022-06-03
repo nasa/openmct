@@ -275,9 +275,9 @@
                         >
                             <tspan>{{ curVal }}</tspan>
                             <tspan
+                                v-if="typeMeterHorizontal && displayUnits"
                                 class="c-gauge__units"
                                 font-size="10"
-                                v-if="typeMeterHorizontal && displayUnits"
                             >{{ units }}</tspan>
                         </text>
                         <text
