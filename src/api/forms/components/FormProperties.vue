@@ -81,7 +81,7 @@
 
 <script>
 import FormRow from "@/api/forms/components/FormRow.vue";
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export default {
     components: {

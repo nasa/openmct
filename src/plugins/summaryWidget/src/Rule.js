@@ -4,18 +4,18 @@ define([
     './input/ColorPalette',
     './input/IconPalette',
     './eventHelpers',
+    '../../../utils/template/templateHelpers',
     'EventEmitter',
-    'lodash',
-    'zepto'
+    'lodash'
 ], function (
     ruleTemplate,
     Condition,
     ColorPalette,
     IconPalette,
     eventHelpers,
+    templateHelpers,
     EventEmitter,
-    _,
-    $
+    _
 ) {
     /**
      * An object representing a summary widget rule. Maintains a set of text
@@ -41,7 +41,7 @@ define([
         this.widgetDnD = widgetDnD;
         this.container = container;
 
-        this.domElement = $(ruleTemplate);
+        this.domElement = templateHelpers.convertTemplateToHTML(ruleTemplate)[0];
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change', 'conditionChange'];
         this.conditions = [];
@@ -50,31 +50,32 @@ define([
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
 
-        this.thumbnail = $('.t-widget-thumb', this.domElement);
-        this.thumbnailIcon = $('.js-sw__icon', this.domElement);
-        this.thumbnailLabel = $('.c-sw__label', this.domElement);
-        this.title = $('.rule-title', this.domElement);
-        this.description = $('.rule-description', this.domElement);
-        this.trigger = $('.t-trigger', this.domElement);
-        this.toggleConfigButton = $('.js-disclosure', this.domElement);
-        this.configArea = $('.widget-rule-content', this.domElement);
-        this.grippy = $('.t-grippy', this.domElement);
-        this.conditionArea = $('.t-widget-rule-config', this.domElement);
-        this.jsConditionArea = $('.t-rule-js-condition-input-holder', this.domElement);
-        this.deleteButton = $('.t-delete', this.domElement);
-        this.duplicateButton = $('.t-duplicate', this.domElement);
-        this.addConditionButton = $('.add-condition', this.domElement);
+        this.thumbnail = this.domElement.querySelector('.t-widget-thumb');
+        this.thumbnailIcon = this.domElement.querySelector('.js-sw__icon');
+        this.thumbnailLabel = this.domElement.querySelector('.c-sw__label');
+        this.title = this.domElement.querySelector('.rule-title');
+        this.description = this.domElement.querySelector('.rule-description');
+        this.trigger = this.domElement.querySelector('.t-trigger');
+        this.toggleConfigButton = this.domElement.querySelector('.js-disclosure');
+        this.configArea = this.domElement.querySelector('.widget-rule-content');
+        this.grippy = this.domElement.querySelector('.t-grippy');
+        this.conditionArea = this.domElement.querySelector('.t-widget-rule-config');
+        this.jsConditionArea = this.domElement.querySelector('.t-rule-js-condition-input-holder');
+        this.deleteButton = this.domElement.querySelector('.t-delete');
+        this.duplicateButton = this.domElement.querySelector('.t-duplicate');
+        this.addConditionButton = this.domElement.querySelector('.add-condition');
 
         /**
          * The text inputs for this rule: any input included in this object will
          * have the appropriate event handlers registered to it, and it's corresponding
          * field in the domain object will be updated with its value
          */
+
         this.textInputs = {
-            name: $('.t-rule-name-input', this.domElement),
-            label: $('.t-rule-label-input', this.domElement),
-            message: $('.t-rule-message-input', this.domElement),
-            jsCondition: $('.t-rule-js-condition-input', this.domElement)
+            name: this.domElement.querySelector('.t-rule-name-input'),
+            label: this.domElement.querySelector('.t-rule-label-input'),
+            message: this.domElement.querySelector('.t-rule-message-input'),
+            jsCondition: this.domElement.querySelector('.t-rule-js-condition-input')
         };
 
         this.iconInput = new IconPalette('', container);
@@ -94,7 +95,7 @@ define([
         function onIconInput(icon) {
             self.config.icon = icon;
             self.updateDomainObject('icon', icon);
-            self.thumbnailIcon.removeClass().addClass(THUMB_ICON_CLASS + ' ' + icon);
+            self.thumbnailIcon.className = `${THUMB_ICON_CLASS + ' ' + icon}`;
             self.eventEmitter.emit('change');
         }
 
@@ -106,7 +107,7 @@ define([
          */
         function onColorInput(color, property) {
             self.config.style[property] = color;
-            self.thumbnail.css(property, color);
+            self.thumbnail.style[property] = color;
             self.eventEmitter.emit('change');
         }
 
@@ -116,7 +117,10 @@ define([
          * @private
          */
         function encodeMsg(msg) {
-            return $('<div />').text(msg).html();
+            const div = document.createElement('div');
+            div.innerText = msg;
+
+            return div.innerText;
         }
 
         /**
@@ -144,9 +148,9 @@ define([
             self.config[inputKey] = text;
             self.updateDomainObject();
             if (inputKey === 'name') {
-                self.title.html(text);
+                self.title.innerText = text;
             } else if (inputKey === 'label') {
-                self.thumbnailLabel.html(text);
+                self.thumbnailLabel.innerText = text;
             }
 
             self.eventEmitter.emit('change');
@@ -158,13 +162,14 @@ define([
          * @private
          */
         function onDragStart(event) {
-            $('.t-drag-indicator').each(function () {
+            document.querySelectorAll('.t-drag-indicator').forEach(indicator => {
                 // eslint-disable-next-line no-invalid-this
-                $(this).html($('.widget-rule-header', self.domElement).clone().get(0));
+                const ruleHeader = self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true);
+                indicator.innerHTML = ruleHeader;
             });
-            self.widgetDnD.setDragImage($('.widget-rule-header', self.domElement).clone().get(0));
+            self.widgetDnD.setDragImage(self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true));
             self.widgetDnD.dragStart(self.config.id);
-            self.domElement.hide();
+            self.domElement.style.display = 'none';
         }
 
         /**
@@ -172,20 +177,31 @@ define([
          * @private
          */
         function toggleConfig() {
-            self.configArea.toggleClass('expanded');
-            self.toggleConfigButton.toggleClass('c-disclosure-triangle--expanded');
+            if (self.configArea.classList.contains('expanded')) {
+                self.configArea.classList.remove('expanded');
+            } else {
+                self.configArea.classList.add('expanded');
+            }
+
+            if (self.toggleConfigButton.classList.contains('c-disclosure-triangle--expanded')) {
+                self.toggleConfigButton.classList.remove('c-disclosure-triangle--expanded');
+            } else {
+                self.toggleConfigButton.classList.add('c-disclosure-triangle--expanded');
+            }
+
             self.config.expanded = !self.config.expanded;
         }
 
-        $('.t-rule-label-input', this.domElement).before(this.iconInput.getDOM());
+        const labelInput = this.domElement.querySelector('.t-rule-label-input');
+        labelInput.parentNode.insertBefore(this.iconInput.getDOM(), labelInput);
         this.iconInput.set(self.config.icon);
         this.iconInput.on('change', function (value) {
             onIconInput(value);
         });
 
         // Initialize thumbs when first loading
-        this.thumbnailIcon.removeClass().addClass(THUMB_ICON_CLASS + ' ' + self.config.icon);
-        this.thumbnailLabel.html(self.config.label);
+        this.thumbnailIcon.className = `${THUMB_ICON_CLASS + ' ' + self.config.icon}`;
+        this.thumbnailLabel.innerText = self.config.label;
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
             const input = self.colorInputs[inputKey];
@@ -198,15 +214,17 @@ define([
                 self.updateDomainObject();
             });
 
-            $('.t-style-input', self.domElement).append(input.getDOM());
+            self.domElement.querySelector('.t-style-input').append(input.getDOM());
         });
 
         Object.keys(this.textInputs).forEach(function (inputKey) {
-            self.textInputs[inputKey].prop('value', self.config[inputKey] || '');
-            self.listenTo(self.textInputs[inputKey], 'input', function () {
-                // eslint-disable-next-line no-invalid-this
-                onTextInput(this, inputKey);
-            });
+            if (self.textInputs[inputKey]) {
+                self.textInputs[inputKey].value = self.config[inputKey] || '';
+                self.listenTo(self.textInputs[inputKey], 'input', function () {
+                    // eslint-disable-next-line no-invalid-this
+                    onTextInput(this, inputKey);
+                });
+            }
         });
 
         this.listenTo(this.deleteButton, 'click', this.remove);
@@ -217,15 +235,15 @@ define([
         this.listenTo(this.toggleConfigButton, 'click', toggleConfig);
         this.listenTo(this.trigger, 'change', onTriggerInput);
 
-        this.title.html(self.config.name);
-        this.description.html(self.config.description);
-        this.trigger.prop('value', self.config.trigger);
+        this.title.innerHTML = self.config.name;
+        this.description.innerHTML = self.config.description;
+        this.trigger.value = self.config.trigger;
 
         this.listenTo(this.grippy, 'mousedown', onDragStart);
         this.widgetDnD.on('drop', function () {
             // eslint-disable-next-line no-invalid-this
             this.domElement.show();
-            $('.t-drag-indicator').hide();
+            document.querySelector('.t-drag-indicator').style.display = 'none';
         }, this);
 
         if (!this.conditionManager.loadCompleted()) {
@@ -233,21 +251,21 @@ define([
         }
 
         if (!this.config.expanded) {
-            this.configArea.removeClass('expanded');
-            this.toggleConfigButton.removeClass('c-disclosure-triangle--expanded');
+            this.configArea.classList.remove('expanded');
+            this.toggleConfigButton.classList.remove('c-disclosure-triangle--expanded');
         }
 
         if (this.domainObject.configuration.ruleOrder.length === 2) {
-            $('.t-grippy', this.domElement).hide();
+            this.domElement.querySelector('.t-grippy').style.display = 'none';
         }
 
         this.refreshConditions();
 
         //if this is the default rule, hide elements that don't apply
         if (this.config.id === 'default') {
-            $('.t-delete', this.domElement).hide();
-            $('.t-widget-rule-config', this.domElement).hide();
-            $('.t-grippy', this.domElement).hide();
+            this.domElement.querySelector('.t-delete').style.display = 'none';
+            this.domElement.querySelector('.t-widget-rule-config').style.display = 'none';
+            this.domElement.querySelector('.t-grippy').style.display = 'none';
         }
     }
 
@@ -304,8 +322,8 @@ define([
      * During a rule drag event, show the placeholder element after this rule
      */
     Rule.prototype.showDragIndicator = function () {
-        $('.t-drag-indicator').hide();
-        $('.t-drag-indicator', this.domElement).show();
+        document.querySelector('.t-drag-indicator').style.display = 'none';
+        this.domElement.querySelector('.t-drag-indicator').style.display = '';
     };
 
     /**
@@ -397,7 +415,10 @@ define([
         const triggerContextStr = self.config.trigger === 'any' ? ' or ' : ' and ';
 
         self.conditions = [];
-        $('.t-condition', this.domElement).remove();
+
+        this.domElement.querySelectorAll('.t-condition').forEach(condition => {
+            condition.remove();
+        });
 
         this.config.conditions.forEach(function (condition, index) {
             const newCondition = new Condition(condition, index, self.conditionManager);
@@ -408,16 +429,23 @@ define([
         });
 
         if (this.config.trigger === 'js') {
-            this.jsConditionArea.show();
-            this.addConditionButton.hide();
+            if (this.jsConditionArea) {
+                this.jsConditionArea.style.display = '';
+            }
+
+            this.addConditionButton.style.display = 'none';
         } else {
-            this.jsConditionArea.hide();
-            this.addConditionButton.show();
+            if (this.jsConditionArea) {
+                this.jsConditionArea.style.display = 'none';
+            }
+
+            this.addConditionButton.style.display = '';
             self.conditions.forEach(function (condition) {
                 $condition = condition.getDOM();
-                $('li:last-of-type', self.conditionArea).before($condition);
+                const lastOfType = self.conditionArea.querySelector('li:last-of-type');
+                lastOfType.parentNode.insertBefore($condition, lastOfType);
                 if (loopCnt > 0) {
-                    $('.t-condition-context', $condition).html(triggerContextStr + ' when');
+                    $condition.querySelector('.t-condition-context').innerHTML = triggerContextStr + ' when';
                 }
 
                 loopCnt++;
@@ -489,7 +517,7 @@ define([
         }
 
         description = (description === '' ? this.config.description : description);
-        this.description.html(description);
+        this.description.innerHTML = self.config.description;
         this.config.description = description;
     };
 

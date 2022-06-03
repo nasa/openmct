@@ -36,10 +36,6 @@
         align-items: center;
     }
 
-    &__value {
-        color: $colorBodyFgEm;
-    }
-
     .c-frame & {
         // When in a Display or Flexible Layout
         @include abs();
@@ -66,7 +62,7 @@
     }
 
     &__direction {
-        font-size: 0.9rem !important;
+        font-size: 0.7em !important;
         margin-right: $interiorMargin;
     }
 
