@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import ExampleTagsPlugin from "../../../example/exampleTags/plugin";
 
 describe("The Annotation API", () => {
     let openmct;
@@ -30,6 +31,7 @@ describe("The Annotation API", () => {
 
     beforeEach((done) => {
         openmct = createOpenMct();
+        openmct.install(new ExampleTagsPlugin());
         const availableTags = openmct.annotation.getAvailableTags();
         mockDomainObject = {
             type: 'notebook',
