@@ -42,6 +42,7 @@ define([
     './plugins/duplicate/plugin',
     './plugins/importFromJSONAction/plugin',
     './plugins/exportAsJSONAction/plugin',
+    './ui/components/components',
     'vue'
 ], function (
     EventEmitter,
@@ -65,6 +66,7 @@ define([
     DuplicateActionPlugin,
     ImportFromJSONAction,
     ExportAsJSONAction,
+    components,
     Vue
 ) {
     /**
@@ -386,6 +388,7 @@ define([
     };
 
     MCT.prototype.plugins = plugins;
+    MCT.prototype.components = components.default;
 
     return MCT;
 });
