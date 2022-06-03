@@ -22,6 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 import indicatorTemplate from './res/indicator-template.html';
+import { convertTemplateToHTML } from '@/utils/template/templateHelpers';
 
 const DEFAULT_ICON_CLASS = 'icon-info';
 
@@ -30,7 +31,7 @@ class SimpleIndicator extends EventEmitter {
         super();
 
         this.openmct = openmct;
-        this.element = compileTemplate(indicatorTemplate)[0];
+        this.element = convertTemplateToHTML(indicatorTemplate)[0];
         this.priority = openmct.priority.DEFAULT;
 
         this.textElement = this.element.querySelector('.js-indicator-text');
@@ -114,13 +115,6 @@ class SimpleIndicator extends EventEmitter {
     getElement() {
         return this.element;
     }
-}
-
-function compileTemplate(htmlTemplate) {
-    const templateNode = document.createElement('template');
-    templateNode.innerHTML = htmlTemplate;
-
-    return templateNode.content.cloneNode(true).children;
 }
 
 export default SimpleIndicator;

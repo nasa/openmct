@@ -1,13 +1,13 @@
 define([
     '../eventHelpers',
     '../../res/input/selectTemplate.html',
-    'EventEmitter',
-    'zepto'
+    '../../../../utils/template/templateHelpers',
+    'EventEmitter'
 ], function (
     eventHelpers,
     selectTemplate,
-    EventEmitter,
-    $
+    templateHelpers,
+    EventEmitter
 ) {
 
     /**
@@ -20,7 +20,8 @@ define([
 
         const self = this;
 
-        this.domElement = $(selectTemplate);
+        this.domElement = templateHelpers.convertTemplateToHTML(selectTemplate)[0];
+
         this.options = [];
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['change'];
@@ -35,12 +36,12 @@ define([
          */
         function onChange(event) {
             const elem = event.target;
-            const value = self.options[$(elem).prop('selectedIndex')];
+            const value = self.options[elem.selectedIndex];
 
             self.eventEmitter.emit('change', value[0]);
         }
 
-        this.listenTo($('select', this.domElement), 'change', onChange, this);
+        this.listenTo(this.domElement.querySelector('select'), 'change', onChange, this);
     }
 
     /**
@@ -74,16 +75,19 @@ define([
         const self = this;
         let selectedIndex = 0;
 
-        selectedIndex = $('select', this.domElement).prop('selectedIndex');
-        $('option', this.domElement).remove();
+        selectedIndex = this.domElement.querySelector('select').selectedIndex;
 
-        self.options.forEach(function (option, index) {
-            $('select', self.domElement)
-                .append('<option value = "' + option[0] + '" >'
-                        + option[1] + '</option>');
+        this.domElement.querySelector('select').innerHTML = '';
+
+        self.options.forEach(function (option) {
+            const optionElement = document.createElement('option');
+            optionElement.value = option[0];
+            optionElement.innerText = `+ ${option[1]}`;
+
+            self.domElement.querySelector('select').appendChild(optionElement);
         });
 
-        $('select', this.domElement).prop('selectedIndex', selectedIndex);
+        this.domElement.querySelector('select').selectedIndex = selectedIndex;
     };
 
     /**
@@ -120,7 +124,7 @@ define([
                 selectedIndex = index;
             }
         });
-        $('select', this.domElement).prop('selectedIndex', selectedIndex);
+        this.domElement.querySelector('select').selectedIndex = selectedIndex;
 
         selectedOption = this.options[selectedIndex];
         this.eventEmitter.emit('change', selectedOption[0]);
@@ -131,17 +135,21 @@ define([
      * @return {string}
      */
     Select.prototype.getSelected = function () {
-        return $('select', this.domElement).prop('value');
+        return this.domElement.querySelector('select').value;
     };
 
     Select.prototype.hide = function () {
-        $(this.domElement).addClass('hidden');
-        $('.equal-to').addClass('hidden');
+        this.domElement.classList.add('hidden');
+        if (this.domElement.querySelector('.equal-to')) {
+            this.domElement.querySelector('.equal-to').classList.add('hidden');
+        }
     };
 
     Select.prototype.show = function () {
-        $(this.domElement).removeClass('hidden');
-        $('.equal-to').removeClass('hidden');
+        this.domElement.classList.remove('hidden');
+        if (this.domElement.querySelector('.equal-to')) {
+            this.domElement.querySelector('.equal-to').classList.remove('hidden');
+        }
     };
 
     Select.prototype.destroy = function () {
