@@ -26,25 +26,6 @@ export default function () {
 
         openmct.install(openmct.plugins.FaultManagement());
 
-        openmct.faults.addFaultActionProvider({
-            acknowledgeFault(fault, { comment = '' }) {
-                console.log('acknowledgeFault', fault);
-                console.log('comment', comment);
-
-                return Promise.resolve({
-                    success: true
-                });
-            },
-            shelveFault(fault, shelveData) {
-                console.log('shelveFault', fault);
-                console.log('shelveData', shelveData);
-
-                return Promise.resolve({
-                    success: true
-                });
-            }
-        });
-
         openmct.faults.addProvider({
             request(domainObject, options) {
                 const faults = localStorage.getItem('faults') || '{}';
@@ -78,6 +59,22 @@ export default function () {
             },
             supportsSubscribe(domainObject) {
                 return domainObject.type === 'faultManagement';
+            },
+            acknowledgeFault(fault, { comment = '' }) {
+                console.log('acknowledgeFault', fault);
+                console.log('comment', comment);
+
+                return Promise.resolve({
+                    success: true
+                });
+            },
+            shelveFault(fault, shelveData) {
+                console.log('shelveFault', fault);
+                console.log('shelveData', shelveData);
+
+                return Promise.resolve({
+                    success: true
+                });
             }
         });
     };

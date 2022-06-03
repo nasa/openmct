@@ -25,43 +25,8 @@ export default class FaultManagementAPI {
         this.openmct = openmct;
     }
 
-    acknowledgeFault(fault, ackData) {
-        return this.faultActionProvider.acknowledgeFault(fault, ackData);
-    }
-
     addProvider(provider) {
         this.provider = provider;
-    }
-
-    addFaultActionProvider(provider) {
-        this.faultActionProvider = provider;
-    }
-
-    getFaultModel(faultData, type) {
-        return {
-            type: type || faultData?.type,
-            fault: {
-                acknowledged: Boolean(faultData?.acknowledged),
-                currentValueInfo: {
-                    value: faultData?.parameterDetail?.currentValue?.engValue?.doubleValue,
-                    rangeCondition: faultData?.parameterDetail?.currentValue?.rangeCondition,
-                    monitoringResult: faultData?.parameterDetail?.currentValue?.monitoringResult
-                },
-                id: `id-${faultData?.id?.namespace}-${faultData?.id?.name}`,
-                name: faultData?.id?.name,
-                namespace: faultData?.id?.namespace,
-                seqNum: faultData?.seqNum,
-                severity: faultData?.severity,
-                shelved: Boolean(faultData?.shelveInfo),
-                shortDescription: faultData?.parameterDetail?.parameter?.shortDescription,
-                triggerTime: faultData?.triggerTime,
-                triggerValueInfo: {
-                    value: faultData?.parameterDetail?.triggerValue?.engValue?.doubleValue,
-                    rangeCondition: faultData?.parameterDetail?.triggerValue?.rangeCondition,
-                    monitoringResult: faultData?.parameterDetail?.triggerValue?.monitoringResult
-                }
-            }
-        };
     }
 
     request(domainObject) {
@@ -72,10 +37,6 @@ export default class FaultManagementAPI {
         return this.provider.request(domainObject);
     }
 
-    shelveFault(fault, shelveData) {
-        return this.faultActionProvider.shelveFault(fault, shelveData);
-    }
-
     subscribe(domainObject, callback) {
         if (!this.provider?.supportsSubscribe(domainObject)) {
             return Promise.reject();
@@ -83,4 +44,59 @@ export default class FaultManagementAPI {
 
         return this.provider.subscribe(domainObject, callback);
     }
+
+    acknowledgeFault(fault, ackData) {
+        return this.provider.acknowledgeFault(fault, ackData);
+    }
+
+    shelveFault(fault, shelveData) {
+        return this.provider.shelveFault(fault, shelveData);
+    }
 }
+
+/** @typedef {object} Fault
+ * @property {string} type
+ * @property {object} fault
+ * @property {boolean} fault.acknowledged
+ * @property {object} fault.currentValueInfo
+ * @property {number} fault.currentValueInfo.value
+ * @property {string} fault.currentValueInfo.rangeCondition
+ * @property {string} fault.currentValueInfo.monitoringResult
+ * @property {string} fault.id
+ * @property {string} fault.name
+ * @property {string} fault.namespace
+ * @property {number} fault.seqNum
+ * @property {string} fault.severity
+ * @property {boolean} fault.shelved
+ * @property {string} fault.shortDescription
+ * @property {string} fault.triggerTime
+ * @property {object} fault.triggerValueInfo
+ * @property {number} fault.triggerValueInfo.value
+ * @property {string} fault.triggerValueInfo.rangeCondition
+ * @property {string} fault.triggerValueInfo.monitoringResult
+ * @example
+ *  {
+ *     "type": "",
+ *     "fault": {
+ *         "acknowledged": true,
+ *         "currentValueInfo": {
+ *             "value": 0,
+ *             "rangeCondition": "",
+ *             "monitoringResult": ""
+ *         },
+ *         "id": "",
+ *         "name": "",
+ *         "namespace": "",
+ *         "seqNum": 0,
+ *         "severity": "",
+ *         "shelved": true,
+ *         "shortDescription": "",
+ *         "triggerTime": "",
+ *         "triggerValueInfo": {
+ *             "value": 0,
+ *             "rangeCondition": "",
+ *             "monitoringResult": ""
+ *         }
+ *     }
+ * }
+ */
