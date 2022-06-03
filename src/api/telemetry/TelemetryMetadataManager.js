@@ -156,7 +156,7 @@ define([
             valueMetadata = this.values()[0];
         }
 
-        return valueMetadata.key;
+        return valueMetadata;
     };
 
     return TelemetryMetadataManager;
