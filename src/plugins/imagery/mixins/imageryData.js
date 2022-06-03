@@ -87,21 +87,6 @@ export default {
 
             return !matchesLast && !isOutOfBounds;
         },
-
-        datumIsNotValid(datum) {
-
-            const datumURL = this.formatImageUrl(datum);
-            const lastHistoryURL = this.formatImageUrl(this.imageHistory.slice(-1)[0]);
-
-            // datum is not valid if it matches the last datum in history,
-            // or it is before the last datum in the history
-            const datumTimeCheck = this.parseTime(datum);
-            const historyTimeCheck = this.parseTime(this.imageHistory.slice(-1)[0]);
-            const matchesLast = (datumTimeCheck === historyTimeCheck) && (datumURL === lastHistoryURL);
-            const isStale = datumTimeCheck < historyTimeCheck;
-
-            return matchesLast || isStale;
-        },
         formatImageUrl(datum) {
             if (!datum) {
                 return;
