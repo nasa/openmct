@@ -109,9 +109,10 @@ class CouchObjectProvider {
     }
 
     /**
+     * Takes in a state message from the CouchDB SharedWorker and returns an IndicatorState.
      * @private
-     * @param {*} message
-     * @returns
+     * @param {'open'|'close'|'pending'} message
+     * @returns import('./CouchStatusIndicator').IndicatorState
      */
     #messageToIndicatorState(message) {
         let state;
