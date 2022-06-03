@@ -126,8 +126,14 @@ describe("The Annotation API", () => {
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
         });
-        it("can get for notebook annotation", async () => {
-            const results = await openmct.annotation.getNotebookAnnotation('fooBarEntry', mockDomainObject);
+        it("can get notebook annotations", async () => {
+            const targetKeyString = openmct.objects.makeKeyString(mockDomainObject.identifier);
+            const query = {
+                targetKeyString,
+                entryId: 'fooBarEntry'
+            };
+
+            const results = await openmct.annotation.getAnnotation(query, openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
             expect(results).toBeDefined();
             expect(results.tags.length).toEqual(2);
         });

@@ -143,14 +143,10 @@ export default class AnnotationAPI extends EventEmitter {
         return rearrangedToArray;
     }
 
-    async getNotebookAnnotation(entryId, targetDomainObject) {
-        const targetKeyString = this.openmct.objects.makeKeyString(targetDomainObject.identifier);
+    async getAnnotation(query, searchType) {
         let foundAnnotation = null;
-        const query = {
-            targetKeyString,
-            entryId
-        };
-        const searchResults = (await Promise.all(this.openmct.objects.search(query, null, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS))).flat();
+
+        const searchResults = (await Promise.all(this.openmct.objects.search(query, null, searchType))).flat();
         if (searchResults) {
             foundAnnotation = searchResults[0];
         }
@@ -158,21 +154,18 @@ export default class AnnotationAPI extends EventEmitter {
         return foundAnnotation;
     }
 
-    async addNotebookAnnotationTag(entryId, targetDomainObject, tag) {
-        let existingAnnotation = await this.getNotebookAnnotation(entryId, targetDomainObject);
-
+    async addAnnotationTag(existingAnnotation, targetDomainObject, targetSpecificDetails, annotationType, tag) {
         if (!existingAnnotation) {
             const targets = {};
             const targetKeyString = this.openmct.objects.makeKeyString(targetDomainObject.identifier);
-            targets[targetKeyString] = {
-                entryId: entryId
-            };
+            targets[targetKeyString] = targetSpecificDetails;
+            const contentText = `${annotationType} tag`;
             const annotationCreationArguments = {
-                name: 'notebook entry tag',
+                name: contentText,
                 domainObject: targetDomainObject,
-                annotationType: this.ANNOTATION_TYPES.NOTEBOOK,
+                annotationType,
                 tags: [],
-                contentText: 'notebook entry tag',
+                contentText,
                 targets
             };
             existingAnnotation = await this.create(annotationCreationArguments);
@@ -184,22 +177,25 @@ export default class AnnotationAPI extends EventEmitter {
         return existingAnnotation;
     }
 
-    async removeNotebookAnnotationTag(entryId, targetDomainObject, tagToRemove) {
-        let existingAnnotation = await this.getNotebookAnnotation(entryId, targetDomainObject);
-
+    removeAnnotationTag(existingAnnotation, tagToRemove) {
         if (existingAnnotation && existingAnnotation.tags.includes(tagToRemove)) {
             const cleanedArray = existingAnnotation.tags.filter(extantTag => extantTag !== tagToRemove);
             this.openmct.objects.mutate(existingAnnotation, 'tags', cleanedArray);
         } else {
-            throw new Error(`Asked to remove notebook tag (${tagToRemove}) that doesn't exist for ${entryId}`);
+            throw new Error(`Asked to remove tag (${tagToRemove}) that doesn't exist`, existingAnnotation);
         }
     }
 
-    async removeNotebookAnnotation(entryId, targetDomainObject) {
+    async removeNotebookAnnotationTags(entryId, targetDomainObject) {
         // just removes tags on the annotation as we can't really delete objects
         const notebookAnnotationToRemove = await this.getNotebookAnnotation(entryId, targetDomainObject);
-        if (notebookAnnotationToRemove && notebookAnnotationToRemove.tags) {
-            this.openmct.objects.mutate(notebookAnnotationToRemove, 'tags', []);
+        this.removeAnnotationTags(notebookAnnotationToRemove);
+    }
+
+    removeAnnotationTags(existingAnnotation) {
+        // just removes tags on the annotation as we can't really delete objects
+        if (existingAnnotation && existingAnnotation.tags) {
+            this.openmct.objects.mutate(existingAnnotation, 'tags', []);
         }
     }
 
