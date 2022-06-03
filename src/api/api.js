@@ -35,7 +35,8 @@ define([
     './telemetry/TelemetryAPI',
     './time/TimeAPI',
     './types/TypeRegistry',
-    './user/UserAPI'
+    './user/UserAPI',
+    './annotation/AnnotationAPI'
 ], function (
     ActionsAPI,
     CompositionAPI,
@@ -51,7 +52,8 @@ define([
     TelemetryAPI,
     TimeAPI,
     TypeRegistry,
-    UserAPI
+    UserAPI,
+    AnnotationAPI
 ) {
     return {
         ActionsAPI: ActionsAPI.default,
@@ -68,6 +70,7 @@ define([
         TelemetryAPI: TelemetryAPI,
         TimeAPI: TimeAPI.default,
         TypeRegistry: TypeRegistry,
-        UserAPI: UserAPI.default
+        UserAPI: UserAPI.default,
+        AnnotationAPI: AnnotationAPI.default
     };
 });
