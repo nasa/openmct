@@ -87,6 +87,13 @@
 .icon-unlocked {  @include glyphBefore($glyph-icon-unlocked); }
 .icon-circle {  @include glyphBefore($glyph-icon-circle); }
 .icon-draft {  @include glyphBefore($glyph-icon-draft); }
+.icon-question-mark {  @include glyphBefore($glyph-icon-question-mark); }
+.icon-circle-slash {  @include glyphBefore($glyph-icon-circle-slash); }
+.icon-status-poll-check {  @include glyphBefore($glyph-icon-status-poll-check); }
+.icon-status-poll-caution {  @include glyphBefore($glyph-icon-status-poll-caution); }
+.icon-status-poll-circle-slash {  @include glyphBefore($glyph-icon-status-poll-circle-slash); }
+.icon-status-poll-question-mark {  @include glyphBefore($glyph-icon-status-poll-question-mark); }
+.icon-status-poll-edit {  @include glyphBefore($glyph-icon-status-poll-edit); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }

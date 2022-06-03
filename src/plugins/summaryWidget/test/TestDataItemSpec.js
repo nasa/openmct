@@ -1,4 +1,4 @@
-define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
+define(['../src/TestDataItem'], function (TestDataItem) {
     describe('A summary widget test data item', function () {
         let testDataItem;
         let mockConfig;
@@ -11,7 +11,7 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
         let generateValueSpy;
 
         beforeEach(function () {
-            mockContainer = $(document.createElement('div'));
+            mockContainer = document.createElement('div');
 
             mockConfig = {
                 object: 'object1',
@@ -56,7 +56,7 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
 
         it('exposes a DOM element to represent itself in the view', function () {
             mockContainer.append(testDataItem.getDOM());
-            expect($('.t-test-data-item', mockContainer).get().length).toEqual(1);
+            expect(mockContainer.querySelectorAll('.t-test-data-item').length).toEqual(1);
         });
 
         it('responds to a change in its object select', function () {
@@ -80,34 +80,54 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
         });
 
         it('generates a value input of the appropriate type', function () {
+            let inputs;
+
             mockContainer.append(testDataItem.getDOM());
             mockEvaluator.getInputTypeById.and.returnValue('number');
             testDataItem.generateValueInput('');
-            expect($('input', mockContainer).filter('[type=number]').get().length).toEqual(1);
-            expect($('input', mockContainer).prop('valueAsNumber')).toEqual(1);
+
+            inputs = mockContainer.querySelectorAll('input');
+            const numberInputs = Array.from(inputs).filter(input => input.type === 'number');
+
+            expect(numberInputs.length).toEqual(1);
+            expect(inputs[0].valueAsNumber).toEqual(1);
 
             mockEvaluator.getInputTypeById.and.returnValue('text');
             testDataItem.config.value = 'Text I Am';
             testDataItem.generateValueInput('');
-            expect($('input', mockContainer).filter('[type=text]').get().length).toEqual(1);
-            expect($('input', mockContainer).prop('value')).toEqual('Text I Am');
+
+            inputs = mockContainer.querySelectorAll('input');
+            const textInputs = Array.from(inputs).filter(input => input.type === 'text');
+
+            expect(textInputs.length).toEqual(1);
+            expect(inputs[0].value).toEqual('Text I Am');
         });
 
         it('ensures reasonable defaults on values if none are provided', function () {
+            let inputs;
+
             mockContainer.append(testDataItem.getDOM());
 
             mockEvaluator.getInputTypeById.and.returnValue('number');
             testDataItem.config.value = undefined;
             testDataItem.generateValueInput('');
-            expect($('input', mockContainer).filter('[type=number]').get().length).toEqual(1);
-            expect($('input', mockContainer).prop('valueAsNumber')).toEqual(0);
+
+            inputs = mockContainer.querySelectorAll('input');
+            const numberInputs = Array.from(inputs).filter(input => input.type === 'number');
+
+            expect(numberInputs.length).toEqual(1);
+            expect(inputs[0].valueAsNumber).toEqual(0);
             expect(testDataItem.config.value).toEqual(0);
 
             mockEvaluator.getInputTypeById.and.returnValue('text');
             testDataItem.config.value = undefined;
             testDataItem.generateValueInput('');
-            expect($('input', mockContainer).filter('[type=text]').get().length).toEqual(1);
-            expect($('input', mockContainer).prop('value')).toEqual('');
+
+            inputs = mockContainer.querySelectorAll('input');
+            const textInputs = Array.from(inputs).filter(input => input.type === 'text');
+
+            expect(textInputs.length).toEqual(1);
+            expect(inputs[0].value).toEqual('');
             expect(testDataItem.config.value).toEqual('');
         });
 
@@ -115,8 +135,15 @@ define(['../src/TestDataItem', 'zepto'], function (TestDataItem, $) {
             mockContainer.append(testDataItem.getDOM());
             mockEvaluator.getInputTypeById.and.returnValue('number');
             testDataItem.generateValueInput('');
-            $('input', mockContainer).prop('value', 9001);
-            $('input', mockContainer).trigger('input');
+
+            const event = new Event('input', {
+                bubbles: true,
+                cancelable: true
+            });
+
+            mockContainer.querySelector('input').value = 9001;
+            mockContainer.querySelector('input').dispatchEvent(event);
+
             expect(changeSpy).toHaveBeenCalledWith({
                 value: 9001,
                 property: 'value',

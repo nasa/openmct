@@ -2,13 +2,13 @@ define([
     './eventHelpers',
     '../res/testDataTemplate.html',
     './TestDataItem',
-    'zepto',
+    '../../../utils/template/templateHelpers',
     'lodash'
 ], function (
     eventHelpers,
     testDataTemplate,
     TestDataItem,
-    $,
+    templateHelpers,
     _
 ) {
 
@@ -28,13 +28,13 @@ define([
         this.openmct = openmct;
 
         this.evaluator = this.manager.getEvaluator();
-        this.domElement = $(testDataTemplate);
+        this.domElement = templateHelpers.convertTemplateToHTML(testDataTemplate)[0];
         this.config = this.domainObject.configuration.testDataConfig;
         this.testCache = {};
 
-        this.itemArea = $('.t-test-data-config', this.domElement);
-        this.addItemButton = $('.add-test-condition', this.domElement);
-        this.testDataInput = $('.t-test-data-checkbox', this.domElement);
+        this.itemArea = this.domElement.querySelector('.t-test-data-config');
+        this.addItemButton = this.domElement.querySelector('.add-test-condition');
+        this.testDataInput = this.domElement.querySelector('.t-test-data-checkbox');
 
         /**
          * Toggles whether the associated {ConditionEvaluator} uses the actual
@@ -139,7 +139,10 @@ define([
         }
 
         self.items = [];
-        $('.t-test-data-item', this.domElement).remove();
+
+        this.domElement.querySelectorAll('.t-test-data-item').forEach(item => {
+            item.remove();
+        });
 
         this.config.forEach(function (item, index) {
             const newItem = new TestDataItem(item, index, self.manager);
@@ -150,7 +153,6 @@ define([
         });
 
         self.items.forEach(function (item) {
-            // $('li:last-of-type', self.itemArea).before(item.getDOM());
             self.itemArea.prepend(item.getDOM());
         });
 
