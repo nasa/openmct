@@ -68,7 +68,7 @@
                 <div
                     v-for="(layer, index) in visibleLayers"
                     :key="index"
-                    class="layer-image s-image-layer c-imagery__layer-image"
+                    class="layer-image s-image-layer c-imagery__layer-image js-layer-image"
                     :style="getVisibleLayerStyles(layer)"
                 >
                 </div>
