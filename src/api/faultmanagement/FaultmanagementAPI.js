@@ -29,6 +29,10 @@ export default class FaultManagementAPI {
         this.provider = provider;
     }
 
+    providesActions() {
+        return this.provider?.acknowledgeFault && this.provider?.shelveFault;
+    }
+
     request(domainObject) {
         if (!this.provider?.supportsRequest(domainObject)) {
             return Promise.reject();

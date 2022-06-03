@@ -112,9 +112,7 @@ export default {
             return list;
         },
         showToolbar() {
-            const faultActionProvider = this.openmct.faults.faultActionProvider;
-
-            return faultActionProvider?.acknowledgeFault && faultActionProvider?.shelveFault;
+            return this.openmct.faults.providesActions();
         }
     },
     methods: {
