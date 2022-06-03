@@ -290,7 +290,7 @@ export default {
 
             let xValues = [];
             let yValues = [];
-            let xAxisMetadata = axisMetadata.xAxisMetadata.find(metadata => metadata.source === this.domainObject.configuration.axes.xKey);
+            let xAxisMetadata = axisMetadata.xAxisMetadata.find(metadata => metadata.key === this.domainObject.configuration.axes.xKey);
             if (xAxisMetadata && xAxisMetadata.isArrayValue) {
                 //populate x and y values
                 let metadataKey = this.domainObject.configuration.axes.xKey;
@@ -311,8 +311,8 @@ export default {
                     }
 
                     xValues.push(metadata.name);
-                    if (data[metadata.source]) {
-                        const parsedValue = this.parse(key, metadata.source, data);
+                    if (data[metadata.key]) {
+                        const parsedValue = this.parse(key, metadata.key, data);
                         yValues.push(parsedValue);
                     } else {
                         yValues.push(null);
@@ -345,7 +345,7 @@ export default {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             let metadataValue = metadata.value(timeSystemKey) || { key: timeSystemKey };
 
-            let currentTimestamp = this.parse(key, metadataValue.source, datum);
+            let currentTimestamp = this.parse(key, metadataValue.key, datum);
 
             return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
         },
