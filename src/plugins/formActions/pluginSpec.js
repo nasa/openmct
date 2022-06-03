@@ -27,7 +27,7 @@ import {
 
 import { debounce } from 'lodash';
 
-describe('EditPropertiesAction plugin', () => {
+fdescribe('EditPropertiesAction plugin', () => {
     let editPropertiesAction;
     let openmct;
     let element;
@@ -123,6 +123,9 @@ describe('EditPropertiesAction plugin', () => {
         }
 
         editPropertiesAction.invoke([domainObject])
+            .then(() => {
+                done();
+            })
             .catch(() => {
                 done();
             });
@@ -208,6 +211,10 @@ describe('EditPropertiesAction plugin', () => {
         };
 
         editPropertiesAction.invoke([domainObject])
+            .then(() => {
+                expect(domainObject.name).toEqual(name);
+                done();
+            })
             .catch(() => {
                 expect(domainObject.name).toEqual(name);
 
