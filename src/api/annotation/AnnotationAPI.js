@@ -132,48 +132,6 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
-    /**
-    * Get annotations for a given domain object
-    *
-    * @method getAnnotationsForTarget
-    * @param {module:openmct.DomainObject} domainObject the domain object to
-    *        create
-    * @returns {Promise} a promise which will resolve when the domain object
-    *          has been created, or be rejected if it cannot be saved
-    */
-    async getAnnotationsForTarget(targetDomainObject) {
-        if (!targetDomainObject) {
-            throw new Error('😢 Asked to get an annotation, but was passed a null domain object');
-        }
-
-        const targetKeyString = this.openmct.objects.makeKeyString(targetDomainObject.identifier);
-        let foundAnnotations = null;
-
-        const searchResults = (await Promise.all(this.openmct.objects.search(targetKeyString, null, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS))).flat();
-        if (searchResults) {
-            foundAnnotations = searchResults;
-        }
-
-        const composition = await this.openmct.composition.get(targetDomainObject).load();
-
-        Promise.all(composition.map(async childObject => {
-            const childAnnotations = await this.openmct.annotation.getAnnotationsForTarget(childObject);
-            if (childAnnotations && childAnnotations.length) {
-                childAnnotations.forEach(childAnnotation => {
-                    // check if unique
-                    const annotationExists = foundAnnotations.some(existingAnnotation => {
-                        return this.openmct.objects.areIdsEqual(existingAnnotation.identifier, childAnnotation.identifier);
-                    });
-                    if (!annotationExists) {
-                        foundAnnotations.push(childAnnotation);
-                    }
-                });
-            }
-        }));
-
-        return foundAnnotations;
-    }
-
     getAvailableTags() {
         const rearrangedToArray = Object.keys(availableTags.tags).map(tagKey => {
             return {
