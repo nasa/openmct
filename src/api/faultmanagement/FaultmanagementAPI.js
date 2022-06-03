@@ -29,7 +29,7 @@ export default class FaultManagementAPI {
         this.provider = provider;
     }
 
-    providesActions() {
+    hasActions() {
         return this.provider?.acknowledgeFault && this.provider?.shelveFault;
     }
 
