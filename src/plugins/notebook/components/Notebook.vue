@@ -196,23 +196,11 @@ export default {
             searchResults: [],
             showTime: this.domainObject.configuration.showTime || 0,
             showNav: false,
-            sidebarCoversEntries: false
+            sidebarCoversEntries: false,
+            filteredAndSortedEntries: []
         };
     },
     computed: {
-        filteredAndSortedEntries() {
-            const filterTime = Date.now();
-            const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
-
-            const hours = parseInt(this.showTime, 10);
-            const filteredPageEntriesByTime = hours
-                ? pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000)
-                : pageEntries;
-
-            return this.defaultSort === 'oldest'
-                ? filteredPageEntriesByTime
-                : [...filteredPageEntriesByTime].reverse();
-        },
         pages() {
             return this.getPages() || [];
         },
@@ -261,6 +249,7 @@ export default {
         },
         defaultSort() {
             mutateObject(this.openmct, this.domainObject, 'configuration.defaultSort', this.defaultSort);
+            this.filterAndSortEntries();
         },
         showTime() {
             mutateObject(this.openmct, this.domainObject, 'configuration.showTime', this.showTime);
@@ -276,6 +265,7 @@ export default {
 
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
+        this.filterAndSortEntries();
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -312,6 +302,19 @@ export default {
                     });
                 }
             });
+        },
+        filterAndSortEntries() {
+            const filterTime = Date.now();
+            const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
+
+            const hours = parseInt(this.showTime, 10);
+            const filteredPageEntriesByTime = hours
+                ? pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000)
+                : pageEntries;
+
+            this.filteredAndSortedEntries = this.defaultSort === 'oldest'
+                ? filteredPageEntriesByTime
+                : [...filteredPageEntriesByTime].reverse();
         },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
@@ -384,15 +387,39 @@ export default {
                             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
                             entries.splice(entryPos, 1);
                             this.updateEntries(entries);
+                            this.filterAndSortEntries();
+                            this.removeAnnotations(entryId);
                             dialog.dismiss();
                         }
                     },
                     {
                         label: "Cancel",
-                        callback: () => dialog.dismiss()
+                        callback: () => {
+                            dialog.dismiss();
+                        }
                     }
                 ]
             });
+        },
+        async removeAnnotations(entryId) {
+            const targetKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const query = {
+                targetKeyString,
+                entryId
+            };
+            const existingAnnotation = await this.openmct.annotation.getAnnotation(query, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
+            this.openmct.annotation.removeAnnotationTags(existingAnnotation);
+        },
+        checkEntryPos(entry) {
+            const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
+            if (entryPos === -1) {
+                this.openmct.notifications.alert('Warning: unable to tag entry');
+                console.error(`unable to tag entry ${entry} from section ${this.selectedSection}, page ${this.selectedPage}`);
+
+                return false;
+            }
+
+            return true;
         },
         dragOver(event) {
             event.preventDefault();
@@ -611,13 +638,13 @@ export default {
 
             return section.id;
         },
-        newEntry(embed = null) {
+        async newEntry(embed = null) {
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
-            addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed).then(id => {
-                this.focusEntryId = id;
-            });
+            const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
+            this.focusEntryId = id;
+            this.filterAndSortEntries();
         },
         orientationChange() {
             this.formatSidebar();
@@ -737,6 +764,7 @@ export default {
 
             this.selectedPageId = pageId;
             this.syncUrlWithPageAndSection();
+            this.filterAndSortEntries();
         },
         selectSection(sectionId) {
             if (!sectionId) {
@@ -749,6 +777,7 @@ export default {
             this.selectPage(pageId);
 
             this.syncUrlWithPageAndSection();
+            this.filterAndSortEntries();
         },
         activeTransaction() {
             return this.openmct.objects.getActiveTransaction();

@@ -78,8 +78,10 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
+    './operatorStatus/plugin',
     './gauge/GaugePlugin',
-    './timelist/plugin'
+    './timelist/plugin',
+    '../../example/exampleTags/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -138,8 +140,10 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
+    OperatorStatus,
     GaugePlugin,
-    TimeList
+    TimeList,
+    ExampleTags
 ) {
     const plugins = {};
 
@@ -147,6 +151,7 @@ define([
     plugins.example.ExampleUser = ExampleUser.default;
     plugins.example.ExampleImagery = ExampleImagery.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
+    plugins.example.ExampleTags = ExampleTags.default;
     plugins.example.Generator = () => GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
@@ -217,6 +222,7 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
+    plugins.OperatorStatus = OperatorStatus.default;
     plugins.Gauge = GaugePlugin.default;
     plugins.Timelist = TimeList.default;
 

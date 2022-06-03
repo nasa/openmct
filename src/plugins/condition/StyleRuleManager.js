@@ -78,11 +78,13 @@ export default class StyleRuleManager extends EventEmitter {
         this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
             this.openmct.telemetry.request(conditionSetDomainObject)
                 .then(output => {
-                    if (output && output.length) {
+                    if (output && output.length && (this.conditionSetIdentifier && this.openmct.objects.areIdsEqual(conditionSetDomainObject.identifier, this.conditionSetIdentifier))) {
                         this.handleConditionSetResultUpdated(output[0]);
                     }
                 });
-            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
+            if (this.conditionSetIdentifier && this.openmct.objects.areIdsEqual(conditionSetDomainObject.identifier, this.conditionSetIdentifier)) {
+                this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
+            }
         });
     }
 
