@@ -51,11 +51,21 @@ export default {
     },
     inject: ['openmct'],
     props: {
-        entry: {
+        annotationQuery: {
             type: Object,
-            default() {
-                return null;
-            }
+            required: true
+        },
+        annotationType: {
+            type: String,
+            required: true
+        },
+        annotationSearchType: {
+            type: String,
+            required: true
+        },
+        targetSpecificDetails: {
+            type: Object,
+            required: true
         },
         domainObject: {
             type: Object,
@@ -90,7 +100,7 @@ export default {
         }
     },
     async mounted() {
-        this.annotation = await this.getNotebookAnnotation(this.entry.id, this.domainObject);
+        this.annontation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
         this.addAnnotationListener(this.annotation);
         if (this.annotation && this.annotation.tags) {
             this.tagsChanged(this.annotation.tags);
@@ -124,44 +134,21 @@ export default {
             this.userAddingTag = true;
         },
         async tagRemoved(tagToRemove) {
-            await this.removeNotebookAnnotationTag(this.entry.id, this.domainObject, tagToRemove, '');
+            const existingAnnotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
+
+            return this.openmct.annotation.removeAnnotationTag(existingAnnotation, tagToRemove);
         },
         async tagAdded(newTag) {
-            const newAnnotation = await this.addNotebookAnnotationTag(this.entry.id, this.domainObject, newTag);
+            const existingAnnotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
+
+            const newAnnotation = await this.openmct.annotation.addAnnotationTag(existingAnnotation,
+                this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
             if (!this.annotation) {
                 this.addAnnotationListener(newAnnotation);
             }
 
             this.tagsChanged(newAnnotation.tags);
             this.userAddingTag = false;
-        },
-        async addNotebookAnnotationTag(entryId, targetDomainObject, tag) {
-            let existingAnnotation = await this.getNotebookAnnotation(entryId, targetDomainObject);
-
-            const targetSpecificDetails = {
-                entryId
-            };
-
-            return this.openmct.annotation.addAnnotationTag(existingAnnotation, targetDomainObject, targetSpecificDetails, this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, tag);
-        },
-        async removeNotebookAnnotationTag(entryId, targetDomainObject, tagToRemove) {
-            let existingAnnotation = await this.getNotebookAnnotation(entryId, targetDomainObject);
-
-            return this.openmct.annotation.removeAnnotationTag(existingAnnotation, tagToRemove);
-        },
-        getNotebookAnnotation(entryId, targetDomainObject) {
-            const targetKeyString = this.openmct.objects.makeKeyString(targetDomainObject.identifier);
-            const query = {
-                targetKeyString,
-                entryId
-            };
-
-            return this.openmct.annotation.getAnnotation(query, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
-        },
-        async removeNotebookAnnotationTags(entryId, targetDomainObject) {
-        // just removes tags on the annotation as we can't really delete objects
-            const notebookAnnotationToRemove = await this.getNotebookAnnotation(entryId, targetDomainObject);
-            this.openmct.annotation.removeAnnotationTags(notebookAnnotationToRemove);
         }
     }
 };

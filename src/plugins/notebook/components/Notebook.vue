@@ -401,8 +401,14 @@ export default {
                 ]
             });
         },
-        removeAnnotations(entryId) {
-            this.openmct.annotation.removeNotebookAnnotationTags(entryId, this.domainObject);
+        async removeAnnotations(entryId) {
+            const targetKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const query = {
+                targetKeyString,
+                entryId
+            };
+            const existingAnnotation = await this.openmct.annotation.getAnnotation(query, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
+            this.openmct.annotation.removeAnnotationTags(existingAnnotation);
         },
         checkEntryPos(entry) {
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);

@@ -33,11 +33,11 @@ import EventEmitter from 'EventEmitter';
  * @property {String} PLOT_SPATIAL The plot-spatial annotation type
  */
 const ANNOTATION_TYPES = Object.freeze({
-    NOTEBOOK: 'notebook',
-    GEOSPATIAL: 'geospatial',
-    PIXEL_SPATIAL: 'pixelspatial',
-    TEMPORAL: 'temporal',
-    PLOT_SPATIAL: 'plotspatial'
+    NOTEBOOK: 'NOTEBOOK',
+    GEOSPATIAL: 'GEOSPATIAL',
+    PIXEL_SPATIAL: 'PIXEL_SPATIAL',
+    TEMPORAL: 'TEMPORAL',
+    PLOT_SPATIAL: 'PLOT_SPATIAL'
 });
 
 /**
@@ -86,7 +86,7 @@ export default class AnnotationAPI extends EventEmitter {
     *          has been created, or be rejected if it cannot be saved
     */
     async create({name, domainObject, annotationType, tags, contentText, targets}) {
-        if (!Object.keys(this.ANNOTATION_TYPES).includes(annotationType.toUpperCase())) {
+        if (!Object.keys(this.ANNOTATION_TYPES).includes(annotationType)) {
             throw new Error(`Unknown annotation type: ${annotationType}`);
         }
 
