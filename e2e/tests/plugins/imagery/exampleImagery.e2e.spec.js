@@ -308,14 +308,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
     // Zoom in on next image
-    await bgImageLocator.hover({trial: true});
-    await page.mouse.wheel(0, deltaYStep * 2);
-
-    // Wait for zoom animation to finish
-    await bgImageLocator.hover({trial: true});
-    const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-    expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-    expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+    await mouseZoomIn(page);
 
     // Click previous image button
     await previousImageButton.click();
@@ -534,16 +527,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
         // Zoom in on next image
-        const deltaYStep = 100; // equivalent to 1x zoom
-        await bgImageLocator.hover();
-        await page.mouse.wheel(0, deltaYStep * 2);
-
-        // Wait for zoom animation to finish
-        await bgImageLocator.hover();
-        const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-        const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-        expect(imageNextMouseZoomedIn.height).toBeGreaterThanOrEqual(originalImageDimensions.height);
-        expect(imageNextMouseZoomedIn.width).toBeGreaterThanOrEqual(originalImageDimensions.width);
+        await mouseZoomIn(page);
 
         // Click previous image button
         await previousImageButton.click();
