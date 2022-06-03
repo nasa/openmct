@@ -211,13 +211,15 @@ define(['lodash'], function (_) {
                         options: [
                             {
                                 value: false,
-                                icon: 'icon-frame-show',
-                                title: "Frame visible"
+                                icon: 'icon-frame-hide',
+                                title: "Frame visible",
+                                label: 'Hide frame'
                             },
                             {
                                 value: true,
-                                icon: 'icon-frame-hide',
-                                title: "Frame hidden"
+                                icon: 'icon-frame-show',
+                                title: "Frame hidden",
+                                label: 'Show frame'
                             }
                         ]
                     };
@@ -401,6 +403,7 @@ define(['lodash'], function (_) {
                         },
                         icon: "icon-pencil",
                         title: "Edit text properties",
+                        label: "Edit text",
                         dialog: DIALOG_FORM.text
                     };
                 }
@@ -514,12 +517,14 @@ define(['lodash'], function (_) {
                             {
                                 value: true,
                                 icon: 'icon-eye-open',
-                                title: "Show units"
+                                title: "Show units",
+                                label: "Show units"
                             },
                             {
                                 value: false,
                                 icon: 'icon-eye-disabled',
-                                title: "Hide units"
+                                title: "Hide units",
+                                label: "Hide units"
                             }
                         ]
                     };
@@ -562,6 +567,7 @@ define(['lodash'], function (_) {
                                 domainObject: selectedParent,
                                 icon: "icon-object",
                                 title: "Switch the way this telemetry is displayed",
+                                label: "View type",
                                 options: viewOptions,
                                 method: function (option) {
                                     displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
@@ -662,9 +668,9 @@ define(['lodash'], function (_) {
                     'display-mode': [],
                     'telemetry-value': [],
                     'style': [],
+                    'unit-toggle': [],
                     'position': [],
                     'duplicate': [],
-                    'unit-toggle': [],
                     'remove': [],
                     'toggle-grid': []
                 };
@@ -689,6 +695,7 @@ define(['lodash'], function (_) {
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
+                                getSeparator(),
                                 getXInput(selectedParent, selectedObjects),
                                 getYInput(selectedParent, selectedObjects),
                                 getHeightInput(selectedParent, selectedObjects),
@@ -712,9 +719,17 @@ define(['lodash'], function (_) {
                             toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectedObjects)];
                         }
 
+                        if (toolbar['unit-toggle'].length === 0) {
+                            let toggleUnitsButton = getToggleUnitsButton(selectedParent, selectedObjects);
+                            if (toggleUnitsButton) {
+                                toolbar['unit-toggle'] = [toggleUnitsButton];
+                            }
+                        }
+
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
+                                getSeparator(),
                                 getXInput(selectedParent, selectedObjects),
                                 getYInput(selectedParent, selectedObjects),
                                 getHeightInput(selectedParent, selectedObjects),
@@ -729,17 +744,11 @@ define(['lodash'], function (_) {
                         if (toolbar.viewSwitcher.length === 0) {
                             toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
-
-                        if (toolbar['unit-toggle'].length === 0) {
-                            let toggleUnitsButton = getToggleUnitsButton(selectedParent, selectedObjects);
-                            if (toggleUnitsButton) {
-                                toolbar['unit-toggle'] = [toggleUnitsButton];
-                            }
-                        }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
+                                getSeparator(),
                                 getXInput(selectedParent, selectedObjects),
                                 getYInput(selectedParent, selectedObjects),
                                 getHeightInput(selectedParent, selectedObjects),
@@ -758,6 +767,7 @@ define(['lodash'], function (_) {
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
+                                getSeparator(),
                                 getXInput(selectedParent, selectedObjects),
                                 getYInput(selectedParent, selectedObjects),
                                 getHeightInput(selectedParent, selectedObjects),
@@ -772,6 +782,7 @@ define(['lodash'], function (_) {
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
+                                getSeparator(),
                                 getXInput(selectedParent, selectedObjects),
                                 getYInput(selectedParent, selectedObjects),
                                 getHeightInput(selectedParent, selectedObjects),
@@ -786,6 +797,7 @@ define(['lodash'], function (_) {
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
+                                getSeparator(),
                                 getXInput(selectedParent, selectedObjects),
                                 getYInput(selectedParent, selectedObjects),
                                 getX2Input(selectedParent, selectedObjects),

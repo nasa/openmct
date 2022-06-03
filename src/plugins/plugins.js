@@ -78,6 +78,7 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
+    './operatorStatus/plugin',
     './gauge/GaugePlugin',
     './timelist/plugin'
 ], function (
@@ -138,6 +139,7 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
+    OperatorStatus,
     GaugePlugin,
     TimeList
 ) {
@@ -217,6 +219,7 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
+    plugins.OperatorStatus = OperatorStatus.default;
     plugins.Gauge = GaugePlugin.default;
     plugins.Timelist = TimeList.default;
 
