@@ -83,6 +83,7 @@ define([
     './gauge/GaugePlugin',
     './timelist/plugin',
     './faultManagement/FaultManagementPlugin'
+    '../../example/exampleTags/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -145,7 +146,8 @@ define([
     OperatorStatus,
     GaugePlugin,
     TimeList,
-    FaultManagementPlugin
+    FaultManagementPlugin,
+    ExampleTags
 ) {
     const plugins = {};
 
@@ -154,6 +156,7 @@ define([
     plugins.example.ExampleImagery = ExampleImagery.default;
     plugins.example.ExampleFaultManagement = ExampleFaultManagement.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
+    plugins.example.ExampleTags = ExampleTags.default;
     plugins.example.Generator = () => GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;

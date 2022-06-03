@@ -283,10 +283,12 @@
     }
 
     &__content {
+        display: flex;
+        flex-direction: column;
         flex: 1 1 auto;
 
-       > [class*="__"] + [class*="__"] {
-            margin-top: $interiorMarginSm;
+       > * + * {
+            margin-top: $interiorMargin;
        }
     }
 

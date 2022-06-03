@@ -33,6 +33,7 @@ describe("Notebook plugin:", () => {
     let objectProviderObserver;
 
     let notebookDomainObject;
+    let originalAnnotations;
 
     beforeEach((done) => {
         notebookDomainObject = {
@@ -55,6 +56,11 @@ describe("Notebook plugin:", () => {
         element.appendChild(child);
 
         openmct.install(notebookPlugin());
+        originalAnnotations = openmct.annotation.getNotebookAnnotation;
+        // eslint-disable-next-line require-await
+        openmct.annotation.getNotebookAnnotation = async function () {
+            return null;
+        };
 
         notebookDefinition = openmct.types.get('notebook').definition;
         notebookDefinition.initialize(notebookDomainObject);
@@ -65,6 +71,7 @@ describe("Notebook plugin:", () => {
 
     afterEach(() => {
         appHolder.remove();
+        openmct.annotation.getNotebookAnnotation = originalAnnotations;
 
         return resetApplicationState(openmct);
     });
@@ -83,7 +90,7 @@ describe("Notebook plugin:", () => {
         let notebookViewObject;
         let mutableNotebookObject;
 
-        beforeEach(() => {
+        beforeEach(async () => {
             notebookViewObject = {
                 ...notebookDomainObject,
                 id: "test-object",
@@ -161,16 +168,14 @@ describe("Notebook plugin:", () => {
             testObjectProvider.create.and.returnValue(Promise.resolve(true));
             testObjectProvider.update.and.returnValue(Promise.resolve(true));
 
-            return openmct.objects.getMutable(notebookViewObject.identifier).then((mutableObject) => {
-                mutableNotebookObject = mutableObject;
-                objectProviderObserver = testObjectProvider.observe.calls.mostRecent().args[1];
+            const mutableObject = await openmct.objects.getMutable(notebookViewObject.identifier);
+            mutableNotebookObject = mutableObject;
+            objectProviderObserver = testObjectProvider.observe.calls.mostRecent().args[1];
 
-                notebookView = notebookViewProvider.view(mutableNotebookObject);
-                notebookView.show(child);
+            notebookView = notebookViewProvider.view(mutableNotebookObject);
+            notebookView.show(child);
 
-                return Vue.nextTick();
-            });
-
+            await Vue.nextTick();
         });
 
         afterEach(() => {
