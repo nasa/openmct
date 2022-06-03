@@ -24,7 +24,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-xdescribe("The URLTimeSettingsSynchronizer", () => {
+describe("The URLTimeSettingsSynchronizer", () => {
     let appHolder;
     let openmct;
     let resolveFunction;
