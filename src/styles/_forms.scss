@@ -322,39 +322,6 @@
     }
 }
 
-.autocomplete {
-    input {
-        width: 226px;
-        padding: 5px 0px 5px 7px;
-    }
-    .icon-arrow-down {
-        position: absolute;
-        top: 8px;
-        left: 210px;
-        font-size: 10px;
-        cursor: pointer;
-    }
-    .autocompleteOptions {
-        border: 1px solid $colorFormLines;
-        border-radius: 5px;
-        width: 224px;
-        max-height: 170px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        li {
-            border: 1px solid $colorFormLines;
-            padding: 8px 0px 8px 5px;
-            .optionText {
-                cursor: pointer;
-            }
-        }
-        .optionPreSelected {
-            background-color: $colorInspectorSectionHeaderBg;
-            color: $colorInspectorSectionHeaderFg;
-        }
-    }
-}
-
 /********* COMPACT FORM */
 // ul > li > label, control
 // Make a new UL for each form section

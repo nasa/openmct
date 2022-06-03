@@ -4,9 +4,9 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 0,
+    retries: 1, //Only for debugging purposes
     testDir: 'tests/performance/',
-    timeout: 30 * 1000,
+    timeout: 60 * 1000,
     workers: 1, //Only run in serial with 1 worker
     webServer: {
         command: 'npm run start',
@@ -20,7 +20,7 @@ const config = {
         headless: Boolean(process.env.CI), //Only if running locally
         ignoreHTTPSErrors: true,
         screenshot: 'off',
-        trace: 'off',
+        trace: 'on-first-retry',
         video: 'off'
     },
     projects: [

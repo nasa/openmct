@@ -64,9 +64,9 @@ test.describe.skip('Memory Performance tests', () => {
         await page.goto('/', {waitUntil: 'networkidle'});
 
         // To to Search Available after Launch
-        await page.locator('input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         // Fill Search input
-        await page.locator('input[type="search"]').fill('Performance Display Layout');
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Performance Display Layout');
         //Search Result Appears and is clicked
         await Promise.all([
             page.waitForNavigation(),
