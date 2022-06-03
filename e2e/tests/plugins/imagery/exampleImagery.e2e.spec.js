@@ -604,7 +604,6 @@ async function panZoomAndAssertImageProperties(page) {
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
 
-
     // Pan right
     await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
     await page.mouse.down();
