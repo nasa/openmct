@@ -30,15 +30,6 @@
         v-show="resultsShown"
         class="c-gsearch__results-wrapper"
     >
-        <!--div class= "c-gsearch__filter">
-                <button> All <sup> 200+ </sup> </button>
-                <button> Telemetry <sup> 2 </sup> </button>
-                <button> Imagery <sup>4</sup> </button>
-                <button> Map <sup> 31 </sup> </button>
-                <button> Notebook <sup> 145 </sup> </button>
-                <button> Objects <sup>6</sup> </button>
-            </div-->
-
         <div class="c-gsearch__results">
             <div
                 v-if="objectResults && objectResults.length"
