@@ -41,7 +41,7 @@
 
         <ObjectPath
             ref="location"
-            :read-only="true"
+            :read-only="false"
         />
 
         <div class="c-gsearch-result__tags">
