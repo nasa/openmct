@@ -23,7 +23,7 @@
 define([
     'uuid'
 ], function (
-    uuid
+    { v4: uuid }
 ) {
     function WorkerInterface(openmct) {
         // eslint-disable-next-line no-undef

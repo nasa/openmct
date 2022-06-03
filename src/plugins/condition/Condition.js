@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { evaluateResults } from './utils/evaluator';
 import { getLatestTimestamp } from './utils/time';
