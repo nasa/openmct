@@ -102,13 +102,6 @@ const config = {
                 type: 'asset/source'
             },
             {
-                test: /zepto/,
-                use: [
-                    "imports-loader?this=>window",
-                    "exports-loader?Zepto"
-                ]
-            },
-            {
                 test: /\.(jpg|jpeg|png|svg)$/,
                 type: 'asset/resource',
                 generator: {

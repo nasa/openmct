@@ -28,7 +28,6 @@
     "eslint-plugin-vue": "8.5.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "6.12.0",
     "eventemitter3": "1.2.0",
-    "exports-loader": "0.7.0",
     "express": "4.13.1",
     "file-saver": "2.0.5",
     "git-rev-sync": "3.0.2",
@@ -74,8 +73,7 @@
     "webpack-cli": "4.9.2",
     "webpack-dev-middleware": "5.3.3",
     "webpack-hot-middleware": "2.25.1",
-    "webpack-merge": "5.8.0",
-    "zepto": "1.2.0"
+    "webpack-merge": "5.8.0"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./package-lock.json",
