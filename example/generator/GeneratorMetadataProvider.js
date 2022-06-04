@@ -29,12 +29,12 @@ define([
                     }
                 },
                 {
-                    key: "cos",
-                    name: "Cosine",
-                    unit: "deg",
-                    formatString: '%0.2f',
+                    key: "wavelengths",
+                    name: "Wavelength",
+                    unit: "nm",
+                    format: 'string[]',
                     hints: {
-                        domain: 3
+                        range: 4
                     }
                 },
                 // Need to enable "LocalTimeSystem" plugin to make use of this
@@ -63,6 +63,14 @@ define([
                     formatString: '%0.2f',
                     hints: {
                         range: 2
+                    }
+                },
+                {
+                    key: "intensities",
+                    name: "Intensities",
+                    format: 'number[]',
+                    hints: {
+                        range: 3
                     }
                 }
             ]
