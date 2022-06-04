@@ -38,16 +38,19 @@
             <div class="c-object-label__name">{{ name }}</div>
         </div>
     </li>
-    <ColorSwatch
-        v-if="expanded"
-        :current-color="currentColor"
-        title="Manually set the color for this bar graph series."
-        edit-title="Manually set the color for this bar graph series"
-        view-title="The color for this bar graph series."
-        short-label="Color"
-        class="grid-properties"
-        @colorSet="setColor"
-    />
+    <ul class="grid-properties">
+        <li class="grid-row">
+            <ColorSwatch
+                v-if="expanded"
+                :current-color="currentColor"
+                title="Manually set the color for this bar graph series."
+                edit-title="Manually set the color for this bar graph series."
+                view-title="The color for this bar graph series."
+                short-label="Color"
+                @colorSet="setColor"
+            />
+        </li>
+    </ul>
 </ul>
 </template>
 
@@ -109,7 +112,6 @@ export default {
         }
     },
     mounted() {
-        this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColorAndName();
         this.removeBarStylesListener = this.openmct.objects.observe(this.domainObject, `configuration.barStyles.series["${this.key}"]`, this.initColorAndName);
     },
@@ -120,6 +122,7 @@ export default {
     },
     methods: {
         initColorAndName() {
+            this.key = this.openmct.objects.makeKeyString(this.item.identifier);
             // this is called before the plot is initialized
             if (!this.domainObject.configuration.barStyles.series[this.key]) {
                 const color = this.colorPalette.getNextColor().asHexString();
