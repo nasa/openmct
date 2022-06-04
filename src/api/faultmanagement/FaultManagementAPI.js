@@ -30,7 +30,7 @@ export default class FaultManagementAPI {
     }
 
     hasActions() {
-        return this.provider?.acknowledgeFault && this.provider?.shelveFault;
+        return this.provider?.acknowledgeFault !== undefined && this.provider?.shelveFault !== undefined;
     }
 
     request(domainObject) {
