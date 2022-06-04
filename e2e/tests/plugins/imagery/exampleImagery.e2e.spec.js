@@ -204,7 +204,7 @@ test.describe('Example Imagery', () => {
         expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
 
-    test.only('Using the zoom features does not pause telemetry', async ({ page }) => {
+    test('Using the zoom features does not pause telemetry', async ({ page }) => {
         const bgImageLocator = page.locator(backgroundImageSelector);
         const pausePlayButton = page.locator('.c-button.pause-play');
         // wait for zoom animation to finish
