@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-notebook">
+<div
+    class="c-notebook"
+    :class="[{'c-notebook--restricted' : isRestricted }]"
+>
     <div class="c-notebook__head">
         <Search
             class="c-notebook__search"
@@ -119,6 +122,7 @@
                 </div>
             </div>
             <div
+                v-if="selectedPage && !selectedPage.isLocked"
                 class="c-notebook__drag-area icon-plus"
                 @click="newEntry()"
                 @dragover="dragOver"
@@ -128,6 +132,13 @@
                 <span class="c-notebook__drag-area__label">
                     To start a new entry, click here or drag and drop any object
                 </span>
+            </div>
+            <div
+                v-if="selectedPage && selectedPage.isLocked"
+                class="c-notebook__page-locked"
+            >
+                <div class="icon-lock"></div>
+                <div class="c-notebook__page-locked__message">This page has been committed and cannot be modified or removed</div>
             </div>
             <div
                 v-if="selectedSection && selectedPage"
@@ -142,12 +153,24 @@
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
+                    :is-locked="selectedPage.isLocked"
                     @cancelEdit="cancelTransaction"
                     @editingEntry="startTransaction"
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
                 />
             </div>
+            <div
+                v-if="showLockButton"
+                class="c-notebook__commit-entries-control"
+            >
+                <button
+                    class="c-button c-button--major commit-button icon-lock"
+                    title="Commit entries and lock this page from further changes"
+                    @click="lockPage()"
+                >
+                    <span class="c-button__label">Commit Entries</span>
+                </button></div>
         </div>
     </div>
 </div>
@@ -161,7 +184,7 @@ import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSectionId, setDefaultNotebookPageId } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
-import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
+import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
@@ -192,6 +215,7 @@ export default {
             selectedPageId: this.getSelectedPageId(),
             defaultSort: this.domainObject.configuration.defaultSort,
             focusEntryId: null,
+            isRestricted: this.domainObject.type === RESTRICTED_NOTEBOOK_TYPE,
             search: '',
             searchResults: [],
             showTime: this.domainObject.configuration.showTime || 0,
@@ -241,6 +265,11 @@ export default {
             }
 
             return this.sections[0];
+        },
+        showLockButton() {
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+
+            return entries && entries.length > 0 && this.isRestricted && !this.selectedPage.isLocked;
         }
     },
     watch: {
@@ -282,7 +311,7 @@ export default {
     },
     methods: {
         changeSectionPage(newParams, oldParams, changedParams) {
-            if (newParams.view !== NOTEBOOK_VIEW_TYPE) {
+            if (isNotebookViewType(newParams.view)) {
                 return;
             }
 
@@ -347,6 +376,43 @@ export default {
             this.defaultSectionId = undefined;
             this.removeDefaultClass(this.domainObject.identifier);
             clearDefaultNotebook();
+        },
+        lockPage() {
+            let prompt = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: "This action will lock this page and disallow any new entries, or editing of existing entries. Do you want to continue?",
+                buttons: [
+                    {
+                        label: 'Lock Page',
+                        callback: () => {
+                            let sections = this.getSections();
+                            this.selectedPage.isLocked = true;
+
+                            // cant be default if it's locked
+                            if (this.selectedPage.id === this.defaultPageId) {
+                                this.cleanupDefaultNotebook();
+                            }
+
+                            if (!this.selectedSection.isLocked) {
+                                this.selectedSection.isLocked = true;
+                            }
+
+                            mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
+
+                            if (!this.domainObject.locked) {
+                                mutateObject(this.openmct, this.domainObject, 'locked', true);
+                            }
+
+                            prompt.dismiss();
+                        }
+                    }, {
+                        label: 'Cancel',
+                        callback: () => {
+                            prompt.dismiss();
+                        }
+                    }
+                ]
+            });
         },
         setSectionAndPageFromUrl() {
             let sectionId = this.getSectionIdFromUrl() || this.getDefaultSectionId() || this.getSelectedSectionId();

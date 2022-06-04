@@ -23,6 +23,7 @@
 <template>
 <div
     class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    :class="{ 'locked': isLocked }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
@@ -53,12 +54,12 @@
                     />
                 </div>
             </template>
-            <template v-else>
+            <template v-else-if="!isLocked">
                 <div
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
                     tabindex="0"
-                    contenteditable
+                    contenteditable="true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
@@ -67,6 +68,18 @@
                 >
                 </div>
             </template>
+
+            <template v-else>
+                <div
+                    :id="entry.id"
+                    class="c-ne__text"
+                    contenteditable="false"
+                    tabindex="0"
+                    v-text="entry.text"
+                >
+                </div>
+            </template>
+
             <TagEditor
                 :domain-object="domainObject"
                 :annotation-query="annotationQuery"
@@ -74,11 +87,13 @@
                 :annotation-search-type="openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS"
                 :target-specific-details="{entryId: entry.id}"
             />
+
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed
                     v-for="embed in entry.embeds"
                     :key="embed.id"
                     :embed="embed"
+                    :is-locked="isLocked"
                     @removeEmbed="removeEmbed"
                     @updateEmbed="updateEmbed"
                 />
@@ -86,7 +101,7 @@
         </div>
     </div>
     <div
-        v-if="!readOnly"
+        v-if="!readOnly && !isLocked"
         class="c-ne__local-controls--hidden"
     >
         <button
@@ -172,6 +187,12 @@ export default {
             default() {
                 return true;
             }
+        },
+        isLocked: {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     computed: {
@@ -229,15 +250,21 @@ export default {
                 this.openmct.editor.cancel();
             }
         },
-        changeCursor() {
+        changeCursor(event) {
             event.preventDefault();
-            event.dataTransfer.dropEffect = "copy";
+
+            if (!this.isLocked) {
+                event.dataTransfer.dropEffect = 'copy';
+            } else {
+                event.dataTransfer.dropEffect = 'none';
+                event.dataTransfer.effectAllowed = 'none';
+            }
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
         async dropOnEntry($event) {
-            event.stopImmediatePropagation();
+            $event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {

@@ -186,7 +186,8 @@ define([
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
-    plugins.Notebook = Notebook.default;
+    plugins.Notebook = Notebook.NotebookPlugin;
+    plugins.RestrictedNotebook = Notebook.RestrictedNotebookPlugin;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
