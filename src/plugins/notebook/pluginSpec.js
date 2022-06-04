@@ -55,7 +55,7 @@ describe("Notebook plugin:", () => {
         child = document.createElement('div');
         element.appendChild(child);
 
-        openmct.install(notebookPlugin());
+        openmct.install(NotebookPlugin());
         originalAnnotations = openmct.annotation.getNotebookAnnotation;
         // eslint-disable-next-line require-await
         openmct.annotation.getNotebookAnnotation = async function () {
