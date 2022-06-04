@@ -65,7 +65,7 @@ export const MAINTENANCE = {
 export default class CouchStatusIndicator {
     constructor(simpleIndicator) {
         this.indicator = simpleIndicator;
-        this.setDefaults();
+        this.#setDefaults();
     }
 
     /**
