@@ -88,6 +88,35 @@ describe('the plugin', function () {
         expect(displayLayoutViewProvider).toBeDefined();
     });
 
+    it('renders a display layout view without errors', () => {
+        const testViewObject = {
+            identifier: {
+                namespace: 'test-namespace',
+                key: 'test-key'
+            },
+            type: 'layout',
+            configuration: {
+                items: [],
+                layoutGrid: [10, 10]
+            },
+            composition: []
+        };
+
+        const applicableViews = openmct.objectViews.get(testViewObject, []);
+        let displayLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'layout.view');
+        let view = displayLayoutViewProvider.view(testViewObject);
+        let error;
+
+        try {
+            view.show(child, false);
+        } catch (e) {
+            error = e;
+        }
+
+        expect(error).toBeUndefined();
+
+    });
+
     describe('the alpha numeric format view', () => {
         let displayLayoutItem;
         let telemetryItem;
