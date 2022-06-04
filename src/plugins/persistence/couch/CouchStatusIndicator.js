@@ -70,8 +70,9 @@ export default class CouchStatusIndicator {
 
     /**
      * Set the default values for the indicator.
+     * @private
      */
-    setDefaults() {
+    #setDefaults() {
         this.setIndicatorToState(PENDING);
     }
 
