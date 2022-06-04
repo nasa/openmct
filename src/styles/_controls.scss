@@ -42,6 +42,17 @@
     }
 }
 
+@mixin menuPositioning() {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+
+    > * {
+        flex: 0 0 auto;
+    }
+}
+
 @mixin menuInner() {
     li {
         @include cControl();
@@ -479,6 +490,10 @@ select {
     &__row {
         > * + * { margin-left: $interiorMargin; }
     }
+
+    li {
+        white-space: nowrap;
+    }
 }
 
 /******************************************************** TABS */
@@ -567,6 +582,7 @@ select {
 /******************************************************** MENUS */
 .c-menu {
     @include menuOuter();
+    @include menuPositioning();
     @include menuInner();
 
     &__section-hint {
@@ -590,6 +606,7 @@ select {
 .c-super-menu {
     // Two column layout, menu items on left with detail of hover element on right
     @include menuOuter();
+    @include menuPositioning();
     display: flex;
     padding: $interiorMarginLg;
     flex-direction: row;
@@ -1034,6 +1051,14 @@ input[type="range"] {
         // Horizontal layout be
         display: inline-flex;
         align-items: center;
+    }
+
+    [class*='--menus-aligned'] {
+        // Contains top level elements that hold dropdown menus
+        // Top level elements use display: contents to allow their menus to compactly align
+        // 03-18-22: used in ImageControls.vue
+        display: flex;
+        flex-direction: row;
     }
 }
 

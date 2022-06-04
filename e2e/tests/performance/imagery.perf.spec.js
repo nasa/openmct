@@ -164,7 +164,7 @@ test.describe('Performance tests', () => {
         console.log('jpgResourceTiming ' + JSON.stringify(jpgResourceTiming));
 
         // Click Close Icon
-        await page.locator('.c-click-icon').click();
+        await page.locator('[aria-label="Close"]').click();
         await page.evaluate(() => window.performance.mark("view-large-close-button"));
 
         //await client.send('HeapProfiler.enable');
