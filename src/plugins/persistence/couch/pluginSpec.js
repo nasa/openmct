@@ -25,7 +25,7 @@ import {
     createOpenMct,
     resetApplicationState, spyOnBuiltins
 } from 'utils/testing';
-import { CONNECTED, DISCONNECTED } from './CouchStatusIndicator';
+import { CONNECTED, DISCONNECTED, PENDING } from './CouchStatusIndicator';
 
 describe('the plugin', () => {
     let openmct;
@@ -319,6 +319,8 @@ describe('the view', () => {
     });
 
     describe('updates CouchDB status indicator', () => {
+        let mockPromise;
+
         function assertCouchIndicatorStatus(status) {
             const indicator = appHolder.querySelector('.c-indicator--simple');
             expect(indicator).not.toBeNull();
@@ -326,8 +328,6 @@ describe('the view', () => {
             expect(indicator.textContent).toMatch(new RegExp(status.text, 'i'));
             expect(indicator.title).toMatch(new RegExp(status.title, 'i'));
         }
-
-        let mockPromise;
 
         it("to 'connected' on successful request", async () => {
             mockPromise = Promise.resolve({
@@ -343,22 +343,59 @@ describe('the view', () => {
                 }
             });
             fetch.and.returnValue(mockPromise);
+
             await openmct.objects.get({
                 namespace: '',
                 key: 'object-1'
             });
             await Vue.nextTick();
+
             assertCouchIndicatorStatus(CONNECTED);
         });
 
         it("to 'disconnected' on failed request", async () => {
             fetch.and.throwError(new TypeError('ERR_CONNECTION_REFUSED'));
+
             await openmct.objects.get({
                 namespace: '',
                 key: 'object-1'
             });
             await Vue.nextTick();
+
             assertCouchIndicatorStatus(DISCONNECTED);
+        });
+
+        it("to 'pending'", async () => {
+            const workerMessage = {
+                data: {
+                    type: 'state',
+                    state: 'pending'
+                }
+            };
+            mockPromise = Promise.resolve({
+                status: 200,
+                json: () => {
+                    return {
+                        ok: true,
+                        _id: 'some-value',
+                        id: 'some-value',
+                        _rev: 1,
+                        model: {}
+                    };
+                }
+            });
+            fetch.and.returnValue(mockPromise);
+
+            await openmct.objects.get({
+                namespace: '',
+                key: 'object-1'
+            });
+
+            // Simulate 'pending' state from worker message
+            provider.onSharedWorkerMessage(workerMessage);
+            await Vue.nextTick();
+
+            assertCouchIndicatorStatus(PENDING);
         });
     });
 });
