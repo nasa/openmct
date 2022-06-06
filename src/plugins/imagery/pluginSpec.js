@@ -192,10 +192,6 @@ describe("The Imagery View Layouts", () => {
         cleanupFirst = [];
 
         openmct = createOpenMct();
-        openmct.time.timeSystem('utc', {
-            start: START - (5 * ONE_MINUTE),
-            end: START + (5 * ONE_MINUTE)
-        });
 
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
@@ -320,7 +316,7 @@ describe("The Imagery View Layouts", () => {
         expect(imageryView).toBeDefined();
     });
 
-    xdescribe("Clear data action for imagery", () => {
+    describe("Clear data action for imagery", () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
@@ -329,6 +325,10 @@ describe("The Imagery View Layouts", () => {
         let clearDataAction;
 
         beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
 
             applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
@@ -382,6 +382,10 @@ describe("The Imagery View Layouts", () => {
         let imageryView;
 
         beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
 
             applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
@@ -393,13 +397,12 @@ describe("The Imagery View Layouts", () => {
             return Vue.nextTick();
         });
 
-        it("on mount should show the the most recent image", (done) => {
+        it("on mount should show the the most recent image", () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
-            Vue.nextTick(() => {
+            return Vue.nextTick(() => {
                 const imageInfo = getImageInfo(parent);
 
                 expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
-                done();
             });
         });
 
