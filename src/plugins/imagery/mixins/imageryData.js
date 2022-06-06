@@ -76,20 +76,20 @@ export default {
             }
 
             // const [lastHistoryItem] = this.imageHistory.slice(-1);
-            const lastHistoryItem = this.imageHistory[this.imageHistory.length - 1];
-            const datumURL = this.formatImageUrl(datum);
-            const lastHistoryURL = this.formatImageUrl(lastHistoryItem);
+            // const lastHistoryItem = this.imageHistory[this.imageHistory.length - 1];
+            // const datumURL = this.formatImageUrl(datum);
+            // const lastHistoryURL = this.formatImageUrl(lastHistoryItem);
 
             // or it is before the last datum in the history
             const datumTimeCheck = this.parseTime(datum);
-            const historyTimeCheck = this.parseTime(lastHistoryItem);
+            // const historyTimeCheck = this.parseTime(lastHistoryItem);
             const bounds = this.timeContext.bounds();
 
             // datum is not valid if it matches the last datum in history,
-            const matchesLast = (datumTimeCheck === historyTimeCheck) && (datumURL === lastHistoryURL);
+            // const matchesLast = (datumTimeCheck === historyTimeCheck) && (datumURL === lastHistoryURL);
             const isOutOfBounds = datumTimeCheck < bounds.start || datumTimeCheck > bounds.end;
 
-            return !matchesLast && !isOutOfBounds;
+            return !isOutOfBounds;
         },
         formatImageUrl(datum) {
             if (!datum) {
