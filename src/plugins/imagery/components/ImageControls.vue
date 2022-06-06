@@ -60,7 +60,7 @@
         >
             <div class="c-image-controls__input icon-brightness">
                 <input
-                    v-model="filters.contrast"
+                    v-model="filters.brightness"
                     type="range"
                     min="0"
                     max="500"
@@ -69,7 +69,7 @@
             </div>
             <div class="c-image-controls__input icon-contrast">
                 <input
-                    v-model="filters.brightness"
+                    v-model="filters.contrast"
                     type="range"
                     min="0"
                     max="500"
@@ -174,7 +174,7 @@ export default {
             this.$emit('filtersUpdated', this.filters);
         },
         handleResetFilters() {
-            this.filters = DEFAULT_FILTER_VALUES;
+            this.filters = {...DEFAULT_FILTER_VALUES};
             this.notifyFiltersChanged();
         },
         limitZoomRange(factor) {

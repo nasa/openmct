@@ -97,8 +97,7 @@
                         'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
                         'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
                         'width': `${sizedImageWidth}px`,
-                        'height': `${sizedImageHeight}px`,
-
+                        'height': `${sizedImageHeight}px`
                     }"
                 ></div>
                 <Compass
