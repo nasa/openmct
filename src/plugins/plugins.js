@@ -32,6 +32,7 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    '../../example/faultManagment/exampleFaultSource',
     './imagery/plugin',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
@@ -81,6 +82,7 @@ define([
     './operatorStatus/plugin',
     './gauge/GaugePlugin',
     './timelist/plugin',
+    './faultManagement/FaultManagementPlugin',
     '../../example/exampleTags/plugin'
 ], function (
     _,
@@ -94,6 +96,7 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ExampleFaultSource,
     ImageryPlugin,
     SummaryWidget,
     URLIndicatorPlugin,
@@ -143,6 +146,7 @@ define([
     OperatorStatus,
     GaugePlugin,
     TimeList,
+    FaultManagementPlugin,
     ExampleTags
 ) {
     const plugins = {};
@@ -150,6 +154,7 @@ define([
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
     plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.ExampleFaultSource = ExampleFaultSource.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
     plugins.example.ExampleTags = ExampleTags.default;
     plugins.example.Generator = () => GeneratorPlugin;
@@ -189,6 +194,7 @@ define([
     plugins.Notebook = Notebook.NotebookPlugin;
     plugins.RestrictedNotebook = Notebook.RestrictedNotebookPlugin;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FaultManagement = FaultManagementPlugin.default;
     plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;

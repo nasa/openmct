@@ -238,6 +238,7 @@ define([
         this.priority = api.PriorityAPI;
 
         this.router = new ApplicationRouter(this);
+        this.faults = new api.FaultManagementAPI.default(this);
         this.forms = new api.FormsAPI.default(this);
 
         this.branding = BrandingAPI.default;
