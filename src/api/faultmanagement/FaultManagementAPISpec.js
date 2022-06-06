@@ -58,11 +58,14 @@ const faultDomainObject = {
         namespace: 'fault'
     }
 };
+const aComment = 'THIS is my fault.';
 const faultManagementProvider = {
     request() {
         return Promise.resolve([aFault]);
     },
-    subscribe() {},
+    subscribe(domainObject, callback) {
+        return () => {};
+    },
     supportsRequest(domainObject) {
         return domainObject.type === 'faultManagement';
     },
@@ -87,6 +90,7 @@ describe('The Fault Management API', () => {
     beforeEach(() => {
         openmct = createOpenMct();
         openmct.install(openmct.plugins.FaultManagement());
+        // openmct.install(openmct.plugins.example.ExampleFaultSource());
         openmct.faults.addProvider(faultManagementProvider);
     });
 
@@ -95,12 +99,46 @@ describe('The Fault Management API', () => {
     });
 
     it('allows you to request a fault', async () => {
+        spyOn(faultManagementProvider, 'supportsRequest').and.callThrough();
+
         let faultResponse = await openmct.faults.request(faultDomainObject);
+
+        expect(faultManagementProvider.supportsRequest).toHaveBeenCalledWith(faultDomainObject);
         expect(faultResponse[0].fault.name).toEqual(faultName);
+    });
+
+    it('allows you to subscribe to a fault', () => {
+        spyOn(faultManagementProvider, 'subscribe').and.callThrough();
+        spyOn(faultManagementProvider, 'supportsSubscribe').and.callThrough();
+
+        let unsubscribe = openmct.faults.subscribe(faultDomainObject, () => {});
+
+        expect(unsubscribe).toEqual(jasmine.any(Function));
+        expect(faultManagementProvider.supportsSubscribe).toHaveBeenCalledWith(faultDomainObject);
+        expect(faultManagementProvider.subscribe).toHaveBeenCalledOnceWith(faultDomainObject, jasmine.any(Function));
+
     });
 
     it('will tell you if the fault management provider supports actions', () => {
         expect(openmct.faults.hasActions()).toBeTrue();
+    });
+
+    it('will allow you to acknowledge a fault', async () => {
+        spyOn(faultManagementProvider, 'acknowledgeFault').and.callThrough();
+
+        let ackResponse = await openmct.faults.acknowledgeFault(aFault, aComment);
+
+        expect(faultManagementProvider.acknowledgeFault).toHaveBeenCalledWith(aFault, aComment);
+        expect(ackResponse.success).toBeTrue();
+    });
+
+    it('will allow you to shelve a fault', async () => {
+        spyOn(faultManagementProvider, 'shelveFault').and.callThrough();
+
+        let shelveResponse = await openmct.faults.shelveFault(aFault, aComment);
+
+        expect(faultManagementProvider.shelveFault).toHaveBeenCalledWith(aFault, aComment);
+        expect(shelveResponse.success).toBeTrue();
     });
 
 });
