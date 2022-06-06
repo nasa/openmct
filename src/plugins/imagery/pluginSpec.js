@@ -320,7 +320,7 @@ describe("The Imagery View Layouts", () => {
         expect(imageryView).toBeDefined();
     });
 
-    describe("Clear data action for imagery", () => {
+    xdescribe("Clear data action for imagery", () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
