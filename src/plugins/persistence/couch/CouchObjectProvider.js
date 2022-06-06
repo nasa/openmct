@@ -22,7 +22,8 @@
 
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
-import { NOTEBOOK_TYPE } from '../../notebook/notebook-constants.js';
+import { PENDING, CONNECTED, DISCONNECTED } from "./CouchStatusIndicator";
+import { isNotebookType } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
 const ID = "_id";
@@ -30,9 +31,10 @@ const HEARTBEAT = 50000;
 const ALL_DOCS = "_all_docs?include_docs=true";
 
 class CouchObjectProvider {
-    constructor(openmct, options, namespace) {
-        options = this._normalize(options);
+    constructor(openmct, options, namespace, indicator) {
+        options = this.#normalize(options);
         this.openmct = openmct;
+        this.indicator = indicator;
         this.url = options.url;
         this.namespace = namespace;
         this.objectQueue = {};
@@ -45,7 +47,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    startSharedWorker() {
+    #startSharedWorker() {
         let provider = this;
         let sharedWorker;
 
@@ -82,6 +84,9 @@ class CouchObjectProvider {
     onSharedWorkerMessage(event) {
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
+        } else if (event.data.type === 'state') {
+            const state = this.#messageToIndicatorState(event.data.state);
+            this.indicator.setIndicatorToState(state);
         } else {
             let objectChanges = event.data.objectChanges;
             const objectIdentifier = {
@@ -103,8 +108,34 @@ class CouchObjectProvider {
         }
     }
 
+    /**
+     * Takes in a state message from the CouchDB SharedWorker and returns an IndicatorState.
+     * @private
+     * @param {'open'|'close'|'pending'} message
+     * @returns import('./CouchStatusIndicator').IndicatorState
+     */
+    #messageToIndicatorState(message) {
+        let state;
+        switch (message) {
+        case 'open':
+            state = CONNECTED;
+            break;
+        case 'close':
+            state = DISCONNECTED;
+            break;
+        case 'pending':
+            state = PENDING;
+            break;
+        default:
+            state = PENDING;
+            break;
+        }
+
+        return state;
+    }
+
     //backwards compatibility, options used to be a url. Now it's an object
-    _normalize(options) {
+    #normalize(options) {
         if (typeof options === 'string') {
             return {
                 url: options
@@ -114,7 +145,7 @@ class CouchObjectProvider {
         return options;
     }
 
-    request(subPath, method, body, signal) {
+    async request(subPath, method, body, signal) {
         let fetchOptions = {
             method,
             body,
@@ -129,14 +160,32 @@ class CouchObjectProvider {
             };
         }
 
-        return fetch(this.url + '/' + subPath, fetchOptions)
-            .then((response) => {
-                if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
-                    throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
-                }
+        let response = null;
+        try {
+            response = await fetch(this.url + '/' + subPath, fetchOptions);
+            this.indicator.setIndicatorToState(CONNECTED);
 
-                return response.json();
-            });
+            if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
+                throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+            } else if (response.status === CouchObjectProvider.HTTP_BAD_REQUEST
+                || response.status === CouchObjectProvider.HTTP_UNAUTHORIZED
+                || response.status === CouchObjectProvider.HTTP_NOT_FOUND
+                || response.status === CouchObjectProvider.HTTP_PRECONDITION_FAILED) {
+                const error = await response.json();
+                throw new Error(`CouchDB Error: "${error.error}: ${error.reason}"`);
+            } else if (response.status === CouchObjectProvider.HTTP_SERVER_ERROR) {
+                throw new Error('CouchDB Error: "500 Internal Server Error"');
+            }
+
+            return await response.json();
+        } catch (error) {
+            // Network error, CouchDB unreachable.
+            if (response === null) {
+                this.indicator.setIndicatorToState(DISCONNECTED);
+            }
+
+            console.error(error.message);
+        }
     }
 
     /**
@@ -146,7 +195,7 @@ class CouchObjectProvider {
      * persist any queued objects
      * @private
      */
-    checkResponse(response, intermediateResponse, key) {
+    #checkResponse(response, intermediateResponse, key) {
         let requestSuccess = false;
         const id = response ? response.id : undefined;
         let rev;
@@ -166,7 +215,7 @@ class CouchObjectProvider {
             this.objectQueue[id].updateRevision(rev);
             this.objectQueue[id].pending = false;
             if (this.objectQueue[id].hasNext()) {
-                this.updateQueued(id);
+                this.#updateQueued(id);
             }
         } else {
             this.objectQueue[key].pending = false;
@@ -176,7 +225,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    getModel(response) {
+    #getModel(response) {
         if (response && response.model) {
             let key = response[ID];
             let object = this.fromPersistedModel(response.model, key);
@@ -185,7 +234,7 @@ class CouchObjectProvider {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
 
-            if (object.type === NOTEBOOK_TYPE) {
+            if (isNotebookType(object)) {
                 //Temporary measure until object sync is supported for all object types
                 //Always update notebook revision number because we have realtime sync, so always assume it's the latest.
                 this.objectQueue[key].updateRevision(response[REV]);
@@ -204,7 +253,7 @@ class CouchObjectProvider {
         this.batchIds.push(identifier.key);
 
         if (this.bulkPromise === undefined) {
-            this.bulkPromise = this.deferBatchedGet(abortSignal);
+            this.bulkPromise = this.#deferBatchedGet(abortSignal);
         }
 
         return this.bulkPromise
@@ -216,23 +265,23 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    deferBatchedGet(abortSignal) {
+    #deferBatchedGet(abortSignal) {
         // We until the next event loop cycle to "collect" all of the get
         // requests triggered in this iteration of the event loop
 
-        return this.waitOneEventCycle().then(() => {
+        return this.#waitOneEventCycle().then(() => {
             let batchIds = this.batchIds;
 
-            this.clearBatch();
+            this.#clearBatch();
 
             if (batchIds.length === 1) {
                 let objectKey = batchIds[0];
 
                 //If there's only one request, just do a regular get
                 return this.request(objectKey, "GET", undefined, abortSignal)
-                    .then(this.returnAsMap(objectKey));
+                    .then(this.#returnAsMap(objectKey));
             } else {
-                return this.bulkGet(batchIds, abortSignal);
+                return this.#bulkGet(batchIds, abortSignal);
             }
         });
     }
@@ -240,10 +289,10 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    returnAsMap(objectKey) {
+    #returnAsMap(objectKey) {
         return (result) => {
             let objectMap = {};
-            objectMap[objectKey] = this.getModel(result);
+            objectMap[objectKey] = this.#getModel(result);
 
             return objectMap;
         };
@@ -252,7 +301,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    clearBatch() {
+    #clearBatch() {
         this.batchIds = [];
         delete this.bulkPromise;
     }
@@ -260,7 +309,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    waitOneEventCycle() {
+    #waitOneEventCycle() {
         return new Promise((resolve) => {
             setTimeout(resolve);
         });
@@ -269,7 +318,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    bulkGet(ids, signal) {
+    #bulkGet(ids, signal) {
         ids = this.removeDuplicates(ids);
 
         const query = {
@@ -280,7 +329,7 @@ class CouchObjectProvider {
             if (response && response.rows !== undefined) {
                 return response.rows.reduce((map, row) => {
                     if (row.doc !== undefined) {
-                        map[row.key] = this.getModel(row.doc);
+                        map[row.key] = this.#getModel(row.doc);
                     }
 
                     return map;
@@ -349,7 +398,7 @@ class CouchObjectProvider {
             if (json) {
                 let docs = json.docs;
                 docs.forEach(doc => {
-                    let object = this.getModel(doc);
+                    let object = this.#getModel(doc);
                     if (object) {
                         objects.push(object);
                     }
@@ -368,7 +417,7 @@ class CouchObjectProvider {
         this.observers[keyString].push(callback);
 
         if (!this.isObservingObjectChanges()) {
-            this.observeObjectChanges();
+            this.#observeObjectChanges();
         }
 
         return () => {
@@ -391,7 +440,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    observeObjectChanges() {
+    #observeObjectChanges() {
         const sseChangesPath = `${this.url}/_changes`;
         const sseURL = new URL(sseChangesPath);
         sseURL.searchParams.append('feed', 'eventsource');
@@ -401,7 +450,7 @@ class CouchObjectProvider {
         if (typeof SharedWorker === 'undefined') {
             this.fetchChanges(sseURL.toString());
         } else {
-            this.initiateSharedWorkerFetchChanges(sseURL.toString());
+            this.#initiateSharedWorkerFetchChanges(sseURL.toString());
         }
 
     }
@@ -409,9 +458,9 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    initiateSharedWorkerFetchChanges(url) {
+    #initiateSharedWorkerFetchChanges(url) {
         if (!this.changesFeedSharedWorker) {
-            this.changesFeedSharedWorker = this.startSharedWorker();
+            this.changesFeedSharedWorker = this.#startSharedWorker();
 
             if (this.isObservingObjectChanges()) {
                 this.stopObservingObjectChanges();
@@ -431,7 +480,7 @@ class CouchObjectProvider {
     onEventError(error) {
         console.error('Error on feed', error);
         if (Object.keys(this.observers).length > 0) {
-            this.observeObjectChanges();
+            this.#observeObjectChanges();
         }
     }
 
@@ -475,13 +524,14 @@ class CouchObjectProvider {
 
         // start listening for events
         couchEventSource.addEventListener('message', this.onEventMessage);
+
         console.debug('⇿ Opened connection ⇿');
     }
 
     /**
      * @private
      */
-    getIntermediateResponse() {
+    #getIntermediateResponse() {
         let intermediateResponse = {};
         intermediateResponse.promise = new Promise(function (resolve, reject) {
             intermediateResponse.resolve = resolve;
@@ -509,7 +559,7 @@ class CouchObjectProvider {
     }
 
     create(model) {
-        let intermediateResponse = this.getIntermediateResponse();
+        let intermediateResponse = this.#getIntermediateResponse();
         const key = model.identifier.key;
         model = this.toPersistableModel(model);
         this.enqueueObject(key, model, intermediateResponse);
@@ -520,7 +570,7 @@ class CouchObjectProvider {
             let document = new CouchDocument(key, queued.model);
             this.request(key, "PUT", document).then((response) => {
                 console.log('create check response', key);
-                this.checkResponse(response, queued.intermediateResponse, key);
+                this.#checkResponse(response, queued.intermediateResponse, key);
             }).catch(error => {
                 queued.intermediateResponse.reject(error);
                 this.objectQueue[key].pending = false;
@@ -533,13 +583,13 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    updateQueued(key) {
+    #updateQueued(key) {
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
             this.request(key, "PUT", document).then((response) => {
-                this.checkResponse(response, queued.intermediateResponse, key);
+                this.#checkResponse(response, queued.intermediateResponse, key);
             }).catch((error) => {
                 queued.intermediateResponse.reject(error);
                 this.objectQueue[key].pending = false;
@@ -548,12 +598,12 @@ class CouchObjectProvider {
     }
 
     update(model) {
-        let intermediateResponse = this.getIntermediateResponse();
+        let intermediateResponse = this.#getIntermediateResponse();
         const key = model.identifier.key;
         model = this.toPersistableModel(model);
 
         this.enqueueObject(key, model, intermediateResponse);
-        this.updateQueued(key);
+        this.#updateQueued(key);
 
         return intermediateResponse.promise;
     }
@@ -577,6 +627,11 @@ class CouchObjectProvider {
     }
 }
 
+CouchObjectProvider.HTTP_BAD_REQUEST = 400;
+CouchObjectProvider.HTTP_UNAUTHORIZED = 401;
+CouchObjectProvider.HTTP_NOT_FOUND = 404;
 CouchObjectProvider.HTTP_CONFLICT = 409;
+CouchObjectProvider.HTTP_PRECONDITION_FAILED = 412;
+CouchObjectProvider.HTTP_SERVER_ERROR = 500;
 
 export default CouchObjectProvider;
