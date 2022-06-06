@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/testing';
-import notebookPlugin from './plugin';
+import { NotebookPlugin } from './plugin';
 import Vue from 'vue';
 
 describe("Notebook plugin:", () => {
@@ -55,7 +55,7 @@ describe("Notebook plugin:", () => {
         child = document.createElement('div');
         element.appendChild(child);
 
-        openmct.install(notebookPlugin());
+        openmct.install(NotebookPlugin());
         originalAnnotations = openmct.annotation.getNotebookAnnotation;
         // eslint-disable-next-line require-await
         openmct.annotation.getNotebookAnnotation = async function () {

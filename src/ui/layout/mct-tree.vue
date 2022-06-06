@@ -448,7 +448,7 @@ export default {
         },
         scrollTo(navigationPath) {
 
-            if (this.isItemInView(navigationPath)) {
+            if (!this.$refs.scrollable || this.isItemInView(navigationPath)) {
                 return;
             }
 
@@ -467,6 +467,10 @@ export default {
             }
         },
         scrollEndEvent() {
+            if (!this.$refs.srcrollable) {
+                return;
+            }
+
             this.$nextTick(() => {
                 if (this.scrollToPath) {
                     if (!this.isItemInView(this.scrollToPath)) {

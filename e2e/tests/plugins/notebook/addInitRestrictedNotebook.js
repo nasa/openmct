@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ObjectView from './ObjectView.vue';
-import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
+// this will be called from the test suite with
+// await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
+// it will install the RestrictedNotebook since it is not installed by default
 
-export default {
-    ObjectView,
-    StackedPlot
-};
+document.addEventListener('DOMContentLoaded', () => {
+    const openmct = window.openmct;
+    openmct.install(openmct.plugins.RestrictedNotebook('CUSTOM_NAME'));
+});
