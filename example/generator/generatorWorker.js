@@ -134,17 +134,19 @@
             });
         }
 
-        setTimeout(() => {self.postMessage({
-            id: message.id,
-            data: request.spectra ? {
-                wavelength: data.map((item) => {
-                    return item.wavelength;
-                }),
-                cos: data.map((item) => {
-                    return item.cos;
-                })
-            } : data
-        })}, loadDelay);
+        setTimeout(() => {
+            self.postMessage({
+                id: message.id,
+                data: request.spectra ? {
+                    wavelength: data.map((item) => {
+                        return item.wavelength;
+                    }),
+                    cos: data.map((item) => {
+                        return item.cos;
+                    })
+                } : data
+            });
+        }, loadDelay);
     }
 
     function cos(timestamp, period, amplitude, offset, phase, randomness) {

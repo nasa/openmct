@@ -37,8 +37,6 @@ const percySnapshot = require('@percy/playwright');
 const path = require('path');
 const sinon = require('sinon');
 
-const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
-
 // Snippet from https://github.com/microsoft/playwright/issues/6347#issuecomment-965887758
 // Will replace with cy.clock() equivalent
 test.beforeEach(async ({ context }) => {
@@ -48,10 +46,10 @@ test.beforeEach(async ({ context }) => {
     });
     await context.addInitScript(() => {
         window.__clock = sinon.useFakeTimers({
-            now: 0,
-            shouldAdvanceTime: false,
+            now: 0, //Set browser clock to UNIX Epoch
+            shouldAdvanceTime: false, //Don't advance the clock
             toFake: ["setTimeout", "nextTick"]
-        }); //Set browser clock to UNIX Epoch
+        });
     });
 });
 test.use({ storageState: './e2e/test-data/VisualTestData_storage.json' });
