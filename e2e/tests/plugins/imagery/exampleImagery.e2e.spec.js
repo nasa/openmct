@@ -32,7 +32,6 @@ const { expect } = require('@playwright/test');
 test.describe('Example Imagery', () => {
 
     test.beforeEach(async ({ page }) => {
-        page.on('console', msg => console.log(msg.text()));
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -61,19 +60,19 @@ test.describe('Example Imagery', () => {
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
         const bgImageLocator = page.locator(backgroundImageSelector);
         const deltaYStep = 100; //equivalent to 1x zoom
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
         // zoom in
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         await page.mouse.wheel(0, deltaYStep * 2);
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
         // zoom out
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         await page.mouse.wheel(0, -deltaYStep);
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         const imageMouseZoomedOut = await page.locator(backgroundImageSelector).boundingBox();
 
         expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
@@ -88,11 +87,11 @@ test.describe('Example Imagery', () => {
         const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 
         const bgImageLocator = page.locator(backgroundImageSelector);
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
 
         // zoom in
         await page.mouse.wheel(0, deltaYStep * 2);
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         const zoomedBoundingBox = await bgImageLocator.boundingBox();
         const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
         const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
@@ -151,22 +150,22 @@ test.describe('Example Imagery', () => {
 
     test('Can use + - buttons to zoom on the image', async ({ page }) => {
         const bgImageLocator = page.locator(backgroundImageSelector);
-        await bgImageLocator.hover();
-        const zoomInBtn = page.locator('.t-btn-zoom-in');
-        const zoomOutBtn = page.locator('.t-btn-zoom-out');
+        await bgImageLocator.hover({trial: true});
+        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
+        const zoomOutBtn = page.locator('.t-btn-zoom-out').nth(0);
         const initialBoundingBox = await bgImageLocator.boundingBox();
 
         await zoomInBtn.click();
         await zoomInBtn.click();
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         const zoomedInBoundingBox = await bgImageLocator.boundingBox();
         expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
         await zoomOutBtn.click();
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         const zoomedOutBoundingBox = await bgImageLocator.boundingBox();
         expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
         expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
@@ -176,18 +175,18 @@ test.describe('Example Imagery', () => {
     test('Can use the reset button to reset the image', async ({ page }) => {
         const bgImageLocator = page.locator(backgroundImageSelector);
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
 
-        const zoomInBtn = page.locator('.t-btn-zoom-in');
-        const zoomResetBtn = page.locator('.t-btn-zoom-reset');
+        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
+        const zoomResetBtn = page.locator('.t-btn-zoom-reset').nth(0);
         const initialBoundingBox = await bgImageLocator.boundingBox();
 
         await zoomInBtn.click();
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
         await zoomInBtn.click();
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
 
         const zoomedInBoundingBox = await bgImageLocator.boundingBox();
         expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
@@ -195,7 +194,7 @@ test.describe('Example Imagery', () => {
 
         await zoomResetBtn.click();
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
 
         const resetBoundingBox = await bgImageLocator.boundingBox();
         expect.soft(resetBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
@@ -209,18 +208,18 @@ test.describe('Example Imagery', () => {
         const bgImageLocator = page.locator(backgroundImageSelector);
         const pausePlayButton = page.locator('.c-button.pause-play');
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
 
         // open the time conductor drop down
-        await page.locator('.c-conductor__controls button.c-mode-button').click();
+        await page.locator('button:has-text("Fixed Timespan")').click();
         // Click local clock
-        await page.locator('.icon-clock >> text=Local Clock').click();
+        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
 
         await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
-        const zoomInBtn = page.locator('.t-btn-zoom-in');
+        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
         await zoomInBtn.click();
         // wait for zoom animation to finish
-        await bgImageLocator.hover();
+        await bgImageLocator.hover({trial: true});
 
         return expect(pausePlayButton).not.toHaveClass(/is-paused/);
     });
@@ -267,7 +266,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
     await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
     const bgImageLocator = page.locator(backgroundImageSelector);
-    await bgImageLocator.hover();
+    await bgImageLocator.hover({trial: true});
 
     // Click previous image button
     const previousImageButton = page.locator('.c-nav--prev');
@@ -279,7 +278,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
 
     // Zoom in
     const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-    await bgImageLocator.hover();
+    await bgImageLocator.hover({trial: true});
     const deltaYStep = 100; // equivalent to 1x zoom
     await page.mouse.wheel(0, deltaYStep * 2);
     const zoomedBoundingBox = await bgImageLocator.boundingBox();
@@ -287,7 +286,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
 
     // Wait for zoom animation to finish
-    await bgImageLocator.hover();
+    await bgImageLocator.hover({trial: true});
     const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
     expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
     expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
@@ -311,11 +310,11 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
     // Zoom in on next image
-    await bgImageLocator.hover();
+    await bgImageLocator.hover({trial: true});
     await page.mouse.wheel(0, deltaYStep * 2);
 
     // Wait for zoom animation to finish
-    await bgImageLocator.hover();
+    await bgImageLocator.hover({trial: true});
     const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
     expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
     expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
