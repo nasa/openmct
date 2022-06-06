@@ -120,7 +120,7 @@ describe('The Fault Management API', () => {
     });
 
     it('will tell you if the fault management provider supports actions', () => {
-        expect(openmct.faults.hasActions()).toBeTrue();
+        expect(openmct.faults.supportsActions()).toBeTrue();
     });
 
     it('will allow you to acknowledge a fault', async () => {

@@ -112,7 +112,7 @@ export default {
             return list;
         },
         showToolbar() {
-            return this.openmct.faults.hasActions();
+            return this.openmct.faults.supportsActions();
         }
     },
     methods: {
