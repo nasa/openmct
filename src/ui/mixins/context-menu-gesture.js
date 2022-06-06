@@ -33,6 +33,10 @@ export default {
     },
     methods: {
         showContextMenu(event) {
+            if (this.readOnly) {
+                return;
+            }
+
             event.preventDefault();
             event.stopPropagation();
 

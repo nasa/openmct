@@ -249,7 +249,8 @@ $colorMenuHovBg: rgba($colorKey, 0.5);
 $colorMenuHovFg: $colorBodyFgEm;
 $colorMenuHovIc: $colorMenuHovFg;
 $colorMenuElementHilite: pullForward($colorMenuBg, 10%);
-$shdwMenu: rgba(black, 0.5) 0 1px 5px;
+$shdwMenu: rgba(black, 0.8) 0 2px 10px;
+$shdwMenuInner: inset 0 0 0 1px rgba(white, 0.2);
 $shdwMenuText: none;
 $menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
 
@@ -273,7 +274,6 @@ $colorFormSectionHeaderBg: rgba(#000, 0.1);
 $colorFormSectionHeaderFg: rgba($colorBodyFg, 0.8);
 $colorInputBg: rgba(black, 0.2);
 $colorInputFg: $colorBodyFg;
-$colorInputPlaceholder: pushBack($colorBodyFg, 20%);
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
 $colorFieldHint: pullForward($colorBodyFg, 40%);
