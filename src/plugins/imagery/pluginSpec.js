@@ -398,7 +398,7 @@ describe("The Imagery View Layouts", () => {
 
         it("should show that an image is not new", (done) => {
             Vue.nextTick(() => {
-                const target = imageTelemetry[2].url;
+                const target = imageTelemetry[4].url;
                 parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
                 Vue.nextTick(() => {
