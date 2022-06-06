@@ -66,6 +66,9 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     // add sine wave generator with defaults
     await page.locator('li:has-text("Sine Wave Generator")').click();
 
+    //Add a 5000 ms Delay
+    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
+
     // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
     await page.click('form[name="mctForm"] a:has-text("Overlay Plot")');
 
