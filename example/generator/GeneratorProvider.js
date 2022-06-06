@@ -54,8 +54,8 @@ define([
             'period',
             'offset',
             'dataRateInHz',
-            'phase',
             'randomness',
+            'phase',
             'loadDelay'
         ];
 
