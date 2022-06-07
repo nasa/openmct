@@ -96,8 +96,10 @@ export default {
     components: {
         ListView
     },
-    inject: ['openmct', 'domainObject', 'path'],
+    inject: ['openmct', 'domainObject', 'path', 'composition'],
     data() {
+        this.planObjects = [];
+
         return {
             viewBounds: undefined,
             height: 0,
@@ -111,7 +113,7 @@ export default {
         this.timestamp = Date.now();
         this.getPlanDataAndSetConfig(this.domainObject);
 
-        this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.getPlanDataAndSetConfig);
+        this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.planFileUpdated);
         this.unlistenConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.setViewFromConfig);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
@@ -120,6 +122,12 @@ export default {
 
         this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
         this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
+
+        if (this.composition) {
+            this.composition.on('add', this.addToComposition);
+            this.composition.on('remove', this.removeItem);
+            this.composition.load();
+        }
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -144,8 +152,17 @@ export default {
         if (this.clearAutoScrollDisabledTimer) {
             clearTimeout(this.clearAutoScrollDisabledTimer);
         }
+
+        this.composition.off('add', this.addToComposition);
+        this.composition.off('remove', this.removeItem);
     },
     methods: {
+        planFileUpdated(selectFile) {
+            this.getPlanData({
+                selectFile,
+                sourceMap: this.domainObject.sourceMap
+            });
+        },
         getPlanDataAndSetConfig(mutatedObject) {
             this.getPlanData(mutatedObject);
             this.setViewFromConfig(mutatedObject.configuration);
@@ -162,6 +179,57 @@ export default {
                 this.setViewBounds();
                 this.listActivities();
             }
+        },
+        addItem(domainObject) {
+            this.planObjects = [domainObject];
+            this.resetPlanData();
+            if (domainObject.type === 'plan') {
+                this.getPlanDataAndSetConfig({
+                    ...this.domainObject,
+                    selectFile: domainObject.selectFile
+                });
+            }
+        },
+        addToComposition(telemetryObject) {
+            if (this.planObjects.length > 0) {
+                this.confirmRemoval(telemetryObject);
+            } else {
+                this.addItem(telemetryObject);
+            }
+        },
+        confirmRemoval(telemetryObject) {
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will replace the current plan. Do you want to continue?',
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: true,
+                        callback: () => {
+                            const oldTelemetryObject = this.planObjects[0];
+                            this.removeFromComposition(oldTelemetryObject);
+                            this.addItem(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            this.removeFromComposition(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        removeFromComposition(telemetryObject) {
+            this.composition.remove(telemetryObject);
+        },
+        removeItem() {
+            this.resetPlanData();
+        },
+        resetPlanData() {
+            this.planData = {};
         },
         getPlanData(domainObject) {
             this.planData = getValidatedData(domainObject);
