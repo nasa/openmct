@@ -125,7 +125,7 @@ export default {
 
         if (this.composition) {
             this.composition.on('add', this.addToComposition);
-            this.composition.on('remove', this.removeItem);
+            this.composition.on('remove', this.resetPlanData);
             this.composition.load();
         }
     },
@@ -153,8 +153,10 @@ export default {
             clearTimeout(this.clearAutoScrollDisabledTimer);
         }
 
-        this.composition.off('add', this.addToComposition);
-        this.composition.off('remove', this.removeItem);
+        if (this.composition) {
+            this.composition.off('add', this.addToComposition);
+            this.composition.off('remove', this.removeItem);
+        }
     },
     methods: {
         planFileUpdated(selectFile) {
@@ -192,12 +194,12 @@ export default {
         },
         addToComposition(telemetryObject) {
             if (this.planObjects.length > 0) {
-                this.confirmRemoval(telemetryObject);
+                this.confirmReplacePlan(telemetryObject);
             } else {
                 this.addItem(telemetryObject);
             }
         },
-        confirmRemoval(telemetryObject) {
+        confirmReplacePlan(telemetryObject) {
             const dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
                 message: 'This action will replace the current plan. Do you want to continue?',
@@ -224,9 +226,6 @@ export default {
         },
         removeFromComposition(telemetryObject) {
             this.composition.remove(telemetryObject);
-        },
-        removeItem() {
-            this.resetPlanData();
         },
         resetPlanData() {
             this.planData = {};
