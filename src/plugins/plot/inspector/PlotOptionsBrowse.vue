@@ -41,7 +41,7 @@
     >
         <ul
             v-if="!isStackedPlotObject"
-            class="l-inspector-part"
+            class="l-inspector-part js-yaxis-properties"
         >
             <h2 title="Y axis settings for this object">Y Axis</h2>
             <li class="grid-row">
@@ -92,7 +92,7 @@
         </ul>
         <ul
             v-if="isStackedPlotObject || !isNestedWithinAStackedPlot"
-            class="l-inspector-part"
+            class="l-inspector-part js-legend-properties"
         >
             <h2 title="Legend settings for this object">Legend</h2>
             <li class="grid-row">

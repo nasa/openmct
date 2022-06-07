@@ -26,6 +26,8 @@ import Vue from "vue";
 import StackedPlot from "./StackedPlot.vue";
 import configStore from "../configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
+import PlotConfigurationModel from "../configuration/PlotConfigurationModel";
+import PlotOptions from "../inspector/PlotOptions.vue";
 
 describe("the plugin", function () {
     let element;
@@ -492,5 +494,278 @@ describe("the plugin", function () {
                 done();
             });
         });
+    });
+
+    describe('the stacked plot inspector view', () => {
+        let component;
+        let viewComponentObject;
+        let mockComposition;
+        let testTelemetryObject;
+        let selection;
+        let config;
+        beforeEach((done) => {
+            testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
+            selection = [
+                [
+                    {
+                        context: {
+                            item: {
+                                type: 'telemetry.plot.stacked',
+                                identifier: {
+                                    key: 'some-stacked-plot',
+                                    namespace: ''
+                                },
+                                configuration: {
+                                    series: []
+                                }
+                            }
+                        }
+                    }
+                ]
+            ];
+
+            openmct.router.path = [testTelemetryObject];
+            mockComposition = new EventEmitter();
+            mockComposition.load = () => {
+                mockComposition.emit('add', testTelemetryObject);
+
+                return [testTelemetryObject];
+            };
+
+            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
+            const configId = openmct.objects.makeKeyString(selection[0][0].context.item.identifier);
+            config = new PlotConfigurationModel({
+                id: configId,
+                domainObject: selection[0][0].context.item,
+                openmct: openmct
+            });
+            configStore.add(configId, config);
+
+            let viewContainer = document.createElement('div');
+            child.append(viewContainer);
+            component = new Vue({
+                el: viewContainer,
+                components: {
+                    PlotOptions
+                },
+                provide: {
+                    openmct: openmct,
+                    domainObject: selection[0][0].context.item,
+                    path: [selection[0][0].context.item]
+                },
+                template: '<plot-options/>'
+            });
+
+            Vue.nextTick(() => {
+                viewComponentObject = component.$root.$children[0];
+                done();
+            });
+        });
+
+        afterEach(() => {
+            openmct.router.path = null;
+        });
+
+        describe('in view only mode', () => {
+            let browseOptionsEl;
+            beforeEach(() => {
+                browseOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-browse');
+            });
+
+            it('shows legend properties', () => {
+                const legendPropertiesEl = browseOptionsEl.querySelector('.js-legend-properties');
+                expect(legendPropertiesEl).not.toBeNull();
+            });
+
+            it('does not show series properties', () => {
+                const seriesPropertiesEl = browseOptionsEl.querySelector('.c-tree');
+                expect(seriesPropertiesEl).toBeNull();
+            });
+
+            it('does not show yaxis properties', () => {
+                const yAxisPropertiesEl = browseOptionsEl.querySelector('.js-yaxis-properties');
+                expect(yAxisPropertiesEl).toBeNull();
+            });
+        });
+
+    });
+
+    describe('inspector view of stacked plot child', () => {
+        let component;
+        let viewComponentObject;
+        let mockComposition;
+        let testTelemetryObject;
+        let selection;
+        let config;
+        beforeEach((done) => {
+            testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
+            selection = [
+                [
+                    {
+                        context: {
+                            item: {
+                                id: "test-object",
+                                identifier: {
+                                    key: "test-object",
+                                    namespace: ''
+                                },
+                                type: "telemetry.plot.overlay",
+                                configuration: {
+                                    series: [
+                                        {
+                                            identifier: {
+                                                key: "test-object",
+                                                namespace: ''
+                                            }
+                                        }
+                                    ]
+                                },
+                                composition: []
+                            }
+                        }
+                    },
+                    {
+                        context: {
+                            item: {
+                                type: 'telemetry.plot.stacked',
+                                identifier: {
+                                    key: 'some-stacked-plot',
+                                    namespace: ''
+                                },
+                                configuration: {
+                                    series: []
+                                }
+                            }
+                        }
+                    }
+                ]
+            ];
+
+            openmct.router.path = [testTelemetryObject];
+            mockComposition = new EventEmitter();
+            mockComposition.load = () => {
+                mockComposition.emit('add', testTelemetryObject);
+
+                return [testTelemetryObject];
+            };
+
+            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
+            const configId = openmct.objects.makeKeyString(selection[0][0].context.item.identifier);
+            config = new PlotConfigurationModel({
+                id: configId,
+                domainObject: selection[0][0].context.item,
+                openmct: openmct
+            });
+            configStore.add(configId, config);
+
+            let viewContainer = document.createElement('div');
+            child.append(viewContainer);
+            component = new Vue({
+                el: viewContainer,
+                components: {
+                    PlotOptions
+                },
+                provide: {
+                    openmct: openmct,
+                    domainObject: selection[0][0].context.item,
+                    path: [selection[0][0].context.item, selection[0][1].context.item]
+                },
+                template: '<plot-options/>'
+            });
+
+            Vue.nextTick(() => {
+                viewComponentObject = component.$root.$children[0];
+                done();
+            });
+        });
+
+        afterEach(() => {
+            openmct.router.path = null;
+        });
+
+        describe('in view only mode', () => {
+            let browseOptionsEl;
+            beforeEach(() => {
+                browseOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-browse');
+            });
+
+            it('hides legend properties', () => {
+                const legendPropertiesEl = browseOptionsEl.querySelector('.js-legend-properties');
+                expect(legendPropertiesEl).toBeNull();
+            });
+
+            it('shows series properties', () => {
+                const seriesPropertiesEl = browseOptionsEl.querySelector('.c-tree');
+                expect(seriesPropertiesEl).not.toBeNull();
+            });
+
+            it('shows yaxis properties', () => {
+                const yAxisPropertiesEl = browseOptionsEl.querySelector('.js-yaxis-properties');
+                expect(yAxisPropertiesEl).not.toBeNull();
+            });
+        });
+
     });
 });
