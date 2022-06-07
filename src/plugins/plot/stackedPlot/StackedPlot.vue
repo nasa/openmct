@@ -38,7 +38,7 @@
             v-for="object in compositionObjects"
             :key="object.id"
             class="c-plot--stacked-container"
-            :object="object"
+            :child-object="object"
             :options="options"
             :grid-lines="gridLines"
             :color-palette="colorPalette"
