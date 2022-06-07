@@ -5,9 +5,15 @@
         :title="nextValue.title"
         :class="[nextValue.icon, {'c-icon-button--mixed': nonSpecific}]"
         @click="cycle"
-    ></div>
-</div>
-</template>
+    >
+        <div
+            v-if="nextValue.label"
+            class="c-icon-button__label"
+        >
+            {{ nextValue.label }}
+        </div>
+    </div>
+</div></template>
 
 <script>
 export default {

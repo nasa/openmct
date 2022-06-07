@@ -89,6 +89,7 @@ export default function ClockPlugin(options) {
                     "key": "timezone",
                     "name": "Timezone",
                     "control": "autocomplete",
+                    "cssClass": "c-clock__timezone-selection c-menu--no-icon",
                     "options": momentTimezone.tz.names(),
                     property: [
                         'configuration',

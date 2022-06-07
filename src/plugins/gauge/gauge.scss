@@ -16,13 +16,12 @@
   // Both dial and meter types
   overflow: hidden;
 
-  &__range {
+  &__range,
+  &__units,
+  &__units text {
     $c: $colorGaugeRange;
     color: $c;
-
-    text {
-      fill: $c;
-    }
+    fill: $c;
   }
 
   &__wrapper {
@@ -66,7 +65,8 @@ svg[class*='c-dial'] {
     transition: transform $transitionTimeGauge;
   }
 
-  &__current-value-text {
+  &__current-value-text,
+  &__units-text {
     fill: $colorGaugeTextValue;
     font-family: $heroFont;
   }

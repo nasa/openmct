@@ -49,6 +49,7 @@ export default function () {
                         gaugeType: GAUGE_TYPES[0][1],
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
+                        isDisplayUnits: true,
                         isUseTelemetryLimits: true,
                         limitLow: 10,
                         limitHigh: 90,
@@ -60,6 +61,23 @@ export default function () {
             },
             form: [
                 {
+                    name: "Gauge type",
+                    options: GAUGE_TYPES.map(type => {
+                        return {
+                            name: type[0],
+                            value: type[1]
+                        };
+                    }),
+                    control: "select",
+                    cssClass: "l-input-sm",
+                    key: "gaugeController",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "gaugeType"
+                    ]
+                },
+                {
                     name: "Display current value",
                     control: "toggleSwitch",
                     cssClass: "l-input",
@@ -68,6 +86,17 @@ export default function () {
                         "configuration",
                         "gaugeController",
                         "isDisplayCurVal"
+                    ]
+                },
+                {
+                    name: "Display units",
+                    control: "toggleSwitch",
+                    cssClass: "l-input",
+                    key: "isDisplayUnits",
+                    property: [
+                        "configuration",
+                        "gaugeController",
+                        "isDisplayUnits"
                     ]
                 },
                 {
@@ -90,23 +119,6 @@ export default function () {
                         "configuration",
                         "gaugeController",
                         "precision"
-                    ]
-                },
-                {
-                    name: "Gauge type",
-                    options: GAUGE_TYPES.map(type => {
-                        return {
-                            name: type[0],
-                            value: type[1]
-                        };
-                    }),
-                    control: "select",
-                    cssClass: "l-input-sm",
-                    key: "gaugeController",
-                    property: [
-                        "configuration",
-                        "gaugeController",
-                        "gaugeType"
                     ]
                 },
                 {

@@ -72,6 +72,10 @@ const config = {
                     transform: function (content) {
                         return content.toString().replace(/dist\//g, '');
                     }
+                },
+                {
+                    from: 'src/plugins/imagery/layers',
+                    to: 'imagery'
                 }
             ]
         }),
@@ -100,13 +104,6 @@ const config = {
             {
                 test: /\.html$/,
                 type: 'asset/source'
-            },
-            {
-                test: /zepto/,
-                use: [
-                    "imports-loader?this=>window",
-                    "exports-loader?Zepto"
-                ]
             },
             {
                 test: /\.(jpg|jpeg|png|svg)$/,
