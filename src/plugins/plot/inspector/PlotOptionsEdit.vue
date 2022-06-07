@@ -33,13 +33,17 @@
             v-for="series in plotSeries"
             :key="series.key"
         >
-            <series-form :series="series" />
+            <series-form
+                :series="series"
+                @seriesUpdated="updateSeriesConfigForObject"
+            />
         </li>
     </ul>
     <y-axis-form
         v-if="plotSeries.length && !isStackedPlotObject"
         class="grid-properties"
         :y-axis="config.yAxis"
+        @seriesUpdated="updateSeriesConfigForObject"
     />
     <ul
         v-if="isStackedPlotObject || !isStackedPlotNestedObject"
@@ -112,6 +116,24 @@ export default {
         resetAllSeries() {
             this.plotSeries = [];
             this.config.series.forEach(this.addSeries, this);
+        },
+
+        updateSeriesConfigForObject(config) {
+            const stackedPlotObject = this.path.find((pathObject) => pathObject.type === 'telemetry.plot.stacked');
+            let index = stackedPlotObject.configuration.series.findIndex((seriesConfig) => {
+                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, config.identifier);
+            });
+            if (index < 0) {
+                index = stackedPlotObject.configuration.series.length;
+            }
+
+            const configPath = `configuration.series[${index}].${config.path}`;
+            this.openmct.objects.mutate(
+                stackedPlotObject,
+                configPath,
+                config.value
+            );
+
         }
     }
 };
