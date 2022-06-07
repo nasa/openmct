@@ -155,7 +155,7 @@ export default {
 
         if (this.composition) {
             this.composition.off('add', this.addToComposition);
-            this.composition.off('remove', this.removeItem);
+            this.composition.off('remove', this.resetPlanData);
         }
     },
     methods: {
