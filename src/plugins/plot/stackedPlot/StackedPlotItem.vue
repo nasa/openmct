@@ -34,7 +34,7 @@ export default {
     mixins: [conditionalStylesMixin],
     inject: ['openmct', 'domainObject', 'path'],
     props: {
-        object: {
+        childObject: {
             type: Object,
             default() {
                 return {};
@@ -189,7 +189,7 @@ export default {
         },
         setSelection() {
             let childContext = {};
-            childContext.item = this.object;
+            childContext.item = this.childObject;
             this.context = childContext;
             if (this.removeSelectable) {
                 this.removeSelectable();
@@ -215,26 +215,26 @@ export default {
             };
         },
         getPlotObject() {
-            if (this.object.configuration && this.object.configuration.series) {
+            if (this.childObject.configuration && this.childObject.configuration.series) {
                 //If the object has a configuration, allow initialization of the config from it's persisted config
-                return this.object;
+                return this.childObject;
             } else {
                 // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
-                const configId = this.openmct.objects.makeKeyString(this.object.identifier);
+                const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
                 let config = configStore.get(configId);
                 if (!config) {
                     const persistedConfig = this.domainObject.configuration.series.find((seriesConfig) => {
-                        return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.object.identifier);
+                        return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.childObject.identifier);
                     });
                     if (persistedConfig) {
                         config = new PlotConfigurationModel({
                             id: configId,
                             domainObject: {
-                                ...this.object,
+                                ...this.childObject,
                                 configuration: {
                                     series: [
                                         {
-                                            identifier: this.object.identifier,
+                                            identifier: this.childObject.identifier,
                                             ...persistedConfig.series
                                         }
                                     ],
@@ -252,7 +252,7 @@ export default {
                     }
                 }
 
-                return this.object;
+                return this.childObject;
             }
         }
     }
