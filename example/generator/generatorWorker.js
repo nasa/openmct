@@ -116,7 +116,7 @@
         var dataRateInHz = request.dataRateInHz;
         var phase = request.phase;
         var randomness = request.randomness;
-        var loadDelay = request.loadDelay;
+        var loadDelay = Math.max(request.loadDelay, 0);
 
         var step = 1000 / dataRateInHz;
         var nextStep = start - (start % step) + step;
@@ -146,7 +146,7 @@
                     })
                 } : data
             });
-        }, Math.max(loadDelay, 0));
+        }, loadDelay);
     }
 
     function cos(timestamp, period, amplitude, offset, phase, randomness) {
