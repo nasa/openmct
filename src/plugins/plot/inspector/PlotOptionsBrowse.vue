@@ -91,7 +91,7 @@
             </li>
         </ul>
         <ul
-            v-if="isStackedPlotObject || !isStackedPlotNestedObject"
+            v-if="isStackedPlotObject || !isNestedWithinAStackedPlot"
             class="l-inspector-part"
         >
             <h2 title="Legend settings for this object">Legend</h2>
@@ -177,7 +177,7 @@ export default {
         };
     },
     computed: {
-        isStackedPlotNestedObject() {
+        isNestedWithinAStackedPlot() {
             return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
         },
         isStackedPlotObject() {
