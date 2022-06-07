@@ -146,7 +146,7 @@
                     })
                 } : data
             });
-        }, loadDelay);
+        }, Math.max(loadDelay, 0));
     }
 
     function cos(timestamp, period, amplitude, offset, phase, randomness) {
