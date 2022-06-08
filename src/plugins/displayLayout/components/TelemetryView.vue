@@ -91,7 +91,7 @@ export default {
             width: DEFAULT_TELEMETRY_DIMENSIONS[0],
             height: DEFAULT_TELEMETRY_DIMENSIONS[1],
             displayMode: 'all',
-            value: metadata.getDefaultDisplayValue(),
+            value: metadata.getDefaultDisplayValue()?.key,
             stroke: "",
             fill: "",
             color: "",

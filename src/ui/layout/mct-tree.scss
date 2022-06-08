@@ -6,7 +6,9 @@
     flex: 1 1 auto;
     overflow: auto;
 
-    > * + * { margin-top: $interiorMargin; }
+    > * + * {
+        margin-top: $interiorMargin;
+    }
 
     &__search {
         flex: 0 0 auto;
@@ -59,7 +61,6 @@
     @include userSelectNone();
     overflow-x: hidden;
     overflow-y: auto;
-    padding-right: $interiorMarginSm;
 
     .icon-arrow-nav-to-parent {
         visibility: hidden;
@@ -71,6 +72,7 @@
 
     li {
         position: relative;
+
         &[class*="__item-h"] {
             display: block;
             width: 100%;
@@ -82,7 +84,6 @@
     }
 
     &__item {
-        border-radius: $controlCr;
         display: flex;
         align-items: center;
         cursor: pointer;
@@ -107,12 +108,14 @@
                 color: $colorItemTreeSelectedFg;
             }
         }
+
         &.is-new {
             animation-name: animTemporaryHighlight;
             animation-timing-function: ease-out;
             animation-duration: 3s;
             animation-iteration-count: 1;
         }
+
         &.is-context-clicked {
             box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
         }
@@ -128,11 +131,15 @@
 }
 
 .c-tree {
+    padding-right: $interiorMarginSm;
+
     .c-tree {
         margin-left: 15px;
     }
 
     &__item {
+        border-radius: $smallCr;
+
         [class*="view-control"] {
             padding: 2px 10px;
         }
@@ -161,6 +168,7 @@
             @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
             height: $mobileTreeItemH;
             margin-bottom: $interiorMarginSm;
+
             [class*="view-control"] {
                 width: ceil($mobileTreeItemH * 0.5);
             }
@@ -202,10 +210,11 @@
 
 .c-tree {
     &__item {
-       body.mobile & {
+        body.mobile & {
             @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
             height: $mobileTreeItemH;
             margin-bottom: $interiorMarginSm;
+
             [class*="view-control"] {
                 width: ceil($mobileTreeItemH * 0.5);
             }
@@ -218,9 +227,9 @@
 }
 
 .c-list {
-    padding-right: $interiorMargin;
-
     &__item {
+        border-radius: $smallCr;
+
         &__name {
             $p: $interiorMarginSm;
             @include ellipsize();
@@ -254,7 +263,8 @@
             content: '';
             display: block;
             position: absolute;
-            left: 50%; top: 50%;
+            left: 50%;
+            top: 50%;
             height: $dimension;
             width: $dimension;
         }

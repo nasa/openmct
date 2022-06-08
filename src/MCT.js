@@ -42,6 +42,7 @@ define([
     './plugins/duplicate/plugin',
     './plugins/importFromJSONAction/plugin',
     './plugins/exportAsJSONAction/plugin',
+    './ui/components/components',
     'vue'
 ], function (
     EventEmitter,
@@ -65,6 +66,7 @@ define([
     DuplicateActionPlugin,
     ImportFromJSONAction,
     ExportAsJSONAction,
+    components,
     Vue
 ) {
     /**
@@ -236,14 +238,22 @@ define([
         this.priority = api.PriorityAPI;
 
         this.router = new ApplicationRouter(this);
+        this.faults = new api.FaultManagementAPI.default(this);
         this.forms = new api.FormsAPI.default(this);
 
         this.branding = BrandingAPI.default;
 
+        /**
+         * MCT's annotation API that enables
+         * human-created comments and categorization linked to data products
+         * @type {module:openmct.AnnotationAPI}
+         * @memberof module:openmct.MCT#
+         * @name annotation
+         */
+        this.annotation = new api.AnnotationAPI(this);
+
         // Plugins that are installed by default
         this.install(this.plugins.Plot());
-        this.install(this.plugins.ScatterPlot());
-        this.install(this.plugins.BarChart());
         this.install(this.plugins.TelemetryTable.default());
         this.install(PreviewPlugin.default());
         this.install(LicensesPlugin.default());
@@ -379,6 +389,7 @@ define([
     };
 
     MCT.prototype.plugins = plugins;
+    MCT.prototype.components = components.default;
 
     return MCT;
 });
