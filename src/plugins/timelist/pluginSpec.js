@@ -39,6 +39,10 @@ describe('the plugin', function () {
     let appHolder;
     let originalRouterPath;
     let mockComposition;
+    let now = Date.now();
+    let twoHoursPast = now - (1000 * 60 * 60 * 2);
+    let oneHourPast = now - (1000 * 60 * 60);
+    let twoHoursFuture = now + (1000 * 60 * 60 * 2);
     let planObject = {
         identifier: {
             key: 'test-plan-object',
@@ -51,16 +55,16 @@ describe('the plugin', function () {
                 "TEST-GROUP": [
                     {
                         "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                        "start": 1597170002854,
-                        "end": 1597171032854,
+                        "start": twoHoursPast,
+                        "end": oneHourPast,
                         "type": "TEST-GROUP",
                         "color": "fuchsia",
                         "textColor": "black"
                     },
                     {
                         "name": "Sed ut perspiciatis",
-                        "start": 1597171132854,
-                        "end": 1597171232854,
+                        "start": now,
+                        "end": twoHoursFuture,
                         "type": "TEST-GROUP",
                         "color": "fuchsia",
                         "textColor": "black"
@@ -153,13 +157,13 @@ describe('the plugin', function () {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
                     futureEventsDurationIndex: 0,
-                    futureEventsDuration: 20,
+                    futureEventsDuration: 0,
                     currentEventsIndex: 1,
                     currentEventsDurationIndex: 0,
-                    currentEventsDuration: 20,
+                    currentEventsDuration: 0,
                     pastEventsIndex: 1,
                     pastEventsDurationIndex: 0,
-                    pastEventsDuration: 20,
+                    pastEventsDuration: 0,
                     filter: ''
                 },
                 selectFile: {
@@ -167,16 +171,16 @@ describe('the plugin', function () {
                         "TEST-GROUP": [
                             {
                                 "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                                "start": 1597170002854,
-                                "end": 1597171032854,
+                                "start": twoHoursPast,
+                                "end": oneHourPast,
                                 "type": "TEST-GROUP",
                                 "color": "fuchsia",
                                 "textColor": "black"
                             },
                             {
                                 "name": "Sed ut perspiciatis",
-                                "start": 1597171132854,
-                                "end": 1597171232854,
+                                "start": now,
+                                "end": twoHoursFuture,
                                 "type": "TEST-GROUP",
                                 "color": "fuchsia",
                                 "textColor": "black"
@@ -212,8 +216,8 @@ describe('the plugin', function () {
                 const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
                 expect(itemValues.length).toEqual(4);
                 expect(itemValues[3].innerHTML.trim()).toEqual('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua');
-                expect(itemValues[0].innerHTML.trim()).toEqual(`${moment(1597170002854).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
-                expect(itemValues[1].innerHTML.trim()).toEqual(`${moment(1597171032854).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
+                expect(itemValues[0].innerHTML.trim()).toEqual(`${moment(twoHoursPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
+                expect(itemValues[1].innerHTML.trim()).toEqual(`${moment(oneHourPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
 
                 done();
             });
@@ -236,13 +240,13 @@ describe('the plugin', function () {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
                     futureEventsDurationIndex: 0,
-                    futureEventsDuration: 20,
+                    futureEventsDuration: 0,
                     currentEventsIndex: 1,
                     currentEventsDurationIndex: 0,
-                    currentEventsDuration: 20,
+                    currentEventsDuration: 0,
                     pastEventsIndex: 1,
                     pastEventsDurationIndex: 0,
-                    pastEventsDuration: 20,
+                    pastEventsDuration: 0,
                     filter: ''
                 },
                 composition: [{
@@ -287,13 +291,13 @@ describe('the plugin', function () {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
                     futureEventsDurationIndex: 0,
-                    futureEventsDuration: 20,
+                    futureEventsDuration: 0,
                     currentEventsIndex: 1,
                     currentEventsDurationIndex: 0,
-                    currentEventsDuration: 20,
+                    currentEventsDuration: 0,
                     pastEventsIndex: 1,
                     pastEventsDurationIndex: 0,
-                    pastEventsDuration: 20,
+                    pastEventsDuration: 0,
                     filter: 'perspiciatis'
                 },
                 composition: [{
@@ -322,7 +326,7 @@ describe('the plugin', function () {
         });
     });
 
-    describe('time filtering', () => {
+    describe('time filtering - past', () => {
         let timelistDomainObject;
         let timelistView;
 
@@ -338,14 +342,14 @@ describe('the plugin', function () {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
                     futureEventsDurationIndex: 0,
-                    futureEventsDuration: 20,
+                    futureEventsDuration: 0,
                     currentEventsIndex: 1,
                     currentEventsDurationIndex: 0,
-                    currentEventsDuration: 20,
+                    currentEventsDuration: 0,
                     pastEventsIndex: 0,
                     pastEventsDurationIndex: 0,
-                    pastEventsDuration: 20,
-                    filter: 'perspiciatis'
+                    pastEventsDuration: 0,
+                    filter: ''
                 },
                 composition: [{
                     identifier: {
@@ -368,7 +372,58 @@ describe('the plugin', function () {
         it('hides past events', () => {
             return Vue.nextTick(() => {
                 const items = element.querySelectorAll(LIST_ITEM_CLASS);
-                expect(items.length).toEqual(0);
+                expect(items.length).toEqual(1);
+            });
+        });
+    });
+
+    describe('time filtering - future', () => {
+        let timelistDomainObject;
+        let timelistView;
+
+        beforeEach(() => {
+            timelistDomainObject = {
+                identifier: {
+                    key: 'test-object',
+                    namespace: ''
+                },
+                type: TIMELIST_TYPE,
+                id: "test-object",
+                configuration: {
+                    sortOrderIndex: 0,
+                    futureEventsIndex: 2,
+                    futureEventsDurationIndex: 2,
+                    futureEventsDuration: 3,
+                    currentEventsIndex: 0,
+                    currentEventsDurationIndex: 0,
+                    currentEventsDuration: 0,
+                    pastEventsIndex: 0,
+                    pastEventsDurationIndex: 0,
+                    pastEventsDuration: 0,
+                    filter: ''
+                },
+                composition: [{
+                    identifier: {
+                        key: 'test-plan-object',
+                        namespace: ''
+                    }
+                }]
+            };
+
+            openmct.router.path = [timelistDomainObject];
+
+            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            view.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it('shows future events within end timeframe', () => {
+            return Vue.nextTick(() => {
+                const items = element.querySelectorAll(LIST_ITEM_CLASS);
+                expect(items.length).toEqual(1);
             });
         });
     });
