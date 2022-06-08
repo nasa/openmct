@@ -125,7 +125,7 @@ export default {
 
         if (this.composition) {
             this.composition.on('add', this.addToComposition);
-            this.composition.on('remove', this.resetPlanData);
+            this.composition.on('remove', this.removeItem);
             this.composition.load();
         }
     },
@@ -155,7 +155,7 @@ export default {
 
         if (this.composition) {
             this.composition.off('add', this.addToComposition);
-            this.composition.off('remove', this.resetPlanData);
+            this.composition.off('remove', this.removeItem);
         }
     },
     methods: {
@@ -226,6 +226,10 @@ export default {
         },
         removeFromComposition(telemetryObject) {
             this.composition.remove(telemetryObject);
+        },
+        removeItem() {
+            this.planObjects = [];
+            this.resetPlanData();
         },
         resetPlanData() {
             this.planData = {};

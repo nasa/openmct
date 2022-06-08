@@ -25,6 +25,7 @@ import TimelistPlugin from "./plugin";
 import { TIMELIST_TYPE } from "./constants";
 import Vue from 'vue';
 import moment from "moment";
+import EventEmitter from "EventEmitter";
 
 const LIST_ITEM_CLASS = '.js-table__body .js-list-item';
 const LIST_ITEM_VALUE_CLASS = '.js-list-item__value';
@@ -37,6 +38,37 @@ describe('the plugin', function () {
     let openmct;
     let appHolder;
     let originalRouterPath;
+    let mockComposition;
+    let planObject = {
+        identifier: {
+            key: 'test-plan-object',
+            namespace: ''
+        },
+        type: 'plan',
+        id: "test-plan-object",
+        selectFile: {
+            body: JSON.stringify({
+                "TEST-GROUP": [
+                    {
+                        "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+                        "start": 1597170002854,
+                        "end": 1597171032854,
+                        "type": "TEST-GROUP",
+                        "color": "fuchsia",
+                        "textColor": "black"
+                    },
+                    {
+                        "name": "Sed ut perspiciatis",
+                        "start": 1597171132854,
+                        "end": 1597171232854,
+                        "type": "TEST-GROUP",
+                        "color": "fuchsia",
+                        "textColor": "black"
+                    }
+                ]
+            })
+        }
+    };
 
     beforeEach((done) => {
         appHolder = document.createElement('div');
@@ -57,6 +89,15 @@ describe('the plugin', function () {
         element.appendChild(child);
 
         originalRouterPath = openmct.router.path;
+
+        mockComposition = new EventEmitter();
+        mockComposition.load = () => {
+            mockComposition.emit('add', planObject);
+
+            return Promise.resolve([planObject]);
+        };
+
+        spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
         openmct.on('start', done);
         openmct.start(appHolder);
@@ -175,6 +216,57 @@ describe('the plugin', function () {
                 expect(itemValues[1].innerHTML.trim()).toEqual(`${moment(1597171032854).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
 
                 done();
+            });
+        });
+    });
+
+    describe('the timelist composition', () => {
+        let timelistDomainObject;
+        let timelistView;
+
+        beforeEach(() => {
+            timelistDomainObject = {
+                identifier: {
+                    key: 'test-object',
+                    namespace: ''
+                },
+                type: TIMELIST_TYPE,
+                id: "test-object",
+                configuration: {
+                    sortOrderIndex: 0,
+                    futureEventsIndex: 1,
+                    futureEventsDurationIndex: 0,
+                    futureEventsDuration: 20,
+                    currentEventsIndex: 1,
+                    currentEventsDurationIndex: 0,
+                    currentEventsDuration: 20,
+                    pastEventsIndex: 1,
+                    pastEventsDurationIndex: 0,
+                    pastEventsDuration: 20,
+                    filter: ''
+                },
+                composition: [{
+                    identifier: {
+                        key: 'test-plan-object',
+                        namespace: ''
+                    }
+                }]
+            };
+
+            openmct.router.path = [timelistDomainObject];
+
+            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            view.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it('loads the plan from composition', () => {
+            return Vue.nextTick(() => {
+                const items = element.querySelectorAll(LIST_ITEM_CLASS);
+                expect(items.length).toEqual(2);
             });
         });
     });
