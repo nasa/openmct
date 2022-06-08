@@ -26,6 +26,7 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend
+        v-if="!isNestedWithinAStackedPlot"
         :cursor-locked="!!lockHighlightPoint"
         :series="seriesModels"
         :highlights="highlights"
@@ -246,6 +247,18 @@ export default {
             default() {
                 return 0;
             }
+        },
+        limitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        colorPalette: {
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -266,7 +279,7 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: undefined,
+            showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
             hasSameRangeValue: true,
             cursorGuide: this.initCursorGuide,
@@ -274,13 +287,22 @@ export default {
         };
     },
     computed: {
+        isNestedWithinAStackedPlot() {
+            const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
+
+            return !isNavigatedObject && this.path.find((pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked');
+        },
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         plotLegendPositionClass() {
-            return `plot-legend-${this.config.legend.get('position')}`;
+            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
         },
         plotLegendExpandedStateClass() {
+            if (this.isNestedWithinAStackedPlot) {
+                return '';
+            }
+
             if (this.config.legend.get('expanded')) {
                 return 'plot-legend-expanded';
             } else {
@@ -292,6 +314,12 @@ export default {
         }
     },
     watch: {
+        limitLineLabels: {
+            handler(limitLineLabels) {
+                this.legendHoverChanged(limitLineLabels);
+            },
+            deep: true
+        },
         initGridLines(newGridLines) {
             this.gridLines = newGridLines;
         },
@@ -309,6 +337,11 @@ export default {
 
         this.config = this.getConfig();
         this.legend = this.config.legend;
+
+        if (this.isNestedWithinAStackedPlot) {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.$emit('configLoaded', configId);
+        }
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -375,6 +408,7 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
+                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -758,6 +792,8 @@ export default {
                         };
                     });
             }
+
+            this.$emit('highlights', this.highlights);
         },
 
         untrackMousePosition() {
@@ -792,6 +828,7 @@ export default {
 
             if (this.isMouseClick()) {
                 this.lockHighlightPoint = !this.lockHighlightPoint;
+                this.$emit('lockHighlightPoint', this.lockHighlightPoint);
             }
 
             if (this.pan) {
