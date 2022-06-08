@@ -24,7 +24,7 @@ import { createOpenMct, resetApplicationState } from 'utils/testing';
 import FlexibleLayout from './plugin';
 import Vue from 'vue';
 
-fdescribe('the plugin', function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
