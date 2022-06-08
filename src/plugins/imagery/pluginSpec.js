@@ -509,6 +509,7 @@ describe("The Imagery View Layouts", () => {
                 });
             });
         });
+        //Note this is a WIP test. Coverage was added in e2e suite
         xit('should change the image zoom factor when using the zoom buttons', async (done) => {
             await Vue.nextTick();
             let imageSizeBefore;
@@ -530,6 +531,7 @@ describe("The Imagery View Layouts", () => {
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
             done();
         });
+        //Note this is a WIP test. Coverage was added in e2e suite
         xit('should reset the zoom factor on the image when clicking the zoom button', async (done) => {
             await Vue.nextTick();
             // test clicking the zoom reset button

@@ -83,7 +83,7 @@ describe("the inspector", () => {
         });
     });
 
-    xit("should allow a saved style to be applied", () => {
+    it("should allow a saved style to be applied", () => {
         spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
         selection = mockTelemetryTableSelection;

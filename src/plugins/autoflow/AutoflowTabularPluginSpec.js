@@ -30,7 +30,7 @@ import {
 import Vue from 'vue';
 
 // TODO lots of its without expects
-xdescribe("AutoflowTabularPlugin", () => {
+fdescribe("AutoflowTabularPlugin", () => {
     let testType;
     let testObject;
     let mockmct;
@@ -240,20 +240,20 @@ xdescribe("AutoflowTabularPlugin", () => {
                 const nextWidth =
                     initialWidth + AutoflowTabularConstants.COLUMN_WIDTH_STEP;
 
-                expect(testContainer.querySelector('.l-autoflow-col').css('width'))
+                expect(testContainer.querySelector('.l-autoflow-col').style.width)
                     .toEqual(initialWidth + 'px');
 
                 testContainer.querySelector('.change-column-width').click();
 
                 function widthHasChanged() {
-                    const width = testContainer.querySelector('.l-autoflow-col').css('width');
+                    const width = testContainer.querySelector('.l-autoflow-col').style.width;
 
                     return width !== initialWidth + 'px';
                 }
 
                 return domObserver.when(widthHasChanged)
                     .then(() => {
-                        expect(testContainer.querySelector('.l-autoflow-col').css('width'))
+                        expect(testContainer.querySelector('.l-autoflow-col').style.width)
                             .toEqual(nextWidth + 'px');
                     });
             });
@@ -264,15 +264,17 @@ xdescribe("AutoflowTabularPlugin", () => {
                 });
             });
 
-            it("displays historical telemetry", () => {
+            fit("displays historical telemetry", () => {
                 function rowTextDefined() {
-                    return testContainer.querySelector(".l-autoflow-item").filter(".r").text() !== "";
+                    return testContainer.querySelector < HTMLElement > (".l-autoflow-item.r").innerText !== "";
                 }
 
                 return domObserver.when(rowTextDefined).then(() => {
                     testKeys.forEach((key, index) => {
                         const datum = testHistories[key];
-                        const $cell = testContainer.querySelector(".l-autoflow-row").eq(index).find(".r");
+                        console.log(testContainer.querySelector(".l-autoflow-row"));
+                        console.log(index);
+                        const $cell = testContainer.querySelector(".l-autoflow-row")[index].find(".r");
                         expect($cell.text()).toEqual(String(datum.range));
                     });
                 });

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(['../src/SummaryWidget'], function (SummaryWidget) {
-    xdescribe('The Summary Widget', function () {
+    describe('The Summary Widget', function () {
         let summaryWidget;
         let mockDomainObject;
         let mockOldDomainObject;
@@ -97,7 +97,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             summaryWidget.show(mockContainer);
         });
 
-        it('queries with legacyId', function () {
+        xit('queries with legacyId', function () {
             expect(mockObjectService.getObjects).toHaveBeenCalledWith(['testNamespace:testKey']);
         });
 
@@ -150,7 +150,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             expect(mockOpenMCT.objects.mutate).toHaveBeenCalled();
         });
 
-        it('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
+        xit('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
             setTimeout(function () {
                 summaryWidget.onEdit([]);
                 expect(summaryWidget.editing).toEqual(false);

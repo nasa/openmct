@@ -13,6 +13,7 @@
     "@types/karma": "^6.3.2",
     "@types/lodash": "^4.14.178",
     "@types/mocha": "^9.1.0",
+    "@types/web": "0.0.67",
     "babel-loader": "8.2.3",
     "babel-plugin-istanbul": "6.1.1",
     "comma-separated-values": "3.6.4",

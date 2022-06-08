@@ -26,7 +26,7 @@ define([
     SummaryWidgetTelemetryProvider
 ) {
 
-    xdescribe('SummaryWidgetTelemetryProvider', function () {
+    describe('SummaryWidgetTelemetryProvider', function () {
         let telemObjectA;
         let telemObjectB;
         let summaryWidgetObject;
