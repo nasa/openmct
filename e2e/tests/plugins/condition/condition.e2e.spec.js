@@ -39,8 +39,8 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
-    //Click the Create button
-    await page.click('button:has-text("Create")');
+        //Click the Create button
+        await page.click('button:has-text("Create")');
 
         // Click text=Condition Set
         await page.locator('li:has-text("Condition Set")').click();

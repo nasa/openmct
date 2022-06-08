@@ -226,13 +226,13 @@
                     ></div>
 
                     <div
-                        v-if="limitHigh !== null && meterHighLimitPerc > 0"
+                        v-if="isMeterLimitHigh"
                         class="c-meter__limit-high"
                         :style="`height: ${meterHighLimitPerc}%`"
                     ></div>
 
                     <div
-                        v-if="limitLow !== null && meterLowLimitPerc > 0"
+                        v-if="isMeterLimitLow"
                         class="c-meter__limit-low"
                         :style="`height: ${meterLowLimitPerc}%`"
                     ></div>
@@ -245,13 +245,13 @@
                     ></div>
 
                     <div
-                        v-if="limitHigh !== null && meterHighLimitPerc > 0"
+                        v-if="isMeterLimitHigh"
                         class="c-meter__limit-high"
                         :style="`width: ${meterHighLimitPerc}%`"
                     ></div>
 
                     <div
-                        v-if="limitLow !== null && meterLowLimitPerc > 0"
+                        v-if="isMeterLimitLow"
                         class="c-meter__limit-low"
                         :style="`width: ${meterLowLimitPerc}%`"
                     ></div>
