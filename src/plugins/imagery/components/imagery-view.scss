@@ -68,15 +68,23 @@
             overflow: hidden;
         }
         &__background-image {
+            // Actually does the image display
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
         }
         &__image {
+            // Present to allow Save As... image
+            position: absolute;
             height: 100%;
             width: 100%;
-            visibility: hidden;
-            display: contents;
+            opacity: 0;
+        }
+
+        &__image-save-proxy {
+            height: 100%;
+            width: 100%;
+            z-index: 10;
         }
     }
 
