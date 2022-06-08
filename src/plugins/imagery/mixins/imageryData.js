@@ -39,7 +39,13 @@ export default {
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
         this.imageDownloadNameHints = { ...this.metadata.valuesForHints(['imageDownloadName'])[0]};
-
+        this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
+            size: 1,
+            strategy: 'latest'
+        });
+        this.telemetryCollection.on('add', this.normalizeDatum);
+        this.telemetryCollection.on('clear', this.clearData);
+        this.telemetryCollection.load();
         // initialize
         this.timeKey = this.timeSystem.key;
         this.timeFormatter = this.getFormatter(this.timeKey);
@@ -55,6 +61,10 @@ export default {
 
         this.stopFollowingDataTimeContext();
         this.openmct.objectViews.off('clearData', this.clearData);
+        this.telemetryCollection.off('add', this.normalizeDatum);
+        this.telemetryCollection.off('clear', this.clearData);
+
+        this.telemetryCollection.destroy();
     },
     methods: {
         setDataTimeContext() {
