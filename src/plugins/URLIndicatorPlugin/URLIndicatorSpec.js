@@ -25,37 +25,35 @@ define(
         "utils/testing",
         "./URLIndicator",
         "./URLIndicatorPlugin",
-        "../../MCT",
-        "zepto"
+        "../../MCT"
     ],
     function (
         testingUtils,
         URLIndicator,
         URLIndicatorPlugin,
-        MCT,
-        $
+        MCT
     ) {
-        const defaultAjaxFunction = $.ajax;
-
         describe("The URLIndicator", function () {
             let openmct;
             let indicatorElement;
             let pluginOptions;
-            let ajaxOptions;
             let urlIndicator; // eslint-disable-line
+            let fetchSpy;
 
             beforeEach(function () {
                 jasmine.clock().install();
                 openmct = new testingUtils.createOpenMct();
                 spyOn(openmct.indicators, 'add');
-                spyOn($, 'ajax');
-                $.ajax.and.callFake(function (options) {
-                    ajaxOptions = options;
-                });
+                fetchSpy = spyOn(window, 'fetch').and.callFake(() => Promise.resolve({
+                    ok: true
+                }));
             });
 
             afterEach(function () {
-                $.ajax = defaultAjaxFunction;
+                if (window.fetch.restore) {
+                    window.fetch.restore();
+                }
+
                 jasmine.clock().uninstall();
 
                 return testingUtils.resetApplicationState(openmct);
@@ -96,11 +94,11 @@ define(
                         expect(indicatorElement.classList.contains('iconClass-checked')).toBe(true);
                     });
                     it("uses custom interval", function () {
-                        expect($.ajax.calls.count()).toEqual(1);
+                        expect(window.fetch).toHaveBeenCalledTimes(1);
                         jasmine.clock().tick(1);
-                        expect($.ajax.calls.count()).toEqual(1);
+                        expect(window.fetch).toHaveBeenCalledTimes(1);
                         jasmine.clock().tick(pluginOptions.interval + 1);
-                        expect($.ajax.calls.count()).toEqual(2);
+                        expect(window.fetch).toHaveBeenCalledTimes(2);
                     });
                     it("uses custom label if supplied in initialization", function () {
                         expect(indicatorElement.textContent.indexOf(pluginOptions.label) >= 0).toBe(true);
@@ -120,18 +118,21 @@ define(
 
                 it("requests the provided URL", function () {
                     jasmine.clock().tick(pluginOptions.interval + 1);
-                    expect(ajaxOptions.url).toEqual(pluginOptions.url);
+                    expect(window.fetch).toHaveBeenCalledWith(pluginOptions.url);
                 });
 
-                it("indicates success if connection is nominal", function () {
+                it("indicates success if connection is nominal", async function () {
                     jasmine.clock().tick(pluginOptions.interval + 1);
-                    ajaxOptions.success();
+                    await urlIndicator.fetchUrl();
                     expect(indicatorElement.classList.contains('s-status-on')).toBe(true);
                 });
 
-                it("indicates an error when the server cannot be reached", function () {
+                it("indicates an error when the server cannot be reached", async function () {
+                    fetchSpy.and.callFake(() => Promise.resolve({
+                        ok: false
+                    }));
                     jasmine.clock().tick(pluginOptions.interval + 1);
-                    ajaxOptions.error();
+                    await urlIndicator.fetchUrl();
                     expect(indicatorElement.classList.contains('s-status-warning-hi')).toBe(true);
                 });
             });

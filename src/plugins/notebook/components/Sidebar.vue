@@ -4,16 +4,15 @@
         <div class="c-sidebar__header-w">
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ sectionTitle }}</span>
+                <button
+                    class="c-icon-button c-icon-button--major icon-plus"
+                    @click="addSection"
+                >
+                    <span class="c-list-button__label">Add</span>
+                </button>
             </div>
         </div>
         <div class="c-sidebar__contents-and-controls">
-            <button
-                class="c-list-button"
-                @click="addSection"
-            >
-                <span class="c-button c-list-button__button icon-plus"></span>
-                <span class="c-list-button__label">Add {{ sectionTitle }}</span>
-            </button>
             <SectionCollection
                 class="c-sidebar__contents"
                 :default-section-id="defaultSectionId"
@@ -31,21 +30,17 @@
         <div class="c-sidebar__header-w">
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ pageTitle }}</span>
+
+                <button
+                    class="c-icon-button c-icon-button--major icon-plus"
+                    @click="addPage"
+                >
+                    <span class="c-icon-button__label">Add</span>
+                </button>
             </div>
-            <button
-                class="c-click-icon c-click-icon--major icon-x-in-circle"
-                @click="toggleNav"
-            ></button>
         </div>
 
         <div class="c-sidebar__contents-and-controls">
-            <button
-                class="c-list-button"
-                @click="addPage"
-            >
-                <span class="c-button c-list-button__button icon-plus"></span>
-                <span class="c-list-button__label">Add {{ pageTitle }}</span>
-            </button>
             <PageCollection
                 ref="pageCollection"
                 class="c-sidebar__contents"
@@ -62,6 +57,12 @@
                 @selectPage="selectPage"
             />
         </div>
+    </div>
+    <div class="c-sidebar__right-edge">
+        <button
+            class="c-icon-button c-icon-button--major icon-line-horz"
+            @click="toggleNav"
+        ></button>
     </div>
 </div>
 </template>

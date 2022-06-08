@@ -45,6 +45,11 @@
 
 .c-clock {
     > * + * { margin-left: $interiorMargin; }
+
+    &__timezone-selection .c-menu {
+        // Menu for selecting timezones in properties dialog
+        max-height: 200px;
+    }
 }
 
 .c-timer {

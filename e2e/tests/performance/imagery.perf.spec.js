@@ -103,10 +103,10 @@ test.describe('Performance tests', () => {
         await page.goto('/');
 
         // Search Available after Launch
-        await page.locator('input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.evaluate(() => window.performance.mark("search-available"));
         // Fill Search input
-        await page.locator('input[type="search"]').fill('Performance Display Layout');
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Performance Display Layout');
         await page.evaluate(() => window.performance.mark("search-entered"));
         //Search Result Appears and is clicked
         await Promise.all([
@@ -164,7 +164,7 @@ test.describe('Performance tests', () => {
         console.log('jpgResourceTiming ' + JSON.stringify(jpgResourceTiming));
 
         // Click Close Icon
-        await page.locator('.c-click-icon').click();
+        await page.locator('[aria-label="Close"]').click();
         await page.evaluate(() => window.performance.mark("view-large-close-button"));
 
         //await client.send('HeapProfiler.enable');

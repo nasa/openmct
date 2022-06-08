@@ -118,7 +118,7 @@ mct-plot {
         }
     }
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         .c-control-bar {
             display: none;
         }
@@ -498,7 +498,7 @@ mct-plot {
         margin-bottom: $interiorMarginSm;
     }
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         &.is-legend-hidden {
             display: none;
         }

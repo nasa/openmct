@@ -23,6 +23,7 @@
 import TimelistViewProvider from './TimelistViewProvider';
 import { TIMELIST_TYPE } from './constants';
 import TimeListInspectorViewProvider from "./inspector/TimeListInspectorViewProvider";
+import TimelistCompositionPolicy from "@/plugins/timelist/TimelistCompositionPolicy";
 
 export default function () {
     return function install(openmct) {
@@ -37,7 +38,6 @@ export default function () {
                     name: 'Upload Plan (JSON File)',
                     key: 'selectFile',
                     control: 'file-input',
-                    required: true,
                     text: 'Select File...',
                     type: 'application/json',
                     property: [
@@ -59,10 +59,12 @@ export default function () {
                     pastEventsDuration: 20,
                     filter: ''
                 };
+                domainObject.composition = [];
             }
         });
         openmct.objectViews.addProvider(new TimelistViewProvider(openmct));
         openmct.inspectorViews.addProvider(new TimeListInspectorViewProvider(openmct));
+        openmct.composition.addPolicy(new TimelistCompositionPolicy(openmct).allow);
 
     };
 }
