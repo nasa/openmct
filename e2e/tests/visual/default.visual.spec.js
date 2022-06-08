@@ -192,7 +192,6 @@ test('Visual - Save Successful Banner', async ({ page }) => {
     //Wait until Save Banner is gone
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
     await percySnapshot(page, 'Banner message gone');
-
 });
 
 test('Visual - Display Layout Icon is correct', async ({ page }) => {

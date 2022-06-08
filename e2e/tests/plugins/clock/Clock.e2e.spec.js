@@ -46,22 +46,22 @@ test.describe('Clock Generator', () => {
         // Click .icon-arrow-down
         await page.locator('.icon-arrow-down').click();
         //verify if the autocomplete dropdown is visible
-        await expect(page.locator(".optionPreSelected")).toBeVisible();
+        await expect(page.locator(".c-input--autocomplete__options")).toBeVisible();
         // Click .icon-arrow-down
         await page.locator('.icon-arrow-down').click();
 
         // Verify clicking on the autocomplete arrow collapses the dropdown
-        await expect(page.locator(".optionPreSelected")).not.toBeVisible();
+        await expect(page.locator(".c-input--autocomplete__options")).not.toBeVisible();
 
         // Click timezone input to open dropdown
-        await page.locator('.autocompleteInput').click();
+        await page.locator('.c-input--autocomplete__input').click();
         //verify if the autocomplete dropdown is visible
-        await expect(page.locator(".optionPreSelected")).toBeVisible();
+        await expect(page.locator(".c-input--autocomplete__options")).toBeVisible();
 
         // Verify clicking outside the autocomplete dropdown collapses it
         await page.locator('text=Timezone').click();
         // Verify clicking on the autocomplete arrow collapses the dropdown
-        await expect(page.locator(".optionPreSelected")).not.toBeVisible();
+        await expect(page.locator(".c-input--autocomplete__options")).not.toBeVisible();
 
     });
 });

@@ -40,14 +40,6 @@ export default {
         BarGraph
     },
     inject: ['openmct', 'domainObject', 'path'],
-    props: {
-        options: {
-            type: Object,
-            default() {
-                return {};
-            }
-        }
-    },
     data() {
         this.telemetryObjects = {};
         this.telemetryObjectFormats = {};
@@ -75,7 +67,9 @@ export default {
         this.setTimeContext();
 
         this.loadComposition();
-
+        this.unobserveAxes = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.refreshData);
+        this.unobserveInterpolation = this.openmct.objects.observe(this.domainObject, 'configuration.useInterpolation', this.refreshData);
+        this.unobserveBar = this.openmct.objects.observe(this.domainObject, 'configuration.useBar', this.refreshData);
     },
     beforeDestroy() {
         this.stopFollowingTimeContext();
@@ -86,8 +80,19 @@ export default {
             return;
         }
 
-        this.composition.off('add', this.addTelemetryObject);
+        this.composition.off('add', this.addToComposition);
         this.composition.off('remove', this.removeTelemetryObject);
+        if (this.unobserveAxes) {
+            this.unobserveAxes();
+        }
+
+        if (this.unobserveInterpolation) {
+            this.unobserveInterpolation();
+        }
+
+        if (this.unobserveBar) {
+            this.unobserveBar();
+        }
     },
     methods: {
         setTimeContext() {
@@ -104,6 +109,42 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.refreshData);
             }
+        },
+        addToComposition(telemetryObject) {
+            if (Object.values(this.telemetryObjects).length > 0) {
+                this.confirmRemoval(telemetryObject);
+            } else {
+                this.addTelemetryObject(telemetryObject);
+            }
+        },
+        confirmRemoval(telemetryObject) {
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will replace the current telemetry source. Do you want to continue?',
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: true,
+                        callback: () => {
+                            const oldTelemetryObject = Object.values(this.telemetryObjects)[0];
+                            this.removeFromComposition(oldTelemetryObject);
+                            this.removeTelemetryObject(oldTelemetryObject.identifier);
+                            this.addTelemetryObject(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            this.removeFromComposition(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        removeFromComposition(telemetryObject) {
+            this.composition.remove(telemetryObject);
         },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
@@ -165,7 +206,12 @@ export default {
 
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
             //Exclude 'name' and 'time' based metadata specifically, from the x-Axis values by using range hints only
-            const xAxisMetadata = metadata.valuesForHints(['range']);
+            const xAxisMetadata = metadata.valuesForHints(['range'])
+                .map((metaDatum) => {
+                    metaDatum.isArrayValue = metadata.isArrayValue(metaDatum);
+
+                    return metaDatum;
+                });
 
             return {
                 xAxisMetadata,
@@ -183,13 +229,7 @@ export default {
         loadComposition() {
             this.composition = this.openmct.composition.get(this.domainObject);
 
-            if (!this.composition) {
-                this.addTelemetryObject(this.domainObject);
-
-                return;
-            }
-
-            this.composition.on('add', this.addTelemetryObject);
+            this.composition.on('add', this.addToComposition);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
         },
@@ -212,7 +252,10 @@ export default {
         },
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
-            delete this.telemetryObjects[key];
+            if (this.telemetryObjects[key]) {
+                delete this.telemetryObjects[key];
+            }
+
             if (this.telemetryObjectFormats && this.telemetryObjectFormats[key]) {
                 delete this.telemetryObjectFormats[key];
             }
@@ -237,49 +280,72 @@ export default {
                 this.openmct.notifications.alert(data.message);
             }
 
-            if (!this.isDataInTimeRange(data, key)) {
+            if (!this.isDataInTimeRange(data, key, telemetryObject)) {
+                return;
+            }
+
+            if (this.domainObject.configuration.axes.xKey === undefined || this.domainObject.configuration.axes.yKey === undefined) {
                 return;
             }
 
             let xValues = [];
             let yValues = [];
-
-            //populate X and Y values for plotly
-            axisMetadata.xAxisMetadata.forEach((metadata) => {
-                xValues.push(metadata.name);
-                if (data[metadata.key]) {
-                    const formattedValue = this.format(key, metadata.key, data);
-                    yValues.push(formattedValue);
-                } else {
-                    yValues.push(null);
+            let xAxisMetadata = axisMetadata.xAxisMetadata.find(metadata => metadata.key === this.domainObject.configuration.axes.xKey);
+            if (xAxisMetadata && xAxisMetadata.isArrayValue) {
+                //populate x and y values
+                let metadataKey = this.domainObject.configuration.axes.xKey;
+                if (data[metadataKey] !== undefined) {
+                    xValues = this.parse(key, metadataKey, data);
                 }
-            });
+
+                metadataKey = this.domainObject.configuration.axes.yKey;
+                if (data[metadataKey] !== undefined) {
+                    yValues = this.parse(key, metadataKey, data);
+                }
+            } else {
+                //populate X and Y values for plotly
+                axisMetadata.xAxisMetadata.filter(metadataObj => !metadataObj.isArrayValue).forEach((metadata) => {
+                    if (!xAxisMetadata) {
+                        //Assign the first metadata to use for any formatting
+                        xAxisMetadata = metadata;
+                    }
+
+                    xValues.push(metadata.name);
+                    if (data[metadata.key]) {
+                        const parsedValue = this.parse(key, metadata.key, data);
+                        yValues.push(parsedValue);
+                    } else {
+                        yValues.push(null);
+                    }
+                });
+            }
 
             let trace = {
                 key,
                 name: telemetryObject.name,
                 x: xValues,
                 y: yValues,
-                text: yValues.map(String),
-                xAxisMetadata: axisMetadata.xAxisMetadata,
+                xAxisMetadata: xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: this.options.type ? this.options.type : 'bar',
+                type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
+                mode: 'lines',
+                line: {
+                    shape: this.domainObject.configuration.useInterpolation
+                },
                 marker: {
                     color: this.domainObject.configuration.barStyles.series[key].color
                 },
-                hoverinfo: 'skip'
+                hoverinfo: this.domainObject.configuration.useBar ? 'skip' : 'x+y'
             };
-
-            if (this.options.type) {
-                trace.mode = 'markers';
-                trace.hoverinfo = 'x+y';
-            }
 
             this.addTrace(trace, key);
         },
-        isDataInTimeRange(datum, key) {
+        isDataInTimeRange(datum, key, telemetryObject) {
             const timeSystemKey = this.timeContext.timeSystem().key;
-            let currentTimestamp = this.parse(key, timeSystemKey, datum);
+            const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            let metadataValue = metadata.value(timeSystemKey) || { key: timeSystemKey };
+
+            let currentTimestamp = this.parse(key, metadataValue.key, datum);
 
             return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
         },
@@ -299,7 +365,8 @@ export default {
         },
         requestDataFor(telemetryObject) {
             const axisMetadata = this.getAxisMetadata(telemetryObject);
-            this.openmct.telemetry.request(telemetryObject)
+            const options = this.getOptions();
+            this.openmct.telemetry.request(telemetryObject, options)
                 .then(data => {
                     data.forEach((datum) => {
                         this.addDataToGraph(telemetryObject, datum, axisMetadata);
