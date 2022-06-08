@@ -29,10 +29,10 @@
         v-for="timeSystemItem in timeSystems"
         :key="timeSystemItem.timeSystem.key"
     >
-        <template slot="label">
+        <template #label>
             {{ timeSystemItem.timeSystem.name }}
         </template>
-        <template slot="object">
+        <template #object>
             <timeline-axis
                 :bounds="timeSystemItem.bounds"
                 :time-system="timeSystemItem.timeSystem"
@@ -50,7 +50,7 @@
         <timeline-object-view
             v-for="item in items"
             :key="item.keyString"
-            class="c-timeline__content"
+            class="c-timeline__content js-timeline__content"
             :item="item"
         />
     </div>
@@ -61,7 +61,7 @@
 import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-import { getValidatedPlan } from "../plan/util";
+import { getValidatedData } from "../plan/util";
 
 const unknownObjectType = {
     definition: {
@@ -93,15 +93,15 @@ export default {
         this.stopFollowingTimeContext();
     },
     mounted() {
+        this.items = [];
+        this.setTimeContext();
+
         if (this.composition) {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.reorder);
             this.composition.load();
         }
-
-        this.setTimeContext();
-        this.getTimeSystems();
     },
     methods: {
         addItem(domainObject) {
@@ -110,7 +110,7 @@ export default {
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let rowCount = 0;
             if (domainObject.type === 'plan') {
-                rowCount = Object.keys(getValidatedPlan(domainObject)).length;
+                rowCount = Object.keys(getValidatedData(domainObject)).length;
             }
 
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
@@ -165,6 +165,7 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.getTimeSystems();
             this.updateViewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.updateViewBounds);
         },

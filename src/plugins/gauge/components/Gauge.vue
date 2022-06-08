@@ -64,11 +64,11 @@
         </svg>
 
         <svg
+            v-if="displayCurVal"
             class="c-dial__current-value-text-wrapper"
             viewBox="0 0 512 512"
         >
             <svg
-                v-if="displayCurVal"
                 class="c-dial__current-value-text-sizer"
                 :viewBox="curValViewBox"
             >
@@ -79,20 +79,30 @@
                     style="transform: translate(50%, 70%)"
                 >{{ curVal }}</text>
             </svg>
+            <svg
+                class="c-gauge__units c-dial__units"
+                viewBox="0 0 50 100"
+            >
+                <text
+                    class="c-dial__units-text"
+                    lengthAdjust="spacing"
+                    text-anchor="middle"
+                    style="transform: translate(50%, 72%)"
+                >{{ units }}</text>
+            </svg>
         </svg>
 
         <svg
             class="c-dial__bg"
             viewBox="0 0 10 10"
         >
-
             <g
-                v-if="limitLow !== null && dialLowLimitDeg < getLimitDegree('low', 'max')"
+                v-if="isDialLowLimit"
                 class="c-dial__limit-low"
                 :style="`transform: rotate(${dialLowLimitDeg}deg)`"
             >
                 <rect
-                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q1')"
+                    v-if="isDialLowLimitLow"
                     class="c-dial__low-limit__low"
                     x="5"
                     y="5"
@@ -100,7 +110,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q2')"
+                    v-if="isDialLowLimitMid"
                     class="c-dial__low-limit__mid"
                     x="5"
                     y="0"
@@ -108,7 +118,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialLowLimitDeg >= getLimitDegree('low', 'q3')"
+                    v-if="isDialLowLimitHigh"
                     class="c-dial__low-limit__high"
                     x="0"
                     y="0"
@@ -118,12 +128,12 @@
             </g>
 
             <g
-                v-if="limitHigh !== null && dialHighLimitDeg < getLimitDegree('high', 'max')"
+                v-if="isDialHighLimit"
                 class="c-dial__limit-high"
                 :style="`transform: rotate(${dialHighLimitDeg}deg)`"
             >
                 <rect
-                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'max')"
+                    v-if="isDialHighLimitLow"
                     class="c-dial__high-limit__low"
                     x="0"
                     y="5"
@@ -131,7 +141,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'q2')"
+                    v-if="isDialHighLimitMid"
                     class="c-dial__high-limit__mid"
                     x="0"
                     y="0"
@@ -139,7 +149,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="dialHighLimitDeg <= getLimitDegree('high', 'q3')"
+                    v-if="isDialHighLimitHigh"
                     class="c-dial__high-limit__high"
                     x="5"
                     y="0"
@@ -159,7 +169,7 @@
                 :style="`transform: rotate(${degValueFilledDial}deg)`"
             >
                 <rect
-                    v-if="degValue >= getLimitDegree('low', 'q1')"
+                    v-if="isDialFilledValueLow"
                     class="c-dial__filled-value__low"
                     x="5"
                     y="5"
@@ -167,7 +177,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="degValue >= getLimitDegree('low', 'q2')"
+                    v-if="isDialFilledValueMid"
                     class="c-dial__filled-value__mid"
                     x="5"
                     y="0"
@@ -175,7 +185,7 @@
                     height="5"
                 />
                 <rect
-                    v-if="degValue >= getLimitDegree('low', 'q3')"
+                    v-if="isDialFilledValueHigh"
                     class="c-dial__filled-value__high"
                     x="0"
                     y="0"
@@ -262,7 +272,23 @@
                             lengthAdjust="spacing"
                             text-anchor="middle"
                             style="transform: translate(50%, 70%)"
-                        >{{ curVal }}</text>
+                        >
+                            <tspan>{{ curVal }}</tspan>
+                            <tspan
+                                v-if="typeMeterHorizontal && displayUnits"
+                                class="c-gauge__units"
+                                font-size="10"
+                            >{{ units }}</tspan>
+                        </text>
+                        <text
+                            v-if="typeMeterVertical && displayUnits"
+                            dy="12"
+                            class="c-gauge__units"
+                            font-size="10"
+                            lengthAdjust="spacing"
+                            text-anchor="middle"
+                            style="transform: translate(50%, 70%)"
+                        >{{ units }}</text>
                     </svg>
                 </svg>
             </div>
@@ -275,6 +301,7 @@
 import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
+const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
     name: 'Gauge',
@@ -283,17 +310,20 @@ export default {
         let gaugeController = this.domainObject.configuration.gaugeController;
 
         return {
-            curVal: 0,
+            curVal: DEFAULT_CURRENT_VALUE,
             digits: 3,
             precision: gaugeController.precision,
             displayMinMax: gaugeController.isDisplayMinMax,
             displayCurVal: gaugeController.isDisplayCurVal,
+            displayUnits: gaugeController.isDisplayUnits,
             limitHigh: gaugeController.limitHigh,
             limitLow: gaugeController.limitLow,
             rangeHigh: gaugeController.max,
             rangeLow: gaugeController.min,
             gaugeType: gaugeController.gaugeType,
-            activeTimeSystem: this.openmct.time.timeSystem()
+            showUnits: gaugeController.showUnits,
+            activeTimeSystem: this.openmct.time.timeSystem(),
+            units: ''
         };
     },
     computed: {
@@ -318,6 +348,45 @@ export default {
             const VIEWBOX_STR = '0 0 X 15';
 
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
+        },
+        isDialLowLimit() {
+            return this.limitLow.length > 0 && this.dialLowLimitDeg < getLimitDegree('low', 'max');
+        },
+        isDialLowLimitLow() {
+            return this.dialLowLimitDeg >= getLimitDegree('low', 'q1');
+        },
+        isDialLowLimitMid() {
+            return this.dialLowLimitDeg >= getLimitDegree('low', 'q2');
+        },
+        isDialLowLimitHigh() {
+            return this.dialLowLimitDeg >= getLimitDegree('low', 'q3');
+        },
+        isDialHighLimit() {
+            return this.limitHigh.length > 0 && this.dialHighLimitDeg < getLimitDegree('high', 'max');
+        },
+        isDialHighLimitLow() {
+            return this.dialHighLimitDeg <= getLimitDegree('high', 'max');
+        },
+        isDialHighLimitMid() {
+            return this.dialHighLimitDeg <= getLimitDegree('high', 'q2');
+        },
+        isDialHighLimitHigh() {
+            return this.dialHighLimitDeg <= getLimitDegree('high', 'q3');
+        },
+        isDialFilledValueLow() {
+            return this.degValue >= getLimitDegree('low', 'q1');
+        },
+        isDialFilledValueMid() {
+            return this.degValue >= getLimitDegree('low', 'q2');
+        },
+        isDialFilledValueHigh() {
+            return this.degValue >= getLimitDegree('low', 'q3');
+        },
+        isMeterLimitHigh() {
+            return this.limitHigh.length > 0 && this.meterHighLimitPerc > 0;
+        },
+        isMeterLimitLow() {
+            return this.limitLow.length > 0 && this.meterLowLimitPerc > 0;
         },
         typeDial() {
             return this.matchGaugeType('dial');
@@ -459,13 +528,14 @@ export default {
                 this.unsubscribe = null;
             }
 
-            this.metadata = null;
+            this.curVal = DEFAULT_CURRENT_VALUE;
             this.formats = null;
-            this.valueKey = null;
-            this.limitHigh = null;
-            this.limitLow = null;
+            this.limitHigh = '';
+            this.limitLow = '';
+            this.metadata = null;
             this.rangeHigh = null;
             this.rangeLow = null;
+            this.valueKey = null;
         },
         request(domainObject = this.telemetryObject) {
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
@@ -484,6 +554,8 @@ export default {
                     const length = values.length;
                     this.updateValue(values[length - 1]);
                 });
+
+            this.units = this.metadata.value(this.valueKey).unit || '';
         },
         round(val, decimals = this.precision) {
             let precision = Math.pow(10, decimals);
@@ -518,13 +590,20 @@ export default {
             } else if (telemetryLimit.WATCH) {
                 limits = telemetryLimit.WATCH;
             } else {
-                this.openmct.notifications.error('No limits definition for given telemetry');
+                this.openmct.notifications.error('No limits definition for given telemetry, hiding low and high limits');
+                this.displayMinMax = false;
+                this.limitHigh = '';
+                this.limitLow = '';
+
+                return;
             }
 
             this.limitHigh = this.round(limits.high[this.valueKey]);
             this.limitLow = this.round(limits.low[this.valueKey]);
             this.rangeHigh = this.round(this.limitHigh + this.limitHigh * LIMIT_PADDING_IN_PERCENT / 100);
             this.rangeLow = this.round(this.limitLow - Math.abs(this.limitLow * LIMIT_PADDING_IN_PERCENT / 100));
+
+            this.displayMinMax = this.domainObject.configuration.gaugeController.isDisplayMinMax;
         },
         updateValue(datum) {
             this.datum = datum;

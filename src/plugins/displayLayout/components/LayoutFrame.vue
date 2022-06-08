@@ -25,8 +25,7 @@
     class="l-layout__frame c-frame"
     :class="{
         'no-frame': !item.hasFrame,
-        'u-inspectable': inspectable,
-        'is-in-small-container': size.width < 600 || size.height < 600
+        'u-inspectable': inspectable
     }"
     :style="style"
 >

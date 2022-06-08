@@ -21,10 +21,11 @@
  *****************************************************************************/
 
 /*
-Test for plot autoscale.
+Testsuite for plot autoscale.
 */
 
-const { test: _test, expect } = require('@playwright/test');
+const { test: _test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 // create a new `test` API that will not append platform details to snapshot
 // file names, only for the tests in this file, so that the same snapshots will
@@ -47,7 +48,10 @@ test.use({
 });
 
 test.describe('ExportAsJSON', () => {
-    test('autoscale off causes no error from undefined user range', async ({ page }) => {
+    test('User can set autoscale with a valid range @snapshot', async ({ page }) => {
+        //This is necessary due to the size of the test suite.
+        await test.setTimeout(120 * 1000);
+
         await page.goto('/', { waitUntil: 'networkidle' });
 
         await setTimeRange(page);
@@ -68,14 +72,6 @@ test.describe('ExportAsJSON', () => {
                 .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-prepan.png', { maxDiffPixels: 40 }))
         ]);
 
-        let errorCount = 0;
-
-        function onError() {
-            errorCount++;
-        }
-
-        page.on('pageerror', onError);
-
         await page.keyboard.down('Alt');
 
         await canvas.dragTo(canvas, {
@@ -90,12 +86,6 @@ test.describe('ExportAsJSON', () => {
         });
 
         await page.keyboard.up('Alt');
-
-        page.off('pageerror', onError);
-
-        // There would have been an error at this point. So if there isn't, then
-        // we fixed it.
-        expect(errorCount).toBe(0);
 
         // Ensure the drag worked.
         await Promise.all([
@@ -134,9 +124,14 @@ async function createSinewaveOverlayPlot(page) {
     // add overlay plot with defaults
     await page.locator('li:has-text("Overlay Plot")').click();
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/a9268c6f-45cc-4bcd-a6a0-50ac4036e396?tc.mode=fixed&tc.startBound=1649305424163&tc.endBound=1649307224163&tc.timeSystem=utc&view=plot-overlay' }*/),
-        page.locator('text=OK').click()
+        page.waitForNavigation(),
+        page.locator('text=OK').click(),
+        //Wait for Save Banner to appear1
+        page.waitForSelector('.c-message-banner__message')
     ]);
+    //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // save (exit edit mode)
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
@@ -148,14 +143,19 @@ async function createSinewaveOverlayPlot(page) {
     // add sine wave generator with defaults
     await page.locator('li:has-text("Sine Wave Generator")').click();
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/a9268c6f-45cc-4bcd-a6a0-50ac4036e396/5cfa5c69-17bc-4a99-9545-4da8125380c5?tc.mode=fixed&tc.startBound=1649305424163&tc.endBound=1649307224163&tc.timeSystem=utc&view=plot-single' }*/),
-        page.locator('text=OK').click()
+        page.waitForNavigation(),
+        page.locator('text=OK').click(),
+        //Wait for Save Banner to appear1
+        page.waitForSelector('.c-message-banner__message')
     ]);
+    //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // focus the overlay plot
     await page.locator('text=Open MCT My Items >> span').nth(3).click();
     await Promise.all([
-        page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/a9268c6f-45cc-4bcd-a6a0-50ac4036e396?tc.mode=fixed&tc.startBound=1649305424163&tc.endBound=1649307224163&tc.timeSystem=utc&view=plot-overlay' }*/),
+        page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()
     ]);
 }
@@ -168,11 +168,18 @@ async function turnOffAutoscale(page) {
     await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
 
     // uncheck autoscale
-    await page.locator('text=Y Axis Scaling Auto scale Padding >> input[type="checkbox"]').uncheck();
+    await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"] >> nth=1').uncheck();
 
     // save
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-    await page.locator('text=Save and Finish Editing').click();
+    await Promise.all([
+        page.locator('text=Save and Finish Editing').click(),
+        //Wait for Save Banner to appear
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+    //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 }
 
 /**
@@ -180,6 +187,7 @@ async function turnOffAutoscale(page) {
  */
 async function testYTicks(page, values) {
     const yTicks = page.locator('.gl-plot-y-tick-label');
+    await page.locator('canvas >> nth=1').hover();
     let promises = [yTicks.count().then(c => expect(c).toBe(values.length))];
 
     for (let i = 0, l = values.length; i < l; i += 1) {

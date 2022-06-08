@@ -99,12 +99,24 @@ describe("The Imagery View Layouts", () => {
         location: "parentId",
         modified: 0,
         persisted: 0,
+        configuration: {
+            layers: [{
+                name: '16:9',
+                visible: true
+            }]
+        },
         telemetry: {
             values: [
                 {
                     "name": "Image",
                     "key": "url",
                     "format": "image",
+                    "layers": [
+                        {
+                            source: location.host + '/images/bg-splash.jpg',
+                            name: '16:9'
+                        }
+                    ],
                     "hints": {
                         "image": 1,
                         "priority": 3
@@ -403,6 +415,18 @@ describe("The Imagery View Layouts", () => {
                 const imageInfo = getImageInfo(parent);
 
                 expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
+            });
+        });
+
+        it("on mount should show the any image layers", (done) => {
+            //Looks like we need Vue.nextTick here so that computed properties settle down
+            Vue.nextTick().then(() => {
+                Vue.nextTick(() => {
+                    const layerEls = parent.querySelectorAll('.js-layer-image');
+                    console.log(layerEls);
+                    expect(layerEls.length).toEqual(1);
+                    done();
+                });
             });
         });
 

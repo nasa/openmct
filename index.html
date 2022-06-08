@@ -75,12 +75,12 @@
         const TWO_HOURS = ONE_HOUR * 2;
         const ONE_DAY = ONE_HOUR * 24;
 
-
         openmct.install(openmct.plugins.LocalStorage());
 
         openmct.install(openmct.plugins.example.Generator());
         openmct.install(openmct.plugins.example.EventGeneratorPlugin());
         openmct.install(openmct.plugins.example.ExampleImagery());
+        openmct.install(openmct.plugins.example.ExampleTags());
 
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
@@ -191,11 +191,13 @@
         openmct.install(openmct.plugins.ObjectMigration());
         openmct.install(openmct.plugins.ClearData(
             ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked', 'example.imagery'],
-            {indicator: true}
+            { indicator: true }
         ));
         openmct.install(openmct.plugins.Clock({ enableClockIndicator: true }));
         openmct.install(openmct.plugins.Timer());
         openmct.install(openmct.plugins.Timelist());
+        openmct.install(openmct.plugins.BarChart());
+        openmct.install(openmct.plugins.ScatterPlot());
         openmct.start();
     </script>
 </html>

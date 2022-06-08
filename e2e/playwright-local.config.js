@@ -2,12 +2,14 @@
 // playwright.config.js
 // @ts-check
 
+// eslint-disable-next-line no-unused-vars
 const { devices } = require('@playwright/test');
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
     retries: 0,
     testDir: 'tests',
+    testIgnore: '**/*.perf.spec.js',
     timeout: 30 * 1000,
     webServer: {
         command: 'npm run start',
@@ -21,20 +23,20 @@ const config = {
         baseURL: 'http://localhost:8080/',
         headless: false,
         ignoreHTTPSErrors: true,
-        screenshot: 'on',
-        trace: 'on',
-        video: 'on'
+        screenshot: 'only-on-failure',
+        trace: 'retain-on-failure',
+        video: 'retain-on-failure'
     },
     projects: [
         {
             name: 'chrome',
             use: {
-                browserName: 'chromium',
-                ...devices['Desktop Chrome']
+                browserName: 'chromium'
             }
         },
         {
             name: 'MMOC',
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
                 viewport: {
@@ -53,7 +55,10 @@ const config = {
     ],
     reporter: [
         ['list'],
-        ['allure-playwright']
+        ['html', {
+            open: 'on-failure',
+            outputFolder: '../test-results'
+        }]
     ]
 };
 

@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
-test.describe('Time counductor operations', () => {
+test.describe('Time conductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
-        //Go to baseURL
+        // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
         const year = new Date().getFullYear();
 
@@ -67,3 +68,168 @@ test.describe('Time counductor operations', () => {
         expect(endDateValidityStatus).not.toBeTruthy();
     });
 });
+
+// Testing instructions:
+// Try to change the realtime offsets when in realtime (local clock) mode.
+test.describe('Time conductor input fields real-time mode', () => {
+    test('validate input fields in real-time mode', async ({ page }) => {
+        const startOffset = {
+            secs: '23'
+        };
+
+        const endOffset = {
+            secs: '31'
+        };
+
+        // Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Switch to real-time mode
+        await setRealTimeMode(page);
+
+        // Set start time offset
+        await setStartOffset(page, startOffset);
+
+        // Verify time was updated on time offset button
+        await expect(page.locator('data-testid=conductor-start-offset-button')).toContainText('00:30:23');
+
+        // Set end time offset
+        await setEndOffset(page, endOffset);
+
+        // Verify time was updated on preceding time offset button
+        await expect(page.locator('data-testid=conductor-end-offset-button')).toContainText('00:00:31');
+    });
+
+    /**
+     * Verify that offsets and url params are preserved when switching
+     * between fixed timespan and real-time mode.
+     */
+    test('preserve offsets and url params when switching between fixed and real-time mode', async ({ page }) => {
+        const startOffset = {
+            mins: '30',
+            secs: '23'
+        };
+
+        const endOffset = {
+            secs: '01'
+        };
+
+        // Convert offsets to milliseconds
+        const startDelta = (30 * 60 * 1000) + (23 * 1000);
+        const endDelta = (1 * 1000);
+
+        // Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Switch to real-time mode
+        await setRealTimeMode(page);
+
+        // Set start time offset
+        await setStartOffset(page, startOffset);
+
+        // Set end time offset
+        await setEndOffset(page, endOffset);
+
+        // Switch to fixed timespan mode
+        await setFixedTimeMode(page);
+
+        // Switch back to real-time mode
+        await setRealTimeMode(page);
+
+        // Verify updated start time offset persists after mode switch
+        await expect(page.locator('data-testid=conductor-start-offset-button')).toContainText('00:30:23');
+
+        // Verify updated end time offset persists after mode switch
+        await expect(page.locator('data-testid=conductor-end-offset-button')).toContainText('00:00:01');
+
+        // Verify url parameters persist after mode switch
+        await page.waitForNavigation();
+        expect(page.url()).toContain(`startDelta=${startDelta}`);
+        expect(page.url()).toContain(`endDelta=${endDelta}`);
+    });
+});
+
+/**
+ * @typedef {Object} OffsetValues
+ * @property {string | undefined} hours
+ * @property {string | undefined} mins
+ * @property {string | undefined} secs
+ */
+
+/**
+ * Set the values (hours, mins, secs) for the start time offset when in realtime mode
+ * @param {import('@playwright/test').Page} page
+ * @param {OffsetValues} offset
+ */
+async function setStartOffset(page, offset) {
+    const startOffsetButton = page.locator('data-testid=conductor-start-offset-button');
+    await setTimeConductorOffset(page, offset, startOffsetButton);
+}
+
+/**
+ * Set the values (hours, mins, secs) for the end time offset when in realtime mode
+ * @param {import('@playwright/test').Page} page
+ * @param {OffsetValues} offset
+ */
+async function setEndOffset(page, offset) {
+    const endOffsetButton = page.locator('data-testid=conductor-end-offset-button');
+    await setTimeConductorOffset(page, offset, endOffsetButton);
+}
+
+/**
+ * Set the time conductor to fixed timespan mode
+ * @param {import('@playwright/test').Page} page
+ */
+async function setFixedTimeMode(page) {
+    await setTimeConductorMode(page, true);
+}
+
+/**
+ * Set the time conductor to realtime mode
+ * @param {import('@playwright/test').Page} page
+ */
+async function setRealTimeMode(page) {
+    await setTimeConductorMode(page, false);
+}
+
+/**
+ * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode
+ * @param {import('@playwright/test').Page} page
+ * @param {OffsetValues} offset
+ * @param {import('@playwright/test').Locator} offsetButton
+ */
+async function setTimeConductorOffset(page, {hours, mins, secs}, offsetButton) {
+    await offsetButton.click();
+
+    if (hours) {
+        await page.fill('.pr-time-controls__hrs', hours);
+    }
+
+    if (mins) {
+        await page.fill('.pr-time-controls__mins', mins);
+    }
+
+    if (secs) {
+        await page.fill('.pr-time-controls__secs', secs);
+    }
+
+    // Click the check button
+    await page.locator('.icon-check').click();
+}
+
+/**
+ * Set the time conductor mode to either fixed timespan or realtime mode.
+ * @param {import('@playwright/test').Page} page
+ * @param {boolean} [isFixedTimespan=true] true for fixed timespan mode, false for realtime mode; default is true
+ */
+async function setTimeConductorMode(page, isFixedTimespan = true) {
+    // Click 'mode' button
+    await page.locator('.c-mode-button').click();
+
+    // Switch time conductor mode
+    if (isFixedTimespan) {
+        await page.locator('data-testid=conductor-modeOption-fixed').click();
+    } else {
+        await page.locator('data-testid=conductor-modeOption-realtime').click();
+    }
+}

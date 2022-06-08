@@ -1,0 +1,137 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/******************************* EXPANDED SEARCH 2022 */
+.c-gsearch {
+    .l-shell__head & {
+        // Search input in the shell head
+        width: 20%;
+
+        .c-search {
+            background: rgba($colorHeadFg, 0.2);
+            box-shadow: none;
+        }
+    }
+
+    &__results-wrapper {
+        @include menuOuter();
+        display: flex;
+        flex-direction: column;
+        padding: $interiorMarginLg;
+        min-width: 500px;
+        max-height: 500px;
+    }
+
+    &__results,
+    &__results-section {
+        flex: 1 1 auto;
+    }
+
+    &__results {
+        // Holds n __results-sections
+        padding-right: $interiorMargin; // Fend off scrollbar
+        overflow-y: auto;
+
+        > * + * {
+            margin-top: $interiorMarginLg;
+        }
+    }
+
+    &__results-section {
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+    }
+
+    &__results-section-title {
+        @include propertiesHeader();
+    }
+}
+
+.c-gsearch-result {
+    display: flex;
+    padding: $interiorMargin $interiorMarginSm;
+
+    > * + * {
+        margin-left: $interiorMarginLg;
+    }
+
+    + .c-gsearch-result {
+        border-top: 1px solid $colorInteriorBorder;
+    }
+
+    &__type-icon,
+    &__more-options-button {
+        flex: 0 0 auto;
+    }
+
+    &__type-icon {
+        color: $colorItemTreeIcon;
+        font-size: 2.2em;
+
+        // TEMP: uses object-label component, hide label part
+        .c-object-label__name {
+            display: none;
+        }
+    }
+
+    &__more-options-button {
+        display: none; // TEMP until enabled
+    }
+
+    &__body {
+        flex: 1 1 auto;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+
+        .c-location {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    }
+
+    &__tags {
+        display: flex;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
+
+    &__title {
+        border-radius: $basicCr;
+        color: pullForward($colorBodyFg, 30%);
+        cursor: pointer;
+        font-size: 1.15em;
+        padding: 3px $interiorMarginSm;
+
+        &:hover {
+            background-color: $colorItemTreeHoverBg;
+        }
+    }
+
+    .c-tag {
+        font-size: 0.9em;
+    }
+}
