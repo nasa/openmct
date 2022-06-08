@@ -476,6 +476,7 @@ export default {
         this.filterChanged = _.debounce(this.filterChanged, 500);
     },
     mounted() {
+        console.error('oh noes an error!');
         this.csvExporter = new CSVExporter();
         this.rowsAdded = _.throttle(this.rowsAdded, 200);
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
@@ -536,6 +537,7 @@ export default {
         this.table.configuration.destroy();
 
         this.table.destroy();
+        this.isNotARealFunction();
     },
     methods: {
         updateVisibleRows() {
