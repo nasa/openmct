@@ -270,4 +270,106 @@ describe('the plugin', function () {
             });
         });
     });
+
+    describe('filters', () => {
+        let timelistDomainObject;
+        let timelistView;
+
+        beforeEach(() => {
+            timelistDomainObject = {
+                identifier: {
+                    key: 'test-object',
+                    namespace: ''
+                },
+                type: TIMELIST_TYPE,
+                id: "test-object",
+                configuration: {
+                    sortOrderIndex: 0,
+                    futureEventsIndex: 1,
+                    futureEventsDurationIndex: 0,
+                    futureEventsDuration: 20,
+                    currentEventsIndex: 1,
+                    currentEventsDurationIndex: 0,
+                    currentEventsDuration: 20,
+                    pastEventsIndex: 1,
+                    pastEventsDurationIndex: 0,
+                    pastEventsDuration: 20,
+                    filter: 'perspiciatis'
+                },
+                composition: [{
+                    identifier: {
+                        key: 'test-plan-object',
+                        namespace: ''
+                    }
+                }]
+            };
+
+            openmct.router.path = [timelistDomainObject];
+
+            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            view.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it('activities', () => {
+            return Vue.nextTick(() => {
+                const items = element.querySelectorAll(LIST_ITEM_CLASS);
+                expect(items.length).toEqual(1);
+            });
+        });
+    });
+
+    describe('time filtering', () => {
+        let timelistDomainObject;
+        let timelistView;
+
+        beforeEach(() => {
+            timelistDomainObject = {
+                identifier: {
+                    key: 'test-object',
+                    namespace: ''
+                },
+                type: TIMELIST_TYPE,
+                id: "test-object",
+                configuration: {
+                    sortOrderIndex: 0,
+                    futureEventsIndex: 1,
+                    futureEventsDurationIndex: 0,
+                    futureEventsDuration: 20,
+                    currentEventsIndex: 1,
+                    currentEventsDurationIndex: 0,
+                    currentEventsDuration: 20,
+                    pastEventsIndex: 0,
+                    pastEventsDurationIndex: 0,
+                    pastEventsDuration: 20,
+                    filter: 'perspiciatis'
+                },
+                composition: [{
+                    identifier: {
+                        key: 'test-plan-object',
+                        namespace: ''
+                    }
+                }]
+            };
+
+            openmct.router.path = [timelistDomainObject];
+
+            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            view.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it('hides past events', () => {
+            return Vue.nextTick(() => {
+                const items = element.querySelectorAll(LIST_ITEM_CLASS);
+                expect(items.length).toEqual(0);
+            });
+        });
+    });
 });

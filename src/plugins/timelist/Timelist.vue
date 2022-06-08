@@ -247,7 +247,7 @@ export default {
             const futureEventsDurationIndex = this.domainObject.configuration.futureEventsDurationIndex;
 
             if (pastEventsIndex === 0 && futureEventsIndex === 0 && currentEventsIndex === 0) {
-                //show all events
+                //don't show all events
                 this.showAll = false;
                 this.viewBounds = undefined;
                 this.hideAll = true;
