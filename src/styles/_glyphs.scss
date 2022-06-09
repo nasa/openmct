@@ -241,12 +241,10 @@
 .bg-icon-tabular { @include glyphBg($bg-icon-tabular); }
 .bg-icon-tabular-lad { @include glyphBg($bg-icon-tabular-lad); }
 .bg-icon-tabular-lad-set { @include glyphBg($bg-icon-tabular-lad-set); }
-.bg-icon-tabular-realtime { @include glyphBg($bg-icon-tabular-realtime); }
 .bg-icon-tabular-scrolling { @include glyphBg($bg-icon-tabular-scrolling); }
 .bg-icon-telemetry { @include glyphBg($bg-icon-telemetry); }
 .bg-icon-timeline { @include glyphBg($bg-icon-timeline); }
 .bg-icon-timer { @include glyphBg($bg-icon-timer); }
-.bg-icon-topic { @include glyphBg($bg-icon-topic); }
 .bg-icon-box-with-dashed-lines { @include glyphBg($bg-icon-box-with-dashed-lines); }
 .bg-icon-summary-widget { @include glyphBg($bg-icon-summary-widget); }
 .bg-icon-notebook { @include glyphBg($bg-icon-notebook); }
@@ -264,5 +262,5 @@
 .bg-icon-map { @include glyphBg($bg-icon-map); }
 .bg-icon-plan { @include glyphBg($bg-icon-plan); }
 .bg-icon-timelist { @include glyphBg($bg-icon-timelist); }
-.bg-icon-notebook-shift-log { @include glyphBg($bg-icon-notebook-shift-log); }
 .bg-icon-plot-scatter { @include glyphBg($bg-icon-plot-scatter); }
+.bg-icon-notebook-shift-log { @include glyphBg($bg-icon-notebook-shift-log); }
