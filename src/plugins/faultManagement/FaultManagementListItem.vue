@@ -40,7 +40,7 @@
         class="c-fault-mgmt__list-severity"
         :title="fault.severity"
         :class="[
-            'is-severity-' + fault.severity
+            'is-severity-' + severity
         ]"
     >
     </div>
