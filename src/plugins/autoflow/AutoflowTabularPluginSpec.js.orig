@@ -29,6 +29,28 @@ import {
 } from 'utils/testing';
 import Vue from 'vue';
 
+<<<<<<< Updated upstream
+// TODO lots of its without expects
+fdescribe("AutoflowTabularPlugin", () => {
+    let testType;
+    let testObject;
+    let mockmct;
+
+    beforeEach(() => {
+        testType = "some-type";
+        testObject = { type: testType };
+        mockmct = createOpenMct();
+        spyOn(mockmct.composition, 'get');
+        spyOn(mockmct.objectViews, 'addProvider');
+        spyOn(mockmct.telemetry, 'getMetadata');
+        spyOn(mockmct.telemetry, 'getValueFormatter');
+        spyOn(mockmct.telemetry, 'limitEvaluator');
+        spyOn(mockmct.telemetry, 'request');
+        spyOn(mockmct.telemetry, 'subscribe');
+
+        const plugin = new AutoflowTabularPlugin({ type: testType });
+        plugin(mockmct);
+=======
 fdescribe("AutoflowTabularPlugin", () => {
     let testTypeObject;
     let autoflowObject;
@@ -71,6 +93,7 @@ fdescribe("AutoflowTabularPlugin", () => {
 
         viewProviders = openmct.objectViews.get(autoflowObject, []);
         autoflowViewProvider = viewProviders.filter(provider => provider?.key === 'autoflow')?.[0];
+>>>>>>> Stashed changes
     });
 
     afterEach(() => {
@@ -255,12 +278,27 @@ fdescribe("AutoflowTabularPlugin", () => {
             });
         });
 
+<<<<<<< Updated upstream
+            it("provides a button to change column width", () => {
+                const initialWidth = AutoflowTabularConstants.INITIAL_COLUMN_WIDTH;
+                const nextWidth =
+                    initialWidth + AutoflowTabularConstants.COLUMN_WIDTH_STEP;
+
+                expect(testContainer.querySelector('.l-autoflow-col').style.width)
+                    .toEqual(initialWidth + 'px');
+=======
         it("provides a button to change column width", async () => {
             let buttonClicked;
+>>>>>>> Stashed changes
 
             const initialWidth = testContainer.querySelector('.l-autoflow-col').style.width;
 
+<<<<<<< Updated upstream
+                function widthHasChanged() {
+                    const width = testContainer.querySelector('.l-autoflow-col').style.width;
+=======
             expect(initialWidth.length).toBeGreaterThan(0);
+>>>>>>> Stashed changes
 
             function widthHasChanged() {
                 if (!buttonClicked) {
@@ -268,7 +306,16 @@ fdescribe("AutoflowTabularPlugin", () => {
                     testContainer.querySelector('.change-column-width').click();
                 }
 
+<<<<<<< Updated upstream
+                return domObserver.when(widthHasChanged)
+                    .then(() => {
+                        expect(testContainer.querySelector('.l-autoflow-col').style.width)
+                            .toEqual(nextWidth + 'px');
+                    });
+            });
+=======
                 const changedWidth = testContainer.querySelector('.l-autoflow-col').style.width;
+>>>>>>> Stashed changes
 
                 return changedWidth !== initialWidth;
             }
@@ -284,6 +331,21 @@ fdescribe("AutoflowTabularPlugin", () => {
             });
         });
 
+<<<<<<< Updated upstream
+            fit("displays historical telemetry", () => {
+                function rowTextDefined() {
+                    return testContainer.querySelector < HTMLElement > (".l-autoflow-item.r").innerText !== "";
+                }
+
+                return domObserver.when(rowTextDefined).then(() => {
+                    testKeys.forEach((key, index) => {
+                        const datum = testHistories[key];
+                        console.log(testContainer.querySelector(".l-autoflow-row"));
+                        console.log(index);
+                        const $cell = testContainer.querySelector(".l-autoflow-row")[index].find(".r");
+                        expect($cell.text()).toEqual(String(datum.range));
+                    });
+=======
         fit("displays historical telemetry", () => {
             function rowTextDefined() {
                 return testContainer.querySelector(".l-autoflow-item.r").textContent !== "";
@@ -297,6 +359,7 @@ fdescribe("AutoflowTabularPlugin", () => {
                     console.log(testContainer.querySelectorAll(".l-autoflow-row"));
                     // const $cell = testContainer.querySelector(".l-autoflow-row").eq(index).find(".r");
                     // expect($cell.text()).toEqual(String(datum.range));
+>>>>>>> Stashed changes
                 });
             });
         });
