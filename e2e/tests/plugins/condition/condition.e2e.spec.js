@@ -32,35 +32,6 @@ const { expect } = require('@playwright/test');
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
 
-test('Create new Condition Set object and store @localStorage', async ({ page, context }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
-
-    //Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click text=Condition Set
-    await page.click('text=Condition Set');
-
-    // Click text=OK
-    await Promise.all([
-        page.waitForNavigation(),
-        page.click('text=OK')
-    ]);
-
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
-    //Save localStorage for future test execution
-    await context.storageState({ path: './e2e/tests/recycled_storage.json' });
-
-    //Set object identifier from url
-    conditionSetUrl = await page.url();
-    console.log('conditionSetUrl ' + conditionSetUrl);
-
-    getConditionSetIdentifierFromUrl = await conditionSetUrl.split('/').pop().split('?')[0];
-    console.log('getConditionSetIdentifierFromUrl ' + getConditionSetIdentifierFromUrl);
-
-});
-
 test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     test.beforeAll(async ({ browser }) => {
         const context = await browser.newContext();
@@ -95,7 +66,6 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     });
     //Load localStorage for subsequent tests
     test.use({ storageState: './e2e/tests/recycled_storage.json' });
-
     //Begin suite of tests again localStorage
     test('Condition set object properties persist in main view and inspector', async ({ page }) => {
         //Navigate to baseURL with injected localStorage
