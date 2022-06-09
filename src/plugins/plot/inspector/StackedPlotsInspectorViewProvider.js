@@ -2,21 +2,22 @@
 import PlotOptions from "./PlotOptions.vue";
 import Vue from 'vue';
 
-export default function PlotsInspectorViewProvider(openmct) {
+export default function StackedPlotsInspectorViewProvider(openmct) {
     return {
-        key: 'plots-inspector',
-        name: 'Plots Inspector View',
+        key: 'stacked-plots-inspector',
+        name: 'Stacked Plots Inspector View',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
             }
 
-            let object = selection[0][0].context.item;
+            const object = selection[0][0].context.item;
+            const parent = selection[0].length > 1 && selection[0][1].context.item;
 
             const isOverlayPlotObject = object && object.type === 'telemetry.plot.overlay';
-            const isStackedPlotObject = object && object.type === 'telemetry.plot.stacked';
+            const isParentStackedPlotObject = parent && parent.type === 'telemetry.plot.stacked';
 
-            return isStackedPlotObject || isOverlayPlotObject;
+            return !isOverlayPlotObject && isParentStackedPlotObject;
         },
         view: function (selection) {
             let component;

@@ -27,12 +27,14 @@
 import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
 import conditionalStylesMixin from "./mixins/objectStyles-mixin";
+import configStore from "@/plugins/plot/configuration/ConfigStore";
+import PlotConfigurationModel from "@/plugins/plot/configuration/PlotConfigurationModel";
 
 export default {
     mixins: [conditionalStylesMixin],
     inject: ['openmct', 'domainObject', 'path'],
     props: {
-        object: {
+        childObject: {
             type: Object,
             default() {
                 return {};
@@ -56,6 +58,18 @@ export default {
                 return true;
             }
         },
+        showLimitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        colorPalette: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        },
         plotTickWidth: {
             type: Number,
             default() {
@@ -72,12 +86,22 @@ export default {
         },
         plotTickWidth(width) {
             this.updateComponentProp('plotTickWidth', width);
+        },
+        showLimitLineLabels: {
+            handler(data) {
+                this.updateComponentProp('limitLineLabels', data);
+            },
+            deep: true
         }
     },
     mounted() {
         this.updateView();
     },
     beforeDestroy() {
+        if (this.removeSelectable) {
+            this.removeSelectable();
+        }
+
         if (this.component) {
             this.component.$destroy();
         }
@@ -96,15 +120,19 @@ export default {
             }
 
             const onTickWidthChange = this.onTickWidthChange;
+            const onLockHighlightPointUpdated = this.onLockHighlightPointUpdated;
+            const onHighlightsUpdated = this.onHighlightsUpdated;
+            const onConfigLoaded = this.onConfigLoaded;
             const onCursorGuideChange = this.onCursorGuideChange;
             const onGridLinesChange = this.onGridLinesChange;
             const loadingUpdated = this.loadingUpdated;
             const setStatus = this.setStatus;
 
             const openmct = this.openmct;
-            const object = this.object;
             const path = this.path;
 
+            //If this object is not persistable, then package it with it's parent
+            const object = this.getPlotObject();
             const getProps = this.getProps;
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
@@ -123,14 +151,28 @@ export default {
                     return {
                         ...getProps(),
                         onTickWidthChange,
+                        onLockHighlightPointUpdated,
+                        onHighlightsUpdated,
+                        onConfigLoaded,
                         onCursorGuideChange,
                         onGridLinesChange,
                         loadingUpdated,
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
+
+            this.setSelection();
+        },
+        onLockHighlightPointUpdated() {
+            this.$emit('lockHighlightPoint', ...arguments);
+        },
+        onHighlightsUpdated() {
+            this.$emit('highlights', ...arguments);
+        },
+        onConfigLoaded() {
+            this.$emit('configLoaded', ...arguments);
         },
         onTickWidthChange() {
             this.$emit('plotTickWidth', ...arguments);
@@ -145,19 +187,73 @@ export default {
             this.status = status;
             this.updateComponentProp('status', status);
         },
+        setSelection() {
+            let childContext = {};
+            childContext.item = this.childObject;
+            this.context = childContext;
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
+
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el, this.context);
+        },
         loadingUpdated(loaded) {
             this.loading = loaded;
             this.updateComponentProp('loading', loaded);
         },
         getProps() {
             return {
+                limitLineLabels: this.showLimitLineLabels,
                 gridLines: this.gridLines,
                 cursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,
                 loading: this.loading,
                 options: this.options,
-                status: this.status
+                status: this.status,
+                colorPalette: this.colorPalette
             };
+        },
+        getPlotObject() {
+            if (this.childObject.configuration && this.childObject.configuration.series) {
+                //If the object has a configuration, allow initialization of the config from it's persisted config
+                return this.childObject;
+            } else {
+                // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
+                const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
+                let config = configStore.get(configId);
+                if (!config) {
+                    const persistedConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+                        return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.childObject.identifier);
+                    });
+                    if (persistedConfig) {
+                        config = new PlotConfigurationModel({
+                            id: configId,
+                            domainObject: {
+                                ...this.childObject,
+                                configuration: {
+                                    series: [
+                                        {
+                                            identifier: this.childObject.identifier,
+                                            ...persistedConfig.series
+                                        }
+                                    ],
+                                    yAxis: persistedConfig.yAxis
+
+                                }
+                            },
+                            openmct: this.openmct,
+                            palette: this.colorPalette,
+                            callback: (data) => {
+                                this.data = data;
+                            }
+                        });
+                        configStore.add(configId, config);
+                    }
+                }
+
+                return this.childObject;
+            }
         }
     }
 };
