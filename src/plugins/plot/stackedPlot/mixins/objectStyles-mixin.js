@@ -31,7 +31,7 @@ export default {
         };
     },
     mounted() {
-        this.objectStyles = this.getObjectStyleForItem(this.object.configuration);
+        this.objectStyles = this.getObjectStyleForItem(this.childObject.configuration);
         this.initObjectStyles();
     },
     beforeDestroy() {
@@ -62,18 +62,18 @@ export default {
                 this.stopListeningStyles();
             }
 
-            this.stopListeningStyles = this.openmct.objects.observe(this.object, 'configuration.objectStyles', (newObjectStyle) => {
+            this.stopListeningStyles = this.openmct.objects.observe(this.childObject, 'configuration.objectStyles', (newObjectStyle) => {
                 //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
                 this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
             });
 
-            if (this.object && this.object.configuration && this.object.configuration.fontStyle) {
-                const { fontSize, font } = this.object.configuration.fontStyle;
+            if (this.childObject && this.childObject.configuration && this.childObject.configuration.fontStyle) {
+                const { fontSize, font } = this.childObject.configuration.fontStyle;
                 this.setFontSize(fontSize);
                 this.setFont(font);
             }
 
-            this.stopListeningFontStyles = this.openmct.objects.observe(this.object, 'configuration.fontStyle', (newFontStyle) => {
+            this.stopListeningFontStyles = this.openmct.objects.observe(this.childObject, 'configuration.fontStyle', (newFontStyle) => {
                 this.setFontSize(newFontStyle.fontSize);
                 this.setFont(newFontStyle.font);
             });
