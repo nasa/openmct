@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import FlexibleLayout from './plugin';
+import Vue from 'vue';
 
 describe('the plugin', function () {
     let element;
@@ -61,7 +62,7 @@ describe('the plugin', function () {
         element.appendChild(child);
 
         openmct.on('start', done);
-        openmct.startHeadless();
+        openmct.start(child);
     });
 
     afterEach(() => {
@@ -82,6 +83,16 @@ describe('the plugin', function () {
 
         it('provides a view', () => {
             expect(flexibleLayoutViewProvider).toBeDefined();
+        });
+
+        it('renders a view', async () => {
+            const flexibleView = flexibleLayoutViewProvider.view(testViewObject, []);
+            flexibleView.show(child, false);
+
+            await Vue.nextTick();
+            const flexTitle = child.querySelector('.l-browse-bar .c-object-label__name');
+
+            expect(flexTitle).not.toBeNull();
         });
     });
 
