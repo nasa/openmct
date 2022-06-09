@@ -27,6 +27,7 @@
 import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
 import conditionalStylesMixin from "./mixins/objectStyles-mixin";
+import ProgressBar from "../../../ui/components/ProgressBar.vue";
 
 export default {
     mixins: [conditionalStylesMixin],
@@ -112,7 +113,8 @@ export default {
             this.component = new Vue({
                 el: viewContainer,
                 components: {
-                    MctPlot
+                    MctPlot,
+                    ProgressBar
                 },
                 provide: {
                     openmct,
@@ -129,7 +131,21 @@ export default {
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                computed: {
+                    progressLoad() {
+                        return {
+                            progressPerc: undefined
+                        };
+                    }
+                },
+                watch: { 
+                    loading: function(newVal, oldVal) {
+                        if (newVal !== oldVal) {
+                            this.loading = newVal;
+                        }
+                    },
+                },
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="progressLoad" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
         },
         onTickWidthChange() {
