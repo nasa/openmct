@@ -32,39 +32,40 @@ const { expect } = require('@playwright/test');
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
 
-test('Create new Condition Set object and store @localStorage', async ({ page, context }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
-
-    //Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click text=Condition Set
-    await page.click('text=Condition Set');
-
-    // Click text=OK
-    await Promise.all([
-        page.waitForNavigation(),
-        page.click('text=OK')
-    ]);
-
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
-    //Save localStorage for future test execution
-    await context.storageState({ path: './e2e/tests/recycled_storage.json' });
-
-    //Set object identifier from url
-    conditionSetUrl = await page.url();
-    console.log('conditionSetUrl ' + conditionSetUrl);
-
-    getConditionSetIdentifierFromUrl = await conditionSetUrl.split('/').pop().split('?')[0];
-    console.log('getConditionSetIdentifierFromUrl ' + getConditionSetIdentifierFromUrl);
-
-});
-
 test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
+    test.beforeAll(async ({ browser }) => {
+        const context = await browser.newContext();
+        const page = await context.newPage();
+        //Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        //Click the Create button
+        await page.click('button:has-text("Create")');
+
+        // Click text=Condition Set
+        await page.locator('li:has-text("Condition Set")').click();
+
+        // Click text=OK
+        await Promise.all([
+            page.waitForNavigation(),
+            page.click('text=OK')
+        ]);
+
+        //Save localStorage for future test execution
+        await context.storageState({ path: './e2e/tests/recycled_storage.json' });
+
+        //Set object identifier from url
+        conditionSetUrl = await page.url();
+        console.log('conditionSetUrl ' + conditionSetUrl);
+
+        getConditionSetIdentifierFromUrl = await conditionSetUrl.split('/').pop().split('?')[0];
+        console.debug('getConditionSetIdentifierFromUrl ' + getConditionSetIdentifierFromUrl);
+    });
+    test.afterAll(async ({ browser }) => {
+        await browser.close();
+    });
     //Load localStorage for subsequent tests
     test.use({ storageState: './e2e/tests/recycled_storage.json' });
-
     //Begin suite of tests again localStorage
     test('Condition set object properties persist in main view and inspector', async ({ page }) => {
         //Navigate to baseURL with injected localStorage
@@ -121,7 +122,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         // Verify Condition Set Object is renamed in Tree
         await expect(page.locator('a:has-text("Renamed Condition Set")')).toBeTruthy();
         // Verify Search Tree reflects renamed Name property
-        await page.locator('input[type="search"]').fill('Renamed');
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Renamed');
         await expect(page.locator('a:has-text("Renamed Condition Set")')).toBeTruthy();
 
         //Reload Page
@@ -145,35 +146,31 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         // Verify Condition Set Object is renamed in Tree
         await expect(page.locator('a:has-text("Renamed Condition Set")')).toBeTruthy();
         // Verify Search Tree reflects renamed Name property
-        await page.locator('input[type="search"]').fill('Renamed');
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Renamed');
         await expect(page.locator('a:has-text("Renamed Condition Set")')).toBeTruthy();
     });
     test('condition set object can be deleted by Search Tree Actions menu on @localStorage', async ({ page }) => {
         //Navigate to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
+        const numberOfConditionSetsToStart = await page.locator('a:has-text("Unnamed Condition Set Condition Set")').count();
         //Expect Unnamed Condition Set to be visible in Main View
-        await expect(page.locator('a:has-text("Unnamed Condition Set Condition Set")')).toBeVisible();
+        await expect(page.locator('a:has-text("Unnamed Condition Set Condition Set") >> nth=0')).toBeVisible();
 
         // Search for Unnamed Condition Set
-        await page.locator('input[type="search"]').fill('Unnamed Condition Set');
-        // Right Click to Open Actions Menu
-        await page.locator('a:has-text("Unnamed Condition Set")').click({
-            button: 'right'
-        });
-        // Click Remove Action
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed Condition Set');
+        // Click Search Result
+        await page.locator('[aria-label="OpenMCT Search"] >> text=Unnamed Condition Set').first().click();
+        // Click hamburger button
+        await page.locator('[title="More options"]').click();
+        // Click text=Remove
         await page.locator('text=Remove').click();
 
         await page.locator('text=OK').click();
 
         //Expect Unnamed Condition Set to be removed in Main View
-        await expect(page.locator('a:has-text("Unnamed Condition Set Condition Set")')).not.toBeVisible();
-
-        await page.locator('.c-search__clear-input').click();
-        // Search for Unnamed Condition Set
-        await page.locator('input[type="search"]').fill('Unnamed Condition Set');
-        // Expect Unnamed Condition Set to be removed
-        await expect(page.locator('a:has-text("Unnamed Condition Set")')).not.toBeVisible();
+        const numberOfConditionSetsAtEnd = await page.locator('a:has-text("Unnamed Condition Set Condition Set")').count();
+        expect(numberOfConditionSetsAtEnd).toEqual(numberOfConditionSetsToStart - 1);
 
         //Feature?
         //Domain Object is still available by direct URL after delete

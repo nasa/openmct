@@ -6,11 +6,11 @@
       "localStorage": [
         {
           "name": "tcHistory",
-          "value": "{\"utc\":[{\"start\":1651513945533,\"end\":1651515745533}]}"
+          "value": "{\"utc\":[{\"start\":1652301954635,\"end\":1652303754635}]}"
         },
         {
           "name": "mct",
-          "value": "{\"mine\":{\"identifier\":{\"key\":\"mine\",\"namespace\":\"\"},\"name\":\"My Items\",\"type\":\"folder\",\"composition\":[{\"key\":\"c0f99e39-85e7-4ef7-99b1-ef52d4ed69b2\",\"namespace\":\"\"}],\"location\":\"ROOT\",\"persisted\":1651515746374,\"modified\":1651515746374},\"c0f99e39-85e7-4ef7-99b1-ef52d4ed69b2\":{\"name\":\"Unnamed Condition Set\",\"type\":\"conditionSet\",\"identifier\":{\"key\":\"c0f99e39-85e7-4ef7-99b1-ef52d4ed69b2\",\"namespace\":\"\"},\"configuration\":{\"conditionTestData\":[],\"conditionCollection\":[{\"isDefault\":true,\"id\":\"e35a066b-eb0e-4b05-a4c9-cc31dc202572\",\"configuration\":{\"name\":\"Default\",\"output\":\"Default\",\"trigger\":\"all\",\"criteria\":[]},\"summary\":\"Default condition\"}]},\"composition\":[],\"telemetry\":{},\"modified\":1651515746373,\"location\":\"mine\",\"persisted\":1651515746373}}"
+          "value": "{\"mine\":{\"identifier\":{\"key\":\"mine\",\"namespace\":\"\"},\"name\":\"My Items\",\"type\":\"folder\",\"composition\":[{\"key\":\"f64bea3b-58a7-4586-8c05-8b651e5f0bfd\",\"namespace\":\"\"}],\"location\":\"ROOT\",\"persisted\":1652303756008,\"modified\":1652303756007},\"f64bea3b-58a7-4586-8c05-8b651e5f0bfd\":{\"name\":\"Unnamed Condition Set\",\"type\":\"conditionSet\",\"identifier\":{\"key\":\"f64bea3b-58a7-4586-8c05-8b651e5f0bfd\",\"namespace\":\"\"},\"configuration\":{\"conditionTestData\":[],\"conditionCollection\":[{\"isDefault\":true,\"id\":\"73f2d9ae-d1f3-4561-b7fc-ecd5df557249\",\"configuration\":{\"name\":\"Default\",\"output\":\"Default\",\"trigger\":\"all\",\"criteria\":[]},\"summary\":\"Default condition\"}]},\"composition\":[],\"telemetry\":{},\"modified\":1652303755999,\"location\":\"mine\",\"persisted\":1652303756002}}"
         },
         {
           "name": "mct-tree-expanded",

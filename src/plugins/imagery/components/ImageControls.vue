@@ -21,74 +21,61 @@
  *****************************************************************************/
 
 <template>
-<div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
-    <div class="c-image-controls__control c-image-controls__zoom icon-magnify">
-        <div class="c-button-set c-button-set--strip-h">
-            <button
-                class="c-button t-btn-zoom-out icon-minus"
-                title="Zoom out"
-                @click="zoomOut"
-            ></button>
+<div class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hover">
+    <imagery-view-menu-switcher
+        :icon-class="'icon-brightness'"
+        :title="'Brightness and contrast'"
+    >
+        <filter-settings @filterChanged="updateFilterValues" />
+    </imagery-view-menu-switcher>
 
-            <button
-                class="c-button t-btn-zoom-in icon-plus"
-                title="Zoom in"
-                @click="zoomIn"
-            ></button>
-        </div>
+    <imagery-view-menu-switcher
+        v-if="layers.length"
+        :icon-class="'icon-layers'"
+        :title="'Layers'"
+    >
+        <layer-settings
+            :layers="layers"
+            @toggleLayerVisibility="toggleLayerVisibility"
+        />
+    </imagery-view-menu-switcher>
 
-        <button
-            class="c-button t-btn-zoom-lock"
-            title="Lock current zoom and pan across all images"
-            :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
-            @click="toggleZoomLock"
-        ></button>
+    <zoom-settings
+        class="--hide-if-less-than-220"
+        :pan-zoom-locked="panZoomLocked"
+        :zoom-factor="zoomFactor"
+        @zoomOut="zoomOut"
+        @zoomIn="zoomIn"
+        @toggleZoomLock="toggleZoomLock"
+        @handleResetImage="handleResetImage"
+    />
 
-        <button
-            class="c-button icon-reset t-btn-zoom-reset"
-            title="Remove zoom and pan"
-            @click="handleResetImage"
-        ></button>
-
-        <span class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</span>
-    </div>
-    <div class="c-image-controls__control c-image-controls__brightness-contrast">
-        <span
-            class="c-image-controls__sliders"
-            draggable="true"
-            @dragstart.stop.prevent
-        >
-            <div class="c-image-controls__input icon-brightness">
-                <input
-                    v-model="filters.contrast"
-                    type="range"
-                    min="0"
-                    max="500"
-                    @change="notifyFiltersChanged"
-                >
-            </div>
-            <div class="c-image-controls__input icon-contrast">
-                <input
-                    v-model="filters.brightness"
-                    type="range"
-                    min="0"
-                    max="500"
-                    @change="notifyFiltersChanged"
-                >
-            </div>
-        </span>
-        <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
-            <button
-                class="c-icon-link icon-reset t-btn-reset"
-                @click="handleResetFilters"
-            ></button>
-        </span>
-    </div>
+    <imagery-view-menu-switcher
+        class="--show-if-less-than-220"
+        :icon-class="'icon-magnify'"
+        :title="'Zoom settings'"
+    >
+        <zoom-settings
+            :pan-zoom-locked="panZoomLocked"
+            :class="'c-control-menu c-menu--has-close-btn'"
+            :zoom-factor="zoomFactor"
+            :is-menu="true"
+            @zoomOut="zoomOut"
+            @zoomIn="zoomIn"
+            @toggleZoomLock="toggleZoomLock"
+            @handleResetImage="handleResetImage"
+        />
+    </imagery-view-menu-switcher>
 </div>
 </template>
 
 <script>
 import _ from 'lodash';
+
+import FilterSettings from "./FilterSettings.vue";
+import LayerSettings from "./LayerSettings.vue";
+import ZoomSettings from "./ZoomSettings.vue";
+import ImageryViewMenuSwitcher from "./ImageryViewMenuSwitcher.vue";
 
 const DEFAULT_FILTER_VALUES = {
     brightness: '100',
@@ -101,13 +88,28 @@ const ZOOM_STEP = 1;
 const ZOOM_WHEEL_SENSITIVITY_REDUCTION = 0.01;
 
 export default {
+    components: {
+        FilterSettings,
+        LayerSettings,
+        ImageryViewMenuSwitcher,
+        ZoomSettings
+    },
     inject: ['openmct', 'domainObject'],
     props: {
+        layers: {
+            type: Array,
+            required: true
+        },
         zoomFactor: {
             type: Number,
             required: true
         },
-        imageUrl: String
+        imageUrl: {
+            type: String,
+            default: () => {
+                return '';
+            }
+        }
     },
     data() {
         return {
@@ -123,9 +125,6 @@ export default {
         };
     },
     computed: {
-        formattedZoomFactor() {
-            return Number.parseFloat(this.zoomFactor).toPrecision(2);
-        },
         cursorStates() {
             const isPannable = this.altPressed && this.zoomFactor > 1;
             const showCursorZoomIn = this.metaPressed && !this.shiftPressed;
@@ -174,7 +173,7 @@ export default {
             this.$emit('filtersUpdated', this.filters);
         },
         handleResetFilters() {
-            this.filters = DEFAULT_FILTER_VALUES;
+            this.filters = {...DEFAULT_FILTER_VALUES};
             this.notifyFiltersChanged();
         },
         limitZoomRange(factor) {
@@ -267,6 +266,13 @@ export default {
 
             const newScaleFactor = this.zoomFactor + (this.shiftPressed ? -ZOOM_STEP : ZOOM_STEP);
             this.zoomImage(newScaleFactor, e.clientX, e.clientY);
+        },
+        toggleLayerVisibility(index) {
+            this.$emit('toggleLayerVisibility', index);
+        },
+        updateFilterValues(filters) {
+            this.filters = filters;
+            this.notifyFiltersChanged();
         }
     }
 };

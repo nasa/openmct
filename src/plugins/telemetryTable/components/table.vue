@@ -499,6 +499,8 @@ export default {
         this.table.tableRows.on('sort', this.updateVisibleRows);
         this.table.tableRows.on('filter', this.updateVisibleRows);
 
+        this.openmct.time.on('bounds', this.boundsChanged);
+
         //Default sort
         this.sortOptions = this.table.tableRows.sortBy();
         this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
@@ -513,7 +515,7 @@ export default {
 
         this.table.initialize();
     },
-    destroyed() {
+    beforeDestroy() {
         this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
         this.table.off('historical-rows-processed', this.checkForMarkedRows);
@@ -526,6 +528,8 @@ export default {
         this.table.tableRows.off('filter', this.updateVisibleRows);
 
         this.table.configuration.off('change', this.updateConfiguration);
+
+        this.openmct.time.off('bounds', this.boundsChanged);
 
         clearInterval(this.resizePollHandle);
 
@@ -823,16 +827,16 @@ export default {
             this.visibleRows = [];
             this.$nextTick().then(this.updateVisibleRows);
         },
-        pause(pausedByButton) {
-            if (pausedByButton) {
+        pause(byButton) {
+            if (byButton) {
                 this.pausedByButton = true;
             }
 
             this.paused = true;
             this.table.pause();
         },
-        unpause(unpausedByButton) {
-            if (unpausedByButton) {
+        unpause(byButtonOrUserBoundsChange) {
+            if (byButtonOrUserBoundsChange) {
                 this.undoMarkedRows();
                 this.table.unpause();
                 this.paused = false;
@@ -847,6 +851,16 @@ export default {
 
             this.isShowingMarkedRowsOnly = false;
         },
+        boundsChanged(_bounds, isTick) {
+            if (isTick) {
+                return;
+            }
+
+            // User bounds change.
+            if (this.paused) {
+                this.unpause(true);
+            }
+        },
         togglePauseByButton() {
             if (this.paused) {
                 this.unpause(true);
@@ -854,7 +868,7 @@ export default {
                 this.pause(true);
             }
         },
-        undoMarkedRows(unpause) {
+        undoMarkedRows() {
             this.markedRows.forEach(r => r.marked = false);
             this.markedRows = [];
         },

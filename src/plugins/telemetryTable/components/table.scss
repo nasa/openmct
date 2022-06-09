@@ -63,8 +63,9 @@
                 padding-top: 0;
                 padding-bottom: 0;
             }
-            .is-in-small-container & {
-                display: none;
+
+            .--width-less-than-600 & {
+                display: none !important;
             }
         }
     }

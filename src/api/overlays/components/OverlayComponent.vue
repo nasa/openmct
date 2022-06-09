@@ -7,6 +7,7 @@
     <div class="c-overlay__outer">
         <button
             v-if="dismissable"
+            aria-label="Close"
             class="c-click-icon c-overlay__close-button icon-x"
             @click="destroy"
         ></button>
