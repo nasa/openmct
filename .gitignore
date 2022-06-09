@@ -31,9 +31,6 @@ closed-lib
 node_modules
 bower_components
 
-# Protractor logs
-protractor/logs
-
 # npm-debug log
 npm-debug.log
 
@@ -45,7 +42,7 @@ report.*.json
 
 # e2e test artifacts
 test-results
-allure-results
+.nyc_output
 
 package-lock.json
 

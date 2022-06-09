@@ -49,7 +49,7 @@ class WatchRunPlugin {
 }
 
 const webpack = require('webpack');
-const webpackConfig = require('./webpack.dev.js');
+const webpackConfig = require('./webpack.coverage.js');
 webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 webpackConfig.plugins.push(new WatchRunPlugin());
 

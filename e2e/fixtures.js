@@ -3,6 +3,9 @@
 // This file extends the base functionality of the playwright test framework
 const base = require('@playwright/test');
 const { expect } = require('@playwright/test');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
 /**
  * Takes a `ConsoleMessage` and returns a formatted string
@@ -16,7 +19,30 @@ function consoleMessageToString(msg) {
     at (${url} ${lineNumber}:${columnNumber})`;
 }
 
+const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
+
+function generateUUID() {
+    return crypto.randomBytes(16).toString('hex');
+}
+
 exports.test = base.test.extend({
+    context: async ({ context }, use) => {
+        await context.addInitScript(() =>
+            window.addEventListener('beforeunload', () =>
+                (window).collectIstanbulCoverage(JSON.stringify((window).__coverage__))
+            )
+        );
+        await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
+        await context.exposeFunction('collectIstanbulCoverage', (coverageJSON) => {
+            if (coverageJSON) {
+                fs.writeFileSync(path.join(istanbulCLIOutput, `playwright_coverage_${generateUUID()}.json`), coverageJSON);
+            }
+        });
+        await use(context);
+        for (const page of context.pages()) {
+            await page.evaluate(() => (window).collectIstanbulCoverage(JSON.stringify((window).__coverage__)));
+        }
+    },
     page: async ({ baseURL, page }, use) => {
         const messages = [];
         page.on('console', (msg) => messages.push(msg));
