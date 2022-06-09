@@ -30,7 +30,7 @@ define([], function () {
         return new Promise(function (resolve, reject) {
             //Test latch function at least once
             if (latchFunction()) {
-                resolve();
+                resolve(true);
             } else {
                 //Latch condition not true yet, create observer on DOM and test again on change.
                 const config = {
@@ -40,7 +40,7 @@ define([], function () {
                 };
                 const observer = new MutationObserver(function () {
                     if (latchFunction()) {
-                        resolve();
+                        resolve(true);
                     }
                 });
                 observer.observe(this.element, config);
