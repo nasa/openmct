@@ -126,7 +126,6 @@ export default {
             const onConfigLoaded = this.onConfigLoaded;
             const onCursorGuideChange = this.onCursorGuideChange;
             const onGridLinesChange = this.onGridLinesChange;
-            const loadingUpdated = this.loadingUpdated;
             const setStatus = this.setStatus;
 
             const openmct = this.openmct;
@@ -158,8 +157,8 @@ export default {
                         onConfigLoaded,
                         onCursorGuideChange,
                         onGridLinesChange,
-                        loadingUpdated,
-                        setStatus
+                        setStatus,
+                        loading: true
                     };
                 },
                 computed: {
@@ -169,11 +168,9 @@ export default {
                         };
                     }
                 },
-                watch: { 
-                    loading: function(newVal, oldVal) {
-                        if (newVal !== oldVal) {
-                            this.loading = newVal;
-                        }
+                methods: {
+                    loadingUpdated(loaded) {
+                        this.loading = loaded;
                     },
                 },
                 template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="progressLoad" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
@@ -214,17 +211,12 @@ export default {
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context);
         },
-        loadingUpdated(loaded) {
-            this.loading = loaded;
-            this.updateComponentProp('loading', loaded);
-        },
         getProps() {
             return {
                 limitLineLabels: this.showLimitLineLabels,
                 gridLines: this.gridLines,
                 cursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,
-                loading: this.loading,
                 options: this.options,
                 status: this.status,
                 colorPalette: this.colorPalette
