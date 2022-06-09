@@ -41,7 +41,7 @@ describe('the plugin', function () {
         element.appendChild(child);
 
         openmct.on('start', done);
-        openmct.startHeadless();
+        openmct.start(child);
     });
 
     afterEach(() => {
