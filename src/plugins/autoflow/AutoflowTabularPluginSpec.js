@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// import AutoflowTabularPlugin from './AutoflowTabularPlugin';
 import AutoflowTabularConstants from './AutoflowTabularConstants';
 import DOMObserver from './dom-observer';
 import {
@@ -29,7 +28,7 @@ import {
 } from 'utils/testing';
 import Vue from 'vue';
 
-fdescribe("AutoflowTabularPlugin", () => {
+describe("AutoflowTabularPlugin", () => {
     let testTypeObject;
     let autoflowObject;
     let otherObject;
@@ -284,19 +283,19 @@ fdescribe("AutoflowTabularPlugin", () => {
             });
         });
 
-        fit("displays historical telemetry", () => {
+        it("displays historical telemetry", () => {
             function rowTextDefined() {
                 return testContainer.querySelector(".l-autoflow-item.r").textContent !== "";
             }
 
             return domObserver.when(rowTextDefined).then(() => {
+                const rows = testContainer.querySelectorAll(".l-autoflow-row");
+
                 testKeys.forEach((key, index) => {
-                    console.log(key);
-                    console.log(testHistories[key]);
                     const datum = testHistories[key];
-                    console.log(testContainer.querySelectorAll(".l-autoflow-row"));
-                    // const $cell = testContainer.querySelector(".l-autoflow-row").eq(index).find(".r");
-                    // expect($cell.text()).toEqual(String(datum.range));
+                    const $cell = rows[index].querySelector(".l-autoflow-item.r");
+
+                    expect($cell.textContent).toEqual(String(datum.range));
                 });
             });
         });
@@ -315,16 +314,21 @@ fdescribe("AutoflowTabularPlugin", () => {
             });
 
             return waitsForChange().then(() => {
+                const rows = testContainer.querySelectorAll(".l-autoflow-row");
+
                 testData.forEach((datum, index) => {
-                    const $cell = testContainer.querySelector(".l-autoflow-row").eq(index).find(".r");
-                    expect($cell.text()).toEqual(String(datum.range));
+                    const $cell = rows[index].querySelector(".l-autoflow-item.r");
+
+                    expect($cell.textContent).toEqual(String(datum.range));
                 });
             });
         });
 
         it("updates classes for limit violations", () => {
             const testClass = "some-limit-violation";
+
             mockEvaluator.evaluate.and.returnValue({ cssClass: testClass });
+
             testKeys.forEach((key) => {
                 callbacks[key]({
                     range: 'foo',
@@ -333,9 +337,12 @@ fdescribe("AutoflowTabularPlugin", () => {
             });
 
             return waitsForChange().then(() => {
+                const rows = testContainer.querySelectorAll(".l-autoflow-row");
+
                 testKeys.forEach((datum, index) => {
-                    const $cell = testContainer.querySelector(".l-autoflow-row").eq(index).find(".r");
-                    expect($cell.hasClass(testClass)).toBe(true);
+                    const $cell = rows[index].querySelector(".l-autoflow-item.r");
+
+                    expect($cell.classList.contains(testClass)).toBe(true);
                 });
             });
         });
@@ -348,27 +355,27 @@ fdescribe("AutoflowTabularPlugin", () => {
             let promiseChain = Promise.resolve();
 
             function columnsHaveAutoflowed() {
-                const itemsHeight = $container.querySelector('.l-autoflow-items').height();
+                const itemsHeight = $container.querySelector('.l-autoflow-items').style.height;
                 const availableHeight = itemsHeight - sliderHeight;
                 const availableRows = Math.max(Math.floor(availableHeight / rowHeight), 1);
                 const columns = Math.ceil(count / availableRows);
 
-                return $container.querySelector('.l-autoflow-col').length === columns;
+                return $container.querySelectorAll('.l-autoflow-col').length === columns;
             }
 
-            $container.find('.abs').css({
-                position: 'absolute',
-                left: '0px',
-                right: '0px',
-                top: '0px',
-                bottom: '0px'
-            });
-            $container.css({ position: 'absolute' });
+            const absElement = $container.querySelector('.abs');
+            absElement.style.position = 'absolute';
+            absElement.style.left = 0;
+            absElement.style.right = 0;
+            absElement.style.top = 0;
+            absElement.style.bottom = 0;
 
-            $container.appendTo(document.body);
+            $container.style.position = 'absolute';
+
+            document.body.append($container);
 
             function setHeight(height) {
-                $container.css('height', height + 'px');
+                $container.style.height = `${height}px`;
 
                 return domObserver.when(columnsHaveAutoflowed);
             }
@@ -378,7 +385,9 @@ fdescribe("AutoflowTabularPlugin", () => {
                 promiseChain = promiseChain.then(setHeight.bind(this, height));
             }
 
-            return promiseChain.then(() => {
+            return promiseChain.then(success => {
+                expect(success).toBeTrue();
+
                 $container.remove();
             });
         });
