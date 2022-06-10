@@ -42,7 +42,10 @@ report.*.json
 
 # e2e test artifacts
 test-results
+
+# codecov artifacts
 .nyc_output
+coverage
 
 package-lock.json
 
