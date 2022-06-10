@@ -15,17 +15,12 @@
 *.idea
 *.iml
 
-# External dependencies
-
 # Build output
 target
 dist
 
 # Mac OS X Finder
 .DS_Store
-
-# Closed source libraries
-closed-lib
 
 # Node, Bower dependencies
 node_modules
@@ -37,17 +32,13 @@ npm-debug.log
 # karma reports
 report.*.json
 
-# Lighthouse reports
-.lighthouseci
-
 # e2e test artifacts
 test-results
 
 # codecov artifacts
 .nyc_output
 coverage
-
-package-lock.json
-
-#codecov artifacts
 codecov
+
+# :(
+package-lock.json
