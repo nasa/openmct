@@ -27,17 +27,18 @@
     :show-ucontents="item.domainObject.type === 'plan'"
     :span-rows-count="item.rowCount"
 >
-    <template slot="label">
+    <template #label>
         {{ item.domainObject.name }}
     </template>
-    <object-view
-        ref="objectView"
-        slot="object"
-        class="u-contents"
-        :default-object="item.domainObject"
-        :object-path="item.objectPath"
-        @change-action-collection="setActionCollection"
-    />
+    <template #object>
+        <object-view
+            ref="objectView"
+            class="u-contents"
+            :default-object="item.domainObject"
+            :object-path="item.objectPath"
+            @change-action-collection="setActionCollection"
+        />
+    </template>
 </swim-lane>
 </template>
 

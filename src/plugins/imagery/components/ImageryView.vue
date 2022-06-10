@@ -403,6 +403,9 @@ export default {
         formattedDuration() {
             let result = 'N/A';
             let negativeAge = -1;
+            if (!Number.isInteger(this.numericDuration)) {
+                return result;
+            }
 
             if (this.numericDuration > TWENTYFOUR_HOURS) {
                 negativeAge *= (this.numericDuration / TWENTYFOUR_HOURS);
@@ -905,8 +908,10 @@ export default {
             let currentTime = this.timeContext.clock() && this.timeContext.clock().currentValue();
             if (currentTime === undefined) {
                 this.numericDuration = currentTime;
-            } else {
+            } else if (Number.isInteger(this.parsedSelectedTime)) {
                 this.numericDuration = currentTime - this.parsedSelectedTime;
+            } else {
+                this.numericDuration = undefined;
             }
         },
         resetAgeCSS() {

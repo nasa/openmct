@@ -173,7 +173,7 @@ export default {
             this.$emit('filtersUpdated', this.filters);
         },
         handleResetFilters() {
-            this.filters = DEFAULT_FILTER_VALUES;
+            this.filters = {...DEFAULT_FILTER_VALUES};
             this.notifyFiltersChanged();
         },
         limitZoomRange(factor) {
