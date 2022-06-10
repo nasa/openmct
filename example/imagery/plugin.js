@@ -190,7 +190,9 @@ function getRealtimeProvider() {
         subscribe: (domainObject, callback) => {
             const delay = getImageLoadDelay(domainObject);
             const interval = setInterval(() => {
-                callback(pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay));
+                const imageSamples = getImageSamples(domainObject.configuration);
+                const datum = pointForTimestamp(Date.now(), domainObject.name, imageSamples, delay);
+                callback(datum);
             }, delay);
 
             return () => {
