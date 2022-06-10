@@ -74,7 +74,7 @@ module.exports = (config) => {
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: "dist/reports/coverage",
+            dir: "coverage/unit",
             reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
