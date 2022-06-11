@@ -491,8 +491,8 @@ test.describe('Example Imagery in Flexible layout', () => {
         // Click triangle to open sub menu
         await page.locator('.c-form__section .c-disclosure-triangle').click();
 
-        // Had to use Xpath here I could not click this with css. Click unnamed flexview
-        await page.locator('xpath=//div[2]/div/div[2]/div/div/form/div/div[2]/div/div[3]/div/div[2]/div[2]/div/div[3]/div/a').click();
+        // Click Flexable Layout
+        await page.click('.c-overlay__outer >> text=Unnamed Flexible Layout');
 
         // Click text=OK
         await page.locator('text=OK').click();
