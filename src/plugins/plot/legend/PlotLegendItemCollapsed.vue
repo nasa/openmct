@@ -41,7 +41,7 @@
         <span class="plot-series-name">{{ nameWithUnit }}</span>
     </div>
     <div
-        v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none')"
+        v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none' && valueToShowWhenCollapsed !== 'units')"
         class="plot-series-value hover-value-enabled"
         :class="[{ 'cursor-hover': notNearest }, valueToDisplayWhenCollapsedClass, mctLimitStateClass]"
     >

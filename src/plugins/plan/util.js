@@ -22,7 +22,7 @@
 
 export function getValidatedData(domainObject) {
     let sourceMap = domainObject.sourceMap;
-    let body = domainObject.selectFile.body;
+    let body = domainObject.selectFile?.body;
     let json = {};
     if (typeof body === 'string') {
         try {
@@ -30,7 +30,7 @@ export function getValidatedData(domainObject) {
         } catch (e) {
             return json;
         }
-    } else {
+    } else if (body !== undefined) {
         json = body;
     }
 
