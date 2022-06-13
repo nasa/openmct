@@ -308,14 +308,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
     // Zoom in on next image
-    await bgImageLocator.hover({trial: true});
-    await page.mouse.wheel(0, deltaYStep * 2);
-
-    // Wait for zoom animation to finish
-    await bgImageLocator.hover({trial: true});
-    const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-    expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-    expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+    await mouseZoomIn(page);
 
     // Click previous image button
     await previousImageButton.click();
@@ -340,27 +333,7 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.locator('.pause-play').click();
 
     //Get background-image url from background-image css prop
-    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
-    let backgroundImageUrl = await backgroundImage.evaluate((el) => {
-        return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-    });
-    let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
-    console.log('backgroundImageUrl1 ' + backgroundImageUrl1);
-
-    let backgroundImageUrl2;
-    await expect.poll(async () => {
-        // Verify next image has updated
-        let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-        });
-        backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
-
-        return backgroundImageUrl2;
-    }, {
-        message: "verify next image has updated",
-        timeout: 6 * 1000
-    }).not.toBe(backgroundImageUrl1);
-    console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
+    await assertBackgroundImageUrlFromBackgroundCss(page);
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
@@ -452,14 +425,246 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
     });
 });
 
+// test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+// test.fixme('Can use alt+drag to move around image once zoomed in');
+// test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+// test.fixme('If the imagery view is in pause mode, images still come in');
+// test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Flexible layout', () => {
-    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-    test.fixme('Can use alt+drag to move around image once zoomed in');
-    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
+    test('Example Imagery in Flexible layout', async ({ page }) => {
+        // Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Click the Create button
+        await page.click('button:has-text("Create")');
+
+        // Click text=Example Imagery
+        await page.click('text=Example Imagery');
+
+        // Clear and set Image load delay (milliseconds)
+        await page.click('input[type="number"]', {clickCount: 3});
+        await page.type('input[type="number"]', "20");
+
+        // Click text=OK
+        await Promise.all([
+            page.waitForNavigation({waitUntil: 'networkidle'}),
+            page.click('text=OK'),
+            //Wait for Save Banner to appear
+            page.waitForSelector('.c-message-banner__message')
+        ]);
+        // Wait until Save Banner is gone
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        const bgImageLocator = await page.locator(backgroundImageSelector);
+        await bgImageLocator.hover();
+
+        // Click the Create button
+        await page.click('button:has-text("Create")');
+
+        // Click text=Flexible Layout
+        await page.click('text=Flexible Layout');
+
+        // Assert Flexable layout
+        await expect(page.locator('.js-form-title')).toHaveText('Create a New Flexible Layout');
+
+        // Click text=OK
+        page.click('text=OK');
+
+        // Wait until Save Banner is gone
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+
+        // Click My Items
+        await page.locator('form[name="mctForm"] >> text=My Items').click();
+        await Promise.all([
+            page.waitForNavigation({waitUntil: 'networkidle'})
+        ]);
+
+        // Click My Items
+        await page.locator('.c-disclosure-triangle').click();
+
+        // Right click example imagery
+        await page.click(('text=Unnamed Example Imagery'), { button: 'right' });
+
+        // Click move
+        await page.locator('.icon-move').click();
+
+        // Click triangle to open sub menu
+        await page.locator('.c-form__section .c-disclosure-triangle').click();
+
+        // Click Flexable Layout
+        await page.click('.c-overlay__outer >> text=Unnamed Flexible Layout');
+
+        // Click text=OK
+        await page.locator('text=OK').click();
+
+        // Save template
+        await saveTemplate(page);
+
+        // Zoom in
+        await mouseZoomIn(page);
+
+        // Center the mouse pointer
+        const zoomedBoundingBox = await bgImageLocator.boundingBox();
+        const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+        const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+        await page.mouse.move(imageCenterX, imageCenterY);
+
+        // Pan zoom
+        await panZoomAndAssertImageProperties(page);
+
+        // Click previous image button
+        const previousImageButton = page.locator('.c-nav--prev');
+        await previousImageButton.click();
+
+        // Verify previous image
+        const selectedImage = page.locator('.selected');
+        await expect(selectedImage).toBeVisible();
+
+        // Click time conductor mode button
+        await page.locator('.c-mode-button').click();
+
+        // Select local clock mode
+        await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+
+        // Zoom in on next image
+        await mouseZoomIn(page);
+
+        // Click previous image button
+        await previousImageButton.click();
+
+        // Verify previous image
+        await expect(selectedImage).toBeVisible();
+
+        const imageCount = await page.locator('.c-imagery__thumb').count();
+        await expect.poll(async () => {
+            const newImageCount = await page.locator('.c-imagery__thumb').count();
+
+            return newImageCount;
+        }, {
+            message: "verify that new images still stream in",
+            timeout: 6 * 1000
+        }).toBeGreaterThan(imageCount);
+
+        // Verify selected image is still displayed
+        await expect(selectedImage).toBeVisible();
+
+        // Unpause imagery
+        await page.locator('.pause-play').click();
+
+        //Get background-image url from background-image css prop
+        await assertBackgroundImageUrlFromBackgroundCss(page);
+    });
 });
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function saveTemplate(page) {
+    await page.locator('.c-button--menu.c-button--major.icon-save').click();
+    await page.locator('text=Save and Finish Editing').click();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function assertBackgroundImageUrlFromBackgroundCss(page) {
+    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+    let backgroundImageUrl = await backgroundImage.evaluate((el) => {
+        return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+    });
+    let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
+    console.log('backgroundImageUrl1 ' + backgroundImageUrl1);
+
+    let backgroundImageUrl2;
+    await expect.poll(async () => {
+        // Verify next image has updated
+        let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
+            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+        });
+        backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
+
+        return backgroundImageUrl2;
+    }, {
+        message: "verify next image has updated",
+        timeout: 6 * 1000
+    }).not.toBe(backgroundImageUrl1);
+    console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function panZoomAndAssertImageProperties(page) {
+    const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+    const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+    const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+    expect(expectedAltText).toEqual(imageryHintsText);
+    const bgImageLocator = page.locator(backgroundImageSelector);
+    const zoomedBoundingBox = await bgImageLocator.boundingBox();
+    const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+    const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+
+    // Pan right
+    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await page.mouse.down();
+    await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
+    await page.mouse.up();
+    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+    const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
+    expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
+
+    // Pan left
+    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await page.mouse.down();
+    await page.mouse.move(imageCenterX, imageCenterY, 10);
+    await page.mouse.up();
+    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+    const afterLeftPanBoundingBox = await bgImageLocator.boundingBox();
+    expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
+
+    // Pan up
+    await page.mouse.move(imageCenterX, imageCenterY);
+    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await page.mouse.down();
+    await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
+    await page.mouse.up();
+    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+    const afterUpPanBoundingBox = await bgImageLocator.boundingBox();
+    expect(afterUpPanBoundingBox.y).toBeGreaterThanOrEqual(afterLeftPanBoundingBox.y);
+
+    // Pan down
+    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await page.mouse.down();
+    await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
+    await page.mouse.up();
+    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
+    const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
+    expect(afterDownPanBoundingBox.y).toBeLessThanOrEqual(afterUpPanBoundingBox.y);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+*/
+async function mouseZoomIn(page) {
+    const bgImageLocator = await page.locator(backgroundImageSelector);
+    // Zoom in
+    const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
+    await bgImageLocator.hover();
+    const deltaYStep = 100; // equivalent to 1x zoom
+    await page.mouse.wheel(0, deltaYStep * 2);
+    const zoomedBoundingBox = await bgImageLocator.boundingBox();
+    const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+    const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+
+    // center the mouse pointer
+    await page.mouse.move(imageCenterX, imageCenterY);
+
+    // Wait for zoom animation to finish
+    await bgImageLocator.hover();
+    const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+    expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+    expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+}
 
 test.describe('Example Imagery in Tabs view', () => {
     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
