@@ -231,8 +231,9 @@ function getLadProvider() {
         },
         request: (domainObject, options) => {
             const delay = getImageLoadDelay(domainObject);
+            const datum = pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay);
 
-            return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name, delay)]);
+            return Promise.resolve([datum]);
         }
     };
 }
