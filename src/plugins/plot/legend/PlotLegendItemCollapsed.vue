@@ -134,7 +134,7 @@ export default {
             } else {
                 this.formattedYValueFromStats = '';
             }
-            
+
             const getPath = this.dynamicPathForKey('color');
             const seriesColorPath = getPath(this.domainObject, seriesObject);
 
