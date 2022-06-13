@@ -82,6 +82,7 @@
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
 
 export default {
+    inject: ['openmct', 'domainObject'],
     props: {
         seriesObject: {
             type: Object,
@@ -111,7 +112,8 @@ export default {
             formattedXValue: '',
             formattedMinY: '',
             formattedMaxY: '',
-            mctLimitStateClass: ''
+            mctLimitStateClass: '',
+            colorObserver: null
         };
     },
     computed: {
@@ -142,6 +144,9 @@ export default {
     mounted() {
         this.initialize();
     },
+    destroy() {
+        this.colorObserver();
+    },
     methods: {
         initialize(highlightedObject) {
             const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
@@ -169,6 +174,29 @@ export default {
                 this.formattedMinY = '';
                 this.formattedMaxY = '';
             }
+            const getPath = this.dynamicPathForKey('color');
+            const seriesColorPath = getPath(this.domainObject, seriesObject);
+
+            if (!this.colorObserver) {
+                this.colorObserver = this.openmct.objects.observe(
+                    this.domainObject,
+                    seriesColorPath,
+                    this.changeColor.bind(this, seriesObject)
+                );
+            }
+        },
+        changeColor(seriesObject) {
+            this.colorAsHexString = seriesObject.get('color').asHexString();
+        },
+        dynamicPathForKey(key) {
+            return function (object, model) {
+                const modelIdentifier = model.get('identifier');
+                const index = object.configuration.series.findIndex(s => {
+                    return _.isEqual(s.identifier, modelIdentifier);
+                });
+
+                return 'configuration.series[' + index + '].' + key;
+            };
         },
         toggleHover(hover) {
             this.hover = hover;
