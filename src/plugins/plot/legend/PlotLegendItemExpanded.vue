@@ -174,6 +174,7 @@ export default {
                 this.formattedMinY = '';
                 this.formattedMaxY = '';
             }
+
             const getPath = this.dynamicPathForKey('color');
             const seriesColorPath = getPath(this.domainObject, seriesObject);
 
