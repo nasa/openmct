@@ -56,6 +56,7 @@
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
 
 export default {
+    inject: ['openmct', 'domainObject'],
     props: {
         valueToShowWhenCollapsed: {
             type: String,
@@ -83,7 +84,8 @@ export default {
             formattedYValue: '',
             formattedXValue: '',
             mctLimitStateClass: '',
-            formattedYValueFromStats: ''
+            formattedYValueFromStats: '',
+            colorObserver: null
         };
     },
     computed: {
@@ -104,6 +106,9 @@ export default {
     },
     mounted() {
         this.initialize();
+    },
+    destroy() {
+        this.colorObserver();
     },
     methods: {
         initialize(highlightedObject) {
@@ -129,6 +134,30 @@ export default {
             } else {
                 this.formattedYValueFromStats = '';
             }
+            
+            const getPath = this.dynamicPathForKey('color');
+            const seriesColorPath = getPath(this.domainObject, seriesObject);
+
+            if (!this.colorObserver) {
+                this.colorObserver = this.openmct.objects.observe(
+                    this.domainObject,
+                    seriesColorPath,
+                    this.changeColor.bind(this, seriesObject)
+                );
+            }
+        },
+        changeColor(seriesObject) {
+            this.colorAsHexString = seriesObject.get('color').asHexString();
+        },
+        dynamicPathForKey(key) {
+            return function (object, model) {
+                const modelIdentifier = model.get('identifier');
+                const index = object.configuration.series.findIndex(s => {
+                    return _.isEqual(s.identifier, modelIdentifier);
+                });
+
+                return 'configuration.series[' + index + '].' + key;
+            };
         },
         toggleHover(hover) {
             this.hover = hover;
