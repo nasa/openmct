@@ -150,18 +150,18 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
             expect(mockOpenMCT.objects.mutate).toHaveBeenCalled();
         });
 
-        xit('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
+        it('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
             setTimeout(function () {
                 summaryWidget.onEdit([]);
                 expect(summaryWidget.editing).toEqual(false);
-                expect(summaryWidget.ruleArea.css('display')).toEqual('none');
-                expect(summaryWidget.testDataArea.css('display')).toEqual('none');
-                expect(summaryWidget.addRuleButton.css('display')).toEqual('none');
+                expect(summaryWidget.ruleArea.style.display).toEqual('none');
+                expect(summaryWidget.testDataArea.style.display).toEqual('none');
+                expect(summaryWidget.addRuleButton.style.display).toEqual('none');
                 summaryWidget.onEdit(['editing']);
                 expect(summaryWidget.editing).toEqual(true);
-                expect(summaryWidget.ruleArea.css('display')).not.toEqual('none');
-                expect(summaryWidget.testDataArea.css('display')).not.toEqual('none');
-                expect(summaryWidget.addRuleButton.css('display')).not.toEqual('none');
+                expect(summaryWidget.ruleArea.style.display).not.toEqual('none');
+                expect(summaryWidget.testDataArea.style.display).not.toEqual('none');
+                expect(summaryWidget.addRuleButton.style.display).not.toEqual('none');
             }, 100);
         });
 
