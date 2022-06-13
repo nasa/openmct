@@ -21,7 +21,11 @@
  *****************************************************************************/
 
 <template>
-<div class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hover">
+<div
+    class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hover"
+    role="toolbar"
+    aria-label="Image controls"
+>
     <imagery-view-menu-switcher
         :icon-class="'icon-brightness'"
         :title="'Brightness and contrast'"

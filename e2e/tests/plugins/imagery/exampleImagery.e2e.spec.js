@@ -79,7 +79,15 @@ test.describe('Example Imagery', () => {
         expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
         expect(imageMouseZoomedOut.height).toBeLessThan(imageMouseZoomedIn.height);
         expect(imageMouseZoomedOut.width).toBeLessThan(imageMouseZoomedIn.width);
+    });
 
+    test('Can adjust image brightness/contrast by dragging the sliders', async ({ page }) => {
+        // Open the image filter menu
+        await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+
+        // Drag the brightness and contrast sliders around and assert filter values
+        await dragBrightnessSliderAndAssertFilterValues(page);
+        await dragContrastSliderAndAssertFilterValues(page);
     });
 
     test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
@@ -334,6 +342,13 @@ test('Example Imagery in Display layout', async ({ page }) => {
 
     //Get background-image url from background-image css prop
     await assertBackgroundImageUrlFromBackgroundCss(page);
+
+    // Open the image filter menu
+    await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+
+    // Drag the brightness and contrast sliders around and assert filter values
+    await dragBrightnessSliderAndAssertFilterValues(page);
+    await dragContrastSliderAndAssertFilterValues(page);
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
@@ -560,7 +575,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await assertBackgroundImageUrlFromBackgroundCss(page);
 
         // Open the image filter menu
-        await page.locator('button.c-button.c-button--menu.c-switcher-menu__button.icon-brightness').click();
+        await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
 
         // Drag the brightness and contrast sliders around and assert filter values
         await dragBrightnessSliderAndAssertFilterValues(page);
