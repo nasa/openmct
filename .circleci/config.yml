@@ -132,6 +132,7 @@ jobs:
           node-version: <<parameters.node-version>>
       - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - run: npm run cov:e2e:report 
+      - run: ls -latR #DEBUG
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
