@@ -138,7 +138,7 @@ jobs:
       - store_artifacts:
           path: test-results
       - persist_to_workspace:
-          root: "~/"
+          root: "./"
           paths: 
            - .nyc_output
            - coverage
