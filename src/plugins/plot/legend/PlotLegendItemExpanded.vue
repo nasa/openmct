@@ -112,8 +112,7 @@ export default {
             formattedXValue: '',
             formattedMinY: '',
             formattedMaxY: '',
-            mctLimitStateClass: '',
-            colorObserver: null
+            mctLimitStateClass: ''
         };
     },
     computed: {

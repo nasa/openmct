@@ -84,8 +84,7 @@ export default {
             formattedYValue: '',
             formattedXValue: '',
             mctLimitStateClass: '',
-            formattedYValueFromStats: '',
-            colorObserver: null
+            formattedYValueFromStats: ''
         };
     },
     computed: {
