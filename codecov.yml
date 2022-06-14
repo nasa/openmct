@@ -13,16 +13,6 @@ coverage:
   round: down
   range: "66...100"
 
-ignore:
-
-parsers:
-  gcov:
-    branch_detection:
-      conditional: true
-      loop: true
-      method: false
-      macro: false
-
 comment:
   layout: "reach,diff,flags,files,footer"
   behavior: default
