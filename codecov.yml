@@ -13,7 +13,22 @@ coverage:
   round: down
   range: "66...100"
 
+flags:
+  unit:
+    paths: #note, accepts globs, not regexes
+      - ./coverage/unit/lcov.info
+    carryforward: true 
+  e2e-ci:
+    paths:
+      - ./coverage/e2e/lcov.info
+    carryforward: true
+  e2e-full:
+    paths:
+      - ./coverage/e2e/full/lcov.info
+    carryforward: true    
+
 comment:
   layout: "reach,diff,flags,files,footer"
   behavior: default
   require_changes: false
+  show_carryforward_flags: false
