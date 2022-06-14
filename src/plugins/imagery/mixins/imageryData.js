@@ -44,13 +44,7 @@ export default {
         this.timeKey = this.timeSystem.key;
         this.timeFormatter = this.getFormatter(this.timeKey);
 
-        // kickoff
-        this.subscribe();
-
-        this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
-            size: 1,
-            strategy: 'latest'
-        });
+        this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {});
         this.telemetryCollection.on('add', this.dataAdded);
         this.telemetryCollection.on('clear', this.dataCleared);
         this.telemetryCollection.load();
@@ -72,9 +66,13 @@ export default {
     methods: {
         dataAdded(data) {
             console.debug(`🍒 Received data`, data);
+            console.debug(`Normalizing`);
+            this.imageHistory = data.map(datum => this.normalizeDatum(datum));
+            console.debug(`🍒 Normalized data`, this.imageHistory);
         },
         dataCleared() {
             console.debug(`🍋 data should be cleared`);
+            this.imageHistory.splice(0, this.imageHistory.length);
         },
         setDataTimeContext() {
             this.stopFollowingDataTimeContext();
@@ -88,19 +86,6 @@ export default {
                 this.timeContext.off('bounds', this.boundsChange);
                 this.timeContext.off('timeSystem', this.timeSystemChange);
             }
-        },
-        isDatumValid(datum) {
-            //TODO: Add a check to see if there are duplicate images (identical image timestamp and url subsequently)
-            if (!datum) {
-                return false;
-            }
-
-            const datumTimeCheck = this.parseTime(datum);
-            const bounds = this.timeContext.bounds();
-
-            const isOutOfBounds = datumTimeCheck < bounds.start || datumTimeCheck > bounds.end;
-
-            return !isOutOfBounds;
         },
         formatImageUrl(datum) {
             if (!datum) {
@@ -143,40 +128,6 @@ export default {
             // forcibly reset the imageContainer size to prevent an aspect ratio distortion
             delete this.imageContainerWidth;
             delete this.imageContainerHeight;
-
-            return this.requestHistory();
-        },
-        async requestHistory() {
-            this.requestCount++;
-            const requestId = this.requestCount;
-            const bounds = this.timeContext.bounds();
-
-            const data = await this.openmct.telemetry
-                .request(this.domainObject, bounds) || [];
-            // wait until new request resolves to do comparison
-            if (this.requestCount !== requestId) {
-                return this.imageHistory = [];
-            }
-
-            const imagery = data.filter(this.isDatumValid).map(this.normalizeDatum);
-            this.imageHistory = imagery;
-        },
-        clearData(domainObjectToClear) {
-            // global clearData button is accepted therefore no truthy check on inputted param
-            const clearDataForObjectSelected = Boolean(domainObjectToClear);
-            if (clearDataForObjectSelected) {
-                const idsEqual = this.openmct.objects.areIdsEqual(
-                    domainObjectToClear.identifier,
-                    this.domainObject.identifier
-                );
-                if (!idsEqual) {
-                    return;
-                }
-            }
-
-            // splice array to encourage garbage collection
-            this.imageHistory.splice(0, this.imageHistory.length);
-
         },
         timeSystemChange() {
             this.timeSystem = this.timeContext.timeSystem();
@@ -184,22 +135,7 @@ export default {
             this.timeFormatter = this.getFormatter(this.timeKey);
             this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         },
-        subscribe() {
-            this.unsubscribe = this.openmct.telemetry
-                .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.parseTime(datum);
-                    let bounds = this.timeContext.bounds();
-                    if (!(parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end)) {
-                        return;
-                    }
-
-                    if (this.isDatumValid(datum)) {
-                        this.imageHistory.push(this.normalizeDatum(datum));
-                    }
-                });
-        },
         normalizeDatum(datum) {
-
             const formattedTime = this.formatTime(datum);
             const url = this.formatImageUrl(datum);
             const time = this.parseTime(formattedTime);
