@@ -170,11 +170,11 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
-          name: node16-lint
-          node-version: lts/gallium
-      - unit-test:
-          name: node14-chrome
+          name: node14-lint
           node-version: lts/fermium
+      - unit-test:
+          name: node16-chrome
+          node-version: lts/gallium
           browser: ChromeHeadless
       - unit-test:
           name: node18-chrome
@@ -188,7 +188,7 @@ workflows:
           node-version: lts/gallium
       - upload_code_covio: #This job runs last to ensure all reports have been generated
           requires:
-            - node14-chrome
+            - node16-chrome
             - e2e-ci
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
