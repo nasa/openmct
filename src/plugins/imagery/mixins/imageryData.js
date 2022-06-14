@@ -30,7 +30,7 @@ export default {
         this.timeSystemChange = this.timeSystemChange.bind(this);
         this.setDataTimeContext = this.setDataTimeContext.bind(this);
         this.setDataTimeContext();
-        this.openmct.objectViews.on('clearData', this.clearData);
+        this.openmct.objectViews.on('clearData', this.dataCleared);
 
         // set
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -56,7 +56,7 @@ export default {
         }
 
         this.stopFollowingDataTimeContext();
-        this.openmct.objectViews.off('clearData', this.clearData);
+        this.openmct.objectViews.off('clearData', this.dataCleared);
 
         this.telemetryCollection.off('add', this.dataAdded);
         this.telemetryCollection.off('clear', this.dataCleared);
