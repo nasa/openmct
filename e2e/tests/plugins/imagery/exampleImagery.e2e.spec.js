@@ -79,7 +79,15 @@ test.describe('Example Imagery', () => {
         expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
         expect(imageMouseZoomedOut.height).toBeLessThan(imageMouseZoomedIn.height);
         expect(imageMouseZoomedOut.width).toBeLessThan(imageMouseZoomedIn.width);
+    });
 
+    test('Can adjust image brightness/contrast by dragging the sliders', async ({ page }) => {
+        // Open the image filter menu
+        await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+
+        // Drag the brightness and contrast sliders around and assert filter values
+        await dragBrightnessSliderAndAssertFilterValues(page);
+        await dragContrastSliderAndAssertFilterValues(page);
     });
 
     test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
@@ -334,6 +342,13 @@ test('Example Imagery in Display layout', async ({ page }) => {
 
     //Get background-image url from background-image css prop
     await assertBackgroundImageUrlFromBackgroundCss(page);
+
+    // Open the image filter menu
+    await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+
+    // Drag the brightness and contrast sliders around and assert filter values
+    await dragBrightnessSliderAndAssertFilterValues(page);
+    await dragContrastSliderAndAssertFilterValues(page);
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
@@ -432,6 +447,11 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 // test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Flexible layout', () => {
     test('Example Imagery in Flexible layout', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5326'
+        });
+
         // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -553,6 +573,13 @@ test.describe('Example Imagery in Flexible layout', () => {
 
         //Get background-image url from background-image css prop
         await assertBackgroundImageUrlFromBackgroundCss(page);
+
+        // Open the image filter menu
+        await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+
+        // Drag the brightness and contrast sliders around and assert filter values
+        await dragBrightnessSliderAndAssertFilterValues(page);
+        await dragContrastSliderAndAssertFilterValues(page);
     });
 });
 
@@ -562,6 +589,80 @@ test.describe('Example Imagery in Flexible layout', () => {
 async function saveTemplate(page) {
     await page.locator('.c-button--menu.c-button--major.icon-save').click();
     await page.locator('text=Save and Finish Editing').click();
+}
+
+/**
+ * Drag the brightness slider to max, min, and midpoint and assert the filter values
+ * @param {import('@playwright/test').Page} page
+ */
+async function dragBrightnessSliderAndAssertFilterValues(page) {
+    const brightnessSlider = 'div.c-image-controls__slider-wrapper.icon-brightness > input';
+    const brightnessBoundingBox = await page.locator(brightnessSlider).boundingBox();
+    const brightnessMidX = brightnessBoundingBox.x + brightnessBoundingBox.width / 2;
+    const brightnessMidY = brightnessBoundingBox.y + brightnessBoundingBox.height / 2;
+
+    await page.locator(brightnessSlider).hover();
+    await page.mouse.down();
+    await page.mouse.move(brightnessBoundingBox.x + brightnessBoundingBox.width, brightnessMidY);
+    await assertBackgroundImageBrightness(page, '500');
+    await page.mouse.move(brightnessBoundingBox.x, brightnessMidY);
+    await assertBackgroundImageBrightness(page, '0');
+    await page.mouse.move(brightnessMidX, brightnessMidY);
+    await assertBackgroundImageBrightness(page, '250');
+    await page.mouse.up();
+}
+
+/**
+ * Drag the contrast slider to max, min, and midpoint and assert the filter values
+ * @param {import('@playwright/test').Page} page
+ */
+async function dragContrastSliderAndAssertFilterValues(page) {
+    const contrastSlider = 'div.c-image-controls__slider-wrapper.icon-contrast > input';
+    const contrastBoundingBox = await page.locator(contrastSlider).boundingBox();
+    const contrastMidX = contrastBoundingBox.x + contrastBoundingBox.width / 2;
+    const contrastMidY = contrastBoundingBox.y + contrastBoundingBox.height / 2;
+
+    await page.locator(contrastSlider).hover();
+    await page.mouse.down();
+    await page.mouse.move(contrastBoundingBox.x + contrastBoundingBox.width, contrastMidY);
+    await assertBackgroundImageContrast(page, '500');
+    await page.mouse.move(contrastBoundingBox.x, contrastMidY);
+    await assertBackgroundImageContrast(page, '0');
+    await page.mouse.move(contrastMidX, contrastMidY);
+    await assertBackgroundImageContrast(page, '250');
+    await page.mouse.up();
+}
+
+/**
+ * Gets the filter:brightness value of the current background-image and
+ * asserts against an expected value
+ * @param {import('@playwright/test').Page} page
+ * @param {String} expected The expected brightness value
+ */
+async function assertBackgroundImageBrightness(page, expected) {
+    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+
+    // Get the brightness filter value (i.e: filter: brightness(500%) => "500")
+    const actual = await backgroundImage.evaluate((el) => {
+        return el.style.filter.match(/brightness\((\d{1,3})%\)/)[1];
+    });
+    expect(actual).toBe(expected);
+}
+
+/**
+ * Gets the filter:contrast value of the current background-image and
+ * asserts against an expected value
+ * @param {import('@playwright/test').Page} page
+ * @param {String} expected The expected contrast value
+ */
+async function assertBackgroundImageContrast(page, expected) {
+    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+
+    // Get the contrast filter value (i.e: filter: contrast(500%) => "500")
+    const actual = await backgroundImage.evaluate((el) => {
+        return el.style.filter.match(/contrast\((\d{1,3})%\)/)[1];
+    });
+    expect(actual).toBe(expected);
 }
 
 /**
