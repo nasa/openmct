@@ -97,7 +97,11 @@ test('Visual - Default Condition Set', async ({ page }) => {
     await percySnapshot(page, 'Default Condition Set');
 });
 
-test('Visual - Default Condition Widget', async ({ page }) => {
+test.fixme('Visual - Default Condition Widget', async ({ page }) => {
+    test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/5349'
+    });
     //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
