@@ -21,7 +21,11 @@
  *****************************************************************************/
 
 <template>
-<div class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hover">
+<div
+    class="h-local-controls h-local-controls--overlay-content h-local-controls--menus-aligned c-local-controls--show-on-hover"
+    role="toolbar"
+    aria-label="Image controls"
+>
     <imagery-view-menu-switcher
         :icon-class="'icon-brightness'"
         :title="'Brightness and contrast'"
@@ -173,7 +177,7 @@ export default {
             this.$emit('filtersUpdated', this.filters);
         },
         handleResetFilters() {
-            this.filters = DEFAULT_FILTER_VALUES;
+            this.filters = {...DEFAULT_FILTER_VALUES};
             this.notifyFiltersChanged();
         },
         limitZoomRange(factor) {
