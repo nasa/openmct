@@ -104,9 +104,9 @@
     "otherdoc": "node docs/gendocs.js --in docs/src --out dist/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
     "docs": "npm run jsdoc ; npm run otherdoc",
     "cov:e2e:report":"nyc report --reporter=lcovonly --report-dir=./coverage/e2e",
-    "cov:e2e:full:publish":"codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e",
-    "cov:e2e:ci:publish":"codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e",
-    "cov:unit:publish":"codecov --disable=gcov -f ./coverage/unit/lcov.info -F unit",
+    "cov:e2e:full:publish":"codecov -f ./coverage/e2e/lcov.info -F e2e-full",
+    "cov:e2e:ci:publish":"codecov -f ./coverage/e2e/lcov.info -F e2e-ci",
+    "cov:unit:publish":"codecov -f ./coverage/unit/lcov.info -F unit",
     "prepare": "npm run build:prod"
   },
   "repository": {
