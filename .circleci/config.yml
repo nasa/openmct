@@ -115,10 +115,8 @@ jobs:
           node-version: <<parameters.node-version>>
       - store_test_results:
           path: dist/reports/tests/
-      - persist_to_workspace:
-          root: coverage
-          paths: 
-            - unit
+      - store_artifacts:
+          path: coverage
       - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
     parameters:
@@ -134,16 +132,12 @@ jobs:
       - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - run: npm run cov:e2e:report 
       - run: npm run cov:e2e:ci:publish
-      - run: ls -latR #DEBUG
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
           path: test-results
-      - persist_to_workspace:
-          root: "./"
-          paths: 
-           - .nyc_output
-           - coverage
+      - store_artifacts:
+          path: coverage
       - generate_and_store_version_and_filesystem_artifacts
   perf-test:
     parameters:
@@ -159,21 +153,6 @@ jobs:
       - store_artifacts:
           path: test-results
       - generate_and_store_version_and_filesystem_artifacts
-  upload_code_covio:
-    parameters:
-      node-version:
-        type: string
-    executor: pw-focal-development
-    description: "Command to upload code coverage reports to codecov.io"
-    steps:
-      - build_and_install:
-          node-version: <<parameters.node-version>>
-      - attach_workspace:
-          at: /coverage
-      - run: |
-          ls -latR
-          npm run cov:unit:publish
-          npm run cov:e2e:ci:publish  
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
@@ -194,11 +173,6 @@ workflows:
           suite: ci
       - perf-test:
           node-version: lts/gallium
-      - upload_code_covio: #This job runs last to ensure all reports have been generated
-          node-version: lts/gallium
-          requires:
-            - node16-chrome
-            - e2e-ci
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
