@@ -58,15 +58,6 @@ commands:
           ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
           path: /tmp/artifacts/
-  upload_code_covio:
-    description: "Command to upload code coverage reports to codecov.io"
-    steps:
-        - attach_workspace:
-            at: /coverage
-        - run: |
-            ls -latR
-            npm run cov:unit:publish
-            npm run cov:e2e:ci:publish
 orbs:
   node: circleci/node@4.9.0
   browser-tools: circleci/browser-tools@1.3.0
@@ -164,7 +155,17 @@ jobs:
           path: test-results/results.xml
       - store_artifacts:
           path: test-results
-      - generate_and_store_version_and_filesystem_artifacts      
+      - generate_and_store_version_and_filesystem_artifacts
+  upload_code_covio:
+    executor: pw-focal-development
+    description: "Command to upload code coverage reports to codecov.io"
+    steps:
+        - attach_workspace:
+            at: /coverage
+        - run: |
+            ls -latR
+            npm run cov:unit:publish
+            npm run cov:e2e:ci:publish  
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
@@ -187,8 +188,8 @@ workflows:
           node-version: lts/gallium
       - upload_code_covio: #This job runs last to ensure all reports have been generated
           requires:
-            - unit-test
-            - e2e-test
+            - node14-chrome
+            - e2e-ci
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
