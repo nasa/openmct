@@ -75,12 +75,7 @@ module.exports = (config) => {
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
             dir: "coverage/unit",
-            reports: ['lcovonly', 'text-summary'],
-            thresholds: {
-                global: {
-                    lines: 52
-                }
-            }
+            reports: ['lcovonly']
         },
         specReporter: {
             maxLogLines: 5,
