@@ -125,7 +125,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    it("reset hash", (done) => {
+    xit("reset hash", (done) => {
         let success;
 
         window.location.hash = oldHash;
