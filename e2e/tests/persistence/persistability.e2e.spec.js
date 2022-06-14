@@ -28,9 +28,11 @@ const { test } = require('../../fixtures.js');
 const { expect } = require('@playwright/test');
 const path = require('path');
 
-// https://github.com/nasa/openmct/issues/4323#issuecomment-1067282651
-
-test.describe('Persistence operations', () => {
+test.describe('Persistence operations @addInit', () => {
+    test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/4323'
+    });
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef

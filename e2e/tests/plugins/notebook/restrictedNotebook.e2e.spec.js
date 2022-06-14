@@ -125,7 +125,7 @@ async function openContextMenuRestrictedNotebook(page) {
     return;
 }
 
-test.describe('Restricted Notebook', () => {
+test.describe('Restricted Notebook @addInit', () => {
 
     test.beforeEach(async ({ page }) => {
         await startAndAddNotebookObject(page);
@@ -168,7 +168,7 @@ test.describe('Restricted Notebook', () => {
 
 });
 
-test.describe('Restricted Notebook with at least one entry and with the page locked', () => {
+test.describe('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
 
     test.beforeEach(async ({ page }) => {
         await startAndAddNotebookObject(page);
@@ -237,7 +237,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     });
 });
 
-test.describe('Restricted Notebook with a page locked and with an embed', () => {
+test.describe('Restricted Notebook with a page locked and with an embed @addInit', () => {
 
     test.beforeEach(async ({ page }) => {
         await startAndAddNotebookObject(page);
