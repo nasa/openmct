@@ -64,6 +64,7 @@ import YAxisForm from "./forms/YAxisForm.vue";
 import LegendForm from "./forms/LegendForm.vue";
 import eventHelpers from "../lib/eventHelpers";
 import configStore from "../configuration/ConfigStore";
+import _ from "lodash";
 
 export default {
     components: {
@@ -125,14 +126,24 @@ export default {
             });
             if (index < 0) {
                 index = stackedPlotObject.configuration.series.length;
+                const configPath = `configuration.series[${index}]`;
+                let newConfig = {
+                    identifier: config.identifier
+                };
+                _.set(newConfig, `${config.path}`, config.value);
+                this.openmct.objects.mutate(
+                    stackedPlotObject,
+                    configPath,
+                    newConfig
+                );
+            } else {
+                const configPath = `configuration.series[${index}].${config.path}`;
+                this.openmct.objects.mutate(
+                    stackedPlotObject,
+                    configPath,
+                    config.value
+                );
             }
-
-            const configPath = `configuration.series[${index}].${config.path}`;
-            this.openmct.objects.mutate(
-                stackedPlotObject,
-                configPath,
-                config.value
-            );
 
         }
     }
