@@ -88,6 +88,7 @@ describe("The Imagery View Layouts", () => {
     let openmct;
     let parent;
     let child;
+    let historicalProvider;
     let imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
     let imageryObject = {
         identifier: {
@@ -122,50 +123,6 @@ describe("The Imagery View Layouts", () => {
                         "priority": 3
                     },
                     "source": "url"
-                    // "relatedTelemetry": {
-                    //     "heading": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "heading",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "roll": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "roll",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "pitch": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "pitch",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "cameraPan": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "cameraPan",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "cameraTilt": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "cameraTilt",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "sunOrientation": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "sunOrientation",
-                    //             "valueKey": "value"
-                    //         }
-                    //     }
-                    // }
                 },
                 {
                     "name": "Name",
@@ -208,6 +165,13 @@ describe("The Imagery View Layouts", () => {
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
         });
+
+        historicalProvider = {
+            request: () => {
+                return Promise.resolve(imageTelemetry);
+            }
+        };
+        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
 
         spyOn(openmct.telemetry, 'request').and.callFake(() => {
             telemetryPromiseResolve(imageTelemetry);
@@ -584,6 +548,34 @@ describe("The Imagery View Layouts", () => {
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
             done();
         });
+
+        it('should reset the brightness and contrast when clicking the reset button', async () => {
+            const viewInstance = imageryView._getInstance();
+            await Vue.nextTick();
+
+            // Save the original brightness and contrast values
+            const origBrightness = viewInstance.$refs.ImageryContainer.filters.brightness;
+            const origContrast = viewInstance.$refs.ImageryContainer.filters.contrast;
+
+            // Change them to something else (default: 100)
+            viewInstance.$refs.ImageryContainer.setFilters({
+                brightness: 200,
+                contrast: 200
+            });
+            await Vue.nextTick();
+
+            // Verify that the values actually changed
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(200);
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(200);
+
+            // Click the reset button
+            parent.querySelector('.t-btn-reset').click();
+            await Vue.nextTick();
+
+            // Verify that the values were reset
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(origBrightness);
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(origContrast);
+        });
     });
 
     describe("imagery time strip view", () => {
@@ -651,6 +643,17 @@ describe("The Imagery View Layouts", () => {
                     done();
                 });
             });
+        });
+
+        it("should remove images when bounds change", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START,
+                end: START + (5 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(1);
         });
     });
 });
