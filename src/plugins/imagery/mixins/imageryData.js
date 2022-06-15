@@ -67,17 +67,13 @@ export default {
     },
     methods: {
         dataAdded(dataToAdd) {
-            console.debug(`🍒 Received data`, dataToAdd);
             const normalizedDataToAdd = dataToAdd.map(datum => this.normalizeDatum(datum));
             this.imageHistory = this.imageHistory.concat(normalizedDataToAdd);
-            console.debug(`🍒 Current data`, this.imageHistory);
         },
         dataCleared() {
-            console.debug(`🍋 data should be cleared`);
             this.imageHistory.splice(0, this.imageHistory.length);
         },
         dataRemoved(dataToRemove) {
-            console.debug(`🍊 data should be removed`, dataToRemove);
             this.imageHistory = this.imageHistory.filter(existingDatum => {
                 const shouldKeep = dataToRemove.some(datumToRemove => {
                     return (existingDatum.utc !== datumToRemove.utc);
@@ -85,7 +81,6 @@ export default {
 
                 return shouldKeep;
             });
-            console.debug(`🍊 Current data`, this.imageHistory);
         },
         setDataTimeContext() {
             this.stopFollowingDataTimeContext();
