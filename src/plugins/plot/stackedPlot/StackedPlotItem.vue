@@ -223,12 +223,12 @@ export default {
                 const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
                 let config = configStore.get(configId);
                 if (!config) {
-                    let persistedConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+                    let persistedSeriesConfig = this.domainObject.configuration.series.find((seriesConfig) => {
                         return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.childObject.identifier);
                     });
 
-                    if (!persistedConfig) {
-                        persistedConfig = {
+                    if (!persistedSeriesConfig) {
+                        persistedSeriesConfig = {
                             series: {}
                         };
                     }
@@ -241,11 +241,9 @@ export default {
                                 series: [
                                     {
                                         identifier: this.childObject.identifier,
-                                        ...persistedConfig.series
+                                        ...persistedSeriesConfig.series
                                     }
-                                ],
-                                yAxis: persistedConfig.yAxis
-
+                                ]
                             }
                         },
                         openmct: this.openmct,
