@@ -590,6 +590,20 @@ describe("The Imagery View Layouts", () => {
                 end: START + (5 * ONE_MINUTE)
             });
 
+            const mockClock = jasmine.createSpyObj("clock", [
+                "on",
+                "off",
+                "currentValue"
+            ]);
+            mockClock.key = 'mockClock';
+            mockClock.currentValue.and.returnValue(1);
+
+            openmct.time.addClock(mockClock);
+            openmct.time.clock('mockClock', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
+
             openmct.router.path = [{
                 identifier: {
                     key: 'test-timestrip',
@@ -624,7 +638,7 @@ describe("The Imagery View Layouts", () => {
         it("on mount should show imagery within the given bounds", (done) => {
             Vue.nextTick(() => {
                 const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
-                expect(imageElements.length).toEqual(6);
+                expect(imageElements.length).toEqual(5);
                 done();
             });
         });
@@ -645,10 +659,18 @@ describe("The Imagery View Layouts", () => {
             });
         });
 
-        it("should remove images when bounds change", async () => {
+        it("should remove images when clock advances", async () => {
+            openmct.time.tick(ONE_MINUTE * 2);
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(4);
+        });
+
+        it("should update images when bounds change", async () => {
             openmct.time.timeSystem('utc', {
                 start: START,
-                end: START + (5 * ONE_MINUTE)
+                end: START + (2 * ONE_MINUTE)
             });
             await Vue.nextTick();
             await Vue.nextTick();
