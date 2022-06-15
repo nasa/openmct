@@ -46,6 +46,7 @@ export default {
 
         this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {});
         this.telemetryCollection.on('add', this.dataAdded);
+        this.telemetryCollection.on('remove', this.dataRemoved);
         this.telemetryCollection.on('clear', this.dataCleared);
         this.telemetryCollection.load();
     },
@@ -64,15 +65,26 @@ export default {
         this.telemetryCollection.destroy();
     },
     methods: {
-        dataAdded(data) {
-            console.debug(`🍒 Received data`, data);
-            console.debug(`Normalizing`);
-            this.imageHistory = data.map(datum => this.normalizeDatum(datum));
-            console.debug(`🍒 Normalized data`, this.imageHistory);
+        dataAdded(dataToAdd) {
+            console.debug(`🍒 Received data`, dataToAdd);
+            const normalizedDataToAdd = dataToAdd.map(datum => this.normalizeDatum(datum));
+            this.imageHistory = this.imageHistory.concat(normalizedDataToAdd);
+            console.debug(`🍒 Current data`, this.imageHistory);
         },
         dataCleared() {
             console.debug(`🍋 data should be cleared`);
             this.imageHistory.splice(0, this.imageHistory.length);
+        },
+        dataRemoved(dataToRemove) {
+            console.debug(`🍊 data should be removed`, dataToRemove);
+            this.imageHistory = this.imageHistory.filter(existingDatum => {
+                const shouldKeep = dataToRemove.some(datumToRemove => {
+                    return (existingDatum.utc !== datumToRemove.utc);
+                });
+
+                return shouldKeep;
+            });
+            console.debug(`🍊 Current data`, this.imageHistory);
         },
         setDataTimeContext() {
             this.stopFollowingDataTimeContext();
