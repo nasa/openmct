@@ -34,8 +34,7 @@ const config = {
         library: 'openmct',
         libraryTarget: 'umd',
         publicPath: '',
-        hashFunction: 'xxhash64',
-        clean: true
+        hashFunction: 'xxhash64'
     },
     resolve: {
         alias: {
