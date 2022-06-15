@@ -331,9 +331,9 @@ test('Example Imagery in Display layout', async ({ page }) => {
 
         return newImageCount;
     }, {
-        message: "verify that new images still stream in",
+        message: "verify that old images are discarded",
         timeout: 6 * 1000
-    }).toBeGreaterThan(imageCount);
+    }).toBe(imageCount);
 
     // Verify selected image is still displayed
     await expect(selectedImage).toBeVisible();
