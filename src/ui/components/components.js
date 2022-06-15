@@ -21,9 +21,13 @@
  *****************************************************************************/
 
 import ObjectView from './ObjectView.vue';
+import Plot from '../../plugins/plot/Plot.vue';
+import MctPlot from '../../plugins/plot/MctPlot.vue';
 import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
 
 export default {
     ObjectView,
+    Plot,
+    MctPlot,
     StackedPlot
 };
