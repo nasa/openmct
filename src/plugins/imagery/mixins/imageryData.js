@@ -60,6 +60,7 @@ export default {
         this.openmct.objectViews.off('clearData', this.dataCleared);
 
         this.telemetryCollection.off('add', this.dataAdded);
+        this.telemetryCollection.off('remove', this.dataRemoved);
         this.telemetryCollection.off('clear', this.dataCleared);
 
         this.telemetryCollection.destroy();
