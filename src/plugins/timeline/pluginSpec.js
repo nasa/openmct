@@ -416,32 +416,17 @@ describe('the plugin', function () {
                     "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
                 }
             };
-            const testTelemetryObject = {
+            const barGraphObject = {
                 identifier: {
                     namespace: "",
                     key: "test-object"
                 },
                 type: "telemetry.plot.bar-graph",
-                name: "Test Object",
-                telemetry: {
-                    values: [{
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }]
-                }
+                name: "Test Object"
             };
             const composition = openmct.composition.get(parent);
             expect(() => {
-                composition.add(testTelemetryObject);
+                composition.add(barGraphObject);
             }).toThrow();
             expect(parent.composition.length).toBe(0);
         });

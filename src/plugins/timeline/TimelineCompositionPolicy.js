@@ -29,13 +29,11 @@ const DISALLOWED_TYPES = [
     'telemetry.plot.scatter-plot'
 ];
 export default function TimelineCompositionPolicy(openmct) {
-    function hasNumericTelemetry(domainObject) {
+    function hasNumericTelemetry(domainObject, metadata) {
         const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
-        if (!hasTelemetry) {
+        if (!hasTelemetry || !metadata) {
             return false;
         }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
 
         return metadata.values().length > 0 && hasDomainAndRange(metadata);
     }
@@ -45,8 +43,7 @@ export default function TimelineCompositionPolicy(openmct) {
             && metadata.valuesForHints(['domain']).length > 0);
     }
 
-    function hasImageTelemetry(domainObject) {
-        const metadata = openmct.telemetry.getMetadata(domainObject);
+    function hasImageTelemetry(domainObject, metadata) {
         if (!metadata) {
             return false;
         }
@@ -57,8 +54,10 @@ export default function TimelineCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
             if (parent.type === 'time-strip') {
+                const metadata = openmct.telemetry.getMetadata(child);
+
                 if (!DISALLOWED_TYPES.includes(child.type)
-                    && (hasNumericTelemetry(child) || hasImageTelemetry(child) || ALLOWED_TYPES.includes(child.type))) {
+                    && (hasNumericTelemetry(child, metadata) || hasImageTelemetry(child, metadata) || ALLOWED_TYPES.includes(child.type))) {
                     return true;
                 }
 
