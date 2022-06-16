@@ -131,7 +131,7 @@ jobs:
           node-version: <<parameters.node-version>>
       - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - run: npm run cov:e2e:report 
-      - run: npm run cov:e2e:ci:publish
+      - run: npm run cov:e2e:<<parameters.suite>>:publish
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -171,6 +171,10 @@ workflows:
           name: e2e-ci
           node-version: lts/gallium
           suite: ci
+      - e2e-test:
+          name: e2e-full
+          node-version: lts/gallium
+          suite: full
       - perf-test:
           node-version: lts/gallium
   the-nightly: #These jobs do not run on PRs, but against master at night
