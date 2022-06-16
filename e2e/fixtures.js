@@ -23,6 +23,7 @@ function consoleMessageToString(msg) {
     at (${url} ${lineNumber}:${columnNumber})`;
 }
 
+//The following is based on https://github.com/mxschmitt/playwright-test-coverage
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 
 function generateUUID() {
