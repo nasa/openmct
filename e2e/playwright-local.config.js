@@ -46,13 +46,22 @@ const config = {
             }
         },
         {
+            name: 'safari',
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'webkit'
+            }
+        },
+        {
             name: 'firefox',
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'firefox'
             }
         },
         {
             name: 'canary',
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
                 channel: 'chrome-canary'
@@ -61,6 +70,7 @@ const config = {
         {
             name: 'ipad',
             grep: /@ipad/,
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'webkit',
                 ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
