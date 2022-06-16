@@ -667,15 +667,37 @@ describe("The Imagery View Layouts", () => {
             expect(imageElements.length).toEqual(4);
         });
 
-        it("should update images when bounds change", async () => {
+        it("should remove images when start bounds shorten", async () => {
             openmct.time.timeSystem('utc', {
                 start: START,
-                end: START + (2 * ONE_MINUTE)
+                end: START + (5 * ONE_MINUTE)
             });
             await Vue.nextTick();
             await Vue.nextTick();
             const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
             expect(imageElements.length).toEqual(1);
+        });
+
+        it("should remove images when end bounds shorten", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START - (2 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(4);
+        });
+
+        it("should remove images when both bounds shorten", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START - (2 * ONE_MINUTE),
+                end: START + (2 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(3);
         });
     });
 });
