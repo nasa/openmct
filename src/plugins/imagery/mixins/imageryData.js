@@ -71,7 +71,7 @@ export default {
             this.imageHistory = this.imageHistory.concat(normalizedDataToAdd);
         },
         dataCleared() {
-            this.imageHistory.splice(0, this.imageHistory.length);
+            this.imageHistory = [];
         },
         dataRemoved(dataToRemove) {
             this.imageHistory = this.imageHistory.filter(existingDatum => {
