@@ -584,6 +584,34 @@ describe("The Imagery View Layouts", () => {
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
             done();
         });
+
+        it('should reset the brightness and contrast when clicking the reset button', async () => {
+            const viewInstance = imageryView._getInstance();
+            await Vue.nextTick();
+
+            // Save the original brightness and contrast values
+            const origBrightness = viewInstance.$refs.ImageryContainer.filters.brightness;
+            const origContrast = viewInstance.$refs.ImageryContainer.filters.contrast;
+
+            // Change them to something else (default: 100)
+            viewInstance.$refs.ImageryContainer.setFilters({
+                brightness: 200,
+                contrast: 200
+            });
+            await Vue.nextTick();
+
+            // Verify that the values actually changed
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(200);
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(200);
+
+            // Click the reset button
+            parent.querySelector('.t-btn-reset').click();
+            await Vue.nextTick();
+
+            // Verify that the values were reset
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(origBrightness);
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(origContrast);
+        });
     });
 
     describe("imagery time strip view", () => {
