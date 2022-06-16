@@ -19,6 +19,7 @@
   &__range,
   &__units,
   &__units text {
+    // TODO: MAKE THIS METER-SPECIFIC
     $c: $colorGaugeRange;
     color: $c;
     fill: $c;
@@ -31,44 +32,40 @@
 }
 
 /********************************************** DIAL GAUGE */
-svg[class*='c-dial'] {
+.c-dial {
   max-height: 100%;
   max-width: 100%;
-  position: absolute;
 
-  g {
-    transform-origin: center;
-  }
-}
-
-.c-dial {
   &__bg {
-    background: $colorGaugeBg;
-    clip-path: url(#gaugeBgMask);
+    fill: $colorGaugeBg;
   }
-
-  &__limit-high rect { fill: $colorGaugeLimitHigh; }
-  &__limit-low rect { fill: $colorGaugeLimitLow; }
-
-  &__filled-value-wrapper {
-    clip-path: url(#gaugeValueMask);
+  &__limit-high rect {
+    fill: $colorGaugeLimitHigh;
   }
-
-  &__needle-value-wrapper {
-    clip-path: url(#gaugeValueMask);
+  &__limit-low rect {
+    fill: $colorGaugeLimitLow;
   }
-
-  &__filled-value { fill: $colorGaugeValue; }
-
+  &__filled-value {
+    fill: $colorGaugeValue;
+  }
   &__needle-value {
     fill: $colorGaugeValue;
     transition: transform $transitionTimeGauge;
   }
-
-  &__current-value-text,
-  &__units-text {
+  &__current-value-text {
     fill: $colorGaugeTextValue;
     font-family: $heroFont;
+  }
+
+  &__units-text,
+  &__range-text {
+    $c: $colorGaugeRange;
+    fill: $c;
+  }
+
+  &__graphics g {
+    transform-origin: center;
+    opacity: 0.5; // TEMP
   }
 }
 

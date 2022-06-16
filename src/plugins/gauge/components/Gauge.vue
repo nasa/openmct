@@ -24,78 +24,37 @@
     class="c-gauge__wrapper js-gauge-wrapper"
     :class="`c-gauge--${gaugeType}`"
 >
-    <template v-if="typeDial">
-        <svg
-            width="0"
-            height="0"
-            class="c-dial__clip-paths"
-        >
-            <defs>
-                <clipPath
-                    id="gaugeBgMask"
-                    clipPathUnits="objectBoundingBox"
-                >
-                    <path d="M0.853553 0.853553C0.944036 0.763071 1 0.638071 1 0.5C1 0.223858 0.776142 0 0.5 0C0.223858 0 0 0.223858 0 0.5C0 0.638071 0.0559644 0.763071 0.146447 0.853553L0.285934 0.714066C0.23115 0.659281 0.197266 0.583598 0.197266 0.5C0.197266 0.332804 0.332804 0.197266 0.5 0.197266C0.667196 0.197266 0.802734 0.332804 0.802734 0.5C0.802734 0.583598 0.76885 0.659281 0.714066 0.714066L0.853553 0.853553Z" />
-                </clipPath>
-                <clipPath
-                    id="gaugeValueMask"
-                    clipPathUnits="objectBoundingBox"
-                >
-                    <path d="M0.18926 0.81074C0.109735 0.731215 0.0605469 0.621351 0.0605469 0.5C0.0605469 0.257298 0.257298 0.0605469 0.5 0.0605469C0.742702 0.0605469 0.939453 0.257298 0.939453 0.5C0.939453 0.621351 0.890265 0.731215 0.81074 0.81074L0.714066 0.714066C0.76885 0.659281 0.802734 0.583599 0.802734 0.5C0.802734 0.332804 0.667196 0.197266 0.5 0.197266C0.332804 0.197266 0.197266 0.332804 0.197266 0.5C0.197266 0.583599 0.23115 0.659281 0.285934 0.714066L0.18926 0.81074Z" />
-                </clipPath>
-            </defs>
-        </svg>
+    <svg
+        v-if="typeDial"
+        class="c-gauge c-dial"
+        viewBox="0 0 10 10"
+    >
+        <g class="c-dial__masks">
+            <mask id="gaugeValueMask">
+                <path
+                    d="M1.8926 8.1074C1.09734 7.31215 0.605469 6.21352 0.605469 5C0.605469 2.57297 2.57297 0.605469 5 0.605469C7.42703 0.605469 9.39453 2.57297 9.39453 5C9.39453 6.21352 8.90266 7.31215 8.1074 8.1074L7.14066 7.14066C7.6885 6.59281 8.02734 5.83598 8.02734 5C8.02734 3.32804 6.67196 1.97266 5 1.97266C3.32804 1.97266 1.97266 3.32804 1.97266 5C1.97266 5.83598 2.3115 6.59281 2.85934 7.14066L1.8926 8.1074Z"
+                    fill="white"
+                />
+            </mask>
+            <mask id="gaugeBgMask">
+                <path
+                    d="M8.53553 8.53553C9.44036 7.63071 10 6.38071 10 5C10 2.23858 7.76142 0 5 0C2.23858 0 0 2.23858 0 5C0 6.38071 0.559644 7.63071 1.46447 8.53553L2.85934 7.14066C2.3115 6.59281 1.97266 5.83598 1.97266 5C1.97266 3.32804 3.32804 1.97266 5 1.97266C6.67196 1.97266 8.02734 3.32804 8.02734 5C8.02734 5.83598 7.6885 6.59281 7.14066 7.14066L8.53553 8.53553Z"
+                    fill="white"
+                />
+            </mask>
+        </g>
 
-        <svg
-            class="c-dial__range c-gauge__range js-gauge-dial-range"
-            viewBox="0 0 512 512"
+        <g
+            class="c-dial__graphics"
+            mask="url(#gaugeBgMask)"
         >
-            <text
-                v-if="displayMinMax"
-                font-size="35"
-                transform="translate(105 455) rotate(-45)"
-            >{{ rangeLow }}</text>
-            <text
-                v-if="displayMinMax"
-                font-size="35"
-                transform="translate(407 455) rotate(45)"
-                text-anchor="end"
-            >{{ rangeHigh }}</text>
-        </svg>
-
-        <svg
-            v-if="displayCurVal"
-            class="c-dial__current-value-text-wrapper"
-            viewBox="0 0 512 512"
-        >
-            <svg
-                class="c-dial__current-value-text-sizer"
-                :viewBox="curValViewBox"
-            >
-                <text
-                    class="c-dial__current-value-text js-dial-current-value"
-                    lengthAdjust="spacing"
-                    text-anchor="middle"
-                    style="transform: translate(50%, 70%)"
-                >{{ curVal }}</text>
-            </svg>
-            <svg
-                class="c-gauge__units c-dial__units"
-                viewBox="0 0 50 100"
-            >
-                <text
-                    class="c-dial__units-text"
-                    lengthAdjust="spacing"
-                    text-anchor="middle"
-                    style="transform: translate(50%, 72%)"
-                >{{ units }}</text>
-            </svg>
-        </svg>
-
-        <svg
-            class="c-dial__bg"
-            viewBox="0 0 10 10"
-        >
+            <rect
+                class="c-dial__bg"
+                x="0"
+                y="0"
+                width="10"
+                height="10"
+            />
             <g
                 v-if="isDialLowLimit"
                 class="c-dial__limit-low"
@@ -126,7 +85,6 @@
                     height="5"
                 />
             </g>
-
             <g
                 v-if="isDialHighLimit"
                 class="c-dial__limit-high"
@@ -157,14 +115,14 @@
                     height="5"
                 />
             </g>
-        </svg>
+        </g>
 
-        <svg
-            v-if="typeFilledDial"
-            class="c-dial__filled-value-wrapper"
-            viewBox="0 0 10 10"
+        <g
+            class="c-dial__graphics"
+            mask="url(#gaugeValueMask)"
         >
             <g
+                v-if="typeFilledDial"
                 class="c-dial__filled-value"
                 :style="`transform: rotate(${degValueFilledDial}deg)`"
             >
@@ -193,21 +151,53 @@
                     height="5"
                 />
             </g>
-        </svg>
-
-        <svg
-            v-if="valueInBounds && typeNeedleDial"
-            class="c-dial__needle-value-wrapper"
-            viewBox="0 0 10 10"
-        >
             <g
+                v-if="valueInBounds && typeNeedleDial"
                 class="c-dial__needle-value"
                 :style="`transform: rotate(${degValue}deg)`"
             >
                 <path d="M4.90234 9.39453L5.09766 9.39453L5.30146 8.20874C6.93993 8.05674 8.22265 6.67817 8.22266 5C8.22266 3.22018 6.77982 1.77734 5 1.77734C3.22018 1.77734 1.77734 3.22018 1.77734 5C1.77734 6.67817 3.06007 8.05674 4.69854 8.20874L4.90234 9.39453Z" />
             </g>
-        </svg>
-    </template>
+        </g>
+        <g class="c-dial__text">
+            <g
+                v-if="displayCurVal"
+                class="c-dial__current-value-text-wrapper"
+            >
+                <text
+                    class="c-dial__current-value-text js-dial-current-value"
+                    y="55%"
+                    lengthAdjust="spacing"
+                    :font-size="curValFontSize"
+                    text-anchor="middle"
+                    transform="translate(5)"
+                >{{ curVal }}</text>
+                <text
+                    v-if="displayUnits"
+                    class="c-dial__units-text"
+                    y="68%"
+                    font-size="8%"
+                    text-anchor="middle"
+                    transform="translate(5)"
+                >{{ units }}</text>
+            </g>
+            <g
+                v-if="displayMinMax"
+                class="c-dial__range-text"
+                :font-size="rangeFontSize"
+            >
+                <text
+                    transform="translate(1.5 8.7) rotate(-45)"
+                    dominant-baseline="hanging"
+                >{{ rangeLow }}</text>
+                <text
+                    transform="translate(8.4 8.7) rotate(45)"
+                    dominant-baseline="hanging"
+                    text-anchor="end"
+                >{{ rangeHigh }}</text>
+            </g>
+        </g>
+    </svg>
 
     <template v-if="typeMeter">
         <div class="c-meter">
@@ -349,8 +339,23 @@ export default {
 
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
         },
+        curValFontSize() {
+            const CHAR_THRESHOLD = 2;
+            const START_PERC = 27;
+            const REDUCE_PERC = 2.5;
+
+            return this.fontSizeFromChars(this.digits, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
+        },
+        rangeFontSize() {
+            const CHAR_THRESHOLD = 3;
+            const START_PERC = 8.5;
+            const REDUCE_PERC = 0.8;
+            const RANGE_CHARS_MAX = Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length);
+
+            return this.fontSizeFromChars(RANGE_CHARS_MAX, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
+        },
         isDialLowLimit() {
-            return this.limitLow.length > 0 && this.dialLowLimitDeg < getLimitDegree('low', 'max');
+            return this.limitLow.toString().length > 0 && this.dialLowLimitDeg < getLimitDegree('low', 'max');
         },
         isDialLowLimitLow() {
             return this.dialLowLimitDeg >= getLimitDegree('low', 'q1');
@@ -362,7 +367,7 @@ export default {
             return this.dialLowLimitDeg >= getLimitDegree('low', 'q3');
         },
         isDialHighLimit() {
-            return this.limitHigh.length > 0 && this.dialHighLimitDeg < getLimitDegree('high', 'max');
+            return this.limitHigh.toString().length > 0 && this.dialHighLimitDeg < getLimitDegree('high', 'max');
         },
         isDialHighLimitLow() {
             return this.dialHighLimitDeg <= getLimitDegree('high', 'max');
@@ -383,10 +388,10 @@ export default {
             return this.degValue >= getLimitDegree('low', 'q3');
         },
         isMeterLimitHigh() {
-            return this.limitHigh.length > 0 && this.meterHighLimitPerc > 0;
+            return this.limitHigh.toString().length > 0 && this.meterHighLimitPerc > 0;
         },
         isMeterLimitLow() {
-            return this.limitLow.length > 0 && this.meterLowLimitPerc > 0;
+            return this.limitLow.toString().length > 0 && this.meterLowLimitPerc > 0;
         },
         typeDial() {
             return this.matchGaugeType('dial');
@@ -503,6 +508,11 @@ export default {
                     }
                 ]
             });
+        },
+        fontSizeFromChars(charNum, charThreshold, startPerc, reducePerc) {
+            const fs = (charNum <= charThreshold) ? startPerc : (startPerc - ((charNum - charThreshold) * reducePerc));
+
+            return fs.toString() + "%";
         },
         matchGaugeType(str) {
             return this.gaugeType.indexOf(str) !== -1;
