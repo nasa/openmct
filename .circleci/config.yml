@@ -12,7 +12,7 @@ parameters:
     type: boolean
 commands:
   build_and_install:
-    description: "All steps used to build and install. Will not work on node10"
+    description: "All steps used to build and install. Will use cache if found"
     parameters:
       node-version:
         type: string
@@ -130,8 +130,12 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
-      - run: npm run cov:e2e:report 
-      - run: npm run cov:e2e:<<parameters.suite>>:publish
+      - when: # always collect code coverage regardless of test execution status
+          condition:
+            equal: [ 42, 42 ] # a value that is always true
+          steps:
+            - run: npm run cov:e2e:report 
+            - run: npm run cov:e2e:<<parameters.suite>>:publish
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
