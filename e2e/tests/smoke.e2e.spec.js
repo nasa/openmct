@@ -51,7 +51,7 @@ test('Verify that the create button appears and that the Folder Domain Object is
 test('Verify that My Items Tree appears @ipad', async ({ page }) => {
 
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('/');
 
     //My Items to be visible
     await expect(page.locator('a:has-text("My Items")')).toBeEnabled();
