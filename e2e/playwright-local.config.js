@@ -49,6 +49,7 @@ const config = {
         {
             name: 'safari',
             testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grep: /@ipad/, // only run ipad tests due to this bug https://github.com/microsoft/playwright/issues/8340
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'webkit'
