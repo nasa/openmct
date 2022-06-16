@@ -1,6 +1,10 @@
 /* eslint-disable no-undef */
 
-// This file extends the base functionality of the playwright test framework
+/* This file extends the base functionality of the playwright test framework to enable
+ * code coverage instrumentation, console log error detection and working with a 3rd 
+ * party Chrome-as-a-service extension called Browserless.
+ */
+
 const base = require('@playwright/test');
 const { expect } = require('@playwright/test');
 const fs = require('fs');
@@ -26,6 +30,7 @@ function generateUUID() {
 }
 
 exports.test = base.test.extend({
+    //The following is based on https://github.com/mxschmitt/playwright-test-coverage
     context: async ({ context }, use) => {
         await context.addInitScript(() =>
             window.addEventListener('beforeunload', () =>

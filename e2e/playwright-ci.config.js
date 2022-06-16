@@ -7,7 +7,7 @@ const { devices } = require('@playwright/test');
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 1,
+    retries: 0,
     testDir: 'tests',
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
@@ -44,14 +44,28 @@ const config = {
                     height: 1440
                 }
             }
-        }
-        /*{
+        },
+        {
+            name: 'firefox',
+            use: {
+                browserName: 'firefox'
+            }
+        },
+        {
+            name: 'canary',
+            use: {
+                browserName: 'chromium',
+                channel: 'chrome-canary'
+            }
+        },
+        {
             name: 'ipad',
+            grep: /@ipad/,
             use: {
                 browserName: 'webkit',
                 ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
             }
-        }*/
+        }
     ],
     reporter: [
         ['list'],
