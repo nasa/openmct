@@ -28,6 +28,27 @@
         display: flex;
         flex-direction: column;
         flex: 1 1 auto;
+
+        &.unnsynced{
+            @include sUnsynced();
+        }
+
+        &.cursor-zoom-in {
+            cursor: zoom-in;
+        }
+
+        &.cursor-zoom-out {
+            cursor: zoom-out;
+        }
+
+        &.pannable {
+            @include cursorGrab();
+        }
+    }
+
+    .image-wrapper {
+        overflow: visible clip;
+        background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px);
     }
 
     .image-wrapper {
@@ -45,30 +66,26 @@
             flex: 1 1 auto;
             height: 0;
             overflow: hidden;
-            &.unnsynced{
-                @include sUnsynced();
-            }
-            &.cursor-zoom-in {
-                cursor: zoom-in;
-            }
-            &.cursor-zoom-out {
-                cursor: zoom-out;
-            }
-            &.pannable {
-                @include cursorGrab();
-
-            }
         }
         &__background-image {
+            // Actually does the image display
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
+            height: 100%; //fallback value
         }
         &__image {
+            // Present to allow Save As... image
+            position: absolute;
             height: 100%;
             width: 100%;
-            visibility: hidden;
-            display: contents;
+            opacity: 0;
+        }
+
+        &__image-save-proxy {
+            height: 100%;
+            width: 100%;
+            z-index: 10;
         }
     }
 
@@ -77,6 +94,7 @@
         background: rgba(black, 0.2);
         border-radius: $smallCr;
         padding: 2px $interiorMargin;
+        pointer-events: none;
         position: absolute;
         right: $m;
         top: $m;
@@ -146,6 +164,11 @@
     }
 
 
+    &__layer-image {
+        pointer-events: none;
+        z-index: 1;
+    }
+
     &__thumbs-wrapper {
         display: flex; // Uses row layout
         justify-content: flex-end;
@@ -179,6 +202,50 @@
         font-size: 0.8em;
         margin: $interiorMarginSm;
     }
+
+    .c-control-menu {
+        // Controls on left of flex column layout, close btn on right
+        @include menuOuter();
+
+        border-radius: $controlCr;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: $interiorMargin;
+        width: min-content;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
+
+    .c-switcher-menu {
+        display: contents;
+
+        &__content {
+            // Menu panel
+            top: 28px;
+            position: absolute;
+
+            .c-so-view & {
+                top: 25px;
+            }
+        }
+    }
+}
+
+.--width-less-than-220 .--show-if-less-than-220.c-switcher-menu {
+    display: contents !important;
+}
+
+.s-image-layer {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    opacity: 0.5;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 /*************************************** THUMBS */
@@ -229,70 +296,36 @@
 /*************************************** IMAGERY LOCAL CONTROLS*/
 .c-imagery {
     .h-local-controls--overlay-content {
+        display: flex;
+        flex-direction: row;
         position: absolute;
         left: $interiorMargin; top: $interiorMargin;
         z-index: 70;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
-        max-width: 250px;
-        min-width: 170px;
-        width: 35%;
         align-items: center;
-        padding: $interiorMargin $interiorMarginLg;
-
-        input[type="range"] {
-            display: block;
-            width: 100%;
-            &:not(:first-child) {
-                margin-top: $interiorMarginLg;
-            }
-
-            &:before {
-                margin-right: $interiorMarginSm;
-            }
-        }
+        padding: $interiorMargin $interiorMargin;
 
         .s-status-taking-snapshot & {
             display: none;
         }
     }
-
-    &__lc {
-        &__reset-btn {
-            // Span that holds bracket graphics and button
-            $bc: $scrollbarTrackColorBg;
-
-            &:before,
-            &:after {
-                border-right: 1px solid $bc;
-                content:'';
-                display: block;
-                width: 5px;
-                height: 4px;
-            }
-
-            &:before {
-                border-top: 1px solid $bc;
-                margin-bottom: 2px;
-            }
-
-            &:after {
-                border-bottom: 1px solid $bc;
-                margin-top: 2px;
-            }
-
-            .c-icon-link {
-                color: $colorBtnFg;
-            }
+    [class*='--menus-aligned'] {
+        > * + * {
+            button { margin-left: $interiorMarginSm; }
         }
     }
 }
 
 .c-image-controls {
+    &__controls-wrapper {
+        // Wraps __controls and __close-btn
+        display: flex;
+    }
+
     &__controls {
         display: flex;
         align-items: stretch;
-        flex-direction: column;
 
         > * + * {
             margin-top: $interiorMargin;
@@ -314,30 +347,66 @@
 
     }
 
-    &__input {
-        // A wrapper is needed to add the type icon to left of each control
-
-        input[type='range'] {
-            //width: 100%; // Do we need this?
-        }
-    }
-
     &__zoom {
-        > * + * { margin-left: $interiorMargin; }
+        > * + * { margin-left: $interiorMargin; } // Is this used?
     }
 
-    &__sliders {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
+    &--filters {
+        // Styles specific to the brightness and contrast controls
 
-        > * + * {
-            margin-top: 11px;
+        .c-image-controls {
+            &__sliders {
+                display: flex;
+                flex: 1 1 auto;
+                flex-direction: column;
+                min-width: 80px;
+
+                > * + * {
+                    margin-top: 11px;
+                }
+
+                input[type="range"] {
+                    display: block;
+                    width: 100%;
+                }
+            }
+
+            &__slider-wrapper {
+                display: flex;
+                align-items: center;
+
+                &:before { margin-right: $interiorMargin; }
+            }
+
+            &__reset-btn {
+                // Span that holds bracket graphics and button
+                $bc: $scrollbarTrackColorBg;
+                flex: 0 0 auto;
+
+                &:before,
+                &:after {
+                    border-right: 1px solid $bc;
+                    content:'';
+                    display: block;
+                    width: 5px;
+                    height: 4px;
+                }
+
+                &:before {
+                    border-top: 1px solid $bc;
+                    margin-bottom: 2px;
+                }
+
+                &:after {
+                    border-bottom: 1px solid $bc;
+                    margin-top: 2px;
+                }
+
+                .c-icon-link {
+                    color: $colorBtnFg;
+                }
+            }
         }
-    }
-
-    &__btn-reset {
-        flex: 0 0 auto;
     }
 }
 
@@ -383,7 +452,7 @@
     @include cArrowButtonSizing($dimOuter: 48px);
     border-radius: $controlCr;
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         @include cArrowButtonSizing($dimOuter: 32px);
     }
 }
@@ -408,10 +477,6 @@
             [class*='__image-handle'] {
                 background-color: $colorBodyFg;
             }
-
-            //[class*='__image-placeholder'] {
-            //    display: none;
-            //}
 
             img {
                 display: block !important;

@@ -20,42 +20,34 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<ul class="c-tree c-bar-graph-options">
-    <h2 title="Display properties for this object">Bar Graph Series</h2>
-    <li
-        v-for="series in domainObject.composition"
-        :key="series.key"
-    >
-        <series-options
-            :item="series"
-            :color-palette="colorPalette"
-        />
-    </li>
-</ul>
+<div>
+    <div v-if="canEdit">
+        <plot-options-edit />
+    </div>
+    <div v-else>
+        <plot-options-browse />
+    </div>
+</div>
 </template>
 
 <script>
-import SeriesOptions from "./SeriesOptions.vue";
-import ColorPalette from '@/ui/color/ColorPalette';
-
+import PlotOptionsBrowse from "./PlotOptionsBrowse.vue";
+import PlotOptionsEdit from "./PlotOptionsEdit.vue";
 export default {
     components: {
-        SeriesOptions
+        PlotOptionsBrowse,
+        PlotOptionsEdit
     },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            isEditing: this.openmct.editor.isEditing(),
-            colorPalette: this.colorPalette
+            isEditing: this.openmct.editor.isEditing()
         };
     },
     computed: {
         canEdit() {
             return this.isEditing && !this.domainObject.locked;
         }
-    },
-    beforeMount() {
-        this.colorPalette = new ColorPalette();
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.setEditState);

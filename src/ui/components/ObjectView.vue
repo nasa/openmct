@@ -28,6 +28,7 @@ const SupportedViewTypes = [
     'plot-stacked',
     'plot-overlay',
     'bar-graph.view',
+    'scatter-plot.view',
     'time-strip.view'
 ];
 export default {

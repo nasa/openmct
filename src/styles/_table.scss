@@ -90,7 +90,7 @@ div.c-table {
         flex: 1 1 auto;
     }
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         &:not(.is-paused) {
             .c-table-control-bar {
                 display: none;

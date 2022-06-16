@@ -121,6 +121,18 @@ define([
         return _.sortBy(matchingMetadata, ...iteratees);
     };
 
+    /**
+     * check out of a given metadata has array values
+     */
+    TelemetryMetadataManager.prototype.isArrayValue = function (metadata) {
+        const regex = /\[\]$/g;
+        if (!metadata.format && !metadata.formatString) {
+            return false;
+        }
+
+        return (metadata.format || metadata.formatString).match(regex) !== null;
+    };
+
     TelemetryMetadataManager.prototype.getFilterableValues = function () {
         return this.valueMetadatas.filter(metadatum => metadatum.filters && metadatum.filters.length > 0);
     };
@@ -138,7 +150,7 @@ define([
             valueMetadata = this.values()[0];
         }
 
-        return valueMetadata.key;
+        return valueMetadata;
     };
 
     return TelemetryMetadataManager;

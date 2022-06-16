@@ -3,19 +3,18 @@
     background: $sideBarBg;
     display: flex;
     justify-content: stretch;
-    max-width: 300px;
+    max-width: 600px;
 
     &.c-drawer--push.is-expanded {
         margin-right: $interiorMargin;
-        width: 50%;
+        width: 30%;
     }
 
     &.c-drawer--overlays.is-expanded {
         width: 95%;
     }
 
-    > * {
-        // Hardcoded for two columns
+    &__pane {
         background: $sideBarBg;
         display: flex;
         flex: 1 1 50%;
@@ -31,32 +30,30 @@
         }
     }
 
-    &__pane {
-        > * + * { margin-top: $interiorMargin; }
+    &__right-edge {
+        flex: 0 0 auto;
+        padding: $interiorMarginSm;
     }
 
     &__header-w {
-        // Wraps header, used for page pane with collapse button
+        // Wraps header, used for page pane with collapse buttons
         display: flex;
         flex: 0 0 auto;
         background: $sideBarHeaderBg;
         align-items: center;
-
-        .c-icon-button {
-            font-size: 0.8em;
-            color: $colorBodyFg;
-        }
     }
 
     &__header {
         color: $sideBarHeaderFg;
         display: flex;
+        align-items: center;
         flex: 1 1 auto;
-        padding: $interiorMargin;
+        padding: $interiorMarginSm $interiorMargin;
         text-transform: uppercase;
 
-        > * {
+        &-label {
             @include ellipsize();
+            flex: 1 1 auto;
         }
     }
 
@@ -66,17 +63,8 @@
         flex-direction: column;
         flex: 1 1 auto;
 
-        > * {
-            margin: auto $interiorMargin $interiorMargin $interiorMargin;
-
-            &:first-child {
-                border-bottom: 1px solid $colorInteriorBorder;
-                flex: 0 0 auto;
-            }
-
-            + * {
-                margin-top: $interiorMargin;
-            }
+        > * + * {
+            margin-top: $interiorMargin;
         }
     }
 
@@ -85,12 +73,6 @@
         overflow-x: hidden;
         overflow-y: auto;
         padding: auto $interiorMargin;
-    }
-
-    .c-list-button {
-        .c-button {
-            font-size: 0.8em;
-        }
     }
 
     .c-list__item {

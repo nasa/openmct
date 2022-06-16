@@ -23,7 +23,10 @@
 <template>
 <div
     class="form-row c-form__row"
-    :class="[{ 'first': first }]"
+    :class="[
+        { 'first': first },
+        cssClass
+    ]"
     @onChange="onChange"
 >
     <div
@@ -34,7 +37,7 @@
     </div>
     <div
         class="c-form-row__state-indicator"
-        :class="rowClass"
+        :class="reqClass"
     >
     </div>
     <div
@@ -76,24 +79,22 @@ export default {
         };
     },
     computed: {
-        rowClass() {
-            let cssClass = this.cssClass;
+        reqClass() {
+            let reqClass = 'req';
 
             if (!this.row.required) {
                 return;
             }
 
-            cssClass = `${cssClass} req`;
-
             if (this.visited && this.valid !== undefined) {
                 if (this.valid === true) {
-                    cssClass = `${cssClass} valid`;
+                    reqClass = 'valid';
                 } else {
-                    cssClass = `${cssClass} invalid`;
+                    reqClass = 'invalid';
                 }
             }
 
-            return cssClass;
+            return reqClass;
         }
     },
     mounted() {

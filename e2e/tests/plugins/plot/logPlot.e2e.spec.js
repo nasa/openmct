@@ -25,10 +25,14 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Log plot tests', () => {
-    test.slow('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
+    test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
+        //This is necessary due to the size of the test suite.
+        await test.setTimeout(120 * 1000);
+
         await makeOverlayPlot(page);
         await testRegularTicks(page);
         await enableEditMode(page);
@@ -42,8 +46,11 @@ test.describe('Log plot tests', () => {
         await testLogTicks(page);
         //await testLogPlotPixels(page);
 
-        // refresh page and wait for charts and ticks to load
+        // FIXME: Get rid of the waitForTimeout() and lint warning exception.
+        // eslint-disable-next-line playwright/no-wait-for-timeout
         await page.waitForTimeout(1 * 1000);
+
+        // refresh page and wait for charts and ticks to load
         await page.reload({ waitUntil: 'networkidle'});
         await page.waitForSelector('.gl-plot-chart-area');
         await page.waitForSelector('.gl-plot-y-tick-label');
@@ -53,7 +60,9 @@ test.describe('Log plot tests', () => {
         //await testLogPlotPixels(page);
     });
 
-    test.skip('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
+    // Leaving test as 'TODO' for now.
+    // NOTE: Not eligible for community contributions.
+    test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
         await makeOverlayPlot(page);
         await enableEditMode(page);
         await enableLogMode(page);
@@ -238,6 +247,8 @@ async function saveOverlayPlot(page) {
 /**
  * @param {import('@playwright/test').Page} page
  */
+// FIXME: Remove this eslint exception once implemented
+// eslint-disable-next-line no-unused-vars
 async function testLogPlotPixels(page) {
     const pixelsMatch = await page.evaluate(async () => {
         // TODO get canvas pixels at a few locations to make sure they're the correct color, to test that the plot comes out as expected.
