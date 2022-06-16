@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
 /* This file extends the base functionality of the playwright test framework to enable
- * code coverage instrumentation, console log error detection and working with a 3rd 
+ * code coverage instrumentation, console log error detection and working with a 3rd
  * party Chrome-as-a-service extension called Browserless.
  */
 
