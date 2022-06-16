@@ -134,15 +134,18 @@ export default {
                 this.formattedYValueFromStats = '';
             }
 
-            const getPath = this.dynamicPathForKey('color');
-            const seriesColorPath = getPath(this.domainObject, seriesObject);
+            if (this.domainObject.configuration) {
+                const key = this.domainObject.type === "telemetry.plot.stacked" ? 'series.color' : 'color';
+                const getPath = this.dynamicPathForKey(key);
+                const seriesColorPath = getPath(this.domainObject, seriesObject);
 
-            if (!this.colorObserver) {
-                this.colorObserver = this.openmct.objects.observe(
-                    this.domainObject,
-                    seriesColorPath,
-                    this.changeColor.bind(this, seriesObject)
-                );
+                if (!this.colorObserver) {
+                    this.colorObserver = this.openmct.objects.observe(
+                        this.domainObject,
+                        seriesColorPath,
+                        this.changeColor.bind(this, seriesObject)
+                    );
+                }
             }
         },
         changeColor(seriesObject) {
