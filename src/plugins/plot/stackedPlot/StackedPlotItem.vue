@@ -229,7 +229,8 @@ export default {
 
                     if (!persistedSeriesConfig) {
                         persistedSeriesConfig = {
-                            series: {}
+                            series: {},
+                            yAxis: {}
                         };
                     }
 
@@ -243,7 +244,9 @@ export default {
                                         identifier: this.childObject.identifier,
                                         ...persistedSeriesConfig.series
                                     }
-                                ]
+                                ],
+                                yAxis: persistedSeriesConfig.yAxis
+
                             }
                         },
                         openmct: this.openmct,
