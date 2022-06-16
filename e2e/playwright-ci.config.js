@@ -36,6 +36,7 @@ const config = {
         },
         {
             name: 'MMOC',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
@@ -47,6 +48,7 @@ const config = {
         },
         {
             name: 'safari',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'webkit'
@@ -54,6 +56,7 @@ const config = {
         },
         {
             name: 'firefox',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'firefox'
@@ -61,6 +64,7 @@ const config = {
         },
         {
             name: 'canary',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
@@ -69,6 +73,7 @@ const config = {
         },
         {
             name: 'ipad',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
             grep: /@ipad/,
             grepInvert: /@snapshot/,
             use: {
