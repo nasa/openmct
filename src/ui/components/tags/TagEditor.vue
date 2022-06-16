@@ -100,7 +100,7 @@ export default {
         }
     },
     async mounted() {
-        this.annontation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
+        this.annotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
         this.addAnnotationListener(this.annotation);
         if (this.annotation && this.annotation.tags) {
             this.tagsChanged(this.annotation.tags);
@@ -141,13 +141,13 @@ export default {
         async tagAdded(newTag) {
             const existingAnnotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
 
-            const newAnnotation = await this.openmct.annotation.addAnnotationTag(existingAnnotation,
+            this.annotation = await this.openmct.annotation.addAnnotationTag(existingAnnotation,
                 this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
             if (!this.annotation) {
-                this.addAnnotationListener(newAnnotation);
+                this.addAnnotationListener(this.annotation);
             }
 
-            this.tagsChanged(newAnnotation.tags);
+            this.tagsChanged(this.annotation.tags);
             this.userAddingTag = false;
         }
     }
