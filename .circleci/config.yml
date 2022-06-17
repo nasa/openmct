@@ -138,7 +138,7 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       #- run: npx playwright install chrome-beta
-      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL} || 
+      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - generate_e2e_code_cov_report:
          suite: <<parameters.suite>>          
       - store_test_results:
