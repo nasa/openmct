@@ -42,9 +42,8 @@ test.describe('Sine Wave Generator', () => {
 
         // Verify that the each required field has required indicator
         // Title
-        //await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/req/);
-        await expect(page.locator('.c-form-row__state-indicator >> nth=0')).toHaveClass(/req/);
-
+        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/req/);
+        
         // Verify that the Notes row does not have a required indicator
         await expect(page.locator('.c-form__section div:nth-child(3) .form-row .c-form-row__state-indicator')).not.toContain('.req');
 
