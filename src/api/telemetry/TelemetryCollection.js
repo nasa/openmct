@@ -26,7 +26,7 @@ import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } fro
 
 /** Class representing a Telemetry Collection. */
 
-export class TelemetryCollection extends EventEmitter {
+export default class TelemetryCollection extends EventEmitter {
     /**
      * Creates a Telemetry Collection
      *
