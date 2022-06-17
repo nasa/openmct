@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import DefaultClock from '../../utils/clock/DefaultClock';
+import requestInterceptor from './requestInterceptor';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
@@ -48,6 +49,17 @@ export default class RemoteClock extends DefaultClock {
         this.metadata = undefined;
 
         this.lastTick = 0;
+
+        this.remoteClockLoaded = false;
+        this.loadedBoundsResolve = undefined;
+        this.openmct.telemetry.addRequestInterceptor(
+            requestInterceptor(
+                this.identifier,
+                new Promise((resolve, reject) => {
+                    this.loadedBoundsResolve = resolve;
+                })
+            )
+        );
 
         this._processDatum = this._processDatum.bind(this);
     }
@@ -108,6 +120,11 @@ export default class RemoteClock extends DefaultClock {
      * @private
      */
     _processDatum(datum) {
+        if (!this.remoteClockLoaded) {
+            this.remoteClockLoaded = true;
+            this.loadedBoundsResolve(this.openmct.time.bounds());
+        }
+
         let time = this.parseTime(datum);
 
         if (time > this.lastTick) {

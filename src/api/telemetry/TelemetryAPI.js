@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import TelemetryCollection from './TelemetryCollection';
+import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
 import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
 import TelemetryMetadataManager from './TelemetryMetadataManager';
 import TelemetryValueFormatter from './TelemetryValueFormatter';
@@ -43,6 +44,8 @@ export default class TelemetryAPI {
         this.requestProviders = [];
         this.subscriptionProviders = [];
         this.valueFormatterCache = new WeakMap();
+
+        this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
     }
 
     abortAllRequests() {
@@ -174,6 +177,47 @@ export default class TelemetryAPI {
     }
 
     /**
+     * Register a request interceptor that transforms a request via module:openmct.TelemetryAPI.request
+     * The request will be modifyed when it is received and will be returned in it's modified state
+     * The request will be transformed only if the interceptor is applicable to that domain object as defined by the RequestInterceptorDef
+     *
+     * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the request interceptor definition to add
+     * @method addRequestInterceptor
+     * @memberof module:openmct.TelemetryRequestInterceptorRegistry#
+     */
+    addRequestInterceptor(requestInterceptorDef) {
+        this.interceptorRegistry.addInterceptor(requestInterceptorDef);
+    }
+
+    /**
+     * Retrieve the request interceptors for a given domain object.
+     * @private
+     */
+    listRequestInterceptors(identifier, request) {
+        return this.requestInterceptorRegistry.getInterceptors(identifier, request);
+    }
+
+    /**
+     * Inovke interceptors if applicable for a given domain object.
+     * @private
+     */
+    async applyRequestInterceptors(identifier, request) {
+        const interceptors = this.listRequestInterceptors(identifier, request);
+
+        if (interceptors.length === 0) {
+            return Promise.resolve(request);
+        }
+
+        const finalRequest = await interceptors.reduce(async (prevRequest, interceptor) => {
+            const modifiedRequest = await interceptor.invoke(identifier, prevRequest);
+
+            return modifiedRequest;
+        }, Promise.resolve(request));
+
+        return finalRequest;
+    }
+
+    /**
      * Request telemetry collection for a domain object.
      * The `options` argument allows you to specify filters
      * (start, end, etc.), sort order, and strategies for retrieving
@@ -225,6 +269,7 @@ export default class TelemetryAPI {
         this.requestAbortControllers.add(abortController);
 
         this.standardizeRequestOptions(arguments[1]);
+
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
             this.requestAbortControllers.delete(abortController);
@@ -232,17 +277,19 @@ export default class TelemetryAPI {
             return this.handleMissingRequestProvider(domainObject);
         }
 
-        return provider.request.apply(provider, arguments)
-            .catch((rejected) => {
-                if (rejected.name !== 'AbortError') {
-                    this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-                    console.error(rejected);
-                }
+        return this.applyRequestInterceptors(domainObject.identifier, arguments[1]).then((args) => {
+            return provider.request(domainObject, args)
+                .catch((rejected) => {
+                    if (rejected.name !== 'AbortError') {
+                        this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+                        console.error(rejected);
+                    }
 
-                return Promise.reject(rejected);
-            }).finally(() => {
-                this.requestAbortControllers.delete(abortController);
-            });
+                    return Promise.reject(rejected);
+                }).finally(() => {
+                    this.requestAbortControllers.delete(abortController);
+                });
+        });
     }
 
     /**

@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 export default class TelemetryRequestInterceptorRegistry {
     /**
      * A TelemetryRequestInterceptorRegistry maintains the definitions for different interceptors that may be invoked on telemetry
@@ -32,8 +33,8 @@ export default class TelemetryRequestInterceptorRegistry {
 
     /**
      * @interface TelemetryRequestInterceptorDef
-     * @property {function} appliesTo function that determines if this interceptor should be called for the given identifier/object
-     * @property {function} invoke function that transforms the provided domain object and returns the transformed domain object
+     * @property {function} appliesTo function that determines if this interceptor should be called for the given identifier/request
+     * @property {function} invoke function that transforms the provided request and returns the transformed request
      * @property {function} priority the priority for this interceptor. A higher number returned has more weight than a lower number
      * @memberof module:openmct TelemetryRequestInterceptorRegistry#
      */
@@ -41,7 +42,7 @@ export default class TelemetryRequestInterceptorRegistry {
     /**
      * Register a new telemetry request interceptor.
      *
-     * @param {module:openmct.InterceptorDef} interceptorDef the interceptor to add
+     * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the interceptor to add
      * @method addInterceptor
      * @memberof module:openmct.TelemetryRequestInterceptorRegistry#
      */
@@ -51,15 +52,15 @@ export default class TelemetryRequestInterceptorRegistry {
     }
 
     /**
-     * Retrieve all interceptors applicable to a domain object.
+     * Retrieve all interceptors applicable to a domain object/request.
      * @method getInterceptors
-     * @returns [module:openmct.InterceptorDef] the registered interceptors for this identifier/object
+     * @returns [module:openmct.RequestInterceptorDef] the registered interceptors for this identifier/request
      * @memberof module:openmct.TelemetryRequestInterceptorRegistry#
      */
-    getInterceptors(identifier, object) {
+    getInterceptors(identifier, request) {
         return this.interceptors.filter(interceptor => {
             return typeof interceptor.appliesTo === 'function'
-                && interceptor.appliesTo(identifier, object);
+                && interceptor.appliesTo(identifier, request);
         });
     }
 
