@@ -42,7 +42,7 @@
     }
 }
 
-.is-selected { 
+.is-selected {
     background: $colorSelectedBg;
 }
 
@@ -74,7 +74,7 @@
 
 /*********************************************** TOOLBAR */
 .c-fault-mgmt__toolbar{
-    display: flex; 
+    display: flex;
     justify-content: center;
     > * {
         font-size: 1.25em;
@@ -82,11 +82,19 @@
 }
 
 /*********************************************** LIST VIEW */
-.c-faults-list-view { 
+.c-faults-list-view {
     display: flex;
     flex-direction: column;
     > * + * {
-        margin-top: $interiorMargin; 
+        margin-top: $interiorMargin;
+    }
+}
+
+.c-fault-mgmt {
+    &__list-content-right {
+        .--width-less-than-600 & {
+            display: none;
+        }
     }
 }
 
@@ -102,7 +110,7 @@
     > * {
         margin-left: $interiorMargin;
     }
-    
+
     &-severity{
         font-size: 2em;
         margin-left: $interiorMarginLg;
@@ -111,11 +119,11 @@
     &-pathname{
         flex-wrap: wrap;
         flex: 1 1 auto;
-        
+
     }
     &-path{
         font-size: .75em;
-    } 
+    }
 
     &-faultname{
         font-weight: bold;
@@ -219,7 +227,7 @@
     }
 }
 
-.is-selected { 
+.is-selected {
     background: $colorSelectedBg;
 }
 
