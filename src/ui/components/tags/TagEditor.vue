@@ -139,9 +139,7 @@ export default {
             return this.openmct.annotation.removeAnnotationTag(existingAnnotation, tagToRemove);
         },
         async tagAdded(newTag) {
-            const existingAnnotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
-
-            this.annotation = await this.openmct.annotation.addAnnotationTag(existingAnnotation,
+            this.annotation = await this.openmct.annotation.addAnnotationTag(this.annotation,
                 this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
             if (!this.annotation) {
                 this.addAnnotationListener(this.annotation);
