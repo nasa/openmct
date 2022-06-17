@@ -28,7 +28,9 @@ const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Sine Wave Generator', () => {
-    test('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page }) => {
+    test('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page, browserName }) => {
+        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -40,28 +42,29 @@ test.describe('Sine Wave Generator', () => {
 
         // Verify that the each required field has required indicator
         // Title
-        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(['c-form-row__state-indicator  req']);
+        //await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/req/);
+        await expect(page.locator('.c-form-row__state-indicator >> nth=0')).toHaveClass(/req/);
 
         // Verify that the Notes row does not have a required indicator
         await expect(page.locator('.c-form__section div:nth-child(3) .form-row .c-form-row__state-indicator')).not.toContain('.req');
 
         // Period
-        await expect(page.locator('.c-form__section div:nth-child(4) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('.c-form__section div:nth-child(4) .form-row .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Amplitude
-        await expect(page.locator('.c-form__section div:nth-child(5) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('.c-form__section div:nth-child(5) .form-row .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Offset
-        await expect(page.locator('.c-form__section div:nth-child(6) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('.c-form__section div:nth-child(6) .form-row .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Data Rate
-        await expect(page.locator('.c-form__section div:nth-child(7) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('.c-form__section div:nth-child(7) .form-row .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Phase
-        await expect(page.locator('.c-form__section div:nth-child(8) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('.c-form__section div:nth-child(8) .form-row .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Randomness
-        await expect(page.locator('.c-form__section div:nth-child(9) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('.c-form__section div:nth-child(9) .form-row .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Verify that by removing value from required text field shows invalid indicator
         await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('');
