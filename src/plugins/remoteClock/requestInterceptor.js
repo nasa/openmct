@@ -36,7 +36,7 @@ function requestInterceptor(remoteClockIdentifier, boundsPromise) {
 
             request.start = bounds.start;
             request.end = bounds.end;
-
+            console.log('intercepted request', request);
             return request;
         }
     };
