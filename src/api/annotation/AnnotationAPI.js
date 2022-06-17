@@ -181,7 +181,6 @@ export default class AnnotationAPI extends EventEmitter {
 
         const tagArray = [tag, ...existingAnnotation.tags];
         this.openmct.objects.mutate(existingAnnotation, 'tags', tagArray);
-        existingAnnotation.tags = tagArray;
 
         return existingAnnotation;
     }

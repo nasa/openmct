@@ -133,15 +133,14 @@ export default {
             this.addedTags.push(newTagValue);
             this.userAddingTag = true;
         },
-        async tagRemoved(tagToRemove) {
-            const existingAnnotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
-
-            return this.openmct.annotation.removeAnnotationTag(existingAnnotation, tagToRemove);
+        tagRemoved(tagToRemove) {
+            return this.openmct.annotation.removeAnnotationTag(this.annotation, tagToRemove);
         },
         async tagAdded(newTag) {
+            const annotationWasCreated = this.annotation === null || this.annotation === undefined;
             this.annotation = await this.openmct.annotation.addAnnotationTag(this.annotation,
                 this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
-            if (!this.annotation) {
+            if (annotationWasCreated) {
                 this.addAnnotationListener(this.annotation);
             }
 
