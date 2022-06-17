@@ -120,15 +120,16 @@ export default class RemoteClock extends DefaultClock {
      * @private
      */
     _processDatum(datum) {
-        if (!this.remoteClockLoaded) {
-            this.remoteClockLoaded = true;
-            this.loadedBoundsResolve(this.openmct.time.bounds());
-        }
-
         let time = this.parseTime(datum);
 
         if (time > this.lastTick) {
             this.tick(time);
+        }
+
+        if (!this.remoteClockLoaded) {
+            this.remoteClockLoaded = true;
+            console.log('bounds resolving', this.openmct.time.bound());
+            this.loadedBoundsResolve(this.openmct.time.bounds());
         }
     }
 

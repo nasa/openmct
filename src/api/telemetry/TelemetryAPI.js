@@ -255,6 +255,7 @@ export default class TelemetryAPI {
      *          telemetry data
      */
     request(domainObject) {
+        console.log('request', domainObject.identifier.key);
         if (this.noRequestProviderForAllObjects) {
             return Promise.resolve([]);
         }
@@ -278,6 +279,7 @@ export default class TelemetryAPI {
         }
 
         return this.applyRequestInterceptors(domainObject.identifier, arguments[1]).then((args) => {
+            console.log('new args', args);
             return provider.request(domainObject, args)
                 .catch((rejected) => {
                     if (rejected.name !== 'AbortError') {
