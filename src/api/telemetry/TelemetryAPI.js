@@ -186,7 +186,7 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryRequestInterceptorRegistry#
      */
     addRequestInterceptor(requestInterceptorDef) {
-        this.interceptorRegistry.addInterceptor(requestInterceptorDef);
+        this.requestInterceptorRegistry.addInterceptor(requestInterceptorDef);
     }
 
     /**
