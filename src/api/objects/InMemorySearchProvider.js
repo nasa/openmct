@@ -270,7 +270,6 @@ class InMemorySearchProvider {
     }
 
     onTagMutation(domainObject, newTags) {
-        domainObject.oldTags = domainObject.tags;
         domainObject.tags = newTags;
         const provider = this;
 
@@ -404,20 +403,16 @@ class InMemorySearchProvider {
             }
 
         });
-        // remove old tags
-        if (model.oldTags) {
-            model.oldTags.forEach(tagIDToRemove => {
-                const existsInNewModel = model.tags.includes(tagIDToRemove);
-                if (!existsInNewModel && this.localIndexedAnnotationsByTag[tagIDToRemove]) {
-                    this.localIndexedAnnotationsByTag[tagIDToRemove] = this.localIndexedAnnotationsByTag[tagIDToRemove].
-                        filter(annotationToRemove => {
-                            const shouldKeep = annotationToRemove.keyString !== keyString;
+        const tagsToRemoveFromIndex = Object.keys(this.localIndexedAnnotationsByTag).filter(indexedTag => {
+            return !(model.tags.includes(indexedTag));
+        });
+        tagsToRemoveFromIndex.forEach(tagToRemoveFromIndex => {
+            this.localIndexedAnnotationsByTag[tagToRemoveFromIndex] = this.localIndexedAnnotationsByTag[tagToRemoveFromIndex].filter(indexedAnnotation => {
+                const shouldKeep = indexedAnnotation.keyString !== keyString;
 
-                            return shouldKeep;
-                        });
-                }
+                return shouldKeep;
             });
-        }
+        });
     }
 
     localIndexAnnotation(objectToIndex, model) {
