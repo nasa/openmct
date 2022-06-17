@@ -128,7 +128,7 @@ export default class RemoteClock extends DefaultClock {
 
         if (!this.remoteClockLoaded) {
             this.remoteClockLoaded = true;
-            console.log('bounds resolving', this.openmct.time.bound());
+            console.log('bounds resolving', this.openmct.time.bounds());
             this.loadedBoundsResolve(this.openmct.time.bounds());
         }
     }
