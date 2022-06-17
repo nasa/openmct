@@ -69,7 +69,7 @@ const config = {
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
-                channel: 'chrome-canary'
+                channel: 'chrome-beta'
             }
         },
         {
