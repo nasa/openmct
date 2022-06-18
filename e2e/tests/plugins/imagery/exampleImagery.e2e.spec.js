@@ -581,6 +581,79 @@ test.describe('Example Imagery in Flexible layout', () => {
         await dragBrightnessSliderAndAssertFilterValues(page);
         await dragContrastSliderAndAssertFilterValues(page);
     });
+
+    // test.describe('Example Imagery in Tabs view', () => {
+    //     test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+    //     test.fixme('Can use alt+drag to move around image once zoomed in');
+    //     test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    //     test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
+    //     test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+    //     test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
+    //     test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
+    // });
+    test.describe('Example Imagery in Tabs view', () => {
+        test('Example Imagery in Tabs view', async ({ page }) => {
+            test.info().annotations.push({
+                type: 'issue'
+            });
+
+        // Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Click the Create button
+        await page.click('button:has-text("Create")');
+
+         // Click text=Example Imagery
+         await page.click('text=Example Imagery');
+
+         // Clear and set Image load delay (milliseconds)
+         await page.click('input[type="number"]', {clickCount: 3});
+         await page.type('input[type="number"]', "20");
+ 
+         // Click text=OK
+         await Promise.all([
+             page.waitForNavigation({waitUntil: 'networkidle'}),
+             page.click('text=OK'),
+             //Wait for Save Banner to appear
+             page.waitForSelector('.c-message-banner__message')
+         ]);
+         // Wait until Save Banner is gone
+         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+         const bgImageLocator = await page.locator(backgroundImageSelector);
+         await bgImageLocator.hover();
+
+        // Click the Create button
+        await page.click('button:has-text("Create")');
+
+        // Click text=Tabs View
+        await page.click('text=Tabs View');
+
+        // Create new Tabs View
+        await expect(page.locator('.js-form-title')).toHaveText('Create a New Tabs View');
+
+        // Click My Items
+        await page.locator('form[name="mctForm"] >> text=My Items').click();
+
+        // Click text=OK
+        await Promise.all([
+        page.waitForNavigation({waitUntil: 'networkidle'}),
+        page.click('text=OK'),
+        ])
+
+        // Click My Items
+        await page.locator('.c-disclosure-triangle').click();
+
+        // Right click example imagery
+        await page.click(('text=Unnamed Example Imagery'));
+
+        await page.pause()
+
+        });
+    });
+    
+
+
 });
 
 /**
@@ -767,12 +840,3 @@ async function mouseZoomIn(page) {
     expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
 }
 
-test.describe('Example Imagery in Tabs view', () => {
-    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-    test.fixme('Can use alt+drag to move around image once zoomed in');
-    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
-    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
-});
