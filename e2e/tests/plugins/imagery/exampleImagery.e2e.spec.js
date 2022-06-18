@@ -597,63 +597,58 @@ test.describe('Example Imagery in Flexible layout', () => {
                 type: 'issue'
             });
 
-        // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+            // Go to baseURL
+            await page.goto('/', { waitUntil: 'networkidle' });
 
-        // Click the Create button
-        await page.click('button:has-text("Create")');
+            // Click the Create button
+            await page.click('button:has-text("Create")');
 
-         // Click text=Example Imagery
-         await page.click('text=Example Imagery');
+            // Click text=Example Imagery
+            await page.click('text=Example Imagery');
 
-         // Clear and set Image load delay (milliseconds)
-         await page.click('input[type="number"]', {clickCount: 3});
-         await page.type('input[type="number"]', "20");
- 
-         // Click text=OK
-         await Promise.all([
-             page.waitForNavigation({waitUntil: 'networkidle'}),
-             page.click('text=OK'),
-             //Wait for Save Banner to appear
-             page.waitForSelector('.c-message-banner__message')
-         ]);
-         // Wait until Save Banner is gone
-         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-         const bgImageLocator = await page.locator(backgroundImageSelector);
-         await bgImageLocator.hover();
+            // Clear and set Image load delay (milliseconds)
+            await page.click('input[type="number"]', {clickCount: 3});
+            await page.type('input[type="number"]', "20");
+    
+            // Click text=OK
+            await Promise.all([
+                page.waitForNavigation({waitUntil: 'networkidle'}),
+                page.click('text=OK'),
+                //Wait for Save Banner to appear
+                page.waitForSelector('.c-message-banner__message')
+            ]);
+            // Wait until Save Banner is gone
+            await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+            await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+            const bgImageLocator = await page.locator(backgroundImageSelector);
+            await bgImageLocator.hover();
 
-        // Click the Create button
-        await page.click('button:has-text("Create")');
+            // Click the Create button
+            await page.click('button:has-text("Create")');
 
-        // Click text=Tabs View
-        await page.click('text=Tabs View');
+            // Click text=Tabs View
+            await page.click('text=Tabs View');
 
-        // Create new Tabs View
-        await expect(page.locator('.js-form-title')).toHaveText('Create a New Tabs View');
+            // Create new Tabs View
+            await expect(page.locator('.js-form-title')).toHaveText('Create a New Tabs View');
 
-        // Click My Items
-        await page.locator('form[name="mctForm"] >> text=My Items').click();
+            // Click My Items
+            await page.locator('form[name="mctForm"] >> text=My Items').click();
 
-        // Click text=OK
-        await Promise.all([
-        page.waitForNavigation({waitUntil: 'networkidle'}),
-        page.click('text=OK'),
-        ])
+            // Click text=OK
+            await Promise.all([
+            page.waitForNavigation({waitUntil: 'networkidle'}),
+            page.click('text=OK'),
+            ])
 
-        // Click My Items
-        await page.locator('.c-disclosure-triangle').click();
+            // Click My Items
+            await page.locator('.c-disclosure-triangle').click();
 
-        // Right click example imagery
-        await page.click(('text=Unnamed Example Imagery'));
-
-        await page.pause()
+            // Right click example imagery
+            await page.click(('text=Unnamed Example Imagery'));
 
         });
     });
-    
-
-
 });
 
 /**
