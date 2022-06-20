@@ -26,8 +26,8 @@ This test suite is dedicated to tests which verify form functionality.
 
 const { test, expect } = require('@playwright/test');
 
-test.describe('Tagging Notebooks', () => {
-    test('Can tag an entry', async ({ page }) => {
+test.describe('Tagging in Notebooks', () => {
+    async function createNotebookAndEntry(page) {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -43,7 +43,10 @@ test.describe('Tagging Notebooks', () => {
 
         // Click text=To start a new entry, click here or drag and drop any object
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+    }
 
+    async function createNotebookEntryAndTags(page) {
+        await createNotebookAndEntry(page);
         // Click text=To start a new entry, click here or drag and drop any object
         await page.locator('button:has-text("Add Tag")').click();
 
@@ -58,16 +61,47 @@ test.describe('Tagging Notebooks', () => {
         await page.locator('[placeholder="Type to select tag"]').click();
         // Click text=Science
         await page.locator('text=Science').click();
+    }
 
+    test('Can load tags', async ({ page }) => {
+        await createNotebookAndEntry(page);
+        // Click text=To start a new entry, click here or drag and drop any object
+        await page.locator('button:has-text("Add Tag")').click();
+
+        // Click [placeholder="Type to select tag"]
+        await page.locator('[placeholder="Type to select tag"]').click();
+
+        await expect(page.locator('.c-input--autocomplete__options')).toContainText("Science");
+        await expect(page.locator('.c-input--autocomplete__options')).toContainText("Drilling");
+        await expect(page.locator('.c-input--autocomplete__options')).toContainText("Driving");
+    });
+    test('Can add tags', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
+
+        await expect(page.locator('.c-notebook__entry')).toContainText("Science");
+        await expect(page.locator('.c-notebook__entry')).toContainText("Driving");
+
+        // Click button:has-text("Add Tag")
+        await page.locator('button:has-text("Add Tag")').click();
+
+        await expect(page.locator('.c-input--autocomplete__options')).not.toContainText("Science");
+        await expect(page.locator('.c-input--autocomplete__options')).not.toContainText("Driving");
+        await expect(page.locator('.c-input--autocomplete__options')).toContainText("Drilling");
+    });
+    test('Can search for tags', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
-        // Click [aria-label="Annotation Search Result"] >> text=Science Driving
+        await expect(page.locator('.c-gsearch-result')).toContainText("Science");
         await expect(page.locator('.c-gsearch-result')).toContainText("Driving");
-        // Click .c-notebook__entries
+    });
+
+    test('Can delete tags', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
         await page.locator('.c-notebook__entries').click();
-        // Click text=Science Driving Add Tag >> button >> nth=1
+        // Delete Driving
         await page.locator('text=Science Driving Add Tag >> button').nth(1).click();
 
         await expect(page.locator('.c-notebook__entry')).toContainText("Science");
@@ -76,11 +110,12 @@ test.describe('Tagging Notebooks', () => {
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('.c-gsearch-result')).not.toContainText("Driving");
-
+    });
+    test('Tags persist across reload', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
         //Go to baseURL
         await page.reload();
-
         await expect(page.locator('.c-notebook__entry')).toContainText("Science");
-        await expect(page.locator('.c-notebook__entry')).not.toContainText("Driving");
+        await expect(page.locator('.c-notebook__entry')).toContainText("Driving");
     });
 });
