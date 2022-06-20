@@ -48,7 +48,7 @@
 
 .is-acknowledged{
     .c-fault-mgmt__list-severity{
-        opacity: 40% !important;
+        opacity: 50% !important;
     }
     .c-fault-mgmt__list-faultname{
         font-size: 1.1em;
@@ -120,12 +120,15 @@
     display: flex;
     align-items: center;
 
+    .--width-less-than-600 & {
+        align-items: stretch;
+    }
+
     > * {
         margin-left: $interiorMargin;
         .--width-less-than-600 & {
-            flex-direction: column;
+            // flex-direction: column;
             align-items: stretch;
-
          }
     }
 
