@@ -83,6 +83,8 @@ test.describe('Tagging in Notebooks', () => {
 
         // Click button:has-text("Add Tag")
         await page.locator('button:has-text("Add Tag")').click();
+        // Click [placeholder="Type to select tag"]
+        await page.locator('[placeholder="Type to select tag"]').click();
 
         await expect(page.locator('.c-input--autocomplete__options')).not.toContainText("Science");
         await expect(page.locator('.c-input--autocomplete__options')).not.toContainText("Driving");
