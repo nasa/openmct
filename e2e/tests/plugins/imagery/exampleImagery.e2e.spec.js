@@ -647,6 +647,41 @@ test.describe('Example Imagery in Flexible layout', () => {
             // Right click example imagery
             await page.click(('text=Unnamed Example Imagery'));
 
+            // Click previous image button
+            const previousImageButton = page.locator('.c-nav--prev');
+            await previousImageButton.click();
+
+            // Verify previous image
+            const selectedImage = page.locator('.selected');
+            await expect(selectedImage).toBeVisible();
+
+            // Zoom in
+            const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
+            await bgImageLocator.hover({trial: true});
+            const deltaYStep = 100; // equivalent to 1x zoom
+            await page.mouse.wheel(0, deltaYStep * 2);
+            const zoomedBoundingBox = await bgImageLocator.boundingBox();
+            const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+            const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+
+            // Wait for zoom animation to finish
+            await bgImageLocator.hover({trial: true});
+            const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+            expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+            expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+
+            // Center the mouse pointer
+            await page.mouse.move(imageCenterX, imageCenterY);
+
+            // zoom out
+            await bgImageLocator.hover({trial: true});
+            await page.mouse.wheel(0, -deltaYStep);
+            // wait for zoom animation to finish
+            await bgImageLocator.hover({trial: true});
+            const imageMouseZoomedOut = await page.locator(backgroundImageSelector).boundingBox();
+
+            await page.pause();
+
         });
     });
 });
