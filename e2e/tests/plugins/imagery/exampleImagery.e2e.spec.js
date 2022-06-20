@@ -680,8 +680,11 @@ test.describe('Example Imagery in Flexible layout', () => {
             await bgImageLocator.hover({trial: true});
             const imageMouseZoomedOut = await page.locator(backgroundImageSelector).boundingBox();
 
-            await page.pause();
+            // zoom in
+            await mouseZoomIn(page);
 
+            // Pan zoom
+            await panZoomAndAssertImageProperties(page);
         });
     });
 });
