@@ -26,7 +26,8 @@
     :class="[
         {'is-selected': isSelected},
         {'is-unacknowledged': !fault.acknowledged},
-        {'is-shelved': fault.shelved}
+        {'is-shelved': fault.shelved},
+        {'is-acknowledged': fault.acknowledged}
     ]"
 >
     <div class="c-fault-mgmt__checkbox">

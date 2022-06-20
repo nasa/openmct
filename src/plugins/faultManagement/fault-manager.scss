@@ -40,6 +40,19 @@
     .c-fault-mgmt__list-severity{
         @include pulse($animName: severityAnim, $dur: 200ms);
     }
+    .c-fault-mgmt__list-faultname{
+        font-weight: bold;
+        font-size: 1.3em;
+    }
+}
+
+.is-acknowledged{
+    .c-fault-mgmt__list-severity{
+        opacity: 40% !important;
+    }
+    .c-fault-mgmt__list-faultname{
+        font-size: 1.1em;
+    }
 }
 
 .is-selected {
@@ -77,7 +90,7 @@
     display: flex;
     justify-content: center;
     > * {
-        font-size: 1.25em;
+        font-size: 1em;
     }
 }
 
@@ -90,13 +103,13 @@
     }
 }
 
-.c-fault-mgmt {
-    &__list-content-right {
-        .--width-less-than-600 & {
-            display: none;
-        }
-    }
-}
+// .c-fault-mgmt {
+//     &__list-content-right {
+//         .--width-less-than-600 & {
+//             display: none;
+//         }
+//     }
+// }
 
 
 /*********************************************** FAULT ITEM */
@@ -109,6 +122,11 @@
 
     > * {
         margin-left: $interiorMargin;
+        .--width-less-than-600 & {
+            flex-direction: column;
+            align-items: stretch;
+
+         }
     }
 
     &-severity{
@@ -119,6 +137,7 @@
     &-pathname{
         flex-wrap: wrap;
         flex: 1 1 auto;
+        max-width: 90%;
 
     }
     &-path{
@@ -126,8 +145,8 @@
     }
 
     &-faultname{
-        font-weight: bold;
-        font-size: 1.3em;
+        font-size: 1em;
+        
     }
 
     &-content{
@@ -135,20 +154,35 @@
         flex-wrap: wrap;
         flex: 1 1 auto;
         align-items: center;
+        .--width-less-than-600 & {
+            flex-direction: column;
+            margin-left: $interiorMarginLg;
+            align-items: stretch;
+
+         }
+    
     }
 
     &-content-right{
         margin-left: auto;
         display: flex;
         flex-wrap: wrap;
+        .--width-less-than-600 & {
+            margin-left: 0px;
+            // flex-direction: column;
+         }
     }
 
     &-trigVal, &-curVal, &-trigTime{
         @include ellipsize;
         border-radius: $controlCr;
         padding: $interiorMargin;
-        width: 80px;
+        width: 100px;
+        font-size: 1.1em;
         margin-right: $interiorMarginLg;
+        .--width-less-than-600 & {
+            margin-top: $interiorMargin;
+        }
 
     }
 
@@ -188,8 +222,13 @@
     background: rgba($colorBodyFg, .23);
     border-radius: $controlCr;
 
+
     &-tripVal, &-liveVal, &-trigTime{
         background: none;
+        padding: 0px;
+        .--width-less-than-600 & {
+            display: none;
+        }
     }
 
     &-trigTime{
