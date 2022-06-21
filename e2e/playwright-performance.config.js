@@ -10,7 +10,7 @@ const config = {
     workers: 1, //Only run in serial with 1 worker
     webServer: {
         command: 'npm run start',
-        port: 8080,
+        url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
     },
