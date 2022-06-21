@@ -37,6 +37,7 @@
 }
 
 .is-unacknowledged{
+    color: white;
     .c-fault-mgmt__list-severity{
         @include pulse($animName: severityAnim, $dur: 200ms);
     }
@@ -48,7 +49,22 @@
 
 .is-acknowledged{
     .c-fault-mgmt__list-severity{
-        opacity: 50% !important;
+        opacity: 70% !important;
+    }
+    .c-fault-mgmt__list-severity:after{
+        color: $colorLimitCyanIc;
+        content: "\e90f";
+        display: block;
+        font-family: symbolsfont;
+        position: absolute;
+        text-shadow: rgb(0 0 0 / 50%) 0 1px 4px;
+        top: auto;
+        left: 1%;
+        bottom: 10%;
+        right: auto;
+        transform-origin: right bottom;
+        transform: scale(0.45);
+        opacity: 1 !important;
     }
     .c-fault-mgmt__list-faultname{
         font-size: 1.1em;
@@ -127,7 +143,6 @@
     > * {
         margin-left: $interiorMargin;
         .--width-less-than-600 & {
-            // flex-direction: column;
             align-items: stretch;
          }
     }
@@ -137,6 +152,7 @@
         margin-left: $interiorMarginLg;
      }
 
+
     &-pathname{
         flex-wrap: wrap;
         flex: 1 1 auto;
@@ -144,7 +160,7 @@
 
     }
     &-path{
-        font-size: .75em;
+        font-size: .9em;
     }
 
     &-faultname{
@@ -170,6 +186,7 @@
         margin-left: auto;
         display: flex;
         flex-wrap: wrap;
+        margin-left: $interiorMarginLg;
         .--width-less-than-600 & {
             margin-left: 0px;
             // flex-direction: column;
