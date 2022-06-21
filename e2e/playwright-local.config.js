@@ -13,7 +13,7 @@ const config = {
     timeout: 30 * 1000,
     webServer: {
         command: 'npm run start',
-        port: 8080,
+        url: 'http://localhost:8080/#',
         timeout: 120 * 1000,
         reuseExistingServer: !process.env.CI
     },
@@ -69,7 +69,7 @@ const config = {
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
-                channel: 'chrome-canary' //Note this is not available in CI
+                channel: 'chrome-canary' //Note this is not available in ubuntu/CircleCI
             }
         },
         {
