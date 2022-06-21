@@ -69,6 +69,15 @@ const config = {
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
+                channel: 'chrome-canary' //Note this is not available in CI
+            }
+        },
+        {
+            name: 'chrome-beta',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'chromium',
                 channel: 'chrome-beta'
             }
         },

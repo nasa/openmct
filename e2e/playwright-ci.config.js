@@ -64,7 +64,7 @@ const config = {
             }
         },
         {
-            name: 'canary',
+            name: 'chrome-beta',
             testMatch: '**/*.e2e.spec.js', // only run e2e tests
             grepInvert: /@snapshot/,
             use: {
