@@ -121,20 +121,22 @@ export default {
         },
         setUpYAxisOptions() {
             this.yKeyOptions = this.seriesModel.metadata
+                ? this.seriesModel.metadata
                 .valuesForHints(['range'])
                 .map(function (o) {
                     return {
                         name: o.name,
                         key: o.key
                     };
-                });
+                })
+                : [];
 
             //  set yAxisLabel if none is set yet
             if (this.yAxisLabel === 'none') {
                 let yKey = this.seriesModel.model.yKey;
                 let yKeyModel = this.yKeyOptions.filter(o => o.key === yKey)[0];
 
-                this.yAxisLabel = yKeyModel.name;
+                this.yAxisLabel = yKeyModel ? yKeyModel.name : '';
             }
         },
         toggleYAxisLabel() {
