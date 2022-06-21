@@ -59,12 +59,11 @@
         position: absolute;
         text-shadow: rgb(0 0 0 / 50%) 0 1px 4px;
         top: auto;
-        left: 1%;
-        bottom: 10%;
+        left: 15%;
+        bottom: -5%;
         right: auto;
         transform-origin: right bottom;
         transform: scale(0.45);
-        opacity: 1 !important;
     }
     .c-fault-mgmt__list-faultname{
         font-size: 1.1em;
@@ -84,8 +83,6 @@
         @include pulse($animName: shelvedAnim, $dur: 0ms);
     }
 }
-
-
 
 /*********************************************** SEARCH  */
 .c-fault-mgmt__search-row{
@@ -119,15 +116,6 @@
     }
 }
 
-// .c-fault-mgmt {
-//     &__list-content-right {
-//         .--width-less-than-600 & {
-//             display: none;
-//         }
-//     }
-// }
-
-
 /*********************************************** FAULT ITEM */
 .c-fault-mgmt__list{
     background: rgba($colorBodyFg, 0.1);
@@ -150,8 +138,8 @@
     &-severity{
         font-size: 2em;
         margin-left: $interiorMarginLg;
+        height: 24.0909px;
      }
-
 
     &-pathname{
         flex-wrap: wrap;
@@ -160,12 +148,11 @@
 
     }
     &-path{
-        font-size: .9em;
+        font-size: .85em;
     }
 
     &-faultname{
-        font-size: 1em;
-        
+        font-size: 1em; 
     }
 
     &-content{
@@ -173,23 +160,19 @@
         flex-wrap: wrap;
         flex: 1 1 auto;
         align-items: center;
+        margin-left: $interiorMarginLg;
         .--width-less-than-600 & {
             flex-direction: column;
-            margin-left: $interiorMarginLg;
             align-items: stretch;
-
          }
-    
     }
 
     &-content-right{
         margin-left: auto;
         display: flex;
         flex-wrap: wrap;
-        margin-left: $interiorMarginLg;
         .--width-less-than-600 & {
             margin-left: 0px;
-            // flex-direction: column;
          }
     }
 
@@ -203,7 +186,6 @@
         .--width-less-than-600 & {
             margin-top: $interiorMargin;
         }
-
     }
 
     &-trigVal {
@@ -227,6 +209,8 @@
         display: flex;
         align-content: right;
         width: 100px;
+        flex: 0 0 auto;
+        margin-left: auto;
     }
 
     &-action-button{
@@ -241,7 +225,6 @@
     display: flex;
     background: rgba($colorBodyFg, .23);
     border-radius: $controlCr;
-
 
     &-tripVal, &-liveVal, &-trigTime{
         background: none;

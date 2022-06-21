@@ -37,37 +37,35 @@
             @input="toggleSelected"
         >
     </div>
-    <div class="c-fault-mgmt__list-group">
-        <div
-            class="c-fault-mgmt__list-severity"
-            :title="fault.severity"
-            :class="[
-                'is-severity-' + severity
-            ]"
-        >
+    <div
+        class="c-fault-mgmt__list-severity"
+        :title="fault.severity"
+        :class="[
+            'is-severity-' + severity
+        ]"
+    >
+    </div>
+    <div class="c-fault-mgmt__list-content">
+        <div class="c-fault-mgmt__list-pathname">
+            <div class="c-fault-mgmt__list-path">{{ fault.namespace }}</div>
+            <div class="c-fault-mgmt__list-faultname">{{ fault.name }}</div>
         </div>
-        <div class="c-fault-mgmt__list-content">
-            <div class="c-fault-mgmt__list-pathname">
-                <div class="c-fault-mgmt__list-path">{{ fault.namespace }}</div>
-                <div class="c-fault-mgmt__list-faultname">{{ fault.name }}</div>
+        <div class="c-fault-mgmt__list-content-right">
+            <div
+                class="c-fault-mgmt__list-trigVal"
+                :class="tripValueClassname"
+                title="Trip Value"
+            >{{ fault.triggerValueInfo.value }}</div>
+            <div
+                class="c-fault-mgmt__list-curVal"
+                :class="liveValueClassname"
+                title="Live Value"
+            >
+                {{ fault.currentValueInfo.value }}
             </div>
-            <div class="c-fault-mgmt__list-content-right">
-                <div
-                    class="c-fault-mgmt__list-trigVal"
-                    :class="tripValueClassname"
-                    title="Trip Value"
-                >{{ fault.triggerValueInfo.value }}</div>
-                <div
-                    class="c-fault-mgmt__list-curVal"
-                    :class="liveValueClassname"
-                    title="Live Value"
-                >
-                    {{ fault.currentValueInfo.value }}
-                </div>
-                <div
-                    class="c-fault-mgmt__list-trigTime"
-                >{{ fault.triggerTime }}
-                </div>
+            <div
+                class="c-fault-mgmt__list-trigTime"
+            >{{ fault.triggerTime }}
             </div>
         </div>
     </div>
