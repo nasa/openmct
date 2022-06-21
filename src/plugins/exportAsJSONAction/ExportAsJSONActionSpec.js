@@ -363,7 +363,6 @@ describe('Export as JSON plugin', () => {
         });
 
         spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
-            console.log(completedTree);
             expect(Object.keys(completedTree).length).toBe(2);
             const conditionSetId = Object.keys(completedTree.openmct)[1];
             expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();

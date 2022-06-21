@@ -136,14 +136,15 @@ export default class ExportAsJSONAction {
      * @returns {object}
      */
     _rewriteLinkForReference(child, parent) {
-        this.externalIdentifiers.push(this._getId(child));
+        const childId = this._getId(child);
+        this.externalIdentifiers.push(childId);
         const copyOfChild = JSON.parse(JSON.stringify(child));
 
         copyOfChild.identifier.key = uuid();
         const newIdString = this._getId(copyOfChild);
         const parentId = this._getId(parent);
 
-        this.idMap[this._getId(child)] = newIdString;
+        this.idMap[childId] = newIdString;
         copyOfChild.location = null;
         parent.configuration.objectStyles.conditionSetIdentifier = copyOfChild.identifier;
         this.tree[newIdString] = copyOfChild;
@@ -213,18 +214,10 @@ export default class ExportAsJSONAction {
                             }
                         }
                     });
-                    this.calls--;
-                    if (this.calls === 0) {
-                        this._rewriteReferences();
-                        this._saveAs(this._wrapTree());
-                    }
+                    this._decrementCallsAndSave();
                 });
         } else if (!childObjectReferenceId) {
-            this.calls--;
-            if (this.calls === 0) {
-                this._rewriteReferences();
-                this._saveAs(this._wrapTree());
-            }
+            this._decrementCallsAndSave();
         }
 
         if (childObjectReferenceId) {
@@ -246,12 +239,16 @@ export default class ExportAsJSONAction {
                         }
                     }
 
-                    this.calls--;
-                    if (this.calls === 0) {
-                        this._rewriteReferences();
-                        this._saveAs(this._wrapTree());
-                    }
+                    this._decrementCallsAndSave();
                 });
+        }
+    }
+
+    _decrementCallsAndSave() {
+        this.calls--;
+        if (this.calls === 0) {
+            this._rewriteReferences();
+            this._saveAs(this._wrapTree());
         }
     }
 }
