@@ -59,9 +59,6 @@ test.describe('Move item tests', () => {
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder2);
 
-        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-        await page.click('form[name="mctForm"] a:has-text("My Items")');
-
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=OK').click(),
