@@ -224,7 +224,8 @@ class InMemorySearchProvider {
 
     /**
      * Schedule an id to be indexed at a later date.  If there are less
-     * pending requests then allowed, will kick off an indexing request.
+     * pending requests than the maximum allowed, this will kick off an indexing request.
+     * This is done only when indexing first begins and we need to index a lot of objects.
      *
      * @private
      * @param {identifier} id to be indexed.
