@@ -31,6 +31,11 @@
   }
 }
 
+.c-dial__value-oor-indicator,
+.c-meter__value-oor-indicator {
+  fill: $colorGaugeRange;
+}
+
 /********************************************** DIAL GAUGE */
 .c-dial {
   max-height: 100%;
@@ -45,7 +50,8 @@
   &__limit-low rect {
     fill: $colorGaugeLimitLow;
   }
-  &__filled-value {
+  &__filled-value,
+  &__range-msg-text {
     fill: $colorGaugeValue;
   }
   &__needle-value {
@@ -59,8 +65,7 @@
 
   &__units-text,
   &__range-text {
-    $c: $colorGaugeRange;
-    fill: $c;
+    fill: $colorGaugeRange;
   }
 
   &__graphics g {
@@ -72,15 +77,9 @@
 /********************************************** METER GAUGE */
 .c-meter {
   // Common styles for c-meter
+  $meterOutOfRangeIndicatorMax: 50%;
   @include abs();
   display: flex;
-
-  svg {
-    // current-value-text
-    position: absolute;
-    height: 100%;
-    width: 100%;
-  }
 
   &__range {
     display: flex;
@@ -101,6 +100,30 @@
     background: $colorGaugeValue;
     transition: transform $transitionTimeGauge;
     z-index: 1;
+  }
+
+  &__value-oor-indicator {
+    opacity: 50%;
+    position: absolute;
+    max-height: $meterOutOfRangeIndicatorMax;
+    max-width: $meterOutOfRangeIndicatorMax;
+  }
+
+  &__current-value-text-wrapper {
+    // SVG
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+
+  &__current-value-text {
+    fill: $colorGaugeTextValue;
+    font-family: $heroFont;
+  }
+
+  &__viewbox-debug {
+    //fill: rgba(deeppink, 0.5);
+    display: none;
   }
 
   .c-gauge__curval {
@@ -142,6 +165,12 @@
     [class*='limit'] {
       left: 0;
       right: 0;
+    }
+
+    .c-meter__value-oor-indicator {
+      bottom: 2%;
+      left: 50%;
+      transform: translateX(-50%);
     }
   }
 
@@ -215,6 +244,12 @@
 
     &__limit-high {
       right: 0;
+    }
+
+    .c-meter__value-oor-indicator {
+      left: 2%;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 }

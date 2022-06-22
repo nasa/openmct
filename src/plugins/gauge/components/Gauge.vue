@@ -23,181 +23,205 @@
 <div
     class="c-gauge__wrapper js-gauge-wrapper"
     :class="`c-gauge--${gaugeType}`"
+    :title="gaugeTitle"
 >
-    <svg
-        v-if="typeDial"
-        class="c-gauge c-dial"
-        viewBox="0 0 10 10"
-    >
-        <g class="c-dial__masks">
-            <mask id="gaugeValueMask">
-                <path
-                    d="M1.8926 8.1074C1.09734 7.31215 0.605469 6.21352 0.605469 5C0.605469 2.57297 2.57297 0.605469 5 0.605469C7.42703 0.605469 9.39453 2.57297 9.39453 5C9.39453 6.21352 8.90266 7.31215 8.1074 8.1074L7.14066 7.14066C7.6885 6.59281 8.02734 5.83598 8.02734 5C8.02734 3.32804 6.67196 1.97266 5 1.97266C3.32804 1.97266 1.97266 3.32804 1.97266 5C1.97266 5.83598 2.3115 6.59281 2.85934 7.14066L1.8926 8.1074Z"
-                    fill="white"
-                />
-            </mask>
-            <mask id="gaugeBgMask">
-                <path
-                    d="M8.53553 8.53553C9.44036 7.63071 10 6.38071 10 5C10 2.23858 7.76142 0 5 0C2.23858 0 0 2.23858 0 5C0 6.38071 0.559644 7.63071 1.46447 8.53553L2.85934 7.14066C2.3115 6.59281 1.97266 5.83598 1.97266 5C1.97266 3.32804 3.32804 1.97266 5 1.97266C6.67196 1.97266 8.02734 3.32804 8.02734 5C8.02734 5.83598 7.6885 6.59281 7.14066 7.14066L8.53553 8.53553Z"
-                    fill="white"
-                />
-            </mask>
-        </g>
-
-        <g
-            class="c-dial__graphics"
-            mask="url(#gaugeBgMask)"
+    <template v-if="typeDial">
+        <svg
+            class="c-gauge c-dial"
+            viewBox="0 0 10 10"
         >
-            <rect
-                class="c-dial__bg"
-                x="0"
-                y="0"
-                width="10"
-                height="10"
-            />
-            <g
-                v-if="isDialLowLimit"
-                class="c-dial__limit-low"
-                :style="`transform: rotate(${dialLowLimitDeg}deg)`"
-            >
-                <rect
-                    v-if="isDialLowLimitLow"
-                    class="c-dial__low-limit__low"
-                    x="5"
-                    y="5"
-                    width="5"
-                    height="5"
-                />
-                <rect
-                    v-if="isDialLowLimitMid"
-                    class="c-dial__low-limit__mid"
-                    x="5"
-                    y="0"
-                    width="5"
-                    height="5"
-                />
-                <rect
-                    v-if="isDialLowLimitHigh"
-                    class="c-dial__low-limit__high"
-                    x="0"
-                    y="0"
-                    width="5"
-                    height="5"
-                />
+            <g class="c-dial__masks">
+                <mask id="gaugeValueMask">
+                    <path
+                        d="M1.8926 8.1074C1.09734 7.31215 0.605469 6.21352 0.605469 5C0.605469 2.57297 2.57297 0.605469 5 0.605469C7.42703 0.605469 9.39453 2.57297 9.39453 5C9.39453 6.21352 8.90266 7.31215 8.1074 8.1074L7.14066 7.14066C7.6885 6.59281 8.02734 5.83598 8.02734 5C8.02734 3.32804 6.67196 1.97266 5 1.97266C3.32804 1.97266 1.97266 3.32804 1.97266 5C1.97266 5.83598 2.3115 6.59281 2.85934 7.14066L1.8926 8.1074Z"
+                        fill="white"
+                    />
+                </mask>
+                <mask id="gaugeBgMask">
+                    <path
+                        d="M8.53553 8.53553C9.44036 7.63071 10 6.38071 10 5C10 2.23858 7.76142 0 5 0C2.23858 0 0 2.23858 0 5C0 6.38071 0.559644 7.63071 1.46447 8.53553L2.85934 7.14066C2.3115 6.59281 1.97266 5.83598 1.97266 5C1.97266 3.32804 3.32804 1.97266 5 1.97266C6.67196 1.97266 8.02734 3.32804 8.02734 5C8.02734 5.83598 7.6885 6.59281 7.14066 7.14066L8.53553 8.53553Z"
+                        fill="white"
+                    />
+                </mask>
             </g>
-            <g
-                v-if="isDialHighLimit"
-                class="c-dial__limit-high"
-                :style="`transform: rotate(${dialHighLimitDeg}deg)`"
-            >
-                <rect
-                    v-if="isDialHighLimitLow"
-                    class="c-dial__high-limit__low"
-                    x="0"
-                    y="5"
-                    width="5"
-                    height="5"
-                />
-                <rect
-                    v-if="isDialHighLimitMid"
-                    class="c-dial__high-limit__mid"
-                    x="0"
-                    y="0"
-                    width="5"
-                    height="5"
-                />
-                <rect
-                    v-if="isDialHighLimitHigh"
-                    class="c-dial__high-limit__high"
-                    x="5"
-                    y="0"
-                    width="5"
-                    height="5"
-                />
-            </g>
-        </g>
 
-        <g
-            class="c-dial__graphics"
-            mask="url(#gaugeValueMask)"
-        >
             <g
-                v-if="typeFilledDial"
-                class="c-dial__filled-value"
-                :style="`transform: rotate(${degValueFilledDial}deg)`"
+                class="c-dial__graphics"
+                mask="url(#gaugeBgMask)"
             >
                 <rect
-                    v-if="isDialFilledValueLow"
-                    class="c-dial__filled-value__low"
-                    x="5"
-                    y="5"
-                    width="5"
-                    height="5"
-                />
-                <rect
-                    v-if="isDialFilledValueMid"
-                    class="c-dial__filled-value__mid"
-                    x="5"
-                    y="0"
-                    width="5"
-                    height="5"
-                />
-                <rect
-                    v-if="isDialFilledValueHigh"
-                    class="c-dial__filled-value__high"
+                    class="c-dial__bg"
                     x="0"
                     y="0"
-                    width="5"
-                    height="5"
+                    width="10"
+                    height="10"
+                />
+                <g
+                    v-if="isDialLowLimit"
+                    class="c-dial__limit-low"
+                    :style="`transform: rotate(${dialLowLimitDeg}deg)`"
+                >
+                    <rect
+                        v-if="isDialLowLimitLow"
+                        class="c-dial__low-limit__low"
+                        x="5"
+                        y="5"
+                        width="5"
+                        height="5"
+                    />
+                    <rect
+                        v-if="isDialLowLimitMid"
+                        class="c-dial__low-limit__mid"
+                        x="5"
+                        y="0"
+                        width="5"
+                        height="5"
+                    />
+                    <rect
+                        v-if="isDialLowLimitHigh"
+                        class="c-dial__low-limit__high"
+                        x="0"
+                        y="0"
+                        width="5"
+                        height="5"
+                    />
+                </g>
+                <g
+                    v-if="isDialHighLimit"
+                    class="c-dial__limit-high"
+                    :style="`transform: rotate(${dialHighLimitDeg}deg)`"
+                >
+                    <rect
+                        v-if="isDialHighLimitLow"
+                        class="c-dial__high-limit__low"
+                        x="0"
+                        y="5"
+                        width="5"
+                        height="5"
+                    />
+                    <rect
+                        v-if="isDialHighLimitMid"
+                        class="c-dial__high-limit__mid"
+                        x="0"
+                        y="0"
+                        width="5"
+                        height="5"
+                    />
+                    <rect
+                        v-if="isDialHighLimitHigh"
+                        class="c-dial__high-limit__high"
+                        x="5"
+                        y="0"
+                        width="5"
+                        height="5"
+                    />
+                </g>
+            </g>
+
+            <g
+                class="c-dial__graphics"
+                mask="url(#gaugeValueMask)"
+            >
+                <g
+                    v-if="typeFilledDial"
+                    class="c-dial__filled-value"
+                    :style="`transform: rotate(${degValueFilledDial}deg)`"
+                >
+                    <rect
+                        v-if="isDialFilledValueLow"
+                        class="c-dial__filled-value__low"
+                        x="5"
+                        y="5"
+                        width="5"
+                        height="5"
+                    />
+                    <rect
+                        v-if="isDialFilledValueMid"
+                        class="c-dial__filled-value__mid"
+                        x="5"
+                        y="0"
+                        width="5"
+                        height="5"
+                    />
+                    <rect
+                        v-if="isDialFilledValueHigh"
+                        class="c-dial__filled-value__high"
+                        x="0"
+                        y="0"
+                        width="5"
+                        height="5"
+                    />
+                </g>
+                <g
+                    v-if="valueInBounds && typeNeedleDial"
+                    class="c-dial__needle-value"
+                    :style="`transform: rotate(${degValue}deg)`"
+                >
+                    <path d="M4.90234 9.39453L5.09766 9.39453L5.30146 8.20874C6.93993 8.05674 8.22265 6.67817 8.22266 5C8.22266 3.22018 6.77982 1.77734 5 1.77734C3.22018 1.77734 1.77734 3.22018 1.77734 5C1.77734 6.67817 3.06007 8.05674 4.69854 8.20874L4.90234 9.39453Z" />
+                </g>
+                <path
+                    id="dialTextPath"
+                    class="c-dial__range-msg-path"
+                    d="M8.3501 5.0001C8.3501 6.85025 6.85025 8.3501 5.0001 8.3501C3.14994 8.3501 1.6501 6.85025 1.6501 5.0001C1.6501 3.14994 3.14994 1.6501 5.0001 1.6501C6.85025 1.6501 8.3501 3.14994 8.3501 5.0001Z"
+                    fill="none"
+                    style="transform-origin: center; transform: rotate(182deg)"
                 />
             </g>
-            <g
-                v-if="valueInBounds && typeNeedleDial"
-                class="c-dial__needle-value"
-                :style="`transform: rotate(${degValue}deg)`"
-            >
-                <path d="M4.90234 9.39453L5.09766 9.39453L5.30146 8.20874C6.93993 8.05674 8.22265 6.67817 8.22266 5C8.22266 3.22018 6.77982 1.77734 5 1.77734C3.22018 1.77734 1.77734 3.22018 1.77734 5C1.77734 6.67817 3.06007 8.05674 4.69854 8.20874L4.90234 9.39453Z" />
+            <g class="c-dial__text">
+                <g
+                    v-if="displayCurVal"
+                    class="c-dial__current-value-text-wrapper"
+                >
+                    <text
+                        class="c-dial__current-value-text js-dial-current-value"
+                        y="55%"
+                        lengthAdjust="spacing"
+                        :font-size="curValFontSize"
+                        text-anchor="middle"
+                        transform="translate(5)"
+                    >{{ curVal }}</text>
+                    <text
+                        v-if="displayUnits"
+                        class="c-dial__units-text"
+                        y="68%"
+                        font-size="8%"
+                        text-anchor="middle"
+                        transform="translate(5)"
+                    >{{ units }}</text>
+                </g>
+                <g
+                    v-if="displayMinMax"
+                    class="c-dial__range-text"
+                    :font-size="rangeFontSize"
+                >
+                    <text
+                        transform="translate(1.5 8.7) rotate(-45)"
+                        dominant-baseline="hanging"
+                    >{{ rangeLow }}</text>
+                    <text
+                        transform="translate(8.4 8.7) rotate(45)"
+                        dominant-baseline="hanging"
+                        text-anchor="end"
+                    >{{ rangeHigh }}</text>
+                </g>
             </g>
-        </g>
-        <g class="c-dial__text">
-            <g
-                v-if="displayCurVal"
-                class="c-dial__current-value-text-wrapper"
-            >
-                <text
-                    class="c-dial__current-value-text js-dial-current-value"
-                    y="55%"
-                    lengthAdjust="spacing"
-                    :font-size="curValFontSize"
-                    text-anchor="middle"
-                    transform="translate(5)"
-                >{{ curVal }}</text>
-                <text
-                    v-if="displayUnits"
-                    class="c-dial__units-text"
-                    y="68%"
-                    font-size="8%"
-                    text-anchor="middle"
-                    transform="translate(5)"
-                >{{ units }}</text>
-            </g>
-            <g
-                v-if="displayMinMax"
-                class="c-dial__range-text"
-                :font-size="rangeFontSize"
-            >
-                <text
-                    transform="translate(1.5 8.7) rotate(-45)"
-                    dominant-baseline="hanging"
-                >{{ rangeLow }}</text>
-                <text
-                    transform="translate(8.4 8.7) rotate(45)"
-                    dominant-baseline="hanging"
-                    text-anchor="end"
-                >{{ rangeHigh }}</text>
-            </g>
-        </g>
-    </svg>
+
+            <svg
+                v-if="!valueInBounds"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                xml:space="preserve"
+                class="c-dial__value-oor-indicator"
+                x="45%"
+                y="80%"
+                width="1"
+                height="1"
+            ><path
+                d="M448 0H64C28.7.1.1 28.7 0 64v384c.1 35.3 28.7 63.9 64 64h384c35.3-.1 63.9-28.7 64-64V64c-.1-35.3-28.7-63.9-64-64zM288 448h-64v-64h64v64zm10.9-192L280 352h-48l-18.9-96V64H299v192h-.1z"
+            /></svg>
+
+        </svg>
+    </template>
 
     <template v-if="typeMeter">
         <div class="c-meter">
@@ -209,6 +233,16 @@
                 <div class="c-meter__range__low">{{ rangeLow }}</div>
             </div>
             <div class="c-meter__bg">
+                <svg
+                    v-if="!valueInBounds"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    :preserveAspectRatio="meterOorRangeIndicatorAspectRatio"
+                    class="c-meter__value-oor-indicator"
+                ><path
+                    d="M448 0H64C28.7.1.1 28.7 0 64v384c.1 35.3 28.7 63.9 64 64h384c35.3-.1 63.9-28.7 64-64V64c-.1-35.3-28.7-63.9-64-64zM288 448h-64v-64h64v64zm10.9-192L280 352h-48l-18.9-96V64H299v192h-.1z"
+                /></svg>
+
                 <template v-if="typeMeterVertical">
                     <div
                         class="c-meter__value"
@@ -249,37 +283,41 @@
 
                 <svg
                     class="c-meter__current-value-text-wrapper"
-                    viewBox="0 0 512 512"
+                    :viewBox="meterVerticalCurValViewBox"
+                    preserveAspectRatio="xMidYMid meet"
                 >
-                    <svg
-                        v-if="displayCurVal"
-                        class="c-meter__current-value-text-sizer"
-                        :viewBox="curValViewBox"
-                        preserveAspectRatio="xMidYMid meet"
+                    <rect
+                        class="c-meter__viewbox-debug"
+                        x="0"
+                        y="0"
+                        width="100%"
+                        height="100%"
+                    />
+                    <text
+                        class="c-meter__current-value-text js-meter-current-value"
+                        font-size="4"
+                        lengthAdjust="spacing"
+                        text-anchor="middle"
+                        :dominant-baseline="meterTextBaseline"
+                        x="50%"
+                        y="50%"
                     >
-                        <text
-                            class="c-dial__current-value-text js-meter-current-value"
-                            lengthAdjust="spacing"
-                            text-anchor="middle"
-                            style="transform: translate(50%, 70%)"
-                        >
+                        <template v-if="displayCurVal">
                             <tspan>{{ curVal }}</tspan>
                             <tspan
                                 v-if="typeMeterHorizontal && displayUnits"
                                 class="c-gauge__units"
-                                font-size="10"
+                                font-size="80%"
                             >{{ units }}</tspan>
-                        </text>
-                        <text
-                            v-if="typeMeterVertical && displayUnits"
-                            dy="12"
-                            class="c-gauge__units"
-                            font-size="10"
-                            lengthAdjust="spacing"
-                            text-anchor="middle"
-                            style="transform: translate(50%, 70%)"
-                        >{{ units }}</text>
-                    </svg>
+                            <tspan
+                                v-if="typeMeterVertical && displayUnits"
+                                x="50%"
+                                dy="3.5"
+                                class="c-gauge__units"
+                                font-size="80%"
+                            >{{ units }}</tspan>
+                        </template>
+                    </text>
                 </svg>
             </div>
         </div>
@@ -333,9 +371,15 @@ export default {
         dialLowLimitDeg() {
             return this.percentToDegrees(this.valToPercent(this.limitLow));
         },
-        curValViewBox() {
-            const DIGITS_RATIO = 10;
-            const VIEWBOX_STR = '0 0 X 15';
+        meterOorRangeIndicatorAspectRatio() {
+            return this.typeMeterVertical ? 'xMidYMin meet' : 'xMinYMid meet';
+        },
+        meterTextBaseline() {
+            return this.typeMeterVertical ? 'auto' : 'middle';
+        },
+        meterVerticalCurValViewBox() {
+            const DIGITS_RATIO = 3;
+            const VIEWBOX_STR = '0 0 X 10';
 
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
         },
@@ -392,6 +436,9 @@ export default {
         },
         isMeterLimitLow() {
             return this.limitLow.toString().length > 0 && this.meterLowLimitPerc > 0;
+        },
+        gaugeTitle() {
+            return this.valueInBounds ? 'Gauge' : 'Value is currently out of range and cannot be graphically displayed';
         },
         typeDial() {
             return this.matchGaugeType('dial');
