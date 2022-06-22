@@ -23,6 +23,7 @@
 <template>
 <div
     class="c-gsearch-result c-gsearch-result--object"
+    aria-label="Search Result"
     role="presentation"
 >
     <div
