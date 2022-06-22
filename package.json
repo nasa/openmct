@@ -94,7 +94,7 @@
     "test:e2e": "npx playwright test",
     "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome smoke branding default condition timeConductor clock exampleImagery persistence performance",
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js --project=chrome",
-    "test:e2e:updatesnapshots": "npx playwright test --config=e2e/playwright-local.config.js --project=chrome --grep @snapshot --update-snapshots",
+    "test:e2e:updatesnapshots": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot --update-snapshots",
     "test:e2e:visual": "percy exec --config ./e2e/.percy.yml -- npx playwright test --config=e2e/playwright-visual.config.js",
     "test:e2e:full": "npx playwright test --config=e2e/playwright-ci.config.js",
     "test:perf": "npx playwright test --config=e2e/playwright-performance.config.js",
