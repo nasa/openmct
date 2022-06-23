@@ -30,7 +30,7 @@ const { expect } = require('@playwright/test');
 
 test.describe('Log plot tests', () => {
     test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
-        //Test.slow annotation is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
+        //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
         test.slow();
 
         await makeOverlayPlot(page);
