@@ -78,6 +78,10 @@ class StaticModelProvider {
     }
 
     parseTreeLeaf(leafKey, leafValue, idMap, namespace) {
+        if (!leafValue) {
+            return leafValue;
+        }
+
         const hasChild = typeof leafValue === 'object';
         if (hasChild) {
             return this.parseBranchedLeaf(leafValue, idMap, namespace);
