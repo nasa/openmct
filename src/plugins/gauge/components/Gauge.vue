@@ -168,27 +168,14 @@
                 />
             </g>
             <g class="c-dial__text">
-                <g
-                    v-if="displayCurVal"
-                    class="c-dial__current-value-text-wrapper"
-                >
-                    <text
-                        class="c-dial__current-value-text js-dial-current-value"
-                        y="55%"
-                        lengthAdjust="spacing"
-                        :font-size="curValFontSize"
-                        text-anchor="middle"
-                        transform="translate(5)"
-                    >{{ curVal }}</text>
-                    <text
-                        v-if="displayUnits"
-                        class="c-dial__units-text"
-                        y="68%"
-                        font-size="8%"
-                        text-anchor="middle"
-                        transform="translate(5)"
-                    >{{ units }}</text>
-                </g>
+                <text
+                    x="50%"
+                    y="70%"
+                    text-anchor="middle"
+                    class="c-gauge__units"
+                    font-size="8%"
+                >{{ units }}</text>
+
                 <g
                     v-if="displayMinMax"
                     class="c-dial__range-text"
@@ -207,7 +194,7 @@
             </g>
 
             <svg
-                v-if="!valueInBounds"
+                v-if="!valueInBounds && valueExpected"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
                 xml:space="preserve"
@@ -219,6 +206,33 @@
             ><path
                 d="M448 0H64C28.7.1.1 28.7 0 64v384c.1 35.3 28.7 63.9 64 64h384c35.3-.1 63.9-28.7 64-64V64c-.1-35.3-28.7-63.9-64-64zM288 448h-64v-64h64v64zm10.9-192L280 352h-48l-18.9-96V64H299v192h-.1z"
             /></svg>
+
+            <svg
+                class="c-gauge__current-value-text-wrapper"
+                :viewBox="curValViewBox"
+                preserveAspectRatio="xMidYMid meet"
+            >
+                <rect
+                    class="svg-viewbox-debug"
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                />
+                <text
+                    class="c-dial__current-value-text js-gauge-current-value"
+                    font-size="3.5"
+                    lengthAdjust="spacing"
+                    text-anchor="middle"
+                    dominant-baseline="middle"
+                    x="50%"
+                    y="50%"
+                >
+                    <template v-if="displayCurVal">
+                        <tspan>{{ curVal }}</tspan>
+                    </template>
+                </text>
+            </svg>
 
         </svg>
     </template>
@@ -233,15 +247,16 @@
                 <div class="c-meter__range__low">{{ rangeLow }}</div>
             </div>
             <div class="c-meter__bg">
-                <svg
-                    v-if="!valueInBounds"
+                <div
+                    v-if="!valueInBounds && valueExpected"
+                    class="c-meter__value-oor-indicator"
+                ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 512 512"
                     :preserveAspectRatio="meterOorRangeIndicatorAspectRatio"
-                    class="c-meter__value-oor-indicator"
                 ><path
                     d="M448 0H64C28.7.1.1 28.7 0 64v384c.1 35.3 28.7 63.9 64 64h384c35.3-.1 63.9-28.7 64-64V64c-.1-35.3-28.7-63.9-64-64zM288 448h-64v-64h64v64zm10.9-192L280 352h-48l-18.9-96V64H299v192h-.1z"
-                /></svg>
+                /></svg></div>
 
                 <template v-if="typeMeterVertical">
                     <div
@@ -282,19 +297,19 @@
                 </template>
 
                 <svg
-                    class="c-meter__current-value-text-wrapper"
-                    :viewBox="meterVerticalCurValViewBox"
+                    class="c-gauge__current-value-text-wrapper"
+                    :viewBox="curValViewBox"
                     preserveAspectRatio="xMidYMid meet"
                 >
                     <rect
-                        class="c-meter__viewbox-debug"
+                        class="svg-viewbox-debug"
                         x="0"
                         y="0"
                         width="100%"
                         height="100%"
                     />
                     <text
-                        class="c-meter__current-value-text js-meter-current-value"
+                        class="c-meter__current-value-text js-gauge-current-value"
                         font-size="4"
                         lengthAdjust="spacing"
                         text-anchor="middle"
@@ -372,23 +387,16 @@ export default {
             return this.percentToDegrees(this.valToPercent(this.limitLow));
         },
         meterOorRangeIndicatorAspectRatio() {
-            return this.typeMeterVertical ? 'xMidYMin meet' : 'xMinYMid meet';
+            return this.typeMeterVertical ? 'xMidYMax meet' : 'xMinYMid meet';
         },
         meterTextBaseline() {
             return this.typeMeterVertical ? 'auto' : 'middle';
         },
-        meterVerticalCurValViewBox() {
+        curValViewBox() {
             const DIGITS_RATIO = 3;
             const VIEWBOX_STR = '0 0 X 10';
 
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
-        },
-        curValFontSize() {
-            const CHAR_THRESHOLD = 2;
-            const START_PERC = 27;
-            const REDUCE_PERC = 2.5;
-
-            return this.fontSizeFromChars(this.digits, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
         },
         rangeFontSize() {
             const CHAR_THRESHOLD = 3;
@@ -479,6 +487,9 @@ export default {
         },
         meterLowLimitPerc() {
             return 100 - this.valToPercentMeter(this.limitLow);
+        },
+        valueExpected() {
+            return this.curVal.toString().indexOf(DEFAULT_CURRENT_VALUE) === -1;
         },
         valueInBounds() {
             return (this.curVal >= this.rangeLow && this.curVal <= this.rangeHigh);

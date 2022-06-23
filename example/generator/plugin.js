@@ -81,7 +81,7 @@ define([
                 {
                     name: "Amplitude",
                     control: "numberfield",
-                    cssClass: "l-input-sm l-numeric",
+                    cssClass: "l-numeric",
                     key: "amplitude",
                     required: true,
                     property: [
@@ -92,7 +92,7 @@ define([
                 {
                     name: "Offset",
                     control: "numberfield",
-                    cssClass: "l-input-sm l-numeric",
+                    cssClass: "l-numeric",
                     key: "offset",
                     required: true,
                     property: [
