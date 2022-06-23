@@ -167,18 +167,6 @@ export default {
             const id = this.openmct.objects.makeKeyString(child.identifier);
 
             this.$set(this.tickWidthMap, id, 0);
-            const persistedConfig = this.domainObject.configuration.series && this.domainObject.configuration.series.find((seriesConfig) => {
-                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, child.identifier);
-            });
-            if (persistedConfig === undefined) {
-                this.openmct.objects.mutate(
-                    this.domainObject,
-                    'configuration.series[' + this.compositionObjects.length + ']',
-                    {
-                        identifier: child.identifier
-                    }
-                );
-            }
 
             this.compositionObjects.push(child);
         },
