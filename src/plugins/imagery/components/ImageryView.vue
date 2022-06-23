@@ -845,7 +845,8 @@ export default {
             if (domThumb) {
                 domThumb.scrollIntoView({
                     behavior: 'smooth',
-                    block: 'center'
+                    block: 'center',
+                    inline: 'center'
                 });
             }
         },
