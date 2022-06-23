@@ -1167,10 +1167,12 @@ export default {
         thumbnailClassList(index) {
             const active = this.focusedImageIndex === index;
             const selected = active && this.isPaused;
+            const realTime = !this.isFixed;
 
             return {
                 selected,
-                active
+                active,
+                'real-time': realTime
             };
         }
     }
