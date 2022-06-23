@@ -170,7 +170,7 @@
                 v-for="(image, index) in imageHistory"
                 :key="image.url + image.time"
                 class="c-imagery__thumb c-thumb"
-                :class="{ selected: focusedImageIndex === index && isPaused }"
+                :class="thumbnailClassList(index)"
                 :title="image.formattedTime"
                 @click="thumbnailClicked(index)"
             >
@@ -1163,6 +1163,15 @@ export default {
             let isVisible = this.layers[index].visible === true;
             this.layers[index].visible = !isVisible;
             this.visibleLayers = this.layers.filter(layer => layer.visible);
+        },
+        thumbnailClassList(index) {
+            const active = this.focusedImageIndex === index;
+            const selected = active && this.isPaused;
+
+            return {
+                selected,
+                active
+            };
         }
     }
 };

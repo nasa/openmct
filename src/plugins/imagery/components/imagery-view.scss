@@ -257,6 +257,10 @@
     min-width: $w;
     width: $w;
 
+    &.active {
+        background: $colorSelectedBg;
+        color: $colorSelectedFg;
+    }
     &:hover {
         background: $colorThumbHoverBg;
     }
