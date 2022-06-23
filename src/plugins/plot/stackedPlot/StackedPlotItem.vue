@@ -223,33 +223,39 @@ export default {
                 const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
                 let config = configStore.get(configId);
                 if (!config) {
-                    const persistedConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+                    let persistedSeriesConfig = this.domainObject.configuration.series.find((seriesConfig) => {
                         return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.childObject.identifier);
                     });
-                    if (persistedConfig) {
-                        config = new PlotConfigurationModel({
-                            id: configId,
-                            domainObject: {
-                                ...this.childObject,
-                                configuration: {
-                                    series: [
-                                        {
-                                            identifier: this.childObject.identifier,
-                                            ...persistedConfig.series
-                                        }
-                                    ],
-                                    yAxis: persistedConfig.yAxis
 
-                                }
-                            },
-                            openmct: this.openmct,
-                            palette: this.colorPalette,
-                            callback: (data) => {
-                                this.data = data;
-                            }
-                        });
-                        configStore.add(configId, config);
+                    if (!persistedSeriesConfig) {
+                        persistedSeriesConfig = {
+                            series: {},
+                            yAxis: {}
+                        };
                     }
+
+                    config = new PlotConfigurationModel({
+                        id: configId,
+                        domainObject: {
+                            ...this.childObject,
+                            configuration: {
+                                series: [
+                                    {
+                                        identifier: this.childObject.identifier,
+                                        ...persistedSeriesConfig.series
+                                    }
+                                ],
+                                yAxis: persistedSeriesConfig.yAxis
+
+                            }
+                        },
+                        openmct: this.openmct,
+                        palette: this.colorPalette,
+                        callback: (data) => {
+                            this.data = data;
+                        }
+                    });
+                    configStore.add(configId, config);
                 }
 
                 return this.childObject;

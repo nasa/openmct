@@ -136,8 +136,8 @@ export default {
                 this.url = url;
             }
 
-            const conditionSetIdentifier = domainObject.configuration.objectStyles.conditionSetIdentifier;
-            if (this.conditionSetIdentifier !== conditionSetIdentifier) {
+            const conditionSetIdentifier = domainObject.configuration?.objectStyles?.conditionSetIdentifier;
+            if (conditionSetIdentifier && this.conditionSetIdentifier !== conditionSetIdentifier) {
                 this.conditionSetIdentifier = conditionSetIdentifier;
             }
 
