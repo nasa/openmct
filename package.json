@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "2.0.5-SNAPSHOT",
+  "version": "2.1.0-SNAPSHOT",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@babel/eslint-parser": "7.18.2",
@@ -49,7 +49,7 @@
     "lighthouse": "9.6.1",
     "location-bar": "3.0.1",
     "lodash": "4.17.21",
-    "mini-css-extract-plugin": "2.6.0",
+    "mini-css-extract-plugin": "2.6.1",
     "moment": "2.29.3",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.34",
