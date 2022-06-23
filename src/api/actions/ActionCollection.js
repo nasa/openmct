@@ -85,8 +85,6 @@ class ActionCollection extends EventEmitter {
     }
 
     destroy() {
-        super.removeAllListeners();
-
         if (!this.skipEnvironmentObservers) {
             this.objectUnsubscribes.forEach(unsubscribe => {
                 unsubscribe();
@@ -96,6 +94,7 @@ class ActionCollection extends EventEmitter {
         }
 
         this.emit('destroy', this.view);
+        this.removeAllListeners();
     }
 
     getVisibleActions() {
@@ -133,6 +132,7 @@ class ActionCollection extends EventEmitter {
     }
 
     _update() {
+        console.log('update emitted');
         this.emit('update', this.applicableActions);
     }
 
