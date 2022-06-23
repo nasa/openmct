@@ -32,7 +32,7 @@
         <progress-bar
             v-show="!!loading"
             class="c-telemetry-table__progress-bar"
-            :model="progressLoad"
+            :model="{progressPerc: undefined}"
         />
         <mct-plot
             :init-grid-lines="gridLines"
@@ -77,13 +77,6 @@ export default {
             status: ''
         };
     },
-    computed: {
-        progressLoad() {
-            return {
-                progressPerc: undefined
-            };
-        }
-    },
     mounted() {
         eventHelpers.extend(this);
         this.imageExporter = new ImageExporter(this.openmct);
@@ -98,17 +91,14 @@ export default {
         destroy() {
             this.stopListening();
         },
-
         exportJPG() {
             const plotElement = this.$refs.plotContainer;
             this.imageExporter.exportJPG(plotElement, 'plot.jpg', 'export-plot');
         },
-
         exportPNG() {
             const plotElement = this.$refs.plotContainer;
             this.imageExporter.exportPNG(plotElement, 'plot.png', 'export-plot');
         },
-
         setStatus(status) {
             this.status = status;
         },
