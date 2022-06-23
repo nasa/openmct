@@ -254,6 +254,7 @@ export default {
             visibleLayers: [],
             durationFormatter: undefined,
             imageHistory: [],
+            bounds: {},
             timeSystem: timeSystem,
             keyString: undefined,
             autoScroll: true,
@@ -569,6 +570,9 @@ export default {
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
             this.getImageNaturalDimensions();
+        },
+        bounds() {
+            this.scrollToFocused();
         }
     },
     async mounted() {
@@ -610,6 +614,7 @@ export default {
         this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
         this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
         this.handleThumbWindowResizeStart = _.debounce(this.handleThumbWindowResizeStart, SCROLL_LATENCY);
+        this.scrollToFocused = _.debounce(this.scrollToFocused, 400);
 
         if (this.$refs.thumbsWrapper) {
             this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
