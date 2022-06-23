@@ -134,19 +134,25 @@
             });
         }
 
-        setTimeout(() => {
-            self.postMessage({
-                id: message.id,
-                data: request.spectra ? {
-                    wavelength: data.map((item) => {
-                        return item.wavelength;
-                    }),
-                    cos: data.map((item) => {
-                        return item.cos;
-                    })
-                } : data
-            });
-        }, loadDelay);
+        if (loadDelay === 0) {
+            postOnRequest(message, request, data);
+        } else {
+            setTimeout(() => postOnRequest(message, request, data), loadDelay);
+        }
+    }
+
+    function postOnRequest(message, request, data) {
+        self.postMessage({
+            id: message.id,
+            data: request.spectra ? {
+                wavelength: data.map((item) => {
+                    return item.wavelength;
+                }),
+                cos: data.map((item) => {
+                    return item.cos;
+                })
+            } : data
+        });
     }
 
     function cos(timestamp, period, amplitude, offset, phase, randomness) {
