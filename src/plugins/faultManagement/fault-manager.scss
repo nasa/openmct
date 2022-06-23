@@ -152,7 +152,7 @@
     }
 
     &-faultname{
-        font-size: 1em; 
+        font-size: 1em;
     }
 
     &-content{
@@ -181,7 +181,6 @@
         border-radius: $controlCr;
         padding: $interiorMargin;
         width: 100px;
-        font-size: 1.1em;
         margin-right: $interiorMarginLg;
         .--width-less-than-600 & {
             margin-top: $interiorMargin;
