@@ -260,6 +260,7 @@
 
                 <template v-if="typeMeterVertical">
                     <div
+                        v-if="valueExpected"
                         class="c-meter__value"
                         :class="{'c-meter__value-needle' : typeNeedleMeter }"
                         :style="`transform: translateY(${meterValueToPerc}%)`"
@@ -280,6 +281,7 @@
 
                 <template v-if="typeMeterHorizontal">
                     <div
+                        v-if="valueExpected"
                         class="c-meter__value"
                         :class="{'c-meter__value-needle' : typeNeedleMeter }"
                         :style="`transform: translateX(${meterValueToPerc * -1}%)`"
