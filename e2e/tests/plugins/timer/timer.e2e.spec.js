@@ -67,7 +67,8 @@ test.describe('Timer', () => {
 });
 
 /**
- * Open the timer context menu from the object tree
+ * Open the timer context menu from the object tree.
+ * Expands the 'My Items' folder if it is not already expanded.
  * @param {import('@playwright/test').Page} page
  */
 async function openTimerContextMenu(page) {
