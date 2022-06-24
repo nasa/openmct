@@ -178,7 +178,7 @@
 
                 <g
                     v-if="displayMinMax"
-                    class="c-dial__range-text"
+                    class="c-dial__range-text js-gauge-dial-range"
                     :font-size="rangeFontSize"
                 >
                     <text
@@ -220,7 +220,7 @@
                     height="100%"
                 />
                 <text
-                    class="c-dial__current-value-text js-gauge-current-value"
+                    class="c-dial__current-value-text js-dial-current-value"
                     font-size="3.5"
                     lengthAdjust="spacing"
                     text-anchor="middle"
