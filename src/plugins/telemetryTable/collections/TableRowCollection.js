@@ -81,7 +81,7 @@ define(
 
                 this.sortAndMergeRows(rowsToAdd);
 
-                // we emit filter and update of visible rows
+                // We emit filter and update of visible rows
                 this.emit('filter', rowsToAdd);
             }
 
@@ -90,9 +90,7 @@ define(
                     throw 'Please specify sort options';
                 }
 
-                let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
-
-                return !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
+                return !(Object.keys(this.columnFilters).length > 0) ? rows : rows.filter(this.matchesFilters, this);
             }
 
             sortAndMergeRows(rows) {
