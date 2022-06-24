@@ -1,0 +1,924 @@
+@charset "UTF-8";
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/************************** FEATURES */
+/************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
+/************************** RATIOS */
+/************************** LAYOUT */
+/*************** Panes */
+/*************** Overlay */
+/*************** Progress Overlay */
+/*************** Items */
+/*************** Tree */
+/*************** Tabular */
+/*************** Imagery */
+/*************** Ticks */
+/*************** Plots */
+/* min plot height is based on user testing to find minimum useful height */
+/*************** Bubbles */
+/*************** Forms */
+/*************** Wait Spinner Defaults */
+/************************** CONTROLS */
+/************************** PATHS */
+/************************** TIMINGS */
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*********************************************** CONTROLS, FORM ELEMENTS */
+/************************** CHAR UNICODES */
+/************************** 16 PX CLASSES */
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-alert-rect:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-alert-triangle:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-down:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-left:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-right:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-double-up:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-tall-up:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-tall-down:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-double-down:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-up:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-asterisk:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-bell:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-box:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-box-with-arrow:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-check:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-connectivity:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-database-in-brackets:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-eye-open:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-gear:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-hourglass:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-info:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-link:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-lock:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-minus:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-people:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-person:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-plus:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-trash:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-x:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-brackets:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrows-out:before {
+  content: "󡀀";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrows-right-left:before {
+  content: "󡀁";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrows-up-down:before {
+  content: "󡀂";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-bullet:before {
+  content: "󡀄";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-calendar:before {
+  content: "󡀅";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-chain-links:before {
+  content: "󡀆";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-collapse-pane-left:before {
+  content: "󡀇";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-collapse-pane-right:before {
+  content: "󡀈";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-download:before {
+  content: "󡀉";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-duplicate:before {
+  content: "󡀐";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-folder-new:before {
+  content: "󡀑";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-fullscreen-collapse:before {
+  content: "󡀒";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-fullscreen-expand:before {
+  content: "󡀓";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-layers:before {
+  content: "󡀔";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-line-horz:before {
+  content: "󡀕";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-magnify:before {
+  content: "󡀖";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-magnify-in:before {
+  content: "󡀗";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-magnify-out:before {
+  content: "󡀘";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-menu-hamburger:before {
+  content: "󡀙";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-move:before {
+  content: "󡀠";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-new-window:before {
+  content: "󡀡";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-paint-bucket:before {
+  content: "󡀢";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-pause:before {
+  content: "󡀣";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-pencil:before {
+  content: "󡀤";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-play:before {
+  content: "󡀥";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-plot-resource:before {
+  content: "󡀦";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-pointer-left:before {
+  content: "󡀧";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-pointer-right:before {
+  content: "󡀨";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-refresh:before {
+  content: "󡀩";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-save:before {
+  content: "󡀰";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-sine:before {
+  content: "󡀱";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-T:before {
+  content: "󡀲";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-thumbs-strip:before {
+  content: "󡀳";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-two-parts-both:before {
+  content: "󡀴";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-two-parts-one-only:before {
+  content: "󡀵";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-resync:before {
+  content: "󡀶";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-reset:before {
+  content: "󡀷";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-x-in-circle:before {
+  content: "󡀸";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-brightness:before {
+  content: "󡀹";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-contrast:before {
+  content: "󡁀";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-expand:before {
+  content: "󡁁";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-activity:before {
+  content: "󡄀";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-activity-mode:before {
+  content: "󡄁";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-autoflow-tabular:before {
+  content: "󡄂";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-clock:before {
+  content: "󡄃";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-database:before {
+  content: "󡄄";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-database-query:before {
+  content: "󡄅";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-dataset:before {
+  content: "󡄆";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-datatable:before {
+  content: "󡄇";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-dictionary:before {
+  content: "󡄈";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-folder:before {
+  content: "󡄉";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-image:before {
+  content: "󡄐";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-layout:before {
+  content: "󡄑";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-object:before {
+  content: "󡄒";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-object-unknown:before {
+  content: "󡄓";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-packet:before {
+  content: "󡄔";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-page:before {
+  content: "󡄕";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-plot-overlay:before {
+  content: "󡄖";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-plot-stacked:before {
+  content: "󡄗";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-session:before {
+  content: "󡄘";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular:before {
+  content: "󡄙";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular-lad:before {
+  content: "󡄠";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular-lad-set:before {
+  content: "󡄡";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular-realtime:before {
+  content: "󡄢";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular-scrolling:before {
+  content: "󡄣";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-telemetry:before {
+  content: "󡄤";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-telemetry-panel:before {
+  content: "󡄥";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-timeline:before {
+  content: "󡄦";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-timer:before {
+  content: "󡄧";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-topic:before {
+  content: "󡄨";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-box-with-dashed-lines:before {
+  content: "󡄩";
+  font-family: "symbolsfont"; }
+
+/************************** 12 PX CLASSES */
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-eye-open-12px:before {
+  content: "";
+  font-family: "symbolsfont-12px"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-collapse-pane-left-12px:before {
+  content: "󡀇";
+  font-family: "symbolsfont-12px"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-collapse-pane-right-12px:before {
+  content: "󡀈";
+  font-family: "symbolsfont-12px"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-folder-12px:before {
+  content: "󡄉";
+  font-family: "symbolsfont-12px"; }
+
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 22, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.triangle {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-left: 5px solid #0099cc;
+  border-bottom: 5px solid transparent; }
+  /* line 26, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+  .triangle.triangle-down {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-top: 5px solid #0099cc;
+    border-right: 5px solid transparent; }
+
+/* line 31, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.ui-symbol, .t-item-icon {
+  font-family: 'symbolsfont';
+  -webkit-font-smoothing: antialiased; }
+
+/* line 36, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.ui-symbol.icon, .t-item-icon {
+  color: #0099cc;
+  font-size: inherit; }
+  /* line 39, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+  .ui-symbol.icon.alert, .alert.t-item-icon {
+    color: #ff3c00; }
+    /* line 41, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+    .ui-symbol.icon.alert:hover, .alert.t-item-icon:hover {
+      color: #ff8a66; }
+
+/* line 47, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.bar .ui-symbol, .bar .t-item-icon {
+  display: inline-block; }
+
+/* line 51, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.invoke-menu {
+  text-shadow: none;
+  display: inline-block; }
+
+/* line 56, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.s-menu-button .invoke-menu,
+.icon.major .invoke-menu, .major.t-item-icon .invoke-menu {
+  margin-left: 3px; }
+
+/* line 61, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.menu .type-icon,
+.tree-item .type-icon,
+.super-menu.menu .menu-item-a:before {
+  position: absolute; }
+
+/* line 67, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.t-item-icon {
+  line-height: inherit;
+  position: relative; }
+  /* line 73, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+  .t-item-icon.l-icon-link {
+    /*        .t-item-icon-glyph {
+            &:after {
+                color: $colorIconLink;
+                content: '\e921'; //$glyph-icon-link;
+                height: auto; width: auto;
+                position: absolute;
+                left: 0; top: 0; right: 0; bottom: 20%;
+                @include transform-origin(bottom left);
+                @include transform(scale(0.3));
+                z-index: 2;
+            }
+        }*/ }
+    /* line 74, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+    .t-item-icon.l-icon-link:after {
+      color: #49dedb;
+      content: "";
+      height: auto;
+      width: auto;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 20%;
+      -webkit-transform-origin: bottom left;
+      -moz-transform-origin: bottom left;
+      -ms-transform-origin: bottom left;
+      -o-transform-origin: bottom left;
+      transform-origin: bottom left;
+      -webkit-transform: scale(0.3);
+      -moz-transform: scale(0.3);
+      -ms-transform: scale(0.3);
+      -o-transform: scale(0.3);
+      transform: scale(0.3);
+      z-index: 2; }
+
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2016, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 22, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+.l-style-guide {
+  font-size: 0.9em;
+  text-align: justify;
+  margin: auto 10%; }
+  /* line 27, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide a.link {
+    color: #0099cc; }
+  /* line 31, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide h1, .l-style-guide h2 {
+    color: #cccccc; }
+  /* line 35, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide h2 {
+    font-size: 1.25em; }
+  /* line 39, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide h3 {
+    font-size: 0.9em;
+    margin: 5px 0;
+    text-transform: uppercase; }
+    /* line 42, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+    .l-style-guide h3:not(:first-child) {
+      margin-top: 20px; }
+  /* line 48, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide .w-markup {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    display: block;
+    padding: 10px 10px;
+    position: relative; }
+  /* line 57, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide code,
+  .l-style-guide pre {
+    font-size: 0.8rem; }
+  /* line 62, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide code {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    display: inline-block;
+    padding: 1px 5px; }
+  /* line 69, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide pre {
+    display: block;
+    margin: 0;
+    max-height: 300px;
+    overflow: auto;
+    padding-bottom: 10px;
+    white-space: pre; }
+  /* line 78, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide table, .l-style-guide ul {
+    margin-bottom: 10px;
+    width: auto; }
+  /* line 83, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide .themed {
+    display: none; }
+  /* line 87, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide .doc-title {
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase; }
+  /* line 92, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide .l-section {
+    border-top: 1px solid rgba(153, 153, 153, 0.3);
+    margin-top: 2em;
+    padding-top: 1em; }
+    /* line 97, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+    .l-style-guide .l-section .cols {
+      display: -webkit-box;
+      display: -moz-box;
+      display: box;
+      display: -webkit-flex;
+      display: -moz-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -moz-box-orient: horizontal;
+      box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -moz-box-direction: normal;
+      box-direction: normal;
+      -webkit-flex-direction: row;
+      -moz-flex-direction: row;
+      flex-direction: row;
+      -ms-flex-direction: row; }
+      /* line 101, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+      .l-style-guide .l-section .cols .col {
+        -webkit-box-flex: 1;
+        -moz-box-flex: 1;
+        box-flex: 1;
+        -webkit-flex: 1 1 auto;
+        -moz-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        min-width: 300px; }
+        /* line 103, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+        .l-style-guide .l-section .cols .col:not(:last-child) {
+          border-right: 1px solid rgba(153, 153, 153, 0.1);
+          margin-right: 20px;
+          padding-right: 20px; }
+        /* line 110, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+        .l-style-guide .l-section .cols .col img {
+          width: 100%; }
+      /* line 117, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+      .l-style-guide .l-section .cols.cols1-1 .col {
+        width: 50%; }
+      /* line 124, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+      .l-style-guide .l-section .cols.cols1-2 .col:first-child {
+        width: 33%; }
+      /* line 127, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+      .l-style-guide .l-section .cols.cols1-2 .col:last-child {
+        width: 66%; }
+      /* line 134, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+      .l-style-guide .l-section .cols.cols2-1 .col:first-child {
+        width: 66%; }
+      /* line 137, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+      .l-style-guide .l-section .cols.cols2-1 .col:last-child {
+        width: 33%; }
+  /* line 146, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide .items-holder.grid .item.glyph-item,
+  .l-style-guide .items-holder.grid .item.swatch-item {
+    margin-bottom: 50px;
+    margin-right: 10px;
+    position: relative;
+    text-align: left; }
+    /* line 152, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+    .l-style-guide .items-holder.grid .item.glyph-item .glyph,
+    .l-style-guide .items-holder.grid .item.swatch-item .glyph {
+      color: #fff;
+      font-size: 5em;
+      margin: 10px 0;
+      text-align: center; }
+    /* line 159, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+    .l-style-guide .items-holder.grid .item.glyph-item table.details td,
+    .l-style-guide .items-holder.grid .item.swatch-item table.details td {
+      font-size: inherit; }
+      /* line 161, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+      .l-style-guide .items-holder.grid .item.glyph-item table.details td.label,
+      .l-style-guide .items-holder.grid .item.swatch-item table.details td.label {
+        color: gray;
+        text-transform: uppercase;
+        white-space: nowrap; }
+  /* line 169, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide .items-holder.grid .item.glyph-item {
+    width: 225px;
+    height: 200px; }
+  /* line 174, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+  .l-style-guide .items-holder.grid .item.swatch-item {
+    width: 200px;
+    height: 150px; }
+    /* line 179, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+    .l-style-guide .items-holder.grid .item.swatch-item .glyph {
+      text-shadow: 0px 1px 10px rgba(0, 0, 0, 0.3); }
+    /* line 183, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+    .l-style-guide .items-holder.grid .item.swatch-item .h-swatch {
+      position: relative;
+      height: 85px; }
+    /* line 188, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/_style-guide-base.scss */
+    .l-style-guide .items-holder.grid .item.swatch-item .swatch {
+      height: 75px;
+      width: 75px;
+      border: 1px solid rgba(153, 153, 153, 0.1);
+      border-radius: 15%;
+      position: absolute;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      -moz-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+      -o-transform: translateX(-50%);
+      transform: translateX(-50%); }
+
+/* line 36, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/style-guide-espresso.scss */
+div.themed.espresso {
+  display: block; }
+
+/* line 37, /Users/vwoeltje/Projects/WTD/Repositories/openmct/example/styleguide/res/sass/style-guide-espresso.scss */
+span.themed.espresso {
+  display: inline; }
+
+/*# sourceMappingURL=style-guide-espresso.css.map */

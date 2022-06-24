@@ -1,0 +1,42 @@
+/* Styles for auto-generated docs */
+/* line 5, /Users/akhenry/Code/website/styles/sass/documentation.scss */
+body, html {
+  background-color: white;
+  color: #333; }
+
+/* line 10, /Users/akhenry/Code/website/styles/sass/documentation.scss */
+body {
+  font-size: 90%;
+  margin: 50px 15%; }
+
+/* line 15, /Users/akhenry/Code/website/styles/sass/documentation.scss */
+h1, h2, h3 {
+  margin-top: 24px;
+  padding-top: 24px;
+  text-transform: uppercase; }
+
+/* line 21, /Users/akhenry/Code/website/styles/sass/documentation.scss */
+h1 {
+  border-top: 1px solid #ccc; }
+
+/* line 25, /Users/akhenry/Code/website/styles/sass/documentation.scss */
+img {
+  max-width: 100%; }
+
+/* line 29, /Users/akhenry/Code/website/styles/sass/documentation.scss */
+th, td {
+  font-size: 0.8rem;
+  padding-right: 10px; }
+
+/* line 34, /Users/akhenry/Code/website/styles/sass/documentation.scss */
+th {
+  text-align: left; }
+
+/* line 38, /Users/akhenry/Code/website/styles/sass/documentation.scss */
+code {
+  background-color: #eee;
+  border-radius: 2px;
+  display: inline-block;
+  padding: 1px 5px; }
+
+/*# sourceMappingURL=documentation.css.map */
