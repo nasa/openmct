@@ -132,7 +132,6 @@ class ActionCollection extends EventEmitter {
     }
 
     _update() {
-        console.log('update emitted');
         this.emit('update', this.applicableActions);
     }
 
