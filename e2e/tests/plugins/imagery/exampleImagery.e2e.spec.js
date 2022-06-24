@@ -41,9 +41,6 @@ test.describe('Example Imagery', () => {
         // Click text=Example Imagery
         await page.click('text=Example Imagery');
 
-        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-        await page.click('form[name="mctForm"] a:has-text("My Items")');
-
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
@@ -330,9 +327,9 @@ test('Example Imagery in Display layout', async ({ page }) => {
 
         return newImageCount;
     }, {
-        message: "verify that new images still stream in",
+        message: "verify that old images are discarded",
         timeout: 6 * 1000
-    }).toBeGreaterThan(imageCount);
+    }).toBe(imageCount);
 
     // Verify selected image is still displayed
     await expect(selectedImage).toBeVisible();
