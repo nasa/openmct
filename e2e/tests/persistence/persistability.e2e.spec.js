@@ -29,10 +29,6 @@ const { expect } = require('@playwright/test');
 const path = require('path');
 
 test.describe('Persistence operations @addInit', () => {
-    test.info().annotations.push({
-        type: 'issue',
-        description: 'https://github.com/nasa/openmct/issues/4323'
-    });
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef
@@ -40,6 +36,10 @@ test.describe('Persistence operations @addInit', () => {
     });
 
     test('Persistability should be respected in the create form location field', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/4323'
+        });
         // Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
