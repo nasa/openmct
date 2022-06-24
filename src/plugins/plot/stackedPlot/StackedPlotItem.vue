@@ -185,7 +185,7 @@ export default {
         },
         setStatus(status) {
             this.status = status;
-            this.updateComponentProp('status', status);
+            this.$emit('status', status);
         },
         setSelection() {
             let childContext = {};
@@ -200,7 +200,7 @@ export default {
         },
         loadingUpdated(loaded) {
             this.loading = loaded;
-            this.updateComponentProp('loading', loaded);
+            this.$emit('loading', loaded);
         },
         getProps() {
             return {
