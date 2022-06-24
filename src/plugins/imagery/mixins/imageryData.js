@@ -128,7 +128,7 @@ export default {
 
             return this.timeFormatter.parse(datum);
         },
-        async boundsChange(bounds, isTick) {
+        boundsChange(bounds, isTick) {
             if (isTick) {
                 return;
             }
@@ -136,11 +136,7 @@ export default {
             // forcibly reset the imageContainer size to prevent an aspect ratio distortion
             delete this.imageContainerWidth;
             delete this.imageContainerHeight;
-
-            await this.requestHistory();
             this.bounds = bounds; // setting bounds for ImageryView watcher
-        },
-        
         },
         timeSystemChange() {
             this.timeSystem = this.timeContext.timeSystem();
