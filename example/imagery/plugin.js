@@ -59,7 +59,8 @@ export default function () {
                 object.configuration = {
                     imageLocation: '',
                     imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS,
-                    imageSamples: []
+                    imageSamples: [],
+                    layers: []
                 };
 
                 object.telemetry = {
@@ -90,7 +91,21 @@ export default function () {
                             format: 'image',
                             hints: {
                                 image: 1
-                            }
+                            },
+                            layers: [
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-16x9.png',
+                                    name: '16:9'
+                                },
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-safe.png',
+                                    name: 'Safe'
+                                },
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-scale.png',
+                                    name: 'Scale'
+                                }
+                            ]
                         },
                         {
                             name: 'Image Download Name',
@@ -153,7 +168,7 @@ function getImageUrlListFromConfig(configuration) {
 }
 
 function getImageLoadDelay(domainObject) {
-    const imageLoadDelay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+    const imageLoadDelay = Math.trunc(Number(domainObject.configuration.imageLoadDelayInMilliSeconds));
     if (!imageLoadDelay) {
         openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS);
 

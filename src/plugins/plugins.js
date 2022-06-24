@@ -32,6 +32,7 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    '../../example/faultManagment/exampleFaultSource',
     './imagery/plugin',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
@@ -80,7 +81,9 @@ define([
     './localStorage/plugin',
     './operatorStatus/plugin',
     './gauge/GaugePlugin',
-    './timelist/plugin'
+    './timelist/plugin',
+    './faultManagement/FaultManagementPlugin',
+    '../../example/exampleTags/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -93,6 +96,7 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ExampleFaultSource,
     ImageryPlugin,
     SummaryWidget,
     URLIndicatorPlugin,
@@ -141,14 +145,18 @@ define([
     LocalStorage,
     OperatorStatus,
     GaugePlugin,
-    TimeList
+    TimeList,
+    FaultManagementPlugin,
+    ExampleTags
 ) {
     const plugins = {};
 
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
     plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.ExampleFaultSource = ExampleFaultSource.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
+    plugins.example.ExampleTags = ExampleTags.default;
     plugins.example.Generator = () => GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
@@ -183,8 +191,10 @@ define([
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
-    plugins.Notebook = Notebook.default;
+    plugins.Notebook = Notebook.NotebookPlugin;
+    plugins.RestrictedNotebook = Notebook.RestrictedNotebookPlugin;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FaultManagement = FaultManagementPlugin.default;
     plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;

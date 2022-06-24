@@ -36,7 +36,7 @@
         <li
             v-for="action in options.actions"
             :key="action.name"
-            :class="action.cssClass"
+            :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
             :title="action.description"
             :data-testid="action.testId || false"
             @click="action.onItemClicked"
