@@ -22,8 +22,12 @@
 import TableRowCollection from "./TableRowCollection.js";
 
 describe("Table rows constructor", function () {
+    let tableRowCollection;
+    beforeEach(() => {
+        tableRowCollection = new TableRowCollection();
+    });
+
     it("Testing rows structure", function () {
-        let tableRowCollection = new TableRowCollection();
         tableRowCollection.rows = [{
             'objectKeyString': 'Timestamp'
         }];
@@ -31,11 +35,24 @@ describe("Table rows constructor", function () {
     });
 
     it("Testing columnsFilters structure", function () {
-        let tableRowCollection = new TableRowCollection();
         tableRowCollection.columnFilters = {
             'objectKeyString': 'Timestamp'
         };
         expect(tableRowCollection.columnFilters.objectKeyString).toBe('Timestamp');
     });
+
+    it("Testing sortCollection", function () {
+        tableRowCollection.sortOptions = 'asc';
+        let result = tableRowCollection.addRows([]);
+        expect(result).toBe(undefined);
+    });
+
+    it("Testing sortAndMergeRows", function () {
+        tableRowCollection.sortOptions = 'asc';
+        tableRowCollection.rows = [];
+        let result = tableRowCollection.sortAndMergeRows([]);
+        expect(result).toBe(undefined);
+    });
+
 });
 
