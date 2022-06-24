@@ -208,13 +208,13 @@ export default class TelemetryAPI {
             return Promise.resolve(request);
         }
 
-        const finalRequest = await interceptors.reduce(async (prevRequest, interceptor) => {
-            const modifiedRequest = await interceptor.invoke(identifier, prevRequest);
+        let modifiedRequest = { ...request };
 
-            return modifiedRequest;
-        }, Promise.resolve(request));
+        for (let interceptor of interceptors) {
+            modifiedRequest = await interceptor.invoke(modifiedRequest);
+        }
 
-        return finalRequest;
+        return modifiedRequest;
     }
 
     /**
