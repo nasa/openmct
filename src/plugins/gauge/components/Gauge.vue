@@ -261,6 +261,7 @@
                 <template v-if="typeMeterVertical">
                     <div
                         class="c-meter__value"
+                        :class="{'c-meter__value-needle' : typeNeedleMeter }"
                         :style="`transform: translateY(${meterValueToPerc}%)`"
                     ></div>
 
@@ -280,6 +281,7 @@
                 <template v-if="typeMeterHorizontal">
                     <div
                         class="c-meter__value"
+                        :class="{'c-meter__value-needle' : typeNeedleMeter }"
                         :style="`transform: translateX(${meterValueToPerc * -1}%)`"
                     ></div>
 
@@ -469,15 +471,25 @@ export default {
         typeMeterInverted() {
             return this.matchGaugeType('inverted');
         },
+        typeFilledMeter() {
+            return true; // TODO: enhance Gauge props to support this
+        },
+        typeNeedleMeter() {
+            return false; // TODO: enhance Gauge props to support this
+        },
         meterValueToPerc() {
             const meterDirection = (this.typeMeterInverted) ? -1 : 1;
 
-            if (this.curVal <= this.rangeLow) {
-                return meterDirection * 100;
-            }
+            if (this.typeFilledMeter) {
+                // Filled meter is a filled rectangle that is transformed along a vertical or horizontal axis
+                // So never move it below the low range more than 100%, or above the high range more than 0%
+                if (this.curVal <= this.rangeLow) {
+                    return meterDirection * 100;
+                }
 
-            if (this.curVal >= this.rangeHigh) {
-                return 0;
+                if (this.curVal >= this.rangeHigh) {
+                    return 0;
+                }
             }
 
             return this.valToPercentMeter(this.curVal) * meterDirection;

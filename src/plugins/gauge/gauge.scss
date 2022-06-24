@@ -1,3 +1,6 @@
+$meterNeedlePerc: 1%; // Todo: move this into a constant
+$meterNeedleMinPx: 2px;
+
 .is-object-type-gauge {
   overflow: hidden;
 }
@@ -77,7 +80,6 @@
 
   &__graphics g {
     transform-origin: center;
-    opacity: 0.5; // TEMP
   }
 }
 
@@ -106,6 +108,16 @@
     position: absolute;
     background: $colorGaugeValue;
     z-index: 1;
+  }
+
+  &__value-needle {
+    background: none !important;
+    &:before {
+      @include abs();
+      content: '';
+      display: block;
+      background: $colorGaugeValue;
+    }
   }
 
   &__value-oor-indicator {
@@ -187,6 +199,17 @@
     &__limit-high {
       top: 0;
     }
+
+    &__value-needle {
+      left: 0;
+
+      &:before {
+        bottom: auto;
+        height: $meterNeedlePerc;
+        min-height: $meterNeedleMinPx;
+        transform: translateY(-50%);
+      }
+    }
   }
 
   .c-gauge--meter-vertical-inverted & {
@@ -204,6 +227,17 @@
 
     &__range__high {
       order: 2;
+    }
+
+    &__value-needle {
+      left: 0;
+
+      &:before {
+        top: auto;
+        height: $meterNeedlePerc;
+        min-height: $meterNeedleMinPx;
+        transform: translateY(50%);
+      }
     }
   }
 
@@ -236,6 +270,17 @@
       bottom: $m;
       left: 0;
       right: 0;
+    }
+
+    &__value-needle {
+      bottom: 0;
+
+      &:before {
+        left: auto;
+        width: $meterNeedlePerc;
+        min-height: $meterNeedleMinPx;
+        transform: translateX(50%);
+      }
     }
 
     [class*='limit'] {
