@@ -1,5 +1,7 @@
-$meterNeedlePerc: 1%; // Todo: move this into a constant
-$meterNeedleMinPx: 2px;
+$meterNeedlePerc: 1%;
+$meterNeedleMinPx: 4px;
+$meterNeedleMaxPx: 20px;
+$meterNeedleBorderRadius: 5px;
 
 .is-object-type-gauge {
   overflow: hidden;
@@ -22,7 +24,6 @@ $meterNeedleMinPx: 2px;
   &__range,
   &__units,
   &__units text {
-    // TODO: MAKE THIS METER-SPECIFIC
     $c: $colorGaugeRange;
     color: $c;
     fill: $c;
@@ -179,6 +180,18 @@ $meterNeedleMinPx: 2px;
       bottom: 0;
     }
 
+    &__value-needle {
+      right: 0;
+
+      &:before {
+        border-bottom-left-radius: $meterNeedleBorderRadius;
+        border-top-left-radius: $meterNeedleBorderRadius;
+        height: $meterNeedlePerc;
+        min-height: $meterNeedleMinPx;
+        max-height: $meterNeedleMaxPx;
+      }
+    }
+
     [class*='limit'] {
       left: 0;
       right: 0;
@@ -201,12 +214,8 @@ $meterNeedleMinPx: 2px;
     }
 
     &__value-needle {
-      left: 0;
-
       &:before {
         bottom: auto;
-        height: $meterNeedlePerc;
-        min-height: $meterNeedleMinPx;
         transform: translateY(-50%);
       }
     }
@@ -230,12 +239,8 @@ $meterNeedleMinPx: 2px;
     }
 
     &__value-needle {
-      left: 0;
-
       &:before {
         top: auto;
-        height: $meterNeedlePerc;
-        min-height: $meterNeedleMinPx;
         transform: translateY(50%);
       }
     }
@@ -273,12 +278,15 @@ $meterNeedleMinPx: 2px;
     }
 
     &__value-needle {
-      bottom: 0;
+      top: 0;
 
       &:before {
+        border-bottom-left-radius: $meterNeedleBorderRadius;
+        border-bottom-right-radius: $meterNeedleBorderRadius;
         left: auto;
         width: $meterNeedlePerc;
-        min-height: $meterNeedleMinPx;
+        min-width: $meterNeedleMinPx;
+        max-width: $meterNeedleMaxPx;
         transform: translateX(50%);
       }
     }

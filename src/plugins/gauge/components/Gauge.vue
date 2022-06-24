@@ -472,10 +472,10 @@ export default {
             return this.matchGaugeType('inverted');
         },
         typeFilledMeter() {
-            return true; // TODO: enhance Gauge props to support this
+            return true; // Stubbing in for future capability
         },
         typeNeedleMeter() {
-            return false; // TODO: enhance Gauge props to support this
+            return false; // Stubbing in for future capability
         },
         meterValueToPerc() {
             const meterDirection = (this.typeMeterInverted) ? -1 : 1;
