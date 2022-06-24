@@ -254,8 +254,10 @@ test('Example Imagery in Display layout', async ({ page }) => {
     await page.click('text=Example Imagery');
 
     // Clear and set Image load delay to minimum value
+    // FIXME: Update the value to 5000 ms when this bug is fixed.
+    // See: https://github.com/nasa/openmct/issues/5265
     await page.locator('input[type="number"]').fill('');
-    await page.locator('input[type="number"]').fill('5000');
+    await page.locator('input[type="number"]').fill('0');
 
     // Click text=OK
     await Promise.all([
