@@ -147,10 +147,6 @@ export default {
         if (this.removeColorObserver) {
             this.removeColorObserver();
         }
-
-        if (this.stopObservingForChanges) {
-            this.stopObservingForChanges();
-        }
     },
     methods: {
         initialize(highlightedObject) {
@@ -213,6 +209,8 @@ export default {
                 seriesColorPath,
                 this.changeColor.bind(this, seriesObject)
             );
+
+            this.stopObservingForChanges();
         },
         changeColor(seriesObject) {
             this.colorAsHexString = seriesObject.get('color').asHexString();
