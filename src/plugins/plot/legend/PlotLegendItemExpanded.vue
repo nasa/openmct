@@ -191,7 +191,7 @@ export default {
                     const key = this.domainObject.type === "telemetry.plot.stacked" ? 'series.color' : 'color';
                     const getPath = this.dynamicPathForKey(key);
                     const seriesColorPath = getPath(this.domainObject, seriesObject);
-                    
+
                     this.removeColorObserver = this.openmct.objects.observe(
                         this.domainObject,
                         seriesColorPath,

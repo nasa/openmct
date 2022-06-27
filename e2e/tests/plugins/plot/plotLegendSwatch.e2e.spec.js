@@ -41,7 +41,7 @@ test.describe('Legend color in sync with plot color', () => {
         // gets color for swatch located in legend
         const element = await page.waitForSelector('.plot-series-color-swatch');
         const color = await element.evaluate((el) => {
-                return window.getComputedStyle(el).getPropertyValue('background-color');
+            return window.getComputedStyle(el).getPropertyValue('background-color');
         });
 
         expect(color).toBe('rgb(255, 166, 61)');
