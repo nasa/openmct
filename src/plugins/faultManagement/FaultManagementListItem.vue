@@ -30,7 +30,7 @@
         {'is-acknowledged': fault.acknowledged}
     ]"
 >
-    <div class="c-fault-mgmt__checkbox">
+    <div class="c-fault-mgmt__list-checkbox">
         <input
             type="checkbox"
             :checked="isSelected"
@@ -52,16 +52,21 @@
         </div>
         <div class="c-fault-mgmt__list-content-right">
             <div
-                class="c-fault-mgmt__list-trigVal"
-                :class="tripValueClassname"
-                title="Trip Value"
-            >{{ fault.triggerValueInfo.value }}</div>
-            <div
-                class="c-fault-mgmt__list-curVal"
-                :class="liveValueClassname"
-                title="Live Value"
+                class="c-fault-mgmt__list-values"
+                :class=["tripValueClassname", "liveValueClassname"]
             >
-                {{ fault.currentValueInfo.value }}
+                <div
+                    class="c-fault-mgmt__list-trigVal"
+                    :class="tripValueClassname"
+                    title="Trip Value"
+                >{{ fault.triggerValueInfo.value }}</div>
+                <div
+                    class="c-fault-mgmt__list-curVal"
+                    :class="liveValueClassname"
+                    title="Live Value"
+                >
+                    {{ fault.currentValueInfo.value }}
+                </div>
             </div>
             <div
                 class="c-fault-mgmt__list-trigTime"

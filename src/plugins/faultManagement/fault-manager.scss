@@ -135,6 +135,10 @@
          }
     }
 
+    &-checkbox{
+       margin-top: 2px;
+    }
+
     &-severity{
         font-size: 2em;
         margin-left: $interiorMarginLg;
@@ -143,8 +147,13 @@
 
     &-pathname{
         flex-wrap: wrap;
-        flex: 1 1 auto;
+        flex: 1 1 30%;
         max-width: 90%;
+        .--width-less-than-600 & {
+            flex-direction: column;
+            align-items: stretch;
+            flex: 1 1 auto;
+         }
 
     }
     &-path{
@@ -152,7 +161,7 @@
     }
 
     &-faultname{
-        font-size: 1em;
+        font-size: 1em; 
     }
 
     &-content{
@@ -171,30 +180,40 @@
         margin-left: auto;
         display: flex;
         flex-wrap: wrap;
+        flex: 1 1 auto;
         .--width-less-than-600 & {
             margin-left: 0px;
          }
+    }
+
+    &-values {
+        @include isLimit();
     }
 
     &-trigVal, &-curVal, &-trigTime{
         @include ellipsize;
         border-radius: $controlCr;
         padding: $interiorMargin;
-        width: 100px;
+        // width: 100px;
+        font-size: 1.1em;
         margin-right: $interiorMarginLg;
         .--width-less-than-600 & {
             margin-top: $interiorMargin;
+            flex: 1 1 auto;
         }
     }
 
     &-trigVal {
-        @include isLimit();
+        // @include isLimit();
         background: rgba($colorBodyFg, 0.25);
+        min-width: 100px;
+        flex: 1 1 auto;
     }
 
     &-curVal {
-        @include isLimit();
+        // @include isLimit();
         background: rgba($colorBodyFg, 0.25);
+        flex: 1 1 10%;
         &-alert{
             background: $colorWarningHi;
         }
@@ -206,10 +225,14 @@
 
     &-action-wrapper{
         display: flex;
-        align-content: right;
-        width: 100px;
+        text-align: right;
+        // width: 100px;
         flex: 0 0 auto;
         margin-left: auto;
+        align-items: stretch;
+        .--width-less-than-600 & {
+           align-items: baseline;
+        }
     }
 
     &-action-button{
@@ -244,7 +267,6 @@
         align-content: right;
         width: 100px;
     }
-
 }
 
 .is-severity-critical{
