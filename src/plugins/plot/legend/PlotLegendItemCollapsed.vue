@@ -107,7 +107,13 @@ export default {
         this.initialize();
     },
     destroy() {
-        this.colorObserver();
+        if (this.removeColorObserver) {
+            this.removeColorObserver();
+        }
+
+        if (this.stopObservingForChanges) {
+            this.stopObservingForChanges();
+        }
     },
     methods: {
         initialize(highlightedObject) {
@@ -135,18 +141,38 @@ export default {
             }
 
             if (this.domainObject.configuration) {
-                const key = this.domainObject.type === "telemetry.plot.stacked" ? 'series.color' : 'color';
-                const getPath = this.dynamicPathForKey(key);
-                const seriesColorPath = getPath(this.domainObject, seriesObject);
+                let index = this.domainObject.configuration.series.findIndex((seriesConfig) => {
+                    return this.openmct.objects.areIdsEqual(seriesConfig.identifier, seriesObject.domainObject.identifier);
+                });
 
-                if (!this.colorObserver) {
-                    this.colorObserver = this.openmct.objects.observe(
+                if (index < 0) {
+                    this.stopObservingForChanges = this.openmct.objects.observe(
+                        this.domainObject,
+                        '*',
+                        this.updateColorListener.bind(this, seriesObject)
+                    );
+                } else {
+                    const key = this.domainObject.type === "telemetry.plot.stacked" ? 'series.color' : 'color';
+                    const getPath = this.dynamicPathForKey(key);
+                    const seriesColorPath = getPath(this.domainObject, seriesObject);
+                    
+                    this.removeColorObserver = this.openmct.objects.observe(
                         this.domainObject,
                         seriesColorPath,
                         this.changeColor.bind(this, seriesObject)
                     );
                 }
             }
+        },
+        updateColorListener(seriesObject) {
+            const index = this.domainObject.configuration.series.length;
+            const seriesColorPath = `configuration.series[${index}]`;
+
+            this.removeColorObserver = this.openmct.objects.observe(
+                this.domainObject,
+                seriesColorPath,
+                this.changeColor.bind(this, seriesObject)
+            );
         },
         changeColor(seriesObject) {
             this.colorAsHexString = seriesObject.get('color').asHexString();
