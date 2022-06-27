@@ -328,38 +328,12 @@ test('Example Imagery in Display layout', async ({ page }) => {
 
         return newImageCount;
     }, {
-        message: "verify that new images still stream in",
+        message: "verify that old images are discarded",
         timeout: 6 * 1000
-    }).toBeGreaterThan(imageCount);
+    }).toBe(imageCount);
 
     // Verify selected image is still displayed
     await expect(selectedImage).toBeVisible();
-
-    // Unpause imagery
-    await page.locator('.pause-play').click();
-
-    //Get background-image url from background-image css prop
-    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
-    let backgroundImageUrl = await backgroundImage.evaluate((el) => {
-        return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-    });
-    let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
-    console.log('backgroundImageUrl1 ' + backgroundImageUrl1);
-
-    let backgroundImageUrl2;
-    await expect.poll(async () => {
-        // Verify next image has updated
-        let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-        });
-        backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
-
-        return backgroundImageUrl2;
-    }, {
-        message: "verify next image has updated",
-        timeout: 6 * 1000
-    }).not.toBe(backgroundImageUrl1);
-    console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
