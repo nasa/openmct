@@ -44,24 +44,30 @@ test.describe('Timer', () => {
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Timer');
     });
 
-    test('Can start, pause, restart, and stop timer within context menu and 3dot menu', async ({ page }) => {
+    test('Can perform actions on the Timer', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/4313'
         });
 
-        await test.step("Use Timer actions from the tree context menu", async () => {
+        await test.step("From the tree context menu", async () => {
             await triggerTimerContextMenuAction(page, 'Start');
             await triggerTimerContextMenuAction(page, 'Pause');
             await triggerTimerContextMenuAction(page, 'Restart at 0');
             await triggerTimerContextMenuAction(page, 'Stop');
         });
 
-        await test.step("Use Timer actions from the 3dot menu", async () => {
+        await test.step("From the 3dot menu", async () => {
             await triggerTimer3dotMenuAction(page, 'Start');
             await triggerTimer3dotMenuAction(page, 'Pause');
             await triggerTimer3dotMenuAction(page, 'Restart at 0');
             await triggerTimer3dotMenuAction(page, 'Stop');
+        });
+
+        await test.step("From the object view", async () => {
+            await triggerTimerViewAction(page, 'Start');
+            await triggerTimerViewAction(page, 'Pause');
+            await triggerTimerViewAction(page, 'Restart at 0');
         });
     });
 });
@@ -69,6 +75,11 @@ test.describe('Timer', () => {
 /**
  * Actions that can be performed on a timer from context menus.
  * @typedef {'Start' | 'Stop' | 'Pause' | 'Restart at 0'} TimerAction
+ */
+
+/**
+ * Actions that can be performed on a timer from the object view.
+ * @typedef {'Start' | 'Pause' | 'Restart at 0'} TimerViewAction
  */
 
 /**
@@ -121,6 +132,32 @@ async function triggerTimer3dotMenuAction(page, action) {
 
     await page.locator(menuAction).click();
     assertTimerStateAfterAction(page, action);
+}
+
+/**
+ * Trigger a timer action from the object view
+ * @param {import('@playwright/test').Page} page
+ * @param {TimerViewAction} action
+ */
+async function triggerTimerViewAction(page, action) {
+    const buttonTitle = buttonTitleFromAction(action);
+    await page.click(`button[title="${buttonTitle}"]`);
+    assertTimerStateAfterAction(page, action);
+}
+
+/**
+ * Takes in a TimerViewAction and returns the button title
+ * @param {TimerViewAction} action
+ */
+function buttonTitleFromAction(action) {
+    switch (action) {
+    case 'Start':
+        return 'Start';
+    case 'Pause':
+        return 'Pause';
+    case 'Restart at 0':
+        return 'Reset';
+    }
 }
 
 /**
