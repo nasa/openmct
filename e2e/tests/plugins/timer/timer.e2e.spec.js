@@ -67,6 +67,11 @@ test.describe('Timer', () => {
 });
 
 /**
+ * Actions that can be performed on a timer from context menus.
+ * @typedef {'Start' | 'Stop' | 'Pause' | 'Restart at 0'} TimerAction
+ */
+
+/**
  * Open the timer context menu from the object tree.
  * Expands the 'My Items' folder if it is not already expanded.
  * @param {import('@playwright/test').Page} page
@@ -86,71 +91,57 @@ async function openTimerContextMenu(page) {
 /**
  * Trigger a timer action from the tree context menu
  * @param {import('@playwright/test').Page} page
- * @param {'Start' | 'Stop' | 'Pause' | 'Restart at 0'} action
+ * @param {TimerAction} action
  */
 async function triggerTimerContextMenuAction(page, action) {
+    const menuAction = `.c-menu ul li >> text="${action}"`;
     await openTimerContextMenu(page);
-    let menuOptions = page.locator('.c-menu ul');
-    await expect.soft(menuOptions).toContainText(action);
-    await page.locator(`.c-menu ul li:has-text("${action}")`).click();
-    await openTimerContextMenu(page);
-    menuOptions = page.locator('.c-menu ul');
-    await assertAvailableActions(menuOptions, action);
+    await page.locator(menuAction).click();
+    assertTimerStateAfterAction(page, action);
 }
 
 /**
  * Trigger a timer action from the 3dot menu
  * @param {import('@playwright/test').Page} page
- * @param {'Start' | 'Stop' | 'Pause' | 'Restart at 0'} action
+ * @param {TimerAction} action
  */
 async function triggerTimer3dotMenuAction(page, action) {
+    const menuAction = `.c-menu ul li >> text="${action}"`;
     const threeDotMenuButton = 'button[title="More options"]';
-    await page.click(threeDotMenuButton);
-    await page.locator(`.c-menu ul li:has-text("${action}")`).click();
+    let isActionAvailable = false;
+    let iterations = 0;
+    // Dismiss/open the 3dot menu until the action is available
+    // or a maxiumum number of iterations is reached
+    while (!isActionAvailable && iterations <= 20) {
+        await page.click('.c-object-view');
+        await page.click(threeDotMenuButton);
+        isActionAvailable = await page.locator(menuAction).isVisible();
+        iterations++;
+    }
 
-    // FIXME: Figure out a way to not need an explicit wait here.
-    // Need to wait for 3dot menu options to update via event.
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(200);
-
-    await page.click(threeDotMenuButton);
-    const menuOptions = page.locator('.c-menu ul');
-    await assertAvailableActions(menuOptions, action);
-
-    // Dismiss 3dot menu (click outside of it)
-    await page.click('.c-object-view');
+    await page.locator(menuAction).click();
+    assertTimerStateAfterAction(page, action);
 }
 
 /**
- * Assert the available actions in the menu after performing the given action
- * @param {import('@playwright/test').Locator} menuLocator
- * @param {'Start' | 'Stop' | 'Pause' | 'Restart at 0'} action
+ * Verify the timer state after a timer action has been performed.
+ * @param {import('@playwright/test').Page} page
+ * @param {TimerAction} action
  */
-async function assertAvailableActions(menuLocator, action) {
+async function assertTimerStateAfterAction(page, action) {
+    let timerStateClass;
     switch (action) {
     case 'Start':
-        await expect.soft(menuLocator).not.toContainText('Start');
-        await expect.soft(menuLocator).toContainText('Stop');
-        await expect.soft(menuLocator).toContainText('Pause');
-        await expect.soft(menuLocator).toContainText('Restart at 0');
+    case 'Restart at 0':
+        timerStateClass = "is-started";
         break;
     case 'Stop':
-        await expect.soft(menuLocator).toContainText('Start');
-        await expect.soft(menuLocator).not.toContainText('Stop');
-        await expect.soft(menuLocator).not.toContainText('Pause');
-        await expect.soft(menuLocator).not.toContainText('Restart at 0');
+        timerStateClass = 'is-stopped';
         break;
     case 'Pause':
-        await expect.soft(menuLocator).toContainText('Start');
-        await expect.soft(menuLocator).toContainText('Stop');
-        await expect.soft(menuLocator).not.toContainText('Pause');
-        await expect.soft(menuLocator).toContainText('Restart at 0');
-        break;
-    case 'Restart at 0':
-        await expect.soft(menuLocator).not.toContainText('Start');
-        await expect.soft(menuLocator).toContainText('Stop');
-        await expect.soft(menuLocator).toContainText('Pause');
-        await expect.soft(menuLocator).toContainText('Restart at 0');
+        timerStateClass = 'is-paused';
         break;
     }
+
+    await expect.soft(page.locator('.c-timer')).toHaveClass(new RegExp(timerStateClass));
 }
