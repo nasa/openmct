@@ -335,7 +335,9 @@ export class TelemetryCollection extends EventEmitter {
             this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
         }
 
-        let metadataValue = this.metadata ? this.metadata.value(timeSystem.key) : { format: timeSystem.key };
+        let metadataValue = this.metadata
+            ? this.metadata.value(timeSystem.key) || { format: timeSystem.key }
+            : { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (datum) => {
