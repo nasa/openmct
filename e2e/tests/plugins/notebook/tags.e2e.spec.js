@@ -24,7 +24,8 @@
 This test suite is dedicated to tests which verify form functionality.
 */
 
-const { test, expect } = require('@playwright/test');
+const { expect } = require('@playwright/test');
+const { test } = require('../../../fixtures');
 
 /**
   * Creates a notebook object and adds an entry.
