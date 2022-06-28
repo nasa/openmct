@@ -25,6 +25,7 @@ This test suite is dedicated to tests which verify search functionality.
 */
 
 const { test, expect } = require('@playwright/test');
+const percySnapshot = require('@percy/playwright');
 
 /**
   * Creates a notebook object and adds an entry.
@@ -69,7 +70,7 @@ test.describe('Grand Search', () => {
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cl');
         await expect(page.locator('[aria-label="Search Result"]')).toContainText('Clock');
-        await page.percysnapshot();
+        await page.percysnapshot('Searching for Clocks');
         // Click text=Elements >> nth=0
         await page.locator('text=Elements').first().click();
         await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
