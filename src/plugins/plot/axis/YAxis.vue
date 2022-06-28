@@ -122,13 +122,13 @@ export default {
         setUpYAxisOptions() {
             this.yKeyOptions = this.seriesModel.metadata
                 ? this.seriesModel.metadata
-                .valuesForHints(['range'])
-                .map(function (o) {
-                    return {
-                        name: o.name,
-                        key: o.key
-                    };
-                })
+                    .valuesForHints(['range'])
+                    .map(function (o) {
+                        return {
+                            name: o.name,
+                            key: o.key
+                        };
+                    })
                 : [];
 
             //  set yAxisLabel if none is set yet
