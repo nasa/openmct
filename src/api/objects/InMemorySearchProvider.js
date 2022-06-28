@@ -445,7 +445,7 @@ class InMemorySearchProvider {
             keyString
         };
         if (model && (model.type === 'annotation')) {
-            if (model.targets && model.targets) {
+            if (model.targets) {
                 this.localIndexAnnotation(objectToIndex, model);
             }
 

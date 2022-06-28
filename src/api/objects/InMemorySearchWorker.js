@@ -113,7 +113,7 @@
             keyString
         };
         if (model && (model.type === 'annotation')) {
-            if (model.targets && model.targets) {
+            if (model.targets) {
                 indexAnnotation(objectToIndex, model);
             }
 
