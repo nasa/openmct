@@ -102,7 +102,7 @@ test.describe('Grand Search', () => {
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Cl');
         // Click text=Unnamed Clock
         await Promise.all([
-            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/ROOT/mine/c5a1c3be-73e4-46d3-ae94-ba03b75a7978?tc.mode=fixed&tc.startBound=1656416305282&tc.endBound=1656418105282&tc.timeSystem=utc&view=clock.view' }*/),
+            page.waitForNavigation(),
             page.locator('text=Unnamed Clock').click()
         ]);
         await expect(page.locator('.is-object-type-clock')).toBeVisible();
