@@ -30,7 +30,7 @@
         >
     </div>
     <div class="c-fault-mgmt__list-content">
-        <div class="c-fault-mgmt__list-header-results"> {{ totalFaultsCount }} Results </div>
+        <div class="c-fault-mgmt__list-header-results c-fault-mgmt__list-pathname"> {{ totalFaultsCount }} Results </div>
         <div class="c-fault-mgmt__list-content-right">
             <div class="c-fault-mgmt__list-header-tripVal c-fault-mgmt__list-trigVal">Trip Value</div>
             <div class="c-fault-mgmt__list-header-liveVal c-fault-mgmt__list-curVal">Live Value</div>

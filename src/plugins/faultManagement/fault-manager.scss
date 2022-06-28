@@ -43,7 +43,7 @@
     }
     .c-fault-mgmt__list-faultname{
         font-weight: bold;
-        font-size: 1.3em;
+        // font-size: 1.3em;
     }
 }
 
@@ -66,7 +66,7 @@
         transform: scale(0.45);
     }
     .c-fault-mgmt__list-faultname{
-        font-size: 1.1em;
+        // font-size: 1.1em;
     }
 }
 
@@ -148,7 +148,8 @@
     &-pathname{
         flex-wrap: wrap;
         flex: 1 1 30%;
-        max-width: 90%;
+        // max-width: 90%;
+        margin-right: $interiorMarginSm;
         .--width-less-than-600 & {
             flex-direction: column;
             align-items: stretch;
@@ -161,7 +162,7 @@
     }
 
     &-faultname{
-        font-size: 1em; 
+        font-size: 1.3em; 
     }
 
     &-content{
@@ -186,34 +187,29 @@
          }
     }
 
-    &-values {
-        @include isLimit();
-    }
-
     &-trigVal, &-curVal, &-trigTime{
         @include ellipsize;
         border-radius: $controlCr;
         padding: $interiorMargin;
-        // width: 100px;
         font-size: 1.1em;
         margin-right: $interiorMarginLg;
         .--width-less-than-600 & {
             margin-top: $interiorMargin;
-            flex: 1 1 auto;
+            flex: 0 0 auto;
         }
     }
 
     &-trigVal {
-        // @include isLimit();
+        @include isLimit();
         background: rgba($colorBodyFg, 0.25);
-        min-width: 100px;
-        flex: 1 1 auto;
+        margin-right: $interiorMarginLg;
+        flex: 1 1 20%;
     }
 
     &-curVal {
-        // @include isLimit();
+        @include isLimit();
         background: rgba($colorBodyFg, 0.25);
-        flex: 1 1 10%;
+        flex: 1 1 20%;
         &-alert{
             background: $colorWarningHi;
         }
@@ -248,6 +244,9 @@
     background: rgba($colorBodyFg, .23);
     border-radius: $controlCr;
 
+    &-results{
+        // width: 100px;
+    }
     &-tripVal, &-liveVal, &-trigTime{
         background: none;
         padding: 0px;
@@ -257,15 +256,15 @@
     }
 
     &-trigTime{
-        width: 160px;
+        width: 95px;
     }
     &-sortButton{
-        flex: 0 0 auto;
-        margin-left: auto;
-        justify-content: right;
-        display: flex;
-        align-content: right;
-        width: 100px;
+        // flex: 0 0 auto;
+        // margin-left: auto;
+        // justify-content: right;
+        // display: flex;
+        // align-content: right;
+        // width: 10px;
     }
 }
 

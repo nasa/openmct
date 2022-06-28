@@ -52,21 +52,16 @@
         </div>
         <div class="c-fault-mgmt__list-content-right">
             <div
-                class="c-fault-mgmt__list-values"
-                :class=["tripValueClassname", "liveValueClassname"]
+                class="c-fault-mgmt__list-trigVal"
+                :class="tripValueClassname"
+                title="Trip Value"
+            >{{ fault.triggerValueInfo.value }}</div>
+            <div
+                class="c-fault-mgmt__list-curVal"
+                :class="liveValueClassname"
+                title="Live Value"
             >
-                <div
-                    class="c-fault-mgmt__list-trigVal"
-                    :class="tripValueClassname"
-                    title="Trip Value"
-                >{{ fault.triggerValueInfo.value }}</div>
-                <div
-                    class="c-fault-mgmt__list-curVal"
-                    :class="liveValueClassname"
-                    title="Live Value"
-                >
-                    {{ fault.currentValueInfo.value }}
-                </div>
+                {{ fault.currentValueInfo.value }}
             </div>
             <div
                 class="c-fault-mgmt__list-trigTime"
