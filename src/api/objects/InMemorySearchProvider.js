@@ -259,8 +259,12 @@ class InMemorySearchProvider {
     }
 
     onAnnotationCreation(annotationObject) {
-        const provider = this;
-        provider.index(annotationObject);
+
+        const objectProvider = this.openmct.objects.getProvider(annotationObject.identifier);
+        if (objectProvider === undefined || objectProvider.search === undefined) {
+            const provider = this;
+            provider.index(annotationObject);
+        }
     }
 
     onNameMutation(domainObject, name) {
