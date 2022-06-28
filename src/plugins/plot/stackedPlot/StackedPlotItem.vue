@@ -147,6 +147,11 @@ export default {
                     domainObject: object,
                     path
                 },
+                computed: {
+                    isMissing()  {
+                        return openmct.objects.isMissing(object);
+                    }
+                },
                 data() {
                     return {
                         ...getProps(),
@@ -160,7 +165,7 @@ export default {
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
 
             this.setSelection();
@@ -233,29 +238,33 @@ export default {
                             yAxis: {}
                         };
                     }
+                    
+                    try {
+                        config = new PlotConfigurationModel({
+                            id: configId,
+                            domainObject: {
+                                ...this.childObject,
+                                configuration: {
+                                    series: [
+                                        {
+                                            identifier: this.childObject.identifier,
+                                            ...persistedSeriesConfig.series
+                                        }
+                                    ],
+                                    yAxis: persistedSeriesConfig.yAxis
 
-                    config = new PlotConfigurationModel({
-                        id: configId,
-                        domainObject: {
-                            ...this.childObject,
-                            configuration: {
-                                series: [
-                                    {
-                                        identifier: this.childObject.identifier,
-                                        ...persistedSeriesConfig.series
-                                    }
-                                ],
-                                yAxis: persistedSeriesConfig.yAxis
-
+                                }
+                            },
+                            openmct: this.openmct,
+                            palette: this.colorPalette,
+                            callback: (data) => {
+                                this.data = data;
                             }
-                        },
-                        openmct: this.openmct,
-                        palette: this.colorPalette,
-                        callback: (data) => {
-                            this.data = data;
-                        }
-                    });
-                    configStore.add(configId, config);
+                        });
+                        configStore.add(configId, config);
+                    } catch {
+                        console.warn('Missing domain object');
+                    }
                 }
 
                 return this.childObject;
