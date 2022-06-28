@@ -20,29 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from './TimelineViewProvider';
-import timelineInterceptor from "./timelineInterceptor";
-import TimelineCompositionPolicy from "./TimelineCompositionPolicy";
+// this will be called from the test suite with
+// await page.addInitScript({ path: path.join(__dirname, 'addInitGauge.js') });
+// it will install the Gauge since it is not installed by default
 
-export default function () {
-    return function install(openmct) {
-        openmct.types.addType('time-strip', {
-            name: 'Time Strip',
-            key: 'time-strip',
-            description: 'Compose and display time-based telemetry and other object types in a timeline-like view.',
-            creatable: true,
-            cssClass: 'icon-timeline',
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    useIndependentTime: false
-                };
-            }
-        });
-        timelineInterceptor(openmct);
-        openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
-
-        openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-    };
-}
-
+document.addEventListener('DOMContentLoaded', () => {
+    const openmct = window.openmct;
+    openmct.install(openmct.plugins.Gauge());
+});
