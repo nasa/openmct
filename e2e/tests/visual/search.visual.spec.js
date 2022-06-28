@@ -24,8 +24,8 @@
 This test suite is dedicated to tests which verify search functionality.
 */
 
-const { expect } = require('@playwright/test');
-const { test } = require('../fixtures.js');
+const { test, expect } = require('@playwright/test');
+const percySnapshot = require('@percy/playwright');
 
 /**
   * Creates a notebook object and adds an entry.
@@ -70,6 +70,7 @@ test.describe('Grand Search', () => {
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cl');
         await expect(page.locator('[aria-label="Search Result"]')).toContainText('Clock');
+        await percySnapshot(page, 'Searching for Clocks');
         // Click text=Elements >> nth=0
         await page.locator('text=Elements').first().click();
         await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
@@ -78,20 +79,11 @@ test.describe('Grand Search', () => {
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
         // Click [aria-label="Unnamed Clock clock result"] >> text=Unnamed Clock
         await page.locator('[aria-label="Unnamed Clock clock result"] >> text=Unnamed Clock').click();
-        await expect(page.locator('.js-preview-window')).toBeVisible();
+        await percySnapshot(page, 'Preview for clock should display when editing enabled and search item clicked');
 
         // Click [aria-label="Close"]
         await page.locator('[aria-label="Close"]').click();
-        await expect(page.locator('[aria-label="Search Result"]')).toBeVisible();
-        await expect(page.locator('[aria-label="Search Result"]')).toContainText('Cloc');
-
-        // Click [aria-label="OpenMCT Search"] a >> nth=0
-        await page.locator('[aria-label="OpenMCT Search"] a').first().click();
-        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
-
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('foo');
-        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
+        await percySnapshot(page, 'Search should still be showing after preview closed');
 
         // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
         await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
@@ -106,6 +98,7 @@ test.describe('Grand Search', () => {
             page.waitForNavigation(),
             page.locator('text=Unnamed Clock').click()
         ]);
-        await expect(page.locator('.is-object-type-clock')).toBeVisible();
+        await percySnapshot(page, 'Clicking on search results should navigate to them if not editing');
+
     });
 });
