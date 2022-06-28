@@ -94,6 +94,10 @@ export default {
         };
         this.$refs.objectpath.updateSelection([[selectionObject]]);
         this.previewAction = new PreviewAction(this.openmct);
+        this.previewAction.on('isVisible', this.togglePreviewState);
+    },
+    destroyed() {
+        this.previewAction.off('isVisible', this.togglePreviewState);
     },
     methods: {
         clickedResult(event) {
@@ -105,6 +109,9 @@ export default {
                 const resultUrl = objectPathToUrl(this.openmct, objectPath);
                 this.openmct.router.navigate(resultUrl);
             }
+        },
+        togglePreviewState(previewState) {
+            this.$emit('preview-changed', previewState);
         },
         preview() {
             const objectPath = this.result.originalPath;
