@@ -93,7 +93,7 @@ test.describe('Sine Wave Generator', () => {
         const value = await page.locator('.field.control.l-input-sm input').first().inputValue();
         await expect(value).toBe('6');
 
-        /* Unfortunately, it appears that this code block worked at some point. Because the locators are so scrambled, 
+        /* Unfortunately, it appears that this code block worked at some point. Because the locators are so scrambled,
         * it's not clear what anything actually validates.
         // Click .c-form-row__state-indicator.grows
         // await page.locator('.c-form-row__state-indicator.grows').click();
