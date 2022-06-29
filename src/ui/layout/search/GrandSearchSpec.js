@@ -27,6 +27,7 @@ import {
 import Vue from 'vue';
 import GrandSearch from './GrandSearch.vue';
 import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
+import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
 
 describe("GrandSearch", () => {
     let openmct;
@@ -36,11 +37,18 @@ describe("GrandSearch", () => {
     let sharedWorkerToRestore;
     let mockDomainObject;
     let mockAnnotationObject;
+    let mockDisplayLayout;
+    let mockFolderObject;
+    let originalRouterPath;
 
     beforeEach((done) => {
         openmct = createOpenMct();
+        originalRouterPath = openmct.router.path;
+        openmct.router.path = [mockDisplayLayout];
+        openmct.editor.edit();
 
         openmct.install(new ExampleTagsPlugin());
+        openmct.install(new DisplayLayoutPlugin());
         const availableTags = openmct.annotation.getAvailableTags();
         mockDomainObject = {
             type: 'notebook',
@@ -62,6 +70,26 @@ describe("GrandSearch", () => {
                 }
             }
         };
+        mockFolderObject = {
+            type: 'folder',
+            name: 'Test Folder',
+            identifier: {
+                key: 'some-folder',
+                namespace: 'fooNameSpace'
+            }
+        };
+        mockDisplayLayout = {
+            type: 'layout',
+            name: 'Bar Layout',
+            identifier: {
+                key: 'some-layout',
+                namespace: 'fooNameSpace'
+            },
+            configuration: {
+                items: [],
+                layoutGrid: [10, 10]
+            }
+        };
         mockAnnotationObject = {
             type: 'annotation',
             name: 'Some Notebook Annotation',
@@ -78,7 +106,8 @@ describe("GrandSearch", () => {
             }
         };
 
-        const mockObjectProvider = jasmine.createSpyObj("mock provider", [
+        openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(false);
+        const mockObjectProvider = jasmine.createSpyObj("mock object provider", [
             "create",
             "update",
             "get"
@@ -89,6 +118,10 @@ describe("GrandSearch", () => {
                 return mockDomainObject;
             } else if (identifier.key === mockAnnotationObject.identifier.key) {
                 return mockAnnotationObject;
+            } else if (identifier.key === mockDisplayLayout.identifier.key) {
+                return mockDisplayLayout;
+            } else if (identifier.key === mockFolderObject.identifier.key) {
+                return mockFolderObject;
             } else {
                 return null;
             }
@@ -99,11 +132,21 @@ describe("GrandSearch", () => {
 
         openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
 
+        const mockViewProvider = jasmine.createSpyObj("mock view provider", [
+            "key",
+            "view",
+            "canView"
+        ]);
+
+        openmct.objectViews.addProvider(mockViewProvider);
+
         openmct.on('start', async () => {
             // use local worker
             sharedWorkerToRestore = openmct.objects.inMemorySearchProvider.worker;
             openmct.objects.inMemorySearchProvider.worker = null;
             await openmct.objects.inMemorySearchProvider.index(mockDomainObject);
+            await openmct.objects.inMemorySearchProvider.index(mockDisplayLayout);
+            await openmct.objects.inMemorySearchProvider.index(mockFolderObject);
             await openmct.objects.inMemorySearchProvider.index(mockAnnotationObject);
             parent = document.createElement('div');
             document.body.appendChild(parent);
@@ -127,6 +170,7 @@ describe("GrandSearch", () => {
 
     afterEach(() => {
         openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
+        openmct.router.path = originalRouterPath;
         grandSearchComponent.$destroy();
 
         return resetApplicationState(openmct);
@@ -144,5 +188,16 @@ describe("GrandSearch", () => {
         await Vue.nextTick();
         const annotationResult = document.querySelector('[aria-label="Search Result"]');
         expect(annotationResult).toBeDefined();
+    });
+
+    it("should preview object search results in edit mode if object clicked", async () => {
+        await grandSearchComponent.$children[0].searchEverything('Folder');
+        grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
+        await Vue.nextTick();
+        const searchResult = document.querySelector('[name="Test Folder"]');
+        expect(searchResult).toBeDefined();
+        searchResult.click();
+        const previewWindow = document.querySelector('.js-preview-window');
+        expect(previewWindow).toBeDefined();
     });
 });
