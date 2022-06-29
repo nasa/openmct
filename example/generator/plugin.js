@@ -132,6 +132,17 @@ define([
                         "telemetry",
                         "randomness"
                     ]
+                },
+                {
+                    name: "Loading Delay (ms)",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "loadDelay",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "loadDelay"
+                    ]
                 }
             ],
             initialize: function (object) {
@@ -141,7 +152,8 @@ define([
                     offset: 0,
                     dataRateInHz: 1,
                     phase: 0,
-                    randomness: 0
+                    randomness: 0,
+                    loadDelay: 0
                 };
             }
         });

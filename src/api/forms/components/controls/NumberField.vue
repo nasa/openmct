@@ -28,6 +28,7 @@
     >
         <input
             v-model="field"
+            :aria-label="model.name"
             type="number"
             :min="model.min"
             :max="model.max"
