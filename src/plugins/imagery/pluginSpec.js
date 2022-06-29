@@ -88,6 +88,7 @@ describe("The Imagery View Layouts", () => {
     let openmct;
     let parent;
     let child;
+    let historicalProvider;
     let imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
     let imageryObject = {
         identifier: {
@@ -122,50 +123,6 @@ describe("The Imagery View Layouts", () => {
                         "priority": 3
                     },
                     "source": "url"
-                    // "relatedTelemetry": {
-                    //     "heading": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "heading",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "roll": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "roll",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "pitch": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "pitch",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "cameraPan": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "cameraPan",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "cameraTilt": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "cameraTilt",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "sunOrientation": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "sunOrientation",
-                    //             "valueKey": "value"
-                    //         }
-                    //     }
-                    // }
                 },
                 {
                     "name": "Name",
@@ -208,6 +165,13 @@ describe("The Imagery View Layouts", () => {
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
         });
+
+        historicalProvider = {
+            request: () => {
+                return Promise.resolve(imageTelemetry);
+            }
+        };
+        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
 
         spyOn(openmct.telemetry, 'request').and.callFake(() => {
             telemetryPromiseResolve(imageTelemetry);
@@ -626,6 +590,20 @@ describe("The Imagery View Layouts", () => {
                 end: START + (5 * ONE_MINUTE)
             });
 
+            const mockClock = jasmine.createSpyObj("clock", [
+                "on",
+                "off",
+                "currentValue"
+            ]);
+            mockClock.key = 'mockClock';
+            mockClock.currentValue.and.returnValue(1);
+
+            openmct.time.addClock(mockClock);
+            openmct.time.clock('mockClock', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
+
             openmct.router.path = [{
                 identifier: {
                     key: 'test-timestrip',
@@ -660,7 +638,7 @@ describe("The Imagery View Layouts", () => {
         it("on mount should show imagery within the given bounds", (done) => {
             Vue.nextTick(() => {
                 const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
-                expect(imageElements.length).toEqual(6);
+                expect(imageElements.length).toEqual(5);
                 done();
             });
         });
@@ -679,6 +657,47 @@ describe("The Imagery View Layouts", () => {
                     done();
                 });
             });
+        });
+
+        it("should remove images when clock advances", async () => {
+            openmct.time.tick(ONE_MINUTE * 2);
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(4);
+        });
+
+        it("should remove images when start bounds shorten", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START,
+                end: START + (5 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(1);
+        });
+
+        it("should remove images when end bounds shorten", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START - (2 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(4);
+        });
+
+        it("should remove images when both bounds shorten", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START - (2 * ONE_MINUTE),
+                end: START + (2 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(3);
         });
     });
 });

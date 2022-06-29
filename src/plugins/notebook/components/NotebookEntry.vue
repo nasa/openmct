@@ -23,6 +23,7 @@
 <template>
 <div
     class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    aria-label="Notebook Entry"
     :class="{ 'locked': isLocked }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
