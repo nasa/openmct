@@ -64,8 +64,6 @@ export default {
             objectSearchResults: []
         };
     },
-    mounted() {
-    },
     destroyed() {
         document.body.removeEventListener('click', this.handleOutsideClick);
     },

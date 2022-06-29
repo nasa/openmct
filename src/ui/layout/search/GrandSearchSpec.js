@@ -36,9 +36,9 @@ describe("GrandSearch", () => {
     let parent;
     let sharedWorkerToRestore;
     let mockDomainObject;
+    let mockAnnotationObject;
     let mockDisplayLayout;
     let mockFolderObject;
-    let mockAnnotationObject;
     let originalRouterPath;
 
     beforeEach((done) => {
@@ -107,7 +107,6 @@ describe("GrandSearch", () => {
         };
 
         openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(false);
-
         const mockObjectProvider = jasmine.createSpyObj("mock object provider", [
             "create",
             "update",
