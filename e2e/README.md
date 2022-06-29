@@ -28,6 +28,12 @@ https://playwright.dev/docs/test-snapshots
 
 ### Architecture
 
+#### Continuous Integration
+- Maturation and difference between full and e2e-ci suites
+
+### Multi-browser and Multi-operating system
+- Where is it tested
+- What's supported
 ### Test Design
 
 - Re-usable tests for VISTA, VIPER, etc.
