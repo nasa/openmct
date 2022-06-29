@@ -231,13 +231,17 @@ async function lockPage(page) {
     const commitButton = page.locator('button:has-text("Commit Entries")');
     await commitButton.click();
 
-    //Wait until Save Banner is gone
+    //Wait until Lock Banner is visible
     await Promise.all([
         page.locator('text=Lock Page').click(),
         page.waitForSelector('.c-message-banner__message')
     ]);
-    // Close banner button instead of artificial mutation delay
+    // Close Lock Banner
     await page.locator('.c-message-banner__close-button').click();
+
+    //artifically wait to avoid mutation delay TODO: https://github.com/nasa/openmct/issues/5409
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(1 * 1000);
 }
 
 /**
@@ -252,4 +256,3 @@ async function openContextMenuRestrictedNotebook(page) {
         button: 'right'
     });
 }
-
