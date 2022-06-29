@@ -7,7 +7,7 @@ const { devices } = require('@playwright/test');
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 2,
+    retries: 3,
     testDir: 'tests',
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
