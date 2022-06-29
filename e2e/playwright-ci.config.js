@@ -46,15 +46,15 @@ const config = {
                 }
             }
         },
-        // {
-        //     name: 'safari',
-        //     testMatch: '**/*.e2e.spec.js', // only run e2e tests
-        //     grep: /@ipad/, // only run ipad tests due to this bug https://github.com/microsoft/playwright/issues/8340
-        //     grepInvert: /@snapshot/,
-        //     use: {
-        //         browserName: 'webkit'
-        //     }
-        // },
+        {
+            name: 'safari',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grep: /@ipad/, // only run ipad tests due to this bug https://github.com/microsoft/playwright/issues/8340
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'webkit'
+            }
+        },
         {
             name: 'firefox',
             testMatch: '**/*.e2e.spec.js', // only run e2e tests
@@ -87,7 +87,7 @@ const config = {
         ['list'],
         ['html', {
             open: 'never',
-            outputFolder: '../html-test-reports' //Must be in different location that junit reporter
+            outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
         }],
         ['junit', { outputFile: 'test-results/results.xml' }],
         ['github']
