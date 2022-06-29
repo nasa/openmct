@@ -7,7 +7,7 @@
     "@braintree/sanitize-url": "6.0.0",
     "@percy/cli": "1.2.1",
     "@percy/playwright": "1.0.4",
-    "@playwright/test": "1.21.1",
+    "@playwright/test": "1.23.0",
     "@types/eventemitter3": "^1.0.0",
     "@types/jasmine": "^4.0.1",
     "@types/karma": "^6.3.2",
