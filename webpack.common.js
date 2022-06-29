@@ -54,6 +54,9 @@ const config = {
             "utils": path.join(__dirname, "src/utils")
         }
     },
+    optimization: {
+        minimize: false
+    },
     plugins: [
         new webpack.DefinePlugin({
             __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
