@@ -339,6 +339,8 @@ define([
 
         return provider.request.apply(provider, arguments)
             .catch((rejected) => {
+                console.log('telemetryAPI rejected!!!!!');
+                console.log(rejected);
                 if (rejected.name !== 'AbortError') {
                     this.openmct.notifications.error('Error requesting telemetry data, see console for details');
                     console.error(rejected);
