@@ -242,7 +242,8 @@ test.describe('Example Imagery', () => {
 // ('If the imagery view is in pause mode, it should not be updated when new images come in');
 // ('If the imagery view is not in pause mode, it should be updated when new images come in');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
-test('Example Imagery in Display layout', async ({ page }) => {
+test('Example Imagery in Display layout', async ({ page, browserName }) => {
+    test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
     test.info().annotations.push({
         type: 'issue',
         description: 'https://github.com/nasa/openmct/issues/5265'
@@ -447,7 +448,8 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 // test.fixme('If the imagery view is in pause mode, images still come in');
 // test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Flexible layout', () => {
-    test('Example Imagery in Flexible layout', async ({ page }) => {
+    test('Example Imagery in Flexible layout', async ({ page, browserName }) => {
+        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5326'
