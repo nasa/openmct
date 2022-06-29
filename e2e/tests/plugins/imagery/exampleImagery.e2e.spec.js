@@ -492,11 +492,13 @@ test.describe('Example Imagery in Flexible layout', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
             page.click('text=OK'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
+
+        // Close Banner
+        await page.locator('.c-message-banner__close-button').click();
 
         // Wait until Save Banner is gone
         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});

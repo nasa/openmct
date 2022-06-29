@@ -18,7 +18,7 @@ const config = {
         reuseExistingServer: !process.env.CI
     },
     maxFailures: process.env.CI ? 5 : undefined, //Limits failures to 5 to reduce CI Waste
-    workers: 1, //Limit to 2 for CircleCI Agent
+    workers: 2, //Limit to 2 for CircleCI Agent
     use: {
         baseURL: 'http://localhost:8080/',
         headless: true,
