@@ -80,17 +80,17 @@ const config = {
                 browserName: 'chromium',
                 channel: 'chrome-beta'
             }
+        },
+        {
+            name: 'ipad',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grep: /@ipad/,
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'webkit',
+                ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
+            }
         }
-        // {
-        //     name: 'ipad',
-        //     testMatch: '**/*.e2e.spec.js', // only run e2e tests
-        //     grep: /@ipad/,
-        //     grepInvert: /@snapshot/,
-        //     use: {
-        //         browserName: 'webkit',
-        //         ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
-        //     }
-        // }
     ],
     reporter: [
         ['list'],
