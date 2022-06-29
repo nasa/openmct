@@ -251,6 +251,10 @@ async function openContextMenuRestrictedNotebook(page) {
     // Click text=Open MCT My Items (This expands the My Items folder to show it's chilren in the tree)
     await page.locator('text=Open MCT My Items >> span').nth(3).click();
 
+    //artifically wait to avoid mutation delay TODO: https://github.com/nasa/openmct/issues/5409
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(1 * 1000);
+
     // Click a:has-text("Unnamed CUSTOM_NAME")
     await page.locator(`a:has-text("Unnamed ${CUSTOM_NAME}")`).click({
         button: 'right'
