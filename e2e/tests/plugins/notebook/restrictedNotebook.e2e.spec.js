@@ -125,17 +125,17 @@ async function openContextMenuRestrictedNotebook(page) {
     return;
 }
 
-test.describe('Restricted Notebook', () => {
+test.describe('Restricted Notebook @addInit', () => {
 
     test.beforeEach(async ({ page }) => {
         await startAndAddNotebookObject(page);
     });
 
-    test('Can be renamed', async ({ page }) => {
+    test('Can be renamed @addInit', async ({ page }) => {
         await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed ${CUSTOM_NAME}`);
     });
 
-    test('Can be deleted if there are no locked pages', async ({ page }) => {
+    test('Can be deleted if there are no locked pages @addInit', async ({ page }) => {
         await openContextMenuRestrictedNotebook(page);
 
         const menuOptions = page.locator('.c-menu ul');
@@ -158,7 +158,7 @@ test.describe('Restricted Notebook', () => {
         expect.soft(await restrictedNotebookTreeObject.count()).toEqual(0);
     });
 
-    test('Can be locked if at least one page has one entry', async ({ page }) => {
+    test('Can be locked if at least one page has one entry @addInit', async ({ page }) => {
 
         await enterTextEntry(page);
 
@@ -168,7 +168,7 @@ test.describe('Restricted Notebook', () => {
 
 });
 
-test.describe('Restricted Notebook with at least one entry and with the page locked', () => {
+test.describe('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
 
     test.beforeEach(async ({ page }) => {
         await startAndAddNotebookObject(page);
@@ -179,7 +179,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await page.locator('button.c-notebook__toggle-nav-button').click();
     });
 
-    test('Locked page should now be in a locked state', async ({ page }) => {
+    test('Locked page should now be in a locked state @addInit', async ({ page }) => {
         // main lock message on page
         const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
         expect.soft(await lockMessage.count()).toEqual(1);
@@ -197,7 +197,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
     });
 
-    test('Can still: add page, rename, add entry, delete unlocked pages', async ({ page }) => {
+    test('Can still: add page, rename, add entry, delete unlocked pages @addInit', async ({ page }) => {
         // Click text=Page Add >> button
         await Promise.all([
             page.waitForNavigation(),
@@ -237,14 +237,14 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     });
 });
 
-test.describe('Restricted Notebook with a page locked and with an embed', () => {
+test.describe('Restricted Notebook with a page locked and with an embed @addInit', () => {
 
     test.beforeEach(async ({ page }) => {
         await startAndAddNotebookObject(page);
         await dragAndDropEmbed(page);
     });
 
-    test('Allows embeds to be deleted if page unlocked', async ({ page }) => {
+    test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {
         // Click .c-ne__embed__name .c-popup-menu-button
         await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
 
@@ -252,7 +252,7 @@ test.describe('Restricted Notebook with a page locked and with an embed', () => 
         await expect.soft(embedMenu).toContainText('Remove This Embed');
     });
 
-    test('Disallows embeds to be deleted if page locked', async ({ page }) => {
+    test('Disallows embeds to be deleted if page locked @addInit', async ({ page }) => {
         await lockPage(page);
         // Click .c-ne__embed__name .c-popup-menu-button
         await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu

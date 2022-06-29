@@ -62,6 +62,34 @@ describe('the plugin', function () {
             })
         }
     };
+    let timelineObject = {
+        "composition": [],
+        configuration: {
+            useIndependentTime: false,
+            timeOptions: {
+                mode: {
+                    key: 'fixed'
+                },
+                fixedOffsets: {
+                    start: 10,
+                    end: 11
+                },
+                clockOffsets: {
+                    start: -(30 * 60 * 1000),
+                    end: (30 * 60 * 1000)
+                }
+            }
+        },
+        "name": "Some timestrip",
+        "type": "time-strip",
+        "location": "mine",
+        "modified": 1631005183584,
+        "persisted": 1631005183502,
+        "identifier": {
+            "namespace": "",
+            "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+        }
+    };
 
     beforeEach((done) => {
         mockObjectPath = [
@@ -134,28 +162,7 @@ describe('the plugin', function () {
 
         beforeEach(() => {
             testViewObject = {
-                id: "test-object",
-                identifier: {
-                    key: "test-object",
-                    namespace: ''
-                },
-                type: "time-strip",
-                configuration: {
-                    useIndependentTime: false,
-                    timeOptions: {
-                        mode: {
-                            key: 'fixed'
-                        },
-                        fixedOffsets: {
-                            start: 10,
-                            end: 11
-                        },
-                        clockOffsets: {
-                            start: -(30 * 60 * 1000),
-                            end: (30 * 60 * 1000)
-                        }
-                    }
-                }
+                ...timelineObject
             };
 
             const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
@@ -187,15 +194,7 @@ describe('the plugin', function () {
 
         beforeEach(() => {
             timelineDomainObject = {
-                identifier: {
-                    key: 'test-object',
-                    namespace: ''
-                },
-                type: 'time-strip',
-                id: "test-object",
-                configuration: {
-                    useIndependentTime: false
-                },
+                ...timelineObject,
                 composition: [
                     {
                         identifier: {
@@ -236,27 +235,10 @@ describe('the plugin', function () {
     describe('the independent time conductor', () => {
         let timelineView;
         let testViewObject = {
-            id: "test-object",
-            identifier: {
-                key: "test-object",
-                namespace: ''
-            },
-            type: "time-strip",
+            ...timelineObject,
             configuration: {
-                useIndependentTime: true,
-                timeOptions: {
-                    mode: {
-                        key: 'local'
-                    },
-                    fixedOffsets: {
-                        start: 10,
-                        end: 11
-                    },
-                    clockOffsets: {
-                        start: -(30 * 60 * 1000),
-                        end: (30 * 60 * 1000)
-                    }
-                }
+                ...timelineObject.configuration,
+                useIndependentTime: true
             }
         };
 
@@ -284,27 +266,15 @@ describe('the plugin', function () {
     describe('the independent time conductor - fixed', () => {
         let timelineView;
         let testViewObject2 = {
+            ...timelineObject,
             id: "test-object2",
             identifier: {
                 key: "test-object2",
                 namespace: ''
             },
-            type: "time-strip",
             configuration: {
-                useIndependentTime: true,
-                timeOptions: {
-                    mode: {
-                        key: 'fixed'
-                    },
-                    fixedOffsets: {
-                        start: 10,
-                        end: 11
-                    },
-                    clockOffsets: {
-                        start: -(30 * 60 * 1000),
-                        end: (30 * 60 * 1000)
-                    }
-                }
+                ...timelineObject.configuration,
+                useIndependentTime: true
             }
         };
 
@@ -328,4 +298,68 @@ describe('the plugin', function () {
         });
     });
 
+    describe("The timestrip composition policy", () => {
+        let testObject;
+        beforeEach(() => {
+            testObject = {
+                ...timelineObject,
+                composition: []
+            };
+        });
+
+        it("allows composition for plots", () => {
+            const testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }]
+                }
+            };
+            const composition = openmct.composition.get(testObject);
+            expect(() => {
+                composition.add(testTelemetryObject);
+            }).not.toThrow();
+            expect(testObject.composition.length).toBe(1);
+        });
+
+        it("allows composition for plans", () => {
+            const composition = openmct.composition.get(testObject);
+            expect(() => {
+                composition.add(planObject);
+            }).not.toThrow();
+            expect(testObject.composition.length).toBe(1);
+        });
+
+        it("disallows composition for non time-based plots", () => {
+            const barGraphObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "telemetry.plot.bar-graph",
+                name: "Test Object"
+            };
+            const composition = openmct.composition.get(testObject);
+            expect(() => {
+                composition.add(barGraphObject);
+            }).toThrow();
+            expect(testObject.composition.length).toBe(0);
+        });
+    });
 });
