@@ -121,10 +121,10 @@ export default {
             }
         },
         dragStart(event) {
-            let navigatedObject = this.openmct.router.path[0];
+            const navigatedObject = this.openmct.router.path[0];
             const objectPath = this.result.originalPath;
-            let serializedPath = JSON.stringify(objectPath);
-            let keyString = this.openmct.objects.makeKeyString(this.result.identifier);
+            const serializedPath = JSON.stringify(objectPath);
+            const keyString = this.openmct.objects.makeKeyString(this.result.identifier);
             if (this.openmct.composition.checkPolicy(navigatedObject, this.result)) {
                 event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.result));
             }

@@ -77,7 +77,8 @@ export default {
         return {
             resultsShown: false,
             annotationResults: [],
-            objectResults: []
+            objectResults: [],
+            previewVisible: false
         };
     },
     methods: {
