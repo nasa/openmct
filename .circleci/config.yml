@@ -151,6 +151,8 @@ jobs:
           path: test-results
       - store_artifacts:
           path: coverage
+      - store_artifacts:
+          path: html-test-results
       - generate_and_store_version_and_filesystem_artifacts
   perf-test:
     parameters:
@@ -165,6 +167,8 @@ jobs:
           path: test-results/results.xml
       - store_artifacts:
           path: test-results
+      - store_artifacts:
+          path: html-test-results
       - generate_and_store_version_and_filesystem_artifacts
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit

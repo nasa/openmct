@@ -34,6 +34,7 @@ report.*.json
 
 # e2e test artifacts
 test-results
+html-test-results
 
 # codecov artifacts
 .nyc_output

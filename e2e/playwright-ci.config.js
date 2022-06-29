@@ -87,7 +87,7 @@ const config = {
         ['list'],
         ['html', {
             open: 'never',
-            outputFolder: '../test-results/html/'
+            outputFolder: '../html-test-reports' //Must be in different location that junit reporter
         }],
         ['junit', { outputFile: 'test-results/results.xml' }],
         ['github']

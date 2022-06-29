@@ -96,7 +96,7 @@ const config = {
         ['list'],
         ['html', {
             open: 'on-failure',
-            outputFolder: '../test-results'
+            outputFolder: '../html-test-reports' //Must be in different location that junit reporter
         }]
     ]
 };
