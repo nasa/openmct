@@ -81,7 +81,8 @@ test.describe('Example Imagery', () => {
         expect(imageMouseZoomedOut.width).toBeLessThan(imageMouseZoomedIn.width);
     });
 
-    test('Can adjust image brightness/contrast by dragging the sliders', async ({ page }) => {
+    test('Can adjust image brightness/contrast by dragging the sliders', async ({ page, browserName }) => {
+        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
         // Open the image filter menu
         await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
 
