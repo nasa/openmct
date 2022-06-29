@@ -133,9 +133,24 @@ describe("the plugin", () => {
         let tableViewProvider;
         let tableView;
         let tableInstance;
+        let mockClock;
 
         beforeEach(() => {
             openmct.time.timeSystem('utc', {
+                start: 0,
+                end: 4
+            });
+
+            mockClock = jasmine.createSpyObj("clock", [
+                "on",
+                "off",
+                "currentValue"
+            ]);
+            mockClock.key = 'mockClock';
+            mockClock.currentValue.and.returnValue(1);
+
+            openmct.time.addClock(mockClock);
+            openmct.time.clock('mockClock', {
                 start: 0,
                 end: 4
             });
@@ -359,6 +374,116 @@ describe("the plugin", () => {
             await Vue.nextTick();
             tableRowCells = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
             expect(tableRowCells.length).toEqual(4);
+        });
+
+        it("Pauses the table when a row is marked", async () => {
+            let firstRow = element.querySelector('table.c-telemetry-table__body > tbody > tr');
+            let clickEvent = createMouseEvent('click');
+
+            // Mark a row
+            firstRow.dispatchEvent(clickEvent);
+
+            await Vue.nextTick();
+
+            // Verify table is paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+        });
+
+        it("Unpauses the table on user bounds change", async () => {
+            let firstRow = element.querySelector('table.c-telemetry-table__body > tbody > tr');
+            let clickEvent = createMouseEvent('click');
+
+            // Mark a row
+            firstRow.dispatchEvent(clickEvent);
+
+            await Vue.nextTick();
+
+            // Verify table is paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            const currentBounds = openmct.time.bounds();
+
+            const newBounds = {
+                start: currentBounds.start,
+                end: currentBounds.end - 3
+            };
+
+            // Manually change the time bounds
+            openmct.time.bounds(newBounds);
+
+            await Vue.nextTick();
+
+            // Verify table is no longer paused
+            expect(element.querySelector('div.c-table.is-paused')).toBeNull();
+
+            await Vue.nextTick();
+
+            // Verify table displays the correct number of rows within the new bounds
+            const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(2);
+        });
+
+        it("Unpauses the table on user bounds change if paused by button", async () => {
+            const viewContext = tableView.getViewContext();
+
+            // Pause by button
+            viewContext.togglePauseByButton();
+
+            await Vue.nextTick();
+
+            // Verify table is paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            const currentBounds = openmct.time.bounds();
+
+            const newBounds = {
+                start: currentBounds.start,
+                end: currentBounds.end - 3
+            };
+
+            // Manually change the time bounds
+            openmct.time.bounds(newBounds);
+
+            await Vue.nextTick();
+
+            // Verify table is no longer paused
+            expect(element.querySelector('div.c-table.is-paused')).toBeNull();
+
+            await Vue.nextTick();
+
+            // Verify table displays the correct number of rows within the new bounds
+            const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(2);
+        });
+
+        it("Does not unpause the table on tick", async () => {
+            const viewContext = tableView.getViewContext();
+
+            // Pause by button
+            viewContext.togglePauseByButton();
+
+            await Vue.nextTick();
+
+            // Verify table displays the correct number of rows
+            let tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(3);
+
+            // Verify table is paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            // Tick the clock
+            openmct.time.tick(1);
+
+            await Vue.nextTick();
+
+            // Verify table is still paused
+            expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            await Vue.nextTick();
+
+            // Verify table displays the correct number of rows
+            tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(3);
         });
     });
 });

@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-inspect-properties c-inspect-properties--location">
+<div
+    v-if="originalPath.length"
+    class="c-inspect-properties c-inspect-properties--location"
+>
     <div
         class="c-inspect-properties__header"
         title="The location of this linked object."

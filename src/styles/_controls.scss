@@ -22,6 +22,71 @@
 
 @use 'sass:math';
 
+/******************************************************** CONTROL-SPECIFIC MIXINS */
+@mixin menuOuter() {
+    border-radius: $basicCr;
+    box-shadow: $shdwMenuInner, $shdwMenu;
+    background: $colorMenuBg;
+    color: $colorMenuFg;
+    //filter: $filterMenu; // 2022: causing all kinds of weird visual bugs in Chrome
+    text-shadow: $shdwMenuText;
+    padding: $interiorMarginSm;
+    //box-shadow: $shdwMenu;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+
+    > * {
+        flex: 0 0 auto;
+    }
+}
+
+@mixin menuPositioning() {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+
+    > * {
+        flex: 0 0 auto;
+    }
+}
+
+@mixin menuInner() {
+    li {
+        @include cControl();
+        justify-content: start;
+        cursor: pointer;
+        display: flex;
+        padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
+        transition: $transIn;
+        white-space: nowrap;
+
+        @include hover {
+            background: $colorMenuHovBg;
+            color: $colorMenuHovFg;
+            &:before {
+                color: $colorMenuHovIc;
+            }
+        }
+
+        &:not(.c-menu--no-icon &) {
+            &:before {
+                color: $colorMenuIc;
+                font-size: 1em;
+                margin-right: $interiorMargin;
+                min-width: 1em;
+            }
+
+            &:not([class*='icon']):before {
+                content: ''; // Enable :before so that menu items without an icon still indent properly
+            }
+
+        }
+    }
+}
+
 /******************************************************** BUTTONS */
 // Optionally can include icon in :before via markup
 button {
@@ -333,6 +398,47 @@ input[type=number]::-webkit-outer-spin-button {
         // Small inputs, like small numerics
         width: 40px;
     }
+
+    &--autocomplete {
+        &__wrapper {
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        &__input {
+            min-width: 100px;
+
+            // Fend off from afford-arrow
+            min-height: 2em;
+            padding-right: 2.5em !important;
+        }
+
+        &__options {
+            @include menuOuter();
+            @include menuInner();
+            display: flex;
+
+            ul {
+                flex: 1 1 auto;
+                overflow: auto;
+            }
+
+            li {
+                &:before {
+                    color: var(--optionIconColor) !important;
+                    font-size: 0.8em !important;
+                }
+            }
+        }
+
+        &__afford-arrow {
+            font-size: 0.8em;
+            position: absolute;
+            right: 2px;
+            z-index: 2;
+        }
+    }
 }
 
 input[type=number].c-input-number--no-spinners {
@@ -383,6 +489,10 @@ select {
     // input and label in each __row
     &__row {
         > * + * { margin-left: $interiorMargin; }
+    }
+
+    li {
+        white-space: nowrap;
     }
 }
 
@@ -470,61 +580,9 @@ select {
 }
 
 /******************************************************** MENUS */
-@mixin menuOuter() {
-    border-radius: $basicCr;
-    background: $colorMenuBg;
-    filter: $filterMenu;
-    text-shadow: $shdwMenuText;
-    padding: $interiorMarginSm;
-    box-shadow: $shdwMenu;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 100;
-
-    > * {
-        flex: 0 0 auto;
-    }
-}
-
-@mixin menuInner() {
-    li {
-        @include cControl();
-        justify-content: start;
-        color: $colorMenuFg;
-        cursor: pointer;
-        display: flex;
-        padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
-        transition: $transIn;
-        white-space: nowrap;
-
-        @include hover {
-            background: $colorMenuHovBg;
-            color: $colorMenuHovFg;
-            &:before {
-                color: $colorMenuHovIc;
-            }
-        }
-
-        &:before {
-            color: $colorMenuIc;
-            font-size: 1em;
-            margin-right: $interiorMargin;
-            min-width: 1em;
-        }
-
-        &:not([class*='icon']):before {
-             content: ''; // Enable :before so that menu items without an icon still indent properly
-        }
-
-        .menus-no-icon & {
-            &:before { display: none; }
-        }
-    }
-}
-
 .c-menu {
     @include menuOuter();
+    @include menuPositioning();
     @include menuInner();
 
     &__section-hint {
@@ -548,6 +606,7 @@ select {
 .c-super-menu {
     // Two column layout, menu items on left with detail of hover element on right
     @include menuOuter();
+    @include menuPositioning();
     display: flex;
     padding: $interiorMarginLg;
     flex-direction: row;
@@ -992,6 +1051,14 @@ input[type="range"] {
         // Horizontal layout be
         display: inline-flex;
         align-items: center;
+    }
+
+    [class*='--menus-aligned'] {
+        // Contains top level elements that hold dropdown menus
+        // Top level elements use display: contents to allow their menus to compactly align
+        // 03-18-22: used in ImageControls.vue
+        display: flex;
+        flex-direction: row;
     }
 }
 

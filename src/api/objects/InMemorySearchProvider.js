@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 class InMemorySearchProvider {
     /**
@@ -39,11 +39,10 @@ class InMemorySearchProvider {
          * If max results is not specified in query, use this as default.
          */
         this.DEFAULT_MAX_RESULTS = 100;
-
         this.openmct = openmct;
-
         this.indexedIds = {};
         this.indexedCompositions = {};
+        this.indexedTags = {};
         this.idsToIndex = [];
         this.pendingIndex = {};
         this.pendingRequests = 0;
@@ -52,11 +51,18 @@ class InMemorySearchProvider {
         /**
          * If we don't have SharedWorkers available (e.g., iOS)
          */
-        this.localIndexedItems = {};
+        this.localIndexedDomainObjects = {};
+        this.localIndexedAnnotationsByDomainObject = {};
+        this.localIndexedAnnotationsByTag = {};
 
         this.pendingQueries = {};
         this.onWorkerMessage = this.onWorkerMessage.bind(this);
         this.onWorkerMessageError = this.onWorkerMessageError.bind(this);
+        this.localSearchForObjects = this.localSearchForObjects.bind(this);
+        this.localSearchForAnnotations = this.localSearchForAnnotations.bind(this);
+        this.localSearchForTags = this.localSearchForTags.bind(this);
+        this.localSearchForNotebookAnnotations = this.localSearchForNotebookAnnotations.bind(this);
+        this.onAnnotationCreation = this.onAnnotationCreation.bind(this);
         this.onerror = this.onWorkerError.bind(this);
         this.startIndexing = this.startIndexing.bind(this);
 
@@ -76,13 +82,39 @@ class InMemorySearchProvider {
 
     startIndexing() {
         const rootObject = this.openmct.objects.rootProvider.rootObject;
+
+        this.searchTypes = this.openmct.objects.SEARCH_TYPES;
+
+        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.NOTEBOOK_ANNOTATIONS, this.searchTypes.TAGS];
+
         this.scheduleForIndexing(rootObject.identifier);
+
+        this.indexAnnotations();
 
         if (typeof SharedWorker !== 'undefined') {
             this.worker = this.startSharedWorker();
         } else {
             // we must be on iOS
         }
+
+        this.openmct.annotation.on('annotationCreated', this.onAnnotationCreation);
+
+    }
+
+    indexAnnotations() {
+        const theInMemorySearchProvider = this;
+        Object.values(this.openmct.objects.providers).forEach(objectProvider => {
+            if (objectProvider.getAllObjects) {
+                const allObjects = objectProvider.getAllObjects();
+                if (allObjects) {
+                    Object.values(allObjects).forEach(domainObject => {
+                        if (domainObject.type === 'annotation') {
+                            theInMemorySearchProvider.scheduleForIndexing(domainObject.identifier);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     /**
@@ -98,51 +130,60 @@ class InMemorySearchProvider {
         return intermediateResponse;
     }
 
-    /**
-     * Query the search provider for results.
-     *
-     * @param {String} input the string to search by.
-     * @param {Number} maxResults max number of results to return.
-     * @returns {Promise} a promise for a modelResults object.
-     */
-    query(input, maxResults) {
-        if (!maxResults) {
-            maxResults = this.DEFAULT_MAX_RESULTS;
-        }
-
+    search(query, searchType) {
         const queryId = uuid();
         const pendingQuery = this.getIntermediateResponse();
         this.pendingQueries[queryId] = pendingQuery;
+        const searchOptions = {
+            queryId,
+            searchType,
+            query,
+            maxResults: this.DEFAULT_MAX_RESULTS
+        };
 
         if (this.worker) {
-            this.dispatchSearch(queryId, input, maxResults);
+            this.#dispatchSearchToWorker(searchOptions);
         } else {
-            this.localSearch(queryId, input, maxResults);
+            this.#localQueryFallBack(searchOptions);
         }
 
         return pendingQuery.promise;
     }
 
+    #localQueryFallBack({queryId, searchType, query, maxResults}) {
+        if (searchType === this.searchTypes.OBJECTS) {
+            return this.localSearchForObjects(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.ANNOTATIONS) {
+            return this.localSearchForAnnotations(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.NOTEBOOK_ANNOTATIONS) {
+            return this.localSearchForNotebookAnnotations(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.TAGS) {
+            return this.localSearchForTags(queryId, query, maxResults);
+        } else {
+            throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+        }
+    }
+
+    supportsSearchType(searchType) {
+        return this.supportedSearchTypes.includes(searchType);
+    }
+
     /**
-     * Handle messages from the worker.  Only really knows how to handle search
-     * results, which are parsed, transformed into a modelResult object, which
-     * is used to resolve the corresponding promise.
+     * Handle messages from the worker.
      * @private
      */
     async onWorkerMessage(event) {
-        if (event.data.request !== 'search') {
-            return;
-        }
-
         const pendingQuery = this.pendingQueries[event.data.queryId];
         const modelResults = {
             total: event.data.total
         };
         modelResults.hits = await Promise.all(event.data.results.map(async (hit) => {
-            const identifier = this.openmct.objects.parseKeyString(hit.keyString);
-            const domainObject = await this.openmct.objects.get(identifier);
+            if (hit && hit.keyString) {
+                const identifier = this.openmct.objects.parseKeyString(hit.keyString);
+                const domainObject = await this.openmct.objects.get(identifier);
 
-            return domainObject;
+                return domainObject;
+            }
         }));
 
         pendingQuery.resolve(modelResults);
@@ -216,10 +257,23 @@ class InMemorySearchProvider {
         }
     }
 
+    onAnnotationCreation(annotationObject) {
+        const provider = this;
+        provider.index(annotationObject);
+    }
+
     onNameMutation(domainObject, name) {
         const provider = this;
 
         domainObject.name = name;
+        provider.index(domainObject);
+    }
+
+    onTagMutation(domainObject, newTags) {
+        domainObject.oldTags = domainObject.tags;
+        domainObject.tags = newTags;
+        const provider = this;
+
         provider.index(domainObject);
     }
 
@@ -259,6 +313,13 @@ class InMemorySearchProvider {
                 'composition',
                 this.onCompositionMutation.bind(this, domainObject)
             );
+            if (domainObject.type === 'annotation') {
+                this.indexedTags[keyString] = this.openmct.objects.observe(
+                    domainObject,
+                    'tags',
+                    this.onTagMutation.bind(this, domainObject)
+                );
+            }
         }
 
         if ((keyString !== 'ROOT')) {
@@ -317,14 +378,64 @@ class InMemorySearchProvider {
      * @private
      * @returns {String} a unique query Id for the query.
      */
-    dispatchSearch(queryId, searchInput, maxResults) {
+    #dispatchSearchToWorker({queryId, searchType, query, maxResults}) {
         const message = {
-            request: 'search',
-            input: searchInput,
+            request: searchType.toString(),
+            input: query,
             maxResults,
             queryId
         };
         this.worker.port.postMessage(message);
+    }
+
+    localIndexTags(keyString, objectToIndex, model) {
+        // add new tags
+        model.tags.forEach(tagID => {
+            if (!this.localIndexedAnnotationsByTag[tagID]) {
+                this.localIndexedAnnotationsByTag[tagID] = [];
+            }
+
+            const existsInIndex = this.localIndexedAnnotationsByTag[tagID].some(indexedObject => {
+                return indexedObject.keyString === objectToIndex.keyString;
+            });
+
+            if (!existsInIndex) {
+                this.localIndexedAnnotationsByTag[tagID].push(objectToIndex);
+            }
+
+        });
+        // remove old tags
+        if (model.oldTags) {
+            model.oldTags.forEach(tagIDToRemove => {
+                const existsInNewModel = model.tags.includes(tagIDToRemove);
+                if (!existsInNewModel && this.localIndexedAnnotationsByTag[tagIDToRemove]) {
+                    this.localIndexedAnnotationsByTag[tagIDToRemove] = this.localIndexedAnnotationsByTag[tagIDToRemove].
+                        filter(annotationToRemove => {
+                            const shouldKeep = annotationToRemove.keyString !== keyString;
+
+                            return shouldKeep;
+                        });
+                }
+            });
+        }
+    }
+
+    localIndexAnnotation(objectToIndex, model) {
+        Object.keys(model.targets).forEach(targetID => {
+            if (!this.localIndexedAnnotationsByDomainObject[targetID]) {
+                this.localIndexedAnnotationsByDomainObject[targetID] = [];
+            }
+
+            objectToIndex.targets = model.targets;
+            objectToIndex.tags = model.tags;
+            const existsInIndex = this.localIndexedAnnotationsByDomainObject[targetID].some(indexedObject => {
+                return indexedObject.keyString === objectToIndex.keyString;
+            });
+
+            if (!existsInIndex) {
+                this.localIndexedAnnotationsByDomainObject[targetID].push(objectToIndex);
+            }
+        });
     }
 
     /**
@@ -332,11 +443,22 @@ class InMemorySearchProvider {
      * if we don't have SharedWorkers available (e.g., iOS)
      */
     localIndexItem(keyString, model) {
-        this.localIndexedItems[keyString] = {
+        const objectToIndex = {
             type: model.type,
             name: model.name,
             keyString
         };
+        if (model && (model.type === 'annotation')) {
+            if (model.targets && model.targets) {
+                this.localIndexAnnotation(objectToIndex, model);
+            }
+
+            if (model.tags) {
+                this.localIndexTags(keyString, objectToIndex, model);
+            }
+        } else {
+            this.localIndexedDomainObjects[keyString] = objectToIndex;
+        }
     }
 
     /**
@@ -346,21 +468,122 @@ class InMemorySearchProvider {
      * Gets search results from the indexedItems based on provided search
      * input. Returns matching results from indexedItems
      */
-    localSearch(queryId, searchInput, maxResults) {
+    localSearchForObjects(queryId, searchInput, maxResults) {
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
-        let results;
+        let results = [];
         const input = searchInput.trim().toLowerCase();
         const message = {
-            request: 'search',
-            results: {},
+            request: 'searchForObjects',
+            results: [],
             total: 0,
             queryId
         };
 
-        results = Object.values(this.localIndexedItems).filter((indexedItem) => {
+        results = Object.values(this.localIndexedDomainObjects).filter((indexedItem) => {
             return indexedItem.name.toLowerCase().includes(input);
-        });
+        }) || [];
+
+        message.total = results.length;
+        message.results = results
+            .slice(0, maxResults);
+        const eventToReturn = {
+            data: message
+        };
+        this.onWorkerMessage(eventToReturn);
+    }
+
+    /**
+     * A local version of the same SharedWorker function
+     * if we don't have SharedWorkers available (e.g., iOS)
+     */
+    localSearchForAnnotations(queryId, searchInput, maxResults) {
+        // This results dictionary will have domain object ID keys which
+        // point to the value the domain object's score.
+        let results = [];
+        const message = {
+            request: 'searchForAnnotations',
+            results: [],
+            total: 0,
+            queryId
+        };
+
+        results = this.localIndexedAnnotationsByDomainObject[searchInput] || [];
+
+        message.total = results.length;
+        message.results = results
+            .slice(0, maxResults);
+        const eventToReturn = {
+            data: message
+        };
+        this.onWorkerMessage(eventToReturn);
+    }
+
+    /**
+     * A local version of the same SharedWorker function
+     * if we don't have SharedWorkers available (e.g., iOS)
+     */
+    localSearchForTags(queryId, matchingTagKeys, maxResults) {
+        let results = [];
+        const message = {
+            request: 'searchForTags',
+            results: [],
+            total: 0,
+            queryId
+        };
+
+        if (matchingTagKeys) {
+            matchingTagKeys.forEach(matchingTag => {
+                const matchingAnnotations = this.localIndexedAnnotationsByTag[matchingTag];
+                if (matchingAnnotations) {
+                    matchingAnnotations.forEach(matchingAnnotation => {
+                        const existsInResults = results.some(indexedObject => {
+                            return matchingAnnotation.keyString === indexedObject.keyString;
+                        });
+                        if (!existsInResults) {
+                            results.push(matchingAnnotation);
+                        }
+                    });
+                }
+            });
+        }
+
+        message.total = results.length;
+        message.results = results
+            .slice(0, maxResults);
+        const eventToReturn = {
+            data: message
+        };
+        this.onWorkerMessage(eventToReturn);
+    }
+
+    /**
+     * A local version of the same SharedWorker function
+     * if we don't have SharedWorkers available (e.g., iOS)
+     */
+    localSearchForNotebookAnnotations(queryId, {entryId, targetKeyString}, maxResults) {
+        // This results dictionary will have domain object ID keys which
+        // point to the value the domain object's score.
+        let results = [];
+        const message = {
+            request: 'searchForNotebookAnnotations',
+            results: [],
+            total: 0,
+            queryId
+        };
+
+        const matchingAnnotations = this.localIndexedAnnotationsByDomainObject[targetKeyString];
+        if (matchingAnnotations) {
+            results = matchingAnnotations.filter(matchingAnnotation => {
+                if (!matchingAnnotation.targets) {
+                    return false;
+                }
+
+                const target = matchingAnnotation.targets[targetKeyString];
+
+                return (target && target.entryId && (target.entryId === entryId));
+            });
+        }
 
         message.total = results.length;
         message.results = results

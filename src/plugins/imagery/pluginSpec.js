@@ -84,7 +84,6 @@ describe("The Imagery View Layouts", () => {
     let telemetryPromise;
     let telemetryPromiseResolve;
     let cleanupFirst;
-    let isClearDataTriggered;
 
     let openmct;
     let parent;
@@ -100,12 +99,24 @@ describe("The Imagery View Layouts", () => {
         location: "parentId",
         modified: 0,
         persisted: 0,
+        configuration: {
+            layers: [{
+                name: '16:9',
+                visible: true
+            }]
+        },
         telemetry: {
             values: [
                 {
                     "name": "Image",
                     "key": "url",
                     "format": "image",
+                    "layers": [
+                        {
+                            source: location.host + '/images/bg-splash.jpg',
+                            name: '16:9'
+                        }
+                    ],
                     "hints": {
                         "image": 1,
                         "priority": 3
@@ -193,20 +204,12 @@ describe("The Imagery View Layouts", () => {
         cleanupFirst = [];
 
         openmct = createOpenMct();
-        openmct.time.timeSystem('utc', {
-            start: START - (5 * ONE_MINUTE),
-            end: START + (5 * ONE_MINUTE)
-        });
 
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
         });
 
         spyOn(openmct.telemetry, 'request').and.callFake(() => {
-            if (isClearDataTriggered) {
-                return [];
-            }
-
             telemetryPromiseResolve(imageTelemetry);
 
             return telemetryPromise;
@@ -325,44 +328,105 @@ describe("The Imagery View Layouts", () => {
         expect(imageryView).toBeDefined();
     });
 
-    describe("imagery view", () => {
+    describe("Clear data action for imagery", () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
+        let componentView;
         let clearDataPlugin;
         let clearDataAction;
 
         beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
 
             applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
             imageryView.show(child);
+            componentView = imageryView._getInstance().$children[0];
+
             clearDataPlugin = new ClearDataPlugin(
                 ['example.imagery'],
                 {indicator: true}
             );
             openmct.install(clearDataPlugin);
             clearDataAction = openmct.actions.getAction('clear-data-action');
+
+            return Vue.nextTick();
+        });
+
+        it('clear data action is installed', () => {
+            expect(clearDataAction).toBeDefined();
+        });
+
+        it('on clearData action should clear data for object is selected', (done) => {
             // force show the thumbnails
+            componentView.forceShowThumbnails = true;
+            Vue.nextTick(() => {
+                let clearDataResolve;
+                let telemetryRequestPromise = new Promise((resolve) => {
+                    clearDataResolve = resolve;
+                });
+                expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
+
+                openmct.objectViews.on('clearData', (_domainObject) => {
+                    return Vue.nextTick(() => {
+                        expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
+
+                        clearDataResolve();
+                    });
+                });
+                clearDataAction.invoke(imageryObject);
+
+                telemetryRequestPromise.then(() => {
+                    done();
+                });
+            });
+        });
+    });
+
+    describe("imagery view", () => {
+        let applicableViews;
+        let imageryViewProvider;
+        let imageryView;
+
+        beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
+
+            applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
+            imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
+            imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
+            imageryView.show(child);
+
             imageryView._getInstance().$children[0].forceShowThumbnails = true;
 
             return Vue.nextTick();
         });
-        afterEach(() => {
-            isClearDataTriggered = false;
-            // openmct.time.stopClock();
-            // openmct.router.removeListener('change:hash', resolveFunction);
-            // imageryView.destroy();
-        });
 
-        it("on mount should show the the most recent image", (done) => {
+        it("on mount should show the the most recent image", () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
-            Vue.nextTick(() => {
+            return Vue.nextTick(() => {
                 const imageInfo = getImageInfo(parent);
 
                 expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
-                done();
+            });
+        });
+
+        it("on mount should show the any image layers", (done) => {
+            //Looks like we need Vue.nextTick here so that computed properties settle down
+            Vue.nextTick().then(() => {
+                Vue.nextTick(() => {
+                    const layerEls = parent.querySelectorAll('.js-layer-image');
+                    console.log(layerEls);
+                    expect(layerEls.length).toEqual(1);
+                    done();
+                });
             });
         });
 
@@ -398,7 +462,7 @@ describe("The Imagery View Layouts", () => {
 
         it("should show that an image is not new", (done) => {
             Vue.nextTick(() => {
-                const target = imageTelemetry[2].url;
+                const target = imageTelemetry[4].url;
                 parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
                 Vue.nextTick(() => {
@@ -521,23 +585,32 @@ describe("The Imagery View Layouts", () => {
             done();
         });
 
-        it('clear data action is installed', () => {
-            expect(clearDataAction).toBeDefined();
-        });
-
-        it('on clearData action should clear data for object is selected', async (done) => {
-            // force show the thumbnails
-            imageryView._getInstance().$children[0].forceShowThumbnails = true;
+        it('should reset the brightness and contrast when clicking the reset button', async () => {
+            const viewInstance = imageryView._getInstance();
             await Vue.nextTick();
-            expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
-            openmct.objectViews.on('clearData', async (_domainObject) => {
-                await Vue.nextTick();
-                expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
-                done();
+
+            // Save the original brightness and contrast values
+            const origBrightness = viewInstance.$refs.ImageryContainer.filters.brightness;
+            const origContrast = viewInstance.$refs.ImageryContainer.filters.contrast;
+
+            // Change them to something else (default: 100)
+            viewInstance.$refs.ImageryContainer.setFilters({
+                brightness: 200,
+                contrast: 200
             });
-            // stubbed telemetry data will return empty array when true
-            isClearDataTriggered = true;
-            clearDataAction.invoke(imageryObject);
+            await Vue.nextTick();
+
+            // Verify that the values actually changed
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(200);
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(200);
+
+            // Click the reset button
+            parent.querySelector('.t-btn-reset').click();
+            await Vue.nextTick();
+
+            // Verify that the values were reset
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(origBrightness);
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(origContrast);
         });
     });
 

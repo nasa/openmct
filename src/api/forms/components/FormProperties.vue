@@ -21,9 +21,9 @@
 *****************************************************************************/
 
 <template>
-<div class="c-form">
+<div class="c-form js-form">
     <div class="c-overlay__top-bar c-form__top-bar">
-        <div class="c-overlay__dialog-title">{{ model.title }}</div>
+        <div class="c-overlay__dialog-title js-form-title">{{ model.title }}</div>
         <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
     </div>
     <form
@@ -44,18 +44,14 @@
             >
                 {{ section.name }}
             </h2>
-            <div
+            <FormRow
                 v-for="(row, index) in section.rows"
                 :key="row.id"
-                class="u-contents"
-            >
-                <FormRow
-                    :css-class="section.cssClass"
-                    :first="index < 1"
-                    :row="row"
-                    @onChange="onChange"
-                />
-            </div>
+                :css-class="row.cssClass"
+                :first="index < 1"
+                :row="row"
+                @onChange="onChange"
+            />
         </div>
     </form>
 
@@ -70,7 +66,7 @@
         </button>
         <button
             tabindex="0"
-            class="c-button"
+            class="c-button js-cancel-button"
             @click="onDismiss"
         >
             {{ cancelLabel }}
@@ -81,7 +77,7 @@
 
 <script>
 import FormRow from "@/api/forms/components/FormRow.vue";
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export default {
     components: {

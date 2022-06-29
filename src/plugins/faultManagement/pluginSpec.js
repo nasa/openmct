@@ -19,33 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { BAR_GRAPH_KEY } from './BarGraphConstants';
-import BarGraphViewProvider from './BarGraphViewProvider';
-import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider';
-import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 
-export default function () {
-    return function install(openmct) {
-        openmct.types.addType(BAR_GRAPH_KEY, {
-            key: BAR_GRAPH_KEY,
-            name: "Bar Graph",
-            cssClass: "icon-bar-chart",
-            description: "View data as a bar graph. Can be added to Display Layouts.",
-            creatable: true,
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    barStyles: { series: {} }
-                };
-            },
-            priority: 891
-        });
+import {
+    createOpenMct,
+    resetApplicationState
+} from '../../utils/testing';
+import { FAULT_MANAGEMENT_TYPE } from './constants';
 
-        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
+describe("The Fault Management Plugin", () => {
+    let openmct;
 
-        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
+    beforeEach(() => {
+        openmct = createOpenMct();
+    });
 
-        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
-    };
-}
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
 
+    it('is not installed by default', () => {
+        let typeDef = openmct.types.get(FAULT_MANAGEMENT_TYPE).definition;
+
+        expect(typeDef.name).toBe('Unknown Type');
+    });
+
+    it('can be installed', () => {
+        openmct.install(openmct.plugins.FaultManagement());
+        let typeDef = openmct.types.get(FAULT_MANAGEMENT_TYPE).definition;
+
+        expect(typeDef.name).toBe('Fault Management');
+    });
+});
