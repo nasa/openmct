@@ -2,15 +2,16 @@
 
 This document is very much WIP
 
-### Overview
+## Overview
 
+## Getting Started
+
+## Types of Testing
 ### Visual Testing
 
 ### Snapshot Testing
 
 https://playwright.dev/docs/test-snapshots
-
-
 
 ### Mobile Testing
 
@@ -18,7 +19,11 @@ https://playwright.dev/docs/test-snapshots
 
 ### Component Testing TBD
 
+## Architecture and Test Design and Best Practices
+
 ### Architecture
+
+### Test Design
 
 ### Best Practices
 
