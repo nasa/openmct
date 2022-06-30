@@ -33,7 +33,7 @@ let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
 
 test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async ({ browser}) => {
         const context = await browser.newContext();
         const page = await context.newPage();
         //Go to baseURL
@@ -51,7 +51,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
             page.click('text=OK')
         ]);
 
-        //Save localStorage for future test execution
+        //Save localStorage for future test execution.
         await context.storageState({ path: './e2e/tests/recycled_storage.json' });
 
         //Set object identifier from url
@@ -60,18 +60,17 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         getConditionSetIdentifierFromUrl = await conditionSetUrl.split('/').pop().split('?')[0];
         console.debug('getConditionSetIdentifierFromUrl ' + getConditionSetIdentifierFromUrl);
+        await page.close();
     });
-    test.afterAll(async ({ browser }) => {
-        await browser.close();
-    });
-    //Load localStorage for subsequent tests
+
+    //Load localStorage for subsequent tests. Note: this requires a file already in place -- even if blank.
     test.use({ storageState: './e2e/tests/recycled_storage.json' });
     //Begin suite of tests again localStorage
-    test('Condition set object properties persist in main view and inspector', async ({ page }) => {
+    test('Condition set object properties persist in main view and inspector @localStorage', async ({ page }) => {
         //Navigate to baseURL with injected localStorage
         await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
 
-        //Assertions on loaded Condition Set in main view
+        //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
         await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
 
         //Assertions on loaded Condition Set in Inspector
@@ -92,7 +91,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     test('condition set object can be modified on @localStorage', async ({ page }) => {
         await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
 
-        //Assertions on loaded Condition Set in main view
+        //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
         await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
 
         //Update the Condition Set properties
@@ -153,9 +152,10 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         //Navigate to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
-        const numberOfConditionSetsToStart = await page.locator('a:has-text("Unnamed Condition Set Condition Set")').count();
-        //Expect Unnamed Condition Set to be visible in Main View
+        //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
         await expect(page.locator('a:has-text("Unnamed Condition Set Condition Set") >> nth=0')).toBeVisible();
+
+        const numberOfConditionSetsToStart = await page.locator('a:has-text("Unnamed Condition Set Condition Set")').count();
 
         // Search for Unnamed Condition Set
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed Condition Set');
@@ -163,13 +163,14 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         await page.locator('[aria-label="OpenMCT Search"] >> text=Unnamed Condition Set').first().click();
         // Click hamburger button
         await page.locator('[title="More options"]').click();
+
         // Click text=Remove
         await page.locator('text=Remove').click();
-
         await page.locator('text=OK').click();
 
         //Expect Unnamed Condition Set to be removed in Main View
         const numberOfConditionSetsAtEnd = await page.locator('a:has-text("Unnamed Condition Set Condition Set")').count();
+
         expect(numberOfConditionSetsAtEnd).toEqual(numberOfConditionSetsToStart - 1);
 
         //Feature?
