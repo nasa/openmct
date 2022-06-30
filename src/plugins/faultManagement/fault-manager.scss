@@ -116,19 +116,27 @@
     }
 }
 
+.c-faults-list-view-header-item-container{
+    display: grid;
+    width: 100%;
+    grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
+    // grid-row-gap: 2px;
+}
+
+.c-faults-list-view-item-body{
+   display: contents;
+}
+
 /*********************************************** FAULT ITEM */
 .c-fault-mgmt__list{
     background: rgba($colorBodyFg, 0.1);
-    // margin-bottom: 5px;
-    // padding: 4px;
-    // display: flex;
-    // align-items: center;
-    display: grid;
-    grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
-    grid-row-gap: 2px;
+    display: contents;
+    width: 100%;
+    // grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
+    // grid-row-gap: $interiorMarginSm;
 
-    .--width-less-than-600 {
-        grid-template-columns: max-content max-content 1fr 50px;
+    .--width-less-than-600 & {
+        grid-template-columns: max-content max-content 1fr 4px;
     }
 
     > * {
@@ -215,12 +223,12 @@
     &-trigVal {
         @include isLimit();
         background: rgba($colorBodyFg, 0.25);
+        margin-left: $interiorMarginLg;
         // margin-right: $interiorMarginLg;
         // flex: 1 1 20%;
     }
     &-val {
-        // @include isLimit();
-        // background: rgba($colorBodyFg, 0.25);
+        justify-content: left;
     }
 
     &-curVal {
@@ -238,31 +246,32 @@
 
     &-action-wrapper{
         // display: flex;
-        // text-align: right;
+        text-align: right;
         // // width: 100px;
-        // flex: 0 0 auto;
+        flex: 0 0 auto;
         // margin-left: auto;
-        // align-items: stretch;
+        align-items: stretch;
         // .--width-less-than-600 & {
         //    align-items: baseline;
         // }
     }
 
     &-action-button{
-        // flex: 0 0 auto;
-        // margin-left: auto;
-        // justify-content: right;
+        flex: 0 0 auto;
+        margin-left: auto;
+        text-align: right;
     }
 }
 
 /*********************************************** LIST HEADER */
 .c-fault-mgmt__list-header{
-    // display: flex;
-    // background: rgba($colorBodyFg, .23);
-    // border-radius: $controlCr;
+    display: flex;
+    background: rgba($colorBodyFg, .23);
+    border-radius: $controlCr;
+    align-items: center;
 
     &-results{
-        // width: 100px;
+        grid-column: 2 / span 2;
     }
     &-tripVal, &-liveVal, &-trigTime{
         background: none;
@@ -276,6 +285,7 @@
         // width: 95px;
     }
     &-sortButton{
+        text-align: right;
         // flex: 0 0 auto;
         // margin-left: auto;
         // justify-content: right;

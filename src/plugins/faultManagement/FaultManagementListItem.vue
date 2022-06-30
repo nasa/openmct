@@ -63,7 +63,7 @@
                     class="c-fault-mgmt__list-curVal"
                     :class="liveValueClassname"
                     title="Live Value"
-                >{{ fault.currentValueInfo.value }} </div>
+                >{{ fault.currentValueInfo.value }}</div>
             </div>
             <div
                 class="c-fault-mgmt__list-trigTime"
@@ -71,11 +71,13 @@
             </div>
         </div>
     </div>
-    <button
-        class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
-        title="Disposition Actions"
-        @click="showActionMenu"
-    ></button>
+    <div class="c-fault-mgmt__list-action-wrapper">
+        <button
+            class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
+            title="Disposition Actions"
+            @click="showActionMenu"
+        ></button>
+    </div>
 </div>
 </template>
 <!--
