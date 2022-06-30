@@ -188,10 +188,6 @@ workflows:
           name: e2e-ci
           node-version: lts/gallium
           suite: ci
-      - e2e-test:
-          name: e2e-full
-          node-version: lts/gallium
-          suite: full
       - perf-test:
           node-version: lts/gallium
   the-nightly: #These jobs do not run on PRs, but against master at night
