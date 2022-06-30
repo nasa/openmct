@@ -51,6 +51,9 @@ test.describe('Example Imagery', () => {
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
+        // Close Banner
+        await page.locator('.c-message-banner__close-button').click();
+
         //Wait until Save Banner is gone
         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
@@ -490,22 +493,11 @@ test.describe('Example Imagery in Flexible layout', () => {
         // Assert Flexable layout
         await expect(page.locator('.js-form-title')).toHaveText('Create a New Flexible Layout');
 
-        // Click text=OK
-        await Promise.all([
-            page.click('text=OK'),
-            //Wait for Save Banner to appear
-            page.waitForSelector('.c-message-banner__message')
-        ]);
-
-        // Close Banner
-        await page.locator('.c-message-banner__close-button').click();
-
-        // Wait until Save Banner is gone
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+        await page.locator('form[name="mctForm"] >> text=My Items').click();
 
         // Click My Items
         await Promise.all([
-            page.locator('form[name="mctForm"] >> text=My Items').click(),
+            page.locator('text=OK').click(),
             page.waitForNavigation({waitUntil: 'networkidle'})
         ]);
 
