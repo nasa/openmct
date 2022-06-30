@@ -227,10 +227,10 @@ class CouchObjectProvider {
             throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
         } else if (status >= CouchObjectProvider.HTTP_BAD_REQUEST) {
             if (!json.error || !json.reason) {
-                throw new Error(`CouchDB Error: Status code ${status} received`);
+                throw new Error(`CouchDB Error ${status}`);
             }
 
-            throw new Error(`CouchDB Error: "${json.error}: ${json.reason}"`);
+            throw new Error(`CouchDB Error ${status}: "${json.error} - ${json.reason}"`);
         }
     }
 
