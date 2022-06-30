@@ -222,6 +222,11 @@ export class TelemetryCollection extends EventEmitter {
         }
 
         if (added.length) {
+            // check if there is a size option, if so force it's adherence
+            if (this.options.size !== undefined && this.options.size > 0) {
+                added = added.slice(0, this.options.size);
+            }
+
             this.emit('add', added);
         }
     }
