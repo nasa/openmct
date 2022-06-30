@@ -126,7 +126,7 @@ class CouchObjectProvider {
         case 'pending':
             state = PENDING;
             break;
-        default:
+        case 'unknown':
             state = UNKNOWN;
             break;
         }
