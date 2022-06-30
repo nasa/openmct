@@ -44,20 +44,6 @@ test.describe('Log plot tests', () => {
         await testLogTicks(page);
         await saveOverlayPlot(page);
         await testLogTicks(page);
-        //await testLogPlotPixels(page);
-
-        // FIXME: Get rid of the waitForTimeout() and lint warning exception.
-        // eslint-disable-next-line playwright/no-wait-for-timeout
-        // await page.waitForTimeout(1 * 1000);
-
-        // refresh page and wait for charts and ticks to load
-        // await page.reload({ waitUntil: 'networkidle'});
-        // await page.waitForSelector('.gl-plot-chart-area');
-        // await page.waitForSelector('.gl-plot-y-tick-label');
-
-        // // test log ticks hold up after refresh
-        // await testLogTicks(page);
-        //await testLogPlotPixels(page);
     });
 
     // Leaving test as 'TODO' for now.

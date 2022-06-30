@@ -27,19 +27,6 @@ Testsuite for plot autoscale.
 const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
 
-// create a new `test` API that will not append platform details to snapshot
-// file names, only for the tests in this file, so that the same snapshots will
-// be used for all platforms.
-// const test = _test.extend({
-//     _autoSnapshotSuffix: [
-//         async ({}, use, testInfo) => {
-//             testInfo.snapshotSuffix = '';
-//             await use();
-//         },
-//         { auto: true }
-//     ]
-// });
-
 test.use({
     viewport: {
         width: 1280,

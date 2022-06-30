@@ -93,60 +93,6 @@ test.describe('Sine Wave Generator', () => {
         const value = await page.locator('.field.control.l-input-sm input').first().inputValue();
         await expect(value).toBe('6');
 
-        /* Unfortunately, it appears that this code block worked at some point. Because the locators are so scrambled,
-        * it's not clear what anything actually validates.
-        // Click .c-form-row__state-indicator.grows
-        // await page.locator('.c-form-row__state-indicator.grows').click();
-
-        // // Click text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]
-        // await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').click();
-
-        // // Click .c-form-row__state-indicator >> nth=0
-        // await page.locator('.c-form-row__state-indicator').first().click();
-
-        // Fill text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]
-        await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('New Sine Wave Generator');
-
-        // Double click div:nth-child(4) .form-row .c-form-row__controls
-        await page.locator('div:nth-child(4) .form-row .c-form-row__controls').dblclick();
-
-        // TODO Update
-        await page.locator('.field.control.l-input-sm input').first().click();
-
-        // Click div:nth-child(4) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(4) .form-row .c-form-row__state-indicator').click();
-
-        // Click .field.control.l-input-sm input >> nth=0
-        await page.locator('.field.control.l-input-sm input').first().click();
-
-        // Click .field.control.l-input-sm input >> nth=0
-        await page.locator('.field.control.l-input-sm input').first().click();
-
-        // Click div:nth-child(5) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(5) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Click div:nth-child(5) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(5) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Click div:nth-child(5) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(5) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Click div:nth-child(6) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(6) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Double click div:nth-child(7) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(7) .form-row .c-form-row__controls .form-control .field input').dblclick();
-
-        // Click div:nth-child(7) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(7) .form-row .c-form-row__state-indicator').click();
-
-        // Click div:nth-child(7) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(7) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Fill div:nth-child(7) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(7) .form-row .c-form-row__controls .form-control .field input').fill('3');
-        */
-
         //Click text=OK
         await Promise.all([
             page.waitForNavigation(),

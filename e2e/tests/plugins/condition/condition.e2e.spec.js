@@ -52,7 +52,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         ]);
 
         //Save localStorage for future test execution.
-        await context.storageState({ path: `./e2e/tests/recycled_storage.json` });
+        await context.storageState({ path: './e2e/tests/recycled_storage.json' });
 
         //Set object identifier from url
         conditionSetUrl = await page.url();
@@ -65,13 +65,6 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
     //Load localStorage for subsequent tests. Note: this requires a file already in place -- even if blank.
     test.use({ storageState: './e2e/tests/recycled_storage.json' });
-    // test.use({
-    //     storageState: async ({browserName}, use) => {
-    //         // Generate storageState by browserName
-    //         const storageState = `./e2e/tests/recycled_storage_${browserName}.json`;
-    //         await use(storageState);
-    //     }
-    // });
     //Begin suite of tests again localStorage
     test('Condition set object properties persist in main view and inspector @localStorage', async ({ page }) => {
         //Navigate to baseURL with injected localStorage

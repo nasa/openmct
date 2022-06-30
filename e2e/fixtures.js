@@ -9,7 +9,7 @@ const base = require('@playwright/test');
 const { expect } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
+const { v4: uuid } = require('uuid');
 
 /**
  * Takes a `ConsoleMessage` and returns a formatted string
@@ -27,7 +27,7 @@ function consoleMessageToString(msg) {
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 
 function generateUUID() {
-    return crypto.randomBytes(16).toString('hex');
+    return uuid();
 }
 
 exports.test = base.test.extend({
