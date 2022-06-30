@@ -360,6 +360,7 @@ export default {
         this.setTimeContext();
 
         this.loaded = true;
+        console.log('mct plot loaded');
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
@@ -684,6 +685,7 @@ export default {
 
             this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
             this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
+            console.log('initialize complete');
         },
 
         onXAxisChange(displayBounds) {
