@@ -116,6 +116,7 @@
         var dataRateInHz = request.dataRateInHz;
         var phase = request.phase;
         var randomness = request.randomness;
+        var loadDelay = Math.max(request.loadDelay, 0);
 
         var step = 1000 / dataRateInHz;
         var nextStep = start - (start % step) + step;
@@ -133,6 +134,14 @@
             });
         }
 
+        if (loadDelay === 0) {
+            postOnRequest(message, request, data);
+        } else {
+            setTimeout(() => postOnRequest(message, request, data), loadDelay);
+        }
+    }
+
+    function postOnRequest(message, request, data) {
         self.postMessage({
             id: message.id,
             data: request.spectra ? {

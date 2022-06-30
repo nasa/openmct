@@ -224,7 +224,8 @@ class InMemorySearchProvider {
 
     /**
      * Schedule an id to be indexed at a later date.  If there are less
-     * pending requests then allowed, will kick off an indexing request.
+     * pending requests than the maximum allowed, this will kick off an indexing request.
+     * This is done only when indexing first begins and we need to index a lot of objects.
      *
      * @private
      * @param {identifier} id to be indexed.
@@ -258,8 +259,12 @@ class InMemorySearchProvider {
     }
 
     onAnnotationCreation(annotationObject) {
-        const provider = this;
-        provider.index(annotationObject);
+
+        const objectProvider = this.openmct.objects.getProvider(annotationObject.identifier);
+        if (objectProvider === undefined || objectProvider.search === undefined) {
+            const provider = this;
+            provider.index(annotationObject);
+        }
     }
 
     onNameMutation(domainObject, name) {
@@ -270,7 +275,6 @@ class InMemorySearchProvider {
     }
 
     onTagMutation(domainObject, newTags) {
-        domainObject.oldTags = domainObject.tags;
         domainObject.tags = newTags;
         const provider = this;
 
@@ -404,20 +408,16 @@ class InMemorySearchProvider {
             }
 
         });
-        // remove old tags
-        if (model.oldTags) {
-            model.oldTags.forEach(tagIDToRemove => {
-                const existsInNewModel = model.tags.includes(tagIDToRemove);
-                if (!existsInNewModel && this.localIndexedAnnotationsByTag[tagIDToRemove]) {
-                    this.localIndexedAnnotationsByTag[tagIDToRemove] = this.localIndexedAnnotationsByTag[tagIDToRemove].
-                        filter(annotationToRemove => {
-                            const shouldKeep = annotationToRemove.keyString !== keyString;
+        const tagsToRemoveFromIndex = Object.keys(this.localIndexedAnnotationsByTag).filter(indexedTag => {
+            return !(model.tags.includes(indexedTag));
+        });
+        tagsToRemoveFromIndex.forEach(tagToRemoveFromIndex => {
+            this.localIndexedAnnotationsByTag[tagToRemoveFromIndex] = this.localIndexedAnnotationsByTag[tagToRemoveFromIndex].filter(indexedAnnotation => {
+                const shouldKeep = indexedAnnotation.keyString !== keyString;
 
-                            return shouldKeep;
-                        });
-                }
+                return shouldKeep;
             });
-        }
+        });
     }
 
     localIndexAnnotation(objectToIndex, model) {
@@ -449,7 +449,7 @@ class InMemorySearchProvider {
             keyString
         };
         if (model && (model.type === 'annotation')) {
-            if (model.targets && model.targets) {
+            if (model.targets) {
                 this.localIndexAnnotation(objectToIndex, model);
             }
 
