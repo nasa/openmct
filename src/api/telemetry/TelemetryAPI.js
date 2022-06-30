@@ -315,7 +315,7 @@ define([
      * @returns {Promise.<object[]>} a promise for an array of
      *          telemetry data
      */
-    TelemetryAPI.prototype.request = function (domainObject) {
+    TelemetryAPI.prototype.request = async function (domainObject) {
         if (this.noRequestProviderForAllObjects) {
             return Promise.resolve([]);
         }
@@ -336,6 +336,9 @@ define([
 
             return this.handleMissingRequestProvider(domainObject);
         }
+
+        const timeContext = this.openmct.time.getContextForView([domainObject]);
+        await timeContext.hasInitialTick();
 
         return provider.request.apply(provider, arguments)
             .catch((rejected) => {

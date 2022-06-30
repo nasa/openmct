@@ -344,6 +344,22 @@ class TimeContext extends EventEmitter {
         return this.activeClock;
     }
 
+    hasInitialTick() {
+        if (!this.activeClock) {
+            return Promise.resolve();
+        }
+
+        const waitForInitialTick = (resolve) => {
+            if (this.activeClock.isInitialized()) {
+                resolve();
+            } else {
+                setTimeout(() => waitForInitialTick(resolve), 100);
+            }
+        };
+
+        return new Promise(waitForInitialTick);
+    }
+
     /**
      * Update bounds based on provided time and current offsets
      * @param {number} timestamp A time from which bounds will be calculated

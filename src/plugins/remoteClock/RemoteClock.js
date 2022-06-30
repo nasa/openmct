@@ -112,6 +112,7 @@ export default class RemoteClock extends DefaultClock {
 
         if (time > this.lastTick) {
             this.tick(time);
+            this.initialized = true;
         }
     }
 

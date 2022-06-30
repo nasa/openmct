@@ -38,6 +38,7 @@ export default class DefaultClock extends EventEmitter {
         this.cssClass = 'icon-clock';
         this.name = 'Clock';
         this.description = "A default clock for openmct.";
+        this.initialized = false;
     }
 
     tick(tickValue) {
@@ -86,4 +87,7 @@ export default class DefaultClock extends EventEmitter {
         return this.lastTick;
     }
 
+    isInitialized() {
+        return this.initialized;
+    }
 }

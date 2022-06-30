@@ -40,6 +40,7 @@ export default class LocalClock extends DefaultClock {
         this.period = period;
         this.timeoutHandle = undefined;
         this.lastTick = Date.now();
+        this.initialized = true;
     }
 
     start() {
