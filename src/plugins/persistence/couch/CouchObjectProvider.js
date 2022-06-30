@@ -22,7 +22,7 @@
 
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
-import { PENDING, CONNECTED, DISCONNECTED } from "./CouchStatusIndicator";
+import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from "./CouchStatusIndicator";
 import { isNotebookType } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
@@ -112,7 +112,7 @@ class CouchObjectProvider {
      * Takes in a state message from the CouchDB SharedWorker and returns an IndicatorState.
      * @private
      * @param {'open'|'close'|'pending'} message
-     * @returns import('./CouchStatusIndicator').IndicatorState
+     * @returns {import('./CouchStatusIndicator').IndicatorState}
      */
     #messageToIndicatorState(message) {
         let state;
@@ -127,7 +127,7 @@ class CouchObjectProvider {
             state = PENDING;
             break;
         default:
-            state = PENDING;
+            state = UNKNOWN;
             break;
         }
 
