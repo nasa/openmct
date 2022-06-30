@@ -105,9 +105,8 @@ export default {
         let canvasEls = this.$parent.$refs.chartContainer.querySelectorAll("canvas");
         const mainCanvas = canvasEls[1];
         const overlayCanvas = canvasEls[0];
-        if (this.initializeCanvas(mainCanvas, overlayCanvas)) {
-            this.draw();
-        }
+
+        const initialized = this.initializeCanvas(mainCanvas, overlayCanvas);
 
         this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
@@ -115,6 +114,11 @@ export default {
         this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
         this.listenTo(this.config.xAxis, 'change', this.updateLimitsAndDraw);
         this.config.series.forEach(this.onSeriesAdd, this);
+
+        if (initialized) {
+            this.draw();
+        }
+
         this.$emit('chartLoaded');
     },
     beforeDestroy() {
