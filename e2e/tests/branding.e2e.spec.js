@@ -58,6 +58,7 @@ test.describe('Branding tests', () => {
             page.waitForEvent('popup'),
             page.locator('text=click here for third party licensing information').click()
         ]);
+        await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
         expect(page2.waitForURL('**/licenses**')).toBeTruthy();
     });
 });
