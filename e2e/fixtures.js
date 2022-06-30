@@ -26,10 +26,6 @@ function consoleMessageToString(msg) {
 //The following is based on https://github.com/mxschmitt/playwright-test-coverage
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 
-function generateUUID() {
-    return uuid();
-}
-
 exports.test = base.test.extend({
     //The following is based on https://github.com/mxschmitt/playwright-test-coverage
     context: async ({ context }, use) => {
@@ -41,7 +37,7 @@ exports.test = base.test.extend({
         await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
         await context.exposeFunction('collectIstanbulCoverage', (coverageJSON) => {
             if (coverageJSON) {
-                fs.writeFileSync(path.join(istanbulCLIOutput, `playwright_coverage_${generateUUID()}.json`), coverageJSON);
+                fs.writeFileSync(path.join(istanbulCLIOutput, `playwright_coverage_${uuid()}.json`), coverageJSON);
             }
         });
         await use(context);
