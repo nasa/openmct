@@ -215,51 +215,52 @@ export default {
             };
         },
         getPlotObject() {
-            if (this.childObject.configuration && this.childObject.configuration.series) {
-                //If the object has a configuration, allow initialization of the config from it's persisted config
-                return this.childObject;
-            } else {
-                // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
-                const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
-                let config = configStore.get(configId);
-                if (!config) {
-                    let persistedSeriesConfig = this.domainObject.configuration.series.find((seriesConfig) => {
-                        return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.childObject.identifier);
-                    });
-
-                    if (!persistedSeriesConfig) {
-                        persistedSeriesConfig = {
-                            series: {},
-                            yAxis: {}
-                        };
-                    }
-
-                    config = new PlotConfigurationModel({
-                        id: configId,
-                        domainObject: {
-                            ...this.childObject,
-                            configuration: {
-                                series: [
-                                    {
-                                        identifier: this.childObject.identifier,
-                                        ...persistedSeriesConfig.series
-                                    }
-                                ],
-                                yAxis: persistedSeriesConfig.yAxis
-
-                            }
-                        },
-                        openmct: this.openmct,
-                        palette: this.colorPalette,
-                        callback: (data) => {
-                            this.data = data;
-                        }
-                    });
-                    configStore.add(configId, config);
-                }
-
-                return this.childObject;
-            }
+            return this.childObject;
+            // if (this.childObject.configuration && this.childObject.configuration.series) {
+            //     //If the object has a configuration, allow initialization of the config from it's persisted config
+            //     return this.childObject;
+            // } else {
+            //     // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
+            //     const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
+            //     let config = configStore.get(configId);
+            //     if (!config) {
+            //         let persistedSeriesConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+            //             return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.childObject.identifier);
+            //         });
+            //
+            //         if (!persistedSeriesConfig) {
+            //             persistedSeriesConfig = {
+            //                 series: {},
+            //                 yAxis: {}
+            //             };
+            //         }
+            //
+            //         config = new PlotConfigurationModel({
+            //             id: configId,
+            //             domainObject: {
+            //                 ...this.childObject,
+            //                 configuration: {
+            //                     series: [
+            //                         {
+            //                             identifier: this.childObject.identifier,
+            //                             ...persistedSeriesConfig.series
+            //                         }
+            //                     ],
+            //                     yAxis: persistedSeriesConfig.yAxis
+            //
+            //                 }
+            //             },
+            //             openmct: this.openmct,
+            //             palette: this.colorPalette,
+            //             callback: (data) => {
+            //                 this.data = data;
+            //             }
+            //         });
+            //         configStore.add(configId, config);
+            //     }
+            //
+            //     return this.childObject;
+            // }
         }
     }
 };
