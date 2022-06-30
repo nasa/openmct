@@ -44,6 +44,7 @@
     <div
         v-if="!hideOptions"
         class="c-menu c-input--autocomplete__options"
+        aria-label="Autocomplete Options"
         @blur="hideOptions = true"
     >
         <ul>

@@ -25,7 +25,7 @@ import {
     createOpenMct,
     resetApplicationState, spyOnBuiltins
 } from 'utils/testing';
-import { CONNECTED, DISCONNECTED, PENDING } from './CouchStatusIndicator';
+import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
 
 describe('the plugin', () => {
     let openmct;
@@ -396,6 +396,39 @@ describe('the view', () => {
             await Vue.nextTick();
 
             assertCouchIndicatorStatus(PENDING);
+        });
+
+        it("to 'unknown'", async () => {
+            const workerMessage = {
+                data: {
+                    type: 'state',
+                    state: 'unknown'
+                }
+            };
+            mockPromise = Promise.resolve({
+                status: 200,
+                json: () => {
+                    return {
+                        ok: true,
+                        _id: 'some-value',
+                        id: 'some-value',
+                        _rev: 1,
+                        model: {}
+                    };
+                }
+            });
+            fetch.and.returnValue(mockPromise);
+
+            await openmct.objects.get({
+                namespace: '',
+                key: 'object-1'
+            });
+
+            // Simulate 'pending' state from worker message
+            provider.onSharedWorkerMessage(workerMessage);
+            await Vue.nextTick();
+
+            assertCouchIndicatorStatus(UNKNOWN);
         });
     });
 });

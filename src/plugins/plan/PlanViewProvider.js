@@ -39,7 +39,7 @@ export default function PlanViewProvider(openmct) {
         },
 
         canEdit(domainObject) {
-            return domainObject.type === 'plan';
+            return false;
         },
 
         view: function (domainObject, objectPath) {
