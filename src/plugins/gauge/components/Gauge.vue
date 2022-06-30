@@ -253,7 +253,7 @@
                 ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 512 512"
-                    :preserveAspectRatio="meterOorRangeIndicatorAspectRatio"
+                    :preserveAspectRatio="meterOutOfRangeIndicatorAspectRatio"
                 ><path
                     d="M448 0H64C28.7.1.1 28.7 0 64v384c.1 35.3 28.7 63.9 64 64h384c35.3-.1 63.9-28.7 64-64V64c-.1-35.3-28.7-63.9-64-64zM288 448h-64v-64h64v64zm10.9-192L280 352h-48l-18.9-96V64H299v192h-.1z"
                 /></svg></div>
@@ -390,7 +390,7 @@ export default {
         dialLowLimitDeg() {
             return this.percentToDegrees(this.valToPercent(this.limitLow));
         },
-        meterOorRangeIndicatorAspectRatio() {
+        meterOutOfRangeIndicatorAspectRatio() {
             return this.typeMeterVertical ? 'xMidYMax meet' : 'xMinYMid meet';
         },
         meterTextBaseline() {
@@ -503,6 +503,10 @@ export default {
             return 100 - this.valToPercentMeter(this.limitLow);
         },
         valueExpected() {
+            if (this.curVal === undefined || Object.is(this.curVal, 'null')) {
+                return false;
+            }
+
             return this.curVal.toString().indexOf(DEFAULT_CURRENT_VALUE) === -1;
         },
         valueInBounds() {
