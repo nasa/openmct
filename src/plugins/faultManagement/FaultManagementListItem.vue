@@ -51,6 +51,65 @@
             <div class="c-fault-mgmt__list-faultname">{{ fault.name }}</div>
         </div>
         <div class="c-fault-mgmt__list-content-right">
+            <div class="c-fault-mgmt__list-val">
+                <div
+                    class="c-fault-mgmt__list-trigVal"
+                    :class="tripValueClassname"
+                    title="Trip Value"
+                >{{ fault.triggerValueInfo.value }}</div>
+            </div>
+            <div class="c-fault-mgmt__list-val">
+                <div
+                    class="c-fault-mgmt__list-curVal"
+                    :class="liveValueClassname"
+                    title="Live Value"
+                >{{ fault.currentValueInfo.value }} </div>
+            </div>
+            <div
+                class="c-fault-mgmt__list-trigTime"
+            >{{ fault.triggerTime }}
+            </div>
+        </div>
+    </div>
+    <button
+        class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
+        title="Disposition Actions"
+        @click="showActionMenu"
+    ></button>
+</div>
+</template>
+<!--
+<template>
+<div
+    class="c-fault-mgmt__list data-selectable"
+    :class="[
+        {'is-selected': isSelected},
+        {'is-unacknowledged': !fault.acknowledged},
+        {'is-shelved': fault.shelved},
+        {'is-acknowledged': fault.acknowledged}
+    ]"
+>
+    <div class="c-fault-mgmt__list-checkbox">
+        <input
+            type="checkbox"
+            :checked="isSelected"
+            @input="toggleSelected"
+        >
+    </div>
+    <div
+        class="c-fault-mgmt__list-severity"
+        :title="fault.severity"
+        :class="[
+            'is-severity-' + severity
+        ]"
+    >
+    </div>
+    <div class="c-fault-mgmt__list-content">
+        <div class="c-fault-mgmt__list-pathname">
+            <div class="c-fault-mgmt__list-path">{{ fault.namespace }}</div>
+            <div class="c-fault-mgmt__list-faultname">{{ fault.name }}</div>
+        </div>
+        <div class="c-fault-mgmt__list-content-right">
             <div
                 class="c-fault-mgmt__list-trigVal"
                 :class="tripValueClassname"
@@ -77,7 +136,7 @@
         ></button>
     </div>
 </div>
-</template>
+</template> -->
 
 <script>
 
