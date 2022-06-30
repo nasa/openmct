@@ -65,7 +65,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    xit("when the clock is set via the time API, it is reflected in the URL", (done) => {
+    it("when the clock is set via the time API, it is reflected in the URL", (done) => {
         let success;
 
         resolveFunction = () => {
@@ -125,7 +125,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    xit("reset hash", (done) => {
+    it("reset hash", (done) => {
         let success;
 
         window.location.hash = oldHash;
