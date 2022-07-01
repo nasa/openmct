@@ -345,13 +345,9 @@ class TimeContext extends EventEmitter {
     }
 
     hasInitialTick() {
-        if (!this.activeClock) {
-            return Promise.resolve();
-        }
-
         const waitForInitialTick = (resolve) => {
-            if (this.activeClock.isInitialized()) {
-                resolve();
+            if (this.activeClock === undefined || this.activeClock.isInitialized()) {
+                resolve(true);
             } else {
                 setTimeout(() => waitForInitialTick(resolve), 100);
             }

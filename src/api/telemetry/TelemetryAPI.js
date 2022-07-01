@@ -337,7 +337,7 @@ define([
             return this.handleMissingRequestProvider(domainObject);
         }
 
-        const timeContext = this.openmct.time.getContextForView([domainObject]);
+        const timeContext = this.openmct.time.getContextForView();
         await timeContext.hasInitialTick();
 
         return provider.request.apply(provider, arguments)
