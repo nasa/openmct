@@ -182,10 +182,10 @@ export default {
                 });
 
                 if (index < 0) {
-                    this.stopObservingForChanges = this.openmct.objects.observe(
+                    this.removeColorObserver = this.openmct.objects.observe(
                         this.domainObject,
                         '*',
-                        this.updateColorListener.bind(this, seriesObject)
+                        this.changeColor.bind(this, seriesObject)
                     );
                 } else {
                     const key = this.domainObject.type === "telemetry.plot.stacked" ? 'series.color' : 'color';
@@ -199,18 +199,6 @@ export default {
                     );
                 }
             }
-        },
-        updateColorListener(seriesObject) {
-            const index = this.domainObject.configuration.series.length;
-            const seriesColorPath = `configuration.series[${index}]`;
-
-            this.removeColorObserver = this.openmct.objects.observe(
-                this.domainObject,
-                seriesColorPath,
-                this.changeColor.bind(this, seriesObject)
-            );
-
-            this.stopObservingForChanges();
         },
         changeColor(seriesObject) {
             this.colorAsHexString = seriesObject.get('color').asHexString();
