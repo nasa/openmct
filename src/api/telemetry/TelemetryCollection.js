@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _, { add } from 'lodash';
 import EventEmitter from 'EventEmitter';
 import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
 
@@ -290,12 +289,12 @@ export class TelemetryCollection extends EventEmitter {
 
             // need to check futureBuffer and need to check
             // if anything has fallen out of bounds
+            let startIndex = 0;
+            let endIndex = 0;
 
             let discarded = [];
             let added = [];
             let testDatum = {};
-            let startIndex = 0;
-            let endIndex = 0;
 
             if (startChanged) {
                 testDatum[this.timeKey] = bounds.start;
