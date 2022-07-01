@@ -166,26 +166,15 @@
             class="c-imagery__thumbs-scroll-area"
             @scroll="handleScroll"
         >
-            <div
+            <ImageThumbnail
                 v-for="(image, index) in imageHistory"
                 :key="image.url + image.time"
-                class="c-imagery__thumb c-thumb"
-                :class="thumbnailClassList(index)"
-                :title="image.formattedTime"
-                @click="thumbnailClicked(index)"
-            >
-                <a
-                    href=""
-                    :download="image.imageDownloadName"
-                    @click.prevent
-                >
-                    <img
-                        class="c-thumb__image"
-                        :src="image.url"
-                    >
-                </a>
-                <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
-            </div>
+                :image="image"
+                :active="focusedImageIndex === index"
+                :selected="focusedImageIndex === index && isPaused"
+                :real-time="!isFixed"
+                @click.native="thumbnailClicked(index)"
+            />
         </div>
 
         <button
@@ -205,6 +194,7 @@ import moment from 'moment';
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
 import ImageControls from './ImageControls.vue';
+import ImageThumbnail from './ImageThumbnail.vue';
 import imageryData from "../../imagery/mixins/imageryData";
 
 const REFRESH_CSS_MS = 500;
@@ -231,7 +221,8 @@ const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 export default {
     components: {
         Compass,
-        ImageControls
+        ImageControls,
+        ImageThumbnail
     },
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
@@ -1169,17 +1160,6 @@ export default {
             let isVisible = this.layers[index].visible === true;
             this.layers[index].visible = !isVisible;
             this.visibleLayers = this.layers.filter(layer => layer.visible);
-        },
-        thumbnailClassList(index) {
-            const active = this.focusedImageIndex === index;
-            const selected = active && this.isPaused;
-            const realTime = !this.isFixed;
-
-            return {
-                selected,
-                active,
-                'real-time': realTime
-            };
         }
     }
 };
