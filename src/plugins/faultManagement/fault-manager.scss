@@ -162,6 +162,9 @@
 
     &-pathname{
         padding-right: $interiorMarginLg;
+        overflow-wrap: anywhere;
+        min-width: 100px;
+        
     }
     &-path{
         font-size: .85em;
@@ -189,10 +192,18 @@
         margin-top: $interiorMargin;
     }
 
-    &-val {
-        justify-content: left;
-        background: none;
+    // &-val {
+    //     @include isLimit();
+    //     justify-content: left;
+    //     background: none;
+    //     padding-right: $interiorMarginLg;
+    // }
+    &-trigVal, &-curVal{
+        @include isLimit();
         padding-right: $interiorMarginLg;
+        display: flex;
+        background: rgba($colorBodyFg, 0.25);
+        flex-direction: row;
     }
     &-trigTime{
         margin-top: $interiorMargin;
@@ -200,14 +211,8 @@
         font-size: 1.1em;
         background: none !important;
     }
-    &-trigVal {
-        @include isLimit();
-        background: rgba($colorBodyFg, 0.25);
-    }
-
-    &-curVal {
-        @include isLimit();
-        background: rgba($colorBodyFg, 0.25);
+    &-val-limit {
+        width:fit-content;
     }
 
     &-action-wrapper{
