@@ -319,7 +319,6 @@ export class TelemetryCollection extends EventEmitter {
             if (endChanged) {
                 testDatum[this.timeKey] = bounds.end;
                 // Calculate the new index of the last item in bounds
-
                 endIndex = _.sortedLastIndexBy(
                     this.futureBuffer,
                     testDatum,
@@ -327,10 +326,12 @@ export class TelemetryCollection extends EventEmitter {
                 );
                 added = this.futureBuffer.splice(0, endIndex);
 
+                let combined = [...this.boundedTelemetry, ...added];
+
                 if (!this.isStrategyLatest) {
-                    this.boundedTelemetry = [...this.boundedTelemetry, ...added];
+                    this.boundedTelemetry = combined;
                 } else {
-                    let latest = this._getLatestDatum(added);
+                    let latest = this._getLatestDatum(combined);
 
                     added = [latest];
                     this.boundedTelemetry = added;
