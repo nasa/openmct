@@ -50,14 +50,11 @@ export default class RemoteClock extends DefaultClock {
 
         this.lastTick = 0;
 
-        this.remoteClockLoaded = false;
-        this.loadedBoundsResolve = undefined;
         this.openmct.telemetry.addRequestInterceptor(
             requestInterceptor(
+                this.openmct,
                 this.identifier,
-                new Promise((resolve, reject) => {
-                    this.loadedBoundsResolve = resolve;
-                })
+                this.#waitForReady.bind(this)
             )
         );
 
@@ -125,12 +122,6 @@ export default class RemoteClock extends DefaultClock {
         if (time > this.lastTick) {
             this.tick(time);
         }
-
-        if (!this.remoteClockLoaded) {
-            this.remoteClockLoaded = true;
-            console.log('bounds resolving', this.openmct.time.bounds());
-            this.loadedBoundsResolve(this.openmct.time.bounds());
-        }
     }
 
     /**
@@ -146,5 +137,26 @@ export default class RemoteClock extends DefaultClock {
         this.parseTime = (datum) => {
             return timeFormatter.parse(datum);
         };
+    }
+
+    /**
+     * Waits for the clock to have a non-default tick value.
+     *
+     * @private
+     */
+    #waitForReady() {
+        const waitForInitialTick = (resolve) => {
+            if (this.lastTick > 0) {
+                const offsets = this.openmct.time.clockOffsets();
+                resolve({
+                    start: this.lastTick + offsets.start,
+                    end: this.lastTick + offsets.end
+                });
+            } else {
+                setTimeout(() => waitForInitialTick(resolve), 100);
+            }
+        };
+
+        return new Promise(waitForInitialTick);
     }
 }

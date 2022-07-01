@@ -255,7 +255,6 @@ export default class TelemetryAPI {
      *          telemetry data
      */
     async request(domainObject) {
-        console.log('request', domainObject.identifier.key);
         if (this.noRequestProviderForAllObjects) {
             return Promise.resolve([]);
         }

@@ -20,23 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function requestInterceptor(remoteClockIdentifier, boundsPromise) {
+function requestInterceptor(openmct, remoteClockIdentifier, waitForBounds) {
     let remoteClockLoaded = false;
 
     return {
-        appliesTo: (identifier) => {
-            if (remoteClockLoaded) {
-                return false;
-            }
+        appliesTo: () => {
+            // Get the activeClock from the Global Time Context
+            const { activeClock } = openmct.time.getContextForView();
 
-            return identifier.key !== remoteClockIdentifier.key;
+            return activeClock !== undefined
+            && activeClock.key === 'remote-clock'
+            && !remoteClockLoaded;
         },
-        invoke: async (identifier, request) => {
-            let bounds = await boundsPromise;
+        invoke: async (request) => {
+            const { start, end } = await waitForBounds();
+            remoteClockLoaded = true;
+            request.start = start;
+            request.end = end;
 
-            request.start = bounds.start;
-            request.end = bounds.end;
-            console.log('intercepted request', request);
             return request;
         }
     };
