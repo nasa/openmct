@@ -123,8 +123,8 @@
 .c-faults-list-view-header-item-container{
     display: grid;
     width: 100%;
-    grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
-    grid-row-gap: $interiorMarginLg;
+    grid-template-columns: max-content max-content repeat(4,minmax(max-content, 20%)) max-content;
+    grid-row-gap: $interiorMargin;
 
     &-wrapper {
         flex: 1 1 auto;
@@ -143,12 +143,11 @@
 
 /*********************************************** FAULT ITEM */
 .c-fault-mgmt__list{
-    background: rgba($colorBodyFg, 0.1);
     display: contents;
     width: 100%;
     &:hover{
         .c-fault-mgmt-item{
-            background: rgba($colorBodyFg, 0.15);;
+            background: rgba($colorBodyFg, 0.15);
         }
     }
 
@@ -159,7 +158,7 @@
 
     &-severity{
         font-size: 2em;
-        margin-left: $interiorMarginLg;
+        margin-left: $interiorMarginSm;
         height: 24.0909px;
     }
 
@@ -173,6 +172,9 @@
 
     &-pathname{
         padding-right: $interiorMarginLg;
+        overflow-wrap: anywhere;
+        min-width: 100px;
+
     }
     &-path{
         font-size: .85em;
@@ -200,10 +202,13 @@
         margin-top: $interiorMargin;
     }
 
-    &-val {
-        justify-content: left;
-        background: none;
+    &-trigVal,
+    &-curVal{
+        @include isLimit();
         padding-right: $interiorMarginLg;
+        display: flex;
+        background: rgba($colorBodyFg, 0.25);
+        flex-direction: row;
     }
     &-trigTime{
         margin-top: $interiorMargin;
@@ -211,14 +216,8 @@
         font-size: 1.1em;
         background: none !important;
     }
-    &-trigVal {
-        @include isLimit();
-        background: rgba($colorBodyFg, 0.25);
-    }
-
-    &-curVal {
-        @include isLimit();
-        background: rgba($colorBodyFg, 0.25);
+    &-val-limit {
+        width:fit-content;
     }
 
     &-action-wrapper{
@@ -258,6 +257,7 @@
     &-results{
         grid-column: 2 / span 2;
         font-size: 1em;
+        height: auto;
     }
 
     &-tripVal, &-liveVal, &-trigTime{
@@ -273,8 +273,8 @@
 .c-fault-mgmt-item{
     background: rgba($colorBodyFg, 0.1);
     padding-bottom: $interiorMargin;
-    padding-top: $interiorMarginSm;
-    padding-left: $interiorMarginSm;
+    padding-top: $interiorMargin;
+    padding-left: $interiorMargin;
 
     &-header{
         $c: $colorBodyBg;
