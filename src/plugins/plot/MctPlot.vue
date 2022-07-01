@@ -344,8 +344,10 @@ export default {
             this.$emit('configLoaded', configId);
         }
 
-        this.listenTo(this.config.series, 'add', this.addSeries, this);
-        this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+        // this.listenTo(this.config.series, 'add', this.addSeries, this);
+        // this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+        this.config.series.on('add', this.addSeries);
+        this.config.series.on('remove', this.removeSeries);
 
         this.config.series.models.forEach(this.addSeries, this);
 
@@ -685,6 +687,8 @@ export default {
 
             // this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
             // this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
+            this.config.xAxis.on('change:displayRange', this.onXAxisChange);
+            this.config.yAxis.on('change:displayRange', this.onYAxisChange);
             console.log('initialize complete');
         },
 
@@ -1160,6 +1164,11 @@ export default {
             configStore.deleteStore(this.config.id);
 
             this.stopListening();
+            this.config.series.off('add', this.addSeries);
+            this.config.series.off('remove', this.removeSeries);
+
+            this.config.xAxis.off('change:displayRange', this.onXAxisChange);
+            this.config.yAxis.off('change:displayRange', this.onYAxisChange);
 
             if (this.checkForSize) {
                 clearInterval(this.checkForSize);
