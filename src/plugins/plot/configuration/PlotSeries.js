@@ -324,7 +324,6 @@ export default class PlotSeries extends Model {
     load(options) {
         return this.fetch(options)
             .then(function (res) {
-                console.log('series data loaded');
                 this.emit('load');
 
                 return res;

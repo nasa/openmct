@@ -160,10 +160,10 @@ export default {
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
 
-            // this.setSelection();
+            this.setSelection();
         },
         onLockHighlightPointUpdated() {
             this.$emit('lockHighlightPoint', ...arguments);
@@ -227,28 +227,25 @@ export default {
                         return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.childObject.identifier);
                     });
 
-                    if (!persistedSeriesConfig) {
-                        persistedSeriesConfig = {
-                            series: {},
-                            yAxis: {}
+                    let domainObject = {
+                        ...this.childObject
+                    };
+                    if (persistedSeriesConfig) {
+                        domainObject.configuration = {
+                            series: [
+                                {
+                                    identifier: this.childObject.identifier,
+                                    ...persistedSeriesConfig.series
+                                }
+                            ],
+                            yAxis: persistedSeriesConfig.yAxis
+
                         };
                     }
 
                     config = new PlotConfigurationModel({
                         id: configId,
-                        domainObject: {
-                            ...this.childObject,
-                            configuration: {
-                                series: [
-                                    {
-                                        identifier: this.childObject.identifier,
-                                        ...persistedSeriesConfig.series
-                                    }
-                                ],
-                                yAxis: persistedSeriesConfig.yAxis
-
-                            }
-                        },
+                        domainObject,
                         openmct: this.openmct,
                         palette: this.colorPalette,
                         callback: (data) => {

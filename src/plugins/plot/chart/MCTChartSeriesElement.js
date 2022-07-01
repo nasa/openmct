@@ -38,10 +38,6 @@ export default class MCTChartSeriesElement {
         this.listenTo(series, 'reset', this.reset, this);
         this.listenTo(series, 'destroy', this.destroy, this);
         this.series.getSeriesData().forEach(function (point, index) {
-            if (index === 0) {
-                console.log('MctSeriesElement constructor append');
-            }
-
             this.append(point, index, series);
         }, this);
     }
@@ -99,7 +95,6 @@ export default class MCTChartSeriesElement {
     makePoint(point, series) {
         if (!this.offset.xVal) {
             this.chart.setOffset(point, undefined, series);
-            console.log('offset set');
         }
 
         return {

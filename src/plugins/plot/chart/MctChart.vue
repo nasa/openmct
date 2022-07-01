@@ -427,7 +427,6 @@ export default {
         },
         scheduleDraw() {
             if (!this.drawScheduled) {
-                console.log('scheduleDraw');
                 requestAnimationFrame(this.draw);
                 this.drawScheduled = true;
             }
@@ -440,7 +439,6 @@ export default {
 
             this.drawAPI.clear();
             if (this.canDraw()) {
-                console.log('drawing');
                 this.updateViewport();
                 this.drawSeries();
                 this.drawRectangles();

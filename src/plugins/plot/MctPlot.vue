@@ -360,7 +360,6 @@ export default {
         this.setTimeContext();
 
         this.loaded = true;
-        console.log('mct plot loaded');
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);

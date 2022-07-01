@@ -245,10 +245,12 @@ export default {
         },
         registerSeriesListeners(configId) {
             this.seriesConfig[configId] = this.getConfig(configId);
-            this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
-            this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
-
             this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
+
+            if (this.seriesConfig[configId].series.models.length === 0 || this.seriesConfig[configId].series.models[0].keyString !== configId) {
+                this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
+                this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
+            }
         },
         addSeries(series) {
             const index = this.seriesModels.length;
