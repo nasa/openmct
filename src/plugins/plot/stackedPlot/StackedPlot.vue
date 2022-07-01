@@ -26,13 +26,13 @@
     class="c-plot c-plot--stacked holder holder-plot has-control-bar"
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <plot-legend
-        :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
-        :highlights="highlights"
-        :legend="legend"
-        @legendHoverChanged="legendHoverChanged"
-    />
+    <!--    <plot-legend-->
+    <!--        :cursor-locked="!!lockHighlightPoint"-->
+    <!--        :series="seriesModels"-->
+    <!--        :highlights="highlights"-->
+    <!--        :legend="legend"-->
+    <!--        @legendHoverChanged="legendHoverChanged"-->
+    <!--    />-->
     <div class="l-view-section">
         <stacked-plot-item
             v-for="object in compositionObjects"
