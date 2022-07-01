@@ -120,7 +120,7 @@
     display: grid;
     width: 100%;
     grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
-    grid-row-gap: $interiorMarginLg;
+    grid-row-gap: $interiorMargin;
     .--width-less-than-600 & {
         grid-template-columns: max-content max-content 1fr max-content;
     }
@@ -132,7 +132,6 @@
 
 /*********************************************** FAULT ITEM */
 .c-fault-mgmt__list{
-    background: rgba($colorBodyFg, 0.1);
     display: contents;
     width: 100%;
     &:hover{
@@ -192,12 +191,6 @@
         margin-top: $interiorMargin;
     }
 
-    // &-val {
-    //     @include isLimit();
-    //     justify-content: left;
-    //     background: none;
-    //     padding-right: $interiorMarginLg;
-    // }
     &-trigVal, &-curVal{
         @include isLimit();
         padding-right: $interiorMarginLg;
@@ -252,6 +245,7 @@
     &-results{
         grid-column: 2 / span 2;
         font-size: 1em;
+        height: auto;
     }
 
     &-tripVal, &-liveVal, &-trigTime{
@@ -267,12 +261,12 @@
 .c-fault-mgmt-item{
     background: rgba($colorBodyFg, 0.1);
     padding-bottom: $interiorMargin;
-    padding-top: $interiorMarginSm;
-    padding-left: $interiorMarginSm;
+    padding-top: $interiorMargin;
+    padding-left: $interiorMargin;
 
     &-header{
         background: rgba($colorBodyFg, 0.27);
-        padding: $interiorMarginSm;
+        padding: $interiorMargin;
 
     }
 }
