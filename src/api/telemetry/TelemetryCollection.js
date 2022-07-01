@@ -294,13 +294,14 @@ export class TelemetryCollection extends EventEmitter {
             let discarded = [];
             let added = [];
             let testDatum = {};
+            let startIndex = 0;
+            let endIndex = 0;
 
-            if (!this.isStrategyLatest) {
-                let startIndex = 0;
-                let endIndex = 0;
+            if (startChanged) {
+                testDatum[this.timeKey] = bounds.start;
 
-                if (startChanged) {
-                    testDatum[this.timeKey] = bounds.start;
+                // a little more complicated if not latest strategy
+                if (!this.isStrategyLatest) {
                     // Calculate the new index of the first item within the bounds
                     startIndex = _.sortedIndexBy(
                         this.boundedTelemetry,
@@ -308,21 +309,41 @@ export class TelemetryCollection extends EventEmitter {
                         datum => this.parseTime(datum)
                     );
                     discarded = this.boundedTelemetry.splice(0, startIndex);
+                } else {
+                    if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
+                        discarded = this.boundedTelemetry;
+                        this.boundedTelemetry = [];
+                    }
                 }
+            }
 
-                if (endChanged) {
-                    testDatum[this.timeKey] = bounds.end;
-                    // Calculate the new index of the last item in bounds
-                    endIndex = _.sortedLastIndexBy(
-                        this.futureBuffer,
-                        testDatum,
-                        datum => this.parseTime(datum)
-                    );
-                    added = this.futureBuffer.splice(0, endIndex);
+            if (endChanged) {
+                testDatum[this.timeKey] = bounds.end;
+                // Calculate the new index of the last item in bounds
+
+                endIndex = _.sortedLastIndexBy(
+                    this.futureBuffer,
+                    testDatum,
+                    datum => this.parseTime(datum)
+                );
+                added = this.futureBuffer.splice(0, endIndex);
+
+                if (!this.isStrategyLatest) {
                     this.boundedTelemetry = [...this.boundedTelemetry, ...added];
+                } else {
+                    let latest = this._getLatestDatum(added);
+
+                    added = [latest];
+                    this.boundedTelemetry = added;
                 }
-            } else {
-                // we can reuse the logic in processNewTelemetry
+            }
+
+            if (discarded.length > 0) {
+                this.emit('remove', discarded);
+            }
+
+            if (added.length > 0) {
+                this.emit('add', added);
             }
         } else {
             // user bounds change, reset
