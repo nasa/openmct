@@ -55,29 +55,21 @@
         <div class="c-fault-mgmt__list-content-right">
             <div class="c-fault-mgmt-item">
                 <div
-                    class="c-fault-mgmt__list-val-limit"
-                    :class="tripValueClassname">
-                    <div
-                        class="c-fault-mgmt__list-trigVal"
-                        :class="tripValueClassname"
-                        title="Trip Value"
-                    >{{ fault.triggerValueInfo.value }}</div>
-                </div>
+                    class="c-fault-mgmt-item-value c-fault-mgmt__list-trigVal"
+                    :class="tripValueClassname"
+                    title="Trip Value"
+                >{{ fault.triggerValueInfo.value }}</div>
             </div>
             <div class="c-fault-mgmt-item">
                 <div
-                    class="c-fault-mgmt__list-val-limit"
-                    :class="liveValueClassname">
-                    <div
-                        class="c-fault-mgmt__list-curVal"
-                        :class="liveValueClassname"
-                        title="Live Value"
-                    >{{ fault.currentValueInfo.value }}</div>
-                </div>
+                    class="c-fault-mgmt-item-value c-fault-mgmt__list-curVal"
+                    :class="liveValueClassname"
+                    title="Live Value"
+                >{{ fault.currentValueInfo.value }}</div>
             </div>
-            <div class="c-fault-mgmt-item c-fault-mgmt__list-val">
+            <div class="c-fault-mgmt-item">
                 <div
-                    class="c-fault-mgmt-item c-fault-mgmt__list-trigTime"
+                    class="c-fault-mgmt-item-value c-fault-mgmt__list-trigTime"
                 >{{ fault.triggerTime }}
                 </div>
             </div>

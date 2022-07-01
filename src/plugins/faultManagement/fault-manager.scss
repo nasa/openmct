@@ -21,6 +21,8 @@
  *****************************************************************************/
 
 /*********************************************** FAULT PROPERTIES */
+$colorFaultItemBg: pullForward($colorBodyBg, 5%);
+
 .is-severity-critical{
     @include glyphBefore($glyph-icon-alert-triangle);
     color: $colorStatusError;
@@ -145,11 +147,13 @@
 .c-fault-mgmt__list{
     display: contents;
     width: 100%;
-    &:hover{
-        .c-fault-mgmt-item{
-            background: rgba($colorBodyFg, 0.15);
-        }
-    }
+
+    // Don't enable hover until the user can do something with that click
+    //&:hover{
+    //    .c-fault-mgmt-item{
+    //        background: $colorFaultItemBg;
+    //    }
+    //}
 
     &-checkbox{
         border-top-left-radius: 4px;
@@ -195,29 +199,29 @@
     }
 
     &-trigVal, &-curVal {
-        border-radius: $controlCr;
-        padding: $interiorMargin;
-        font-size: 1.1em;
-        margin-right: $interiorMarginLg;
-        margin-top: $interiorMargin;
+        //border-radius: $controlCr;
+        //padding: $interiorMargin;
+        //font-size: 1.1em;
+        //margin-right: $interiorMarginLg;
+        //margin-top: $interiorMargin;
     }
 
     &-trigVal,
     &-curVal{
-        @include isLimit();
-        padding-right: $interiorMarginLg;
-        display: flex;
-        background: rgba($colorBodyFg, 0.25);
+        //@include isLimit();
+        //padding-right: $interiorMarginLg;
+        //display: flex;
+        //background: rgba($colorBodyFg, 0.25);
         flex-direction: row;
     }
     &-trigTime{
-        margin-top: $interiorMargin;
-        padding: $interiorMargin;
-        font-size: 1.1em;
-        background: none !important;
+        //margin-top: $interiorMargin;
+        //padding: $interiorMargin;
+        //font-size: 1.1em;
+        //background: none !important;
     }
     &-val-limit {
-        width:fit-content;
+        //width:fit-content;
     }
 
     &-action-wrapper{
@@ -270,11 +274,10 @@
 }
 
 /*********************************************** GRID ITEM */
-.c-fault-mgmt-item{
-    background: rgba($colorBodyFg, 0.1);
-    padding-bottom: $interiorMargin;
-    padding-top: $interiorMargin;
-    padding-left: $interiorMargin;
+.c-fault-mgmt-item {
+    $p: $interiorMarginSm $interiorMargin;
+    padding: $p;
+    background: $colorFaultItemBg;
 
     &-header{
         $c: $colorBodyBg;
@@ -285,6 +288,14 @@
         position: sticky;
         top: 0;
         z-index: 2;
+    }
+
+    &-value {
+        @include isLimit();
+        background: rgba($colorBodyFg, 0.1);
+        padding: $p;
+        border-radius: $controlCr;
+        display: inline-flex;
     }
 }
 
