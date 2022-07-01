@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 /*
-Tests to verify log plot functionality. Note this test suite if very much under active development and should not
-necessarily be used for reference when writing new tests in this area.
+Tests to verify log plot functionality when objects are missing
 */
 
 const { test } = require('../../../fixtures.js');
