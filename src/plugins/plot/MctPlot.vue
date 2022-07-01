@@ -683,8 +683,8 @@ export default {
             this.cursorGuideVertical = this.$refs.cursorGuideVertical;
             this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
 
-            this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
-            this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
+            // this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
+            // this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
             console.log('initialize complete');
         },
 
