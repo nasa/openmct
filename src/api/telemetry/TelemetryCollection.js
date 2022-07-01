@@ -324,7 +324,7 @@ export class TelemetryCollection extends EventEmitter {
     _setTimeSystem(timeSystem) {
         let domains = [];
         let metadataValue = { format: timeSystem.key };
-        
+
         if (this.metadata) {
             domains = this.metadata.valuesForHints(['domain']);
             metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };

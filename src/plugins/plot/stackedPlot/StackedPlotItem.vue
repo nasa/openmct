@@ -225,6 +225,7 @@ export default {
                 //If object is missing, warn and return object
                 if (this.openmct.objects.isMissing(this.childObject)) {
                     console.warn('Missing domain object');
+
                     return this.childObject;
                 }
 

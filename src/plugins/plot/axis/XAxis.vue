@@ -146,7 +146,7 @@ export default {
                             key: o.key
                         };
                     });
-            }    
+            }
 
             this.xAxisLabel = this.xAxis.get('label');
             this.selectedXKeyOptionKey = this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
