@@ -29,6 +29,14 @@ const { expect } = require('@playwright/test');
 
 test.describe('Handle missing object for plots', () => {
     test('Displays empty div for missing stacked plot item', async ({ page }) => {
+        const errorLogs = [];
+
+        page.on("console", (message) => {
+            if (message.type() === 'warning') {
+                errorLogs.push(message.text());
+            }
+        });
+
         //Make stacked plot
         await makeStackedPlot(page);
 
@@ -46,7 +54,13 @@ test.describe('Handle missing object for plots', () => {
         );
 
         //Reloads page and clicks on stacked plot
-        page.reload();
+        await Promise.all([
+            page.reload(),
+            page.waitForLoadState('networkidle')
+        ]);
+
+        //Verify Main section is there on load
+        await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Stacked Plot');
 
         await page.locator('text=Open MCT My Items >> span').nth(3).click();
         await Promise.all([
@@ -56,9 +70,15 @@ test.describe('Handle missing object for plots', () => {
 
         //Check that there is only one stacked item plot with a plot, the missing one will be empty
         await expect(page.locator(".c-plot--stacked-container:has(.gl-plot)")).toHaveCount(1);
+        //Verify that console.warn is thrown
+        await expect(errorLogs).toHaveLength(1);
     });
 });
 
+/**
+ * This is used the create a stacked plot object
+ * @private
+ */
 async function makeStackedPlot(page) {
     // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
     await page.goto('/', { waitUntil: 'networkidle' });
@@ -102,6 +122,10 @@ async function makeStackedPlot(page) {
     ]);
 }
 
+/**
+ * This is used to save a stacked plot object
+ * @private
+ */
 async function saveStackedPlot(page) {
     // save stacked plot
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
@@ -116,6 +140,10 @@ async function saveStackedPlot(page) {
     await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
 }
 
+/**
+ * This is used to create a sine wave generator object
+ * @private
+ */
 async function createSineWaveGenerator(page) {
     //Create sine wave generator
     await page.locator('button.c-create-button').click();
