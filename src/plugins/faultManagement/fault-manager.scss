@@ -120,7 +120,10 @@
     display: grid;
     width: 100%;
     grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
-    // grid-row-gap: 2px;
+    grid-row-gap: $interiorMarginLg;
+    .--width-less-than-600 & {
+        grid-template-columns: max-content max-content 1fr 4px;
+    }
 }
 
 .c-faults-list-view-item-body{
@@ -132,31 +135,18 @@
     background: rgba($colorBodyFg, 0.1);
     display: contents;
     width: 100%;
-    // grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
-    // grid-row-gap: $interiorMarginSm;
-
-    .--width-less-than-600 & {
-        grid-template-columns: max-content max-content 1fr 4px;
-    }
-
-    > * {
-        margin-left: $interiorMargin;
-        margin-bottom: $interiorMarginLg;
-        // .--width-less-than-600 & {
-        //     align-items: stretch;
-        //  }
-    }
 
     &-checkbox{
-       margin-top: $interiorMargin;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4pxx;
     }
 
     &-severity{
         font-size: 2em;
         margin-left: $interiorMarginLg;
-        margin-top: $interiorMarginSm;
+        // margin-top: $interiorMarginSm;
         height: 24.0909px;
-     }
+    }
 
      &-content{
         display: contents;      
@@ -176,10 +166,7 @@
     }
 
     &-pathname{
-        margin-left: $interiorMarginLg;
-        margin-top: $interiorMarginSm;
-        // flex-wrap: wrap;
-        // flex: 1 1 30%;
+        padding-right: $interiorMarginLg;
         // // max-width: 90%;
         // margin-right: $interiorMarginSm;
         // .--width-less-than-600 & {
@@ -191,10 +178,12 @@
     }
     &-path{
         font-size: .85em;
+        margin-left: $interiorMargin;
     }
 
     &-faultname{
         font-size: 1.3em; 
+        margin-left: $interiorMargin;
     }
 
     &-content-right{
@@ -202,12 +191,13 @@
         // display: flex;
         // flex-wrap: wrap;
         // flex: 1 1 auto;
-        // .--width-less-than-600 & {
-        //     margin-left: 0px;
-        //  }
+        .--width-less-than-600 & {
+            display: flex;
+            flex-direction: column;
+         }
     }
 
-    &-trigVal, &-curVal, &-trigTime{
+    &-trigVal, &-curVal {
         // @include ellipsize;
         border-radius: $controlCr;
         padding: $interiorMargin;
@@ -220,15 +210,22 @@
         // }
     }
 
+    &-val {
+        justify-content: left;
+        background: none;
+        padding-right: $interiorMarginLg;
+    }
+    &-trigTime{
+        margin-top: $interiorMargin;
+        padding: $interiorMargin;
+        font-size: 1.1em;
+        background: none !important;
+    }
     &-trigVal {
         @include isLimit();
         background: rgba($colorBodyFg, 0.25);
-        margin-left: $interiorMarginLg;
-        // margin-right: $interiorMarginLg;
-        // flex: 1 1 20%;
-    }
-    &-val {
-        justify-content: left;
+        // margin-left: $interiorMarginLg;
+
     }
 
     &-curVal {
@@ -238,10 +235,6 @@
         // &-alert{
         //     background: $colorWarningHi;
         // }
-    }
-
-    &-trigTime{
-        // width: auto;
     }
 
     &-action-wrapper{
@@ -265,33 +258,41 @@
 
 /*********************************************** LIST HEADER */
 .c-fault-mgmt__list-header{
-    display: flex;
-    background: rgba($colorBodyFg, .23);
+    display: contents;
     border-radius: $controlCr;
     align-items: center;
 
+    * {
+        margin: 0px;
+        border-radius: 0px;
+    }
     &-results{
         grid-column: 2 / span 2;
     }
     &-tripVal, &-liveVal, &-trigTime{
-        background: none;
-        padding: 0px;
+        margin-right: 0px;
+        border-radius: 0px;
         .--width-less-than-600 & {
             display: none;
         }
     }
 
-    &-trigTime{
-        // width: 95px;
-    }
     &-sortButton{
         text-align: right;
-        // flex: 0 0 auto;
-        // margin-left: auto;
-        // justify-content: right;
-        // display: flex;
-        // align-content: right;
-        // width: 10px;
+    }
+}
+
+/*********************************************** GRID ITEM */
+.c-fault-mgmt-item{
+    background: rgba($colorBodyFg, 0.1);
+    padding-bottom: $interiorMarginLg;
+    padding-top: $interiorMarginSm;
+    padding-left: $interiorMarginSm;
+
+    &-header{
+        background: rgba($colorBodyFg, 0.27);
+        padding: $interiorMarginSm;
+
     }
 }
 
@@ -318,6 +319,9 @@
 
 .is-selected {
     background: $colorSelectedBg;
+    .c-fault-mgmt-item{
+        background: $colorSelectedBg;
+    }
 }
 
 .is-shelved{
