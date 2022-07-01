@@ -134,6 +134,7 @@ export default {
             //If this object is not persistable, then package it with it's parent
             const object = this.getPlotObject();
             const getProps = this.getProps;
+            const isMissing = openmct.objects.isMissing(object);
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
 
@@ -158,13 +159,9 @@ export default {
                         onCursorGuideChange,
                         onGridLinesChange,
                         setStatus,
+                        isMissing,
                         loading: true
                     };
-                },
-                computed: {
-                    isMissing() {
-                        return openmct.objects.isMissing(object);
-                    }
                 },
                 methods: {
                     loadingUpdated(loaded) {
@@ -225,6 +222,12 @@ export default {
                 //If the object has a configuration, allow initialization of the config from it's persisted config
                 return this.childObject;
             } else {
+                //If object is missing, warn and return object
+                if (this.openmct.objects.isMissing(this.childObject)) {
+                    console.warn('Missing domain object');
+                    return this.childObject;
+                }
+
                 // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
                 const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
                 let config = configStore.get(configId);
@@ -240,32 +243,28 @@ export default {
                         };
                     }
 
-                    try {
-                        config = new PlotConfigurationModel({
-                            id: configId,
-                            domainObject: {
-                                ...this.childObject,
-                                configuration: {
-                                    series: [
-                                        {
-                                            identifier: this.childObject.identifier,
-                                            ...persistedSeriesConfig.series
-                                        }
-                                    ],
-                                    yAxis: persistedSeriesConfig.yAxis
+                    config = new PlotConfigurationModel({
+                        id: configId,
+                        domainObject: {
+                            ...this.childObject,
+                            configuration: {
+                                series: [
+                                    {
+                                        identifier: this.childObject.identifier,
+                                        ...persistedSeriesConfig.series
+                                    }
+                                ],
+                                yAxis: persistedSeriesConfig.yAxis
 
-                                }
-                            },
-                            openmct: this.openmct,
-                            palette: this.colorPalette,
-                            callback: (data) => {
-                                this.data = data;
                             }
-                        });
-                        configStore.add(configId, config);
-                    } catch {
-                        console.warn('Missing domain object');
-                    }
+                        },
+                        openmct: this.openmct,
+                        palette: this.colorPalette,
+                        callback: (data) => {
+                            this.data = data;
+                        }
+                    });
+                    configStore.add(configId, config);
                 }
 
                 return this.childObject;
