@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _ from 'lodash';
+import _, { add } from 'lodash';
 import EventEmitter from 'EventEmitter';
 import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
 
@@ -180,47 +180,67 @@ export class TelemetryCollection extends EventEmitter {
         let afterEndOfBounds;
         let added = [];
 
-        for (let datum of data) {
-            parsedValue = this.parseTime(datum);
-            beforeStartOfBounds = parsedValue < this.lastBounds.start;
-            afterEndOfBounds = parsedValue > this.lastBounds.end;
+        if (!this.isStrategyLatest) {
 
-            if (!afterEndOfBounds && !beforeStartOfBounds) {
-                let isDuplicate = false;
-                let startIndex = this._sortedIndex(datum);
-                let endIndex = undefined;
+            // loop through, sort and dedupe
+            for (let datum of data) {
+                parsedValue = this.parseTime(datum);
+                beforeStartOfBounds = parsedValue < this.lastBounds.start;
+                afterEndOfBounds = parsedValue > this.lastBounds.end;
 
-                // dupe check
-                if (startIndex !== this.boundedTelemetry.length) {
-                    endIndex = _.sortedLastIndexBy(
-                        this.boundedTelemetry,
-                        datum,
-                        boundedDatum => this.parseTime(boundedDatum)
-                    );
+                if (!afterEndOfBounds && !beforeStartOfBounds) {
+                    let isDuplicate = false;
+                    let startIndex = this._sortedIndex(datum);
+                    let endIndex = undefined;
 
-                    if (endIndex > startIndex) {
-                        let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
-                        isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
+                    // dupe check
+                    if (startIndex !== this.boundedTelemetry.length) {
+                        endIndex = _.sortedLastIndexBy(
+                            this.boundedTelemetry,
+                            datum,
+                            boundedDatum => this.parseTime(boundedDatum)
+                        );
+
+                        if (endIndex > startIndex) {
+                            let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
+                            isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
+                        }
+                    } else if (startIndex === this.boundedTelemetry.length) {
+                        isDuplicate = _.isEqual(datum, this.boundedTelemetry[this.boundedTelemetry.length - 1]);
                     }
-                } else if (startIndex === this.boundedTelemetry.length) {
-                    isDuplicate = _.isEqual(datum, this.boundedTelemetry[this.boundedTelemetry.length - 1]);
+
+                    if (!isDuplicate) {
+                        let index = endIndex || startIndex;
+
+                        this.boundedTelemetry.splice(index, 0, datum);
+                        added.push(datum);
+                    }
+
+                } else if (afterEndOfBounds) {
+                    this.futureBuffer.push(datum);
                 }
-
-                if (!isDuplicate) {
-                    let index = endIndex || startIndex;
-
-                    this.boundedTelemetry.splice(index, 0, datum);
-                    added.push(datum);
-                }
-
-            } else if (afterEndOfBounds) {
-                this.futureBuffer.push(datum);
             }
-        }
 
-        if (added.length) {
+            if (added.length) {
+                this.emit('add', added);
+            }
+        } else {
+            // strategy latest, we only need one value
+            let latest = this._getLatestDatum(data);
+
+            added.push(latest);
+
+            this.boundedTelemetry = added;
             this.emit('add', added);
         }
+    }
+
+    _getLatestDatum(data) {
+        let zeroTimeDatum = { [this.timeKey]: 0 };
+
+        return data.reduce((prevDatum, nextDatum) => {
+            return this.parseTime(prevDatum) > this.parseTime(nextDatum) ? prevDatum : nextDatum;
+        }, zeroTimeDatum);
     }
 
     /**
@@ -270,42 +290,39 @@ export class TelemetryCollection extends EventEmitter {
 
             // need to check futureBuffer and need to check
             // if anything has fallen out of bounds
-            let startIndex = 0;
-            let endIndex = 0;
 
             let discarded = [];
             let added = [];
             let testDatum = {};
 
-            if (startChanged) {
-                testDatum[this.timeKey] = bounds.start;
-                // Calculate the new index of the first item within the bounds
-                startIndex = _.sortedIndexBy(
-                    this.boundedTelemetry,
-                    testDatum,
-                    datum => this.parseTime(datum)
-                );
-                discarded = this.boundedTelemetry.splice(0, startIndex);
-            }
+            if (!this.isStrategyLatest) {
+                let startIndex = 0;
+                let endIndex = 0;
 
-            if (endChanged) {
-                testDatum[this.timeKey] = bounds.end;
-                // Calculate the new index of the last item in bounds
-                endIndex = _.sortedLastIndexBy(
-                    this.futureBuffer,
-                    testDatum,
-                    datum => this.parseTime(datum)
-                );
-                added = this.futureBuffer.splice(0, endIndex);
-                this.boundedTelemetry = [...this.boundedTelemetry, ...added];
-            }
+                if (startChanged) {
+                    testDatum[this.timeKey] = bounds.start;
+                    // Calculate the new index of the first item within the bounds
+                    startIndex = _.sortedIndexBy(
+                        this.boundedTelemetry,
+                        testDatum,
+                        datum => this.parseTime(datum)
+                    );
+                    discarded = this.boundedTelemetry.splice(0, startIndex);
+                }
 
-            if (discarded.length > 0) {
-                this.emit('remove', discarded);
-            }
-
-            if (added.length > 0) {
-                this.emit('add', added);
+                if (endChanged) {
+                    testDatum[this.timeKey] = bounds.end;
+                    // Calculate the new index of the last item in bounds
+                    endIndex = _.sortedLastIndexBy(
+                        this.futureBuffer,
+                        testDatum,
+                        datum => this.parseTime(datum)
+                    );
+                    added = this.futureBuffer.splice(0, endIndex);
+                    this.boundedTelemetry = [...this.boundedTelemetry, ...added];
+                }
+            } else {
+                // we can reuse the logic in processNewTelemetry
             }
         } else {
             // user bounds change, reset
