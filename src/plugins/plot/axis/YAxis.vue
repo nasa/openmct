@@ -120,16 +120,18 @@ export default {
             }
         },
         setUpYAxisOptions() {
-            this.yKeyOptions = this.seriesModel.metadata
-                ? this.seriesModel.metadata
+            this.yKeyOptions = [];
+
+            if (this.seriesModel.metadata) {
+                this.yKeyOptions = this.seriesModel.metadata
                     .valuesForHints(['range'])
                     .map(function (o) {
                         return {
                             name: o.name,
                             key: o.key
                         };
-                    })
-                : [];
+                    });
+            }
 
             //  set yAxisLabel if none is set yet
             if (this.yAxisLabel === 'none') {
