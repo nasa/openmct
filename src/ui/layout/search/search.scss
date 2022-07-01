@@ -39,6 +39,7 @@
         padding: $interiorMarginLg;
         min-width: 500px;
         max-height: 500px;
+        z-index: 60;
     }
 
     &__results,
