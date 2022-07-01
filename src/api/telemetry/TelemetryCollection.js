@@ -49,6 +49,7 @@ export class TelemetryCollection extends EventEmitter {
         this.pageState = undefined;
         this.lastBounds = undefined;
         this.requestAbort = undefined;
+        this.isStrategyLatest = this.options.strategy === 'latest';
     }
 
     /**
