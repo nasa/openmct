@@ -35,27 +35,29 @@
         @shelveSelected="toggleShelveSelected"
     />
 
-    <div class="c-faults-list-view-header-item-container">
-        <FaultManagementListHeader
-            class="header"
-            :selected-faults="Object.values(selectedFaults)"
-            :total-faults-count="filteredFaultsList.length"
-            @selectAll="selectAll"
-            @sortChanged="sortChanged"
-        />
+    <div class="c-faults-list-view-header-item-container-wrapper">
+        <div class="c-faults-list-view-header-item-container">
+            <FaultManagementListHeader
+                class="header"
+                :selected-faults="Object.values(selectedFaults)"
+                :total-faults-count="filteredFaultsList.length"
+                @selectAll="selectAll"
+                @sortChanged="sortChanged"
+            />
 
-        <div class="c-faults-list-view-item-body">
-            <template v-if="filteredFaultsList.length > 0">
-                <FaultManagementListItem
-                    v-for="fault of filteredFaultsList"
-                    :key="fault.id"
-                    :fault="fault"
-                    :is-selected="isSelected(fault)"
-                    @toggleSelected="toggleSelected"
-                    @acknowledgeSelected="toggleAcknowledgeSelected"
-                    @shelveSelected="toggleShelveSelected"
-                />
-            </template>
+            <div class="c-faults-list-view-item-body">
+                <template v-if="filteredFaultsList.length > 0">
+                    <FaultManagementListItem
+                        v-for="fault of filteredFaultsList"
+                        :key="fault.id"
+                        :fault="fault"
+                        :is-selected="isSelected(fault)"
+                        @toggleSelected="toggleSelected"
+                        @acknowledgeSelected="toggleAcknowledgeSelected"
+                        @shelveSelected="toggleShelveSelected"
+                    />
+                </template>
+            </div>
         </div>
     </div>
 </div>

@@ -88,6 +88,7 @@
 .c-fault-mgmt__search-row{
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
     > * + * {
        margin-left: 10px;
        float: right;
@@ -102,8 +103,9 @@
 .c-fault-mgmt__toolbar{
     display: flex;
     justify-content: center;
+    flex: 0 0 auto;
     > * {
-        font-size: 1em;
+        font-size: 1em; // Why do we need this?
     }
 }
 
@@ -111,6 +113,8 @@
 .c-faults-list-view {
     display: flex;
     flex-direction: column;
+    height: 100%;
+
     > * + * {
         margin-top: $interiorMargin;
     }
@@ -121,6 +125,13 @@
     width: 100%;
     grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
     grid-row-gap: $interiorMarginLg;
+
+    &-wrapper {
+        flex: 1 1 auto;
+        padding-right: $interiorMargin; // Fend of from scrollbar
+        overflow-y: scroll;
+    }
+
     .--width-less-than-600 & {
         grid-template-columns: max-content max-content 1fr max-content;
     }
@@ -138,7 +149,7 @@
     &:hover{
         .c-fault-mgmt-item{
             background: rgba($colorBodyFg, 0.15);;
-        }  
+        }
     }
 
     &-checkbox{
@@ -153,10 +164,10 @@
     }
 
      &-content{
-        display: contents;      
+        display: contents;
         .--width-less-than-600 & {
             display: flex;
-            flex-direction: column;   
+            flex-direction: column;
          }
     }
 
@@ -169,7 +180,7 @@
     }
 
     &-faultname{
-        font-size: 1.3em; 
+        font-size: 1.3em;
         margin-left: $interiorMargin;
     }
 
@@ -266,9 +277,14 @@
     padding-left: $interiorMarginSm;
 
     &-header{
-        background: rgba($colorBodyFg, 0.27);
+        $c: $colorBodyBg;
+        background: $c;
+        border-bottom: 5px solid $c;
+        min-height: 30px;
         padding: $interiorMarginSm;
-
+        position: sticky;
+        top: 0;
+        z-index: 2;
     }
 }
 
