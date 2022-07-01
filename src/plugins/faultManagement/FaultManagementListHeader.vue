@@ -29,8 +29,10 @@
             @input="selectAll"
         >
     </div>
-    <div class="c-fault-mgmt__list-content">
-        <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-results c-fault-mgmt__list-pathname"> {{ totalFaultsCount }} Results </div>
+    <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-results c-fault-mgmt__list-severity">
+        {{ totalFaultsCount }} Results
+    </div>
+    <div class="c-fault-mgmt__list-header-content">
         <div class="c-fault-mgmt__list-content-right">
             <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-tripVal">Trip Value</div>
             <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-liveVal">Live Value</div>

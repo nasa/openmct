@@ -122,7 +122,7 @@
     grid-template-columns: max-content max-content 1fr repeat(3,minmax(max-content, 20%)) max-content;
     grid-row-gap: $interiorMarginLg;
     .--width-less-than-600 & {
-        grid-template-columns: max-content max-content 1fr 4px;
+        grid-template-columns: max-content max-content 1fr max-content;
     }
 }
 
@@ -135,6 +135,11 @@
     background: rgba($colorBodyFg, 0.1);
     display: contents;
     width: 100%;
+    &:hover{
+        .c-fault-mgmt-item{
+            background: rgba($colorBodyFg, 0.15);;
+        }  
+    }
 
     &-checkbox{
         border-top-left-radius: 4px;
@@ -144,7 +149,6 @@
     &-severity{
         font-size: 2em;
         margin-left: $interiorMarginLg;
-        // margin-top: $interiorMarginSm;
         height: 24.0909px;
     }
 
@@ -154,27 +158,10 @@
             display: flex;
             flex-direction: column;   
          }
-        // display: flex;
-        // flex-wrap: wrap;
-        // flex: 1 1 auto;
-        // align-items: center;
-        // margin-left: $interiorMarginLg;
-        // .--width-less-than-600 & {
-        //     flex-direction: column;
-        //     align-items: stretch;
-        //  }
     }
 
     &-pathname{
         padding-right: $interiorMarginLg;
-        // // max-width: 90%;
-        // margin-right: $interiorMarginSm;
-        // .--width-less-than-600 & {
-        //     flex-direction: column;
-        //     align-items: stretch;
-        //     flex: 1 1 auto;
-        //  }
-
     }
     &-path{
         font-size: .85em;
@@ -188,9 +175,6 @@
 
     &-content-right{
         display: contents;
-        // display: flex;
-        // flex-wrap: wrap;
-        // flex: 1 1 auto;
         .--width-less-than-600 & {
             display: flex;
             flex-direction: column;
@@ -198,16 +182,11 @@
     }
 
     &-trigVal, &-curVal {
-        // @include ellipsize;
         border-radius: $controlCr;
         padding: $interiorMargin;
         font-size: 1.1em;
         margin-right: $interiorMarginLg;
         margin-top: $interiorMargin;
-        // .--width-less-than-600 & {
-        //     margin-top: $interiorMargin;
-        //     flex: 0 0 auto;
-        // }
     }
 
     &-val {
@@ -224,29 +203,17 @@
     &-trigVal {
         @include isLimit();
         background: rgba($colorBodyFg, 0.25);
-        // margin-left: $interiorMarginLg;
-
     }
 
     &-curVal {
         @include isLimit();
         background: rgba($colorBodyFg, 0.25);
-        // flex: 1 1 20%;
-        // &-alert{
-        //     background: $colorWarningHi;
-        // }
     }
 
     &-action-wrapper{
-        // display: flex;
         text-align: right;
-        // // width: 100px;
         flex: 0 0 auto;
-        // margin-left: auto;
         align-items: stretch;
-        // .--width-less-than-600 & {
-        //    align-items: baseline;
-        // }
     }
 
     &-action-button{
@@ -266,9 +233,22 @@
         margin: 0px;
         border-radius: 0px;
     }
+
+    .--width-less-than-600 & {
+        .c-fault-mgmt__list-content-right{
+        display:none;
+        }
+    }
+
+    &-content{
+        display: contents;
+    }
+
     &-results{
         grid-column: 2 / span 2;
+        font-size: 1em;
     }
+
     &-tripVal, &-liveVal, &-trigTime{
         margin-right: 0px;
         border-radius: 0px;
@@ -276,16 +256,12 @@
             display: none;
         }
     }
-
-    &-sortButton{
-        text-align: right;
-    }
 }
 
 /*********************************************** GRID ITEM */
 .c-fault-mgmt-item{
     background: rgba($colorBodyFg, 0.1);
-    padding-bottom: $interiorMarginLg;
+    padding-bottom: $interiorMargin;
     padding-top: $interiorMarginSm;
     padding-left: $interiorMarginSm;
 
