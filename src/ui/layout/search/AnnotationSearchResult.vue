@@ -23,6 +23,8 @@
 <template>
 <div
     class="c-gsearch-result c-gsearch-result--annotation"
+    aria-label="Search Result"
+    role="presentation"
 >
     <div
         class="c-gsearch-result__type-icon"

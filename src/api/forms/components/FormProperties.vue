@@ -60,6 +60,7 @@
             tabindex="0"
             :disabled="isInvalid"
             class="c-button c-button--major"
+            aria-label="Save"
             @click="onSave"
         >
             {{ submitLabel }}
@@ -67,6 +68,7 @@
         <button
             tabindex="0"
             class="c-button js-cancel-button"
+            aria-label="Cancel"
             @click="onDismiss"
         >
             {{ cancelLabel }}
