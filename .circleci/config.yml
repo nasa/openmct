@@ -220,7 +220,7 @@ workflows:
           suite: full
     triggers:
       - schedule:
-          cron: "0 */4 * * *"
+          cron: "0 0,4,8,12,16,20 * * *"
           filters:
             branches:
               only:
