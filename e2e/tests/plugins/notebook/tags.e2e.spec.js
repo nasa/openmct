@@ -31,44 +31,53 @@ const { test } = require('../../../fixtures');
   * Creates a notebook object and adds an entry.
   * @param {import('@playwright/test').Page} page
   */
-async function createNotebookAndEntry(page) {
+async function createNotebookAndEntry(page, iterations = 1) {
     //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
     // Click button:has-text("Create")
     await page.locator('button:has-text("Create")').click();
-    // Click li:has-text("Notebook")
-    await page.locator('li:has-text("Notebook")').click();
+    await page.locator('[title="Create and save timestamped notes with embedded object snapshots."]').click();
     // Click button:has-text("OK")
     await Promise.all([
         page.waitForNavigation(),
+        page.locator('[name="mctForm"] >> text=My Items').click(),
         page.locator('button:has-text("OK")').click()
     ]);
 
-    // Click text=To start a new entry, click here or drag and drop any object
-    await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+    for (let iteration = 0; iteration < iterations; iteration++) {
+        // Click text=To start a new entry, click here or drag and drop any object
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = ${iteration}`;
+        await page.locator(entryLocator).click();
+        await page.locator(entryLocator).fill(`Entry ${iteration}`);
+    }
+
 }
 
 /**
   * Creates a notebook object, adds an entry, and adds a tag.
   * @param {import('@playwright/test').Page} page
   */
-async function createNotebookEntryAndTags(page) {
-    await createNotebookAndEntry(page);
-    // Click text=To start a new entry, click here or drag and drop any object
-    await page.locator('button:has-text("Add Tag")').click();
+async function createNotebookEntryAndTags(page, iterations = 1) {
+    await createNotebookAndEntry(page, iterations);
 
-    // Click [placeholder="Type to select tag"]
-    await page.locator('[placeholder="Type to select tag"]').click();
-    // Click text=Driving
-    await page.locator('text=Driving').click();
+    for (let iteration = 0; iteration < iterations; iteration++) {
+        // Click text=To start a new entry, click here or drag and drop any object
+        await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
 
-    // Click button:has-text("Add Tag")
-    await page.locator('button:has-text("Add Tag")').click();
-    // Click [placeholder="Type to select tag"]
-    await page.locator('[placeholder="Type to select tag"]').click();
-    // Click text=Science
-    await page.locator('text=Science').click();
+        // Click [placeholder="Type to select tag"]
+        await page.locator('[placeholder="Type to select tag"]').click();
+        // Click text=Driving
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
+
+        // Click button:has-text("Add Tag")
+        await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
+        // Click [placeholder="Type to select tag"]
+        await page.locator('[placeholder="Type to select tag"]').click();
+        // Click text=Science
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
+    }
 }
 
 test.describe('Tagging in Notebooks', () => {
@@ -137,10 +146,54 @@ test.describe('Tagging in Notebooks', () => {
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
     });
     test('Tags persist across reload', async ({ page }) => {
-        await createNotebookEntryAndTags(page);
+        //Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
+
+        // Create a clock object we can navigate to
+        await page.click('button:has-text("Create")');
+
+        // Click Clock
+        await page.click('text=Clock');
+        // Click button:has-text("OK")
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('[name="mctForm"] >> text=My Items').click(),
+            page.locator('button:has-text("OK")').click()
+        ]);
+
+        const ITERATIONS = 4;
+        await createNotebookEntryAndTags(page, ITERATIONS);
+
+        for (let iteration = 0; iteration < ITERATIONS; iteration++) {
+            const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
+            await expect(page.locator(entryLocator)).toContainText("Science");
+            await expect(page.locator(entryLocator)).toContainText("Driving");
+        }
+
+        await page.click('text="My Items"');
+
+        // Click Unnamed Clock
+        await page.click('text="Unnamed Clock"');
+
+        await page.click('text="My Items"');
+
+        // Click Unnamed Notebook
+        await page.click('text="Unnamed Notebook"');
+
+        for (let iteration = 0; iteration < ITERATIONS; iteration++) {
+            const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
+            await expect(page.locator(entryLocator)).toContainText("Science");
+            await expect(page.locator(entryLocator)).toContainText("Driving");
+        }
+
         //Go to baseURL
         await page.reload();
-        await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
-        await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Driving");
+
+        for (let iteration = 0; iteration < ITERATIONS; iteration++) {
+            const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
+            await expect(page.locator(entryLocator)).toContainText("Science");
+            await expect(page.locator(entryLocator)).toContainText("Driving");
+        }
+
     });
 });

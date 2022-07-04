@@ -59,6 +59,7 @@
                 <div
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
+                    aria-label="Notebook Entry Input"
                     tabindex="0"
                     contenteditable="true"
                     @focus="editingEntry()"
