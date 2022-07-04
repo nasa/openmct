@@ -161,6 +161,8 @@ test.describe('Tagging in Notebooks', () => {
             page.locator('button:has-text("OK")').click()
         ]);
 
+        await page.click('.c-disclosure-triangle');
+
         const ITERATIONS = 4;
         await createNotebookEntryAndTags(page, ITERATIONS);
 
@@ -170,12 +172,8 @@ test.describe('Tagging in Notebooks', () => {
             await expect(page.locator(entryLocator)).toContainText("Driving");
         }
 
-        await page.click('text="My Items"');
-
         // Click Unnamed Clock
         await page.click('text="Unnamed Clock"');
-
-        await page.click('text="My Items"');
 
         // Click Unnamed Notebook
         await page.click('text="Unnamed Notebook"');
@@ -188,6 +186,9 @@ test.describe('Tagging in Notebooks', () => {
 
         //Go to baseURL
         await page.reload();
+
+        // Click Unnamed Notebook
+        await page.click('text="Unnamed Notebook"');
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
