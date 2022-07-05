@@ -7,13 +7,13 @@ const { devices } = require('@playwright/test');
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 1,
+    retries: 3, //Retries 3 times for a total of 4. When running sharded and with maxFailures = 5, this should ensure that flake is managed without failing the full suite
     testDir: 'tests',
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
     webServer: {
         command: 'npm run start',
-        port: 8080,
+        url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
     },
@@ -36,6 +36,7 @@ const config = {
         },
         {
             name: 'MMOC',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
@@ -44,20 +45,30 @@ const config = {
                     height: 1440
                 }
             }
-        }
-        /*{
-            name: 'ipad',
+        },
+        {
+            name: 'firefox',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grepInvert: /@snapshot/,
             use: {
-                browserName: 'webkit',
-                ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
+                browserName: 'firefox'
             }
-        }*/
+        },
+        {
+            name: 'chrome-beta', //Only Chrome Beta is available on ubuntu -- not chrome canary
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'chromium',
+                channel: 'chrome-beta'
+            }
+        }
     ],
     reporter: [
         ['list'],
         ['html', {
             open: 'never',
-            outputFolder: '../test-results/html/'
+            outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
         }],
         ['junit', { outputFile: 'test-results/results.xml' }],
         ['github']
