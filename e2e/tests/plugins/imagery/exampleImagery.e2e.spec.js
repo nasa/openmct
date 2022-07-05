@@ -31,6 +31,7 @@ const { expect } = require('@playwright/test');
 
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 
+//The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -336,7 +337,6 @@ test('Example Imagery in Display layout', async ({ page, browserName }) => {
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
-
     test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -536,9 +536,9 @@ test.describe('Example Imagery in Flexible layout', () => {
 
             return newImageCount;
         }, {
-            message: "verify that new images still stream in",
+            message: "verify that old images are discarded",
             timeout: 6 * 1000
-        }).toBeGreaterThan(imageCount);
+        }).toBe(imageCount);
 
         // Verify selected image is still displayed
         await expect(selectedImage).toBeVisible();
@@ -556,6 +556,16 @@ test.describe('Example Imagery in Flexible layout', () => {
         await dragBrightnessSliderAndAssertFilterValues(page);
         await dragContrastSliderAndAssertFilterValues(page);
     });
+});
+
+test.describe('Example Imagery in Tabs view', () => {
+    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+    test.fixme('Can use alt+drag to move around image once zoomed in');
+    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
+    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
 
 /**
@@ -739,13 +749,3 @@ async function mouseZoomIn(page) {
     expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
     expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
 }
-
-test.describe('Example Imagery in Tabs view', () => {
-    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-    test.fixme('Can use alt+drag to move around image once zoomed in');
-    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
-    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
-});
