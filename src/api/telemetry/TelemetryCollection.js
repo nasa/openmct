@@ -235,6 +235,10 @@ export class TelemetryCollection extends EventEmitter {
         }
     }
 
+    /**
+     * Will return the latest value from an array of telemetry.
+     * @private
+     */
     _getLatestDatum(data) {
         let zeroTimeDatum = { [this.timeKey]: 0 };
 
