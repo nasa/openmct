@@ -42,6 +42,7 @@ class CouchObjectProvider {
         this.batchIds = [];
         this.onEventMessage = this.onEventMessage.bind(this);
         this.onEventError = this.onEventError.bind(this);
+        this.#observeObjectChanges();
     }
 
     /**
@@ -471,9 +472,6 @@ class CouchObjectProvider {
                 this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
                 if (this.observers[keyString].length === 0) {
                     delete this.observers[keyString];
-                    if (Object.keys(this.observers).length === 0 && this.isObservingObjectChanges()) {
-                        this.stopObservingObjectChanges();
-                    }
                 }
             }
         };
@@ -525,9 +523,7 @@ class CouchObjectProvider {
 
     onEventError(error) {
         console.error('Error on feed', error);
-        if (Object.keys(this.observers).length > 0) {
-            this.#observeObjectChanges();
-        }
+        this.#observeObjectChanges();
     }
 
     onEventMessage(event) {
