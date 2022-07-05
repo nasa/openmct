@@ -29,7 +29,8 @@ const { test } = require('../../../fixtures');
 
 /**
   * Creates a notebook object and adds an entry.
-  * @param {import('@playwright/test').Page} page
+  * @param {import('@playwright/test').Page} - page to load
+  * @param {number} [iterations = 1] - the number of entries to create
   */
 async function createNotebookAndEntry(page, iterations = 1) {
     //Go to baseURL
@@ -58,6 +59,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
 /**
   * Creates a notebook object, adds an entry, and adds a tag.
   * @param {import('@playwright/test').Page} page
+  * @param {number} [iterations = 1] - the number of entries (and tags) to create
   */
 async function createNotebookEntryAndTags(page, iterations = 1) {
     await createNotebookAndEntry(page, iterations);
@@ -184,8 +186,11 @@ test.describe('Tagging in Notebooks', () => {
             await expect(page.locator(entryLocator)).toContainText("Driving");
         }
 
-        //Go to baseURL
-        await page.reload();
+        //Reload Page
+        await Promise.all([
+            page.reload(),
+            page.waitForLoadState('networkidle')
+        ]);
 
         // Click Unnamed Notebook
         await page.click('text="Unnamed Notebook"');
