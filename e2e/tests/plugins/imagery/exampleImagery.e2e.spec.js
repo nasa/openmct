@@ -306,11 +306,11 @@ test('Example Imagery in Display layout', async ({ page, browserName }) => {
     await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
     // Zoom in on next image
-    await bgImageLocator.hover({trial: true});
+    await page.locator(backgroundImageSelector).hover({trial: true});
     await page.mouse.wheel(0, deltaYStep * 2);
 
     // Wait for zoom animation to finish
-    await bgImageLocator.hover({trial: true});
+    await page.locator(backgroundImageSelector).hover({trial: true});
     const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
     expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
     expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
