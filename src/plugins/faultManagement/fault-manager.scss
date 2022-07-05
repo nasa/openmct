@@ -19,71 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-/*********************************************** FAULT PROPERTIES */
+$colorFaultItemFg: $colorBodyFg;
+$colorFaultItemFgEmphasis: $colorBodyFgEm;
 $colorFaultItemBg: pullForward($colorBodyBg, 5%);
 
-.is-severity-critical{
-    @include glyphBefore($glyph-icon-alert-triangle);
-    color: $colorStatusError;
-}
-
-.is-severity-warning{
-    @include glyphBefore($glyph-icon-alert-rect);
-    color: $colorStatusAlert;
-}
-
-.is-severity-watch{
-    @include glyphBefore($glyph-icon-info);
-    color: $colorCommand;
-}
-
-.is-unacknowledged{
-    color: white;
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: severityAnim, $dur: 200ms);
-    }
-    .c-fault-mgmt__list-faultname{
-        font-weight: bold;
-    }
-}
-
-.is-acknowledged{
-    .c-fault-mgmt__list-severity{
-        opacity: 70% !important;
-    }
-    .c-fault-mgmt__list-severity:after{
-        color: $colorLimitCyanIc;
-        content: "\e90f";
-        display: block;
-        font-family: symbolsfont;
-        position: absolute;
-        text-shadow: rgb(0 0 0 / 50%) 0 1px 4px;
-        top: auto;
-        left: 15%;
-        bottom: -5%;
-        right: auto;
-        transform-origin: right bottom;
-        transform: scale(0.45);
-    }
-}
-
-.is-selected {
-    background: $colorSelectedBg;
-}
-
-.is-shelved{
-    .c-fault-mgmt__list-content{
-        opacity: 50% !important;
-        font-style: italic;
-    }
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: shelvedAnim, $dur: 0ms);
-    }
-}
-
 /*********************************************** SEARCH  */
-.c-fault-mgmt__search-row{
+.c-fault-mgmt__search-row {
     display: flex;
     align-items: center;
     flex: 0 0 auto;
@@ -93,12 +34,12 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
     }
 }
 
-.c-fault-mgmt-search{
+.c-fault-mgmt-search {
     width: 95%;
 }
 
 /*********************************************** TOOLBAR */
-.c-fault-mgmt__toolbar{
+.c-fault-mgmt__toolbar {
     display: flex;
     justify-content: center;
     flex: 0 0 auto;
@@ -118,58 +59,73 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
     }
 }
 
-.c-faults-list-view-header-item-container{
+.c-faults-list-view-header-item-container {
     display: grid;
     width: 100%;
-    grid-template-columns: max-content max-content repeat(4,minmax(max-content, 20%)) max-content;
+    grid-template-columns: max-content max-content repeat(5,minmax(max-content, 20%)) max-content;
     grid-row-gap: $interiorMargin;
 
     &-wrapper {
         flex: 1 1 auto;
         padding-right: $interiorMargin; // Fend of from scrollbar
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 
     .--width-less-than-600 & {
-        grid-template-columns: max-content max-content 1fr max-content;
+        grid-template-columns: max-content max-content 1fr 1fr max-content;
     }
 }
 
-.c-faults-list-view-item-body{
+.c-faults-list-view-item-body {
    display: contents;
 }
 
-/*********************************************** FAULT ITEM */
-.c-fault-mgmt__list{
+/*********************************************** LIST */
+.c-fault-mgmt__list {
     display: contents;
-    width: 100%;
+    color: $colorFaultItemFg;
 
     &-checkbox{
         border-top-left-radius: 4px;
-        border-bottom-left-radius: 4pxx;
+        border-bottom-left-radius: 4px;
     }
 
-    &-severity{
+    &-severity {
         font-size: 2em;
-        margin-left: $interiorMarginSm;
-        height: 24.0909px;
+
+        &.is-severity-critical {
+            @include glyphBefore($glyph-icon-alert-triangle);
+            color: $colorStatusError;
+        }
+
+        &.is-severity-warning {
+            @include glyphBefore($glyph-icon-alert-rect);
+            color: $colorStatusAlert;
+        }
+
+        &.is-severity-watch {
+            @include glyphBefore($glyph-icon-info);
+            color: $colorCommand;
+        }
     }
 
-     &-content{
+     &-content {
         display: contents;
+
         .--width-less-than-600 & {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
+            grid-column: span 2;
          }
     }
 
-    &-pathname{
+    &-pathname {
         padding-right: $interiorMarginLg;
         overflow-wrap: anywhere;
         min-width: 100px;
 
     }
-    &-path{
+    &-path {
         font-size: .85em;
         margin-left: $interiorMargin;
     }
@@ -181,22 +137,66 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
 
     &-content-right {
         display: contents;
-        .--width-less-than-600 & {
-            display: flex;
-            flex-direction: column;
-         }
     }
 
-    &-action-wrapper{
+    &-trigTime {
+        grid-column: 6 / span 2;
+    }
+
+    &-action-wrapper {
         text-align: right;
         flex: 0 0 auto;
         align-items: stretch;
     }
 
-    &-action-button{
+    &-action-button {
         flex: 0 0 auto;
         margin-left: auto;
         text-align: right;
+    }
+
+    // STATES
+    &.is-unacknowledged {
+        color: $colorFaultItemFgEmphasis;
+        .c-fault-mgmt__list-severity {
+            @include pulse($animName: severityAnim, $dur: 200ms);
+        }
+    }
+
+    &.is-acknowledged,
+    &.is-shelved {
+        .c-fault-mgmt__list-severity {
+            &:before {
+                opacity: 60%;
+                //font-size: 1.5em;
+            }
+
+            &:after {
+                color: $colorFaultItemFgEmphasis;
+                display: block;
+                font-family: symbolsfont;
+                position: absolute;
+                //text-shadow: black 0 0 2px;
+                right: -3px;
+                bottom: -3px;
+                transform-origin: right bottom;
+                transform: scale(0.6);
+            }
+        }
+    }
+
+    &.is-shelved {
+        .c-fault-mgmt__list-pathname {
+            font-style: italic;
+        }
+    }
+
+    &.is-acknowledged .c-fault-mgmt__list-severity:after {
+        content: $glyph-icon-check;
+    }
+
+    &.is-shelved .c-fault-mgmt__list-severity:after {
+        content: $glyph-icon-timer;
     }
 }
 
@@ -217,21 +217,21 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
         }
     }
 
-    &-content{
+    &-content {
         display: contents;
     }
 
-    &-results{
+    &-results {
         grid-column: 2 / span 2;
         font-size: 1em;
         height: auto;
     }
 
-    &-tripVal, &-liveVal, &-trigTime{
-        margin-right: 0px;
-        border-radius: 0px;
+    &-action-wrapper {
+        grid-column: 7 / span 2;
+
         .--width-less-than-600 & {
-            display: none;
+            grid-column: 4 / span 2;
         }
     }
 }
@@ -241,6 +241,7 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
     $p: $interiorMargin;
     padding: $p;
     background: $colorFaultItemBg;
+    white-space: nowrap;
 
     &-header {
         $c: $colorBodyBg;
@@ -253,49 +254,15 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
         z-index: 2;
     }
 
-    &-value {
+    &__value {
         @include isLimit();
         background: rgba($colorBodyFg, 0.1);
         padding: $p;
         border-radius: $controlCr;
         display: inline-flex;
     }
-}
 
-.is-severity-critical{
-    @include glyphBefore($glyph-icon-alert-triangle);
-    color: $colorStatusError;
-}
-
-.is-severity-warning{
-    @include glyphBefore($glyph-icon-alert-rect);
-    color: $colorStatusAlert;
-}
-
-.is-severity-watch{
-    @include glyphBefore($glyph-icon-info);
-    color: $colorCommand;
-}
-
-.is-unacknowledged{
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: severityAnim, $dur: 200ms);
-    }
-}
-
-.is-selected {
-    background: $colorSelectedBg;
-    .c-fault-mgmt-item{
+    .is-selected & {
         background: $colorSelectedBg;
-    }
-}
-
-.is-shelved{
-    .c-fault-mgmt__list-content{
-        opacity: 60% !important;
-        font-style: italic;
-    }
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: shelvedAnim, $dur: 0ms);
     }
 }

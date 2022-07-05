@@ -47,29 +47,30 @@
         >
         </div>
     </div>
-    <div class="c-fault-mgmt__list-content">
+    <div class="c-fault-mgmt-item c-fault-mgmt__list-content">
         <div class="c-fault-mgmt-item c-fault-mgmt__list-pathname">
             <div class="c-fault-mgmt__list-path">{{ fault.namespace }}</div>
             <div class="c-fault-mgmt__list-faultname">{{ fault.name }}</div>
         </div>
         <div class="c-fault-mgmt__list-content-right">
-            <div class="c-fault-mgmt-item">
+            <div class="c-fault-mgmt-item c-fault-mgmt__list-trigVal">
                 <div
-                    class="c-fault-mgmt-item-value c-fault-mgmt__list-trigVal"
+                    class="c-fault-mgmt-item__value"
                     :class="tripValueClassname"
                     title="Trip Value"
                 >{{ fault.triggerValueInfo.value }}</div>
             </div>
-            <div class="c-fault-mgmt-item">
+            <div class="c-fault-mgmt-item c-fault-mgmt__list-curVal">
                 <div
-                    class="c-fault-mgmt-item-value c-fault-mgmt__list-curVal"
+                    class="c-fault-mgmt-item__value"
                     :class="liveValueClassname"
                     title="Live Value"
                 >{{ fault.currentValueInfo.value }}</div>
             </div>
-            <div class="c-fault-mgmt-item">
+            <div class="c-fault-mgmt-item c-fault-mgmt__list-trigTime">
                 <div
-                    class="c-fault-mgmt-item-value c-fault-mgmt__list-trigTime"
+                    class="c-fault-mgmt-item__value"
+                    title="Last Trigger Time"
                 >{{ fault.triggerTime }}
                 </div>
             </div>

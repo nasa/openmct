@@ -39,7 +39,7 @@
             <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-trigTime">Trigger Time</div>
         </div>
     </div>
-    <div class="c-fault-mgmt__list-action-wrapper c-fault-mgmt-item-header">
+    <div class=" c-fault-mgmt-item-header c-fault-mgmt__list-header-action-wrapper">
         <div class="c-fault-mgmt__list-header-sortButton c-fault-mgmt__list-action-button">
             <SelectField
                 class="c-fault-mgmt-viewButton"
