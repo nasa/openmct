@@ -201,7 +201,7 @@ export default {
                             {
                                 key: 'comment',
                                 control: 'textarea',
-                                name: 'Comment',
+                                name: 'Optional comment',
                                 pattern: '\\S+',
                                 required: false,
                                 cssClass: 'l-input-lg',
@@ -243,7 +243,7 @@ export default {
                                 {
                                     key: 'comment',
                                     control: 'textarea',
-                                    name: 'Comment',
+                                    name: 'Optional comment',
                                     pattern: '\\S+',
                                     required: false,
                                     cssClass: 'l-input-lg',
@@ -252,7 +252,7 @@ export default {
                                 {
                                     key: 'shelveDuration',
                                     control: 'select',
-                                    name: 'Shelve Duration',
+                                    name: 'Shelve duration',
                                     options: FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS,
                                     required: false,
                                     cssClass: 'l-input-lg',

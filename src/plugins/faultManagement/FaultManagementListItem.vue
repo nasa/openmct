@@ -155,7 +155,7 @@ export default {
 
             const menuItems = [
                 {
-                    cssClass: 'icon-bell',
+                    cssClass: 'icon-check',
                     isDisabled: this.fault.acknowledged,
                     name: 'Acknowledge',
                     description: '',

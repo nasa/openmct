@@ -45,7 +45,6 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
     }
     .c-fault-mgmt__list-faultname{
         font-weight: bold;
-        // font-size: 1.3em;
     }
 }
 
@@ -66,9 +65,6 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
         right: auto;
         transform-origin: right bottom;
         transform: scale(0.45);
-    }
-    .c-fault-mgmt__list-faultname{
-        // font-size: 1.1em;
     }
 }
 
@@ -106,8 +102,8 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
     display: flex;
     justify-content: center;
     flex: 0 0 auto;
-    > * {
-        font-size: 1em; // Why do we need this?
+    > * + * {
+       margin-left: $interiorMargin;
     }
 }
 
@@ -148,13 +144,6 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
     display: contents;
     width: 100%;
 
-    // Don't enable hover until the user can do something with that click
-    //&:hover{
-    //    .c-fault-mgmt-item{
-    //        background: $colorFaultItemBg;
-    //    }
-    //}
-
     &-checkbox{
         border-top-left-radius: 4px;
         border-bottom-left-radius: 4pxx;
@@ -190,38 +179,12 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
         margin-left: $interiorMargin;
     }
 
-    &-content-right{
+    &-content-right {
         display: contents;
         .--width-less-than-600 & {
             display: flex;
             flex-direction: column;
          }
-    }
-
-    &-trigVal, &-curVal {
-        //border-radius: $controlCr;
-        //padding: $interiorMargin;
-        //font-size: 1.1em;
-        //margin-right: $interiorMarginLg;
-        //margin-top: $interiorMargin;
-    }
-
-    &-trigVal,
-    &-curVal{
-        //@include isLimit();
-        //padding-right: $interiorMarginLg;
-        //display: flex;
-        //background: rgba($colorBodyFg, 0.25);
-        flex-direction: row;
-    }
-    &-trigTime{
-        //margin-top: $interiorMargin;
-        //padding: $interiorMargin;
-        //font-size: 1.1em;
-        //background: none !important;
-    }
-    &-val-limit {
-        //width:fit-content;
     }
 
     &-action-wrapper{
@@ -238,7 +201,7 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
 }
 
 /*********************************************** LIST HEADER */
-.c-fault-mgmt__list-header{
+.c-fault-mgmt__list-header {
     display: contents;
     border-radius: $controlCr;
     align-items: center;
@@ -249,8 +212,8 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
     }
 
     .--width-less-than-600 & {
-        .c-fault-mgmt__list-content-right{
-        display:none;
+        .c-fault-mgmt__list-content-right {
+            display:none;
         }
     }
 
@@ -275,16 +238,16 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
 
 /*********************************************** GRID ITEM */
 .c-fault-mgmt-item {
-    $p: $interiorMarginSm $interiorMargin;
+    $p: $interiorMargin;
     padding: $p;
     background: $colorFaultItemBg;
 
-    &-header{
+    &-header {
         $c: $colorBodyBg;
         background: $c;
-        border-bottom: 5px solid $c;
-        min-height: 30px;
-        padding: $interiorMarginSm;
+        border-bottom: 5px solid $c; // Creates illusion of "space" beneath header
+        min-height: 30px; // Needed to align cells
+        padding: $p;
         position: sticky;
         top: 0;
         z-index: 2;
