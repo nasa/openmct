@@ -444,7 +444,7 @@ export default class TelemetryAPI {
         }
 
         return this.formatMapCache.get(metadata);
-    };
+    }
 
     /**
      * Error Handling: Missing Request provider
