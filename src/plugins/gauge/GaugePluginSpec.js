@@ -472,7 +472,7 @@ describe('Gauge plugin', () => {
         it('renders major elements', () => {
             const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
             const rangeElement = gaugeHolder.querySelector('.js-gauge-meter-range');
-            const valueElement = gaugeHolder.querySelector('.js-meter-current-value');
+            const valueElement = gaugeHolder.querySelector('.js-gauge-current-value');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
@@ -485,7 +485,7 @@ describe('Gauge plugin', () => {
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.js-meter-current-value');
+                const textElement = gaugeHolder.querySelector('.js-gauge-current-value');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
@@ -570,7 +570,7 @@ describe('Gauge plugin', () => {
         it('renders major elements', () => {
             const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
             const rangeElement = gaugeHolder.querySelector('.js-gauge-meter-range');
-            const valueElement = gaugeHolder.querySelector('.js-meter-current-value');
+            const valueElement = gaugeHolder.querySelector('.js-gauge-current-value');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
