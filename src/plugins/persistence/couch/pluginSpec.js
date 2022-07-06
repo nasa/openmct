@@ -152,7 +152,10 @@ describe('the plugin', () => {
             mockDomainObject.id = mockDomainObject.identifier.key;
 
             const fakeUpdateEvent = {
-                data: JSON.stringify(mockDomainObject)
+                data: JSON.stringify(mockDomainObject),
+                target: {
+                    readyState: EventSource.CONNECTED
+                }
             };
 
             // eslint-disable-next-line require-await
