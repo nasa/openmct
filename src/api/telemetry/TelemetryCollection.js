@@ -315,11 +315,9 @@ export class TelemetryCollection extends EventEmitter {
                         datum => this.parseTime(datum)
                     );
                     discarded = this.boundedTelemetry.splice(0, startIndex);
-                } else {
-                    if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
-                        discarded = this.boundedTelemetry;
-                        this.boundedTelemetry = [];
-                    }
+                } else if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
+                    discarded = this.boundedTelemetry;
+                    this.boundedTelemetry = [];
                 }
             }
 
@@ -332,17 +330,6 @@ export class TelemetryCollection extends EventEmitter {
                     datum => this.parseTime(datum)
                 );
                 added = this.futureBuffer.splice(0, endIndex);
-
-                let combined = [...this.boundedTelemetry, ...added];
-
-                if (!this.isStrategyLatest) {
-                    this.boundedTelemetry = combined;
-                } else {
-                    let latest = this._getLatestDatum(combined);
-
-                    added = [latest];
-                    this.boundedTelemetry = added;
-                }
             }
 
             if (discarded.length > 0) {
@@ -350,6 +337,13 @@ export class TelemetryCollection extends EventEmitter {
             }
 
             if (added.length > 0) {
+                if (!this.isStrategyLatest) {
+                    this.boundedTelemetry = [...this.boundedTelemetry, ...added];
+                } else {
+                    added = [added[added.length - 1]];
+                    this.boundedTelemetry = added;
+                }
+
                 this.emit('add', added);
             }
         } else {
