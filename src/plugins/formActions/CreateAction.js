@@ -24,6 +24,7 @@ import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
 
 import { v4 as uuid } from 'uuid';
+import _ from 'lodash';
 
 export default class CreateAction extends PropertiesAction {
     constructor(openmct, type, parentDomainObject) {
@@ -50,19 +51,7 @@ export default class CreateAction extends PropertiesAction {
                 return;
             }
 
-            const properties = key.split('.');
-            let object = this.domainObject;
-            const propertiesLength = properties.length;
-            properties.forEach((property, index) => {
-                const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
-                if (isComplexProperty && object[property] !== null) {
-                    object = object[property];
-                } else {
-                    object[property] = value;
-                }
-            });
-
-            object = value;
+            _.set(this.domainObject, `${key}`, value);
         });
 
         const parentDomainObject = parentDomainObjectPath[0];

@@ -100,6 +100,7 @@ export default {
     components: {
         ToggleSwitch
     },
+    inject: ["openmct"],
     props: {
         model: {
             type: Object,
@@ -107,6 +108,8 @@ export default {
         }
     },
     data() {
+        this.changes = {};
+
         return {
             isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
             isDisplayMinMax: this.model.value.isDisplayMinMax,
@@ -118,21 +121,38 @@ export default {
             min: this.model.value.min
         };
     },
+    watch: {
+        model: {
+            handler(newModel) {
+                console.log(newModel);
+            },
+            deep: true
+        }
+    },
+    mounted() {
+        this.openmct.forms.on('formPropertiesChanged', this.onFormPropertyChange);
+    },
+    beforeDestroy() {
+        this.openmct.forms.off('formPropertiesChanged', this.onFormPropertyChange);
+    },
     methods: {
+        onFormPropertyChange(data) {
+            this.changes = data?.configuration?.gaugeController || {};
+        },
         onChange(event) {
             const data = {
                 model: this.model,
                 value: {
-                    gaugeType: this.model.value.gaugeType,
-                    isDisplayMinMax: this.isDisplayMinMax,
-                    isDisplayCurVal: this.isDisplayCurVal,
-                    isDisplayUnits: this.isDisplayUnits,
+                    gaugeType: this.changes.gaugeType || this.model.value.gaugeType,
+                    isDisplayMinMax: this.changes.isDisplayMinMax || this.isDisplayMinMax,
+                    isDisplayCurVal: this.changes.isDisplayCurVal || this.isDisplayCurVal,
+                    isDisplayUnits: this.changes.isDisplayUnits || this.isDisplayUnits,
                     isUseTelemetryLimits: this.isUseTelemetryLimits,
                     limitLow: this.limitLow,
                     limitHigh: this.limitHigh,
                     max: this.max,
                     min: this.min,
-                    precision: this.model.value.precision
+                    precision: this.changes.precision || this.model.value.precision
                 }
             };
 
