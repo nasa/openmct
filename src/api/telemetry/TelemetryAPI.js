@@ -204,7 +204,7 @@ export default class TelemetryAPI {
         const interceptors = this.#getInterceptorsForRequest(domainObject.identifier, request);
 
         if (interceptors.length === 0) {
-            return Promise.resolve(request);
+            return request;
         }
 
         let modifiedRequest = { ...request };
@@ -276,7 +276,7 @@ export default class TelemetryAPI {
             return this.handleMissingRequestProvider(domainObject);
         }
 
-        let args = await this.applyRequestInterceptors(domainObject, arguments);
+        const args = await this.applyRequestInterceptors(...arguments);
 
         return provider.request(domainObject, args)
             .catch((rejected) => {
