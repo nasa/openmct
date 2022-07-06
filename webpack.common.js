@@ -101,8 +101,13 @@ const config = {
                     {
                         loader: 'css-loader'
                     },
-                    'resolve-url-loader',
-                    'sass-loader'
+                    {
+                        loader: 'resolve-url-loader'
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: {sourceMap: true }
+                    }
                 ]
             },
             {

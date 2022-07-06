@@ -323,7 +323,14 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _setTimeSystem(timeSystem) {
-        let domains = this.metadata.valuesForHints(['domain']);
+        let domains = [];
+        let metadataValue = { format: timeSystem.key };
+
+        if (this.metadata) {
+            domains = this.metadata.valuesForHints(['domain']);
+            metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
+        }
+
         let domain = domains.find((d) => d.key === timeSystem.key);
 
         if (domain !== undefined) {
@@ -336,7 +343,6 @@ export default class TelemetryCollection extends EventEmitter {
             this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
         }
 
-        let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (datum) => {

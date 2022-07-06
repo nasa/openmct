@@ -470,7 +470,7 @@ export default class TelemetryAPI {
         }
 
         this.openmct.notifications.error(message);
-        console.error(detailMessage);
+        console.warn(detailMessage);
 
         return Promise.resolve([]);
     }
