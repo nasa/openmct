@@ -367,19 +367,26 @@ describe("the plugin", function () {
                 type: "test-object",
                 name: "Test Object",
                 telemetry: {
-                    values: [{
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }]
+                    values: [
+                        {
+                            key: "some-key",
+                            source: "some-key",
+                            name: "Some attribute",
+                            format: "enum",
+                            enumerations: [
+                                {
+                                    value: 0,
+                                    string: "OFF"
+                                },
+                                {
+                                    value: 1,
+                                    string: "ON"
+                                }
+                            ],
+                            hints: {
+                                range: 1
+                            }
+                        }]
                 }
             };
             const composition = openmct.composition.get(parent);
