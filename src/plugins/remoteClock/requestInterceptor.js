@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function requestInterceptor(openmct, remoteClockIdentifier, waitForBounds) {
+function remoteClockRequestInterceptor(openmct, remoteClockIdentifier, waitForBounds) {
     let remoteClockLoaded = false;
 
     return {
@@ -35,12 +35,12 @@ function requestInterceptor(openmct, remoteClockIdentifier, waitForBounds) {
         invoke: async (request) => {
             const { start, end } = await waitForBounds();
             remoteClockLoaded = true;
-            request.start = start;
-            request.end = end;
+            request[1].start = start;
+            request[1].end = end;
 
             return request;
         }
     };
 }
 
-export default requestInterceptor;
+export default remoteClockRequestInterceptor;

@@ -126,7 +126,7 @@ export default class TelemetryCollection extends EventEmitter {
             this.requestAbort = new AbortController();
             options.signal = this.requestAbort.signal;
             this.emit('requestStarted');
-            const modifiedOptions = await this.openmct.telemetry.applyRequestInterceptors(this.domainObject.identifier, options);
+            const modifiedOptions = await this.openmct.telemetry.applyRequestInterceptors(this.domainObject, options);
             historicalData = await historicalProvider.request(this.domainObject, modifiedOptions);
         } catch (error) {
             if (error.name !== 'AbortError') {

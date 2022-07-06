@@ -193,16 +193,15 @@ export default class TelemetryAPI {
      * Retrieve the request interceptors for a given domain object.
      * @private
      */
-    listRequestInterceptors(identifier, request) {
+    #getInterceptorsForRequest(identifier, request) {
         return this.requestInterceptorRegistry.getInterceptors(identifier, request);
     }
 
     /**
-     * Inovke interceptors if applicable for a given domain object.
-     * @private
+     * Invoke interceptors if applicable for a given domain object.
      */
-    async applyRequestInterceptors(identifier, request) {
-        const interceptors = this.listRequestInterceptors(identifier, request);
+    async applyRequestInterceptors(domainObject, request) {
+        const interceptors = this.#getInterceptorsForRequest(domainObject.identifier, request);
 
         if (interceptors.length === 0) {
             return Promise.resolve(request);
@@ -277,7 +276,7 @@ export default class TelemetryAPI {
             return this.handleMissingRequestProvider(domainObject);
         }
 
-        let args = await this.applyRequestInterceptors(domainObject.identifier, arguments[1]);
+        let args = await this.applyRequestInterceptors(domainObject, arguments);
 
         return provider.request(domainObject, args)
             .catch((rejected) => {

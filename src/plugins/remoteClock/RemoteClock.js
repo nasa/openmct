@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import DefaultClock from '../../utils/clock/DefaultClock';
-import requestInterceptor from './requestInterceptor';
+import remoteClockRequestInterceptor from './requestInterceptor';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
@@ -51,7 +51,7 @@ export default class RemoteClock extends DefaultClock {
         this.lastTick = 0;
 
         this.openmct.telemetry.addRequestInterceptor(
-            requestInterceptor(
+            remoteClockRequestInterceptor(
                 this.openmct,
                 this.identifier,
                 this.#waitForReady.bind(this)
