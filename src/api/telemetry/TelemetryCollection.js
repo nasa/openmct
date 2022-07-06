@@ -174,64 +174,64 @@ export class TelemetryCollection extends EventEmitter {
             return;
         }
 
+        let latestBoundedDatum = this.boundedTelemetry[this.boundedTelemetry.length - 1];
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
         let parsedValue;
         let beforeStartOfBounds;
         let afterEndOfBounds;
         let added = [];
 
-        if (!this.isStrategyLatest) {
+        // loop through, sort and dedupe
+        for (let datum of data) {
+            parsedValue = this.parseTime(datum);
+            beforeStartOfBounds = parsedValue < this.lastBounds.start;
+            afterEndOfBounds = parsedValue > this.lastBounds.end;
 
-            // loop through, sort and dedupe
-            for (let datum of data) {
-                parsedValue = this.parseTime(datum);
-                beforeStartOfBounds = parsedValue < this.lastBounds.start;
-                afterEndOfBounds = parsedValue > this.lastBounds.end;
+            if (!afterEndOfBounds && !beforeStartOfBounds) {
+                let isDuplicate = false;
+                let startIndex = this._sortedIndex(datum);
+                let endIndex = undefined;
 
-                if (!afterEndOfBounds && !beforeStartOfBounds) {
-                    let isDuplicate = false;
-                    let startIndex = this._sortedIndex(datum);
-                    let endIndex = undefined;
+                // dupe check
+                if (startIndex !== this.boundedTelemetry.length) {
+                    endIndex = _.sortedLastIndexBy(
+                        this.boundedTelemetry,
+                        datum,
+                        boundedDatum => this.parseTime(boundedDatum)
+                    );
 
-                    // dupe check
-                    if (startIndex !== this.boundedTelemetry.length) {
-                        endIndex = _.sortedLastIndexBy(
-                            this.boundedTelemetry,
-                            datum,
-                            boundedDatum => this.parseTime(boundedDatum)
-                        );
-
-                        if (endIndex > startIndex) {
-                            let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
-                            isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
-                        }
-                    } else if (startIndex === this.boundedTelemetry.length) {
-                        isDuplicate = _.isEqual(datum, this.boundedTelemetry[this.boundedTelemetry.length - 1]);
+                    if (endIndex > startIndex) {
+                        let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
+                        isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
                     }
-
-                    if (!isDuplicate) {
-                        let index = endIndex || startIndex;
-
-                        this.boundedTelemetry.splice(index, 0, datum);
-                        added.push(datum);
-                    }
-
-                } else if (afterEndOfBounds) {
-                    this.futureBuffer.push(datum);
+                } else if (startIndex === this.boundedTelemetry.length) {
+                    isDuplicate = _.isEqual(datum, this.boundedTelemetry[this.boundedTelemetry.length - 1]);
                 }
-            }
 
-            if (added.length) {
+                if (!isDuplicate) {
+                    let index = endIndex || startIndex;
+
+                    this.boundedTelemetry.splice(index, 0, datum);
+                    added.push(datum);
+                }
+
+            } else if (afterEndOfBounds) {
+                this.futureBuffer.push(datum);
+            }
+        }
+
+        if (added.length) {
+            // if latest strategy is requested, we need to check if the value is the latest unmitted value
+            if (this.isStrategyLatest) {
+                this.boundedTelemetry = [this.boundedTelemetry[this.boundedTelemetry.length - 1]];
+
+                // if true, then this value has yet to be emitted
+                if (this.boundedTelemetry[0] !== latestBoundedDatum) {
+                    this.emit('add', this.boundedTelemetry);
+                }
+            } else {
                 this.emit('add', added);
             }
-        } else {
-            // strategy latest, we only need one value
-            let latest = this._getLatestDatum(data);
-
-            added.push(latest);
-
-            this.boundedTelemetry = added;
-            this.emit('add', added);
         }
     }
 
