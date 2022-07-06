@@ -30,8 +30,8 @@ const { expect } = require('@playwright/test');
 
 test.describe('Log plot tests', () => {
     test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
-        //This is necessary due to the size of the test suite.
-        await test.setTimeout(120 * 1000);
+        //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
+        test.slow();
 
         await makeOverlayPlot(page);
         await testRegularTicks(page);
@@ -44,20 +44,6 @@ test.describe('Log plot tests', () => {
         await testLogTicks(page);
         await saveOverlayPlot(page);
         await testLogTicks(page);
-        //await testLogPlotPixels(page);
-
-        // FIXME: Get rid of the waitForTimeout() and lint warning exception.
-        // eslint-disable-next-line playwright/no-wait-for-timeout
-        await page.waitForTimeout(1 * 1000);
-
-        // refresh page and wait for charts and ticks to load
-        await page.reload({ waitUntil: 'networkidle'});
-        await page.waitForSelector('.gl-plot-chart-area');
-        await page.waitForSelector('.gl-plot-y-tick-label');
-
-        // test log ticks hold up after refresh
-        await testLogTicks(page);
-        //await testLogPlotPixels(page);
     });
 
     // Leaving test as 'TODO' for now.
@@ -121,14 +107,14 @@ async function makeOverlayPlot(page) {
 
     // set amplitude to 6, offset 4, period 2
 
-    await page.locator('div:nth-child(5) .form-row .c-form-row__controls .form-control .field input').click();
-    await page.locator('div:nth-child(5) .form-row .c-form-row__controls .form-control .field input').fill('6');
+    await page.locator('div:nth-child(5) .c-form-row__controls .form-control .field input').click();
+    await page.locator('div:nth-child(5) .c-form-row__controls .form-control .field input').fill('6');
 
-    await page.locator('div:nth-child(6) .form-row .c-form-row__controls .form-control .field input').click();
-    await page.locator('div:nth-child(6) .form-row .c-form-row__controls .form-control .field input').fill('4');
+    await page.locator('div:nth-child(6) .c-form-row__controls .form-control .field input').click();
+    await page.locator('div:nth-child(6) .c-form-row__controls .form-control .field input').fill('4');
 
-    await page.locator('div:nth-child(7) .form-row .c-form-row__controls .form-control .field input').click();
-    await page.locator('div:nth-child(7) .form-row .c-form-row__controls .form-control .field input').fill('2');
+    await page.locator('div:nth-child(7) .c-form-row__controls .form-control .field input').click();
+    await page.locator('div:nth-child(7) .c-form-row__controls .form-control .field input').fill('2');
 
     // Click OK to make generator
 
