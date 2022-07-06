@@ -134,6 +134,7 @@ export default {
             //If this object is not persistable, then package it with it's parent
             const object = this.getPlotObject();
             const getProps = this.getProps;
+            const isMissing = openmct.objects.isMissing(object);
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
 
@@ -158,6 +159,7 @@ export default {
                         onCursorGuideChange,
                         onGridLinesChange,
                         setStatus,
+                        isMissing,
                         loading: true
                     };
                 },
@@ -166,7 +168,7 @@ export default {
                         this.loading = loaded;
                     }
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
 
             this.setSelection();
@@ -220,6 +222,13 @@ export default {
                 //If the object has a configuration, allow initialization of the config from it's persisted config
                 return this.childObject;
             } else {
+                //If object is missing, warn and return object
+                if (this.openmct.objects.isMissing(this.childObject)) {
+                    console.warn('Missing domain object');
+
+                    return this.childObject;
+                }
+
                 // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
                 const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
                 let config = configStore.get(configId);
