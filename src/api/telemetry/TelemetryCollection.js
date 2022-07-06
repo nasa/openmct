@@ -240,11 +240,13 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _getLatestDatum(data) {
-        let zeroTimeDatum = { [this.timeKey]: 0 };
+        if (data.length === 1) {
+            return data[0];
+        }
 
         return data.reduce((prevDatum, nextDatum) => {
             return this.parseTime(prevDatum) > this.parseTime(nextDatum) ? prevDatum : nextDatum;
-        }, zeroTimeDatum);
+        }, data[0]);
     }
 
     /**
