@@ -42,7 +42,6 @@ class CouchObjectProvider {
         this.batchIds = [];
         this.onEventMessage = this.onEventMessage.bind(this);
         this.onEventError = this.onEventError.bind(this);
-        this.#observeObjectChanges();
     }
 
     /**
@@ -200,6 +199,11 @@ class CouchObjectProvider {
         }
 
         let response = null;
+
+        if (!this.isObservingObjectChanges()) {
+            this.#observeObjectChanges();
+        }
+
         try {
             response = await fetch(this.url + '/' + subPath, fetchOptions);
             const { status } = response;
@@ -496,7 +500,6 @@ class CouchObjectProvider {
         } else {
             this.#initiateSharedWorkerFetchChanges(sseURL.toString());
         }
-
     }
 
     /**
