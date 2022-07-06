@@ -241,7 +241,7 @@ module.exports = {
         ],
         "vue/max-attributes-per-line": ["error", {
             "singleline": 1,
-            "multiline": 1,
+            "multiline": 1
         }],
         "vue/first-attribute-linebreak": "error",
         "vue/multiline-html-element-content-newline": "off",
