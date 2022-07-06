@@ -1,9 +1,11 @@
 {
   "all": true,
   "include": [
-    "src/**/*.js"
+    "src/**/*.js",
+    "example/**/*.js"
   ],
   "exclude": [
-    "**/*.spec.js"
+    "**/*.spec.js",
+    "**/*Spec.js"
   ]
 }
