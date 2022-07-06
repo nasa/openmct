@@ -236,20 +236,6 @@ export class TelemetryCollection extends EventEmitter {
     }
 
     /**
-     * Will return the latest value from an array of telemetry.
-     * @private
-     */
-    _getLatestDatum(data) {
-        if (data.length === 1) {
-            return data[0];
-        }
-
-        return data.reduce((prevDatum, nextDatum) => {
-            return this.parseTime(prevDatum) > this.parseTime(nextDatum) ? prevDatum : nextDatum;
-        }, data[0]);
-    }
-
-    /**
      * Finds the correct insertion point for the given telemetry datum.
      * Leverages lodash's `sortedIndexBy` function which implements a binary search.
      * @private
