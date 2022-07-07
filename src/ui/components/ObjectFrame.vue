@@ -223,15 +223,16 @@ export default {
         },
         resizeSoView() {
             let cW = this.$refs.soView.offsetWidth;
+            let widths = [220, 600];
             let wClass = '';
 
-            if (cW < 220) {
-                wClass = CSS_WIDTH_LESS_STR + '220';
-            } else if (cW < 600) {
-                wClass = CSS_WIDTH_LESS_STR + '600';
+            for (let width of widths) {
+                if (cW < width) {
+                    wClass = wClass.concat(' ', CSS_WIDTH_LESS_STR, width);
+                }
             }
 
-            this.widthClass = wClass;
+            this.widthClass = wClass.trimStart();
         }
     }
 };
