@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,12 +22,7 @@
 
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
-
-const ERRORS = {
-    TIMESYSTEM_KEY: 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.',
-    TIMESYSTEM_KEY_NOTIFICATION: 'Telemetry metadata does not match the active time system.',
-    LOADED: 'Telemetry Collection has already been loaded.'
-};
+import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
 
 /** Class representing a Telemetry Collection. */
 
@@ -54,6 +49,7 @@ export class TelemetryCollection extends EventEmitter {
         this.pageState = undefined;
         this.lastBounds = undefined;
         this.requestAbort = undefined;
+        this.isStrategyLatest = this.options.strategy === 'latest';
     }
 
     /**
@@ -62,7 +58,7 @@ export class TelemetryCollection extends EventEmitter {
      */
     load() {
         if (this.loaded) {
-            this._error(ERRORS.LOADED);
+            this._error(LOADED_ERROR);
         }
 
         this._setTimeSystem(this.openmct.time.timeSystem());
@@ -173,16 +169,19 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
+        performance.mark('tlm:process:start');
         if (telemetryData === undefined) {
             return;
         }
 
+        let latestBoundedDatum = this.boundedTelemetry[this.boundedTelemetry.length - 1];
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
         let parsedValue;
         let beforeStartOfBounds;
         let afterEndOfBounds;
         let added = [];
 
+        // loop through, sort and dedupe1
         for (let datum of data) {
             parsedValue = this.parseTime(datum);
             beforeStartOfBounds = parsedValue < this.lastBounds.start;
@@ -222,7 +221,17 @@ export class TelemetryCollection extends EventEmitter {
         }
 
         if (added.length) {
-            this.emit('add', added);
+            // if latest strategy is requested, we need to check if the value is the latest unmitted value
+            if (this.isStrategyLatest) {
+                this.boundedTelemetry = [this.boundedTelemetry[this.boundedTelemetry.length - 1]];
+
+                // if true, then this value has yet to be emitted
+                if (this.boundedTelemetry[0] !== latestBoundedDatum) {
+                    this.emit('add', this.boundedTelemetry);
+                }
+            } else {
+                this.emit('add', added);
+            }
         }
     }
 
@@ -282,13 +291,20 @@ export class TelemetryCollection extends EventEmitter {
 
             if (startChanged) {
                 testDatum[this.timeKey] = bounds.start;
-                // Calculate the new index of the first item within the bounds
-                startIndex = _.sortedIndexBy(
-                    this.boundedTelemetry,
-                    testDatum,
-                    datum => this.parseTime(datum)
-                );
-                discarded = this.boundedTelemetry.splice(0, startIndex);
+                
+                // a little more complicated if not latest strategy
+                if (!this.isStrategyLatest) {
+                    // Calculate the new index of the first item within the bounds
+                    startIndex = _.sortedIndexBy(
+                        this.boundedTelemetry,
+                        testDatum,
+                        datum => this.parseTime(datum)
+                    );
+                    discarded = this.boundedTelemetry.splice(0, startIndex);
+                } else if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
+                    discarded = this.boundedTelemetry;
+                    this.boundedTelemetry = [];
+                }
             }
 
             if (endChanged) {
@@ -300,7 +316,6 @@ export class TelemetryCollection extends EventEmitter {
                     datum => this.parseTime(datum)
                 );
                 added = this.futureBuffer.splice(0, endIndex);
-                this.boundedTelemetry = [...this.boundedTelemetry, ...added];
             }
 
             if (discarded.length > 0) {
@@ -308,6 +323,13 @@ export class TelemetryCollection extends EventEmitter {
             }
 
             if (added.length > 0) {
+                if (!this.isStrategyLatest) {
+                    this.boundedTelemetry = [...this.boundedTelemetry, ...added];
+                } else {
+                    added = [added[added.length - 1]];
+                    this.boundedTelemetry = added;
+                }
+
                 this.emit('add', added);
             }
         } else {
@@ -326,18 +348,26 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _setTimeSystem(timeSystem) {
-        let domains = this.metadata.valuesForHints(['domain']);
+        let domains = [];
+        let metadataValue = { format: timeSystem.key };
+
+        if (this.metadata) {
+            domains = this.metadata.valuesForHints(['domain']);
+            metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
+        }
+
         let domain = domains.find((d) => d.key === timeSystem.key);
 
         if (domain !== undefined) {
             // timeKey is used to create a dummy datum used for sorting
             this.timeKey = domain.source;
         } else {
-            this._warn(ERRORS.TIMESYSTEM_KEY);
-            this.openmct.notifications.alert(ERRORS.TIMESYSTEM_KEY_NOTIFICATION);
+            this.timeKey = undefined;
+
+            this._warn(TIMESYSTEM_KEY_WARNING);
+            this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
         }
 
-        let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (datum) => {
@@ -358,6 +388,7 @@ export class TelemetryCollection extends EventEmitter {
      * @todo handle subscriptions more granually
      */
     _reset() {
+        performance.mark('tlm:reset');
         this.boundedTelemetry = [];
         this.futureBuffer = [];
 
