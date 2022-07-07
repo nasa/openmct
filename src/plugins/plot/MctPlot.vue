@@ -420,17 +420,17 @@ export default {
         },
         addSeries(series, index) {
             this.$set(this.seriesModels, index, series);
-            this.listenTo(series, 'change:xKey', (xKey) => {
-                this.setDisplayRange(series, xKey);
-            }, this);
-            this.listenTo(series, 'change:yKey', () => {
-                this.checkSameRangeValue();
-                this.loadSeriesData(series);
-            }, this);
-
-            this.listenTo(series, 'change:interpolate', () => {
-                this.loadSeriesData(series);
-            }, this);
+            // this.listenTo(series, 'change:xKey', (xKey) => {
+            //     this.setDisplayRange(series, xKey);
+            // }, this);
+            // this.listenTo(series, 'change:yKey', () => {
+            //     this.checkSameRangeValue();
+            //     this.loadSeriesData(series);
+            // }, this);
+            //
+            // this.listenTo(series, 'change:interpolate', () => {
+            //     this.loadSeriesData(series);
+            // }, this);
 
             this.checkSameRangeValue();
             this.loadSeriesData(series);
