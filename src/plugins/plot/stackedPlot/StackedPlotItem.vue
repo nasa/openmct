@@ -80,6 +80,10 @@ export default {
         this.updateView();
     },
     beforeDestroy() {
+        if (this.removeSelectable) {
+            this.removeSelectable();
+        }
+
         if (this.component) {
             this.component.$destroy();
         }
@@ -99,6 +103,7 @@ export default {
 
             const onTickWidthChange = this.onTickWidthChange;
             const loadingUpdated = this.loadingUpdated;
+            const onConfigLoaded = this.onConfigLoaded;
             const setStatus = this.setStatus;
 
             const openmct = this.openmct;
@@ -125,16 +130,20 @@ export default {
                         ...getProps(),
                         onTickWidthChange,
                         loadingUpdated,
+                        onConfigLoaded,
                         setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @configLoaded="onConfigLoaded" @loadingUpdated="loadingUpdated"/></div>'
             });
 
             this.setSelection();
         },
         onTickWidthChange() {
             this.$emit('plotTickWidth', ...arguments);
+        },
+        onConfigLoaded() {
+            this.$emit('configLoaded', ...arguments);
         },
         setStatus(status) {
             this.status = status;

@@ -69,6 +69,7 @@
             :plot-tick-width="maxTickWidth"
             @plotTickWidth="onTickWidthChange"
             @loadingUpdated="loadingUpdated"
+            @configLoaded="registerSeriesListeners"
         />
     </div>
 </div>
@@ -97,13 +98,16 @@ export default {
         }
     },
     data() {
+        this.seriesConfig = {};
+
         return {
             hideExportButtons: false,
             cursorGuide: false,
             gridLines: true,
             loading: false,
             compositionObjects: [],
-            tickWidthMap: {}
+            tickWidthMap: {},
+            seriesModels: []
         };
     },
     computed: {
@@ -169,6 +173,13 @@ export default {
             const id = this.openmct.objects.makeKeyString(childIdentifier);
 
             this.$delete(this.tickWidthMap, id);
+
+            const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
+                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, childIdentifier);
+            });
+            if (configIndex > -1) {
+                this.domainObject.configuration.series.splice(configIndex, 1);
+            }
 
             const childObj = this.compositionObjects.filter((c) => {
                 const identifier = this.openmct.objects.makeKeyString(c.identifier);
