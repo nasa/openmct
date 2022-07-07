@@ -281,6 +281,7 @@ define([
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.DeviceClassifier());
         this.install(this.plugins.UserIndicator());
+        this.install(this.plugins.Gauge());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
