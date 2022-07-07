@@ -53,7 +53,7 @@
                 :key="`seriesObject.keyString-${seriesIndex}`"
                 :highlights="highlights"
                 :value-to-show-when-collapsed="legend.get('valueToShowWhenCollapsed')"
-                :series-object="seriesObject"
+                :series-object-ids="seriesObject"
                 @legendHoverChanged="legendHoverChanged"
             />
         </div>
@@ -97,7 +97,7 @@
                     <plot-legend-item-expanded
                         v-for="(seriesObject, seriesIndex) in series"
                         :key="`seriesObject.keyString-${seriesIndex}`"
-                        :series-object="seriesObject"
+                        :series-object-ids="seriesObject"
                         :highlights="highlights"
                         :legend="legend"
                         @legendHoverChanged="legendHoverChanged"

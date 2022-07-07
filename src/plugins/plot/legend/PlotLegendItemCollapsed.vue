@@ -54,6 +54,8 @@
 <script>
 
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
+import configStore from "@/plugins/plot/configuration/ConfigStore";
+import PlotConfigurationModel from "@/plugins/plot/configuration/PlotConfigurationModel";
 
 export default {
     props: {
@@ -61,7 +63,7 @@ export default {
             type: String,
             required: true
         },
-        seriesObject: {
+        seriesObjectIds: {
             type: Object,
             required: true,
             default() {
@@ -103,9 +105,27 @@ export default {
         }
     },
     mounted() {
+        const configId = this.seriesObjectIds.configId;
+        this.config = this.getConfig(configId);
+        if (!this.config) {
+            return;
+        }
+
+        this.seriesObject = this.getSeriesFromConfig();
         this.initialize();
     },
     methods: {
+        getConfig(configId) {
+            let config = configStore.get(configId);
+
+            return config;
+        },
+        getSeriesFromConfig() {
+            const keyString = this.seriesObjectIds.keyString;
+            const series = this.config.series.models.find(seriesModel => seriesModel.keyString === keyString);
+
+            return series;
+        },
         initialize(highlightedObject) {
             const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
             this.isMissing = seriesObject.domainObject.status === 'missing';

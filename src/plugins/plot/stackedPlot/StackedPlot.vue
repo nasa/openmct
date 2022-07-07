@@ -245,14 +245,18 @@ export default {
         },
         registerSeriesListeners(configId) {
             this.seriesConfig[configId] = this.getConfig(configId);
-            this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
+            this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries.bind(this, configId), this);
             this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
 
-            this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
+            this.seriesConfig[configId].series.models.forEach(this.addSeries.bind(this, configId), this);
         },
-        addSeries(series) {
+        addSeries(configId, series) {
             const index = this.seriesModels.length;
-            this.$set(this.seriesModels, index, series);
+            const seriesModelItem = {
+                keyString: series.keyString,
+                configId
+            };
+            this.$set(this.seriesModels, index, seriesModelItem);
         },
         removeSeries(plotSeries) {
             const index = this.seriesModels.findIndex(seriesModel => this.openmct.objects.areIdsEqual(seriesModel.identifier, plotSeries.identifier));
