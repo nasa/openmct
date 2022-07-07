@@ -211,3 +211,22 @@ test('Visual - Display Layout Icon is correct', async ({ page }) => {
     await percySnapshot(page, 'Display Layout Create Menu');
 
 });
+
+test('Visual - Default Gauge is correct', async ({ page }) => {
+
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    await page.click('text=Gauge');
+
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Gauge object
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Gauge');
+
+});
+
