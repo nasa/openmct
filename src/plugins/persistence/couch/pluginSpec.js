@@ -158,6 +158,7 @@ describe('the plugin', () => {
                 }
             };
 
+            // eslint-disable-next-line require-await
             provider.request = async function (subPath, method, body, signal) {
                 return {
                     body: fakeUpdateEvent,
@@ -172,7 +173,7 @@ describe('the plugin', () => {
             expect(provider.create).toHaveBeenCalled();
             expect(provider.observe).toHaveBeenCalled();
             expect(provider.isObservingObjectChanges).toHaveBeenCalled();
-            
+
             //Set modified timestamp it detects a change and persists the updated model.
             mockDomainObject.modified = mockDomainObject.persisted + 1;
             const updatedResult = await openmct.objects.save(mockDomainObject);
