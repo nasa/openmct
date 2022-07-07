@@ -150,7 +150,7 @@ export default {
             this.loading = loaded;
         },
         destroy() {
-            // this.stopListening();
+            this.stopListening();
             configStore.deleteStore(this.config.id);
 
             this.composition.off('add', this.addChild);

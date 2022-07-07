@@ -130,6 +130,8 @@ export default {
                 },
                 template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
+
+            this.setSelection();
         },
         onTickWidthChange() {
             this.$emit('plotTickWidth', ...arguments);
@@ -138,9 +140,16 @@ export default {
             this.status = status;
             this.updateComponentProp('status', status);
         },
-        loadingUpdated(loaded) {
-            this.loading = loaded;
-            this.updateComponentProp('loading', loaded);
+        setSelection() {
+            let childContext = {};
+            childContext.item = this.childObject;
+            this.context = childContext;
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
+
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el, this.context);
         },
         getProps() {
             return {
