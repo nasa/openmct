@@ -26,33 +26,33 @@
     class="c-plot c-plot--stacked holder holder-plot has-control-bar"
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <plot-legend
-        :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
-        :highlights="highlights"
-        :legend="legend"
-        @legendHoverChanged="legendHoverChanged"
-    />
-    <div class="l-view-section">
-        <stacked-plot-item
-            v-for="object in compositionObjects"
-            :key="object.id"
-            class="c-plot--stacked-container"
-            :child-object="object"
-            :options="options"
-            :grid-lines="gridLines"
-            :color-palette="colorPalette"
-            :cursor-guide="cursorGuide"
-            :show-limit-line-labels="showLimitLineLabels"
-            :plot-tick-width="maxTickWidth"
-            @plotTickWidth="onTickWidthChange"
-            @loadingUpdated="loadingUpdated"
-            @cursorGuide="onCursorGuideChange"
-            @gridLines="onGridLinesChange"
-            @lockHighlightPoint="lockHighlightPointUpdated"
-            @highlights="highlightsUpdated"
-        />
-    </div>
+<!--    <plot-legend-->
+<!--        :cursor-locked="!!lockHighlightPoint"-->
+<!--        :series="seriesModels"-->
+<!--        :highlights="highlights"-->
+<!--        :legend="legend"-->
+<!--        @legendHoverChanged="legendHoverChanged"-->
+<!--    />-->
+<!--    <div class="l-view-section">-->
+<!--        <stacked-plot-item-->
+<!--            v-for="object in compositionObjects"-->
+<!--            :key="object.id"-->
+<!--            class="c-plot&#45;&#45;stacked-container"-->
+<!--            :child-object="object"-->
+<!--            :options="options"-->
+<!--            :grid-lines="gridLines"-->
+<!--            :color-palette="colorPalette"-->
+<!--            :cursor-guide="cursorGuide"-->
+<!--            :show-limit-line-labels="showLimitLineLabels"-->
+<!--            :plot-tick-width="maxTickWidth"-->
+<!--            @plotTickWidth="onTickWidthChange"-->
+<!--            @loadingUpdated="loadingUpdated"-->
+<!--            @cursorGuide="onCursorGuideChange"-->
+<!--            @gridLines="onGridLinesChange"-->
+<!--            @lockHighlightPoint="lockHighlightPointUpdated"-->
+<!--            @highlights="highlightsUpdated"-->
+<!--        />-->
+<!--    </div>-->
 </div>
 </template>
 
