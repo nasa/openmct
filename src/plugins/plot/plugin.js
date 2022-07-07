@@ -68,8 +68,8 @@ export default function () {
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));
 
-        openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new StackedPlotsInspectorViewProvider(openmct));
+        // openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
+        // openmct.inspectorViews.addProvider(new StackedPlotsInspectorViewProvider(openmct));
 
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
