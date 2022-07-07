@@ -24,7 +24,7 @@ const { test } = require('../../../fixtures');
 const { expect } = require('@playwright/test');
 
 test.describe('Telemetry Table', () => {
-    test('unpauses when paused by button and user changes bounds', async ({ page }) => {
+    test('unpauses and filters data when paused by button and user changes bounds', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5113'
