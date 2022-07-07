@@ -119,7 +119,7 @@ export default {
         this.destroy();
     },
     mounted() {
-        eventHelpers.extend(this);
+        // eventHelpers.extend(this);
 
         const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.config = this.getConfig(configId);
@@ -154,7 +154,7 @@ export default {
             this.loading = loaded;
         },
         destroy() {
-            this.stopListening();
+            // this.stopListening();
             configStore.deleteStore(this.config.id);
 
             // this.composition.off('add', this.addChild);
