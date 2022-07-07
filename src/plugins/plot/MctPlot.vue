@@ -715,7 +715,7 @@ export default {
             }
 
             const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.$emit('plotTickWidth', this.tickWidth, id);
+            // this.$emit('plotTickWidth', this.tickWidth, id);
         },
 
         trackMousePosition(event) {
@@ -772,7 +772,7 @@ export default {
         highlightValues(point) {
             this.highlightPoint = point;
             // TODO: used in StackedPlotController
-            this.$emit('plotHighlightUpdate', point);
+            // this.$emit('plotHighlightUpdate', point);
             if (this.lockHighlightPoint) {
                 return;
             }
@@ -793,7 +793,7 @@ export default {
                     });
             }
 
-            this.$emit('highlights', this.highlights);
+            // this.$emit('highlights', this.highlights);
         },
 
         untrackMousePosition() {
@@ -828,7 +828,7 @@ export default {
 
             if (this.isMouseClick()) {
                 this.lockHighlightPoint = !this.lockHighlightPoint;
-                this.$emit('lockHighlightPoint', this.lockHighlightPoint);
+                // this.$emit('lockHighlightPoint', this.lockHighlightPoint);
             }
 
             if (this.pan) {
@@ -1182,7 +1182,7 @@ export default {
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         updateStatus(status) {
-            this.$emit('statusUpdated', status);
+            // this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
             if (this.$parent.$refs.plotWrapper
@@ -1196,11 +1196,11 @@ export default {
         },
         toggleCursorGuide() {
             this.cursorGuide = !this.cursorGuide;
-            this.$emit('cursorGuide', this.cursorGuide);
+            // this.$emit('cursorGuide', this.cursorGuide);
         },
         toggleGridLines() {
             this.gridLines = !this.gridLines;
-            this.$emit('gridLines', this.gridLines);
+            // this.$emit('gridLines', this.gridLines);
         }
     }
 };
