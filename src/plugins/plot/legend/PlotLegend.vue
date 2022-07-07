@@ -21,6 +21,7 @@
 -->
 <template>
 <div
+    v-if="loaded"
     class="c-plot-legend gl-plot-legend"
     :class="{
         'hover-on-plot': !!highlights.length,
@@ -99,7 +100,6 @@
                         :key="`seriesObject.keyString-${seriesIndex}`"
                         :series-object-ids="seriesObject"
                         :highlights="highlights"
-                        :legend="legend"
                         @legendHoverChanged="legendHoverChanged"
                     />
                 </tbody>
@@ -111,6 +111,7 @@
 <script>
 import PlotLegendItemCollapsed from "./PlotLegendItemCollapsed.vue";
 import PlotLegendItemExpanded from "./PlotLegendItemExpanded.vue";
+import configStore from "@/plugins/plot/configuration/ConfigStore";
 export default {
     components: {
         PlotLegendItemExpanded,
@@ -135,40 +136,51 @@ export default {
             default() {
                 return [];
             }
-        },
-        legend: {
-            type: Object,
-            default() {
-                return {};
-            }
         }
     },
     data() {
         return {
-            isLegendExpanded: this.legend.get('expanded') === true
+            loaded: false,
+            isLegendExpanded: false
         };
     },
     computed: {
         showUnitsWhenExpanded() {
-            return this.legend.get('showUnitsWhenExpanded') === true;
+            return this.legend && this.legend.get('showUnitsWhenExpanded') === true;
         },
         showMinimumWhenExpanded() {
-            return this.legend.get('showMinimumWhenExpanded') === true;
+            return this.legend && this.legend.get('showMinimumWhenExpanded') === true;
         },
         showMaximumWhenExpanded() {
-            return this.legend.get('showMaximumWhenExpanded') === true;
+            return this.legend && this.legend.get('showMaximumWhenExpanded') === true;
         },
         showValueWhenExpanded() {
-            return this.legend.get('showValueWhenExpanded') === true;
+            return this.legend && this.legend.get('showValueWhenExpanded') === true;
         },
         showTimestampWhenExpanded() {
-            return this.legend.get('showTimestampWhenExpanded') === true;
+            return this.legend && this.legend.get('showTimestampWhenExpanded') === true;
         },
         isLegendHidden() {
-            return this.legend.get('hideLegendWhenSmall') === true;
+            return this.legend && this.legend.get('hideLegendWhenSmall') === true;
         }
     },
+    mounted() {
+        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.config = this.getConfig(configId);
+        if (!this.config) {
+            return;
+        }
+
+        this.legend = this.config.legend;
+        this.isLegendExpanded = this.legend.get('expanded') === true;
+        this.loaded = true;
+    },
     methods: {
+        getConfig(configId) {
+            let config = configStore.get(configId);
+
+            return config;
+        },
         expandLegend() {
             this.isLegendExpanded = !this.isLegendExpanded;
             this.legend.set('expanded', this.isLegendExpanded);

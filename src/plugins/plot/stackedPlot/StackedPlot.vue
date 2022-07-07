@@ -30,7 +30,6 @@
         :cursor-locked="!!lockHighlightPoint"
         :series="seriesModels"
         :highlights="highlights"
-        :legend="legend"
         @legendHoverChanged="legendHoverChanged"
     />
     <div class="l-view-section">

@@ -96,10 +96,6 @@ export default {
             default() {
                 return [];
             }
-        },
-        legend: {
-            type: Object,
-            required: true
         }
     },
     data() {
@@ -117,19 +113,19 @@ export default {
     },
     computed: {
         showUnitsWhenExpanded() {
-            return this.legend.get('showUnitsWhenExpanded') === true;
+            return this.legend && this.legend.get('showUnitsWhenExpanded') === true;
         },
         showMinimumWhenExpanded() {
-            return this.legend.get('showMinimumWhenExpanded') === true;
+            return this.legend && this.legend.get('showMinimumWhenExpanded') === true;
         },
         showMaximumWhenExpanded() {
-            return this.legend.get('showMaximumWhenExpanded') === true;
+            return this.legend && this.legend.get('showMaximumWhenExpanded') === true;
         },
         showValueWhenExpanded() {
-            return this.legend.get('showValueWhenExpanded') === true;
+            return this.legend && this.legend.get('showValueWhenExpanded') === true;
         },
         showTimestampWhenExpanded() {
-            return this.legend.get('showTimestampWhenExpanded') === true;
+            return this.legend && this.legend.get('showTimestampWhenExpanded') === true;
         }
     },
     watch: {
@@ -148,6 +144,7 @@ export default {
         }
 
         this.seriesObject = this.getSeriesFromConfig();
+        this.legend = this.config.legend;
         this.initialize();
     },
     methods: {
