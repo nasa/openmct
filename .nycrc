@@ -1,9 +1,8 @@
 {
   "all": true,
-  "include": [
-    "src/**/*.js",
-    "example/**/*.js"
-  ],
+  "include": ["src/**/*.{js,vue}"],
+  "reporter": ["lcovonly"],
+  "extension": [".js", ".vue"],
   "exclude": [
     "**/*.spec.js",
     "**/*Spec.js"
