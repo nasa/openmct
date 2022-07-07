@@ -79,6 +79,8 @@ class StaticModelProvider {
 
     parseTreeLeaf(leafKey, leafValue, idMap, namespace) {
         if (!leafValue) {
+            console.log(leafValue);
+
             return leafValue;
         }
 
