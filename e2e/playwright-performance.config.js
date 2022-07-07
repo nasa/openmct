@@ -4,13 +4,13 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 1, //Only for debugging purposes
+    retries: 1, //Only for debugging purposes because trace is enabled only on first retry
     testDir: 'tests/performance/',
     timeout: 60 * 1000,
     workers: 1, //Only run in serial with 1 worker
     webServer: {
         command: 'npm run start',
-        port: 8080,
+        url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
     },
