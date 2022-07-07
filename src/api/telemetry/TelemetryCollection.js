@@ -49,6 +49,7 @@ export default class TelemetryCollection extends EventEmitter {
         this.pageState = undefined;
         this.lastBounds = undefined;
         this.requestAbort = undefined;
+        this.isStrategyLatest = this.options.strategy === 'latest';
     }
 
     /**
@@ -174,12 +175,14 @@ export default class TelemetryCollection extends EventEmitter {
             return;
         }
 
+        let latestBoundedDatum = this.boundedTelemetry[this.boundedTelemetry.length - 1];
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
         let parsedValue;
         let beforeStartOfBounds;
         let afterEndOfBounds;
         let added = [];
 
+        // loop through, sort and dedupe
         for (let datum of data) {
             parsedValue = this.parseTime(datum);
             beforeStartOfBounds = parsedValue < this.lastBounds.start;
@@ -219,7 +222,17 @@ export default class TelemetryCollection extends EventEmitter {
         }
 
         if (added.length) {
-            this.emit('add', added);
+            // if latest strategy is requested, we need to check if the value is the latest unmitted value
+            if (this.isStrategyLatest) {
+                this.boundedTelemetry = [this.boundedTelemetry[this.boundedTelemetry.length - 1]];
+
+                // if true, then this value has yet to be emitted
+                if (this.boundedTelemetry[0] !== latestBoundedDatum) {
+                    this.emit('add', this.boundedTelemetry);
+                }
+            } else {
+                this.emit('add', added);
+            }
         }
     }
 
@@ -279,13 +292,20 @@ export default class TelemetryCollection extends EventEmitter {
 
             if (startChanged) {
                 testDatum[this.timeKey] = bounds.start;
-                // Calculate the new index of the first item within the bounds
-                startIndex = _.sortedIndexBy(
-                    this.boundedTelemetry,
-                    testDatum,
-                    datum => this.parseTime(datum)
-                );
-                discarded = this.boundedTelemetry.splice(0, startIndex);
+
+                // a little more complicated if not latest strategy
+                if (!this.isStrategyLatest) {
+                    // Calculate the new index of the first item within the bounds
+                    startIndex = _.sortedIndexBy(
+                        this.boundedTelemetry,
+                        testDatum,
+                        datum => this.parseTime(datum)
+                    );
+                    discarded = this.boundedTelemetry.splice(0, startIndex);
+                } else if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
+                    discarded = this.boundedTelemetry;
+                    this.boundedTelemetry = [];
+                }
             }
 
             if (endChanged) {
@@ -297,7 +317,6 @@ export default class TelemetryCollection extends EventEmitter {
                     datum => this.parseTime(datum)
                 );
                 added = this.futureBuffer.splice(0, endIndex);
-                this.boundedTelemetry = [...this.boundedTelemetry, ...added];
             }
 
             if (discarded.length > 0) {
@@ -305,6 +324,13 @@ export default class TelemetryCollection extends EventEmitter {
             }
 
             if (added.length > 0) {
+                if (!this.isStrategyLatest) {
+                    this.boundedTelemetry = [...this.boundedTelemetry, ...added];
+                } else {
+                    added = [added[added.length - 1]];
+                    this.boundedTelemetry = added;
+                }
+
                 this.emit('add', added);
             }
         } else {
