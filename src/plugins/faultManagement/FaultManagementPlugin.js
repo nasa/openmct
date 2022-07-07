@@ -32,7 +32,7 @@ export default function FaultManagementPlugin() {
             name: 'Fault Management',
             creatable: false,
             description: 'Fault Management View',
-            cssClass: 'icon-telemetry'
+            cssClass: 'icon-bell'
         });
 
         openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));

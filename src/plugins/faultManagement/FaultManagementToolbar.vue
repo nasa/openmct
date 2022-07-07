@@ -23,7 +23,7 @@
 <template>
 <div class="c-fault-mgmt__toolbar">
     <button
-        class="c-icon-button icon-bell"
+        class="c-icon-button icon-check"
         title="Acknowledge selected faults"
         :disabled="disableAcknowledge"
         @click="acknowledgeSelected"
