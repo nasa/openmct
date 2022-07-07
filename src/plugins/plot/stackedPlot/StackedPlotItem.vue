@@ -140,6 +140,10 @@ export default {
             this.status = status;
             this.updateComponentProp('status', status);
         },
+        loadingUpdated(loaded) {
+            this.loading = loaded;
+            this.updateComponentProp('loading', loaded);
+        },
         setSelection() {
             let childContext = {};
             childContext.item = this.childObject;
