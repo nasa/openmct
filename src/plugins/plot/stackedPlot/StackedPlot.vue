@@ -128,10 +128,10 @@ export default {
         this.loaded = true;
         this.imageExporter = new ImageExporter(this.openmct);
 
-        this.composition.on('add', this.addChild);
-        this.composition.on('remove', this.removeChild);
-        this.composition.on('reorder', this.compositionReorder);
-        this.composition.load();
+        // this.composition.on('add', this.addChild);
+        // this.composition.on('remove', this.removeChild);
+        // this.composition.on('reorder', this.compositionReorder);
+        // this.composition.load();
     },
     methods: {
         getConfig(configId) {
@@ -157,9 +157,9 @@ export default {
             this.stopListening();
             configStore.deleteStore(this.config.id);
 
-            this.composition.off('add', this.addChild);
-            this.composition.off('remove', this.removeChild);
-            this.composition.off('reorder', this.compositionReorder);
+            // this.composition.off('add', this.addChild);
+            // this.composition.off('remove', this.removeChild);
+            // this.composition.off('reorder', this.compositionReorder);
         },
 
         addChild(child) {
