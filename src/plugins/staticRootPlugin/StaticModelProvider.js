@@ -78,7 +78,7 @@ class StaticModelProvider {
     }
 
     parseTreeLeaf(leafKey, leafValue, idMap, namespace) {
-        if (!leafValue) {
+        if (leafValue === null || leafValue === undefined) {
             return leafValue;
         }
 
