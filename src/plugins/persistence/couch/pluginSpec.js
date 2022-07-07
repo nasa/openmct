@@ -152,7 +152,10 @@ describe('the plugin', () => {
             mockDomainObject.id = mockDomainObject.identifier.key;
 
             const fakeUpdateEvent = {
-                data: JSON.stringify(mockDomainObject)
+                data: JSON.stringify(mockDomainObject),
+                target: {
+                    readyState: EventSource.CONNECTED
+                }
             };
 
             // eslint-disable-next-line require-await
@@ -170,7 +173,6 @@ describe('the plugin', () => {
             expect(provider.create).toHaveBeenCalled();
             expect(provider.observe).toHaveBeenCalled();
             expect(provider.isObservingObjectChanges).toHaveBeenCalled();
-            expect(provider.isObservingObjectChanges.calls.mostRecent().returnValue).toBe(true);
 
             //Set modified timestamp it detects a change and persists the updated model.
             mockDomainObject.modified = mockDomainObject.persisted + 1;
@@ -181,6 +183,7 @@ describe('the plugin', () => {
             expect(updatedResult).toBeTrue();
             expect(provider.update).toHaveBeenCalled();
             expect(provider.fetchChanges).toHaveBeenCalled();
+            expect(provider.isObservingObjectChanges.calls.mostRecent().returnValue).toBe(true);
             sharedWorkerCallback(fakeUpdateEvent);
             expect(provider.onEventMessage).toHaveBeenCalled();
 
