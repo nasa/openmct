@@ -392,12 +392,6 @@ describe("the plugin", () => {
 
             // Verify table is no longer paused
             expect(element.querySelector('div.c-table.is-paused')).toBeNull();
-
-            await Vue.nextTick();
-
-            // Verify table displays the correct number of rows within the new bounds
-            const tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
-            expect(tableRows.length).toEqual(2);
         });
 
         it("Unpauses the table on user bounds change if paused by button", async () => {
@@ -448,6 +442,12 @@ describe("the plugin", () => {
 
             // Verify table is still paused
             expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
+
+            await Vue.nextTick();
+
+            // Verify table displays the correct number of rows
+            tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
+            expect(tableRows.length).toEqual(3);
         });
     });
 });
