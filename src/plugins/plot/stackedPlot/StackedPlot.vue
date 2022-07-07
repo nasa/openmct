@@ -241,15 +241,15 @@ export default {
             this.$set(this.tickWidthMap, plotId, width);
         },
         registerSeriesListeners(configId) {
-            // this.seriesConfig[configId] = this.getConfig(configId);
-            // this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
-            // this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
-            //
-            // this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
+            this.seriesConfig[configId] = this.getConfig(configId);
+            this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
+            this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
+
+            this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
         },
         addSeries(series) {
-            const index = this.seriesModels.length;
-            this.$set(this.seriesModels, index, series);
+            this.seriesModels.push(series);
+            // this.$set(this.seriesModels, index, series);
         },
         removeSeries(plotSeries) {
             const index = this.seriesModels.findIndex(seriesModel => this.openmct.objects.areIdsEqual(seriesModel.identifier, plotSeries.identifier));
