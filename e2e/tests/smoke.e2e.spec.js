@@ -45,6 +45,15 @@ test('Verify that the create button appears and that the Folder Domain Object is
     await page.click('button:has-text("Create")');
 
     // Verify that Create Folder appears in the dropdown
-    const locator = page.locator(':nth-match(:text("Folder"), 2)');
-    await expect(locator).toBeEnabled();
+    await expect(page.locator(':nth-match(:text("Folder"), 2)')).toBeEnabled();
+});
+
+test('Verify that My Items Tree appears @ipad', async ({ page }) => {
+    //Test.slow annotation is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
+    test.slow();
+    //Go to baseURL
+    await page.goto('/');
+
+    //My Items to be visible
+    await expect(page.locator('a:has-text("My Items")')).toBeEnabled();
 });

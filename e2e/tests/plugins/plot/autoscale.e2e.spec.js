@@ -24,21 +24,8 @@
 Testsuite for plot autoscale.
 */
 
-const { test: _test } = require('../../../fixtures.js');
+const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
-
-// create a new `test` API that will not append platform details to snapshot
-// file names, only for the tests in this file, so that the same snapshots will
-// be used for all platforms.
-const test = _test.extend({
-    _autoSnapshotSuffix: [
-        async ({}, use, testInfo) => {
-            testInfo.snapshotSuffix = '';
-            await use();
-        },
-        { auto: true }
-    ]
-});
 
 test.use({
     viewport: {
@@ -50,7 +37,7 @@ test.use({
 test.describe('ExportAsJSON', () => {
     test('User can set autoscale with a valid range @snapshot', async ({ page }) => {
         //This is necessary due to the size of the test suite.
-        await test.setTimeout(120 * 1000);
+        test.slow();
 
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -62,16 +49,16 @@ test.describe('ExportAsJSON', () => {
 
         await turnOffAutoscale(page);
 
+        // Make sure that after turning off autoscale, the user selected range values start at the same values the plot had prior.
+        await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
+
         const canvas = page.locator('canvas').nth(1);
 
-        // Make sure that after turning off autoscale, the user selected range values start at the same values the plot had prior.
-        await Promise.all([
-            testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']),
-            new Promise(r => setTimeout(r, 100))
-                .then(() => canvas.screenshot())
-                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-prepan.png', { maxDiffPixels: 40 }))
-        ]);
+        await canvas.hover({trial: true});
 
+        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan');
+
+        //Alt Drag Start
         await page.keyboard.down('Alt');
 
         await canvas.dragTo(canvas, {
@@ -85,15 +72,15 @@ test.describe('ExportAsJSON', () => {
             }
         });
 
+        //Alt Drag End
         await page.keyboard.up('Alt');
 
         // Ensure the drag worked.
-        await Promise.all([
-            testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']),
-            new Promise(r => setTimeout(r, 100))
-                .then(() => canvas.screenshot())
-                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-panned.png', { maxDiffPixels: 40 }))
-        ]);
+        await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']);
+
+        await canvas.hover({trial: true});
+
+        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned');
     });
 });
 
