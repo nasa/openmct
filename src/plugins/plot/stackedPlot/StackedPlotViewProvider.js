@@ -70,13 +70,6 @@ export default function StackedPlotViewProvider(openmct) {
                         template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
                     });
                 },
-                getViewContext() {
-                    if (!component) {
-                        return {};
-                    }
-
-                    return component.$refs.plotComponent.getViewContext();
-                },
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
