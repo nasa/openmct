@@ -5,8 +5,6 @@ const config = require('./webpack.dev');
 
 const path = require('path');
 
-config.devtool = false;
-
 const vueLoaderRule = config.module.rules.find(r => r.use === 'vue-loader');
 
 vueLoaderRule.use = {
@@ -34,6 +32,7 @@ config.module.rules.push({
     use: {
         loader: 'babel-loader',
         options: {
+            // eslint-disable-next-line no-undef
             configFile: path.resolve(process.cwd(), 'babel.coverage.js')
         }
     }

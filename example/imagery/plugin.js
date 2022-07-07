@@ -168,7 +168,7 @@ function getImageUrlListFromConfig(configuration) {
 }
 
 function getImageLoadDelay(domainObject) {
-    const imageLoadDelay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+    const imageLoadDelay = Math.trunc(Number(domainObject.configuration.imageLoadDelayInMilliSeconds));
     if (!imageLoadDelay) {
         openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS);
 
@@ -190,7 +190,9 @@ function getRealtimeProvider() {
         subscribe: (domainObject, callback) => {
             const delay = getImageLoadDelay(domainObject);
             const interval = setInterval(() => {
-                callback(pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay));
+                const imageSamples = getImageSamples(domainObject.configuration);
+                const datum = pointForTimestamp(Date.now(), domainObject.name, imageSamples, delay);
+                callback(datum);
             }, delay);
 
             return () => {
@@ -229,8 +231,9 @@ function getLadProvider() {
         },
         request: (domainObject, options) => {
             const delay = getImageLoadDelay(domainObject);
+            const datum = pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay);
 
-            return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name, delay)]);
+            return Promise.resolve([datum]);
         }
     };
 }
