@@ -32,7 +32,7 @@ test.describe('Handle missing object for plots', () => {
         const errorLogs = [];
 
         page.on("console", (message) => {
-            if (message.type() === 'warning') {
+            if (message.type() === 'warning' && message.text().includes('Missing domain object')) {
                 errorLogs.push(message.text());
             }
         });
@@ -71,7 +71,7 @@ test.describe('Handle missing object for plots', () => {
         //Check that there is only one stacked item plot with a plot, the missing one will be empty
         await expect(page.locator(".c-plot--stacked-container:has(.gl-plot)")).toHaveCount(1);
         //Verify that console.warn is thrown
-        await expect(errorLogs).toHaveLength(1);
+        expect(errorLogs).toHaveLength(1);
     });
 });
 
