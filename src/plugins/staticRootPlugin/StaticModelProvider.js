@@ -160,8 +160,11 @@ class StaticModelProvider {
      * an object provider to fetch those objects.
      */
     rewriteModel(importData, rootIdentifier) {
+        console.log(importData);
         const oldFormatObjectMap = this.rewriteObjectIdentifiers(importData, rootIdentifier);
+        console.log(oldFormatObjectMap);
         const newFormatObjectMap = this.convertToNewObjects(oldFormatObjectMap);
+        console.log(newFormatObjectMap);
         this.objectMap = this.setRootLocation(newFormatObjectMap, rootIdentifier);
     }
 }
