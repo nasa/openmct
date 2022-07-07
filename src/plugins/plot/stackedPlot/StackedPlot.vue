@@ -76,8 +76,12 @@
 
 <script>
 
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import configStore from '../configuration/ConfigStore';
+
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
+import eventHelpers from "@/plugins/plot/lib/eventHelpers";
 
 export default {
     components: {
@@ -111,6 +115,13 @@ export default {
         this.destroy();
     },
     mounted() {
+        eventHelpers.extend(this);
+
+        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.config = this.getConfig(configId);
+        this.legend = this.config.legend;
+
+        this.loaded = true;
         this.imageExporter = new ImageExporter(this.openmct);
 
         this.composition.on('add', this.addChild);
@@ -119,10 +130,29 @@ export default {
         this.composition.load();
     },
     methods: {
+        getConfig(configId) {
+            let config = configStore.get(configId);
+            if (!config) {
+                config = new PlotConfigurationModel({
+                    id: configId,
+                    domainObject: this.domainObject,
+                    openmct: this.openmct,
+                    callback: (data) => {
+                        this.data = data;
+                    }
+                });
+                configStore.add(configId, config);
+            }
+
+            return config;
+        },
         loadingUpdated(loaded) {
             this.loading = loaded;
         },
         destroy() {
+            // this.stopListening();
+            configStore.deleteStore(this.config.id);
+
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.composition.off('reorder', this.compositionReorder);
@@ -198,6 +228,25 @@ export default {
             }
 
             this.$set(this.tickWidthMap, plotId, width);
+        },
+        registerSeriesListeners(configId) {
+            this.seriesConfig[configId] = this.getConfig(configId);
+            this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
+            this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
+
+            this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
+        },
+        addSeries(series) {
+            const index = this.seriesModels.length;
+            this.$set(this.seriesModels, index, series);
+        },
+        removeSeries(plotSeries) {
+            const index = this.seriesModels.findIndex(seriesModel => this.openmct.objects.areIdsEqual(seriesModel.identifier, plotSeries.identifier));
+            if (index > -1) {
+                this.$delete(this.seriesModels, index);
+            }
+
+            this.stopListening(plotSeries);
         }
     }
 };
