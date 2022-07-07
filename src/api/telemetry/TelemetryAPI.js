@@ -276,9 +276,9 @@ export default class TelemetryAPI {
             return this.handleMissingRequestProvider(domainObject);
         }
 
-        const args = await this.applyRequestInterceptors(...arguments);
+        arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
 
-        return provider.request(domainObject, args)
+        return provider.request.apply(provider, arguments)
             .catch((rejected) => {
                 if (rejected.name !== 'AbortError') {
                     this.openmct.notifications.error('Error requesting telemetry data, see console for details');
