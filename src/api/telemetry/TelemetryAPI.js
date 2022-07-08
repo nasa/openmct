@@ -61,7 +61,7 @@ export default class TelemetryAPI {
      * @returns {CustomStringFormatter}
      */
     customStringFormatter(valueMetadata, format) {
-        return new CustomStringFormatter.default(this.openmct, valueMetadata, format);
+        return new CustomStringFormatter(this.openmct, valueMetadata, format);
     }
 
     /**
