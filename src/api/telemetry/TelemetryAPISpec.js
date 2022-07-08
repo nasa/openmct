@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import TelemetryAPI from './TelemetryAPI';
-const { TelemetryCollection } = require("./TelemetryCollection");
+import TelemetryCollection from './TelemetryCollection';
 
 describe('Telemetry API', function () {
     let openmct;
