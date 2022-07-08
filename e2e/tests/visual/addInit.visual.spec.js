@@ -38,6 +38,8 @@ const sinon = require('sinon');
 
 const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
 
+const CUSTOM_NAME = 'CUSTOM_NAME';
+
 // Snippet from https://github.com/microsoft/playwright/issues/6347#issuecomment-965887758
 // Will replace with cy.clock() equivalent
 test.beforeEach(async ({ context }) => {
@@ -52,21 +54,23 @@ test.beforeEach(async ({ context }) => {
     });
 });
 
-test('Visual - Default Gauge is correct @addInit', async ({ page }) => {
-
-    await page.addInitScript({ path: path.join(__dirname, '../plugins/gauge', './addInitGauge.js') });
+test('Visual - Restricted Notebook is visually correct @addInit', async ({ page }) => {
+    // eslint-disable-next-line no-undef
+    await page.addInitScript({ path: path.join(__dirname, '../plugins/notebook', './addInitRestrictedNotebook.js') });
     //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
-
     //Click the Create button
     await page.click('button:has-text("Create")');
+    // Click text=CUSTOM_NAME
+    await page.click(`text=${CUSTOM_NAME}`);
+    // Click text=OK
+    await Promise.all([
+        page.waitForNavigation({waitUntil: 'networkidle'}),
+        page.click('text=OK')
+    ]);
 
-    await page.click('text=Gauge');
-
-    await page.click('text=OK');
-
-    // Take a snapshot of the newly created Gauge object
+    // Take a snapshot of the newly created CUSTOM_NAME notebook
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Default Gauge');
+    await percySnapshot(page, 'Restricted Notebook with CUSTOM_NAME');
 
 });

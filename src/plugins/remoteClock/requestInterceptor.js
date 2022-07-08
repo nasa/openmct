@@ -20,11 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// this will be called from the test suite with
-// await page.addInitScript({ path: path.join(__dirname, 'addInitGauge.js') });
-// it will install the Gauge since it is not installed by default
+function remoteClockRequestInterceptor(openmct, remoteClockIdentifier, waitForBounds) {
+    let remoteClockLoaded = false;
 
-document.addEventListener('DOMContentLoaded', () => {
-    const openmct = window.openmct;
-    openmct.install(openmct.plugins.Gauge());
-});
+    return {
+        appliesTo: () => {
+            // Get the activeClock from the Global Time Context
+            const { activeClock } = openmct.time.getContextForView();
+
+            return activeClock !== undefined
+            && activeClock.key === 'remote-clock'
+            && !remoteClockLoaded;
+        },
+        invoke: async (request) => {
+            const { start, end } = await waitForBounds();
+            remoteClockLoaded = true;
+            request.start = start;
+            request.end = end;
+
+            return request;
+        }
+    };
+}
+
+export default remoteClockRequestInterceptor;
