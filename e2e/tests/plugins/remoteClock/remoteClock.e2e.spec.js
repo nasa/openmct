@@ -20,23 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FaultManagementViewProvider from './FaultManagementViewProvider';
-import FaultManagementObjectProvider from './FaultManagementObjectProvider';
-import FaultManagementInspectorViewProvider from './FaultManagementInspectorViewProvider';
+const { test } = require('../../../fixtures.js');
+// eslint-disable-next-line no-unused-vars
+const { expect } = require('@playwright/test');
 
-import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_NAMESPACE } from './constants';
-
-export default function FaultManagementPlugin() {
-    return function (openmct) {
-        openmct.types.addType(FAULT_MANAGEMENT_TYPE, {
-            name: 'Fault Management',
-            creatable: false,
-            description: 'Fault Management View',
-            cssClass: 'icon-bell'
+test.describe('Remote Clock', () => {
+    // eslint-disable-next-line require-await
+    test.fixme('blocks historical requests until first tick is received', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5221'
         });
-
-        openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new FaultManagementInspectorViewProvider(openmct));
-        openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
-    };
-}
+        // addInitScript to with remote clock
+        // Switch time conductor mode to 'remote clock'
+        // Navigate to telemetry
+        // Verify that the plot renders historical data within the correct bounds
+        // Refresh the page
+        // Verify again that the plot renders historical data within the correct bounds
+    });
+});

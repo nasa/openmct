@@ -28,7 +28,9 @@ const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Sine Wave Generator', () => {
-    test('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page }) => {
+    test('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page, browserName }) => {
+        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -40,44 +42,45 @@ test.describe('Sine Wave Generator', () => {
 
         // Verify that the each required field has required indicator
         // Title
-        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/req/);
 
         // Verify that the Notes row does not have a required indicator
         await expect(page.locator('.c-form__section div:nth-child(3) .form-row .c-form-row__state-indicator')).not.toContain('.req');
+        await page.locator('textarea[type="text"]').fill('Optional Note Text');
 
         // Period
-        await expect(page.locator('.c-form__section div:nth-child(4) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('div:nth-child(4) .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Amplitude
-        await expect(page.locator('.c-form__section div:nth-child(5) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('div:nth-child(5) .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Offset
-        await expect(page.locator('.c-form__section div:nth-child(6) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('div:nth-child(6) .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Data Rate
-        await expect(page.locator('.c-form__section div:nth-child(7) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('div:nth-child(7) .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Phase
-        await expect(page.locator('.c-form__section div:nth-child(8) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('div:nth-child(8) .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Randomness
-        await expect(page.locator('.c-form__section div:nth-child(9) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req']);
+        await expect(page.locator('div:nth-child(9) .c-form-row__state-indicator')).toHaveClass(/req/);
 
         // Verify that by removing value from required text field shows invalid indicator
         await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('');
-        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(['c-form-row__state-indicator  req invalid']);
+        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/invalid/);
 
         // Verify that by adding value to empty required text field changes invalid to valid indicator
-        await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('non empty');
-        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(['c-form-row__state-indicator  req valid']);
+        await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('New Sine Wave Generator');
+        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/valid/);
 
         // Verify that by removing value from required number field shows invalid indicator
         await page.locator('.field.control.l-input-sm input').first().fill('');
-        await expect(page.locator('.c-form__section div:nth-child(4) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req invalid']);
+        await expect(page.locator('div:nth-child(4) .c-form-row__state-indicator')).toHaveClass(/invalid/);
 
         // Verify that by adding value to empty required number field changes invalid to valid indicator
         await page.locator('.field.control.l-input-sm input').first().fill('3');
-        await expect(page.locator('.c-form__section div:nth-child(4) .form-row .c-form-row__state-indicator')).toHaveClass(['c-form-row__state-indicator  req valid']);
+        await expect(page.locator('div:nth-child(4) .c-form-row__state-indicator')).toHaveClass(/valid/);
 
         // Verify that can change value of number field by up/down arrows keys
         // Click .field.control.l-input-sm input >> nth=0
@@ -90,57 +93,6 @@ test.describe('Sine Wave Generator', () => {
         const value = await page.locator('.field.control.l-input-sm input').first().inputValue();
         await expect(value).toBe('6');
 
-        // Click .c-form-row__state-indicator.grows
-        await page.locator('.c-form-row__state-indicator.grows').click();
-
-        // Click text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]
-        await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').click();
-
-        // Click .c-form-row__state-indicator >> nth=0
-        await page.locator('.c-form-row__state-indicator').first().click();
-
-        // Fill text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]
-        await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('New Sine Wave Generator');
-
-        // Double click div:nth-child(4) .form-row .c-form-row__controls
-        await page.locator('div:nth-child(4) .form-row .c-form-row__controls').dblclick();
-
-        // Click .field.control.l-input-sm input >> nth=0
-        await page.locator('.field.control.l-input-sm input').first().click();
-
-        // Click div:nth-child(4) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(4) .form-row .c-form-row__state-indicator').click();
-
-        // Click .field.control.l-input-sm input >> nth=0
-        await page.locator('.field.control.l-input-sm input').first().click();
-
-        // Click .field.control.l-input-sm input >> nth=0
-        await page.locator('.field.control.l-input-sm input').first().click();
-
-        // Click div:nth-child(5) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(5) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Click div:nth-child(5) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(5) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Click div:nth-child(5) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(5) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Click div:nth-child(6) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(6) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Double click div:nth-child(7) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(7) .form-row .c-form-row__controls .form-control .field input').dblclick();
-
-        // Click div:nth-child(7) .form-row .c-form-row__state-indicator
-        await page.locator('div:nth-child(7) .form-row .c-form-row__state-indicator').click();
-
-        // Click div:nth-child(7) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(7) .form-row .c-form-row__controls .form-control .field input').click();
-
-        // Fill div:nth-child(7) .form-row .c-form-row__controls .form-control .field input
-        await page.locator('div:nth-child(7) .form-row .c-form-row__controls .form-control .field input').fill('3');
-
         //Click text=OK
         await Promise.all([
             page.waitForNavigation(),
@@ -151,7 +103,7 @@ test.describe('Sine Wave Generator', () => {
         // Verify object properties
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('New Sine Wave Generator');
 
-        // Verify canvas rendered
+        // Verify canvas rendered and can be interacted with
         await page.locator('canvas').nth(1).click({
             position: {
                 x: 341,
