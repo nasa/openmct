@@ -51,6 +51,7 @@
             @gridLines="onGridLinesChange"
             @lockHighlightPoint="lockHighlightPointUpdated"
             @highlights="highlightsUpdated"
+            @configLoaded="registerSeriesListeners"
         />
     </div>
 </div>
