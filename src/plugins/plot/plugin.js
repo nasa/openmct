@@ -27,7 +27,7 @@ import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPo
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
 import PlotViewActions from "./actions/ViewActions";
 import StackedPlotsInspectorViewProvider from "./inspector/StackedPlotsInspectorViewProvider";
-import stackedPlotConfigurationInterceptor from "./stackedPlot/stackedPlotInterceptor";
+import stackedPlotConfigurationInterceptor from "./stackedPlot/stackedPlotConfigurationInterceptor";
 
 export default function () {
     return function install(openmct) {
