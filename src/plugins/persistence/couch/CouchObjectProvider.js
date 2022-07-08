@@ -647,6 +647,7 @@ class CouchObjectProvider {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model);
+            document.metadata.created = Date.now();
             this.request(key, "PUT", document).then((response) => {
                 console.log('create check response', key);
                 this.#checkResponse(response, queued.intermediateResponse, key);
