@@ -253,7 +253,8 @@ define([
             Object.defineProperty(this, apiName, {
                 value: apiObject,
                 enumerable: false,
-                configurable: false
+                configurable: false,
+                writable: true
             });
         });
 
