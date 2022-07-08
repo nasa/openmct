@@ -21,23 +21,25 @@
  *****************************************************************************/
 
 <template>
-<div class="c-fault-mgmt__list-header c-fault-mgmt__list">
-    <div class="c-fault-mgmt__checkbox">
+<div class="c-fault-mgmt-item-header c-fault-mgmt__list-header c-fault-mgmt__list">
+    <div class="c-fault-mgmt-item-header c-fault-mgmt__checkbox">
         <input
             type="checkbox"
             :checked="isSelectAll"
             @input="selectAll"
         >
     </div>
-    <div class="c-fault-mgmt__list-content">
-        <div class="c-fault-mgmt__list-header-results"> {{ totalFaultsCount }} Results </div>
+    <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-results c-fault-mgmt__list-severity">
+        {{ totalFaultsCount }} Results
+    </div>
+    <div class="c-fault-mgmt__list-header-content">
         <div class="c-fault-mgmt__list-content-right">
-            <div class="c-fault-mgmt__list-header-tripVal c-fault-mgmt__list-trigVal">Trip Value</div>
-            <div class="c-fault-mgmt__list-header-liveVal c-fault-mgmt__list-curVal">Live Value</div>
-            <div class="c-fault-mgmt__list-header-trigTime c-fault-mgmt__list-trigTime">Trigger Time</div>
+            <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-tripVal">Trip Value</div>
+            <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-liveVal">Live Value</div>
+            <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header-trigTime">Trigger Time</div>
         </div>
     </div>
-    <div class="c-fault-mgmt__list-action-wrapper">
+    <div class=" c-fault-mgmt-item-header c-fault-mgmt__list-header-action-wrapper">
         <div class="c-fault-mgmt__list-header-sortButton c-fault-mgmt__list-action-button">
             <SelectField
                 class="c-fault-mgmt-viewButton"
