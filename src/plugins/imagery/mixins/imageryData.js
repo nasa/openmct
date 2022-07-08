@@ -76,7 +76,10 @@ export default {
         dataRemoved(dataToRemove) {
             this.imageHistory = this.imageHistory.filter(existingDatum => {
                 const shouldKeep = dataToRemove.some(datumToRemove => {
-                    return (existingDatum.utc !== datumToRemove.utc);
+                    const existingDatumTimestamp = this.parseTime(existingDatum);
+                    const datumToRemoveTimestamp = this.parseTime(datumToRemove);
+
+                    return (existingDatumTimestamp !== datumToRemoveTimestamp);
                 });
 
                 return shouldKeep;
