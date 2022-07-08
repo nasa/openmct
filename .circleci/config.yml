@@ -190,6 +190,10 @@ workflows:
           suite: ci
       - perf-test:
           node-version: lts/gallium
+      - e2e-test:
+          name: e2e-full-nightly
+          node-version: lts/gallium
+          suite: full
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
