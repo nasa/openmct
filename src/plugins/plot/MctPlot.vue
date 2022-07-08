@@ -480,7 +480,7 @@ export default {
                     end: range.max,
                     domain: this.config.xAxis.get('key')
                 })
-                    .then(this.stopLoading());
+                    .then(this.stopLoading.bind(this));
                 if (purge) {
                     plotSeries.purgeRecordsOutsideRange(range);
                 }

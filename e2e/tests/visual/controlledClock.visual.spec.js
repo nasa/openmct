@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -22,7 +21,9 @@
  *****************************************************************************/
 
 /*
-Collection of Visual Tests set to run with modified init scripts to inject plugins not otherwise available in the default contexts.
+Collection of Visual Tests set to run in a default context. The tests within this suite
+are only meant to run against openmct's app.js started by `npm run start` within the
+`./e2e/playwright-visual.config.js` file.
 
 These should only use functional expect statements to verify assumptions about the state
 in a test and not for functional verification of correctness. Visual tests are not supposed
@@ -31,46 +32,39 @@ to "fail" on assertions. Instead, they should be used to detect changes between 
 Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
-const { test } = require('@playwright/test');
+const { test, expect } = require('@playwright/test');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
 const sinon = require('sinon');
-
-const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
-
-const CUSTOM_NAME = 'CUSTOM_NAME';
 
 // Snippet from https://github.com/microsoft/playwright/issues/6347#issuecomment-965887758
 // Will replace with cy.clock() equivalent
 test.beforeEach(async ({ context }) => {
     await context.addInitScript({
+        // eslint-disable-next-line no-undef
         path: path.join(__dirname, '../../..', './node_modules/sinon/pkg/sinon.js')
     });
     await context.addInitScript(() => {
         window.__clock = sinon.useFakeTimers({
-            now: 0,
-            shouldAdvanceTime: true
-        }); //Set browser clock to UNIX Epoch
+            now: 0, //Set browser clock to UNIX Epoch
+            shouldAdvanceTime: false, //Don't advance the clock
+            toFake: ["setTimeout", "nextTick"]
+        });
     });
 });
+test.use({ storageState: './e2e/test-data/VisualTestData_storage.json' });
 
-test('Visual - Restricted Notebook is visually correct @addInit', async ({ page }) => {
-    // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, '../plugins/notebook', './addInitRestrictedNotebook.js') });
-    //Go to baseURL
+test('Visual - Overlay Plot Loading Indicator @localstorage', async ({ page }) => {
+    // Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
-    //Click the Create button
-    await page.click('button:has-text("Create")');
-    // Click text=CUSTOM_NAME
-    await page.click(`text=${CUSTOM_NAME}`);
-    // Click text=OK
-    await Promise.all([
-        page.waitForNavigation({waitUntil: 'networkidle'}),
-        page.click('text=OK')
-    ]);
 
-    // Take a snapshot of the newly created CUSTOM_NAME notebook
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Restricted Notebook with CUSTOM_NAME');
+    await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
+    //Ensure that we're on the Unnamed Overlay Plot object
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Overlay Plot');
 
+    //Wait for canvas to be rendered and stop animating
+    await page.locator('canvas >> nth=1').hover({trial: true});
+
+    //Take snapshot of Sine Wave Generator within Overlay Plot
+    await percySnapshot(page, 'SineWaveInOverlayPlot');
 });

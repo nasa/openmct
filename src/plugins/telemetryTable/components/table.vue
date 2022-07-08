@@ -144,7 +144,7 @@
         <progress-bar
             v-if="loading"
             class="c-telemetry-table__progress-bar"
-            :model="progressLoad"
+            :model="{progressPerc: undefined}"
         />
 
         <!-- Headers table -->
@@ -385,11 +385,6 @@ export default {
         };
     },
     computed: {
-        progressLoad() {
-            return {
-                progressPerc: undefined
-            };
-        },
         dropTargetStyle() {
             return {
                 top: this.$refs.headersTable.offsetTop + 'px',

@@ -281,11 +281,11 @@ export default {
                 this.xKeyOptions.push(
                     metadataValues.reduce((previousValue, currentValue) => {
                         return {
-                            name: `${previousValue.name}, ${currentValue.name}`,
+                            name: previousValue?.name ? `${previousValue.name}, ${currentValue.name}` : `${currentValue.name}`,
                             value: currentValue.key,
                             isArrayValue: currentValue.isArrayValue
                         };
-                    })
+                    }, {name: ''})
                 );
             }
 
@@ -336,6 +336,8 @@ export default {
 
                     return option;
                 });
+            } else if (this.xKey !== undefined && this.domainObject.configuration.axes.yKey === undefined) {
+                this.domainObject.configuration.axes.yKey = 'none';
             }
 
             this.xKeyOptions = this.xKeyOptions.map((option, index) => {
