@@ -121,14 +121,6 @@ export default {
             min: this.model.value.min
         };
     },
-    watch: {
-        model: {
-            handler(newModel) {
-                console.log(newModel);
-            },
-            deep: true
-        }
-    },
     mounted() {
         this.openmct.forms.on('formPropertiesChanged', this.onFormPropertyChange);
     },
