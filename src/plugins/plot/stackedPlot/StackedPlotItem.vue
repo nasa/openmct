@@ -106,6 +106,9 @@ export default {
         if (this.component) {
             this.component.$destroy();
         }
+
+        const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
+        configStore.deleteStore(configId);
     },
     methods: {
         updateComponentProp(prop, value) {
