@@ -10,7 +10,7 @@ const config = {
     workers: 1, // visual tests should never run in parallel due to test pollution
     webServer: {
         command: 'npm run start',
-        port: 8080,
+        url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
     },

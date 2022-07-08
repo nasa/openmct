@@ -203,7 +203,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name telemetry
          */
-        this.telemetry = new api.TelemetryAPI(this);
+        this.telemetry = new api.TelemetryAPI.default(this);
 
         /**
          * An interface for creating new indicators and changing them dynamically.
@@ -281,6 +281,7 @@ define([
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.DeviceClassifier());
         this.install(this.plugins.UserIndicator());
+        this.install(this.plugins.Gauge());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

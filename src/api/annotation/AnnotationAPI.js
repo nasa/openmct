@@ -172,17 +172,19 @@ export default class AnnotationAPI extends EventEmitter {
                 name: contentText,
                 domainObject: targetDomainObject,
                 annotationType,
-                tags: [],
+                tags: [tag],
                 contentText,
                 targets
             };
-            existingAnnotation = await this.create(annotationCreationArguments);
+            const newAnnotation = await this.create(annotationCreationArguments);
+
+            return newAnnotation;
+        } else {
+            const tagArray = [tag, ...existingAnnotation.tags];
+            this.openmct.objects.mutate(existingAnnotation, 'tags', tagArray);
+
+            return existingAnnotation;
         }
-
-        const tagArray = [tag, ...existingAnnotation.tags];
-        this.openmct.objects.mutate(existingAnnotation, 'tags', tagArray);
-
-        return existingAnnotation;
     }
 
     removeAnnotationTag(existingAnnotation, tagToRemove) {
