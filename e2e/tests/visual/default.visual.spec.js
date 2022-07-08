@@ -32,7 +32,8 @@ to "fail" on assertions. Instead, they should be used to detect changes between 
 Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../fixtures.js');
+const { expect } = require('@playwright/test');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
 const sinon = require('sinon');
@@ -96,7 +97,11 @@ test('Visual - Default Condition Set', async ({ page }) => {
     await percySnapshot(page, 'Default Condition Set');
 });
 
-test('Visual - Default Condition Widget', async ({ page }) => {
+test.fixme('Visual - Default Condition Widget', async ({ page }) => {
+    test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/5349'
+    });
     //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -206,3 +211,22 @@ test('Visual - Display Layout Icon is correct', async ({ page }) => {
     await percySnapshot(page, 'Display Layout Create Menu');
 
 });
+
+test('Visual - Default Gauge is correct', async ({ page }) => {
+
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    await page.click('text=Gauge');
+
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Gauge object
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Gauge');
+
+});
+

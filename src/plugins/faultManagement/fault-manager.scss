@@ -19,216 +19,250 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-/*********************************************** FAULT PROPERTIES */
-.is-severity-critical{
-    @include glyphBefore($glyph-icon-alert-triangle);
-    color: $colorStatusError;
-}
-
-.is-severity-warning{
-    @include glyphBefore($glyph-icon-alert-rect);
-    color: $colorStatusAlert;
-}
-
-.is-severity-watch{
-    @include glyphBefore($glyph-icon-info);
-    color: $colorCommand;
-}
-
-.is-unacknowledged{
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: severityAnim, $dur: 200ms);
-    }
-}
-
-.is-selected { 
-    background: $colorSelectedBg;
-}
-
-.is-shelved{
-    .c-fault-mgmt__list-content{
-        opacity: 50% !important;
-        font-style: italic;
-    }
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: shelvedAnim, $dur: 0ms);
-    }
-}
-
-
+$colorFaultItemFg: $colorBodyFg;
+$colorFaultItemFgEmphasis: $colorBodyFgEm;
+$colorFaultItemBg: pullForward($colorBodyBg, 5%);
 
 /*********************************************** SEARCH  */
-.c-fault-mgmt__search-row{
+.c-fault-mgmt__search-row {
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
     > * + * {
        margin-left: 10px;
        float: right;
     }
 }
 
-.c-fault-mgmt-search{
+.c-fault-mgmt-search {
     width: 95%;
 }
 
 /*********************************************** TOOLBAR */
-.c-fault-mgmt__toolbar{
-    display: flex; 
+.c-fault-mgmt__toolbar {
+    display: flex;
     justify-content: center;
-    > * {
-        font-size: 1.25em;
+    flex: 0 0 auto;
+    > * + * {
+       margin-left: $interiorMargin;
     }
 }
 
 /*********************************************** LIST VIEW */
-.c-faults-list-view { 
+.c-faults-list-view {
     display: flex;
     flex-direction: column;
+    height: 100%;
+
     > * + * {
-        margin-top: $interiorMargin; 
+        margin-top: $interiorMargin;
     }
 }
 
+.c-faults-list-view-header-item-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: max-content max-content repeat(5,minmax(max-content, 20%)) max-content;
+    grid-row-gap: $interiorMargin;
 
-/*********************************************** FAULT ITEM */
-.c-fault-mgmt__list{
-    background: rgba($colorBodyFg, 0.1);
-    margin-bottom: 5px;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-
-    > * {
-        margin-left: $interiorMargin;
+    &-wrapper {
+        flex: 1 1 auto;
+        padding-right: $interiorMargin; // Fend of from scrollbar
+        overflow-y: auto;
     }
-    
-    &-severity{
+
+    .--width-less-than-600 & {
+        grid-template-columns: max-content max-content 1fr 1fr max-content;
+    }
+}
+
+.c-faults-list-view-item-body {
+   display: contents;
+}
+
+/*********************************************** LIST */
+.c-fault-mgmt__list {
+    display: contents;
+    color: $colorFaultItemFg;
+
+    &-checkbox{
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    &-severity {
         font-size: 2em;
-        margin-left: $interiorMarginLg;
-     }
 
-    &-pathname{
-        flex-wrap: wrap;
-        flex: 1 1 auto;
-        
-    }
-    &-path{
-        font-size: .75em;
-    } 
+        &.is-severity-critical {
+            @include glyphBefore($glyph-icon-alert-triangle);
+            color: $colorStatusError;
+        }
 
-    &-faultname{
-        font-weight: bold;
-        font-size: 1.3em;
-    }
+        &.is-severity-warning {
+            @include glyphBefore($glyph-icon-alert-rect);
+            color: $colorStatusAlert;
+        }
 
-    &-content{
-        display: flex;
-        flex-wrap: wrap;
-        flex: 1 1 auto;
-        align-items: center;
-    }
-
-    &-content-right{
-        margin-left: auto;
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    &-trigVal, &-curVal, &-trigTime{
-        @include ellipsize;
-        border-radius: $controlCr;
-        padding: $interiorMargin;
-        width: 80px;
-        margin-right: $interiorMarginLg;
-
-    }
-
-    &-trigVal {
-        @include isLimit();
-        background: rgba($colorBodyFg, 0.25);
-    }
-
-    &-curVal {
-        @include isLimit();
-        background: rgba($colorBodyFg, 0.25);
-        &-alert{
-            background: $colorWarningHi;
+        &.is-severity-watch {
+            @include glyphBefore($glyph-icon-info);
+            color: $colorCommand;
         }
     }
 
-    &-trigTime{
-        width: auto;
+     &-content {
+        display: contents;
+
+        .--width-less-than-600 & {
+            display: flex;
+            flex-wrap: wrap;
+            grid-column: span 2;
+         }
     }
 
-    &-action-wrapper{
-        display: flex;
-        align-content: right;
-        width: 100px;
+    &-pathname {
+        padding-right: $interiorMarginLg;
+        overflow-wrap: anywhere;
+        min-width: 100px;
+
+    }
+    &-path {
+        font-size: .85em;
+        margin-left: $interiorMargin;
     }
 
-    &-action-button{
+    &-faultname{
+        font-size: 1.3em;
+        margin-left: $interiorMargin;
+    }
+
+    &-content-right {
+        display: contents;
+    }
+
+    &-trigTime {
+        grid-column: 6 / span 2;
+    }
+
+    &-action-wrapper {
+        text-align: right;
+        flex: 0 0 auto;
+        align-items: stretch;
+    }
+
+    &-action-button {
         flex: 0 0 auto;
         margin-left: auto;
-        justify-content: right;
+        text-align: right;
+    }
+
+    // STATES
+    &.is-unacknowledged {
+        color: $colorFaultItemFgEmphasis;
+        .c-fault-mgmt__list-severity {
+            @include pulse($animName: severityAnim, $dur: 200ms);
+        }
+    }
+
+    &.is-acknowledged,
+    &.is-shelved {
+        .c-fault-mgmt__list-severity {
+            &:before {
+                opacity: 60%;
+                //font-size: 1.5em;
+            }
+
+            &:after {
+                color: $colorFaultItemFgEmphasis;
+                display: block;
+                font-family: symbolsfont;
+                position: absolute;
+                //text-shadow: black 0 0 2px;
+                right: -3px;
+                bottom: -3px;
+                transform-origin: right bottom;
+                transform: scale(0.6);
+            }
+        }
+    }
+
+    &.is-shelved {
+        .c-fault-mgmt__list-pathname {
+            font-style: italic;
+        }
+    }
+
+    &.is-acknowledged .c-fault-mgmt__list-severity:after {
+        content: $glyph-icon-check;
+    }
+
+    &.is-shelved .c-fault-mgmt__list-severity:after {
+        content: $glyph-icon-timer;
     }
 }
 
 /*********************************************** LIST HEADER */
-.c-fault-mgmt__list-header{
-    display: flex;
-    background: rgba($colorBodyFg, .23);
+.c-fault-mgmt__list-header {
+    display: contents;
     border-radius: $controlCr;
+    align-items: center;
 
-    &-tripVal, &-liveVal, &-trigTime{
-        background: none;
+    * {
+        margin: 0px;
+        border-radius: 0px;
     }
 
-    &-trigTime{
-        width: 160px;
-    }
-    &-sortButton{
-        flex: 0 0 auto;
-        margin-left: auto;
-        justify-content: right;
-        display: flex;
-        align-content: right;
-        width: 100px;
+    .--width-less-than-600 & {
+        .c-fault-mgmt__list-content-right {
+            display:none;
+        }
     }
 
-}
+    &-content {
+        display: contents;
+    }
 
-.is-severity-critical{
-    @include glyphBefore($glyph-icon-alert-triangle);
-    color: $colorStatusError;
-}
+    &-results {
+        grid-column: 2 / span 2;
+        font-size: 1em;
+        height: auto;
+    }
 
-.is-severity-warning{
-    @include glyphBefore($glyph-icon-alert-rect);
-    color: $colorStatusAlert;
-}
+    &-action-wrapper {
+        grid-column: 7 / span 2;
 
-.is-severity-watch{
-    @include glyphBefore($glyph-icon-info);
-    color: $colorCommand;
-}
-
-.is-unacknowledged{
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: severityAnim, $dur: 200ms);
+        .--width-less-than-600 & {
+            grid-column: 4 / span 2;
+        }
     }
 }
 
-.is-selected { 
-    background: $colorSelectedBg;
-}
+/*********************************************** GRID ITEM */
+.c-fault-mgmt-item {
+    $p: $interiorMargin;
+    padding: $p;
+    background: $colorFaultItemBg;
+    white-space: nowrap;
 
-.is-shelved{
-    .c-fault-mgmt__list-content{
-        opacity: 60% !important;
-        font-style: italic;
+    &-header {
+        $c: $colorBodyBg;
+        background: $c;
+        border-bottom: 5px solid $c; // Creates illusion of "space" beneath header
+        min-height: 30px; // Needed to align cells
+        padding: $p;
+        position: sticky;
+        top: 0;
+        z-index: 2;
     }
-    .c-fault-mgmt__list-severity{
-        @include pulse($animName: shelvedAnim, $dur: 0ms);
+
+    &__value {
+        @include isLimit();
+        background: rgba($colorBodyFg, 0.1);
+        padding: $p;
+        border-radius: $controlCr;
+        display: inline-flex;
+    }
+
+    .is-selected & {
+        background: $colorSelectedBg;
     }
 }
