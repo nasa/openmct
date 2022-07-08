@@ -35,8 +35,8 @@ function remoteClockRequestInterceptor(openmct, remoteClockIdentifier, waitForBo
         invoke: async (request) => {
             const { start, end } = await waitForBounds();
             remoteClockLoaded = true;
-            request[1].start = start;
-            request[1].end = end;
+            request.start = start;
+            request.end = end;
 
             return request;
         }
