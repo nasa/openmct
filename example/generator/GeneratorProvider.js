@@ -32,7 +32,8 @@ define([
         offset: 0,
         dataRateInHz: 1,
         randomness: 0,
-        phase: 0
+        phase: 0,
+        loadDelay: 0
     };
 
     function GeneratorProvider(openmct) {
@@ -53,8 +54,9 @@ define([
             'period',
             'offset',
             'dataRateInHz',
+            'randomness',
             'phase',
-            'randomness'
+            'loadDelay'
         ];
 
         request = request || {};

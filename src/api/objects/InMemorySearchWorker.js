@@ -94,19 +94,16 @@
 
         });
         // remove old tags
-        if (model.oldTags) {
-            model.oldTags.forEach(tagIDToRemove => {
-                const existsInNewModel = model.tags.includes(tagIDToRemove);
-                if (!existsInNewModel && indexedAnnotationsByTag[tagIDToRemove]) {
-                    indexedAnnotationsByTag[tagIDToRemove] = indexedAnnotationsByTag[tagIDToRemove].
-                        filter(annotationToRemove => {
-                            const shouldKeep = annotationToRemove.keyString !== keyString;
+        const tagsToRemoveFromIndex = Object.keys(indexedAnnotationsByTag).filter(indexedTag => {
+            return !(model.tags.includes(indexedTag));
+        });
+        tagsToRemoveFromIndex.forEach(tagToRemoveFromIndex => {
+            indexedAnnotationsByTag[tagToRemoveFromIndex] = indexedAnnotationsByTag[tagToRemoveFromIndex].filter(indexedAnnotation => {
+                const shouldKeep = indexedAnnotation.keyString !== keyString;
 
-                            return shouldKeep;
-                        });
-                }
+                return shouldKeep;
             });
-        }
+        });
     }
 
     function indexItem(keyString, model) {
@@ -116,7 +113,7 @@
             keyString
         };
         if (model && (model.type === 'annotation')) {
-            if (model.targets && model.targets) {
+            if (model.targets) {
                 indexAnnotation(objectToIndex, model);
             }
 
