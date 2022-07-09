@@ -215,6 +215,8 @@ class CouchObjectProvider {
             // Network error, CouchDB unreachable.
             if (response === null) {
                 this.indicator.setIndicatorToState(DISCONNECTED);
+                console.error(error.message);
+                throw new Error(`CouchDB Error - No response"`);
             }
 
             console.error(error.message);
@@ -377,15 +379,7 @@ class CouchObjectProvider {
         };
 
         return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
-            if (!response) {
-                //There was no response - no error code, no rows, nothing - this is bad and should not happen
-                // Network error, CouchDB unreachable.
-                if (response === null) {
-                    this.indicator.setIndicatorToState(DISCONNECTED);
-                }
-
-                console.error('Failed to retrieve response: #bulkGet');
-            } else if (response.rows !== undefined) {
+            if (response && response.rows !== undefined) {
                 return response.rows.reduce((map, row) => {
                     //row.doc === null if the document does not exist.
                     //row.doc === undefined if the document is not found.
