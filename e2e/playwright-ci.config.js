@@ -4,6 +4,10 @@
 
 // eslint-disable-next-line no-unused-vars
 const { devices } = require('@playwright/test');
+const CI = process.env.CI === 'true';
+const MAX_FAILURES = 5;
+const CI_WORKERS = 2;
+const LOCAL_WORKERS = 4;
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
@@ -15,10 +19,10 @@ const config = {
         command: 'npm run start',
         url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
-        reuseExistingServer: !process.env.CI
+        reuseExistingServer: !CI
     },
-    maxFailures: process.env.CI ? 5 : undefined, //Limits failures to 5 to reduce CI Waste
-    workers: 2, //Limit to 2 for CircleCI Agent
+    maxFailures: CI ? MAX_FAILURES : undefined, //Limits failures to 5 to reduce CI Waste
+    workers: CI ? CI_WORKERS : LOCAL_WORKERS, //Limit to 2 for CircleCI Agent
     use: {
         baseURL: 'http://localhost:8080/',
         headless: true,
