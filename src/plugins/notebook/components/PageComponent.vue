@@ -133,9 +133,7 @@ export default {
                 return;
             }
 
-            target.textContent = target.textContent.trim().toString();
-
-            const name = target.textContent;
+            const name = target.textContent = target.textContent ? target.textContent.trim().toString() : `Unnamed ${this.pageTitle}`;
 
             if (name === '' || this.page.name === name) {
                 return;
