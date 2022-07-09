@@ -7,6 +7,9 @@ const path = require('path');
 
 const vueLoaderRule = config.module.rules.find(r => r.use === 'vue-loader');
 
+// eslint-disable-next-line no-undef
+config.devtool = process.env.CI ? false : undefined;
+
 vueLoaderRule.use = {
     loader: 'vue-loader'
     // Attempt to use Babel with babel-plugin-istanbul
