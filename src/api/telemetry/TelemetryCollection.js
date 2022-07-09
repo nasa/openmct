@@ -170,7 +170,6 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
-        performance.mark('tlm:process:start');
         if (telemetryData === undefined) {
             return;
         }
@@ -389,7 +388,6 @@ export default class TelemetryCollection extends EventEmitter {
      * @todo handle subscriptions more granually
      */
     _reset() {
-        performance.mark('tlm:reset');
         this.boundedTelemetry = [];
         this.futureBuffer = [];
 
