@@ -91,6 +91,13 @@
             flex: 0 1 auto;
         }
 
+        &__name:empty {
+            min-width: 0.8em;
+            &:hover {
+                background: $sideBarBg;
+            }
+        }
+
         &__menu-indicator {
             flex: 0 0 auto;
             font-size: 0.8em;

@@ -9,6 +9,7 @@
         class="c-list__item__name js-list__item__name"
         :data-id="section.id"
         contenteditable="true"
+        @keydown.escape="updateName"
         @keydown.enter="updateName"
         @blur="updateName"
     >{{ sectionName }}</span>
@@ -96,8 +97,7 @@ export default {
             removeDialog.show();
         },
         selectSection(event) {
-            const target = event.target;
-            const id = target.dataset.id;
+            const { target, target: { dataset: { id } } } = event;
 
             if (!this.section.isLocked) {
                 const section = target.closest('.js-list__item');
@@ -116,16 +116,34 @@ export default {
 
             this.$emit('selectSection', id);
         },
-        updateName(event) {
-            const target = event.target;
-            target.classList.remove('c-input-inline');
-            const name = target.textContent.trim();
+        renameSection(target) {
+            if (!target) {
+                return;
+            }
+
+            target.textContent = target.textContent.trim().toString();
+
+            const name = target.textContent;
 
             if (name === '' || this.section.name === name) {
                 return;
             }
 
             this.$emit('renameSection', Object.assign(this.section, { name }));
+        },
+        updateName(event) {
+            const { target, keyCode, type } = event;
+
+            if (keyCode === 27) {
+                target.textContent = this.section.name;
+            } else if (keyCode === 13 || type === 'blur') {
+                this.renameSection(target);
+            }
+
+            target.scrollLeft = '0';
+            target.classList.remove('c-input-inline');
+
+            target.blur();
         }
     }
 };

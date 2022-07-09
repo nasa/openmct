@@ -14,6 +14,7 @@
             class="c-list__item__name js-list__item__name"
             :data-id="page.id"
             :contenteditable="true"
+            @keydown.escape="updateName"
             @keydown.enter="updateName"
             @blur="updateName"
         >{{ pageName }}</div>
@@ -127,16 +128,34 @@ export default {
 
             this.$emit('selectPage', id);
         },
-        updateName(event) {
-            const target = event.target;
-            const name = target.textContent.toString();
-            target.classList.remove('c-input-inline');
+        renamePage(target) {
+            if (!target) {
+                return;
+            }
+
+            target.textContent = target.textContent.trim().toString();
+
+            const name = target.textContent;
 
             if (name === '' || this.page.name === name) {
                 return;
             }
 
             this.$emit('renamePage', Object.assign(this.page, { name }));
+        },
+        updateName(event) {
+            const { target, keyCode, type } = event;
+
+            if (keyCode === 27) {
+                target.textContent = this.page.name;
+            } else if (keyCode === 13 || type === 'blur') {
+                this.renamePage(target);
+            }
+
+            target.scrollLeft = '0';
+            target.classList.remove('c-input-inline');
+
+            target.blur();
         }
     }
 };
