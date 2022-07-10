@@ -215,6 +215,8 @@ class CouchObjectProvider {
             // Network error, CouchDB unreachable.
             if (response === null) {
                 this.indicator.setIndicatorToState(DISCONNECTED);
+                console.error(error.message);
+                throw new Error(`CouchDB Error - No response"`);
             }
 
             console.error(error.message);
@@ -379,6 +381,8 @@ class CouchObjectProvider {
         return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
             if (response && response.rows !== undefined) {
                 return response.rows.reduce((map, row) => {
+                    //row.doc === null if the document does not exist.
+                    //row.doc === undefined if the document is not found.
                     if (row.doc !== undefined) {
                         map[row.key] = this.#getModel(row.doc);
                     }
@@ -647,6 +651,7 @@ class CouchObjectProvider {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model);
+            document.metadata.created = Date.now();
             this.request(key, "PUT", document).then((response) => {
                 console.log('create check response', key);
                 this.#checkResponse(response, queued.intermediateResponse, key);
