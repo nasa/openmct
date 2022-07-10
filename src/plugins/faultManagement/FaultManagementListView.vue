@@ -96,17 +96,19 @@ export default {
     computed: {
         filteredFaultsList() {
             const filterName = FILTER_ITEMS[this.filterIndex];
-            let list = this.faultsList.filter(fault => !fault.shelved);
+            let list = this.faultsList;
+
+            // Exclude shelved alarms from all views except the Shelved view
+            if (filterName !== 'Shelved') {
+                list = list.filter(fault => fault.shelved !== true);
+            }
+
             if (filterName === 'Acknowledged') {
-                list = this.faultsList.filter(fault => fault.acknowledged);
-            }
-
-            if (filterName === 'Unacknowledged') {
-                list = this.faultsList.filter(fault => !fault.acknowledged);
-            }
-
-            if (filterName === 'Shelved') {
-                list = this.faultsList.filter(fault => fault.shelved);
+                list = list.filter(fault => fault.acknowledged);
+            } else if (filterName === 'Unacknowledged') {
+                list = list.filter(fault => !fault.acknowledged);
+            } else if (filterName === 'Shelved') {
+                list = list.filter(fault => fault.shelved);
             }
 
             if (this.searchTerm.length > 0) {
