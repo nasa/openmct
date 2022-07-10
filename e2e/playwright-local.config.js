@@ -12,10 +12,10 @@ const config = {
     testIgnore: '**/*.perf.spec.js',
     timeout: 30 * 1000,
     webServer: {
-        command: 'npm run start',
+        command: 'cross-env NODE_ENV=TEST npm run start',
         url: 'http://localhost:8080/#',
         timeout: 120 * 1000,
-        reuseExistingServer: !process.env.CI
+        reuseExistingServer: true
     },
     workers: 1,
     use: {

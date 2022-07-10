@@ -12,7 +12,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const request = require('request');
-const CI = process.env.CI === 'true';
+const TEST = process.env.NODE_ENV === 'TEST';
 
 // Defaults
 options.port = options.port || options.p || 8080;
@@ -51,7 +51,7 @@ class WatchRunPlugin {
 
 const webpack = require('webpack');
 let webpackConfig;
-if (CI) {
+if (TEST) {
     webpackConfig = require('./webpack.coverage');
 } else {
     webpackConfig = require('./webpack.dev');
@@ -60,9 +60,8 @@ if (CI) {
         'webpack-hot-middleware/client?reload=true',
         webpackConfig.entry.openmct
     ];
+    webpackConfig.plugins.push(new WatchRunPlugin());
 }
-
-webpackConfig.plugins.push(new WatchRunPlugin());
 
 const compiler = webpack(webpackConfig);
 
@@ -74,7 +73,7 @@ app.use(require('webpack-dev-middleware')(
     }
 ));
 
-if (!CI) {
+if (!TEST) {
     app.use(require('webpack-hot-middleware')(
         compiler,
         {}
