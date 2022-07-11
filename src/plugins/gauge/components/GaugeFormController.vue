@@ -136,15 +136,15 @@ export default {
                 model: this.model,
                 value: {
                     gaugeType: this.changes.gaugeType || this.model.value.gaugeType,
-                    isDisplayMinMax: this.changes.isDisplayMinMax || this.isDisplayMinMax,
-                    isDisplayCurVal: this.changes.isDisplayCurVal || this.isDisplayCurVal,
-                    isDisplayUnits: this.changes.isDisplayUnits || this.isDisplayUnits,
+                    isDisplayMinMax: this.changes.isDisplayMinMax === undefined ? this.isDisplayMinMax : this.changes.isDisplayMinMax,
+                    isDisplayCurVal: this.changes.isDisplayCurVal === undefined ? this.isDisplayCurVal : this.changes.isDisplayCurVal,
+                    isDisplayUnits: this.changes.isDisplayUnits === undefined ? this.isDisplayUnits : this.changes.isDisplayUnits,
                     isUseTelemetryLimits: this.isUseTelemetryLimits,
                     limitLow: this.limitLow,
                     limitHigh: this.limitHigh,
                     max: this.max,
                     min: this.min,
-                    precision: this.changes.precision || this.model.value.precision
+                    precision: this.changes.precision === undefined ? this.model.value.precision : this.changes.precision
                 }
             };
 
