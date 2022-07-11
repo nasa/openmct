@@ -236,7 +236,32 @@ export default {
         refreshData(bounds, isTick) {
             if (!isTick) {
                 const telemetryObjects = Object.values(this.telemetryObjects);
-                telemetryObjects.forEach(this.requestDataFor);
+                telemetryObjects.forEach((telemetryObject) => {
+                    //clear existing data
+                    const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                    const axisMetadata = this.getAxisMetadata(telemetryObject);
+                    let trace = {
+                        key,
+                        name: telemetryObject.name,
+                        x: [],
+                        y: [],
+                        xAxisMetadata: {},
+                        yAxisMetadata: axisMetadata.yAxisMetadata,
+                        type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
+                        mode: 'lines',
+                        line: {
+                            shape: this.domainObject.configuration.useInterpolation
+                        },
+                        marker: {
+                            color: this.domainObject.configuration.barStyles.series[key].color
+                        },
+                        hoverinfo: this.domainObject.configuration.useBar ? 'skip' : 'x+y'
+                    };
+                    this.addTrace(trace, key);
+                    //request new data
+                    this.requestDataFor(telemetryObject);
+                    this.subscribeToObject(telemetryObject);
+                });
             }
         },
         removeAllSubscriptions() {
