@@ -241,7 +241,7 @@ async function lockPage(page) {
 
     //artifically wait to avoid mutation delay TODO: https://github.com/nasa/openmct/issues/5409
     // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(1 * 1000);
+    await page.waitForTimeout(2 * 1000);
 }
 
 /**
@@ -253,7 +253,7 @@ async function openContextMenuRestrictedNotebook(page) {
 
     //artifically wait to avoid mutation delay TODO: https://github.com/nasa/openmct/issues/5409
     // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(1 * 1000);
+    await page.waitForTimeout(2 * 1000);
 
     // Click a:has-text("Unnamed CUSTOM_NAME")
     await page.locator(`a:has-text("Unnamed ${CUSTOM_NAME}")`).click({
