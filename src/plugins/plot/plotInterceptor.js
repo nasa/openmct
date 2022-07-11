@@ -20,11 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// this will be called from the test suite with
-// await page.addInitScript({ path: path.join(__dirname, 'addInitGauge.js') });
-// it will install the Gauge since it is not installed by default
+export default function plotInterceptor(openmct) {
 
-document.addEventListener('DOMContentLoaded', () => {
-    const openmct = window.openmct;
-    openmct.install(openmct.plugins.Gauge());
-});
+    openmct.objects.addGetInterceptor({
+        appliesTo: (identifier, domainObject) => {
+            return domainObject && domainObject.type === 'telemetry.plot.stacked';
+        },
+        invoke: (identifier, object) => {
+
+            if (object && object.configuration && object.configuration.series === undefined) {
+                object.configuration.series = [];
+            }
+
+            return object;
+        }
+    });
+}

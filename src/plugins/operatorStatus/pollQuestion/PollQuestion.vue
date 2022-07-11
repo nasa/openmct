@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import _ from 'lodash';
 
 export default {
     inject: ['openmct', 'indicator', 'configuration'],
@@ -119,6 +120,9 @@ export default {
     beforeDestroy() {
         this.openmct.user.status.off('statusChange', this.fetchStatusSummary);
         this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
+    },
+    created() {
+        this.fetchStatusSummary = _.debounce(this.fetchStatusSummary);
     },
     methods: {
         async fetchCurrentPoll() {

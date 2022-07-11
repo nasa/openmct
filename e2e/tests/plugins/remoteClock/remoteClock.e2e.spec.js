@@ -20,33 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * A CouchDocument describes domain object model in a format
- * which is easily read-written to CouchDB. This includes
- * Couch's _id and _rev fields, as well as a separate
- * metadata field which contains a subset of information found
- * in the model itself (to support search optimization with
- * CouchDB views.)
- * @memberof platform/persistence/couch
- * @constructor
- * @param {string} id the id under which to store this mode
- * @param {object} model the model to store
- * @param {string} rev the revision to include (or undefined,
- *        if no revision should be noted for couch)
- * @param {boolean} whether or not to mark this document as
- *        deleted (see CouchDB docs for _deleted)
- */
-export default function CouchDocument(id, model, rev, markDeleted) {
-    return {
-        "_id": id,
-        "_rev": rev,
-        "_deleted": markDeleted,
-        "metadata": {
-            "category": "domain object",
-            "type": model.type,
-            "owner": "admin",
-            "name": model.name
-        },
-        "model": model
-    };
-}
+const { test } = require('../../../fixtures.js');
+// eslint-disable-next-line no-unused-vars
+const { expect } = require('@playwright/test');
+
+test.describe('Remote Clock', () => {
+    // eslint-disable-next-line require-await
+    test.fixme('blocks historical requests until first tick is received', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5221'
+        });
+        // addInitScript to with remote clock
+        // Switch time conductor mode to 'remote clock'
+        // Navigate to telemetry
+        // Verify that the plot renders historical data within the correct bounds
+        // Refresh the page
+        // Verify again that the plot renders historical data within the correct bounds
+    });
+});

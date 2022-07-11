@@ -5,8 +5,6 @@ const config = require('./webpack.dev');
 
 const path = require('path');
 
-config.devtool = false;
-
 const vueLoaderRule = config.module.rules.find(r => r.use === 'vue-loader');
 
 vueLoaderRule.use = {

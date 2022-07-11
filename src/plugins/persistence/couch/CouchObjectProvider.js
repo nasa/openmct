@@ -199,6 +199,11 @@ class CouchObjectProvider {
         }
 
         let response = null;
+
+        if (!this.isObservingObjectChanges()) {
+            this.#observeObjectChanges();
+        }
+
         try {
             response = await fetch(this.url + '/' + subPath, fetchOptions);
             const { status } = response;
@@ -210,6 +215,8 @@ class CouchObjectProvider {
             // Network error, CouchDB unreachable.
             if (response === null) {
                 this.indicator.setIndicatorToState(DISCONNECTED);
+                console.error(error.message);
+                throw new Error(`CouchDB Error - No response"`);
             }
 
             console.error(error.message);
@@ -374,6 +381,8 @@ class CouchObjectProvider {
         return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
             if (response && response.rows !== undefined) {
                 return response.rows.reduce((map, row) => {
+                    //row.doc === null if the document does not exist.
+                    //row.doc === undefined if the document is not found.
                     if (row.doc !== undefined) {
                         map[row.key] = this.#getModel(row.doc);
                     }
@@ -471,9 +480,6 @@ class CouchObjectProvider {
                 this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
                 if (this.observers[keyString].length === 0) {
                     delete this.observers[keyString];
-                    if (Object.keys(this.observers).length === 0 && this.isObservingObjectChanges()) {
-                        this.stopObservingObjectChanges();
-                    }
                 }
             }
         };
@@ -498,7 +504,6 @@ class CouchObjectProvider {
         } else {
             this.#initiateSharedWorkerFetchChanges(sseURL.toString());
         }
-
     }
 
     /**
@@ -525,18 +530,24 @@ class CouchObjectProvider {
 
     onEventError(error) {
         console.error('Error on feed', error);
-        if (Object.keys(this.observers).length > 0) {
-            this.#observeObjectChanges();
-        }
+        const { readyState } = error.target;
+        this.#updateIndicatorStatus(readyState);
+    }
+
+    onEventOpen(event) {
+        const { readyState } = event.target;
+        this.#updateIndicatorStatus(readyState);
     }
 
     onEventMessage(event) {
+        const { readyState } = event.target;
         const eventData = JSON.parse(event.data);
         const identifier = {
             namespace: this.namespace,
             key: eventData.id
         };
         const keyString = this.openmct.objects.makeKeyString(identifier);
+        this.#updateIndicatorStatus(readyState);
         let observersForObject = this.observers[keyString];
 
         if (observersForObject) {
@@ -559,17 +570,18 @@ class CouchObjectProvider {
 
         this.stopObservingObjectChanges = () => {
             controller.abort();
-            couchEventSource.removeEventListener('message', this.onEventMessage);
+            couchEventSource.removeEventListener('message', this.onEventMessage.bind(this));
             delete this.stopObservingObjectChanges;
         };
 
         console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
         couchEventSource = new EventSource(url);
-        couchEventSource.onerror = this.onEventError;
+        couchEventSource.onerror = this.onEventError.bind(this);
+        couchEventSource.onopen = this.onEventOpen.bind(this);
 
         // start listening for events
-        couchEventSource.addEventListener('message', this.onEventMessage);
+        couchEventSource.addEventListener('message', this.onEventMessage.bind(this));
 
         console.debug('⇿ Opened connection ⇿');
     }
@@ -585,6 +597,31 @@ class CouchObjectProvider {
         });
 
         return intermediateResponse;
+    }
+
+    /**
+     * Update the indicator status based on the readyState of the EventSource
+     * @private
+     */
+    #updateIndicatorStatus(readyState) {
+        let message;
+        switch (readyState) {
+        case EventSource.CONNECTING:
+            message = 'pending';
+            break;
+        case EventSource.OPEN:
+            message = 'open';
+            break;
+        case EventSource.CLOSED:
+            message = 'close';
+            break;
+        default:
+            message = 'unknown';
+            break;
+        }
+
+        const indicatorState = this.#messageToIndicatorState(message);
+        this.indicator.setIndicatorToState(indicatorState);
     }
 
     /**
@@ -614,6 +651,7 @@ class CouchObjectProvider {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model);
+            document.metadata.created = Date.now();
             this.request(key, "PUT", document).then((response) => {
                 console.log('create check response', key);
                 this.#checkResponse(response, queued.intermediateResponse, key);
