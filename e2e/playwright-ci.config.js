@@ -27,7 +27,7 @@ const config = {
         ignoreHTTPSErrors: true,
         screenshot: 'only-on-failure',
         trace: 'on-first-retry',
-        video: 'on-first-retry'
+        video: 'off'
     },
     projects: [
         {
