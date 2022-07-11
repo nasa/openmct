@@ -12,7 +12,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const request = require('request');
-const TEST = process.env.NODE_ENV === 'TEST';
+const __TEST__ = process.env.NODE_ENV === 'test';
 
 // Defaults
 options.port = options.port || options.p || 8080;
@@ -51,7 +51,7 @@ class WatchRunPlugin {
 
 const webpack = require('webpack');
 let webpackConfig;
-if (TEST) {
+if (__TEST__) {
     webpackConfig = require('./webpack.coverage');
 } else {
     webpackConfig = require('./webpack.dev');
@@ -73,7 +73,7 @@ app.use(require('webpack-dev-middleware')(
     }
 ));
 
-if (!TEST) {
+if (!__TEST__) {
     app.use(require('webpack-hot-middleware')(
         compiler,
         {}
