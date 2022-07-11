@@ -28,7 +28,8 @@ const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Handle missing object for plots', () => {
-    test('Displays empty div for missing stacked plot item', async ({ page }) => {
+    test('Displays empty div for missing stacked plot item', async ({ page, browserName }) => {
+        test.fixme(browserName === 'firefox', 'Firefox failing due to console events being missed');
         const errorLogs = [];
 
         page.on("console", (message) => {
