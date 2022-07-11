@@ -140,7 +140,7 @@ async function triggerTimer3dotMenuAction(page, action) {
  * @param {TimerViewAction} action
  */
 async function triggerTimerViewAction(page, action) {
-    await page.hover('.c-timer');
+    await page.locator('.c-timer').hover({trial: true});
     const buttonTitle = buttonTitleFromAction(action);
     await page.click(`button[title="${buttonTitle}"]`);
     assertTimerStateAfterAction(page, action);
