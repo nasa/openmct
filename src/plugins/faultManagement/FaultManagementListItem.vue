@@ -23,12 +23,7 @@
 <template>
 <div
     class="c-fault-mgmt__list data-selectable"
-    :class="[
-        {'is-selected': isSelected},
-        {'is-unacknowledged': !fault.acknowledged},
-        {'is-shelved': fault.shelved},
-        {'is-acknowledged': fault.acknowledged}
-    ]"
+    :class="classesFromState"
 >
     <div class="c-fault-mgmt-item c-fault-mgmt__list-checkbox">
         <input
@@ -113,6 +108,36 @@ export default {
         }
     },
     computed: {
+        classesFromState() {
+            const exclusiveStates = [
+                {
+                    className: 'is-shelved',
+                    test: () => this.fault.shelved
+                },
+                {
+                    className: 'is-unacknowledged',
+                    test: () => !this.fault.acknowledged && !this.fault.shelved
+                },
+                {
+                    className: 'is-acknowledged',
+                    test: () => this.fault.acknowledged && !this.fault.shelved
+                }
+            ];
+
+            const classes = [];
+
+            if (this.isSelected) {
+                classes.push('is-selected');
+            }
+
+            const matchingState = exclusiveStates.find(stateDefinition => stateDefinition.test());
+
+            if (matchingState !== undefined) {
+                classes.push(matchingState.className);
+            }
+
+            return classes;
+        },
         liveValueClassname() {
             const currentValueInfo = this.fault?.currentValueInfo;
             if (!currentValueInfo || currentValueInfo.monitoringResult === 'IN_LIMITS') {

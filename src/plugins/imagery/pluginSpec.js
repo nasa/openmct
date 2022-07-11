@@ -373,39 +373,30 @@ describe("The Imagery View Layouts", () => {
             return Vue.nextTick();
         });
 
-        it("on mount should show the the most recent image", () => {
+        it("on mount should show the the most recent image", async () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
-            return Vue.nextTick(() => {
-                const imageInfo = getImageInfo(parent);
-
-                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
-            });
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
         });
 
-        it("on mount should show the any image layers", (done) => {
+        it("on mount should show the any image layers", async () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
-            Vue.nextTick().then(() => {
-                Vue.nextTick(() => {
-                    const layerEls = parent.querySelectorAll('.js-layer-image');
-                    console.log(layerEls);
-                    expect(layerEls.length).toEqual(1);
-                    done();
-                });
-            });
+            await Vue.nextTick();
+            const layerEls = parent.querySelectorAll('.js-layer-image');
+            console.log(layerEls);
+            expect(layerEls.length).toEqual(1);
         });
 
-        it("should show the clicked thumbnail as the main image", (done) => {
+        it("should show the clicked thumbnail as the main image", async () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
-            Vue.nextTick(() => {
-                const target = imageTelemetry[5].url;
-                parent.querySelectorAll(`img[src='${target}']`)[0].click();
-                Vue.nextTick(() => {
-                    const imageInfo = getImageInfo(parent);
+            await Vue.nextTick();
+            const target = imageTelemetry[5].url;
+            parent.querySelectorAll(`img[src='${target}']`)[0].click();
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
 
-                    expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
-                    done();
-                });
-            });
+            expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
         });
 
         xit("should show that an image is new", (done) => {
@@ -424,71 +415,60 @@ describe("The Imagery View Layouts", () => {
             });
         });
 
-        it("should show that an image is not new", (done) => {
-            Vue.nextTick(() => {
-                const target = imageTelemetry[4].url;
-                parent.querySelectorAll(`img[src='${target}']`)[0].click();
+        it("should show that an image is not new", async () => {
+            await Vue.nextTick();
+            const target = imageTelemetry[4].url;
+            parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
-                Vue.nextTick(() => {
-                    const imageIsNew = isNew(parent);
+            await Vue.nextTick();
+            const imageIsNew = isNew(parent);
 
-                    expect(imageIsNew).toBeFalse();
-                    done();
-                });
-            });
+            expect(imageIsNew).toBeFalse();
         });
 
-        it("should navigate via arrow keys", (done) => {
-            Vue.nextTick(() => {
-                let keyOpts = {
-                    element: parent.querySelector('.c-imagery'),
-                    key: 'ArrowLeft',
-                    keyCode: 37,
-                    type: 'keyup'
-                };
+        it("should navigate via arrow keys", async () => {
+            await Vue.nextTick();
+            const keyOpts = {
+                element: parent.querySelector('.c-imagery'),
+                key: 'ArrowLeft',
+                keyCode: 37,
+                type: 'keyup'
+            };
 
-                simulateKeyEvent(keyOpts);
+            simulateKeyEvent(keyOpts);
 
-                Vue.nextTick(() => {
-                    const imageInfo = getImageInfo(parent);
-
-                    expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
-                    done();
-                });
-            });
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
         });
 
-        it("should navigate via numerous arrow keys", (done) => {
-            Vue.nextTick(() => {
-                let element = parent.querySelector('.c-imagery');
-                let type = 'keyup';
-                let leftKeyOpts = {
-                    element,
-                    type,
-                    key: 'ArrowLeft',
-                    keyCode: 37
-                };
-                let rightKeyOpts = {
-                    element,
-                    type,
-                    key: 'ArrowRight',
-                    keyCode: 39
-                };
+        it("should navigate via numerous arrow keys", async () => {
+            await Vue.nextTick();
+            const element = parent.querySelector('.c-imagery');
+            const type = 'keyup';
+            const leftKeyOpts = {
+                element,
+                type,
+                key: 'ArrowLeft',
+                keyCode: 37
+            };
+            const rightKeyOpts = {
+                element,
+                type,
+                key: 'ArrowRight',
+                keyCode: 39
+            };
 
-                // left thrice
-                simulateKeyEvent(leftKeyOpts);
-                simulateKeyEvent(leftKeyOpts);
-                simulateKeyEvent(leftKeyOpts);
-                // right once
-                simulateKeyEvent(rightKeyOpts);
+            // left thrice
+            simulateKeyEvent(leftKeyOpts);
+            simulateKeyEvent(leftKeyOpts);
+            simulateKeyEvent(leftKeyOpts);
+            // right once
+            simulateKeyEvent(rightKeyOpts);
 
-                Vue.nextTick(() => {
-                    const imageInfo = getImageInfo(parent);
-
-                    expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
-                    done();
-                });
-            });
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
         });
         it ('shows an auto scroll button when scroll to left', (done) => {
             Vue.nextTick(() => {

@@ -210,9 +210,10 @@
         border-radius: $controlCr;
         display: flex;
         align-items: flex-start;
+        flex-direction: row;
         justify-content: space-between;
         padding: $interiorMargin;
-        width: min-content;
+        width: max-content;
 
         > * + * {
             margin-left: $interiorMargin;
@@ -338,7 +339,6 @@
     &__input {
         display: flex;
         align-items: center;
-        width: 100%;
 
         &:before {
             color: rgba($colorMenuFg, 0.5);
@@ -353,13 +353,16 @@
 
     &--filters {
         // Styles specific to the brightness and contrast controls
-
         .c-image-controls {
+            &__controls {
+                width: 80px; // About the minimum this element can be; cannot size based on % due to markup structure
+            }
+
             &__sliders {
                 display: flex;
                 flex: 1 1 auto;
                 flex-direction: column;
-                min-width: 80px;
+                width: 100%;
 
                 > * + * {
                     margin-top: 11px;

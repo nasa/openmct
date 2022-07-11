@@ -20,33 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * A CouchDocument describes domain object model in a format
- * which is easily read-written to CouchDB. This includes
- * Couch's _id and _rev fields, as well as a separate
- * metadata field which contains a subset of information found
- * in the model itself (to support search optimization with
- * CouchDB views.)
- * @memberof platform/persistence/couch
- * @constructor
- * @param {string} id the id under which to store this mode
- * @param {object} model the model to store
- * @param {string} rev the revision to include (or undefined,
- *        if no revision should be noted for couch)
- * @param {boolean} whether or not to mark this document as
- *        deleted (see CouchDB docs for _deleted)
- */
-export default function CouchDocument(id, model, rev, markDeleted) {
+function remoteClockRequestInterceptor(openmct, remoteClockIdentifier, waitForBounds) {
+    let remoteClockLoaded = false;
+
     return {
-        "_id": id,
-        "_rev": rev,
-        "_deleted": markDeleted,
-        "metadata": {
-            "category": "domain object",
-            "type": model.type,
-            "owner": "admin",
-            "name": model.name
+        appliesTo: () => {
+            // Get the activeClock from the Global Time Context
+            const { activeClock } = openmct.time.getContextForView();
+
+            return activeClock !== undefined
+            && activeClock.key === 'remote-clock'
+            && !remoteClockLoaded;
         },
-        "model": model
+        invoke: async (request) => {
+            const { start, end } = await waitForBounds();
+            remoteClockLoaded = true;
+            request.start = start;
+            request.end = end;
+
+            return request;
+        }
     };
 }
+
+export default remoteClockRequestInterceptor;

@@ -169,6 +169,7 @@
             </g>
             <g class="c-dial__text">
                 <text
+                    v-if="displayUnits"
                     x="50%"
                     y="70%"
                     text-anchor="middle"
