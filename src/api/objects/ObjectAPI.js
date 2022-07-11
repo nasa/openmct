@@ -233,7 +233,11 @@ export default class ObjectAPI {
 
             delete this.cache[keystring];
 
-            result = this.applyGetInterceptors(identifier);
+            if (!result) {
+                //no result means resource either doesn't exist or is missing
+                //otherwise it's an error, and we shouldn't apply interceptors
+                result = this.applyGetInterceptors(identifier);
+            }
 
             return result;
         });
