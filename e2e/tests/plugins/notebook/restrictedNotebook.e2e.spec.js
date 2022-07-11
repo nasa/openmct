@@ -80,8 +80,12 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await enterTextEntry(page);
         await lockPage(page);
 
+        // eslint-disable-next-line playwright/no-wait-for-timeout
+        await page.waitForTimeout(5 * 1000);
         // open sidebar
         await page.locator('button.c-notebook__toggle-nav-button').click();
+        // eslint-disable-next-line playwright/no-wait-for-timeout
+        await page.waitForTimeout(5 * 1000);
     });
 
     test('Locked page should now be in a locked state @addInit', async ({ page }) => {
