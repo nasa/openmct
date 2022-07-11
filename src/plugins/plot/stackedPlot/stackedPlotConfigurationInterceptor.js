@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function plotInterceptor(openmct) {
+export default function stackedPlotConfigurationInterceptor(openmct) {
 
     openmct.objects.addGetInterceptor({
         appliesTo: (identifier, domainObject) => {
