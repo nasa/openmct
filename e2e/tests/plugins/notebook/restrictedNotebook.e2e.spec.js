@@ -52,13 +52,12 @@ test.describe('Restricted Notebook', () => {
         // Click Remove Text
         await page.locator('text=Remove').click();
 
-        //Wait until Save Banner is gone
+        // Click 'OK' on confirmation window and wait for save banner to appear
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=OK').click(),
             page.waitForSelector('.c-message-banner__message')
         ]);
-        await page.locator('.c-message-banner__close-button').click();
 
         // has been deleted
         expect.soft(await restrictedNotebookTreeObject.count()).toEqual(0);
