@@ -193,6 +193,8 @@ test.describe('Example Imagery Object', () => {
         expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
         // wait for zoom animation to finish
+        // FIXME: The zoom is flakey, sometimes not returning to original dimensions
+        // https://github.com/nasa/openmct/issues/5491
         await expect.poll(async () => {
             await zoomResetBtn.click();
             const boundingBox = await page.locator(backgroundImageSelector).boundingBox();
