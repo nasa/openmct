@@ -35,7 +35,7 @@ test.describe('Restricted Notebook', () => {
     });
 
     test('Can be renamed @addInit', async ({ page }) => {
-        await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed ${CUSTOM_NAME}`);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed ${CUSTOM_NAME}`);
     });
 
     test('Can be deleted if there are no locked pages @addInit', async ({ page }) => {
@@ -60,7 +60,7 @@ test.describe('Restricted Notebook', () => {
         ]);
 
         // has been deleted
-        expect.soft(await restrictedNotebookTreeObject.count()).toEqual(0);
+        expect(await restrictedNotebookTreeObject.count()).toEqual(0);
     });
 
     test('Can be locked if at least one page has one entry @addInit', async ({ page }) => {
@@ -68,7 +68,7 @@ test.describe('Restricted Notebook', () => {
         await enterTextEntry(page);
 
         const commitButton = page.locator('button:has-text("Commit Entries")');
-        expect.soft(await commitButton.count()).toEqual(1);
+        expect(await commitButton.count()).toEqual(1);
     });
 
 });
@@ -80,15 +80,16 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await enterTextEntry(page);
         await lockPage(page);
 
+        // FIXME: Give ample time for the mutation to happen
+        // https://github.com/nasa/openmct/issues/5409
         // eslint-disable-next-line playwright/no-wait-for-timeout
-        await page.waitForTimeout(5 * 1000);
+        await page.waitForTimeout(1 * 1000);
+
         // open sidebar
         await page.locator('button.c-notebook__toggle-nav-button').click();
-        // eslint-disable-next-line playwright/no-wait-for-timeout
-        await page.waitForTimeout(5 * 1000);
     });
 
-    test('Locked page should now be in a locked state @addInit', async ({ page }) => {
+    test('Locked page should now be in a locked state @addInit', async ({ page }, testInfo) => {
         // main lock message on page
         const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
         expect.soft(await lockMessage.count()).toEqual(1);
@@ -99,11 +100,9 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
         // no way to remove a restricted notebook with a locked page
         await openContextMenuRestrictedNotebook(page);
-
         const menuOptions = page.locator('.c-menu ul');
 
-        await expect.soft(menuOptions).not.toContainText('Remove');
-
+        await expect(menuOptions).not.toContainText('Remove');
     });
 
     test('Can still: add page, rename, add entry, delete unlocked pages @addInit', async ({ page }) => {
@@ -142,7 +141,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
         // deleted page, should no longer exist
         const deletedPageElement = page.locator(`text=${TEST_TEXT_NAME}`);
-        expect.soft(await deletedPageElement.count()).toEqual(0);
+        expect(await deletedPageElement.count()).toEqual(0);
     });
 });
 
@@ -158,7 +157,7 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
         await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
 
         const embedMenu = page.locator('body >> .c-menu');
-        await expect.soft(embedMenu).toContainText('Remove This Embed');
+        await expect(embedMenu).toContainText('Remove This Embed');
     });
 
     test('Disallows embeds to be deleted if page locked @addInit', async ({ page }) => {
@@ -167,7 +166,7 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
         await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
 
         const embedMenu = page.locator('body >> .c-menu');
-        await expect.soft(embedMenu).not.toContainText('Remove This Embed');
+        await expect(embedMenu).not.toContainText('Remove This Embed');
     });
 
 });
@@ -235,28 +234,18 @@ async function lockPage(page) {
     await commitButton.click();
 
     //Wait until Lock Banner is visible
-    await Promise.all([
-        page.locator('text=Lock Page').click(),
-        page.waitForSelector('.c-message-banner__message')
-    ]);
-    // Close Lock Banner
-    await page.locator('.c-message-banner__close-button').click();
-
-    //artifically wait to avoid mutation delay TODO: https://github.com/nasa/openmct/issues/5409
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(2 * 1000);
+    await page.locator('text=Lock Page').click();
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function openContextMenuRestrictedNotebook(page) {
-    // Click text=Open MCT My Items (This expands the My Items folder to show it's chilren in the tree)
-    await page.locator('text=Open MCT My Items >> span').nth(3).click();
-
-    //artifically wait to avoid mutation delay TODO: https://github.com/nasa/openmct/issues/5409
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(2 * 1000);
+    const myItemsFolder = page.locator('text=Open MCT My Items >> span').nth(3);
+    const className = await myItemsFolder.getAttribute('class');
+    if (!className.includes('c-disclosure-triangle--expanded')) {
+        await myItemsFolder.click();
+    }
 
     // Click a:has-text("Unnamed CUSTOM_NAME")
     await page.locator(`a:has-text("Unnamed ${CUSTOM_NAME}")`).click({
