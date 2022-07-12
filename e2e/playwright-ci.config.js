@@ -4,12 +4,12 @@
 
 // eslint-disable-next-line no-unused-vars
 const { devices } = require('@playwright/test');
-const MAX_FAILURES = 25;
-const NUM_WORKERS = 1;
+const MAX_FAILURES = 5;
+const NUM_WORKERS = 2;
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 1, //Retries 3 times for a total of 4. When running sharded and with maxFailures = 5, this should ensure that flake is managed without failing the full suite
+    retries: 3, //Retries 3 times for a total of 4. When running sharded and with maxFailures = 5, this should ensure that flake is managed without failing the full suite
     testDir: 'tests',
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
