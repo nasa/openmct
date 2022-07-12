@@ -60,11 +60,8 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         getConditionSetIdentifierFromUrl = await conditionSetUrl.split('/').pop().split('?')[0];
         console.debug('getConditionSetIdentifierFromUrl ' + getConditionSetIdentifierFromUrl);
-        await page.close();
     });
-    test.afterAll(async ({ browser }) => {
-        await browser.close();
-    });
+
     //Load localStorage for subsequent tests
     test.use({ storageState: './e2e/test-data/recycled_local_storage.json' });
     //Begin suite of tests again localStorage
