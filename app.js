@@ -12,7 +12,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const request = require('request');
-const __TEST__ = process.env.NODE_ENV === 'test';
+const __DEV__ = process.env.NODE_ENV === 'development';
 
 // Defaults
 options.port = options.port || options.p || 8080;
@@ -51,9 +51,7 @@ class WatchRunPlugin {
 
 const webpack = require('webpack');
 let webpackConfig;
-if (__TEST__) {
-    webpackConfig = require('./webpack.coverage');
-} else {
+if (__DEV__) {
     webpackConfig = require('./webpack.dev');
     webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
     webpackConfig.entry.openmct = [
@@ -61,6 +59,8 @@ if (__TEST__) {
         webpackConfig.entry.openmct
     ];
     webpackConfig.plugins.push(new WatchRunPlugin());
+} else {
+    webpackConfig = require('./webpack.coverage');
 }
 
 const compiler = webpack(webpackConfig);
@@ -73,7 +73,7 @@ app.use(require('webpack-dev-middleware')(
     }
 ));
 
-if (!__TEST__) {
+if (__DEV__) {
     app.use(require('webpack-hot-middleware')(
         compiler,
         {}
