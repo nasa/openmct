@@ -21,7 +21,7 @@ const config = {
         ignoreHTTPSErrors: true,
         screenshot: 'on',
         trace: 'off',
-        video: 'on'
+        video: 'off'
     },
     reporter: [
         ['list'],

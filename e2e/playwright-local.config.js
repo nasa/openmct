@@ -25,7 +25,7 @@ const config = {
         ignoreHTTPSErrors: true,
         screenshot: 'only-on-failure',
         trace: 'retain-on-failure',
-        video: 'retain-on-failure'
+        video: 'off'
     },
     projects: [
         {
