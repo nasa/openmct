@@ -51,6 +51,14 @@ export default class CreateAction extends PropertiesAction {
                 return;
             }
 
+            const existingValue = this.domainObject[`${key}`];
+            if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
+                value = {
+                    ...existingValue,
+                    ...value
+                };
+            }
+
             _.set(this.domainObject, `${key}`, value);
         });
 

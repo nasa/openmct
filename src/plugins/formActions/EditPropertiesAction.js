@@ -22,6 +22,8 @@
 
 import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
+import _ from "lodash";
+
 export default class EditPropertiesAction extends PropertiesAction {
     constructor(openmct) {
         super(openmct);
@@ -54,20 +56,15 @@ export default class EditPropertiesAction extends PropertiesAction {
     _onSave(changes) {
         try {
             Object.entries(changes).forEach(([key, value]) => {
-                const properties = key.split('.');
-                let object = this.domainObject;
-                const propertiesLength = properties.length;
-                properties.forEach((property, index) => {
-                    const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
-                    if (isComplexProperty && object[property] !== null) {
-                        object = object[property];
-                    } else {
-                        object[property] = value;
-                    }
-                });
+                const existingValue = this.domainObject[`${key}`];
+                if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
+                    value = {
+                        ...existingValue,
+                        ...value
+                    };
+                }
 
-                object = value;
-                this.openmct.objects.mutate(this.domainObject, key, value);
+                this.openmct.objects.mutate(this.domainObject, `${key}`, value);
                 this.openmct.notifications.info('Save successful');
             });
         } catch (error) {
