@@ -32,6 +32,7 @@ config.module.rules.push({
     use: {
         loader: 'babel-loader',
         options: {
+            retainLines: true,
             // eslint-disable-next-line no-undef
             configFile: path.resolve(process.cwd(), 'babel.coverage.js')
         }
