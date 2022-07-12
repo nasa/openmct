@@ -35,7 +35,9 @@ config.module.rules.push({
         options: {
             retainLines: true,
             // eslint-disable-next-line no-undef
-            configFile: path.resolve(process.cwd(), 'babel.coverage.js')
+            plugins: [['babel-plugin-istanbul', {
+                extension: ['.js', '.vue']
+            }]]
         }
     }
 });
