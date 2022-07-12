@@ -46,8 +46,8 @@
         </div>
 
         <ObjectPath
-            ref="objectpath"
             :read-only="false"
+            :domain-object="result"
         />
     </div>
     <div class="c-gsearch-result__more-options-button">
@@ -88,12 +88,6 @@ export default {
         }
     },
     mounted() {
-        const selectionObject = {
-            context: {
-                item: this.result
-            }
-        };
-        this.$refs.objectpath.updateSelection([[selectionObject]]);
         this.previewAction = new PreviewAction(this.openmct);
         this.previewAction.on('isVisible', this.togglePreviewState);
     },
