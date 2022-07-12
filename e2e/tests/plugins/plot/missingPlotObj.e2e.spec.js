@@ -95,9 +95,6 @@ async function makeStackedPlot(page) {
         page.waitForSelector('.c-message-banner__message')
     ]);
 
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // save the stacked plot
     await saveStackedPlot(page);
@@ -156,7 +153,4 @@ async function createSineWaveGenerator(page) {
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 }
