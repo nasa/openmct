@@ -95,7 +95,6 @@ async function makeStackedPlot(page) {
         page.waitForSelector('.c-message-banner__message')
     ]);
 
-
     // save the stacked plot
     await saveStackedPlot(page);
 
