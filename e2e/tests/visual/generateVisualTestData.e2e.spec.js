@@ -52,9 +52,6 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
         //Wait for Save Banner to appear1
         page.waitForSelector('.c-message-banner__message')
     ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // save (exit edit mode)
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
@@ -69,18 +66,12 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     //Add a 5000 ms Delay
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
 
-    // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-    await page.click('form[name="mctForm"] a:has-text("Overlay Plot")');
-
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=OK').click(),
         //Wait for Save Banner to appear1
         page.waitForSelector('.c-message-banner__message')
     ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // focus the overlay plot
     await page.locator('text=Open MCT My Items >> span').nth(3).click();

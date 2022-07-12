@@ -2,10 +2,12 @@
 // instrumentation using babel-plugin-istanbul (see babel.coverage.js)
 
 const config = require('./webpack.dev');
-
 const path = require('path');
-
 const vueLoaderRule = config.module.rules.find(r => r.use === 'vue-loader');
+// eslint-disable-next-line no-undef
+const CI = process.env.CI === 'true';
+
+config.devtool = CI ? false : undefined;
 
 vueLoaderRule.use = {
     loader: 'vue-loader'
