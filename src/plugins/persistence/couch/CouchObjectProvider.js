@@ -217,9 +217,11 @@ class CouchObjectProvider {
                 this.indicator.setIndicatorToState(DISCONNECTED);
                 console.error(error.message);
                 throw new Error(`CouchDB Error - No response"`);
-            }
+            } else {
+                console.error(error.message);
 
-            console.error(error.message);
+                throw error;
+            }
         }
     }
 
@@ -653,7 +655,6 @@ class CouchObjectProvider {
             let document = new CouchDocument(key, queued.model);
             document.metadata.created = Date.now();
             this.request(key, "PUT", document).then((response) => {
-                console.log('create check response', key);
                 this.#checkResponse(response, queued.intermediateResponse, key);
             }).catch(error => {
                 queued.intermediateResponse.reject(error);

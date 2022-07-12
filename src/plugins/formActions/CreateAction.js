@@ -81,12 +81,20 @@ export default class CreateAction extends PropertiesAction {
 
         const success = await this.openmct.objects.save(this.domainObject);
         if (success) {
+            //this.openmct.editor.edit();
+            const transaction = this.openmct.objects.startTransaction();
+
             const compositionCollection = await this.openmct.composition.get(parentDomainObject);
             compositionCollection.add(this.domainObject);
-
-            this._navigateAndEdit(this.domainObject, parentDomainObjectPath);
-
-            this.openmct.notifications.info('Save successful');
+            try {
+                await transaction.commit();
+                this._navigateAndEdit(this.domainObject, parentDomainObjectPath);
+                this.openmct.notifications.info('Save successful');
+            } catch (error) {
+                this.openmct.notifications.error('Error adding new object to parent');
+            } finally {
+                this.openmct.objects.endTransaction();
+            }
         } else {
             this.openmct.notifications.error('Error saving objects');
         }

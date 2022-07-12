@@ -230,6 +230,7 @@ export default class ObjectAPI {
             return result;
         }).catch((result) => {
             console.warn(`Failed to retrieve ${keystring}:`, result);
+            this.openmct.notifications.error(`Failed to retrieve object ${keystring}`);
 
             delete this.cache[keystring];
 
@@ -387,7 +388,13 @@ export default class ObjectAPI {
             }
         }
 
-        return result;
+        return result.catch((error) => {
+            if (error instanceof this.errors.Conflict) {
+                this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+            }
+
+            throw error;
+        });
     }
 
     /**
@@ -399,6 +406,8 @@ export default class ObjectAPI {
         }
 
         this.transaction = new Transaction(this);
+
+        return this.transaction;
     }
 
     /**
@@ -636,7 +645,7 @@ export default class ObjectAPI {
     }
 
     isTransactionActive() {
-        return Boolean(this.transaction && this.openmct.editor.isEditing());
+        return Boolean(this.transaction);
     }
 
     #hasAlreadyBeenPersisted(domainObject) {
