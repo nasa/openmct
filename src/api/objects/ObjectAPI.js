@@ -406,8 +406,6 @@ export default class ObjectAPI {
         }
 
         this.transaction = new Transaction(this);
-
-        return this.transaction;
     }
 
     /**
@@ -645,7 +643,7 @@ export default class ObjectAPI {
     }
 
     isTransactionActive() {
-        return Boolean(this.transaction);
+        return Boolean(this.transaction && this.openmct.editor.isEditing());
     }
 
     #hasAlreadyBeenPersisted(domainObject) {
