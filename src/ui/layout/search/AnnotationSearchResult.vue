@@ -128,7 +128,12 @@ export default {
     methods: {
         clickedResult() {
             const objectPath = this.domainObject.originalPath;
-            const resultUrl = objectPathToUrl(this.openmct, objectPath);
+            let resultUrl = objectPathToUrl(this.openmct, objectPath);
+            // get rid of ROOT if extant
+            if (resultUrl.includes('/ROOT')) {
+                resultUrl = resultUrl.split('/ROOT').join('');
+            }
+
             this.openmct.router.navigate(resultUrl);
         },
         isSearchMatched(tag) {
