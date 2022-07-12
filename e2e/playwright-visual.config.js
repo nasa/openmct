@@ -9,7 +9,7 @@ const config = {
     timeout: 90 * 1000,
     workers: 1, // visual tests should never run in parallel due to test pollution
     webServer: {
-        command: 'npm run start',
+        command: 'cross-env NODE_ENV=test npm run start',
         url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
@@ -21,7 +21,7 @@ const config = {
         ignoreHTTPSErrors: true,
         screenshot: 'on',
         trace: 'off',
-        video: 'on'
+        video: 'off'
     },
     reporter: [
         ['list'],
