@@ -42,8 +42,9 @@
         </div>
 
         <ObjectPath
-            ref="location"
+            :domain-object="domainObject"
             :read-only="false"
+            :show-object-itself="true"
         />
 
         <div class="c-gsearch-result__tags">
@@ -123,14 +124,6 @@ export default {
         tagForegroundColor() {
             return this.result.fullTagModels[0].foregroundColor;
         }
-    },
-    mounted() {
-        const selectionObject = {
-            context: {
-                item: this.domainObject
-            }
-        };
-        this.$refs.location.updateSelection([[selectionObject]]);
     },
     methods: {
         clickedResult() {

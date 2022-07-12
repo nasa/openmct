@@ -39,8 +39,8 @@
             >
                 <div class="c-gsearch__results-section-title">Object Results</div>
                 <object-search-result
-                    v-for="(objectResult, index) in objectResults"
-                    :key="index"
+                    v-for="(objectResult) in objectResults"
+                    :key="objectResult.identifier.key"
                     :result="objectResult"
                     @preview-changed="previewChanged"
                     @click.native="selectedResult"
@@ -52,8 +52,8 @@
             >
                 <div class="c-gsearch__results-section-title">Annotation Results</div>
                 <annotation-search-result
-                    v-for="(annotationResult, index) in annotationResults"
-                    :key="index"
+                    v-for="(annotationResult) in annotationResults"
+                    :key="annotationResult.identifier.key"
                     :result="annotationResult"
                     @click.native="selectedResult"
                 />
