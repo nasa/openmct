@@ -28,11 +28,12 @@ const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Handle missing object for plots', () => {
-    test('Displays empty div for missing stacked plot item', async ({ page }) => {
+    test('Displays empty div for missing stacked plot item', async ({ page, browserName }) => {
+        test.fixme(browserName === 'firefox', 'Firefox failing due to console events being missed');
         const errorLogs = [];
 
         page.on("console", (message) => {
-            if (message.type() === 'warning') {
+            if (message.type() === 'warning' && message.text().includes('Missing domain object')) {
                 errorLogs.push(message.text());
             }
         });
@@ -71,7 +72,7 @@ test.describe('Handle missing object for plots', () => {
         //Check that there is only one stacked item plot with a plot, the missing one will be empty
         await expect(page.locator(".c-plot--stacked-container:has(.gl-plot)")).toHaveCount(1);
         //Verify that console.warn is thrown
-        await expect(errorLogs).toHaveLength(1);
+        expect(errorLogs).toHaveLength(1);
     });
 });
 
@@ -93,10 +94,6 @@ async function makeStackedPlot(page) {
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
-
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // save the stacked plot
     await saveStackedPlot(page);
@@ -155,7 +152,4 @@ async function createSineWaveGenerator(page) {
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 }
