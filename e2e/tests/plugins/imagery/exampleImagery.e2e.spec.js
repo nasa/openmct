@@ -191,13 +191,14 @@ test.describe('Example Imagery Object', () => {
         expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
-        await zoomResetBtn.click();
         // wait for zoom animation to finish
-
         await expect.poll(async () => {
+            await zoomResetBtn.click();
             const boundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
             return boundingBox;
+        }, {
+            timeout: 10 * 1000
         }).toEqual(initialBoundingBox);
     });
 
