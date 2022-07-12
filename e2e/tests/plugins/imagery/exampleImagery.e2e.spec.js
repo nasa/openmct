@@ -193,14 +193,12 @@ test.describe('Example Imagery Object', () => {
 
         await zoomResetBtn.click();
         // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
 
-        const resetBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-        expect.soft(resetBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
-        expect.soft(resetBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
+        await expect.poll(async () => {
+            const boundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
-        expect.soft(resetBoundingBox.height).toEqual(initialBoundingBox.height);
-        expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
+            return boundingBox;
+        }).toEqual(initialBoundingBox);
     });
 
     test('Using the zoom features does not pause telemetry', async ({ page }) => {
