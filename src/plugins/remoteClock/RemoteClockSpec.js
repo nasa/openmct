@@ -95,7 +95,7 @@ describe("the RemoteClock plugin", () => {
             spyOn(openmct.telemetry, 'request').and.callFake(() => {
                 requestPromiseResolve([reqDatum]);
 
-                return Promise.resolve([reqDatum]);
+                return requestPromise;
             });
 
             let objectPromiseResolve;
