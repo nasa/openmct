@@ -89,8 +89,11 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await page.locator('button.c-notebook__toggle-nav-button').click();
     });
 
-    test('Locked page should now be in a locked state @addInit', async ({ page }, testInfo) => {
-        test.fixme(testInfo.project === 'chrome-beta', "Test is unreliable on chrome-beta");
+    test('Locked page should now be in a locked state @addInit', async ({ page, browser }, testInfo) => {
+        test.fixme(
+            testInfo.project === 'chrome-beta' && browser.version() === '104.0.5112.39',
+            "Test is unreliable on chrome-beta v104.0.5112.39"
+        );
         // main lock message on page
         const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
         expect.soft(await lockMessage.count()).toEqual(1);
