@@ -71,7 +71,7 @@ describe("the RemoteClock plugin", () => {
             parse: (datum) => datum.key
         };
 
-        beforeEach((done) => {
+        beforeEach(async () => {
             openmct.install(openmct.plugins.RemoteClock(TIME_TELEMETRY_ID));
 
             let clocks = openmct.time.getAllClocks();
@@ -95,7 +95,7 @@ describe("the RemoteClock plugin", () => {
             spyOn(openmct.telemetry, 'request').and.callFake(() => {
                 requestPromiseResolve([reqDatum]);
 
-                return requestPromise;
+                return Promise.resolve([reqDatum]);
             });
 
             let objectPromiseResolve;
@@ -113,9 +113,7 @@ describe("the RemoteClock plugin", () => {
                 end: OFFSET_END
             });
 
-            Promise.all([objectPromiseResolve, requestPromise])
-                .then(done)
-                .catch(done);
+            await Promise.all([objectPromiseResolve, requestPromise]);
         });
 
         it('is available and sets up initial values and listeners', () => {
