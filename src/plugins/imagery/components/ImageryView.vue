@@ -219,6 +219,7 @@ const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
 const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
 export default {
+    name: 'ImageryView',
     components: {
         Compass,
         ImageControls,
@@ -564,6 +565,13 @@ export default {
         },
         bounds() {
             this.scrollToFocused();
+        },
+        isFixed(newValue) {
+            const isRealTime = !newValue;
+            // if realtime unpause which will focus on latest image
+            if (isRealTime) {
+                this.paused(false);
+            }
         }
     },
     async mounted() {
