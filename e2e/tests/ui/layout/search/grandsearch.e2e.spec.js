@@ -146,11 +146,22 @@ test.describe('Grand Search', () => {
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
         // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Cl');
-        // Click text=Unnamed Clock
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=Clock A').click()
         ]);
         await expect(page.locator('.is-object-type-clock')).toBeVisible();
+
+        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Disp');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText('Unnamed Display Layout');
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Clock C');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText('Clock C My Items Red Folder Blue Folder');
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cloc');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText('Clock A My Items Red Folder Blue Folder');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=1')).toContainText('Clock B My Items Red Folder Blue Folder');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText('Clock C My Items Red Folder Blue Folder');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText('Clock D My Items Red Folder Blue Folder');
     });
 });
