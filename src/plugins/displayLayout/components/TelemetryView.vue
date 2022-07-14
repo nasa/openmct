@@ -152,7 +152,7 @@ export default {
         },
         unit() {
             let value = this.item.value;
-            let unit = this.metadata.value(value).unit;
+            let unit = this.metadata ? this.metadata.value(value).unit : '';
 
             return unit;
         },
@@ -280,7 +280,7 @@ export default {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
-            const valueMetadata = this.metadata.value(this.item.value);
+            const valueMetadata = this.metadata ? this.metadata.value(this.item.value) : {};
             this.customStringformatter = this.openmct.telemetry.customStringFormatter(valueMetadata, this.item.format);
 
             this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {

@@ -168,7 +168,7 @@ export default class StatusAPI extends EventEmitter {
      */
     async resetStatusForRole(role) {
         const provider = this.#userAPI.getProvider();
-        const defaultStatus = await this.getDefaultStatus();
+        const defaultStatus = await this.getDefaultStatusForRole(role);
 
         if (provider.setStatusForRole) {
             return provider.setStatusForRole(role, defaultStatus);

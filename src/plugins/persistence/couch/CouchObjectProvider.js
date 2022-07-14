@@ -22,7 +22,7 @@
 
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
-import { PENDING, CONNECTED, DISCONNECTED } from "./CouchStatusIndicator";
+import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from "./CouchStatusIndicator";
 import { isNotebookType } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
@@ -112,7 +112,7 @@ class CouchObjectProvider {
      * Takes in a state message from the CouchDB SharedWorker and returns an IndicatorState.
      * @private
      * @param {'open'|'close'|'pending'} message
-     * @returns import('./CouchStatusIndicator').IndicatorState
+     * @returns {import('./CouchStatusIndicator').IndicatorState}
      */
     #messageToIndicatorState(message) {
         let state;
@@ -126,9 +126,47 @@ class CouchObjectProvider {
         case 'pending':
             state = PENDING;
             break;
-        default:
-            state = PENDING;
+        case 'unknown':
+            state = UNKNOWN;
             break;
+        }
+
+        return state;
+    }
+
+    /**
+     * Takes an HTTP status code and returns an IndicatorState
+     * @private
+     * @param {number} statusCode
+     * @returns {import("./CouchStatusIndicator").IndicatorState}
+     */
+    #statusCodeToIndicatorState(statusCode) {
+        let state;
+        switch (statusCode) {
+        case CouchObjectProvider.HTTP_OK:
+        case CouchObjectProvider.HTTP_CREATED:
+        case CouchObjectProvider.HTTP_ACCEPTED:
+        case CouchObjectProvider.HTTP_NOT_MODIFIED:
+        case CouchObjectProvider.HTTP_BAD_REQUEST:
+        case CouchObjectProvider.HTTP_UNAUTHORIZED:
+        case CouchObjectProvider.HTTP_FORBIDDEN:
+        case CouchObjectProvider.HTTP_NOT_FOUND:
+        case CouchObjectProvider.HTTP_METHOD_NOT_ALLOWED:
+        case CouchObjectProvider.HTTP_NOT_ACCEPTABLE:
+        case CouchObjectProvider.HTTP_CONFLICT:
+        case CouchObjectProvider.HTTP_PRECONDITION_FAILED:
+        case CouchObjectProvider.HTTP_REQUEST_ENTITY_TOO_LARGE:
+        case CouchObjectProvider.HTTP_UNSUPPORTED_MEDIA_TYPE:
+        case CouchObjectProvider.HTTP_REQUESTED_RANGE_NOT_SATISFIABLE:
+        case CouchObjectProvider.HTTP_EXPECTATION_FAILED:
+        case CouchObjectProvider.HTTP_SERVER_ERROR:
+            state = CONNECTED;
+            break;
+        case CouchObjectProvider.HTTP_SERVICE_UNAVAILABLE:
+            state = DISCONNECTED;
+            break;
+        default:
+            state = UNKNOWN;
         }
 
         return state;
@@ -161,30 +199,45 @@ class CouchObjectProvider {
         }
 
         let response = null;
+
+        if (!this.isObservingObjectChanges()) {
+            this.#observeObjectChanges();
+        }
+
         try {
             response = await fetch(this.url + '/' + subPath, fetchOptions);
-            this.indicator.setIndicatorToState(CONNECTED);
+            const { status } = response;
+            const json = await response.json();
+            this.#handleResponseCode(status, json, fetchOptions);
 
-            if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
-                throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
-            } else if (response.status === CouchObjectProvider.HTTP_BAD_REQUEST
-                || response.status === CouchObjectProvider.HTTP_UNAUTHORIZED
-                || response.status === CouchObjectProvider.HTTP_NOT_FOUND
-                || response.status === CouchObjectProvider.HTTP_PRECONDITION_FAILED) {
-                const error = await response.json();
-                throw new Error(`CouchDB Error: "${error.error}: ${error.reason}"`);
-            } else if (response.status === CouchObjectProvider.HTTP_SERVER_ERROR) {
-                throw new Error('CouchDB Error: "500 Internal Server Error"');
-            }
-
-            return await response.json();
+            return json;
         } catch (error) {
             // Network error, CouchDB unreachable.
             if (response === null) {
                 this.indicator.setIndicatorToState(DISCONNECTED);
+                console.error(error.message);
+                throw new Error(`CouchDB Error - No response"`);
             }
 
             console.error(error.message);
+        }
+    }
+
+    /**
+     * Handle the response code from a CouchDB request.
+     * Sets the CouchDB indicator status and throws an error if needed.
+     * @private
+     */
+    #handleResponseCode(status, json, fetchOptions) {
+        this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
+        if (status === CouchObjectProvider.HTTP_CONFLICT) {
+            throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+        } else if (status >= CouchObjectProvider.HTTP_BAD_REQUEST) {
+            if (!json.error || !json.reason) {
+                throw new Error(`CouchDB Error ${status}`);
+            }
+
+            throw new Error(`CouchDB Error ${status}: "${json.error} - ${json.reason}"`);
         }
     }
 
@@ -328,6 +381,8 @@ class CouchObjectProvider {
         return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
             if (response && response.rows !== undefined) {
                 return response.rows.reduce((map, row) => {
+                    //row.doc === null if the document does not exist.
+                    //row.doc === undefined if the document is not found.
                     if (row.doc !== undefined) {
                         map[row.key] = this.#getModel(row.doc);
                     }
@@ -425,9 +480,6 @@ class CouchObjectProvider {
                 this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
                 if (this.observers[keyString].length === 0) {
                     delete this.observers[keyString];
-                    if (Object.keys(this.observers).length === 0 && this.isObservingObjectChanges()) {
-                        this.stopObservingObjectChanges();
-                    }
                 }
             }
         };
@@ -452,7 +504,6 @@ class CouchObjectProvider {
         } else {
             this.#initiateSharedWorkerFetchChanges(sseURL.toString());
         }
-
     }
 
     /**
@@ -479,18 +530,24 @@ class CouchObjectProvider {
 
     onEventError(error) {
         console.error('Error on feed', error);
-        if (Object.keys(this.observers).length > 0) {
-            this.#observeObjectChanges();
-        }
+        const { readyState } = error.target;
+        this.#updateIndicatorStatus(readyState);
+    }
+
+    onEventOpen(event) {
+        const { readyState } = event.target;
+        this.#updateIndicatorStatus(readyState);
     }
 
     onEventMessage(event) {
+        const { readyState } = event.target;
         const eventData = JSON.parse(event.data);
         const identifier = {
             namespace: this.namespace,
             key: eventData.id
         };
         const keyString = this.openmct.objects.makeKeyString(identifier);
+        this.#updateIndicatorStatus(readyState);
         let observersForObject = this.observers[keyString];
 
         if (observersForObject) {
@@ -513,17 +570,18 @@ class CouchObjectProvider {
 
         this.stopObservingObjectChanges = () => {
             controller.abort();
-            couchEventSource.removeEventListener('message', this.onEventMessage);
+            couchEventSource.removeEventListener('message', this.onEventMessage.bind(this));
             delete this.stopObservingObjectChanges;
         };
 
         console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
         couchEventSource = new EventSource(url);
-        couchEventSource.onerror = this.onEventError;
+        couchEventSource.onerror = this.onEventError.bind(this);
+        couchEventSource.onopen = this.onEventOpen.bind(this);
 
         // start listening for events
-        couchEventSource.addEventListener('message', this.onEventMessage);
+        couchEventSource.addEventListener('message', this.onEventMessage.bind(this));
 
         console.debug('⇿ Opened connection ⇿');
     }
@@ -539,6 +597,31 @@ class CouchObjectProvider {
         });
 
         return intermediateResponse;
+    }
+
+    /**
+     * Update the indicator status based on the readyState of the EventSource
+     * @private
+     */
+    #updateIndicatorStatus(readyState) {
+        let message;
+        switch (readyState) {
+        case EventSource.CONNECTING:
+            message = 'pending';
+            break;
+        case EventSource.OPEN:
+            message = 'open';
+            break;
+        case EventSource.CLOSED:
+            message = 'close';
+            break;
+        default:
+            message = 'unknown';
+            break;
+        }
+
+        const indicatorState = this.#messageToIndicatorState(message);
+        this.indicator.setIndicatorToState(indicatorState);
     }
 
     /**
@@ -568,6 +651,7 @@ class CouchObjectProvider {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model);
+            document.metadata.created = Date.now();
             this.request(key, "PUT", document).then((response) => {
                 console.log('create check response', key);
                 this.#checkResponse(response, queued.intermediateResponse, key);
@@ -627,11 +711,25 @@ class CouchObjectProvider {
     }
 }
 
+// https://docs.couchdb.org/en/3.2.0/api/basics.html
+CouchObjectProvider.HTTP_OK = 200;
+CouchObjectProvider.HTTP_CREATED = 201;
+CouchObjectProvider.HTTP_ACCEPTED = 202;
+CouchObjectProvider.HTTP_NOT_MODIFIED = 304;
 CouchObjectProvider.HTTP_BAD_REQUEST = 400;
 CouchObjectProvider.HTTP_UNAUTHORIZED = 401;
+CouchObjectProvider.HTTP_FORBIDDEN = 403;
 CouchObjectProvider.HTTP_NOT_FOUND = 404;
+CouchObjectProvider.HTTP_METHOD_NOT_ALLOWED = 404;
+CouchObjectProvider.HTTP_NOT_ACCEPTABLE = 406;
 CouchObjectProvider.HTTP_CONFLICT = 409;
 CouchObjectProvider.HTTP_PRECONDITION_FAILED = 412;
+CouchObjectProvider.HTTP_REQUEST_ENTITY_TOO_LARGE = 413;
+CouchObjectProvider.HTTP_UNSUPPORTED_MEDIA_TYPE = 415;
+CouchObjectProvider.HTTP_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
+CouchObjectProvider.HTTP_EXPECTATION_FAILED = 417;
 CouchObjectProvider.HTTP_SERVER_ERROR = 500;
+// If CouchDB is containerized via Docker it will return 503 if service is unavailable.
+CouchObjectProvider.HTTP_SERVICE_UNAVAILABLE = 503;
 
 export default CouchObjectProvider;

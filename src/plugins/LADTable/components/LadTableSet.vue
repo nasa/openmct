@@ -83,9 +83,12 @@ export default {
             for (let ladTable of ladTables) {
                 for (let telemetryObject of ladTable) {
                     let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
-                    for (let metadatum of metadata.valueMetadatas) {
-                        if (metadatum.unit) {
-                            return true;
+
+                    if (metadata) {
+                        for (let metadatum of metadata.valueMetadatas) {
+                            if (metadatum.unit) {
+                                return true;
+                            }
                         }
                     }
                 }

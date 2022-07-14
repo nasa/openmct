@@ -64,8 +64,6 @@ export default {
             objectSearchResults: []
         };
     },
-    mounted() {
-    },
     destroyed() {
         document.body.removeEventListener('click', this.handleOutsideClick);
     },
@@ -135,8 +133,11 @@ export default {
             // dropdown is visible, this will collapse the dropdown.
             if (this.$refs.GrandSearch) {
                 const clickedInsideDropdown = this.$refs.GrandSearch.contains(event.target);
-                if (!clickedInsideDropdown && this.$refs.searchResultsDropDown._data.resultsShown) {
-                    this.$refs.searchResultsDropDown._data.resultsShown = false;
+                const clickedPreviewClose = event.target.parentElement && event.target.parentElement.querySelector('.js-preview-window');
+                const searchResultsDropDown = this.$refs.searchResultsDropDown._data;
+                if (!clickedInsideDropdown && searchResultsDropDown.resultsShown && !searchResultsDropDown.previewVisible && !clickedPreviewClose) {
+                    searchResultsDropDown.resultsShown = false;
+                    document.body.removeEventListener('click', this.handleOutsideClick);
                 }
             }
         }

@@ -31,6 +31,7 @@ const { expect } = require('@playwright/test');
 
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 
+//The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -43,10 +44,7 @@ test.describe('Example Imagery Object', () => {
         // Click text=Example Imagery
         await page.click('text=Example Imagery');
 
-        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-        await page.click('form[name="mctForm"] a:has-text("My Items")');
-
-        // Click text=OK and wait for save banner to appear
+        // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
             page.click('text=OK'),
@@ -183,7 +181,8 @@ test.describe('Example Imagery Object', () => {
 
     });
 
-    test('Can use the reset button to reset the image', async ({ page }) => {
+    test('Can use the reset button to reset the image', async ({ page }, testInfo) => {
+        test.slow(testInfo.project === 'chrome-beta', "This test is slow in chrome-beta");
         // wait for zoom animation to finish
         await page.locator(backgroundImageSelector).hover({trial: true});
 
@@ -202,16 +201,17 @@ test.describe('Example Imagery Object', () => {
         expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
-        await zoomResetBtn.click();
         // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        // FIXME: The zoom is flakey, sometimes not returning to original dimensions
+        // https://github.com/nasa/openmct/issues/5491
+        await expect.poll(async () => {
+            await zoomResetBtn.click();
+            const boundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
-        const resetBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-        expect.soft(resetBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
-        expect.soft(resetBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
-
-        expect.soft(resetBoundingBox.height).toEqual(initialBoundingBox.height);
-        expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
+            return boundingBox;
+        }, {
+            timeout: 10 * 1000
+        }).toEqual(initialBoundingBox);
     });
 
     test('Using the zoom features does not pause telemetry', async ({ page }) => {
@@ -316,7 +316,14 @@ test('Example Imagery in Display layout', async ({ page, browserName }) => {
     await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
     // Zoom in on next image
-    await mouseZoomIn(page);
+    await page.locator(backgroundImageSelector).hover({trial: true});
+    await page.mouse.wheel(0, deltaYStep * 2);
+
+    // Wait for zoom animation to finish
+    await page.locator(backgroundImageSelector).hover({trial: true});
+    const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+    expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+    expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
 
     // Click previous image button
     await previousImageButton.click();
@@ -330,9 +337,9 @@ test('Example Imagery in Display layout', async ({ page, browserName }) => {
 
         return newImageCount;
     }, {
-        message: "verify that new images still stream in",
+        message: "verify that old images are discarded",
         timeout: 6 * 1000
-    }).toBeGreaterThan(imageCount);
+    }).toBe(imageCount);
 
     // Verify selected image is still displayed
     await expect(selectedImage).toBeVisible();
@@ -352,7 +359,6 @@ test('Example Imagery in Display layout', async ({ page, browserName }) => {
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
-
     test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -557,9 +563,9 @@ test.describe('Example Imagery in Flexible layout', () => {
 
             return newImageCount;
         }, {
-            message: "verify that new images still stream in",
+            message: "verify that old images are discarded",
             timeout: 6 * 1000
-        }).toBeGreaterThan(imageCount);
+        }).toBe(imageCount);
 
         // Verify selected image is still displayed
         await expect(selectedImage).toBeVisible();
@@ -577,6 +583,16 @@ test.describe('Example Imagery in Flexible layout', () => {
         await dragBrightnessSliderAndAssertFilterValues(page);
         await dragContrastSliderAndAssertFilterValues(page);
     });
+});
+
+test.describe('Example Imagery in Tabs view', () => {
+    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+    test.fixme('Can use alt+drag to move around image once zoomed in');
+    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
+    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
 
 /**
@@ -641,22 +657,6 @@ async function assertBackgroundImageBrightness(page, expected) {
     // Get the brightness filter value (i.e: filter: brightness(500%) => "500")
     const actual = await backgroundImage.evaluate((el) => {
         return el.style.filter.match(/brightness\((\d{1,3})%\)/)[1];
-    });
-    expect(actual).toBe(expected);
-}
-
-/**
- * Gets the filter:contrast value of the current background-image and
- * asserts against an expected value
- * @param {import('@playwright/test').Page} page
- * @param {String} expected The expected contrast value
- */
-async function assertBackgroundImageContrast(page, expected) {
-    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
-
-    // Get the contrast filter value (i.e: filter: contrast(500%) => "500")
-    const actual = await backgroundImage.evaluate((el) => {
-        return el.style.filter.match(/contrast\((\d{1,3})%\)/)[1];
     });
     expect(actual).toBe(expected);
 }
@@ -761,12 +761,19 @@ async function mouseZoomIn(page) {
     expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
 }
 
-test.describe('Example Imagery in Tabs view', () => {
-    test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-    test.fixme('Can use alt+drag to move around image once zoomed in');
-    test.fixme('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.fixme('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
-    test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
-});
+/**
+ * Gets the filter:contrast value of the current background-image and
+ * asserts against an expected value
+ * @param {import('@playwright/test').Page} page
+ * @param {String} expected The expected contrast value
+ */
+async function assertBackgroundImageContrast(page, expected) {
+    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+
+    // Get the contrast filter value (i.e: filter: contrast(500%) => "500")
+    const actual = await backgroundImage.evaluate((el) => {
+        return el.style.filter.match(/contrast\((\d{1,3})%\)/)[1];
+    });
+    expect(actual).toBe(expected);
+}
+

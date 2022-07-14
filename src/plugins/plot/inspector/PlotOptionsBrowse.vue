@@ -197,25 +197,27 @@ export default {
     },
     methods: {
         initConfiguration() {
-            this.label = this.config.yAxis.get('label');
-            this.autoscale = this.config.yAxis.get('autoscale');
-            this.logMode = this.config.yAxis.get('logMode');
-            this.autoscalePadding = this.config.yAxis.get('autoscalePadding');
-            const range = this.config.yAxis.get('range');
-            if (range) {
-                this.rangeMin = range.min;
-                this.rangeMax = range.max;
-            }
+            if (this.config) {
+                this.label = this.config.yAxis.get('label');
+                this.autoscale = this.config.yAxis.get('autoscale');
+                this.logMode = this.config.yAxis.get('logMode');
+                this.autoscalePadding = this.config.yAxis.get('autoscalePadding');
+                const range = this.config.yAxis.get('range');
+                if (range) {
+                    this.rangeMin = range.min;
+                    this.rangeMax = range.max;
+                }
 
-            this.position = this.config.legend.get('position');
-            this.hideLegendWhenSmall = this.config.legend.get('hideLegendWhenSmall');
-            this.expandByDefault = this.config.legend.get('expandByDefault');
-            this.valueToShowWhenCollapsed = this.config.legend.get('valueToShowWhenCollapsed');
-            this.showTimestampWhenExpanded = this.config.legend.get('showTimestampWhenExpanded');
-            this.showValueWhenExpanded = this.config.legend.get('showValueWhenExpanded');
-            this.showMinimumWhenExpanded = this.config.legend.get('showMinimumWhenExpanded');
-            this.showMaximumWhenExpanded = this.config.legend.get('showMaximumWhenExpanded');
-            this.showUnitsWhenExpanded = this.config.legend.get('showUnitsWhenExpanded');
+                this.position = this.config.legend.get('position');
+                this.hideLegendWhenSmall = this.config.legend.get('hideLegendWhenSmall');
+                this.expandByDefault = this.config.legend.get('expandByDefault');
+                this.valueToShowWhenCollapsed = this.config.legend.get('valueToShowWhenCollapsed');
+                this.showTimestampWhenExpanded = this.config.legend.get('showTimestampWhenExpanded');
+                this.showValueWhenExpanded = this.config.legend.get('showValueWhenExpanded');
+                this.showMinimumWhenExpanded = this.config.legend.get('showMinimumWhenExpanded');
+                this.showMaximumWhenExpanded = this.config.legend.get('showMaximumWhenExpanded');
+                this.showUnitsWhenExpanded = this.config.legend.get('showUnitsWhenExpanded');
+            }
         },
         getConfig() {
             this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -223,10 +225,12 @@ export default {
             return configStore.get(this.configId);
         },
         registerListeners() {
-            this.config.series.forEach(this.addSeries, this);
+            if (this.config) {
+                this.config.series.forEach(this.addSeries, this);
 
-            this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+                this.listenTo(this.config.series, 'add', this.addSeries, this);
+                this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+            }
         },
 
         addSeries(series, index) {
