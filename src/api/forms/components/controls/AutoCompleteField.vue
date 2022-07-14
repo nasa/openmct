@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -19,29 +19,47 @@
 * this source code distribution or the Licensing information page available
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
-
 <template>
-<div class="form-control autocomplete">
-    <input v-model="field"
-           class="autocompleteInput"
-           type="text"
-           @click="inputClicked()"
-           @keydown="keyDown($event)"
+<div
+    ref="autoCompleteForm"
+    class="form-control c-input--autocomplete js-autocomplete"
+>
+    <div
+        class="c-input--autocomplete__wrapper"
     >
-    <span class="icon-arrow-down"
-          @click="arrowClicked()"
-    ></span>
-    <div class="autocompleteOptions"
-         @blur="hideOptions = true"
+        <input
+            ref="autoCompleteInput"
+            v-model="field"
+            class="c-input--autocomplete__input js-autocomplete__input"
+            type="text"
+            :placeholder="placeHolderText"
+            @click="inputClicked()"
+            @keydown="keyDown($event)"
+        >
+        <div
+            class="icon-arrow-down c-icon-button c-input--autocomplete__afford-arrow js-autocomplete__afford-arrow"
+            @click="arrowClicked()"
+        ></div>
+    </div>
+    <div
+        v-if="!hideOptions"
+        class="c-menu c-input--autocomplete__options"
+        aria-label="Autocomplete Options"
+        @blur="hideOptions = true"
     >
-        <ul v-if="!hideOptions">
-            <li v-for="opt in filteredOptions"
+        <ul>
+            <li
+                v-for="opt in filteredOptions"
                 :key="opt.optionId"
-                :class="{'optionPreSelected': optionIndex === opt.optionId}"
+                :class="[
+                    {'optionPreSelected': optionIndex === opt.optionId},
+                    itemCssClass
+                ]"
+                :style="itemStyle(opt)"
                 @click="fillInputWithString(opt.name)"
                 @mouseover="optionMouseover(opt.optionId)"
             >
-                <span class="optionText">{{ opt.name }}</span>
+                {{ opt.name }}
             </li>
         </ul>
     </div>
@@ -59,35 +77,69 @@ export default {
     props: {
         model: {
             type: Object,
-            required: true
+            required: true,
+            default() {
+                return {};
+            }
+        },
+        placeHolderText: {
+            type: String,
+            default() {
+                return "";
+            }
+        },
+        itemCssClass: {
+            type: String,
+            required: false,
+            default() {
+                return "";
+            }
         }
     },
     data() {
         return {
             hideOptions: true,
+            showFilteredOptions: false,
             optionIndex: 0,
             field: this.model.value
         };
     },
     computed: {
         filteredOptions() {
-            const options = this.optionNames || [];
+            const fullOptions = this.options || [];
+            if (this.showFilteredOptions) {
+                const optionsFiltered = fullOptions
+                    .filter(option => {
+                        if (option.name && this.field) {
+                            return option.name.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
+                        }
 
-            return options
-                .filter(option => {
-                    return option.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
-                }).map((option, index) => {
-                    return {
-                        optionId: index,
-                        name: option
-                    };
-                });
+                        return false;
+                    }).map((option, index) => {
+                        return {
+                            optionId: index,
+                            name: option.name,
+                            color: option.color
+                        };
+                    });
+
+                return optionsFiltered;
+            }
+
+            const optionsFiltered = fullOptions.map((option, index) => {
+                return {
+                    optionId: index,
+                    name: option.name,
+                    color: option.color
+                };
+            });
+
+            return optionsFiltered;
         }
     },
     watch: {
         field(newValue, oldValue) {
             if (newValue !== oldValue) {
-
                 const data = {
                     model: this.model,
                     value: newValue
@@ -95,20 +147,34 @@ export default {
 
                 this.$emit('onChange', data);
             }
+        },
+        hideOptions(newValue) {
+            if (!newValue) {
+                // adding a event listener when the hideOpntions is false (dropdown is visible)
+                // handleoutsideclick can collapse the dropdown when clicked outside autocomplete
+                document.body.addEventListener('click', this.handleOutsideClick);
+            } else {
+                //removing event listener when hideOptions become true (dropdown is collapsed)
+                document.body.removeEventListener('click', this.handleOutsideClick);
+            }
         }
     },
     mounted() {
-        this.options = this.model.options;
-        this.autocompleteInputElement = this.$el.getElementsByClassName('autocompleteInput')[0];
-        if (this.options[0].name) {
-        // If "options" include name, value pair
-            this.optionNames = this.options.map((opt) => {
-                return opt.name;
+        this.autocompleteInputAndArrow = this.$refs.autoCompleteForm;
+        this.autocompleteInputElement = this.$refs.autoCompleteInput;
+        if (this.model.options && this.model.options.length && !this.model.options[0].name) {
+            // If options is only an array of string.
+            this.options = this.model.options.map((option) => {
+                return {
+                    name: option
+                };
             });
         } else {
-        // If options is only an array of string.
-            this.optionNames = this.options;
+            this.options = this.model.options;
         }
+    },
+    destroyed() {
+        document.body.removeEventListener('click', this.handleOutsideClick);
     },
     methods: {
         decrementOptionIndex() {
@@ -131,11 +197,12 @@ export default {
             this.hideOptions = true;
             this.field = string;
         },
-        showOptions(string) {
+        showOptions() {
             this.hideOptions = false;
             this.optionIndex = 0;
         },
         keyDown($event) {
+            this.showFilteredOptions = true;
             if (this.filteredOptions) {
                 let keyCode = $event.keyCode;
                 switch (keyCode) {
@@ -155,11 +222,28 @@ export default {
         },
         inputClicked() {
             this.autocompleteInputElement.select();
-            this.showOptions(this.autocompleteInputElement.value);
+            this.showOptions();
         },
         arrowClicked() {
+            // if the user clicked the arrow, we want
+            // to show them all the options
+            this.showFilteredOptions = false;
             this.autocompleteInputElement.select();
-            this.showOptions('');
+
+            if (this.hideOptions) {
+                this.showOptions();
+            } else {
+                this.hideOptions = true;
+            }
+
+        },
+        handleOutsideClick(event) {
+            // if click event is detected outside autocomplete (both input & arrow) while the
+            // dropdown is visible, this will collapse the dropdown.
+            const clickedInsideAutocomplete = this.autocompleteInputAndArrow.contains(event.target);
+            if (!clickedInsideAutocomplete && !this.hideOptions) {
+                this.hideOptions = true;
+            }
         },
         optionMouseover(optionId) {
             this.optionIndex = optionId;
@@ -175,6 +259,12 @@ export default {
                     });
                 }
             });
+        },
+        itemStyle(option) {
+            if (option.color) {
+
+                return { '--optionIconColor': option.color };
+            }
         }
     }
 };

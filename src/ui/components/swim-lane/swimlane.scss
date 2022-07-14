@@ -29,4 +29,7 @@
 
         @include smallerControlButtons;
     }
+
+    // Yet more brittle special case selecting...
+    .is-object-type-plan { display: contents; }
 }

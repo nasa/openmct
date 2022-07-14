@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 import ImageryView from './ImageryView';
 
-export default function ImageryViewProvider(openmct) {
+export default function ImageryViewProvider(openmct, options) {
     const type = 'example.imagery';
 
     function hasImageTelemetry(domainObject) {
@@ -43,7 +43,7 @@ export default function ImageryViewProvider(openmct) {
             return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
         },
         view: function (domainObject, objectPath) {
-            return new ImageryView(openmct, domainObject, objectPath);
+            return new ImageryView(openmct, domainObject, objectPath, options);
         }
     };
 }

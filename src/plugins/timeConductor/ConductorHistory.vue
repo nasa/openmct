@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2021, United States Government
+ * Open MCT Web, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div ref="historyButton"
-     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+<div
+    ref="historyButton"
+    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
         <button

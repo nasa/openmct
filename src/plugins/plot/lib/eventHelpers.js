@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -90,3 +90,10 @@ const helperFunctions = {
 };
 
 export default helperFunctions;
+
+/**
+@typedef {{
+    listenTo: (object: any, event: any, callback: any, context: any) => void
+    stopListening: (object: any, event: any, callback: any, context: any) => void
+}} EventHelpers
+*/

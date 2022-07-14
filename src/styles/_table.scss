@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -90,7 +90,7 @@ div.c-table {
         flex: 1 1 auto;
     }
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         &:not(.is-paused) {
             .c-table-control-bar {
                 display: none;

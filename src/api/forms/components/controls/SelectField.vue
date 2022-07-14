@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -22,14 +22,16 @@
 
 <template>
 <div class="form-control select-field">
-    <select v-model="selected"
-            required="model.required"
-            name="mctControl"
-            @change="onChange($event)"
+    <select
+        v-model="selected"
+        required="model.required"
+        name="mctControl"
+        @change="onChange($event)"
     >
-        <option v-for="option in model.options"
-                :key="option.name"
-                :value="option.value"
+        <option
+            v-for="option in model.options"
+            :key="option.name"
+            :value="option.value"
         >
             {{ option.name }}
         </option>

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -59,7 +59,8 @@ export default function () {
                 object.configuration = {
                     imageLocation: '',
                     imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS,
-                    imageSamples: []
+                    imageSamples: [],
+                    layers: []
                 };
 
                 object.telemetry = {
@@ -90,7 +91,21 @@ export default function () {
                             format: 'image',
                             hints: {
                                 image: 1
-                            }
+                            },
+                            layers: [
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-16x9.png',
+                                    name: '16:9'
+                                },
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-safe.png',
+                                    name: 'Safe'
+                                },
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-scale.png',
+                                    name: 'Scale'
+                                }
+                            ]
                         },
                         {
                             name: 'Image Download Name',
@@ -153,7 +168,7 @@ function getImageUrlListFromConfig(configuration) {
 }
 
 function getImageLoadDelay(domainObject) {
-    const imageLoadDelay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+    const imageLoadDelay = Math.trunc(Number(domainObject.configuration.imageLoadDelayInMilliSeconds));
     if (!imageLoadDelay) {
         openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS);
 
@@ -175,7 +190,9 @@ function getRealtimeProvider() {
         subscribe: (domainObject, callback) => {
             const delay = getImageLoadDelay(domainObject);
             const interval = setInterval(() => {
-                callback(pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay));
+                const imageSamples = getImageSamples(domainObject.configuration);
+                const datum = pointForTimestamp(Date.now(), domainObject.name, imageSamples, delay);
+                callback(datum);
             }, delay);
 
             return () => {
@@ -214,8 +231,9 @@ function getLadProvider() {
         },
         request: (domainObject, options) => {
             const delay = getImageLoadDelay(domainObject);
+            const datum = pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay);
 
-            return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name, delay)]);
+            return Promise.resolve([datum]);
         }
     };
 }

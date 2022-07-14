@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2020, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,58 +20,62 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="u-contents">
-    <div v-if="canEdit"
-         class="grid-row"
-    >
-        <div class="grid-cell label"
-             :title="editTitle"
+<div class="grid-row grid-row--pad-label-for-button">
+    <template v-if="canEdit">
+        <div
+            class="grid-cell label"
+            :title="editTitle"
         >{{ shortLabel }}</div>
         <div class="grid-cell value">
-            <div class="c-click-swatch c-click-swatch--menu"
-                 @click="toggleSwatch()"
+            <div
+                class="c-click-swatch c-click-swatch--menu"
+                @click="toggleSwatch()"
             >
-                <span class="c-color-swatch"
-                      :style="{ background: currentColor }"
+                <span
+                    class="c-color-swatch"
+                    :style="{ background: currentColor }"
                 >
                 </span>
             </div>
             <div class="c-palette c-palette--color">
-                <div v-show="swatchActive"
-                     class="c-palette__items"
+                <div
+                    v-show="swatchActive"
+                    class="c-palette__items"
                 >
-                    <div v-for="group in colorPaletteGroups"
-                         :key="group.id"
-                         class="u-contents"
+                    <div
+                        v-for="group in colorPaletteGroups"
+                        :key="group.id"
+                        class="u-contents"
                     >
-                        <div v-for="color in group"
-                             :key="color.id"
-                             class="c-palette__item"
-                             :class="{ 'selected': currentColor === color.hexString }"
-                             :style="{ background: color.hexString }"
-                             @click="setColor(color)"
+                        <div
+                            v-for="color in group"
+                            :key="color.id"
+                            class="c-palette__item"
+                            :class="{ 'selected': currentColor === color.hexString }"
+                            :style="{ background: color.hexString }"
+                            @click="setColor(color)"
                         >
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div v-else
-         class="grid-row"
-    >
-        <div class="grid-cell label"
-             :title="viewTitle"
+    </template>
+    <template v-else>
+        <div
+            class="grid-cell label"
+            :title="viewTitle"
         >{{ shortLabel }}</div>
         <div class="grid-cell value">
-            <span class="c-color-swatch"
-                  :style="{
-                      'background': currentColor
-                  }"
+            <span
+                class="c-color-swatch"
+                :style="{
+                    'background': currentColor
+                }"
             >
             </span>
         </div>
-    </div>
+    </template>
 </div>
 </template>
 

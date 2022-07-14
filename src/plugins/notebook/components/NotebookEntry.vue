@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,15 +21,25 @@
  *****************************************************************************/
 
 <template>
-<div class="c-notebook__entry c-ne has-local-controls"
-     @dragover="changeCursor"
-     @drop.capture="cancelEditMode"
-     @drop.prevent="dropOnEntry"
+<div
+    class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    aria-label="Notebook Entry"
+    :class="{ 'locked': isLocked }"
+    @dragover="changeCursor"
+    @drop.capture="cancelEditMode"
+    @drop.prevent="dropOnEntry"
 >
     <div class="c-ne__time-and-content">
-        <div class="c-ne__time">
-            <span>{{ createdOnDate }}</span>
-            <span>{{ createdOnTime }}</span>
+        <div class="c-ne__time-and-creator">
+            <span class="c-ne__created-date">{{ createdOnDate }}</span>
+            <span class="c-ne__created-time">{{ createdOnTime }}</span>
+
+            <span
+                v-if="entry.createdBy"
+                class="c-ne__creator"
+            >
+                <span class="icon-person"></span> {{ entry.createdBy }}
+            </span>
         </div>
         <div class="c-ne__content">
             <template v-if="readOnly && result">
@@ -45,12 +55,14 @@
                     />
                 </div>
             </template>
-            <template v-else>
+            <template v-else-if="!isLocked">
                 <div
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
+                    aria-label="Notebook Entry Input"
                     tabindex="0"
-                    contenteditable
+                    contenteditable="true"
+                    @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
@@ -58,28 +70,53 @@
                 >
                 </div>
             </template>
+
+            <template v-else>
+                <div
+                    :id="entry.id"
+                    class="c-ne__text"
+                    contenteditable="false"
+                    tabindex="0"
+                    v-text="entry.text"
+                >
+                </div>
+            </template>
+
+            <TagEditor
+                :domain-object="domainObject"
+                :annotation-query="annotationQuery"
+                :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
+                :annotation-search-type="openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS"
+                :target-specific-details="{entryId: entry.id}"
+            />
+
             <div class="c-snapshots c-ne__embeds">
-                <NotebookEmbed v-for="embed in entry.embeds"
-                               :key="embed.id"
-                               :embed="embed"
-                               @removeEmbed="removeEmbed"
-                               @updateEmbed="updateEmbed"
+                <NotebookEmbed
+                    v-for="embed in entry.embeds"
+                    :key="embed.id"
+                    :embed="embed"
+                    :is-locked="isLocked"
+                    @removeEmbed="removeEmbed"
+                    @updateEmbed="updateEmbed"
                 />
             </div>
         </div>
     </div>
-    <div v-if="!readOnly"
-         class="c-ne__local-controls--hidden"
+    <div
+        v-if="!readOnly && !isLocked"
+        class="c-ne__local-controls--hidden"
     >
-        <button class="c-icon-button c-icon-button--major icon-trash"
-                title="Delete this entry"
-                tabindex="-1"
-                @click="deleteEntry"
+        <button
+            class="c-icon-button c-icon-button--major icon-trash"
+            title="Delete this entry"
+            tabindex="-1"
+            @click="deleteEntry"
         >
         </button>
     </div>
-    <div v-if="readOnly"
-         class="c-ne__section-and-page"
+    <div
+        v-if="readOnly"
+        class="c-ne__section-and-page"
     >
         <a
             class="c-click-link"
@@ -102,6 +139,7 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
+import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
@@ -111,7 +149,8 @@ import Moment from 'moment';
 export default {
     components: {
         NotebookEmbed,
-        TextHighlight
+        TextHighlight,
+        TagEditor
     },
     inject: ['openmct', 'snapshotContainer'],
     props: {
@@ -150,11 +189,25 @@ export default {
             default() {
                 return true;
             }
+        },
+        isLocked: {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     computed: {
         createdOnDate() {
             return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
+        },
+        annotationQuery() {
+            const targetKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return {
+                targetKeyString,
+                entryId: this.entry.id
+            };
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
@@ -182,7 +235,7 @@ export default {
         this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {
-        addNewEmbed(objectPath) {
+        async addNewEmbed(objectPath) {
             const bounds = this.openmct.time.bounds();
             const snapshotMeta = {
                 bounds,
@@ -190,7 +243,7 @@ export default {
                 objectPath,
                 openmct: this.openmct
             };
-            const newEmbed = createNewEmbed(snapshotMeta);
+            const newEmbed = await createNewEmbed(snapshotMeta);
             this.entry.embeds.push(newEmbed);
         },
         cancelEditMode(event) {
@@ -199,15 +252,21 @@ export default {
                 this.openmct.editor.cancel();
             }
         },
-        changeCursor() {
+        changeCursor(event) {
             event.preventDefault();
-            event.dataTransfer.dropEffect = "copy";
+
+            if (!this.isLocked) {
+                event.dataTransfer.dropEffect = 'copy';
+            } else {
+                event.dataTransfer.dropEffect = 'none';
+                event.dataTransfer.effectAllowed = 'none';
+            }
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
-        dropOnEntry($event) {
-            event.stopImmediatePropagation();
+        async dropOnEntry($event) {
+            $event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
@@ -221,7 +280,7 @@ export default {
             } else {
                 const data = $event.dataTransfer.getData('openmct/domain-object-path');
                 const objectPath = JSON.parse(data);
-                this.addNewEmbed(objectPath);
+                await this.addNewEmbed(objectPath);
             }
 
             this.$emit('updateEntry', this.entry);
@@ -276,11 +335,16 @@ export default {
 
             this.$emit('updateEntry', this.entry);
         },
+        editingEntry() {
+            this.$emit('editingEntry');
+        },
         updateEntryValue($event) {
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;
                 this.$emit('updateEntry', this.entry);
+            } else {
+                this.$emit('cancelEdit');
             }
         }
     }

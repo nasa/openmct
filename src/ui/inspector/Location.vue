@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-inspect-properties c-inspect-properties--location">
+<div
+    v-if="originalPath.length"
+    class="c-inspect-properties c-inspect-properties--location"
+>
     <div
         class="c-inspect-properties__header"
         title="The location of this linked object."

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,12 +21,14 @@
 -->
 
 <template>
-<div v-if="loaded"
-     class="gl-plot-axis-area gl-plot-x has-local-controls"
+<div
+    v-if="loaded"
+    class="gl-plot-axis-area gl-plot-x has-local-controls"
 >
-    <mct-ticks :axis-type="'xAxis'"
-               :position="'left'"
-               @plotTickWidth="onTickWidthChange"
+    <mct-ticks
+        :axis-type="'xAxis'"
+        :position="'left'"
+        @plotTickWidth="onTickWidthChange"
     />
 
     <div
@@ -42,9 +44,10 @@
         class="gl-plot-x-label__select local-controls--hidden"
         @change="toggleXKeyOption()"
     >
-        <option v-for="option in xKeyOptions"
-                :key="option.key"
-                :value="option.key"
+        <option
+            v-for="option in xKeyOptions"
+            :key="option.key"
+            :value="option.key"
         >{{ option.name }}
         </option>
     </select>
@@ -132,17 +135,21 @@ export default {
         },
         setUpXAxisOptions() {
             const xAxisKey = this.xAxis.get('key');
+            this.xKeyOptions = [];
 
-            this.xKeyOptions = this.seriesModel.metadata
-                .valuesForHints(['domain'])
-                .map(function (o) {
-                    return {
-                        name: o.name,
-                        key: o.key
-                    };
-                });
+            if (this.seriesModel.metadata) {
+                this.xKeyOptions = this.seriesModel.metadata
+                    .valuesForHints(['domain'])
+                    .map(function (o) {
+                        return {
+                            name: o.name,
+                            key: o.key
+                        };
+                    });
+            }
+
             this.xAxisLabel = this.xAxis.get('label');
-            this.selectedXKeyOptionKey = this.getXKeyOption(xAxisKey).key;
+            this.selectedXKeyOptionKey = this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
         },
         onTickWidthChange(width) {
             this.$emit('tickWidthChanged', width);

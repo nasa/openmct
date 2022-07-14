@@ -1,6 +1,7 @@
 <template>
-<div ref="axisHolder"
-     class="c-timesystem-axis"
+<div
+    ref="axisHolder"
+    class="c-timesystem-axis"
 >
     <div class="nowMarker"><span class="icon-arrow-down"></span></div>
 </div>
@@ -122,7 +123,7 @@ export default {
             }
         },
         drawAxis(bounds, timeSystem) {
-            let viewBounds = Object.assign({}, bounds);
+            let viewBounds = Object.create(bounds);
 
             this.setScale(viewBounds, timeSystem);
             this.setAxis(viewBounds);

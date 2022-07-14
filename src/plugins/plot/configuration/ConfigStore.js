@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,32 +19,47 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-function ConfigStore() {
-    this.store = {};
-}
+class ConfigStore {
+    /** @type {Record<string, Destroyable>} */
+    store = {};
 
-ConfigStore.prototype.deleteStore = function (id) {
-    if (this.store[id]) {
-        if (this.store[id].destroy) {
-            this.store[id].destroy();
+    /**
+    @param {string} id
+    */
+    deleteStore(id) {
+        const obj = this.store[id];
+
+        if (obj) {
+            if (obj.destroy) {
+                obj.destroy();
+            }
+
+            delete this.store[id];
         }
-
-        delete this.store[id];
     }
-};
 
-ConfigStore.prototype.deleteAll = function () {
-    Object.keys(this.store).forEach(id => this.deleteStore(id));
-};
+    deleteAll() {
+        Object.keys(this.store).forEach(id => this.deleteStore(id));
+    }
 
-ConfigStore.prototype.add = function (id, config) {
-    this.store[id] = config;
-};
+    /**
+    @param {string} id
+    @param {any} config
+    */
+    add(id, config) {
+        this.store[id] = config;
+    }
 
-ConfigStore.prototype.get = function (id) {
-    return this.store[id];
-};
+    /**
+    @param {string} id
+    */
+    get(id) {
+        return this.store[id];
+    }
+}
 
 const STORE = new ConfigStore();
 
 export default STORE;
+
+/** @typedef {{destroy?(): void}} Destroyable */

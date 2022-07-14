@@ -10,8 +10,9 @@
         class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"
     >
-        <span class="is-status__indicator"
-              :title="`This item is ${status}`"
+        <span
+            class="is-status__indicator"
+            :title="`This item is ${status}`"
         ></span>
     </div>
     <div class="c-tree__item__name c-object-label__name">
@@ -41,6 +42,13 @@ export default {
         navigateToPath: {
             type: String,
             default: undefined
+        },
+        readOnly: {
+            type: Boolean,
+            required: false,
+            default() {
+                return false;
+            }
         }
     },
     data() {

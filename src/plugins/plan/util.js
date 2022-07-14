@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export function getValidatedPlan(domainObject) {
-    let body = domainObject.selectFile.body;
+export function getValidatedData(domainObject) {
+    let sourceMap = domainObject.sourceMap;
+    let body = domainObject.selectFile?.body;
     let json = {};
     if (typeof body === 'string') {
         try {
@@ -29,9 +30,37 @@ export function getValidatedPlan(domainObject) {
         } catch (e) {
             return json;
         }
-    } else {
+    } else if (body !== undefined) {
         json = body;
     }
 
-    return json;
+    if (sourceMap !== undefined && sourceMap.activities !== undefined && sourceMap.groupId !== undefined) {
+        let mappedJson = {};
+        json[sourceMap.activities].forEach((activity) => {
+            if (activity[sourceMap.groupId]) {
+                const groupIdKey = activity[sourceMap.groupId];
+                let groupActivity = {
+                    ...activity
+                };
+
+                if (sourceMap.start) {
+                    groupActivity.start = activity[sourceMap.start];
+                }
+
+                if (sourceMap.end) {
+                    groupActivity.end = activity[sourceMap.end];
+                }
+
+                if (!mappedJson[groupIdKey]) {
+                    mappedJson[groupIdKey] = [];
+                }
+
+                mappedJson[groupIdKey].push(groupActivity);
+            }
+        });
+
+        return mappedJson;
+    } else {
+        return json;
+    }
 }

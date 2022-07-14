@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -166,7 +166,8 @@ export default {
             }
 
             return definition.form
-                .map((field) => {
+                .filter(field => !field.hideFromInspector)
+                .map(field => {
                     let path = field.property;
                     if (typeof path === 'string') {
                         path = [path];

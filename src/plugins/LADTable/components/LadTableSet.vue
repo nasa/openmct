@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -83,9 +83,12 @@ export default {
             for (let ladTable of ladTables) {
                 for (let telemetryObject of ladTable) {
                     let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
-                    for (let metadatum of metadata.valueMetadatas) {
-                        if (metadatum.unit) {
-                            return true;
+
+                    if (metadata) {
+                        for (let metadatum of metadata.valueMetadatas) {
+                            if (metadatum.unit) {
+                                return true;
+                            }
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 <template>
-<div class="c-menu"
-     :class="options.menuClass"
+<div
+    class="c-menu"
+    :class="options.menuClass"
 >
     <ul v-if="options.actions.length && options.actions[0].length">
         <template
@@ -11,6 +12,7 @@
                 :key="action.name"
                 :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
                 :title="action.description"
+                :data-testid="action.testId || false"
                 @click="action.onItemClicked"
             >
                 {{ action.name }}
@@ -34,8 +36,9 @@
         <li
             v-for="action in options.actions"
             :key="action.name"
-            :class="action.cssClass"
+            :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
             :title="action.description"
+            :data-testid="action.testId || false"
             @click="action.onItemClicked"
         >
             {{ action.name }}

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -22,12 +22,13 @@
 
 <template>
 <span>
-    <CompositeItem v-for="(item, index) in model.items"
-                   :key="item.name"
-                   :first="index < 1"
-                   :value="JSON.stringify(model.value[index])"
-                   :item="item"
-                   @onChange="onChange"
+    <CompositeItem
+        v-for="(item, index) in model.items"
+        :key="item.name"
+        :first="index < 1"
+        :value="JSON.stringify(model.value[index])"
+        :item="item"
+        @onChange="onChange"
     />
 </span>
 </template>

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,10 +33,7 @@ export default class LinkAction {
     }
 
     appliesTo(objectPath) {
-        let domainObject = objectPath[0];
-        let type = domainObject && this.openmct.types.get(domainObject.type);
-
-        return type && type.definition.creatable;
+        return true; // link away!
     }
 
     invoke(objectPath) {
@@ -77,6 +74,7 @@ export default class LinkAction {
                         {
                             name: "location",
                             control: "locator",
+                            parent: parentDomainObject,
                             required: true,
                             validate: this.validate(parentDomainObject),
                             key: 'location'
@@ -92,10 +90,25 @@ export default class LinkAction {
 
     validate(currentParent) {
         return (data) => {
+
+            // default current parent to ROOT, if it's undefined, then it's a root level item
+            if (currentParent === undefined) {
+                currentParent = {
+                    identifier: {
+                        key: 'ROOT',
+                        namespace: ''
+                    }
+                };
+            }
+
             const parentCandidate = data.value[0];
             const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
             const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+
+            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+                return false;
+            }
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;

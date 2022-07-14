@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -42,6 +42,7 @@ define([
     './plugins/duplicate/plugin',
     './plugins/importFromJSONAction/plugin',
     './plugins/exportAsJSONAction/plugin',
+    './ui/components/components',
     'vue'
 ], function (
     EventEmitter,
@@ -65,6 +66,7 @@ define([
     DuplicateActionPlugin,
     ImportFromJSONAction,
     ExportAsJSONAction,
+    components,
     Vue
 ) {
     /**
@@ -94,147 +96,170 @@ define([
         };
 
         this.destroy = this.destroy.bind(this);
-        /**
-         * Tracks current selection state of the application.
-         * @private
-         */
-        this.selection = new Selection(this);
+        [
+            /**
+            * Tracks current selection state of the application.
+            * @private
+            */
+            ['selection', () => new Selection(this)],
 
-        /**
-         * MCT's time conductor, which may be used to synchronize view contents
-         * for telemetry- or time-based views.
-         * @type {module:openmct.TimeConductor}
-         * @memberof module:openmct.MCT#
-         * @name conductor
-         */
-        this.time = new api.TimeAPI(this);
+            /**
+             * MCT's time conductor, which may be used to synchronize view contents
+             * for telemetry- or time-based views.
+             * @type {module:openmct.TimeConductor}
+             * @memberof module:openmct.MCT#
+             * @name conductor
+             */
+            ['time', () => new api.TimeAPI(this)],
 
-        /**
-         * An interface for interacting with the composition of domain objects.
-         * The composition of a domain object is the list of other domain
-         * objects it "contains" (for instance, that should be displayed
-         * beneath it in the tree.)
-         *
-         * `composition` may be called as a function, in which case it acts
-         * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
-         *
-         * @type {module:openmct.CompositionAPI}
-         * @memberof module:openmct.MCT#
-         * @name composition
-         */
-        this.composition = new api.CompositionAPI(this);
+            /**
+             * An interface for interacting with the composition of domain objects.
+             * The composition of a domain object is the list of other domain
+             * objects it "contains" (for instance, that should be displayed
+             * beneath it in the tree.)
+             *
+             * `composition` may be called as a function, in which case it acts
+             * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
+             *
+             * @type {module:openmct.CompositionAPI}
+             * @memberof module:openmct.MCT#
+             * @name composition
+             */
+            ['composition', () => new api.CompositionAPI(this)],
 
-        /**
-         * Registry for views of domain objects which should appear in the
-         * main viewing area.
-         *
-         * @type {module:openmct.ViewRegistry}
-         * @memberof module:openmct.MCT#
-         * @name objectViews
-         */
-        this.objectViews = new ViewRegistry();
+            /**
+             * Registry for views of domain objects which should appear in the
+             * main viewing area.
+             *
+             * @type {module:openmct.ViewRegistry}
+             * @memberof module:openmct.MCT#
+             * @name objectViews
+             */
+            ['objectViews', () => new ViewRegistry()],
 
-        /**
-         * Registry for views which should appear in the Inspector area.
-         * These views will be chosen based on the selection state.
-         *
-         * @type {module:openmct.InspectorViewRegistry}
-         * @memberof module:openmct.MCT#
-         * @name inspectorViews
-         */
-        this.inspectorViews = new InspectorViewRegistry();
+            /**
+             * Registry for views which should appear in the Inspector area.
+             * These views will be chosen based on the selection state.
+             *
+             * @type {module:openmct.InspectorViewRegistry}
+             * @memberof module:openmct.MCT#
+             * @name inspectorViews
+             */
+            ['inspectorViews', () => new InspectorViewRegistry()],
 
-        /**
-         * Registry for views which should appear in Edit Properties
-         * dialogs, and similar user interface elements used for
-         * modifying domain objects external to its regular views.
-         *
-         * @type {module:openmct.ViewRegistry}
-         * @memberof module:openmct.MCT#
-         * @name propertyEditors
-         */
-        this.propertyEditors = new ViewRegistry();
+            /**
+             * Registry for views which should appear in Edit Properties
+             * dialogs, and similar user interface elements used for
+             * modifying domain objects external to its regular views.
+             *
+             * @type {module:openmct.ViewRegistry}
+             * @memberof module:openmct.MCT#
+             * @name propertyEditors
+             */
+            ['propertyEditors', () => new ViewRegistry()],
 
-        /**
-         * Registry for views which should appear in the status indicator area.
-         * @type {module:openmct.ViewRegistry}
-         * @memberof module:openmct.MCT#
-         * @name indicators
-         */
-        this.indicators = new ViewRegistry();
+            /**
+             * Registry for views which should appear in the toolbar area while
+             * editing. These views will be chosen based on the selection state.
+             *
+             * @type {module:openmct.ToolbarRegistry}
+             * @memberof module:openmct.MCT#
+             * @name toolbars
+             */
+            ['toolbars', () => new ToolbarRegistry()],
 
-        /**
-         * Registry for views which should appear in the toolbar area while
-         * editing. These views will be chosen based on the selection state.
-         *
-         * @type {module:openmct.ToolbarRegistry}
-         * @memberof module:openmct.MCT#
-         * @name toolbars
-         */
-        this.toolbars = new ToolbarRegistry();
+            /**
+             * Registry for domain object types which may exist within this
+             * instance of Open MCT.
+             *
+             * @type {module:openmct.TypeRegistry}
+             * @memberof module:openmct.MCT#
+             * @name types
+             */
+            ['types', () => new api.TypeRegistry()],
 
-        /**
-         * Registry for domain object types which may exist within this
-         * instance of Open MCT.
-         *
-         * @type {module:openmct.TypeRegistry}
-         * @memberof module:openmct.MCT#
-         * @name types
-         */
-        this.types = new api.TypeRegistry();
+            /**
+             * An interface for interacting with domain objects and the domain
+             * object hierarchy.
+             *
+             * @type {module:openmct.ObjectAPI}
+             * @memberof module:openmct.MCT#
+             * @name objects
+             */
+            ['objects', () => new api.ObjectAPI.default(this.types, this)],
 
-        /**
-         * An interface for interacting with domain objects and the domain
-         * object hierarchy.
-         *
-         * @type {module:openmct.ObjectAPI}
-         * @memberof module:openmct.MCT#
-         * @name objects
-         */
-        this.objects = new api.ObjectAPI.default(this.types, this);
+            /**
+             * An interface for retrieving and interpreting telemetry data associated
+             * with a domain object.
+             *
+             * @type {module:openmct.TelemetryAPI}
+             * @memberof module:openmct.MCT#
+             * @name telemetry
+             */
+            ['telemetry', () => new api.TelemetryAPI.default(this)],
 
-        /**
-         * An interface for retrieving and interpreting telemetry data associated
-         * with a domain object.
-         *
-         * @type {module:openmct.TelemetryAPI}
-         * @memberof module:openmct.MCT#
-         * @name telemetry
-         */
-        this.telemetry = new api.TelemetryAPI(this);
+            /**
+             * An interface for creating new indicators and changing them dynamically.
+             *
+             * @type {module:openmct.IndicatorAPI}
+             * @memberof module:openmct.MCT#
+             * @name indicators
+             */
+            ['indicators', () => new api.IndicatorAPI(this)],
 
-        /**
-         * An interface for creating new indicators and changing them dynamically.
-         *
-         * @type {module:openmct.IndicatorAPI}
-         * @memberof module:openmct.MCT#
-         * @name indicators
-         */
-        this.indicators = new api.IndicatorAPI(this);
+            /**
+             * MCT's user awareness management, to enable user and
+             * role specific functionality.
+             * @type {module:openmct.UserAPI}
+             * @memberof module:openmct.MCT#
+             * @name user
+             */
+            ['user', () => new api.UserAPI(this)],
 
-        this.notifications = new api.NotificationAPI();
+            ['notifications', () => new api.NotificationAPI()],
 
-        this.editor = new api.EditorAPI.default(this);
+            ['editor', () => new api.EditorAPI.default(this)],
 
-        this.overlays = new OverlayAPI.default();
+            ['overlays', () => new OverlayAPI.default()],
 
-        this.menus = new api.MenuAPI(this);
+            ['menus', () => new api.MenuAPI(this)],
 
-        this.actions = new api.ActionsAPI(this);
+            ['actions', () => new api.ActionsAPI(this)],
 
-        this.status = new api.StatusAPI(this);
+            ['status', () => new api.StatusAPI(this)],
 
-        this.priority = api.PriorityAPI;
+            ['priority', () => api.PriorityAPI],
 
-        this.router = new ApplicationRouter(this);
-        this.forms = new api.FormsAPI.default(this);
+            ['router', () => new ApplicationRouter(this)],
 
-        this.branding = BrandingAPI.default;
+            ['faults', () => new api.FaultManagementAPI.default(this)],
+
+            ['forms', () => new api.FormsAPI.default(this)],
+
+            ['branding', () => BrandingAPI.default],
+
+            /**
+             * MCT's annotation API that enables
+             * human-created comments and categorization linked to data products
+             * @type {module:openmct.AnnotationAPI}
+             * @memberof module:openmct.MCT#
+             * @name annotation
+             */
+            ['annotation', () => new api.AnnotationAPI(this)]
+        ].forEach(apiEntry => {
+            const apiName = apiEntry[0];
+            const apiObject = apiEntry[1]();
+
+            Object.defineProperty(this, apiName, {
+                value: apiObject,
+                enumerable: false,
+                configurable: false,
+                writable: true
+            });
+        });
 
         // Plugins that are installed by default
-
         this.install(this.plugins.Plot());
-        this.install(this.plugins.Chart());
         this.install(this.plugins.TelemetryTable.default());
         this.install(PreviewPlugin.default());
         this.install(LicensesPlugin.default());
@@ -260,8 +285,9 @@ define([
         this.install(this.plugins.ViewDatumAction());
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
-        this.install(this.plugins.NonEditableFolder());
         this.install(this.plugins.DeviceClassifier());
+        this.install(this.plugins.UserIndicator());
+        this.install(this.plugins.Gauge());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -370,6 +396,7 @@ define([
     };
 
     MCT.prototype.plugins = plugins;
+    MCT.prototype.components = components.default;
 
     return MCT;
 });

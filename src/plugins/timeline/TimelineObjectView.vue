@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -20,23 +20,25 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-<swim-lane :icon-class="item.type.definition.cssClass"
-           :status="status"
-           :min-height="item.height"
-           :show-ucontents="item.domainObject.type === 'plan'"
-           :span-rows-count="item.rowCount"
+<swim-lane
+    :icon-class="item.type.definition.cssClass"
+    :status="status"
+    :min-height="item.height"
+    :show-ucontents="item.domainObject.type === 'plan'"
+    :span-rows-count="item.rowCount"
 >
-    <template slot="label">
+    <template #label>
         {{ item.domainObject.name }}
     </template>
-    <object-view
-        ref="objectView"
-        slot="object"
-        class="u-contents"
-        :default-object="item.domainObject"
-        :object-path="item.objectPath"
-        @change-action-collection="setActionCollection"
-    />
+    <template #object>
+        <object-view
+            ref="objectView"
+            class="u-contents"
+            :default-object="item.domainObject"
+            :object-path="item.objectPath"
+            @change-action-collection="setActionCollection"
+        />
+    </template>
 </swim-lane>
 </template>
 

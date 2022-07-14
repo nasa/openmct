@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,10 +36,6 @@
         align-items: center;
     }
 
-    &__value {
-        color: $colorBodyFgEm;
-    }
-
     .c-frame & {
         // When in a Display or Flexible Layout
         @include abs();
@@ -49,6 +45,11 @@
 
 .c-clock {
     > * + * { margin-left: $interiorMargin; }
+
+    &__timezone-selection .c-menu {
+        // Menu for selecting timezones in properties dialog
+        max-height: 200px;
+    }
 }
 
 .c-timer {
@@ -66,7 +67,7 @@
     }
 
     &__direction {
-        font-size: 0.9rem !important;
+        font-size: 0.7em !important;
         margin-right: $interiorMargin;
     }
 

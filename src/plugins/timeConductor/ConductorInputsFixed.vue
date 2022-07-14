@@ -1,6 +1,7 @@
 <template>
-<form ref="fixedDeltaInput"
-      class="c-conductor__inputs"
+<form
+    ref="fixedDeltaInput"
+    class="c-conductor__inputs"
 >
     <div
         class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
@@ -71,6 +72,12 @@ export default {
             default() {
                 return undefined;
             }
+        },
+        inputBounds: {
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -94,6 +101,17 @@ export default {
             },
             isUTCBased: timeSystem.isUTCBased
         };
+    },
+    watch: {
+        keyString() {
+            this.setTimeContext();
+        },
+        inputBounds: {
+            handler(newBounds) {
+                this.handleNewBounds(newBounds);
+            },
+            deep: true
+        }
     },
     mounted() {
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
@@ -247,6 +265,8 @@ export default {
                 input.setCustomValidity('');
                 input.title = '';
             }
+
+            this.$refs.fixedDeltaInput.reportValidity();
 
             return validationResult.valid;
         },

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2020, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,26 +20,40 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded"
-     class="js-plot-options-edit"
+<div
+    v-if="loaded"
+    class="js-plot-options-edit"
 >
-    <ul class="c-tree">
+    <ul
+        v-if="!isStackedPlotObject"
+        class="c-tree"
+    >
         <h2 title="Display properties for this object">Plot Series</h2>
-        <li v-for="series in plotSeries"
+        <li
+            v-for="series in plotSeries"
             :key="series.key"
         >
-            <series-form :series="series" />
+            <series-form
+                :series="series"
+                @seriesUpdated="updateSeriesConfigForObject"
+            />
         </li>
     </ul>
-    <y-axis-form v-if="plotSeries.length"
-                 class="grid-properties"
-                 :y-axis="config.yAxis"
+    <y-axis-form
+        v-if="plotSeries.length && !isStackedPlotObject"
+        class="grid-properties"
+        :y-axis="config.yAxis"
+        @seriesUpdated="updateSeriesConfigForObject"
     />
-    <ul class="l-inspector-part">
+    <ul
+        v-if="isStackedPlotObject || !isStackedPlotNestedObject"
+        class="l-inspector-part"
+    >
         <h2 title="Legend options">Legend</h2>
-        <legend-form v-if="plotSeries.length"
-                     class="grid-properties"
-                     :legend="config.legend"
+        <legend-form
+            v-if="plotSeries.length"
+            class="grid-properties"
+            :legend="config.legend"
         />
     </ul>
 </div>
@@ -50,6 +64,7 @@ import YAxisForm from "./forms/YAxisForm.vue";
 import LegendForm from "./forms/LegendForm.vue";
 import eventHelpers from "../lib/eventHelpers";
 import configStore from "../configuration/ConfigStore";
+import _ from "lodash";
 
 export default {
     components: {
@@ -57,13 +72,21 @@ export default {
         SeriesForm,
         YAxisForm
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     data() {
         return {
             config: {},
             plotSeries: [],
             loaded: false
         };
+    },
+    computed: {
+        isStackedPlotNestedObject() {
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
+        },
+        isStackedPlotObject() {
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+        }
     },
     mounted() {
         eventHelpers.extend(this);
@@ -94,6 +117,34 @@ export default {
         resetAllSeries() {
             this.plotSeries = [];
             this.config.series.forEach(this.addSeries, this);
+        },
+
+        updateSeriesConfigForObject(config) {
+            const stackedPlotObject = this.path.find((pathObject) => pathObject.type === 'telemetry.plot.stacked');
+            let index = stackedPlotObject.configuration.series.findIndex((seriesConfig) => {
+                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, config.identifier);
+            });
+            if (index < 0) {
+                index = stackedPlotObject.configuration.series.length;
+                const configPath = `configuration.series[${index}]`;
+                let newConfig = {
+                    identifier: config.identifier
+                };
+                _.set(newConfig, `${config.path}`, config.value);
+                this.openmct.objects.mutate(
+                    stackedPlotObject,
+                    configPath,
+                    newConfig
+                );
+            } else {
+                const configPath = `configuration.series[${index}].${config.path}`;
+                this.openmct.objects.mutate(
+                    stackedPlotObject,
+                    configPath,
+                    config.value
+                );
+            }
+
         }
     }
 };

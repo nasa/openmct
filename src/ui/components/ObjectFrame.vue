@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,9 +21,11 @@
  *****************************************************************************/
 <template>
 <div
+    ref="soView"
     class="c-so-view js-notebook-snapshot-item-wrapper"
     :class="[
         statusClass,
+        widthClass,
         'c-so-view--' + domainObject.type,
         {
             'c-so-view--no-frame': !hasFrame,
@@ -34,14 +36,17 @@
     <div
         class="c-so-view__header"
     >
-        <div class="c-object-label"
-             :class="[ statusClass ]"
+        <div
+            class="c-object-label"
+            :class="[ statusClass ]"
         >
-            <div class="c-object-label__type-icon"
-                 :class="cssClass"
+            <div
+                class="c-object-label__type-icon"
+                :class="cssClass"
             >
-                <span class="is-status__indicator"
-                      :title="`This item is ${status}`"
+                <span
+                    class="is-status__indicator"
+                    :title="`This item is ${status}`"
                 ></span>
             </div>
             <div class="c-object-label__name">
@@ -56,13 +61,15 @@
                 'has-complex-content': complexContent
             }"
         >
-            <NotebookMenuSwitcher v-if="notebookEnabled"
-                                  :domain-object="domainObject"
-                                  :object-path="objectPath"
-                                  class="c-notebook-snapshot-menubutton"
+            <NotebookMenuSwitcher
+                v-if="notebookEnabled"
+                :domain-object="domainObject"
+                :object-path="objectPath"
+                class="c-notebook-snapshot-menubutton"
             />
-            <div v-if="statusBarItems.length > 0"
-                 class="c-so-view__frame-controls__btns"
+            <div
+                v-if="statusBarItems.length > 0"
+                class="c-so-view__frame-controls__btns"
             >
                 <button
                     v-for="(item, index) in statusBarItems"
@@ -106,6 +113,7 @@ const SIMPLE_CONTENT_TYPES = [
     'hyperlink',
     'conditionWidget'
 ];
+const CSS_WIDTH_LESS_STR = '--width-less-than-';
 
 export default {
     components: {
@@ -145,6 +153,7 @@ export default {
 
         return {
             cssClass,
+            widthClass: '',
             complexContent,
             notebookEnabled: this.openmct.types.get('notebook'),
             statusBarItems: [],
@@ -163,12 +172,21 @@ export default {
         if (provider) {
             this.$refs.objectView.show(this.domainObject, provider.key, false, this.objectPath);
         }
+
+        if (this.$refs.soView) {
+            this.soViewResizeObserver = new ResizeObserver(this.resizeSoView);
+            this.soViewResizeObserver.observe(this.$refs.soView);
+        }
     },
     beforeDestroy() {
         this.removeStatusListener();
 
         if (this.actionCollection) {
             this.unlistenToActionCollection();
+        }
+
+        if (this.soViewResizeObserver) {
+            this.soViewResizeObserver.disconnect();
         }
     },
     methods: {
@@ -202,6 +220,19 @@ export default {
         },
         setStatus(status) {
             this.status = status;
+        },
+        resizeSoView() {
+            let cW = this.$refs.soView.offsetWidth;
+            let widths = [220, 600];
+            let wClass = '';
+
+            for (let width of widths) {
+                if (cW < width) {
+                    wClass = wClass.concat(' ', CSS_WIDTH_LESS_STR, width);
+                }
+            }
+
+            this.widthClass = wClass.trimStart();
         }
     }
 };

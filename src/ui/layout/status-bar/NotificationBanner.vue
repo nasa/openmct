@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
  Open MCT is licensed under the Apache License, Version 2.0 (the
@@ -29,9 +29,10 @@
     @click="maximize()"
 >
     <span class="c-message-banner__message">{{ activeModel.message }}</span>
-    <span v-if="haslink"
-          class="c-message-banner__message"
-          :class="[haslink ? getLinkProps.cssClass : '']"
+    <span
+        v-if="haslink"
+        class="c-message-banner__message"
+        :class="[haslink ? getLinkProps.cssClass : '']"
     >{{ getLinkProps.text }}</span>
 
     <progress-bar

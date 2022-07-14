@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -26,11 +26,16 @@
 
 import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
+import conditionalStylesMixin from "./mixins/objectStyles-mixin";
+import configStore from "@/plugins/plot/configuration/ConfigStore";
+import PlotConfigurationModel from "@/plugins/plot/configuration/PlotConfigurationModel";
+import ProgressBar from "../../../ui/components/ProgressBar.vue";
 
 export default {
+    mixins: [conditionalStylesMixin],
     inject: ['openmct', 'domainObject', 'path'],
     props: {
-        object: {
+        childObject: {
             type: Object,
             default() {
                 return {};
@@ -54,6 +59,18 @@ export default {
                 return true;
             }
         },
+        showLimitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        colorPalette: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        },
         plotTickWidth: {
             type: Number,
             default() {
@@ -70,12 +87,22 @@ export default {
         },
         plotTickWidth(width) {
             this.updateComponentProp('plotTickWidth', width);
+        },
+        showLimitLineLabels: {
+            handler(data) {
+                this.updateComponentProp('limitLineLabels', data);
+            },
+            deep: true
         }
     },
     mounted() {
         this.updateView();
     },
     beforeDestroy() {
+        if (this.removeSelectable) {
+            this.removeSelectable();
+        }
+
         if (this.component) {
             this.component.$destroy();
         }
@@ -94,21 +121,28 @@ export default {
             }
 
             const onTickWidthChange = this.onTickWidthChange;
-            const loadingUpdated = this.loadingUpdated;
+            const onLockHighlightPointUpdated = this.onLockHighlightPointUpdated;
+            const onHighlightsUpdated = this.onHighlightsUpdated;
+            const onConfigLoaded = this.onConfigLoaded;
+            const onCursorGuideChange = this.onCursorGuideChange;
+            const onGridLinesChange = this.onGridLinesChange;
             const setStatus = this.setStatus;
 
             const openmct = this.openmct;
-            const object = this.object;
             const path = this.path;
 
+            //If this object is not persistable, then package it with it's parent
+            const object = this.getPlotObject();
             const getProps = this.getProps;
+            const isMissing = openmct.objects.isMissing(object);
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
 
             this.component = new Vue({
                 el: viewContainer,
                 components: {
-                    MctPlot
+                    MctPlot,
+                    ProgressBar
                 },
                 provide: {
                     openmct,
@@ -119,33 +153,123 @@ export default {
                     return {
                         ...getProps(),
                         onTickWidthChange,
-                        loadingUpdated,
-                        setStatus
+                        onLockHighlightPointUpdated,
+                        onHighlightsUpdated,
+                        onConfigLoaded,
+                        onCursorGuideChange,
+                        onGridLinesChange,
+                        setStatus,
+                        isMissing,
+                        loading: true
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                methods: {
+                    loadingUpdated(loaded) {
+                        this.loading = loaded;
+                    }
+                },
+                template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
+
+            this.setSelection();
+        },
+        onLockHighlightPointUpdated() {
+            this.$emit('lockHighlightPoint', ...arguments);
+        },
+        onHighlightsUpdated() {
+            this.$emit('highlights', ...arguments);
+        },
+        onConfigLoaded() {
+            this.$emit('configLoaded', ...arguments);
         },
         onTickWidthChange() {
             this.$emit('plotTickWidth', ...arguments);
+        },
+        onCursorGuideChange() {
+            this.$emit('cursorGuide', ...arguments);
+        },
+        onGridLinesChange() {
+            this.$emit('gridLines', ...arguments);
         },
         setStatus(status) {
             this.status = status;
             this.updateComponentProp('status', status);
         },
-        loadingUpdated(loaded) {
-            this.loading = loaded;
-            this.updateComponentProp('loading', loaded);
+        setSelection() {
+            let childContext = {};
+            childContext.item = this.childObject;
+            this.context = childContext;
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
+
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el, this.context);
         },
         getProps() {
             return {
+                limitLineLabels: this.showLimitLineLabels,
                 gridLines: this.gridLines,
                 cursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,
-                loading: this.loading,
                 options: this.options,
-                status: this.status
+                status: this.status,
+                colorPalette: this.colorPalette
             };
+        },
+        getPlotObject() {
+            if (this.childObject.configuration && this.childObject.configuration.series) {
+                //If the object has a configuration, allow initialization of the config from it's persisted config
+                return this.childObject;
+            } else {
+                //If object is missing, warn and return object
+                if (this.openmct.objects.isMissing(this.childObject)) {
+                    console.warn('Missing domain object');
+
+                    return this.childObject;
+                }
+
+                // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
+                const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
+                let config = configStore.get(configId);
+                if (!config) {
+                    let persistedSeriesConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+                        return this.openmct.objects.areIdsEqual(seriesConfig.identifier, this.childObject.identifier);
+                    });
+
+                    if (!persistedSeriesConfig) {
+                        persistedSeriesConfig = {
+                            series: {},
+                            yAxis: {}
+                        };
+                    }
+
+                    config = new PlotConfigurationModel({
+                        id: configId,
+                        domainObject: {
+                            ...this.childObject,
+                            configuration: {
+                                series: [
+                                    {
+                                        identifier: this.childObject.identifier,
+                                        ...persistedSeriesConfig.series
+                                    }
+                                ],
+                                yAxis: persistedSeriesConfig.yAxis
+
+                            }
+                        },
+                        openmct: this.openmct,
+                        palette: this.colorPalette,
+                        callback: (data) => {
+                            this.data = data;
+                        }
+                    });
+                    configStore.add(configId, config);
+                }
+
+                return this.childObject;
+            }
         }
     }
 };

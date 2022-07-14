@@ -27,6 +27,10 @@ describe('Export as JSON plugin', () => {
 
     it('ExportAsJSONAction applies to folder', () => {
         domainObject = {
+            identifier: {
+                key: 'export-testing',
+                namespace: ''
+            },
             composition: [],
             location: 'mine',
             modified: 1640115501237,
@@ -40,6 +44,10 @@ describe('Export as JSON plugin', () => {
 
     it('ExportAsJSONAction applies to telemetry.plot.overlay', () => {
         domainObject = {
+            identifier: {
+                key: 'export-testing',
+                namespace: ''
+            },
             composition: [],
             location: 'mine',
             modified: 1640115501237,
@@ -53,6 +61,10 @@ describe('Export as JSON plugin', () => {
 
     it('ExportAsJSONAction applies to telemetry.plot.stacked', () => {
         domainObject = {
+            identifier: {
+                key: 'export-testing',
+                namespace: ''
+            },
             composition: [],
             location: 'mine',
             modified: 1640115501237,
@@ -64,15 +76,23 @@ describe('Export as JSON plugin', () => {
         expect(exportAsJSONAction.appliesTo([domainObject])).toEqual(true);
     });
 
-    it('ExportAsJSONAction applies does not applies to non-creatable objects', () => {
+    it('ExportAsJSONAction does not applie to non-persistable objects', () => {
         domainObject = {
+            identifier: {
+                key: 'export-testing',
+                namespace: ''
+            },
             composition: [],
             location: 'mine',
             modified: 1640115501237,
             name: 'Non Editable Folder',
             persisted: 1640115501237,
-            type: 'noneditable.folder'
+            type: 'folder'
         };
+
+        spyOn(openmct.objects, 'getProvider').and.callFake(() => {
+            return { get: () => domainObject };
+        });
 
         expect(exportAsJSONAction.appliesTo([domainObject])).toEqual(false);
     });
@@ -296,6 +316,59 @@ describe('Export as JSON plugin', () => {
             // parent and child objects as part of openmct but child with new id/key
             expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'child')).not.toBeTruthy();
             expect(Object.keys(completedTree.openmct).length).toBe(2);
+
+            done();
+        });
+
+        exportAsJSONAction.invoke([parent]);
+    });
+
+    it('ExportAsJSONAction exports object references from tree', (done) => {
+        const parent = {
+            composition: [],
+            configuration: {
+                objectStyles: {
+                    conditionSetIdentifier: {
+                        key: 'child',
+                        namespace: ''
+                    }
+                }
+            },
+            identifier: {
+                key: 'parent',
+                namespace: ''
+            },
+            name: 'Parent',
+            type: 'folder',
+            modified: 1503598129176,
+            location: 'mine',
+            persisted: 1503598129176
+        };
+
+        const child = {
+            composition: [],
+            identifier: {
+                key: 'child',
+                namespace: ''
+            },
+            name: 'Child',
+            type: 'folder',
+            modified: 1503598132428,
+            location: null,
+            persisted: 1503598132428
+        };
+
+        spyOn(openmct.objects, 'get').and.callFake(object => {
+            return Promise.resolve(child);
+        });
+
+        spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
+            expect(Object.keys(completedTree).length).toBe(2);
+            const conditionSetId = Object.keys(completedTree.openmct)[1];
+            expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
+            expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
+            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'parent')).toBeTruthy();
+            expect(completedTree.openmct[conditionSetId].name).toBe('Child');
 
             done();
         });

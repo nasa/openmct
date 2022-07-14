@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -22,18 +22,21 @@
 
 <template>
 <div class="c-style__condition-desc">
-    <span v-if="showLabel && condition"
-          class="c-style__condition-desc__name c-condition__name"
+    <span
+        v-if="showLabel && condition"
+        class="c-style__condition-desc__name c-condition__name"
     >
         {{ condition.configuration.name }}
     </span>
-    <span v-if="!condition.isDefault"
-          class="c-style__condition-desc__text"
+    <span
+        v-if="!condition.isDefault"
+        class="c-style__condition-desc__text"
     >
         {{ description }}
     </span>
-    <span v-else
-          class="c-style__condition-desc__text"
+    <span
+        v-else
+        class="c-style__condition-desc__text"
     >
         Match if no other condition is matched
     </span>

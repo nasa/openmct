@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,15 +28,18 @@ define([
     './ISOTimeFormat/plugin',
     './myItems/plugin',
     '../../example/generator/plugin',
+    '../../example/eventGenerator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    '../../example/faultManagment/exampleFaultSource',
     './imagery/plugin',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
-    './charts/plugin',
+    './charts/bar/plugin',
+    './charts/scatter/plugin',
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
@@ -60,7 +63,6 @@ define([
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
     './newFolderAction/plugin',
-    './nonEditableFolder/plugin',
     './persistence/couch/plugin',
     './defaultRootName/plugin',
     './plan/plugin',
@@ -74,7 +76,14 @@ define([
     './clock/plugin',
     './DeviceClassifier/plugin',
     './timer/plugin',
-    './localStorage/plugin'
+    './userIndicator/plugin',
+    '../../example/exampleUser/plugin',
+    './localStorage/plugin',
+    './operatorStatus/plugin',
+    './gauge/GaugePlugin',
+    './timelist/plugin',
+    './faultManagement/FaultManagementPlugin',
+    '../../example/exampleTags/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -83,15 +92,18 @@ define([
     ISOTimeFormat,
     MyItems,
     GeneratorPlugin,
+    EventGeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ExampleFaultSource,
     ImageryPlugin,
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
-    ChartPlugin,
+    BarChartPlugin,
+    ScatterPlotPlugin,
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
@@ -115,7 +127,6 @@ define([
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
     NewFolderAction,
-    NonEditableFolder,
     CouchDBPlugin,
     DefaultRootName,
     PlanLayout,
@@ -129,19 +140,24 @@ define([
     Clock,
     DeviceClassifier,
     Timer,
-    LocalStorage
+    UserIndicator,
+    ExampleUser,
+    LocalStorage,
+    OperatorStatus,
+    GaugePlugin,
+    TimeList,
+    FaultManagementPlugin,
+    ExampleTags
 ) {
-    const bundleMap = {
-        Elasticsearch: 'platform/persistence/elastic'
-    };
+    const plugins = {};
 
-    const plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
-        return function pluginConstructor() {
-            return function (openmct) {
-                openmct.legacyRegistry.enable(bundleName);
-            };
-        };
-    });
+    plugins.example = {};
+    plugins.example.ExampleUser = ExampleUser.default;
+    plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.ExampleFaultSource = ExampleFaultSource.default;
+    plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
+    plugins.example.ExampleTags = ExampleTags.default;
+    plugins.example.Generator = () => GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
@@ -149,7 +165,7 @@ define([
 
     plugins.MyItems = MyItems.default;
 
-    plugins.StaticRootPlugin = StaticRootPlugin;
+    plugins.StaticRootPlugin = StaticRootPlugin.default;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at
@@ -166,43 +182,19 @@ define([
 
     plugins.CouchDB = CouchDBPlugin.default;
 
-    plugins.Elasticsearch = function (url) {
-        return function (openmct) {
-            if (url) {
-                const bundleName = "config/elastic";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "ELASTIC_ROOT",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
-
-            openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
-        };
-    };
-
-    plugins.Generator = function () {
-        return GeneratorPlugin;
-    };
-
-    plugins.ExampleImagery = ExampleImagery.default;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
-    plugins.Chart = ChartPlugin.default;
+    plugins.BarChart = BarChartPlugin.default;
+    plugins.ScatterPlot = ScatterPlotPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
-    plugins.Notebook = Notebook.default;
+    plugins.Notebook = Notebook.NotebookPlugin;
+    plugins.RestrictedNotebook = Notebook.RestrictedNotebookPlugin;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FaultManagement = FaultManagementPlugin.default;
     plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
@@ -222,7 +214,6 @@ define([
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
-    plugins.NonEditableFolder = NonEditableFolder.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
     plugins.PlanLayout = PlanLayout.default;
@@ -236,7 +227,11 @@ define([
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
+    plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
+    plugins.OperatorStatus = OperatorStatus.default;
+    plugins.Gauge = GaugePlugin.default;
+    plugins.Timelist = TimeList.default;
 
     return plugins;
 });

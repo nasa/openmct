@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,52 +20,26 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div ref="plotWrapper"
-     class="c-plot holder holder-plot has-control-bar"
+<div
+    ref="plotWrapper"
+    class="c-plot holder holder-plot has-control-bar"
 >
-    <div v-if="!options.compact"
-         class="c-control-bar"
+    <div
+        ref="plotContainer"
+        class="l-view-section u-style-receiver js-style-receiver"
+        :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced'}"
     >
-        <span class="c-button-set c-button-set--strip-h">
-            <button class="c-button icon-download"
-                    title="Export This View's Data as PNG"
-                    @click="exportPNG()"
-            >
-                <span class="c-button__label">PNG</span>
-            </button>
-            <button class="c-button"
-                    title="Export This View's Data as JPG"
-                    @click="exportJPG()"
-            >
-                <span class="c-button__label">JPG</span>
-            </button>
-        </span>
-        <button class="c-button icon-crosshair"
-                :class="{ 'is-active': cursorGuide }"
-                title="Toggle cursor guides"
-                @click="toggleCursorGuide"
-        >
-        </button>
-        <button class="c-button"
-                :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
-                title="Toggle grid lines"
-                @click="toggleGridLines"
-        >
-        </button>
-    </div>
-
-    <div ref="plotContainer"
-         class="l-view-section u-style-receiver js-style-receiver"
-         :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced'}"
-    >
-        <div v-show="!!loading"
-             class="c-loading--overlay loading"
-        ></div>
-        <mct-plot :grid-lines="gridLines"
-                  :cursor-guide="cursorGuide"
-                  :options="options"
-                  @loadingUpdated="loadingUpdated"
-                  @statusUpdated="setStatus"
+        <progress-bar
+            v-show="!!loading"
+            class="c-telemetry-table__progress-bar"
+            :model="{progressPerc: undefined}"
+        />
+        <mct-plot
+            :init-grid-lines="gridLines"
+            :init-cursor-guide="cursorGuide"
+            :options="options"
+            @loadingUpdated="loadingUpdated"
+            @statusUpdated="setStatus"
         />
     </div>
 </div>
@@ -75,10 +49,12 @@
 import eventHelpers from './lib/eventHelpers';
 import ImageExporter from '../../exporters/ImageExporter';
 import MctPlot from './MctPlot.vue';
+import ProgressBar from "../../ui/components/ProgressBar.vue";
 
 export default {
     components: {
-        MctPlot
+        MctPlot,
+        ProgressBar
     },
     inject: ['openmct', 'domainObject', 'path'],
     props: {
@@ -115,26 +91,22 @@ export default {
         destroy() {
             this.stopListening();
         },
-
         exportJPG() {
             const plotElement = this.$refs.plotContainer;
             this.imageExporter.exportJPG(plotElement, 'plot.jpg', 'export-plot');
         },
-
         exportPNG() {
             const plotElement = this.$refs.plotContainer;
             this.imageExporter.exportPNG(plotElement, 'plot.png', 'export-plot');
         },
-
-        toggleCursorGuide() {
-            this.cursorGuide = !this.cursorGuide;
-        },
-
-        toggleGridLines() {
-            this.gridLines = !this.gridLines;
-        },
         setStatus(status) {
             this.status = status;
+        },
+        getViewContext() {
+            return {
+                exportPNG: this.exportPNG,
+                exportJPG: this.exportJPG
+            };
         }
     }
 };

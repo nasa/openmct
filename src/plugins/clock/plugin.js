@@ -1,6 +1,6 @@
 
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -89,6 +89,7 @@ export default function ClockPlugin(options) {
                     "key": "timezone",
                     "name": "Timezone",
                     "control": "autocomplete",
+                    "cssClass": "c-clock__timezone-selection c-menu--no-icon",
                     "options": momentTimezone.tz.names(),
                     property: [
                         'configuration',

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,8 +37,9 @@
         :data-font="item.font"
         @contextmenu.prevent="showContextMenu"
     >
-        <div class="is-status__indicator"
-             :title="`This item is ${status}`"
+        <div
+            class="is-status__indicator"
+            :title="`This item is ${status}`"
         ></div>
         <div
             v-if="showLabel"
@@ -90,7 +91,7 @@ export default {
             width: DEFAULT_TELEMETRY_DIMENSIONS[0],
             height: DEFAULT_TELEMETRY_DIMENSIONS[1],
             displayMode: 'all',
-            value: metadata.getDefaultDisplayValue(),
+            value: metadata.getDefaultDisplayValue()?.key,
             stroke: "",
             fill: "",
             color: "",
@@ -151,7 +152,7 @@ export default {
         },
         unit() {
             let value = this.item.value;
-            let unit = this.metadata.value(value).unit;
+            let unit = this.metadata ? this.metadata.value(value).unit : '';
 
             return unit;
         },
@@ -221,20 +222,20 @@ export default {
                 .then(this.setObject);
         }
 
-        this.openmct.time.on("bounds", this.refreshData);
-
         this.status = this.openmct.status.get(this.item.identifier);
         this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
     },
     beforeDestroy() {
-        this.removeSubscription();
         this.removeStatusListener();
 
         if (this.removeSelectable) {
             this.removeSelectable();
         }
 
-        this.openmct.time.off("bounds", this.refreshData);
+        this.telemetryCollection.off('add', this.setLatestValues);
+        this.telemetryCollection.off('clear', this.refreshData);
+
+        this.telemetryCollection.destroy();
 
         if (this.mutablePromise) {
             this.mutablePromise.then(() => {
@@ -252,34 +253,9 @@ export default {
 
             return `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue}${unit}`;
         },
-        requestHistoricalData() {
-            let bounds = this.openmct.time.bounds();
-            let options = {
-                start: bounds.start,
-                end: bounds.end,
-                size: 1,
-                strategy: 'latest'
-            };
-            this.openmct.telemetry.request(this.domainObject, options)
-                .then(data => {
-                    if (data.length > 0) {
-                        this.latestDatum = data[data.length - 1];
-                        this.updateView();
-                    }
-                });
-        },
-        subscribeToObject() {
-            this.subscription = this.openmct.telemetry.subscribe(this.domainObject, function (datum) {
-                const key = this.openmct.time.timeSystem().key;
-                const datumTimeStamp = datum[key];
-                if (this.openmct.time.clock() !== undefined
-                    || (datumTimeStamp
-                        && (this.openmct.time.bounds().end >= datumTimeStamp))
-                ) {
-                    this.latestDatum = datum;
-                    this.updateView();
-                }
-            }.bind(this));
+        setLatestValues(data) {
+            this.latestDatum = data[data.length - 1];
+            this.updateView();
         },
         updateView() {
             if (!this.updatingView) {
@@ -290,17 +266,10 @@ export default {
                 });
             }
         },
-        removeSubscription() {
-            if (this.subscription) {
-                this.subscription();
-                this.subscription = undefined;
-            }
-        },
         refreshData(bounds, isTick) {
             if (!isTick) {
                 this.latestDatum = undefined;
                 this.updateView();
-                this.requestHistoricalData(this.domainObject);
             }
         },
         setObject(domainObject) {
@@ -311,11 +280,16 @@ export default {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
-            const valueMetadata = this.metadata.value(this.item.value);
+            const valueMetadata = this.metadata ? this.metadata.value(this.item.value) : {};
             this.customStringformatter = this.openmct.telemetry.customStringFormatter(valueMetadata, this.item.format);
 
-            this.requestHistoricalData();
-            this.subscribeToObject();
+            this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
+                size: 1,
+                strategy: 'latest'
+            });
+            this.telemetryCollection.on('add', this.setLatestValues);
+            this.telemetryCollection.on('clear', this.refreshData);
+            this.telemetryCollection.load();
 
             this.currentObjectPath = this.objectPath.slice();
             this.currentObjectPath.unshift(this.domainObject);

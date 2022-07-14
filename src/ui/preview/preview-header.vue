@@ -4,9 +4,10 @@
         <div
             class="l-browse-bar__object-name--w c-object-label"
         >
-            <div v-if="type"
-                 class="c-object-label__type-icon"
-                 :class="type.definition.cssClass"
+            <div
+                v-if="type"
+                class="c-object-label__type-icon"
+                :class="type.definition.cssClass"
             ></div>
             <span class="l-browse-bar__object-name c-object-label__name">
                 {{ domainObject.name }}
@@ -19,11 +20,12 @@
             :views="views"
             :current-view="currentView"
         />
-        <NotebookMenuSwitcher :domain-object="domainObject"
-                              :object-path="objectPath"
-                              :is-preview="true"
-                              :current-view="currentView"
-                              class="c-notebook-snapshot-menubutton"
+        <NotebookMenuSwitcher
+            :domain-object="domainObject"
+            :object-path="objectPath"
+            :is-preview="true"
+            :current-view="currentView"
+            class="c-notebook-snapshot-menubutton"
         />
         <div class="l-browse-bar__actions">
             <button

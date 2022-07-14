@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2021, United States Government
+ * Open MCT Web, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div ref="modeButton"
-     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+<div
+    ref="modeButton"
+    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
         <button
@@ -104,6 +105,7 @@ export default {
                     name: 'Fixed Timespan',
                     description: 'Query and explore data that falls between two fixed datetimes.',
                     cssClass: 'icon-tabular',
+                    testId: 'conductor-modeOption-fixed',
                     onItemClicked: () => this.setOption(key)
                 };
             } else {
@@ -115,6 +117,7 @@ export default {
                     description: "Monitor streaming data in real-time. The Time "
                     + "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
                     cssClass: clock.cssClass || 'icon-clock',
+                    testId: 'conductor-modeOption-realtime',
                     onItemClicked: () => this.setOption(key)
                 };
             }
@@ -147,7 +150,8 @@ export default {
             if (clockKey === undefined) {
                 this.openmct.time.stopClock();
             } else {
-                this.openmct.time.clock(clockKey, configuration.clockOffsets);
+                const offsets = this.openmct.time.clockOffsets() || configuration.clockOffsets;
+                this.openmct.time.clock(clockKey, offsets);
             }
         },
 

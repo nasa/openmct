@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,9 +31,9 @@ function replaceDotsWithUnderscores(filename) {
     return filename.replace(regex, '_');
 }
 
-import {saveAs} from 'file-saver/FileSaver';
+import {saveAs} from 'saveAs';
 import html2canvas from 'html2canvas';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 class ImageExporter {
     constructor(openmct) {
@@ -51,7 +51,7 @@ class ImageExporter {
         const overlays = this.openmct.overlays;
         const dialog = overlays.dialog({
             iconClass: 'info',
-            message: 'Caputuring an image',
+            message: 'Capturing image, please wait...',
             buttons: [
                 {
                     label: 'Cancel',

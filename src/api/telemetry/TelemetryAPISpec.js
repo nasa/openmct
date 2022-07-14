@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import TelemetryAPI from './TelemetryAPI';
-const { TelemetryCollection } = require("./TelemetryCollection");
+import TelemetryCollection from './TelemetryCollection';
 
 describe('Telemetry API', function () {
     let openmct;

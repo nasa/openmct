@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,11 +21,17 @@
  *****************************************************************************/
 import Model from './Model';
 
+/**
+ * @template {object} T
+ * @template {object} O
+ * @extends {Model<T, O>}
+ */
 export default class Collection extends Model {
+    /** @type {Constructor} */
+    modelClass = Model;
 
     initialize(options) {
         super.initialize(options);
-        this.modelClass = Model;
         if (options.models) {
             this.models = options.models.map(this.modelFn, this);
         } else {
@@ -107,3 +113,7 @@ export default class Collection extends Model {
         this.stopListening();
     }
 }
+
+/** @typedef {any} TODO */
+
+/** @typedef {new (...args: any[]) => object} Constructor */

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -22,21 +22,30 @@
 
 <template>
 <span class="form-control shell">
-    <span class="field control"
-          :class="model.cssClass"
+    <span
+        class="field control"
+        :class="model.cssClass"
     >
-        <input id="fileElem"
-               ref="fileInput"
-               type="file"
-               accept=".json"
-               style="display:none"
+        <input
+            id="fileElem"
+            ref="fileInput"
+            type="file"
+            accept=".json"
+            style="display:none"
         >
-        <button id="fileSelect"
-                class="c-button"
-                @click="selectFile"
+        <button
+            id="fileSelect"
+            class="c-button"
+            @click="selectFile"
         >
             {{ name }}
         </button>
+        <button
+            v-if="removable"
+            class="c-button icon-trash"
+            title="Remove file"
+            @click="removeFile"
+        ></button>
     </span>
 </span>
 </template>
@@ -60,6 +69,9 @@ export default {
             const fileInfo = this.fileInfo || this.model.value;
 
             return fileInfo && fileInfo.name || this.model.text;
+        },
+        removable() {
+            return (this.fileInfo || this.model.value) && this.model.removable;
         }
     },
     mounted() {
@@ -94,6 +106,15 @@ export default {
         },
         selectFile() {
             this.$refs.fileInput.click();
+        },
+        removeFile() {
+            this.model.value = undefined;
+            this.fileInfo = undefined;
+            const data = {
+                model: this.model,
+                value: undefined
+            };
+            this.$emit('onChange', data);
         }
     }
 };

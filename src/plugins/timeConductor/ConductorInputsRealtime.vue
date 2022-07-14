@@ -1,6 +1,7 @@
 <template>
-<form ref="deltaInput"
-      class="c-conductor__inputs"
+<form
+    ref="deltaInput"
+    class="c-conductor__inputs"
 >
     <div
         class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
@@ -21,7 +22,8 @@
             ref="startOffset"
             class="c-button c-conductor__delta-button"
             title="Set the time offset after now"
-            @click.prevent="showTimePopupStart"
+            data-testid="conductor-start-offset-button"
+            @click.prevent.stop="showTimePopupStart"
         >
             {{ offsets.start }}
         </button>
@@ -60,7 +62,8 @@
             ref="endOffset"
             class="c-button c-conductor__delta-button"
             title="Set the time offset preceding now"
-            @click.prevent="showTimePopupEnd"
+            data-testid="conductor-end-offset-button"
+            @click.prevent.stop="showTimePopupEnd"
         >
             {{ offsets.end }}
         </button>
@@ -83,6 +86,12 @@ export default {
     props: {
         keyString: {
             type: String,
+            default() {
+                return undefined;
+            }
+        },
+        inputBounds: {
+            type: Object,
             default() {
                 return undefined;
             }
@@ -114,6 +123,17 @@ export default {
             },
             isUTCBased: timeSystem.isUTCBased
         };
+    },
+    watch: {
+        keyString() {
+            this.setTimeContext();
+        },
+        inputBounds: {
+            handler(newBounds) {
+                this.handleNewBounds(newBounds);
+            },
+            deep: true
+        }
     },
     mounted() {
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);

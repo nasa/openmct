@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -21,19 +21,19 @@
 *****************************************************************************/
 
 <template>
-<SelectorDialogTree :ignore-type-check="true"
-                    :css-class="`form-locator c-form-control--locator`"
-                    :parent="model.parent"
-                    @treeItemSelected="handleItemSelection"
+<mct-tree
+    :is-selector-tree="true"
+    :initial-selection="model.parent"
+    @tree-item-selection="handleItemSelection"
 />
 </template>
 
 <script>
-import SelectorDialogTree from '@/ui/components/SelectorDialogTree.vue';
+import MctTree from '@/ui/layout/mct-tree.vue';
 
 export default {
     components: {
-        SelectorDialogTree
+        MctTree
     },
     inject: ['openmct'],
     props: {
@@ -43,10 +43,10 @@ export default {
         }
     },
     methods: {
-        handleItemSelection({ parentObjectPath }) {
+        handleItemSelection(item) {
             const data = {
                 model: this.model,
-                value: parentObjectPath
+                value: item.objectPath
             };
 
             this.$emit('onChange', data);

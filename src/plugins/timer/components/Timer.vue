@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2009-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -32,10 +32,11 @@
             :class="[{'hide': timerState === 'stopped' }]"
             @click="restartTimer"
         ></button>
-        <button :title="timerStateButtonText"
-                class="c-timer__ctrl-pause-play c-icon-button c-icon-button--major"
-                :class="[timerStateButtonIcon]"
-                @click="toggleStateButton"
+        <button
+            :title="timerStateButtonText"
+            class="c-timer__ctrl-pause-play c-icon-button c-icon-button--major"
+            :class="[timerStateButtonIcon]"
+            @click="toggleStateButton"
         ></button>
     </div>
     <div
@@ -178,6 +179,15 @@ export default {
             return timerSign;
         }
     },
+    watch: {
+        timerState() {
+            if (!this.viewActionsCollection) {
+                return;
+            }
+
+            this.showOrHideAvailableActions();
+        }
+    },
     mounted() {
         this.$nextTick(() => {
             if (this.configuration && this.configuration.timerState === undefined) {
@@ -189,6 +199,9 @@ export default {
             this.unlisten = ticker.listen(() => {
                 this.openmct.objects.refresh(this.domainObject);
             });
+
+            this.viewActionsCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
+            this.showOrHideAvailableActions();
         });
     },
     beforeDestroy() {
@@ -226,6 +239,22 @@ export default {
             const action = this.openmct.actions.getAction(actionKey);
             if (action) {
                 action.invoke(this.objectPath, this.currentView);
+            }
+        },
+        showOrHideAvailableActions() {
+            switch (this.timerState) {
+            case 'started':
+                this.viewActionsCollection.hide(['timer.start']);
+                this.viewActionsCollection.show(['timer.stop', 'timer.pause', 'timer.restart']);
+                break;
+            case 'paused':
+                this.viewActionsCollection.hide(['timer.pause']);
+                this.viewActionsCollection.show(['timer.stop', 'timer.start', 'timer.restart']);
+                break;
+            case 'stopped':
+                this.viewActionsCollection.hide(['timer.stop', 'timer.pause', 'timer.restart']);
+                this.viewActionsCollection.show(['timer.start']);
+                break;
             }
         }
     }

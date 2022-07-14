@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2021, United States Government
+ * Open MCT Web, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,11 +30,15 @@
     ]"
 >
     <div class="c-conductor__time-bounds">
-        <conductor-inputs-fixed v-if="isFixed"
-                                @updated="saveFixedOffsets"
+        <conductor-inputs-fixed
+            v-if="isFixed"
+            :input-bounds="viewBounds"
+            @updated="saveFixedOffsets"
         />
-        <conductor-inputs-realtime v-else
-                                   @updated="saveClockOffsets"
+        <conductor-inputs-realtime
+            v-else
+            :input-bounds="viewBounds"
+            @updated="saveClockOffsets"
         />
         <ConductorModeIcon class="c-conductor__mode-icon" />
         <conductor-axis

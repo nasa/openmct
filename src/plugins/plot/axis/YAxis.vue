@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,11 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded"
-     class="gl-plot-axis-area gl-plot-y has-local-controls"
-     :style="{
-         width: (tickWidth + 20) + 'px'
-     }"
+<div
+    v-if="loaded"
+    class="gl-plot-axis-area gl-plot-y has-local-controls"
+    :style="{
+        width: (tickWidth + 20) + 'px'
+    }"
 >
 
     <div
@@ -34,24 +35,27 @@
     >{{ yAxisLabel }}
     </div>
 
-    <select v-if="yKeyOptions.length > 1 && singleSeries"
-            v-model="yAxisLabel"
-            class="gl-plot-y-label__select local-controls--hidden"
-            @change="toggleYAxisLabel"
+    <select
+        v-if="yKeyOptions.length > 1 && singleSeries"
+        v-model="yAxisLabel"
+        class="gl-plot-y-label__select local-controls--hidden"
+        @change="toggleYAxisLabel"
     >
-        <option v-for="(option, index) in yKeyOptions"
-                :key="index"
-                :value="option.name"
-                :selected="option.name === yAxisLabel"
+        <option
+            v-for="(option, index) in yKeyOptions"
+            :key="index"
+            :value="option.name"
+            :selected="option.name === yAxisLabel"
         >
             {{ option.name }}
         </option>
     </select>
 
-    <mct-ticks :axis-type="'yAxis'"
-               class="gl-plot-ticks"
-               :position="'top'"
-               @plotTickWidth="onTickWidthChange"
+    <mct-ticks
+        :axis-type="'yAxis'"
+        class="gl-plot-ticks"
+        :position="'top'"
+        @plotTickWidth="onTickWidthChange"
     />
 </div>
 </template>
@@ -116,21 +120,25 @@ export default {
             }
         },
         setUpYAxisOptions() {
-            this.yKeyOptions = this.seriesModel.metadata
-                .valuesForHints(['range'])
-                .map(function (o) {
-                    return {
-                        name: o.name,
-                        key: o.key
-                    };
-                });
+            this.yKeyOptions = [];
+
+            if (this.seriesModel.metadata) {
+                this.yKeyOptions = this.seriesModel.metadata
+                    .valuesForHints(['range'])
+                    .map(function (o) {
+                        return {
+                            name: o.name,
+                            key: o.key
+                        };
+                    });
+            }
 
             //  set yAxisLabel if none is set yet
             if (this.yAxisLabel === 'none') {
                 let yKey = this.seriesModel.model.yKey;
                 let yKeyModel = this.yKeyOptions.filter(o => o.key === yKey)[0];
 
-                this.yAxisLabel = yKeyModel.name;
+                this.yAxisLabel = yKeyModel ? yKeyModel.name : '';
             }
         },
         toggleYAxisLabel() {

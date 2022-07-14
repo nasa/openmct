@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -92,32 +92,40 @@ export default class RemoveAction {
             this.openmct.editor.save();
         }
 
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-        const isAlias = parentKeyString !== child.location;
-
-        if (!isAlias) {
+        if (!this.isAlias(child, parent)) {
             this.openmct.objects.mutate(child, 'location', null);
         }
     }
 
-    appliesTo(objectPath) {
-        let parent = objectPath[1];
-        let parentType = parent && this.openmct.types.get(parent.type);
-        let child = objectPath[0];
-        let locked = child.locked ? child.locked : parent && parent.locked;
-        let isEditing = this.openmct.editor.isEditing();
-
-        if (isEditing) {
-            let currentItemInView = this.openmct.router.path[0];
-            let domainObject = objectPath[0];
-
-            if (this.openmct.objects.areIdsEqual(currentItemInView.identifier, domainObject.identifier)) {
-                return false;
-            }
+    isAlias(child, parent) {
+        if (parent === undefined) {
+            // then it's a root item, not an alias
+            return false;
         }
 
-        if (locked) {
+        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+        const childLocation = child.location;
+
+        return childLocation !== parentKeyString;
+    }
+
+    appliesTo(objectPath) {
+        const parent = objectPath[1];
+        const parentType = parent && this.openmct.types.get(parent.type);
+        const child = objectPath[0];
+        const locked = child.locked ? child.locked : parent && parent.locked;
+        const isEditing = this.openmct.editor.isEditing();
+        const isPersistable = this.openmct.objects.isPersistable(child.identifier);
+        const isAlias = this.isAlias(child, parent);
+
+        if (locked || (!isPersistable && !isAlias)) {
             return false;
+        }
+
+        if (isEditing) {
+            if (this.openmct.router.isNavigatedObject(objectPath)) {
+                return false;
+            }
         }
 
         return parentType
