@@ -154,6 +154,7 @@ test.describe('Grand Search', () => {
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Disp');
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText('Unnamed Display Layout');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toContainText('Folder');
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Clock C');
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText('Clock C My Items Red Folder Blue Folder');
