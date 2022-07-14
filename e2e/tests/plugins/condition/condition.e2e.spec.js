@@ -60,6 +60,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         getConditionSetIdentifierFromUrl = conditionSetUrl.split('/').pop().split('?')[0];
         console.debug('getConditionSetIdentifierFromUrl ' + getConditionSetIdentifierFromUrl);
+        await page.close();
     });
 
     //Load localStorage for subsequent tests

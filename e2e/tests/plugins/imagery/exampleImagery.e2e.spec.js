@@ -81,7 +81,16 @@ test.describe('Example Imagery Object', () => {
         expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
         expect(imageMouseZoomedOut.height).toBeLessThan(imageMouseZoomedIn.height);
         expect(imageMouseZoomedOut.width).toBeLessThan(imageMouseZoomedIn.width);
+    });
 
+    test('Can adjust image brightness/contrast by dragging the sliders', async ({ page, browserName }) => {
+        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+        // Open the image filter menu
+        await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+
+        // Drag the brightness and contrast sliders around and assert filter values
+        await dragBrightnessSliderAndAssertFilterValues(page);
+        await dragContrastSliderAndAssertFilterValues(page);
     });
 
     test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
@@ -249,10 +258,8 @@ test('Example Imagery in Display layout', async ({ page, browserName }) => {
     await page.click('text=Example Imagery');
 
     // Clear and set Image load delay to minimum value
-    // FIXME: Update the value to 5000 ms when this bug is fixed.
-    // See: https://github.com/nasa/openmct/issues/5265
     await page.locator('input[type="number"]').fill('');
-    await page.locator('input[type="number"]').fill('0');
+    await page.locator('input[type="number"]').fill('5000');
 
     // Click text=OK
     await Promise.all([
@@ -336,6 +343,19 @@ test('Example Imagery in Display layout', async ({ page, browserName }) => {
 
     // Verify selected image is still displayed
     await expect(selectedImage).toBeVisible();
+
+    // Unpause imagery
+    await page.locator('.pause-play').click();
+
+    //Get background-image url from background-image css prop
+    await assertBackgroundImageUrlFromBackgroundCss(page);
+
+    // Open the image filter menu
+    await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+
+    // Drag the brightness and contrast sliders around and assert filter values
+    await dragBrightnessSliderAndAssertFilterValues(page);
+    await dragContrastSliderAndAssertFilterValues(page);
 });
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
@@ -426,6 +446,11 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
     });
 });
 
+// test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
+// test.fixme('Can use alt+drag to move around image once zoomed in');
+// test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
+// test.fixme('If the imagery view is in pause mode, images still come in');
+// test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Flexible layout', () => {
     test('Example Imagery in Flexible layout', async ({ page, browserName }) => {
         test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
@@ -636,21 +661,6 @@ async function assertBackgroundImageBrightness(page, expected) {
     expect(actual).toBe(expected);
 }
 
-/**
- * Gets the filter:contrast value of the current background-image and
- * asserts against an expected value
- * @param {import('@playwright/test').Page} page
- * @param {String} expected The expected contrast value
- */
-async function assertBackgroundImageContrast(page, expected) {
-    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
-
-    // Get the contrast filter value (i.e: filter: contrast(500%) => "500")
-    const actual = await backgroundImage.evaluate((el) => {
-        return el.style.filter.match(/contrast\((\d{1,3})%\)/)[1];
-    });
-    expect(actual).toBe(expected);
-}
 
 /**
  * @param {import('@playwright/test').Page} page
@@ -751,3 +761,20 @@ async function mouseZoomIn(page) {
     expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
     expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
 }
+
+/**
+ * Gets the filter:contrast value of the current background-image and
+ * asserts against an expected value
+ * @param {import('@playwright/test').Page} page
+ * @param {String} expected The expected contrast value
+ */
+async function assertBackgroundImageContrast(page, expected) {
+    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+
+    // Get the contrast filter value (i.e: filter: contrast(500%) => "500")
+    const actual = await backgroundImage.evaluate((el) => {
+        return el.style.filter.match(/contrast\((\d{1,3})%\)/)[1];
+    });
+    expect(actual).toBe(expected);
+}
+
