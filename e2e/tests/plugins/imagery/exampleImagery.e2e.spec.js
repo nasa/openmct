@@ -661,7 +661,6 @@ async function assertBackgroundImageBrightness(page, expected) {
     expect(actual).toBe(expected);
 }
 
-
 /**
  * @param {import('@playwright/test').Page} page
  */
