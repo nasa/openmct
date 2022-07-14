@@ -123,10 +123,7 @@ export default class RemoveAction {
         }
 
         if (isEditing) {
-            let currentItemInView = this.openmct.router.path[0];
-            let domainObject = objectPath[0];
-
-            if (this.openmct.objects.areIdsEqual(currentItemInView.identifier, domainObject.identifier)) {
+            if (this.openmct.router.isNavigatedObject(objectPath)) {
                 return false;
             }
         }

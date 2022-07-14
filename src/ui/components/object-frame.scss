@@ -11,6 +11,7 @@
         margin-bottom: $interiorMarginSm;
         overflow: hidden;
         padding: 3px;
+        @include smallerControlButtons; // Make button in frame headers a bit smaller
 
         .c-object-label {
             font-size: 1.05em;
@@ -131,8 +132,6 @@
             @include abs();
         }
     }
-
-    @include smallerControlButtons;
 
     &.has-complex-content {
         > .c-so-view__view-large { display: block; }

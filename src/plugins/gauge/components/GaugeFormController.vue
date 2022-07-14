@@ -40,7 +40,7 @@
             <div class="c-form__row">
                 <span class="req-indicator req">
                 </span>
-                <label>Range minimum value</label>
+                <label>Minimum value</label>
                 <input
                     ref="min"
                     v-model.number="min"
@@ -53,7 +53,7 @@
             <div class="c-form__row">
                 <span class="req-indicator">
                 </span>
-                <label>Range low limit</label>
+                <label>Low limit</label>
                 <input
                     ref="limitLow"
                     v-model.number="limitLow"
@@ -64,26 +64,26 @@
             </div>
 
             <div class="c-form__row">
-                <span class="req-indicator req">
+                <span class="req-indicator">
                 </span>
-                <label>Range maximum value</label>
+                <label>High limit</label>
                 <input
-                    ref="max"
-                    v-model.number="max"
-                    data-field-name="max"
+                    ref="limitHigh"
+                    v-model.number="limitHigh"
+                    data-field-name="limitHigh"
                     type="number"
                     @input="onChange"
                 >
             </div>
 
             <div class="c-form__row">
-                <span class="req-indicator">
+                <span class="req-indicator req">
                 </span>
-                <label>Range high limit</label>
+                <label>Maximum value</label>
                 <input
-                    ref="limitHigh"
-                    v-model.number="limitHigh"
-                    data-field-name="limitHigh"
+                    ref="max"
+                    v-model.number="max"
+                    data-field-name="max"
                     type="number"
                     @input="onChange"
                 >

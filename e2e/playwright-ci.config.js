@@ -4,6 +4,8 @@
 
 // eslint-disable-next-line no-unused-vars
 const { devices } = require('@playwright/test');
+const MAX_FAILURES = 5;
+const NUM_WORKERS = 2;
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
@@ -12,20 +14,20 @@ const config = {
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
     webServer: {
-        command: 'npm run start',
+        command: 'cross-env NODE_ENV=test npm run start',
         url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
-        reuseExistingServer: !process.env.CI
+        reuseExistingServer: false
     },
-    maxFailures: process.env.CI ? 5 : undefined, //Limits failures to 5 to reduce CI Waste
-    workers: 2, //Limit to 2 for CircleCI Agent
+    maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
+    workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
     use: {
         baseURL: 'http://localhost:8080/',
         headless: true,
         ignoreHTTPSErrors: true,
         screenshot: 'only-on-failure',
         trace: 'on-first-retry',
-        video: 'on-first-retry'
+        video: 'off'
     },
     projects: [
         {
