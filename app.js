@@ -12,7 +12,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const request = require('request');
-const __DEV__ = process.env.NODE_ENV === 'development';
+const __DEV__ = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 // Defaults
 options.port = options.port || options.p || 8080;
@@ -89,3 +89,4 @@ app.get('/', function (req, res) {
 app.listen(options.port, options.host, function () {
     console.log('Open MCT application running at %s:%s', options.host, options.port);
 });
+
