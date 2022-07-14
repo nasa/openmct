@@ -25,7 +25,7 @@ const exportPNG = {
     name: 'Export as PNG',
     key: 'export-as-png',
     description: 'Export This View\'s Data as PNG',
-    cssClass: 'c-icon-button icon-download',
+    cssClass: 'icon-download',
     group: 'view',
     invoke(objectPath, view) {
         view.getViewContext().exportPNG();
@@ -36,7 +36,7 @@ const exportJPG = {
     name: 'Export as JPG',
     key: 'export-as-jpg',
     description: 'Export This View\'s Data as JPG',
-    cssClass: 'c-icon-button icon-download',
+    cssClass: 'icon-download',
     group: 'view',
     invoke(objectPath, view) {
         view.getViewContext().exportJPG();
