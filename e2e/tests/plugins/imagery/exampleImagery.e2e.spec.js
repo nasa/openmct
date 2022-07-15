@@ -181,14 +181,8 @@ test.describe('Example Imagery Object', () => {
 
         // Zoom out again via button, assert against the initial image dimensions
         await buttonZoomOut(page);
-
-        await expect.poll(async () => {
-            const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-
-            return finalBoundingBox;
-        }, {
-            timeout: 10 * 1000
-        }).toEqual(initialBoundingBox);
+        const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        expect(finalBoundingBox).toEqual(initialBoundingBox);
     });
 
     test('Can use the reset button to reset the image', async ({ page }, testInfo) => {
@@ -205,16 +199,10 @@ test.describe('Example Imagery Object', () => {
         expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
-        // FIXME: The zoom is flakey, sometimes not returning to original dimensions
-        // https://github.com/nasa/openmct/issues/5491
-        await expect.poll(async () => {
-            await buttonResetPanAndZoom(page);
-            const boundingBox = await page.locator(backgroundImageSelector).boundingBox();
-
-            return boundingBox;
-        }, {
-            timeout: 10 * 1000
-        }).toEqual(initialBoundingBox);
+        // Reset pan and zoom and assert against initial image dimensions
+        await buttonResetPanAndZoom(page);
+        const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        expect(finalBoundingBox).toEqual(initialBoundingBox);
     });
 
     test('Using the zoom features does not pause telemetry', async ({ page }) => {
@@ -790,7 +778,7 @@ async function buttonZoomIn(page) {
     }
 
     await zoomInBtn.click();
-    await backgroundImage.hover({trial: true});
+    await waitForAnimations(backgroundImage);
 }
 
 /**
@@ -807,7 +795,7 @@ async function buttonZoomOut(page) {
     }
 
     await zoomOutBtn.click();
-    await backgroundImage.hover({trial: true});
+    await waitForAnimations(backgroundImage);
 }
 
 /**
@@ -824,5 +812,19 @@ async function buttonResetPanAndZoom(page) {
     }
 
     await panZoomResetBtn.click();
-    await backgroundImage.hover({trial: true});
+    await waitForAnimations(backgroundImage);
+}
+
+/**
+ * Wait for all animations within the given element and subtrees to finish
+ * See: https://github.com/microsoft/playwright/issues/15660#issuecomment-1184911658
+ * @param {import('@playwright/test').Locator} locator
+ */
+function waitForAnimations(locator) {
+    return locator
+        .evaluate((element) =>
+            Promise.all(
+                element
+                    .getAnimations({ subtree: true })
+                    .map((animation) => animation.finished)));
 }
