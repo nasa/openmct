@@ -220,9 +220,8 @@ workflows:
           suite: full
     triggers:
       - schedule:
-          cron: "0 0,4,8,12,16,20 * * *"
+          cron: "0 0 * * *"
           filters:
             branches:
               only:
                 - master
-                - release/2.0.5
