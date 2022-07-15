@@ -6,9 +6,9 @@ This document captures information specific to end-to-end testing of Open MCT. F
 
 End-to-End testing, commonly referred to as "e2e" testing is an industry-standard approach to automating the testing of web-based UIs such as Open MCT. Broadly speaking, e2e tests differentiate themselves from unit tests by preferring replication of real user interactions over execution of raw JavaScript functions.
 
-Historically, the abstraction necessary to replicate real user behavior meant:
+Historically, the abstraction necessary to replicate real user behavior meant that:
 
-- That e2e frameworks were not capable of validating codepaths which were only reachable by unit tests.
+- e2e frameworks were not capable of validating codepaths which were only reachable by unit tests.
 - e2e tests were expensive to run due to the need to instantiate a real browser.
 - e2e tests were flaky due to network conditions or the underlying protocols associated with testing a browser.
 
