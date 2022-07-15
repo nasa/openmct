@@ -91,8 +91,8 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
     test('Locked page should now be in a locked state @addInit', async ({ page, browser }, testInfo) => {
         test.fixme(
-            testInfo.project === 'chrome-beta' && browser.version() === '104.0.5112.39',
-            "Test is unreliable on chrome-beta v104.0.5112.39"
+            browser.browserType().name() === 'chromium' && browser.version().split('.')[0] > '103',
+            "Test is unreliable on chromium >v103"
         );
         // main lock message on page
         const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');

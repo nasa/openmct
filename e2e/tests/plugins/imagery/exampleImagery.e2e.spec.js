@@ -183,8 +183,8 @@ test.describe('Example Imagery Object', () => {
 
     test('Can use the reset button to reset the image', async ({ page, browser }, testInfo) => {
         test.slow(
-            testInfo.project === 'chrome-beta' && browser.version() === '104.0.5112.39',
-            "This test is slow on chrome-beta v104.0.5112.39"
+            browser.browserType().name() === 'chromium' && browser.version().split('.')[0] > '103',
+            "This test is slow on chromium >v103"
         );
         // wait for zoom animation to finish
         await page.locator(backgroundImageSelector).hover({trial: true});
