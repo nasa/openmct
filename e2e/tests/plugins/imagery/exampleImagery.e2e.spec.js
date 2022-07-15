@@ -159,26 +159,30 @@ test.describe('Example Imagery Object', () => {
     });
 
     test('Can use + - buttons to zoom on the image', async ({ page }) => {
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
-        const zoomOutBtn = page.locator('.t-btn-zoom-out').nth(0);
+        // Get initial image dimensions
         const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
-        await zoomInBtn.click();
-        await zoomInBtn.click();
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        // Zoom in twice via button
+        await buttonZoomIn(page);
+        await buttonZoomIn(page);
+
+        // Get and assert zoomed in image dimensions
         const zoomedInBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
-        await zoomOutBtn.click();
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        // Zoom out once via button
+        await buttonZoomOut(page);
+
+        // Get and assert zoomed out image dimensions
         const zoomedOutBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
         expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
 
+        // Zoom out again via button, assert against the initial image dimensions
+        await buttonZoomOut(page);
+        const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        expect(finalBoundingBox).toEqual(initialBoundingBox);
     });
 
     test('Can use the reset button to reset the image', async ({ page }, testInfo) => {
@@ -209,21 +213,17 @@ test.describe('Example Imagery Object', () => {
 
     test('Using the zoom features does not pause telemetry', async ({ page }) => {
         const pausePlayButton = page.locator('.c-button.pause-play');
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
 
         // open the time conductor drop down
         await page.locator('button:has-text("Fixed Timespan")').click();
+
         // Click local clock
         await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
-
         await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
-        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
-        await zoomInBtn.click();
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
 
-        return expect(pausePlayButton).not.toHaveClass(/is-paused/);
+        // Zoom in via button
+        await buttonZoomIn(page);
+        await expect(pausePlayButton).not.toHaveClass(/is-paused/);
     });
 
 });
@@ -771,6 +771,8 @@ async function assertBackgroundImageContrast(page, expected) {
 }
 
 /**
+ * Use the '+' button to zoom in. Hovers first if the toolbar is not visible
+ * and waits for the zoom animation to finish afterwards.
  * @param {import('@playwright/test').Page} page
  */
 async function buttonZoomIn(page) {
@@ -786,6 +788,8 @@ async function buttonZoomIn(page) {
 }
 
 /**
+ * Use the '-' button to zoom out. Hovers first if the toolbar is not visible
+ * and waits for the zoom animation to finish afterwards.
  * @param {import('@playwright/test').Page} page
  */
 async function buttonZoomOut(page) {
@@ -801,6 +805,8 @@ async function buttonZoomOut(page) {
 }
 
 /**
+ * Use the reset button to reset image pan and zoom. Hovers first if the toolbar is not visible
+ * and waits for the zoom animation to finish afterwards.
  * @param {import('@playwright/test').Page} page
  */
 async function buttonResetPanAndZoom(page) {
