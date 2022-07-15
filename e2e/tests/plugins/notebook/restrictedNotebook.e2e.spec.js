@@ -58,7 +58,6 @@ test.describe('Restricted Notebook', () => {
             page.locator('text=OK').click(),
             page.waitForSelector('.c-message-banner__message')
         ]);
-        await page.locator('.c-message-banner__close-button').click();
 
         // has been deleted
         expect(await restrictedNotebookTreeObject.count()).toEqual(0);
