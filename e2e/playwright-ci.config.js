@@ -14,7 +14,10 @@ const config = {
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
     webServer: {
-        command: 'cross-env NODE_ENV=test npm run start',
+        env: {
+            NODE_ENV: 'test'
+        },
+        command: 'npm run start',
         url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: false

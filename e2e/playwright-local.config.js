@@ -13,7 +13,7 @@ const config = {
     timeout: 30 * 1000,
     webServer: {
         env: {
-            NODE_ENV: 'test',
+            NODE_ENV: 'test'
         },
         command: 'npm run start',
         url: 'http://localhost:8080/#',
