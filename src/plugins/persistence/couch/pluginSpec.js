@@ -116,18 +116,15 @@ describe('the plugin', () => {
             expect(result).toBeTrue();
         });
 
-        it('updates an object', (done) => {
-            openmct.objects.save(mockDomainObject).then((result) => {
-                expect(result).toBeTrue();
-                expect(provider.create).toHaveBeenCalled();
-                //Set modified timestamp it detects a change and persists the updated model.
-                mockDomainObject.modified = mockDomainObject.persisted + 1;
-                openmct.objects.save(mockDomainObject).then((updatedResult) => {
-                    expect(updatedResult).toBeTrue();
-                    expect(provider.update).toHaveBeenCalled();
-                    done();
-                });
-            });
+        it('updates an object', async () => {
+            const result = await openmct.objects.save(mockDomainObject);
+            expect(result).toBeTrue();
+            expect(provider.create).toHaveBeenCalled();
+            //Set modified timestamp it detects a change and persists the updated model.
+            mockDomainObject.modified = mockDomainObject.persisted + 1;
+            const updatedResult = await openmct.objects.save(mockDomainObject);
+            expect(updatedResult).toBeTrue();
+            expect(provider.update).toHaveBeenCalled();
         });
 
         it('works without Shared Workers', async () => {
