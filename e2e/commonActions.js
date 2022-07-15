@@ -3,7 +3,7 @@
  * See: https://github.com/microsoft/playwright/issues/15660#issuecomment-1184911658
  * @param {import('@playwright/test').Locator} locator
  */
-export function waitForAnimations(locator) {
+function waitForAnimations(locator) {
     return locator
         .evaluate((element) =>
             Promise.all(
@@ -11,3 +11,8 @@ export function waitForAnimations(locator) {
                     .getAnimations({ subtree: true })
                     .map((animation) => animation.finished)));
 }
+
+// eslint-disable-next-line no-undef
+module.exports = {
+    waitForAnimations
+};

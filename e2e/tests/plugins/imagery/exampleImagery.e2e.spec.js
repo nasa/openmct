@@ -28,7 +28,7 @@ but only assume that example imagery is present.
 
 const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
-import { waitForAnimations } from '../../../commonActions.js';
+const { waitForAnimations } = require('../../../commonActions.js');
 
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 
