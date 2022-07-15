@@ -28,6 +28,7 @@ but only assume that example imagery is present.
 
 const { test } = require('../../../fixtures.js');
 const { expect } = require('@playwright/test');
+import { waitForAnimations } from '../../../commonActions.js';
 
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 
@@ -163,8 +164,8 @@ test.describe('Example Imagery Object', () => {
         const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
         // Zoom in twice via button
-        await buttonZoomIn(page);
-        await buttonZoomIn(page);
+        await zoomIntoImageryByButton(page);
+        await zoomIntoImageryByButton(page);
 
         // Get and assert zoomed in image dimensions
         const zoomedInBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
@@ -172,7 +173,7 @@ test.describe('Example Imagery Object', () => {
         expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
         // Zoom out once via button
-        await buttonZoomOut(page);
+        await zoomOutOfImageryByButton(page);
 
         // Get and assert zoomed out image dimensions
         const zoomedOutBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
@@ -180,7 +181,7 @@ test.describe('Example Imagery Object', () => {
         expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
 
         // Zoom out again via button, assert against the initial image dimensions
-        await buttonZoomOut(page);
+        await zoomOutOfImageryByButton(page);
         const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         expect(finalBoundingBox).toEqual(initialBoundingBox);
     });
@@ -191,8 +192,8 @@ test.describe('Example Imagery Object', () => {
         const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
         // Zoom in twice via button
-        await buttonZoomIn(page);
-        await buttonZoomIn(page);
+        await zoomIntoImageryByButton(page);
+        await zoomIntoImageryByButton(page);
 
         // Get and assert zoomed in image dimensions
         const zoomedInBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
@@ -200,7 +201,7 @@ test.describe('Example Imagery Object', () => {
         expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
         // Reset pan and zoom and assert against initial image dimensions
-        await buttonResetPanAndZoom(page);
+        await resetImageryPanAndZoom(page);
         const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         expect(finalBoundingBox).toEqual(initialBoundingBox);
     });
@@ -216,7 +217,7 @@ test.describe('Example Imagery Object', () => {
         await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
         // Zoom in via button
-        await buttonZoomIn(page);
+        await zoomIntoImageryByButton(page);
         await expect(pausePlayButton).not.toHaveClass(/is-paused/);
     });
 
@@ -769,7 +770,7 @@ async function assertBackgroundImageContrast(page, expected) {
  * and waits for the zoom animation to finish afterwards.
  * @param {import('@playwright/test').Page} page
  */
-async function buttonZoomIn(page) {
+async function zoomIntoImageryByButton(page) {
     // FIXME: There should only be one set of imagery buttons, but there are two?
     const zoomInBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-in").nth(0);
     const backgroundImage = page.locator(backgroundImageSelector);
@@ -786,7 +787,7 @@ async function buttonZoomIn(page) {
  * and waits for the zoom animation to finish afterwards.
  * @param {import('@playwright/test').Page} page
  */
-async function buttonZoomOut(page) {
+async function zoomOutOfImageryByButton(page) {
     // FIXME: There should only be one set of imagery buttons, but there are two?
     const zoomOutBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-out").nth(0);
     const backgroundImage = page.locator(backgroundImageSelector);
@@ -803,7 +804,7 @@ async function buttonZoomOut(page) {
  * and waits for the zoom animation to finish afterwards.
  * @param {import('@playwright/test').Page} page
  */
-async function buttonResetPanAndZoom(page) {
+async function resetImageryPanAndZoom(page) {
     // FIXME: There should only be one set of imagery buttons, but there are two?
     const panZoomResetBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-reset").nth(0);
     const backgroundImage = page.locator(backgroundImageSelector);
@@ -813,18 +814,4 @@ async function buttonResetPanAndZoom(page) {
 
     await panZoomResetBtn.click();
     await waitForAnimations(backgroundImage);
-}
-
-/**
- * Wait for all animations within the given element and subtrees to finish
- * See: https://github.com/microsoft/playwright/issues/15660#issuecomment-1184911658
- * @param {import('@playwright/test').Locator} locator
- */
-function waitForAnimations(locator) {
-    return locator
-        .evaluate((element) =>
-            Promise.all(
-                element
-                    .getAnimations({ subtree: true })
-                    .map((animation) => animation.finished)));
 }
