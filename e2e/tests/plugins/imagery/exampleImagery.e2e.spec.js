@@ -183,29 +183,22 @@ test.describe('Example Imagery Object', () => {
 
     test('Can use the reset button to reset the image', async ({ page }, testInfo) => {
         test.slow(testInfo.project === 'chrome-beta', "This test is slow in chrome-beta");
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
-
-        const zoomInBtn = page.locator('.t-btn-zoom-in').nth(0);
-        const zoomResetBtn = page.locator('.t-btn-zoom-reset').nth(0);
+        // Get initial image dimensions
         const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
-        await zoomInBtn.click();
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        await zoomInBtn.click();
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        // Zoom in twice via button
+        await buttonZoomIn(page);
+        await buttonZoomIn(page);
 
+        // Get and assert zoomed in image dimensions
         const zoomedInBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
-        // wait for zoom animation to finish
         // FIXME: The zoom is flakey, sometimes not returning to original dimensions
         // https://github.com/nasa/openmct/issues/5491
         await expect.poll(async () => {
-            await zoomResetBtn.click();
+            await buttonResetPanAndZoom(page);
             const boundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
             return boundingBox;
@@ -777,3 +770,47 @@ async function assertBackgroundImageContrast(page, expected) {
     expect(actual).toBe(expected);
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function buttonZoomIn(page) {
+    // FIXME: There should only be one set of imagery buttons, but there are two?
+    const zoomInBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-in").nth(0);
+    const backgroundImage = page.locator(backgroundImageSelector);
+    if (!(await zoomInBtn.isVisible())) {
+        await backgroundImage.hover({trial: true});
+    }
+
+    await zoomInBtn.click();
+    await backgroundImage.hover({trial: true});
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function buttonZoomOut(page) {
+    // FIXME: There should only be one set of imagery buttons, but there are two?
+    const zoomOutBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-out").nth(0);
+    const backgroundImage = page.locator(backgroundImageSelector);
+    if (!(await zoomOutBtn.isVisible())) {
+        await backgroundImage.hover({trial: true});
+    }
+
+    await zoomOutBtn.click();
+    await backgroundImage.hover({trial: true});
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function buttonResetPanAndZoom(page) {
+    // FIXME: There should only be one set of imagery buttons, but there are two?
+    const panZoomResetBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-reset").nth(0);
+    const backgroundImage = page.locator(backgroundImageSelector);
+    if (!(await panZoomResetBtn.isVisible())) {
+        await backgroundImage.hover({trial: true});
+    }
+
+    await panZoomResetBtn.click();
+    await backgroundImage.hover({trial: true});
+}
