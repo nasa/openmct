@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npx playwright@1.21.1 install
+      - run: npx playwright@1.23.0 install
       - run: npm install
       - name: Run the e2e visual tests
         run: npm run test:e2e:visual

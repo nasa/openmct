@@ -197,7 +197,7 @@ export default {
             }
         },
         setUnit() {
-            this.unit = this.valueMetadata.unit || '';
+            this.unit = this.valueMetadata ? this.valueMetadata.unit : '';
         },
         firstNonDomainAttribute(metadata) {
             return metadata
