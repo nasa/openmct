@@ -181,8 +181,14 @@ test.describe('Example Imagery Object', () => {
 
         // Zoom out again via button, assert against the initial image dimensions
         await buttonZoomOut(page);
-        const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-        expect(finalBoundingBox).toEqual(initialBoundingBox);
+
+        await expect.poll(async () => {
+            const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+
+            return finalBoundingBox;
+        }, {
+            timeout: 10 * 1000
+        }).toEqual(initialBoundingBox);
     });
 
     test('Can use the reset button to reset the image', async ({ page }, testInfo) => {
