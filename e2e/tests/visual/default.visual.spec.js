@@ -57,7 +57,7 @@ test.beforeEach(async ({ context }) => {
 
 test('Visual - Root and About', async ({ page }) => {
     // Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Verify that Create button is actionable
     await expect(page.locator('button:has-text("Create")')).toBeEnabled();
@@ -81,7 +81,7 @@ test('Visual - Root and About', async ({ page }) => {
 
 test('Visual - Default Condition Set', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -103,7 +103,7 @@ test.fixme('Visual - Default Condition Widget', async ({ page }) => {
         description: 'https://github.com/nasa/openmct/issues/5349'
     });
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -121,7 +121,7 @@ test.fixme('Visual - Default Condition Widget', async ({ page }) => {
 
 test('Visual - Time Conductor start time is less than end time', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
     const year = new Date().getFullYear();
 
     let startDate = 'xxxx-01-01 01:00:00.000Z';
@@ -160,7 +160,7 @@ test('Visual - Time Conductor start time is less than end time', async ({ page }
 
 test('Visual - Sine Wave Generator Form', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -181,7 +181,7 @@ test('Visual - Sine Wave Generator Form', async ({ page }) => {
 
 test('Visual - Save Successful Banner', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -201,7 +201,7 @@ test('Visual - Save Successful Banner', async ({ page }) => {
 
 test('Visual - Display Layout Icon is correct', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -215,7 +215,7 @@ test('Visual - Display Layout Icon is correct', async ({ page }) => {
 test('Visual - Default Gauge is correct', async ({ page }) => {
 
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
