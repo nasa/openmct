@@ -1,25 +1,29 @@
-# End-to-End Testing (e2e)
+# e2e testing
 
-This document captures information specific to end-to-end testing of Open MCT. For general information about testing, please see [the Open MCT README](https://github.com/nasa/openmct/blob/master/README.md#tests).
+This document captures information specific to the e2e testing of Open MCT. For general information about testing, please see [the Open MCT README](https://github.com/nasa/openmct/blob/master/README.md#tests).
 
 ## Overview
 
-End-to-End testing, commonly referred to as "e2e" testing is an industry-standard approach to automating the testing of web-based UIs such as Open MCT. Broadly speaking, e2e tests differentiate themselves from unit tests by preferring replication of real user interactions over execution of raw JavaScript functions.
+This document is designed to capture on the What, Why, and How's of writing and running e2e tests in Open MCT.
+
+### About e2e testing
+
+e2e testing is an industry-standard approach to automating the testing of web-based UIs such as Open MCT. Broadly speaking, e2e tests differentiate themselves from unit tests by preferring replication of real user interactions over execution of raw JavaScript functions.
 
 Historically, the abstraction necessary to replicate real user behavior meant that:
 
-- e2e frameworks were not capable of validating codepaths which were only reachable by unit tests.
-- e2e tests were expensive to run due to the need to instantiate a real browser.
+- e2e tests were "expensive" due to how much code each test executed. The closer a test replicates the user, the more code is needed run during test execution. Unit tests could run smaller units of code more effeciently.
 - e2e tests were flaky due to network conditions or the underlying protocols associated with testing a browser.
+- e2e frameworks relied on a browser communication standard which lacked the observability and controls necessary needed to reach the code paths possible with unit and integration tests.
+- e2e frameworks provided insufficient debug information on test failure
 
 However, as the web ecosystem has matured to the point where mission-critical UIs can be written for the web (Open MCT), the e2e testing tools have matured as well. There are now fewer "trade-offs" when choosing to write an e2e test over any other type of test.
 
 Modern e2e frameworks:
 
-- Enable browsers and web applications to reach 'mocked' states to cover deeper codepaths without mocking the browser itself.
-- Have direct access to JavaScript component libraries such as Vue.js props.
-- Are now more reliable than the application-under-test due to raw and native access to browser-internal protocols.
+- Bypass the surface layer of the web-application-under-test and use a raw debugging protocol to observe and control application and browser state.
 - These new browser-internal protocols enable near-instant, bi-directional communication between test code and the browser, speeding up test execution and making the tests as reliable as the application itself.
+- Provide test debug tooling which enables developers to pinpoint failure
 
 Furthermore, the abstraction necessary to run e2e tests as a user enables them to be extended to run within a variety of contexts. This matches the extensible design of Open MCT. 
 
@@ -29,6 +33,15 @@ A single e2e test in Open MCT is extended to run:
 - Against a matrix of OS platforms.
 - Against a local development version of Open MCT.
 - A version of Open MCT loaded as a dependency (VIPER, VISTA, etc)
+- Against a variety of data sources or telemetry endpoints.
+
+### Why Playwright?
+
+[Playwright](https://playwright.dev/) was chosen as our e2e framework because it solves a few VIPER Mission needs:
+1. First-class support for Automated Performance Testing
+2. Official Chrome, Chrome Canary, and iPad Capabilities
+3. Support for Browserless.io
+4. Ability to generate code coverage reports
 
 ## Getting Started
 
