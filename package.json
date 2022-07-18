@@ -92,7 +92,7 @@
     "test:firefox": "cross-env NODE_ENV=test NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run --browsers=FirefoxHeadless",
     "test:debug": "cross-env NODE_ENV=debug karma start --no-single-run",
     "test:e2e": "npx playwright test",
-    "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome visual smoke branding default exampleImagery condition timeConductor clock persistence performance grandsearch tags",
+    "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome visual smoke branding default condition timeConductor clock persistence performance grandsearch tags",
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js --project=chrome",
     "test:e2e:updatesnapshots": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot --update-snapshots",
     "test:e2e:visual": "percy exec --config ./e2e/.percy.yml -- npx playwright test --config=e2e/playwright-visual.config.js",
