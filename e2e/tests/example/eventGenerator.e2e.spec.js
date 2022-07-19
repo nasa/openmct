@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding the example event generator.
 */
 
-const { test } = require('../../fixtures.js');
+const { test } = require('../../baseFixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Example Event Generator Operations', () => {

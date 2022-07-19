@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../fixtures.js');
+const { test } = require('../../../baseFixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Timer', () => {

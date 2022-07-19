@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../fixtures');
+const { test } = require('../../../baseFixtures');
 const { expect } = require('@playwright/test');
 
 test.describe('Telemetry Table', () => {

@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify branding related components.
 */
 
-const { test } = require('../fixtures.js');
+const { test } = require('../baseFixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Branding tests', () => {

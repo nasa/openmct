@@ -26,7 +26,7 @@ relates to how we've extended it (i.e. ./e2e/fixtures.js) and assumptions made i
 (app.js and ./e2e/webpack-dev-middleware.js)
 */
 
-const { test } = require('../fixtures.js');
+const { test } = require('../baseFixtures.js');
 
 test.describe('fixtures.js tests', () => {
     test('Verify that tests fail if console.error is thrown', async ({ page }) => {

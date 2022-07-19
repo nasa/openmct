@@ -24,7 +24,7 @@
 Tests to verify log plot functionality when objects are missing
 */
 
-const { test } = require('../../../fixtures.js');
+const { test } = require('../../../baseFixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Handle missing object for plots', () => {

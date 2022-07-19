@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
 */
 
-const { test } = require('../../../fixtures.js');
+const { test } = require('../../../baseFixtures.js');
 const { expect } = require('@playwright/test');
 
 test.describe('Sine Wave Generator', () => {

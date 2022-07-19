@@ -26,7 +26,7 @@ but only assume that example imagery is present.
 */
 /* globals process */
 
-const { test, waitForAnimations } = require('../../../fixtures.js');
+const { test, waitForAnimations } = require('../../../baseFixtures.js');
 const { expect } = require('@playwright/test');
 
 const backgroundImageSelector = '.c-imagery__main-image__background-image';

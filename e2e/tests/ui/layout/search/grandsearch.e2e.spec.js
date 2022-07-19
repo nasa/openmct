@@ -25,7 +25,7 @@ This test suite is dedicated to tests which verify search functionality.
 */
 
 const { expect } = require('@playwright/test');
-const { test } = require('../../../../fixtures');
+const { test } = require('../../../../baseFixtures');
 
 /**
   * Creates a notebook object and adds an entry.

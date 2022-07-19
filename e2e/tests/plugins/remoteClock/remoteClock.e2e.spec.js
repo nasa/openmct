@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../fixtures.js');
+const { test } = require('../../../baseFixtures.js');
 // eslint-disable-next-line no-unused-vars
 const { expect } = require('@playwright/test');
 

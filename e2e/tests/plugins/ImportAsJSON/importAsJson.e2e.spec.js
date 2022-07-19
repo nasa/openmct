@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding importAsJSON.
 */
 
-const { test } = require('../../../fixtures.js');
+const { test } = require('../../../baseFixtures.js');
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
 const { expect } = require('@playwright/test');

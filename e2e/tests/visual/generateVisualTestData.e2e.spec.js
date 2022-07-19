@@ -31,7 +31,7 @@ TODO: Provide additional validation of object properties as it grows.
 
 */
 
-const { test } = require('../../fixtures.js');
+const { test } = require('../../baseFixtures.js');
 const { expect } = require('@playwright/test');
 
 test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
