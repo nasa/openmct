@@ -32,8 +32,7 @@ to "fail" on assertions. Instead, they should be used to detect changes between 
 Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
-const { test } = require('../../baseFixtures.js');
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../baseFixtures.js');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
 const sinon = require('sinon');

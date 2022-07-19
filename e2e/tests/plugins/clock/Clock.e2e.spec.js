@@ -24,8 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Clock.
 */
 
-const { test } = require('../../../baseFixtures.js');
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../../baseFixtures.js');
 
 test.describe('Clock Generator', () => {
 

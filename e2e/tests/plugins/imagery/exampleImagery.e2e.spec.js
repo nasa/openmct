@@ -26,9 +26,7 @@ but only assume that example imagery is present.
 */
 /* globals process */
 
-const { test, waitForAnimations } = require('../../../baseFixtures.js');
-const { expect } = require('@playwright/test');
-
+const { test, expect, waitForAnimations } = require('../../../baseFixtures.js');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.

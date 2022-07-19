@@ -24,8 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
 */
 
-const { test } = require('../../baseFixtures.js');
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../baseFixtures.js');
 const path = require('path');
 
 test.describe('Persistence operations @addInit', () => {

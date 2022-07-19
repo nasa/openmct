@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../baseFixtures');
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../../baseFixtures');
 
 test.describe('Telemetry Table', () => {
     test('unpauses and filters data when paused by button and user changes bounds', async ({ page }) => {

@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../baseFixtures.js');
+// FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../../baseFixtures.js');
 
 test.describe('Remote Clock', () => {
     // eslint-disable-next-line require-await

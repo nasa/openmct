@@ -24,9 +24,7 @@
 Testsuite for plot autoscale.
 */
 
-const { test } = require('../../../baseFixtures.js');
-const { expect } = require('@playwright/test');
-
+const { test, expect } = require('../../../baseFixtures.js');
 test.use({
     viewport: {
         width: 1280,

@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../baseFixtures.js');
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../../baseFixtures.js');
 
 test.describe('Time conductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {

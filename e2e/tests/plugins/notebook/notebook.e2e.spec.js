@@ -24,7 +24,9 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const { test } = require('../../../baseFixtures');
+// FIXME: Remove this eslint exception once tests are implemented
+// eslint-disable-next-line no-unused-vars
+const { test, expect } = require('../../../baseFixtures');
 
 test.describe('Notebook CRUD Operations', () => {
     test.fixme('Can create a Notebook Object', async ({ page }) => {

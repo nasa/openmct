@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../baseFixtures');
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../../baseFixtures');
 const path = require('path');
 
 const TEST_TEXT = 'Testing text for entries.';

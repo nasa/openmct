@@ -25,9 +25,7 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test } = require('../../../baseFixtures.js');
-const { expect } = require('@playwright/test');
-
+const { test, expect } = require('../../../baseFixtures.js');
 test.describe('Log plot tests', () => {
     test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
         //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374

@@ -22,7 +22,7 @@ function _consoleMessageToString(msg) {
 
 /**
  * Wait for all animations within the given element and subtrees to finish
- * See: https://github.com/microsoft/playwright/issues/15660
+ * Playwright RFE: https://github.com/microsoft/playwright/issues/15660
  * @param {import('@playwright/test').Locator} locator
  * @return {Promise<Animation[]>}
  */
@@ -81,5 +81,6 @@ exports = {
             }
         }
     }),
+    expect: base.expect,
     waitForAnimations
 };
