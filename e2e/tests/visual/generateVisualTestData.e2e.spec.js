@@ -42,9 +42,6 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     // add overlay plot with defaults
     await page.locator('li:has-text("Overlay Plot")').click();
 
-    // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-    await page.click('form[name="mctForm"] a:has-text("My Items")');
-
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=OK').click(),
