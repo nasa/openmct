@@ -300,8 +300,11 @@ export default class ConditionManager extends EventEmitter {
         return this.compositionLoad.then(() => {
             let latestTimestamp;
             let conditionResults = {};
+            let nextLegOptions = {...options};
+            delete nextLegOptions.onPartialResponse;
+
             const conditionRequests = this.conditions
-                .map(condition => condition.requestLADConditionResult(options));
+                .map(condition => condition.requestLADConditionResult(nextLegOptions));
 
             return Promise.all(conditionRequests)
                 .then((results) => {

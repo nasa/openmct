@@ -31,7 +31,7 @@ const STATUSES = [{
     iconClassPoll: "icon-status-poll-question-mark"
 }, {
     key: "GO",
-    label: "GO",
+    label: "Go",
     iconClass: "icon-check",
     iconClassPoll: "icon-status-poll-question-mark",
     statusClass: "s-status-ok",
@@ -39,7 +39,7 @@ const STATUSES = [{
     statusFgColor: "#000"
 }, {
     key: "MAYBE",
-    label: "MAYBE",
+    label: "Maybe",
     iconClass: "icon-alert-triangle",
     iconClassPoll: "icon-status-poll-question-mark",
     statusClass: "s-status-warning",
@@ -47,7 +47,7 @@ const STATUSES = [{
     statusFgColor: "#000"
 }, {
     key: "NO_GO",
-    label: "NO GO",
+    label: "No go",
     iconClass: "icon-circle-slash",
     iconClassPoll: "icon-status-poll-question-mark",
     statusClass: "s-status-error",

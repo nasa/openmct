@@ -23,6 +23,7 @@
 <template>
 <div
     class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    aria-label="Notebook Entry"
     :class="{ 'locked': isLocked }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
@@ -58,6 +59,7 @@
                 <div
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
+                    aria-label="Notebook Entry Input"
                     tabindex="0"
                     contenteditable="true"
                     @focus="editingEntry()"

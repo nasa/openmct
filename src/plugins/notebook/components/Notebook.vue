@@ -144,6 +144,7 @@
                 v-if="selectedSection && selectedPage"
                 ref="notebookEntries"
                 class="c-notebook__entries"
+                aria-label="Notebook Entries"
             >
                 <NotebookEntry
                     v-for="entry in filteredAndSortedEntries"

@@ -178,6 +178,26 @@ export default {
             this.requestDataFor(telemetryObject);
             this.subscribeToObject(telemetryObject);
         },
+        setTrace(key, name, axisMetadata, xValues, yValues) {
+            let trace = {
+                key,
+                name: name,
+                x: xValues,
+                y: yValues,
+                xAxisMetadata: {},
+                yAxisMetadata: axisMetadata.yAxisMetadata,
+                type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
+                mode: 'lines',
+                line: {
+                    shape: this.domainObject.configuration.useInterpolation
+                },
+                marker: {
+                    color: this.domainObject.configuration.barStyles.series[key].color
+                },
+                hoverinfo: this.domainObject.configuration.useBar ? 'skip' : 'x+y'
+            };
+            this.addTrace(trace, key);
+        },
         addTrace(trace, key) {
             if (!this.trace.length) {
                 this.trace = this.trace.concat([trace]);
@@ -236,7 +256,15 @@ export default {
         refreshData(bounds, isTick) {
             if (!isTick) {
                 const telemetryObjects = Object.values(this.telemetryObjects);
-                telemetryObjects.forEach(this.requestDataFor);
+                telemetryObjects.forEach((telemetryObject) => {
+                    //clear existing data
+                    const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                    const axisMetadata = this.getAxisMetadata(telemetryObject);
+                    this.setTrace(key, telemetryObject.name, axisMetadata, [], []);
+                    //request new data
+                    this.requestDataFor(telemetryObject);
+                    this.subscribeToObject(telemetryObject);
+                });
             }
         },
         removeAllSubscriptions() {
@@ -320,25 +348,7 @@ export default {
                 });
             }
 
-            let trace = {
-                key,
-                name: telemetryObject.name,
-                x: xValues,
-                y: yValues,
-                xAxisMetadata: xAxisMetadata,
-                yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
-                mode: 'lines',
-                line: {
-                    shape: this.domainObject.configuration.useInterpolation
-                },
-                marker: {
-                    color: this.domainObject.configuration.barStyles.series[key].color
-                },
-                hoverinfo: this.domainObject.configuration.useBar ? 'skip' : 'x+y'
-            };
-
-            this.addTrace(trace, key);
+            this.setTrace(key, telemetryObject.name, axisMetadata, xValues, yValues);
         },
         isDataInTimeRange(datum, key, telemetryObject) {
             const timeSystemKey = this.timeContext.timeSystem().key;

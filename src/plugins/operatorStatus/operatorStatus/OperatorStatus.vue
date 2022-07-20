@@ -57,6 +57,7 @@
 </template>
 
 <script>
+const DEFAULT_POLL_QUESTION = 'NO POLL QUESTION';
 
 export default {
     inject: ['openmct', 'indicator', 'configuration'],
@@ -75,7 +76,7 @@ export default {
             allRoles: [],
             role: '--',
             pollQuestionUpdated: '--',
-            currentPollQuestion: '--',
+            currentPollQuestion: DEFAULT_POLL_QUESTION,
             selectedStatus: undefined,
             allStatuses: []
         };

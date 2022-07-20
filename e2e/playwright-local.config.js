@@ -12,10 +12,10 @@ const config = {
     testIgnore: '**/*.perf.spec.js',
     timeout: 30 * 1000,
     webServer: {
-        command: 'npm run start',
-        port: 8080,
+        command: 'cross-env NODE_ENV=test npm run start',
+        url: 'http://localhost:8080/#',
         timeout: 120 * 1000,
-        reuseExistingServer: !process.env.CI
+        reuseExistingServer: true
     },
     workers: 1,
     use: {
@@ -25,7 +25,7 @@ const config = {
         ignoreHTTPSErrors: true,
         screenshot: 'only-on-failure',
         trace: 'retain-on-failure',
-        video: 'retain-on-failure'
+        video: 'off'
     },
     projects: [
         {
@@ -36,6 +36,7 @@ const config = {
         },
         {
             name: 'MMOC',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
             grepInvert: /@snapshot/,
             use: {
                 browserName: 'chromium',
@@ -44,20 +45,58 @@ const config = {
                     height: 1440
                 }
             }
-        }
-        /*{
+        },
+        {
+            name: 'safari',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grep: /@ipad/, // only run ipad tests due to this bug https://github.com/microsoft/playwright/issues/8340
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'webkit'
+            }
+        },
+        {
+            name: 'firefox',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'firefox'
+            }
+        },
+        {
+            name: 'canary',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'chromium',
+                channel: 'chrome-canary' //Note this is not available in ubuntu/CircleCI
+            }
+        },
+        {
+            name: 'chrome-beta',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grepInvert: /@snapshot/,
+            use: {
+                browserName: 'chromium',
+                channel: 'chrome-beta'
+            }
+        },
+        {
             name: 'ipad',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
+            grep: /@ipad/,
+            grepInvert: /@snapshot/,
             use: {
                 browserName: 'webkit',
                 ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
             }
-        }*/
+        }
     ],
     reporter: [
         ['list'],
         ['html', {
             open: 'on-failure',
-            outputFolder: '../test-results'
+            outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
         }]
     ]
 };

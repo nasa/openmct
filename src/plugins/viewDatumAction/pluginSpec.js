@@ -78,13 +78,15 @@ describe("the plugin", () => {
 
     describe('when invoked', () => {
 
-        beforeEach((done) => {
+        beforeEach(() => {
             openmct.overlays.overlay = function (options) {};
 
             spyOn(openmct.overlays, 'overlay');
 
             viewDatumAction.invoke(mockObjectPath, mockView);
+        });
 
+        it('creates an overlay', () => {
             expect(openmct.overlays.overlay).toHaveBeenCalled();
         });
     });

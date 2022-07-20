@@ -21,14 +21,13 @@
  *****************************************************************************/
 
 <template>
-<div class="c-fault-mgmt">
-    <FaultManagementListView
-        :faults-list="faultsList"
-    />
-</div>
+<FaultManagementListView
+    :faults-list="faultsList"
+/>
 </template>
 
 <script>
+
 import FaultManagementListView from './FaultManagementListView.vue';
 import { FAULT_MANAGEMENT_ALARMS, FAULT_MANAGEMENT_GLOBAL_ALARMS } from './constants';
 
