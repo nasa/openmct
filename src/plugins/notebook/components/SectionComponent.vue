@@ -121,18 +121,19 @@ export default {
                 return;
             }
 
-            const name = target.textContent = target.textContent ? target.textContent.trim().toString() : `Unnamed ${this.sectionTitle}`;
+            target.textContent = target.textContent ? target.textContent.trim() : `Unnamed ${this.sectionTitle}`;
 
-            if (name === '' || this.section.name === name) {
+            if (this.section.name === target.textContent) {
                 return;
             }
 
-            this.$emit('renameSection', Object.assign(this.section, { name }));
+            this.$emit('renameSection', Object.assign(this.section, { name: target.textContent }));
         },
         updateName(event) {
+            const ESCAPE = 27;
             const { target, keyCode, type } = event;
 
-            if (keyCode === 27) {
+            if (keyCode === ESCAPE) {
                 target.textContent = this.section.name;
             } else if (keyCode === 13 || type === 'blur') {
                 this.renameSection(target);
