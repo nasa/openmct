@@ -34,6 +34,7 @@ const { expect } = base;
 const fs = require('fs');
 const path = require('path');
 const { v4: uuid } = require('uuid');
+const sinon = require('sinon');
 
 /**
  * Takes a `ConsoleMessage` and returns a formatted string. Used to enable console log error detection
@@ -72,6 +73,27 @@ function waitForAnimations(locator) {
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 
 exports.test = base.test.extend({
+
+    /**
+     * If clockOptions are provided, will override the default clock with fake timers provided by SinonJS.
+     * @see {@link https://github.com/sinonjs/fake-timers/#var-clock--faketimersinstallconfig SinonJS FakeTimers Config}
+     */
+    clockOptions: [undefined, { option: true }],
+    overrideClock: [async ({ context, clockOptions }, use) => {
+        if (clockOptions !== undefined) {
+            await context.addInitScript({
+                path: path.join(__dirname, '../', './node_modules/sinon/pkg/sinon.js')
+            });
+            await context.addInitScript((options) => {
+                window.__clock = sinon.useFakeTimers(options);
+            }, clockOptions);
+        }
+
+        await use(context);
+    }, {
+        auto: true,
+        scope: 'test'
+    }],
     /**
      * Extends the base context class to add codecoverage shim.
      * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Project}
@@ -88,6 +110,7 @@ exports.test = base.test.extend({
                 fs.writeFileSync(path.join(istanbulCLIOutput, `playwright_coverage_${uuid()}.json`), coverageJSON);
             }
         });
+
         await use(context);
         for (const page of context.pages()) {
             await page.evaluate(() => (window).collectIstanbulCoverage(JSON.stringify((window).__coverage__)));
