@@ -75,7 +75,17 @@ const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 exports.test = base.test.extend({
 
     /**
+     * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
+     * the Time Indicator Clock to be in a specific state.
+     * Usage:
+     * ```
+     * test.use({
+     *   clockOptions: {
+     *       now: 0,
+     *       shouldAdvanceTime: true
+     * ```
      * If clockOptions are provided, will override the default clock with fake timers provided by SinonJS.
+     * @see {@link https://github.com/microsoft/playwright/issues/6347 Github RFE}
      * @see {@link https://github.com/sinonjs/fake-timers/#var-clock--faketimersinstallconfig SinonJS FakeTimers Config}
      */
     clockOptions: [undefined, { option: true }],
