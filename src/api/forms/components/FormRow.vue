@@ -86,8 +86,6 @@ export default {
                 return;
             }
 
-            cssClass = `${cssClass} req`;
-
             if (this.visited && this.valid !== undefined) {
                 if (this.valid === true) {
                     reqClass = 'valid';
