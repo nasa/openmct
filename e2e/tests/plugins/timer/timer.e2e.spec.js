@@ -20,29 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../baseFixtures.js');
+const { test, expect } = require('../../../pluginFixtures.js');
 
 test.describe('Timer', () => {
-
-    test.beforeEach(async ({ page }) => {
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
-
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-
-        // Click 'Timer'
-        await page.click('text=Timer');
-
-        // Click text=OK
-        await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK')
-        ]);
-
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Timer');
-    });
-
+    test.use({ domainObjectName: 'Timer'});
     test('Can perform actions on the Timer', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
