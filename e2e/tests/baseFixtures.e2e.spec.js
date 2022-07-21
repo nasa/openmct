@@ -22,13 +22,13 @@
 
 /*
 This test suite is dedicated to testing our use of the playwright framework as it
-relates to how we've extended it (i.e. ./e2e/fixtures.js) and assumptions made in our dev environment
+relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions made in our dev environment
 (app.js and ./e2e/webpack-dev-middleware.js)
 */
 
 const { test } = require('../baseFixtures.js');
 
-test.describe('fixtures.js tests', () => {
+test.describe('baseFixtures tests', () => {
     test('Verify that tests fail if console.error is thrown', async ({ page }) => {
         test.fail();
         //Go to baseURL
