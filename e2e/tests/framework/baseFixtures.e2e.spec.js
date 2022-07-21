@@ -26,10 +26,10 @@ relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions ma
 (app.js and ./e2e/webpack-dev-middleware.js)
 */
 
-const { test } = require('../baseFixtures.js');
+const { test } = require('../../baseFixtures.js');
 
 test.describe('baseFixtures tests', () => {
-    test('Verify that tests fail if console.error is thrown', async ({ page }) => {
+    test('Verify that tests fail if console.error is thrown @framework', async ({ page }) => {
         test.fail();
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
@@ -41,7 +41,7 @@ test.describe('baseFixtures tests', () => {
         ]);
 
     });
-    test('Verify that tests pass if console.warn is thrown', async ({ page }) => {
+    test('Verify that tests pass if console.warn is thrown @framework', async ({ page }) => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
