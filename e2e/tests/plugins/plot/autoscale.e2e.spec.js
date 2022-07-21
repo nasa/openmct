@@ -24,20 +24,8 @@
 Testsuite for plot autoscale.
 */
 
-const { test: _test, expect } = require('@playwright/test');
-
-// create a new `test` API that will not append platform details to snapshot
-// file names, only for the tests in this file, so that the same snapshots will
-// be used for all platforms.
-const test = _test.extend({
-    _autoSnapshotSuffix: [
-        async ({}, use, testInfo) => {
-            testInfo.snapshotSuffix = '';
-            await use();
-        },
-        { auto: true }
-    ]
-});
+const { test } = require('../../../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.use({
     viewport: {
@@ -48,6 +36,9 @@ test.use({
 
 test.describe('ExportAsJSON', () => {
     test('User can set autoscale with a valid range @snapshot', async ({ page }) => {
+        //This is necessary due to the size of the test suite.
+        test.slow();
+
         await page.goto('/', { waitUntil: 'networkidle' });
 
         await setTimeRange(page);
@@ -58,16 +49,16 @@ test.describe('ExportAsJSON', () => {
 
         await turnOffAutoscale(page);
 
+        // Make sure that after turning off autoscale, the user selected range values start at the same values the plot had prior.
+        await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
+
         const canvas = page.locator('canvas').nth(1);
 
-        // Make sure that after turning off autoscale, the user selected range values start at the same values the plot had prior.
-        await Promise.all([
-            testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']),
-            new Promise(r => setTimeout(r, 100))
-                .then(() => canvas.screenshot())
-                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-prepan.png', { maxDiffPixels: 40 }))
-        ]);
+        await canvas.hover({trial: true});
 
+        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan');
+
+        //Alt Drag Start
         await page.keyboard.down('Alt');
 
         await canvas.dragTo(canvas, {
@@ -81,15 +72,15 @@ test.describe('ExportAsJSON', () => {
             }
         });
 
+        //Alt Drag End
         await page.keyboard.up('Alt');
 
         // Ensure the drag worked.
-        await Promise.all([
-            testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']),
-            new Promise(r => setTimeout(r, 100))
-                .then(() => canvas.screenshot())
-                .then(shot => expect(shot).toMatchSnapshot('autoscale-canvas-panned.png', { maxDiffPixels: 40 }))
-        ]);
+        await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']);
+
+        await canvas.hover({trial: true});
+
+        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned');
     });
 });
 
@@ -121,10 +112,12 @@ async function createSinewaveOverlayPlot(page) {
     await page.locator('li:has-text("Overlay Plot")').click();
     await Promise.all([
         page.waitForNavigation(),
+        page.locator('text=OK').click(),
         //Wait for Save Banner to appear1
         page.waitForSelector('.c-message-banner__message')
     ]);
     //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // save (exit edit mode)
@@ -138,10 +131,12 @@ async function createSinewaveOverlayPlot(page) {
     await page.locator('li:has-text("Sine Wave Generator")').click();
     await Promise.all([
         page.waitForNavigation(),
+        page.locator('text=OK').click(),
         //Wait for Save Banner to appear1
         page.waitForSelector('.c-message-banner__message')
     ]);
     //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // focus the overlay plot
@@ -160,11 +155,18 @@ async function turnOffAutoscale(page) {
     await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
 
     // uncheck autoscale
-    await page.locator('text=Y Axis Scaling Auto scale Padding >> input[type="checkbox"]').uncheck();
+    await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"] >> nth=1').uncheck();
 
     // save
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-    await page.locator('text=Save and Finish Editing').click();
+    await Promise.all([
+        page.locator('text=Save and Finish Editing').click(),
+        //Wait for Save Banner to appear
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+    //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 }
 
 /**
@@ -172,6 +174,7 @@ async function turnOffAutoscale(page) {
  */
 async function testYTicks(page, values) {
     const yTicks = page.locator('.gl-plot-y-tick-label');
+    await page.locator('canvas >> nth=1').hover();
     let promises = [yTicks.count().then(c => expect(c).toBe(values.length))];
 
     for (let i = 0, l = values.length; i < l; i += 1) {

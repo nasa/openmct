@@ -24,6 +24,7 @@ define([
     './actions/ActionsAPI',
     './composition/CompositionAPI',
     './Editor',
+    './faultmanagement/FaultManagementAPI',
     './forms/FormsAPI',
     './indicators/IndicatorAPI',
     './menu/MenuAPI',
@@ -34,11 +35,13 @@ define([
     './telemetry/TelemetryAPI',
     './time/TimeAPI',
     './types/TypeRegistry',
-    './user/UserAPI'
+    './user/UserAPI',
+    './annotation/AnnotationAPI'
 ], function (
     ActionsAPI,
     CompositionAPI,
     EditorAPI,
+    FaultManagementAPI,
     FormsAPI,
     IndicatorAPI,
     MenuAPI,
@@ -49,14 +52,16 @@ define([
     TelemetryAPI,
     TimeAPI,
     TypeRegistry,
-    UserAPI
+    UserAPI,
+    AnnotationAPI
 ) {
     return {
         ActionsAPI: ActionsAPI.default,
         CompositionAPI: CompositionAPI,
         EditorAPI: EditorAPI,
+        FaultManagementAPI: FaultManagementAPI,
         FormsAPI: FormsAPI,
-        IndicatorAPI: IndicatorAPI,
+        IndicatorAPI: IndicatorAPI.default,
         MenuAPI: MenuAPI.default,
         NotificationAPI: NotificationAPI.default,
         ObjectAPI: ObjectAPI,
@@ -65,6 +70,7 @@ define([
         TelemetryAPI: TelemetryAPI,
         TimeAPI: TimeAPI.default,
         TypeRegistry: TypeRegistry,
-        UserAPI: UserAPI.default
+        UserAPI: UserAPI.default,
+        AnnotationAPI: AnnotationAPI.default
     };
 });

@@ -32,7 +32,8 @@ to "fail" on assertions. Instead, they should be used to detect changes between 
 Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../fixtures.js');
+const { expect } = require('@playwright/test');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
 const sinon = require('sinon');
@@ -47,7 +48,10 @@ test.beforeEach(async ({ context }) => {
         path: path.join(__dirname, '../../..', './node_modules/sinon/pkg/sinon.js')
     });
     await context.addInitScript(() => {
-        window.__clock = sinon.useFakeTimers(); //Set browser clock to UNIX Epoch
+        window.__clock = sinon.useFakeTimers({
+            now: 0,
+            shouldAdvanceTime: true
+        }); //Set browser clock to UNIX Epoch
     });
 });
 
@@ -56,8 +60,7 @@ test('Visual - Root and About', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     // Verify that Create button is actionable
-    const createButtonLocator = page.locator('button:has-text("Create")');
-    await expect(createButtonLocator).toBeEnabled();
+    await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
     // Take a snapshot of the Dashboard
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
@@ -94,7 +97,11 @@ test('Visual - Default Condition Set', async ({ page }) => {
     await percySnapshot(page, 'Default Condition Set');
 });
 
-test('Visual - Default Condition Widget', async ({ page }) => {
+test.fixme('Visual - Default Condition Widget', async ({ page }) => {
+    test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/5349'
+    });
     //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -171,3 +178,55 @@ test('Visual - Sine Wave Generator Form', async ({ page }) => {
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'removed amplitude property value');
 });
+
+test('Visual - Save Successful Banner', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    //NOTE Something other than example imagery
+    await page.click('text=Timer');
+
+    // Click text=OK
+    await page.click('text=OK');
+    await page.locator('.c-message-banner__message').hover({ trial: true });
+    await percySnapshot(page, 'Banner message shown');
+
+    //Wait until Save Banner is gone
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    await percySnapshot(page, 'Banner message gone');
+});
+
+test('Visual - Display Layout Icon is correct', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    //Hover on Display Layout option.
+    await page.locator('text=Display Layout').hover();
+    await percySnapshot(page, 'Display Layout Create Menu');
+
+});
+
+test('Visual - Default Gauge is correct', async ({ page }) => {
+
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    await page.click('text=Gauge');
+
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Gauge object
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Gauge');
+
+});
+

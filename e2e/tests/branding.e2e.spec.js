@@ -24,7 +24,8 @@
 This test suite is dedicated to tests which verify branding related components.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../fixtures.js');
+const { expect } = require('@playwright/test');
 
 test.describe('Branding tests', () => {
     test('About Modal launches with basic branding properties', async ({ page }) => {
@@ -35,7 +36,7 @@ test.describe('Branding tests', () => {
         await page.click('.l-shell__app-logo');
 
         // Verify that the NASA Logo Appears
-        await expect(await page.locator('.c-about__image')).toBeVisible();
+        await expect(page.locator('.c-about__image')).toBeVisible();
 
         // Modify the Build information in 'about' Modal
         const versionInformationLocator = page.locator('ul.t-info.l-info.s-info');
@@ -57,6 +58,7 @@ test.describe('Branding tests', () => {
             page.waitForEvent('popup'),
             page.locator('text=click here for third party licensing information').click()
         ]);
-        expect(page2.waitForURL('**\/licenses**')).toBeTruthy();
+        await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
+        expect(page2.waitForURL('**/licenses**')).toBeTruthy();
     });
 });

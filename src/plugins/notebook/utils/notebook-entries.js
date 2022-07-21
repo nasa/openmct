@@ -1,4 +1,5 @@
 import objectLink from '../../../ui/mixins/object-link';
+import { v4 as uuid } from 'uuid';
 
 async function getUsername(openmct) {
     let username = '';
@@ -123,8 +124,8 @@ export async function addNotebookEntry(openmct, domainObject, notebookStorage, e
         ? [embed]
         : [];
 
+    const id = `entry-${uuid()}`;
     const createdBy = await getUsername(openmct);
-    const id = `entry-${date}`;
     const entry = {
         id,
         createdOn: date,
@@ -142,7 +143,7 @@ export async function addNotebookEntry(openmct, domainObject, notebookStorage, e
 }
 
 export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
-    if (!domainObject || !selectedSection || !selectedPage) {
+    if (!domainObject || !selectedSection || !selectedPage || !domainObject.configuration) {
         return;
     }
 
@@ -159,7 +160,9 @@ export function getNotebookEntries(domainObject, selectedSection, selectedPage) 
         return;
     }
 
-    return entries[selectedSection.id][selectedPage.id];
+    const specificEntries = entries[selectedSection.id][selectedPage.id];
+
+    return specificEntries;
 }
 
 export function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {

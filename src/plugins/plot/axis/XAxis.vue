@@ -135,17 +135,21 @@ export default {
         },
         setUpXAxisOptions() {
             const xAxisKey = this.xAxis.get('key');
+            this.xKeyOptions = [];
 
-            this.xKeyOptions = this.seriesModel.metadata
-                .valuesForHints(['domain'])
-                .map(function (o) {
-                    return {
-                        name: o.name,
-                        key: o.key
-                    };
-                });
+            if (this.seriesModel.metadata) {
+                this.xKeyOptions = this.seriesModel.metadata
+                    .valuesForHints(['domain'])
+                    .map(function (o) {
+                        return {
+                            name: o.name,
+                            key: o.key
+                        };
+                    });
+            }
+
             this.xAxisLabel = this.xAxis.get('label');
-            this.selectedXKeyOptionKey = this.getXKeyOption(xAxisKey).key;
+            this.selectedXKeyOptionKey = this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
         },
         onTickWidthChange(width) {
             this.$emit('tickWidthChanged', width);

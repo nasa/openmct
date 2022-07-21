@@ -1,10 +1,8 @@
 define([
-    './Palette',
-    'zepto'
+    './Palette'
 ],
 function (
-    Palette,
-    $
+    Palette
 ) {
 
     //The colors that will be used to instantiate this palette if none are provided
@@ -33,17 +31,16 @@ function (
 
         this.palette.setNullOption('rgba(0,0,0,0)');
 
-        const domElement = $(this.palette.getDOM());
+        const domElement = this.palette.getDOM();
         const self = this;
 
-        $('.c-button--menu', domElement).addClass('c-button--swatched');
-        $('.t-swatch', domElement).addClass('color-swatch');
-        $('.c-palette', domElement).addClass('c-palette--color');
+        domElement.querySelector('.c-button--menu').classList.add('c-button--swatched');
+        domElement.querySelector('.t-swatch').classList.add('color-swatch');
+        domElement.querySelector('.c-palette').classList.add('c-palette--color');
 
-        $('.c-palette__item', domElement).each(function () {
+        domElement.querySelectorAll('.c-palette__item').forEach(item => {
             // eslint-disable-next-line no-invalid-this
-            const elem = this;
-            $(elem).css('background-color', elem.dataset.item);
+            item.style.backgroundColor = item.dataset.item;
         });
 
         /**
@@ -53,7 +50,7 @@ function (
          */
         function updateSwatch() {
             const color = self.palette.getCurrent();
-            $('.color-swatch', domElement).css('background-color', color);
+            domElement.querySelector('.color-swatch').style.backgroundColor = color;
         }
 
         this.palette.on('change', updateSwatch);

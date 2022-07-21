@@ -7,12 +7,19 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const {VueLoaderPlugin} = require('vue-loader');
-const gitRevision = require('child_process')
-    .execSync('git rev-parse HEAD')
-    .toString().trim();
-const gitBranch = require('child_process')
-    .execSync('git rev-parse --abbrev-ref HEAD')
-    .toString().trim();
+let gitRevision = 'error-retrieving-revision';
+let gitBranch = 'error-retrieving-branch';
+
+try {
+    gitRevision = require('child_process')
+        .execSync('git rev-parse HEAD')
+        .toString().trim();
+    gitBranch = require('child_process')
+        .execSync('git rev-parse --abbrev-ref HEAD')
+        .toString().trim();
+} catch (err) {
+    console.warn(err);
+}
 
 /** @type {import('webpack').Configuration} */
 const config = {
@@ -26,9 +33,10 @@ const config = {
         maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'
     },
     output: {
-        globalObject: "this",
+        globalObject: 'this',
         filename: '[name].js',
-        library: '[name]',
+        path: path.resolve(__dirname, 'dist'),
+        library: 'openmct',
         libraryTarget: 'umd',
         publicPath: '',
         hashFunction: 'xxhash64',
@@ -44,7 +52,7 @@ const config = {
             "bourbon": "bourbon.scss",
             "plotly-basic": "plotly.js-basic-dist",
             "plotly-gl2d": "plotly.js-gl2d-dist",
-            "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js"),
+            "d3-scale": path.join(__dirname, "node_modules/d3-scale/dist/d3-scale.min.js"),
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
             "styles": path.join(__dirname, "src/styles"),
             "MCT": path.join(__dirname, "src/MCT"),
@@ -72,6 +80,10 @@ const config = {
                     transform: function (content) {
                         return content.toString().replace(/dist\//g, '');
                     }
+                },
+                {
+                    from: 'src/plugins/imagery/layers',
+                    to: 'imagery'
                 }
             ]
         }),
@@ -89,8 +101,13 @@ const config = {
                     {
                         loader: 'css-loader'
                     },
-                    'resolve-url-loader',
-                    'sass-loader'
+                    {
+                        loader: 'resolve-url-loader'
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: {sourceMap: true }
+                    }
                 ]
             },
             {
@@ -100,13 +117,6 @@ const config = {
             {
                 test: /\.html$/,
                 type: 'asset/source'
-            },
-            {
-                test: /zepto/,
-                use: [
-                    "imports-loader?this=>window",
-                    "exports-loader?Zepto"
-                ]
             },
             {
                 test: /\.(jpg|jpeg|png|svg)$/,
