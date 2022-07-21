@@ -26,20 +26,35 @@
 const createdObjects = new Map();
 
 /**
+ * @typedef {Object} ObjectCreateOptions
+ * @property {string} type
+ * @property {string} name
+ */
+
+/**
  * @param {import('@playwright/test').Page} page
- * @param {string} domainObjectName
+ * @param {ObjectCreateOptions} options
  * @returns {Promise<string>} uuid of the domain object
  */
-async function getOrCreateDomainObject(page, domainObjectName) {
-    if (createdObjects.has(domainObjectName)) {
-        return createdObjects.get(domainObjectName);
+async function getOrCreateDomainObject(page, options) {
+    const { type, name } = options;
+
+    if (createdObjects.has(type)) {
+        return createdObjects.get(type);
     }
 
     //Click the Create button
     await page.click('button:has-text("Create")');
 
     // Click the object
-    await page.click(`text=${domainObjectName}`);
+    await page.click(`text=${type}`);
+
+    if (name) {
+        // Enter the name
+        const nameInput = await page.locator('input[type="text"]').nth(2);
+        await nameInput.fill("");
+        await nameInput.fill(name);
+    }
 
     // Click text=OK
     await Promise.all([
@@ -51,7 +66,7 @@ async function getOrCreateDomainObject(page, domainObjectName) {
         return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
     });
 
-    createdObjects.set(domainObjectName, uuid);
+    createdObjects.set(type, uuid);
 
     return uuid;
 }

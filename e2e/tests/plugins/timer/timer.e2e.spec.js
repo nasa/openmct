@@ -22,8 +22,12 @@
 
 const { test, expect } = require('../../../pluginFixtures.js');
 
+const options = {
+    type: 'timer'
+};
+
 test.describe('Timer', () => {
-    test.use({ domainObjectName: 'Timer'});
+    test.use({ objectCreateOptions: options });
     test('Can perform actions on the Timer', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
