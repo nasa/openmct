@@ -24,8 +24,28 @@
 const { test, expect } = require('./baseFixtures');
 const { getOrCreateDomainObject } = require('./appActions');
 
+/**
+ * If provided, these options will be used to get or create the desired domain object before
+ * any tests or test hooks have run.
+ * The `uuid` of the `domainObject` will then be available to use within the scoped tests.
+ *
+ * ### Example:
+ * ```js
+ * test.describe("My test suite", () => {
+ *    test.use({ objectCreateOptions: { type: "Telemetry Table", name: "My Telemetry Table" }});
+ *    test("'My Telemetry Table' is created and provides a uuid", async ({ page, domainObject }) => {
+ *         const { uuid } = domainObject;
+ *         expect(uuid).toBeDefined();
+ *     }))
+ * });
+ * ```
+ * @type {import('./appActions').ObjectCreateOptions}
+ */
+const objectCreateOptions = null;
+
 exports.test = test.extend({
-    objectCreateOptions: [null, { option: true }],
+    objectCreateOptions: [objectCreateOptions, {option: true}],
+    // eslint-disable-next-line no-shadow
     domainObject: [async ({ page, objectCreateOptions }, use) => {
         if (objectCreateOptions === null) {
             await use(page);

@@ -38,9 +38,10 @@ const createdObjects = new Map();
  */
 async function getOrCreateDomainObject(page, options) {
     const { type, name } = options;
+    const objectName = name ? `${type}:${name}` : type;
 
-    if (createdObjects.has(type)) {
-        return createdObjects.get(type);
+    if (createdObjects.has(objectName)) {
+        return createdObjects.get(objectName);
     }
 
     //Click the Create button
@@ -66,7 +67,7 @@ async function getOrCreateDomainObject(page, options) {
         return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
     });
 
-    createdObjects.set(type, uuid);
+    createdObjects.set(objectName, uuid);
 
     return uuid;
 }
