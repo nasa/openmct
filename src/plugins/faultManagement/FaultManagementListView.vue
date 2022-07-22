@@ -35,25 +35,31 @@
         @shelveSelected="toggleShelveSelected"
     />
 
-    <FaultManagementListHeader
-        class="header"
-        :selected-faults="Object.values(selectedFaults)"
-        :total-faults-count="filteredFaultsList.length"
-        @selectAll="selectAll"
-        @sortChanged="sortChanged"
-    />
+    <div class="c-faults-list-view-header-item-container-wrapper">
+        <div class="c-faults-list-view-header-item-container">
+            <FaultManagementListHeader
+                class="header"
+                :selected-faults="Object.values(selectedFaults)"
+                :total-faults-count="filteredFaultsList.length"
+                @selectAll="selectAll"
+                @sortChanged="sortChanged"
+            />
 
-    <template v-if="filteredFaultsList.length > 0">
-        <FaultManagementListItem
-            v-for="fault of filteredFaultsList"
-            :key="fault.id"
-            :fault="fault"
-            :is-selected="isSelected(fault)"
-            @toggleSelected="toggleSelected"
-            @acknowledgeSelected="toggleAcknowledgeSelected"
-            @shelveSelected="toggleShelveSelected"
-        />
-    </template>
+            <div class="c-faults-list-view-item-body">
+                <template v-if="filteredFaultsList.length > 0">
+                    <FaultManagementListItem
+                        v-for="fault of filteredFaultsList"
+                        :key="fault.id"
+                        :fault="fault"
+                        :is-selected="isSelected(fault)"
+                        @toggleSelected="toggleSelected"
+                        @acknowledgeSelected="toggleAcknowledgeSelected"
+                        @shelveSelected="toggleShelveSelected"
+                    />
+                </template>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -90,17 +96,19 @@ export default {
     computed: {
         filteredFaultsList() {
             const filterName = FILTER_ITEMS[this.filterIndex];
-            let list = this.faultsList.filter(fault => !fault.shelved);
+            let list = this.faultsList;
+
+            // Exclude shelved alarms from all views except the Shelved view
+            if (filterName !== 'Shelved') {
+                list = list.filter(fault => fault.shelved !== true);
+            }
+
             if (filterName === 'Acknowledged') {
-                list = this.faultsList.filter(fault => fault.acknowledged);
-            }
-
-            if (filterName === 'Unacknowledged') {
-                list = this.faultsList.filter(fault => !fault.acknowledged);
-            }
-
-            if (filterName === 'Shelved') {
-                list = this.faultsList.filter(fault => fault.shelved);
+                list = list.filter(fault => fault.acknowledged);
+            } else if (filterName === 'Unacknowledged') {
+                list = list.filter(fault => !fault.acknowledged);
+            } else if (filterName === 'Shelved') {
+                list = list.filter(fault => fault.shelved);
             }
 
             if (this.searchTerm.length > 0) {
@@ -195,7 +203,7 @@ export default {
                             {
                                 key: 'comment',
                                 control: 'textarea',
-                                name: 'Comment',
+                                name: 'Optional comment',
                                 pattern: '\\S+',
                                 required: false,
                                 cssClass: 'l-input-lg',
@@ -237,7 +245,7 @@ export default {
                                 {
                                     key: 'comment',
                                     control: 'textarea',
-                                    name: 'Comment',
+                                    name: 'Optional comment',
                                     pattern: '\\S+',
                                     required: false,
                                     cssClass: 'l-input-lg',
@@ -246,7 +254,7 @@ export default {
                                 {
                                     key: 'shelveDuration',
                                     control: 'select',
-                                    name: 'Shelve Duration',
+                                    name: 'Shelve duration',
                                     options: FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS,
                                     required: false,
                                     cssClass: 'l-input-lg',

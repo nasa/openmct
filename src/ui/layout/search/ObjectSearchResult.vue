@@ -23,6 +23,7 @@
 <template>
 <div
     class="c-gsearch-result c-gsearch-result--object"
+    aria-label="Search Result"
     role="presentation"
 >
     <div
@@ -37,6 +38,8 @@
         <div
             class="c-gsearch-result__title"
             :name="resultName"
+            draggable="true"
+            @dragstart="dragStart"
             @click="clickedResult"
         >
             {{ resultName }}
@@ -56,6 +59,7 @@
 <script>
 import ObjectPath from '../../components/ObjectPath.vue';
 import objectPathToUrl from '../../../tools/url';
+import PreviewAction from '../../preview/PreviewAction';
 
 export default {
     name: 'ObjectSearchResult',
@@ -90,12 +94,48 @@ export default {
             }
         };
         this.$refs.objectpath.updateSelection([[selectionObject]]);
+        this.previewAction = new PreviewAction(this.openmct);
+        this.previewAction.on('isVisible', this.togglePreviewState);
+    },
+    destroyed() {
+        this.previewAction.off('isVisible', this.togglePreviewState);
     },
     methods: {
-        clickedResult() {
+        clickedResult(event) {
+            if (this.openmct.editor.isEditing()) {
+                event.preventDefault();
+                this.preview();
+            } else {
+                const objectPath = this.result.originalPath;
+                let resultUrl = objectPathToUrl(this.openmct, objectPath);
+                // get rid of ROOT if extant
+                if (resultUrl.includes('/ROOT')) {
+                    resultUrl = resultUrl.split('/ROOT').join('');
+                }
+
+                this.openmct.router.navigate(resultUrl);
+            }
+        },
+        togglePreviewState(previewState) {
+            this.$emit('preview-changed', previewState);
+        },
+        preview() {
             const objectPath = this.result.originalPath;
-            const resultUrl = objectPathToUrl(this.openmct, objectPath);
-            this.openmct.router.navigate(resultUrl);
+            if (this.previewAction.appliesTo(objectPath)) {
+                this.previewAction.invoke(objectPath);
+            }
+        },
+        dragStart(event) {
+            const navigatedObject = this.openmct.router.path[0];
+            const objectPath = this.result.originalPath;
+            const serializedPath = JSON.stringify(objectPath);
+            const keyString = this.openmct.objects.makeKeyString(this.result.identifier);
+            if (this.openmct.composition.checkPolicy(navigatedObject, this.result)) {
+                event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.result));
+            }
+
+            event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
+            event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.result);
         }
     }
 };

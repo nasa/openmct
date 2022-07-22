@@ -24,7 +24,7 @@ const { test } = require('../../../fixtures');
 const { expect } = require('@playwright/test');
 
 test.describe('Telemetry Table', () => {
-    test('unpauses when paused by button and user changes bounds', async ({ page }) => {
+    test('unpauses and filters data when paused by button and user changes bounds', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5113'
@@ -38,9 +38,6 @@ test.describe('Telemetry Table', () => {
         // Click create button
         await page.locator(createButton).click();
         await page.locator('li:has-text("Telemetry Table")').click();
-
-        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-        await page.click('form[name="mctForm"] a:has-text("My Items")');
 
         await Promise.all([
             page.waitForNavigation(),
@@ -59,9 +56,6 @@ test.describe('Telemetry Table', () => {
         // add Sine Wave Generator with defaults
         await page.locator('li:has-text("Sine Wave Generator")').click();
 
-        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-        await page.click('form[name="mctForm"] a:has-text("My Items")');
-
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=OK').click(),
@@ -77,25 +71,34 @@ test.describe('Telemetry Table', () => {
         ]);
 
         // Click pause button
-        const pauseButton = await page.locator('button.c-button.icon-pause');
+        const pauseButton = page.locator('button.c-button.icon-pause');
         await pauseButton.click();
 
-        const tableWrapper = await page.locator('div.c-table-wrapper');
+        const tableWrapper = page.locator('div.c-table-wrapper');
         await expect(tableWrapper).toHaveClass(/is-paused/);
 
-        // Arbitrarily change end date to some time in the future
+        // Subtract 5 minutes from the current end bound datetime and set it
         const endTimeInput = page.locator('input[type="text"].c-input--datetime').nth(1);
         await endTimeInput.click();
 
         let endDate = await endTimeInput.inputValue();
         endDate = new Date(endDate);
-        endDate.setUTCDate(endDate.getUTCDate() + 1);
-        endDate = endDate.toISOString().replace(/T.*/, '');
+
+        endDate.setUTCMinutes(endDate.getUTCMinutes() - 5);
+        endDate = endDate.toISOString().replace(/T/, ' ');
 
         await endTimeInput.fill('');
         await endTimeInput.fill(endDate);
         await page.keyboard.press('Enter');
 
         await expect(tableWrapper).not.toHaveClass(/is-paused/);
+
+        // Get the most recent telemetry date
+        const latestTelemetryDate = await page.locator('table.c-telemetry-table__body > tbody > tr').last().locator('td').nth(1).getAttribute('title');
+
+        // Verify that it is <= our new end bound
+        const latestMilliseconds = Date.parse(latestTelemetryDate);
+        const endBoundMilliseconds = Date.parse(endDate);
+        expect(latestMilliseconds).toBeLessThanOrEqual(endBoundMilliseconds);
     });
 });

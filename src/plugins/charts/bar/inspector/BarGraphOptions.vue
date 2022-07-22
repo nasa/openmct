@@ -281,11 +281,11 @@ export default {
                 this.xKeyOptions.push(
                     metadataValues.reduce((previousValue, currentValue) => {
                         return {
-                            name: `${previousValue.name}, ${currentValue.name}`,
+                            name: previousValue?.name ? `${previousValue.name}, ${currentValue.name}` : `${currentValue.name}`,
                             value: currentValue.key,
                             isArrayValue: currentValue.isArrayValue
                         };
-                    })
+                    }, {name: ''})
                 );
             }
 
@@ -316,11 +316,16 @@ export default {
                     }
                 } else {
                     if (this.yKey === undefined) {
-                        yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
-                        if (yKeyOptionIndex > -1) {
+                        if (metadataValues.length && metadataArrayValues.length === 0) {
                             update = true;
-                            this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
-                            this.yKeyLabel = this.yKeyOptions[yKeyOptionIndex].name;
+                            this.yKey = 'none';
+                        } else {
+                            yKeyOptionIndex = this.yKeyOptions.findIndex((option, index) => index !== xKeyOptionIndex);
+                            if (yKeyOptionIndex > -1) {
+                                update = true;
+                                this.yKey = this.yKeyOptions[yKeyOptionIndex].value;
+                                this.yKeyLabel = this.yKeyOptions[yKeyOptionIndex].name;
+                            }
                         }
                     }
                 }
@@ -336,6 +341,8 @@ export default {
 
                     return option;
                 });
+            } else if (this.xKey !== undefined && this.domainObject.configuration.axes.yKey === undefined) {
+                this.domainObject.configuration.axes.yKey = 'none';
             }
 
             this.xKeyOptions = this.xKeyOptions.map((option, index) => {

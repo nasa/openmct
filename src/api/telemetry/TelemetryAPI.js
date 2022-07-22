@@ -20,122 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { TelemetryCollection } = require("./TelemetryCollection");
+import TelemetryCollection from './TelemetryCollection';
+import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
+import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
+import TelemetryMetadataManager from './TelemetryMetadataManager';
+import TelemetryValueFormatter from './TelemetryValueFormatter';
+import DefaultMetadataProvider from './DefaultMetadataProvider';
+import objectUtils from 'objectUtils';
+import _ from 'lodash';
 
-define([
-    '../../plugins/displayLayout/CustomStringFormatter',
-    './TelemetryMetadataManager',
-    './TelemetryValueFormatter',
-    './DefaultMetadataProvider',
-    'objectUtils',
-    'lodash'
-], function (
-    CustomStringFormatter,
-    TelemetryMetadataManager,
-    TelemetryValueFormatter,
-    DefaultMetadataProvider,
-    objectUtils,
-    _
-) {
-    /**
-     * A LimitEvaluator may be used to detect when telemetry values
-     * have exceeded nominal conditions.
-     *
-     * @interface LimitEvaluator
-     * @memberof module:openmct.TelemetryAPI~
-     */
+export default class TelemetryAPI {
 
-    /**
-     * Check for any limit violations associated with a telemetry datum.
-     * @method evaluate
-     * @param {*} datum the telemetry datum to evaluate
-     * @param {TelemetryProperty} the property to check for limit violations
-     * @memberof module:openmct.TelemetryAPI~LimitEvaluator
-     * @returns {module:openmct.TelemetryAPI~LimitViolation} metadata about
-     *          the limit violation, or undefined if a value is within limits
-     */
-
-    /**
-     * A violation of limits defined for a telemetry property.
-     * @typedef LimitViolation
-     * @memberof {module:openmct.TelemetryAPI~}
-     * @property {string} cssClass the class (or space-separated classes) to
-     *           apply to display elements for values which violate this limit
-     * @property {string} name the human-readable name for the limit violation
-     */
-
-    /**
-     * A TelemetryFormatter converts telemetry values for purposes of
-     * display as text.
-     *
-     * @interface TelemetryFormatter
-     * @memberof module:openmct.TelemetryAPI~
-     */
-
-    /**
-     * Retrieve the 'key' from the datum and format it accordingly to
-     * telemetry metadata in domain object.
-     *
-     * @method format
-     * @memberof module:openmct.TelemetryAPI~TelemetryFormatter#
-     */
-
-    /**
-     * Describes a property which would be found in a datum of telemetry
-     * associated with a particular domain object.
-     *
-     * @typedef TelemetryProperty
-     * @memberof module:openmct.TelemetryAPI~
-     * @property {string} key the name of the property in the datum which
-     *           contains this telemetry value
-     * @property {string} name the human-readable name for this property
-     * @property {string} [units] the units associated with this property
-     * @property {boolean} [temporal] true if this property is a timestamp, or
-     *           may be otherwise used to order telemetry in a time-like
-     *           fashion; default is false
-     * @property {boolean} [numeric] true if the values for this property
-     *           can be interpreted plainly as numbers; default is true
-     * @property {boolean} [enumerated] true if this property may have only
-     *           certain specific values; default is false
-     * @property {string} [values] for enumerated states, an ordered list
-     *           of possible values
-     */
-
-    /**
-     * Describes and bounds requests for telemetry data.
-     *
-     * @typedef TelemetryRequest
-     * @memberof module:openmct.TelemetryAPI~
-     * @property {string} sort the key of the property to sort by. This may
-     *           be prefixed with a "+" or a "-" sign to sort in ascending
-     *           or descending order respectively. If no prefix is present,
-     *           ascending order will be used.
-     * @property {*} start the lower bound for values of the sorting property
-     * @property {*} end the upper bound for values of the sorting property
-     * @property {string[]} strategies symbolic identifiers for strategies
-     *           (such as `minmax`) which may be recognized by providers;
-     *           these will be tried in order until an appropriate provider
-     *           is found
-     */
-
-    /**
-     * Provides telemetry data. To connect to new data sources, new
-     * TelemetryProvider implementations should be
-     * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
-     *
-     * @interface TelemetryProvider
-     * @memberof module:openmct.TelemetryAPI~
-     */
-
-    /**
-     * An interface for retrieving telemetry data associated with a domain
-     * object.
-     *
-     * @interface TelemetryAPI
-     * @augments module:openmct.TelemetryAPI~TelemetryProvider
-     * @memberof module:openmct
-     */
-    function TelemetryAPI(openmct) {
+    constructor(openmct) {
         this.openmct = openmct;
 
         this.formatMapCache = new WeakMap();
@@ -148,12 +44,14 @@ define([
         this.requestProviders = [];
         this.subscriptionProviders = [];
         this.valueFormatterCache = new WeakMap();
+
+        this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
     }
 
-    TelemetryAPI.prototype.abortAllRequests = function () {
+    abortAllRequests() {
         this.requestAbortControllers.forEach((controller) => controller.abort());
         this.requestAbortControllers.clear();
-    };
+    }
 
     /**
      * Return Custom String Formatter
@@ -162,9 +60,9 @@ define([
      * @param {string} format custom formatter string (eg: %.4f, &lts etc.)
      * @returns {CustomStringFormatter}
      */
-    TelemetryAPI.prototype.customStringFormatter = function (valueMetadata, format) {
-        return new CustomStringFormatter.default(this.openmct, valueMetadata, format);
-    };
+    customStringFormatter(valueMetadata, format) {
+        return new CustomStringFormatter(this.openmct, valueMetadata, format);
+    }
 
     /**
      * Return true if the given domainObject is a telemetry object.  A telemetry
@@ -174,9 +72,9 @@ define([
      * @param {module:openmct.DomainObject} domainObject
      * @returns {boolean} true if the object is a telemetry object.
      */
-    TelemetryAPI.prototype.isTelemetryObject = function (domainObject) {
+    isTelemetryObject(domainObject) {
         return Boolean(this.findMetadataProvider(domainObject));
-    };
+    }
 
     /**
      * Check if this provider can supply telemetry data associated with
@@ -188,10 +86,10 @@ define([
      * @returns {boolean} true if telemetry can be provided
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
-    TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
+    canProvideTelemetry(domainObject) {
         return Boolean(this.findSubscriptionProvider(domainObject))
-               || Boolean(this.findRequestProvider(domainObject));
-    };
+                || Boolean(this.findRequestProvider(domainObject));
+    }
 
     /**
      * Register a telemetry provider with the telemetry service. This
@@ -201,7 +99,7 @@ define([
      * @param {module:openmct.TelemetryAPI~TelemetryProvider} provider the new
      *        telemetry provider
      */
-    TelemetryAPI.prototype.addProvider = function (provider) {
+    addProvider(provider) {
         if (provider.supportsRequest) {
             this.requestProviders.unshift(provider);
         }
@@ -217,54 +115,54 @@ define([
         if (provider.supportsLimits) {
             this.limitProviders.unshift(provider);
         }
-    };
+    }
 
     /**
      * @private
      */
-    TelemetryAPI.prototype.findSubscriptionProvider = function () {
+    findSubscriptionProvider() {
         const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsSubscribe.apply(provider, args);
         }
 
         return this.subscriptionProviders.filter(supportsDomainObject)[0];
-    };
+    }
 
     /**
      * @private
      */
-    TelemetryAPI.prototype.findRequestProvider = function (domainObject) {
+    findRequestProvider(domainObject) {
         const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsRequest.apply(provider, args);
         }
 
         return this.requestProviders.filter(supportsDomainObject)[0];
-    };
+    }
 
     /**
      * @private
      */
-    TelemetryAPI.prototype.findMetadataProvider = function (domainObject) {
+    findMetadataProvider(domainObject) {
         return this.metadataProviders.filter(function (p) {
             return p.supportsMetadata(domainObject);
         })[0];
-    };
+    }
 
     /**
      * @private
      */
-    TelemetryAPI.prototype.findLimitEvaluator = function (domainObject) {
+    findLimitEvaluator(domainObject) {
         return this.limitProviders.filter(function (p) {
             return p.supportsLimits(domainObject);
         })[0];
-    };
+    }
 
     /**
      * @private
      */
-    TelemetryAPI.prototype.standardizeRequestOptions = function (options) {
+    standardizeRequestOptions(options) {
         if (!Object.prototype.hasOwnProperty.call(options, 'start')) {
             options.start = this.openmct.time.bounds().start;
         }
@@ -276,7 +174,47 @@ define([
         if (!Object.prototype.hasOwnProperty.call(options, 'domain')) {
             options.domain = this.openmct.time.timeSystem().key;
         }
-    };
+    }
+
+    /**
+     * Register a request interceptor that transforms a request via module:openmct.TelemetryAPI.request
+     * The request will be modifyed when it is received and will be returned in it's modified state
+     * The request will be transformed only if the interceptor is applicable to that domain object as defined by the RequestInterceptorDef
+     *
+     * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the request interceptor definition to add
+     * @method addRequestInterceptor
+     * @memberof module:openmct.TelemetryRequestInterceptorRegistry#
+     */
+    addRequestInterceptor(requestInterceptorDef) {
+        this.requestInterceptorRegistry.addInterceptor(requestInterceptorDef);
+    }
+
+    /**
+     * Retrieve the request interceptors for a given domain object.
+     * @private
+     */
+    #getInterceptorsForRequest(identifier, request) {
+        return this.requestInterceptorRegistry.getInterceptors(identifier, request);
+    }
+
+    /**
+     * Invoke interceptors if applicable for a given domain object.
+     */
+    async applyRequestInterceptors(domainObject, request) {
+        const interceptors = this.#getInterceptorsForRequest(domainObject.identifier, request);
+
+        if (interceptors.length === 0) {
+            return request;
+        }
+
+        let modifiedRequest = { ...request };
+
+        for (let interceptor of interceptors) {
+            modifiedRequest = await interceptor.invoke(modifiedRequest);
+        }
+
+        return modifiedRequest;
+    }
 
     /**
      * Request telemetry collection for a domain object.
@@ -292,13 +230,13 @@ define([
      *        options for this telemetry collection request
      * @returns {TelemetryCollection} a TelemetryCollection instance
      */
-    TelemetryAPI.prototype.requestCollection = function (domainObject, options = {}) {
+    requestCollection(domainObject, options = {}) {
         return new TelemetryCollection(
             this.openmct,
             domainObject,
             options
         );
-    };
+    }
 
     /**
      * Request historical telemetry for a domain object.
@@ -315,7 +253,7 @@ define([
      * @returns {Promise.<object[]>} a promise for an array of
      *          telemetry data
      */
-    TelemetryAPI.prototype.request = function (domainObject) {
+    async request(domainObject) {
         if (this.noRequestProviderForAllObjects) {
             return Promise.resolve([]);
         }
@@ -330,12 +268,15 @@ define([
         this.requestAbortControllers.add(abortController);
 
         this.standardizeRequestOptions(arguments[1]);
+
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
             this.requestAbortControllers.delete(abortController);
 
             return this.handleMissingRequestProvider(domainObject);
         }
+
+        arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
 
         return provider.request.apply(provider, arguments)
             .catch((rejected) => {
@@ -348,7 +289,7 @@ define([
             }).finally(() => {
                 this.requestAbortControllers.delete(abortController);
             });
-    };
+    }
 
     /**
      * Subscribe to realtime telemetry for a specific domain object.
@@ -364,7 +305,7 @@ define([
      * @returns {Function} a function which may be called to terminate
      *          the subscription
      */
-    TelemetryAPI.prototype.subscribe = function (domainObject, callback, options) {
+    subscribe(domainObject, callback, options) {
         const provider = this.findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
@@ -401,7 +342,7 @@ define([
                 delete this.subscribeCache[keyString];
             }
         }.bind(this);
-    };
+    }
 
     /**
      * Get telemetry metadata for a given domain object.  Returns a telemetry
@@ -410,7 +351,7 @@ define([
      *
      * @returns {TelemetryMetadataManager}
      */
-    TelemetryAPI.prototype.getMetadata = function (domainObject) {
+    getMetadata(domainObject) {
         if (!this.metadataCache.has(domainObject)) {
             const metadataProvider = this.findMetadataProvider(domainObject);
             if (!metadataProvider) {
@@ -426,14 +367,14 @@ define([
         }
 
         return this.metadataCache.get(domainObject);
-    };
+    }
 
     /**
      * Return an array of valueMetadatas that are common to all supplied
      * telemetry objects and match the requested hints.
      *
      */
-    TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
+    commonValuesForHints(metadatas, hints) {
         const options = metadatas.map(function (metadata) {
             const values = metadata.valuesForHints(hints);
 
@@ -453,14 +394,14 @@ define([
         });
 
         return _.sortBy(options, sortKeys);
-    };
+    }
 
     /**
      * Get a value formatter for a given valueMetadata.
      *
      * @returns {TelemetryValueFormatter}
      */
-    TelemetryAPI.prototype.getValueFormatter = function (valueMetadata) {
+    getValueFormatter(valueMetadata) {
         if (!this.valueFormatterCache.has(valueMetadata)) {
             this.valueFormatterCache.set(
                 valueMetadata,
@@ -469,7 +410,7 @@ define([
         }
 
         return this.valueFormatterCache.get(valueMetadata);
-    };
+    }
 
     /**
      * Get a value formatter for a given key.
@@ -477,9 +418,9 @@ define([
      *
      * @returns {Format}
      */
-    TelemetryAPI.prototype.getFormatter = function (key) {
+    getFormatter(key) {
         return this.formatters.get(key);
-    };
+    }
 
     /**
      * Get a format map of all value formatters for a given piece of telemetry
@@ -487,7 +428,7 @@ define([
      *
      * @returns {Object<String, {TelemetryValueFormatter}>}
      */
-    TelemetryAPI.prototype.getFormatMap = function (metadata) {
+    getFormatMap(metadata) {
         if (!metadata) {
             return {};
         }
@@ -502,14 +443,14 @@ define([
         }
 
         return this.formatMapCache.get(metadata);
-    };
+    }
 
     /**
      * Error Handling: Missing Request provider
      *
      * @returns Promise
      */
-    TelemetryAPI.prototype.handleMissingRequestProvider = function (domainObject) {
+    handleMissingRequestProvider(domainObject) {
         this.noRequestProviderForAllObjects = this.requestProviders.every(requestProvider => {
             const supportsRequest = requestProvider.supportsRequest.apply(requestProvider, arguments);
             const hasRequestProvider = Object.prototype.hasOwnProperty.call(requestProvider, 'request') && typeof requestProvider.request === 'function';
@@ -529,18 +470,18 @@ define([
         }
 
         this.openmct.notifications.error(message);
-        console.error(detailMessage);
+        console.warn(detailMessage);
 
         return Promise.resolve([]);
-    };
+    }
 
     /**
      * Register a new telemetry data formatter.
      * @param {Format} format the
      */
-    TelemetryAPI.prototype.addFormat = function (format) {
+    addFormat(format) {
         this.formatters.set(format.key, format);
-    };
+    }
 
     /**
      * Get a limit evaluator for this domain object.
@@ -558,9 +499,9 @@ define([
      * @method limitEvaluator
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
-    TelemetryAPI.prototype.limitEvaluator = function (domainObject) {
+    limitEvaluator(domainObject) {
         return this.getLimitEvaluator(domainObject);
-    };
+    }
 
     /**
      * Get a limits for this domain object.
@@ -578,9 +519,9 @@ define([
      * @method limits
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
-    TelemetryAPI.prototype.limitDefinition = function (domainObject) {
+    limitDefinition(domainObject) {
         return this.getLimits(domainObject);
-    };
+    }
 
     /**
      * Get a limit evaluator for this domain object.
@@ -598,7 +539,7 @@ define([
      * @method limitEvaluator
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
-    TelemetryAPI.prototype.getLimitEvaluator = function (domainObject) {
+    getLimitEvaluator(domainObject) {
         const provider = this.findLimitEvaluator(domainObject);
         if (!provider) {
             return {
@@ -607,7 +548,7 @@ define([
         }
 
         return provider.getLimitEvaluator(domainObject);
-    };
+    }
 
     /**
      * Get a limit definitions for this domain object.
@@ -636,7 +577,7 @@ define([
      *  supported colors are purple, red, orange, yellow and cyan
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
-    TelemetryAPI.prototype.getLimits = function (domainObject) {
+    getLimits(domainObject) {
         const provider = this.findLimitEvaluator(domainObject);
         if (!provider || !provider.getLimits) {
             return {
@@ -647,7 +588,104 @@ define([
         }
 
         return provider.getLimits(domainObject);
-    };
+    }
+}
 
-    return TelemetryAPI;
-});
+/**
+ * A LimitEvaluator may be used to detect when telemetry values
+ * have exceeded nominal conditions.
+ *
+ * @interface LimitEvaluator
+ * @memberof module:openmct.TelemetryAPI~
+ */
+
+/**
+ * Check for any limit violations associated with a telemetry datum.
+ * @method evaluate
+ * @param {*} datum the telemetry datum to evaluate
+ * @param {TelemetryProperty} the property to check for limit violations
+ * @memberof module:openmct.TelemetryAPI~LimitEvaluator
+ * @returns {module:openmct.TelemetryAPI~LimitViolation} metadata about
+ *          the limit violation, or undefined if a value is within limits
+ */
+
+/**
+ * A violation of limits defined for a telemetry property.
+ * @typedef LimitViolation
+ * @memberof {module:openmct.TelemetryAPI~}
+ * @property {string} cssClass the class (or space-separated classes) to
+ *           apply to display elements for values which violate this limit
+ * @property {string} name the human-readable name for the limit violation
+ */
+
+/**
+ * A TelemetryFormatter converts telemetry values for purposes of
+ * display as text.
+ *
+ * @interface TelemetryFormatter
+ * @memberof module:openmct.TelemetryAPI~
+ */
+
+/**
+ * Retrieve the 'key' from the datum and format it accordingly to
+ * telemetry metadata in domain object.
+ *
+ * @method format
+ * @memberof module:openmct.TelemetryAPI~TelemetryFormatter#
+ */
+
+/**
+ * Describes a property which would be found in a datum of telemetry
+ * associated with a particular domain object.
+ *
+ * @typedef TelemetryProperty
+ * @memberof module:openmct.TelemetryAPI~
+ * @property {string} key the name of the property in the datum which
+ *           contains this telemetry value
+ * @property {string} name the human-readable name for this property
+ * @property {string} [units] the units associated with this property
+ * @property {boolean} [temporal] true if this property is a timestamp, or
+ *           may be otherwise used to order telemetry in a time-like
+ *           fashion; default is false
+ * @property {boolean} [numeric] true if the values for this property
+ *           can be interpreted plainly as numbers; default is true
+ * @property {boolean} [enumerated] true if this property may have only
+ *           certain specific values; default is false
+ * @property {string} [values] for enumerated states, an ordered list
+ *           of possible values
+ */
+
+/**
+ * Describes and bounds requests for telemetry data.
+ *
+ * @typedef TelemetryRequest
+ * @memberof module:openmct.TelemetryAPI~
+ * @property {string} sort the key of the property to sort by. This may
+ *           be prefixed with a "+" or a "-" sign to sort in ascending
+ *           or descending order respectively. If no prefix is present,
+ *           ascending order will be used.
+ * @property {*} start the lower bound for values of the sorting property
+ * @property {*} end the upper bound for values of the sorting property
+ * @property {string[]} strategies symbolic identifiers for strategies
+ *           (such as `minmax`) which may be recognized by providers;
+ *           these will be tried in order until an appropriate provider
+ *           is found
+ */
+
+/**
+ * Provides telemetry data. To connect to new data sources, new
+ * TelemetryProvider implementations should be
+ * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
+ *
+ * @interface TelemetryProvider
+ * @memberof module:openmct.TelemetryAPI~
+ */
+
+/**
+ * An interface for retrieving telemetry data associated with a domain
+ * object.
+ *
+ * @interface TelemetryAPI
+ * @augments module:openmct.TelemetryAPI~TelemetryProvider
+ * @memberof module:openmct
+ */
