@@ -38,6 +38,7 @@ A single e2e test in Open MCT is extended to run:
 ### Why Playwright?
 
 [Playwright](https://playwright.dev/) was chosen as our e2e framework because it solves a few VIPER Mission needs:
+
 1. First-class support for Automated Performance Testing
 2. Official Chrome, Chrome Canary, and iPad Capabilities
 3. Support for Browserless.io
@@ -68,7 +69,7 @@ A single e2e test in Open MCT is extended to run:
 
 ### (FUTURE) Component Testing
 
-- Component testing is currrently possible in Playwright but not enabled on this project. For more, please see: <https://playwright.dev/docs/test-components>
+- Component testing is currently possible in Playwright but not enabled on this project. For more, please see: <https://playwright.dev/docs/test-components>
 
 ## Architecture, Test Design and Best Practices
 
@@ -87,13 +88,12 @@ A single e2e test in Open MCT is extended to run:
 
 ### (TBD) Test Design
 
-How to make tests robust to function in other contexts (VISTA, VIPER, etc.)
-- Leverage the use of pluginFixtures.js like getOrCreateDomainObject
-
-How to make tests faster and more resiliant
-- When possible, navigate directly by URL
-- Leverage ```await page.goto('/', { waitUntil: 'networkidle' });```
-- Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
+- How to make tests robust to function in other contexts (VISTA, VIPER, etc.)
+  - Leverage the use of pluginFixtures.js like getOrCreateDomainObject
+- How to make tests faster and more resilient
+  - When possible, navigate directly by URL
+  - Leverage ```await page.goto('/', { waitUntil: 'networkidle' });```
+  - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
 #### Annotations
 

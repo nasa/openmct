@@ -27,17 +27,15 @@
  *
  * For example, if two functions are nearly identical in
  * timer.e2e.spec.js and notebook.e2e.spec.js, that function should be generalized and moved into this file.
- *
  */
 
 /**
- * This common function creates a domainObject with default options. It the preferred way of creating objects
- * in the e2e suite when uniterested in properties of the objects, themselves.
+ * This common function creates a `domainObject` with default options. It is the preferred way of creating objects
+ * in the e2e suite when uninterested in properties of the objects themselves.
  * @param {import('@playwright/test').Page} page
  * @param {string} type
  * @param {string | undefined} name
  */
-
 async function createDomainObjectWithDefaults(page, type, name) {
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -47,7 +45,7 @@ async function createDomainObjectWithDefaults(page, type, name) {
 
     // Modify the name input field of the domain object to accept 'name'
     if (name) {
-        const nameInput = await page.locator('input[type="text"]').nth(2);
+        const nameInput = page.locator('input[type="text"]').nth(2);
         await nameInput.fill("");
         await nameInput.fill(name);
     }

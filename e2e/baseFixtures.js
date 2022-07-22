@@ -22,9 +22,9 @@
  *****************************************************************************/
 
 /**
- * This file is dedicated to extending the base functionality of the @playwright/test framework.
+ * This file is dedicated to extending the base functionality of the `@playwright/test` framework.
  * The functions in this file should be viewed as temporary or a shim to be removed as the RFEs in
- * the playwright github repo are implemented. Functions which serve those RFEs are marked with corresponding
+ * the Playwright GitHub repo are implemented. Functions which serve those RFEs are marked with corresponding
  * GitHub issues.
  */
 

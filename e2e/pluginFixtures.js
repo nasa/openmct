@@ -22,7 +22,7 @@
  *****************************************************************************/
 
 /**
- * The file contains customer fixtures which extend the base functionality of the playwright fixtures
+ * The file contains custom fixtures which extend the base functionality of the Playwright fixtures
  * and appActions. These fixtures should be generalized across all plugins.
  */
 
@@ -60,7 +60,7 @@ async function getOrCreateDomainObject(page, options) {
 
     await createDomainObjectWithDefaults(page, type, name);
 
-    //Once object is created, get the uuid from the url
+    // Once object is created, get the uuid from the url
     const uuid = await page.evaluate(() => {
         return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
     });
