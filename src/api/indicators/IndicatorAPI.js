@@ -72,6 +72,20 @@ class IndicatorAPI extends EventEmitter {
         this.emit('addIndicator', indicator);
     }
 
+    /**
+     * @param {string} key the key of the indicator
+     * @param {number} priority the priority to set
+     */
+    setPriority(key, priority) {
+        const indicatorToPrioritize = this.indicatorObjects
+            .find(indicator => indicator.key === key);
+
+        if (indicatorToPrioritize !== undefined) {
+            indicatorToPrioritize.priority = priority;
+        } else {
+            console.warn(`Could not find an installed indicator: ${key}`);
+        }
+    }
 }
 
 export default IndicatorAPI;
