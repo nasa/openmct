@@ -57,5 +57,26 @@ async function createDomainObjectWithDefaults(page, type, name) {
     ]);
 }
 
+/**
+* Open the given `domainObject`'s context menu from the object tree.
+* Expands the 'My Items' folder if it is not already expanded.
+* @param {import('@playwright/test').Page} page
+* @param {string} name the display name of the `domainObject`
+*/
+async function openObjectTreeContextMenu(page, name) {
+    const myItemsFolder = page.locator('text=Open MCT My Items >> span').nth(3);
+    const className = await myItemsFolder.getAttribute('class');
+    if (!className.includes('c-disclosure-triangle--expanded')) {
+        await myItemsFolder.click();
+    }
+
+    await page.locator(`a:has-text("${name}")`).click({
+        button: 'right'
+    });
+}
+
 // eslint-disable-next-line no-undef
-exports.createDomainObjectWithDefaults = createDomainObjectWithDefaults;
+module.exports = {
+    createDomainObjectWithDefaults,
+    openObjectTreeContextMenu
+};

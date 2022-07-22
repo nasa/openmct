@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../baseFixtures');
+const { openObjectTreeContextMenu } = require('../../../appActions');
 const path = require('path');
 
 const TEST_TEXT = 'Testing text for entries.';
@@ -38,14 +39,14 @@ test.describe('Restricted Notebook', () => {
     });
 
     test('Can be deleted if there are no locked pages @addInit', async ({ page }) => {
-        await openContextMenuRestrictedNotebook(page);
+        await openObjectTreeContextMenu(page, `Unnamed ${CUSTOM_NAME}`);
 
         const menuOptions = page.locator('.c-menu ul');
         await expect.soft(menuOptions).toContainText('Remove');
 
         const restrictedNotebookTreeObject = page.locator(`a:has-text("Unnamed ${CUSTOM_NAME}")`);
 
-        // notbook tree object exists
+        // notebook tree object exists
         expect.soft(await restrictedNotebookTreeObject.count()).toEqual(1);
 
         // Click Remove Text
@@ -99,7 +100,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         expect.soft(await pageLockIcon.count()).toEqual(1);
 
         // no way to remove a restricted notebook with a locked page
-        await openContextMenuRestrictedNotebook(page);
+        await openObjectTreeContextMenu(page, `Unnamed ${CUSTOM_NAME}`);
         const menuOptions = page.locator('.c-menu ul');
 
         await expect(menuOptions).not.toContainText('Remove');
@@ -235,20 +236,4 @@ async function lockPage(page) {
 
     //Wait until Lock Banner is visible
     await page.locator('text=Lock Page').click();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function openContextMenuRestrictedNotebook(page) {
-    const myItemsFolder = page.locator('text=Open MCT My Items >> span').nth(3);
-    const className = await myItemsFolder.getAttribute('class');
-    if (!className.includes('c-disclosure-triangle--expanded')) {
-        await myItemsFolder.click();
-    }
-
-    // Click a:has-text("Unnamed CUSTOM_NAME")
-    await page.locator(`a:has-text("Unnamed ${CUSTOM_NAME}")`).click({
-        button: 'right'
-    });
 }

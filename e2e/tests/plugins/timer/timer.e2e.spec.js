@@ -21,9 +21,10 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../pluginFixtures.js');
+const { openObjectTreeContextMenu } = require('../../../appActions.js');
 
 const options = {
-    type: 'timer'
+    type: 'Timer'
 };
 
 test.describe('Timer', () => {
@@ -67,30 +68,13 @@ test.describe('Timer', () => {
  */
 
 /**
- * Open the timer context menu from the object tree.
- * Expands the 'My Items' folder if it is not already expanded.
- * @param {import('@playwright/test').Page} page
- */
-async function openTimerContextMenu(page) {
-    const myItemsFolder = page.locator('text=Open MCT My Items >> span').nth(3);
-    const className = await myItemsFolder.getAttribute('class');
-    if (!className.includes('c-disclosure-triangle--expanded')) {
-        await myItemsFolder.click();
-    }
-
-    await page.locator(`a:has-text("Unnamed Timer")`).click({
-        button: 'right'
-    });
-}
-
-/**
  * Trigger a timer action from the tree context menu
  * @param {import('@playwright/test').Page} page
  * @param {TimerAction} action
  */
 async function triggerTimerContextMenuAction(page, action) {
     const menuAction = `.c-menu ul li >> text="${action}"`;
-    await openTimerContextMenu(page);
+    await openObjectTreeContextMenu(page, "Unnamed Timer");
     await page.locator(menuAction).click();
     assertTimerStateAfterAction(page, action);
 }
@@ -106,7 +90,7 @@ async function triggerTimer3dotMenuAction(page, action) {
     let isActionAvailable = false;
     let iterations = 0;
     // Dismiss/open the 3dot menu until the action is available
-    // or a maxiumum number of iterations is reached
+    // or a maximum number of iterations is reached
     while (!isActionAvailable && iterations <= 20) {
         await page.click('.c-object-view');
         await page.click(threeDotMenuButton);
