@@ -87,7 +87,13 @@ A single e2e test in Open MCT is extended to run:
 
 ### (TBD) Test Design
 
-- Re-usable tests for VISTA, VIPER, etc.
+How to make tests robust to function in other contexts (VISTA, VIPER, etc.)
+- Leverage the use of pluginFixtures.js like getOrCreateDomainObject
+
+How to make tests faster and more resiliant
+- When possible, navigate directly by URL
+- Leverage ```await page.goto('/', { waitUntil: 'networkidle' });```
+- Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
 #### Annotations
 

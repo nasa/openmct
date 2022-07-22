@@ -21,8 +21,54 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * The file contains customer fixtures which extend the base functionality of the playwright fixtures
+ * and appActions. These fixtures should be generalized across all plugins.
+ */
+
 const { test, expect } = require('./baseFixtures');
-const { getOrCreateDomainObject } = require('./appActions');
+const { createDomainObjectWithDefaults } = require('./appActions');
+
+/**
+ * @typedef {Object} ObjectCreateOptions
+ * @property {string} type
+ * @property {string} name
+ */
+
+/**
+ * Used to create a new domain object as a part of getOrCreateDomainObject.
+ * @type {Map<string, string>}
+ */
+const createdObjects = new Map();
+
+/**
+ * This action will create a domain object for the test to reference and return the uuid. If an object
+ * of a given name already exists, it will return the uuid of that object to the test instead of creating
+ * a new file. The intent is to move object creation out of test suites which are not explicitly worried
+ * about object creation, while providing a consistent interface to retrieving objects in a persistentContext.
+ * @param {import('@playwright/test').Page} page
+ * @param {ObjectCreateOptions} options
+ * @returns {Promise<string>} uuid of the domain object
+ */
+async function getOrCreateDomainObject(page, options) {
+    const { type, name } = options;
+    const objectName = name ? `${type}:${name}` : type;
+
+    if (createdObjects.has(objectName)) {
+        return createdObjects.get(objectName);
+    }
+
+    await createDomainObjectWithDefaults(page, type, name);
+
+    //Once object is created, get the uuid from the url
+    const uuid = await page.evaluate(() => {
+        return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
+    });
+
+    createdObjects.set(objectName, uuid);
+
+    return uuid;
+}
 
 /**
  * If provided, these options will be used to get or create the desired domain object before
@@ -39,7 +85,7 @@ const { getOrCreateDomainObject } = require('./appActions');
  *     }))
  * });
  * ```
- * @type {import('./appActions').ObjectCreateOptions}
+ * @type {ObjectCreateOptions}
  */
 const objectCreateOptions = null;
 

@@ -21,56 +21,43 @@
  *****************************************************************************/
 
 /**
- * @type {Map<string, string>}
+ * The fixtures in this file are to be used to consolidate common actions performed by the
+ * various test suites. The goal is only to avoid duplication of code across test suites and not to abstract
+ * away the underlying functionality of the application. For more about the App Action pattern, see /e2e/README.md)
+ *
+ * For example, if two functions are nearly identical in
+ * timer.e2e.spec.js and notebook.e2e.spec.js, that function should be generalized and moved into this file.
+ *
  */
-const createdObjects = new Map();
 
 /**
- * @typedef {Object} ObjectCreateOptions
- * @property {string} type
- * @property {string} name
- */
-
-/**
+ * This common function creates a domainObject with default options. It the preferred way of creating objects
+ * in the e2e suite when uniterested in properties of the objects, themselves.
  * @param {import('@playwright/test').Page} page
- * @param {ObjectCreateOptions} options
- * @returns {Promise<string>} uuid of the domain object
+ * @param {string} type
+ * @param {string | undefined} name
  */
-async function getOrCreateDomainObject(page, options) {
-    const { type, name } = options;
-    const objectName = name ? `${type}:${name}` : type;
 
-    if (createdObjects.has(objectName)) {
-        return createdObjects.get(objectName);
-    }
-
+async function createDomainObjectWithDefaults(page, type, name) {
     //Click the Create button
     await page.click('button:has-text("Create")');
 
-    // Click the object
+    // Click the object specified by 'type'
     await page.click(`text=${type}`);
 
+    // Modify the name input field of the domain object to accept 'name'
     if (name) {
-        // Enter the name
         const nameInput = await page.locator('input[type="text"]').nth(2);
         await nameInput.fill("");
         await nameInput.fill(name);
     }
 
-    // Click text=OK
+    // Click OK button and wait for Navigate event
     await Promise.all([
         page.waitForNavigation({waitUntil: 'networkidle'}),
         page.click('text=OK')
     ]);
-
-    const uuid = await page.evaluate(() => {
-        return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
-    });
-
-    createdObjects.set(objectName, uuid);
-
-    return uuid;
 }
 
 // eslint-disable-next-line no-undef
-exports.getOrCreateDomainObject = getOrCreateDomainObject;
+exports.createDomainObjectWithDefaults = createDomainObjectWithDefaults;

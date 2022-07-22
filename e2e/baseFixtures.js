@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -27,8 +28,6 @@
  * GitHub issues.
  */
 
-/* eslint-disable no-undef */
-
 const base = require('@playwright/test');
 const { expect } = base;
 const fs = require('fs');
@@ -37,7 +36,7 @@ const { v4: uuid } = require('uuid');
 const sinon = require('sinon');
 
 /**
- * Takes a `ConsoleMessage` and returns a formatted string. Used to enable console log error detection
+ * Takes a `ConsoleMessage` and returns a formatted string. Used to enable console log error detection.
  * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
  * @private
  * @param {import('@playwright/test').ConsoleMessage} msg
