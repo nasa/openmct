@@ -47,7 +47,7 @@ test.describe('Visual - Controlled Clock', () => {
 
     test('Overlay Plot Loading Indicator @localstorage', async ({ page }) => {
         // Go to baseURL
-        await page.goto('./#/browse/mine?tc.mode=fixed&tc.timeSystem=utc&hideTree=true', { waitUntil: 'networkidle' });
+        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 
         await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
         //Ensure that we're on the Unnamed Overlay Plot object

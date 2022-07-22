@@ -46,7 +46,7 @@ test.describe('Visual - Default', () => {
 
     test('Visual - Root and About', async ({ page }) => {
         // Go to baseURL
-        await page.goto('./#/browse/mine?tc.mode=fixed&tc.timeSystem=utc&hideTree=true', { waitUntil: 'networkidle' });
+        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 
         // Verify that Create button is actionable
         await expect(page.locator('button:has-text("Create")')).toBeEnabled();

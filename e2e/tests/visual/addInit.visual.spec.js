@@ -51,7 +51,7 @@ test.describe('Visual - addInit', () => {
         // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../plugins/notebook', './addInitRestrictedNotebook.js') });
         //Go to baseURL
-        await page.goto('./#/browse/mine?tc.mode=fixed&tc.timeSystem=utc&hideTree=true', { waitUntil: 'networkidle' });
+        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
         //Click the Create button
         await page.click('button:has-text("Create")');
         // Click text=CUSTOM_NAME
