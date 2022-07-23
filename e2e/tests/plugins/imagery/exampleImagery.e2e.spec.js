@@ -226,7 +226,7 @@ test.describe('Example Imagery Object', () => {
 // ('Clicking on the left arrow should pause the imagery and go to previous image');
 // ('If the imagery view is in pause mode, it should not be updated when new images come in');
 // ('If the imagery view is not in pause mode, it should be updated when new images come in');
-test('Example Imagery in Display layout @unstable', async ({ page, browserName }) => {
+test('Example Imagery in Display layout @unstable', async ({ page }) => {
     test.info().annotations.push({
         type: 'issue',
         description: 'https://github.com/nasa/openmct/issues/5265'
