@@ -80,16 +80,11 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await enterTextEntry(page);
         await lockPage(page);
 
-        // FIXME: Give ample time for the mutation to happen
-        // https://github.com/nasa/openmct/issues/5409
-        // eslint-disable-next-line playwright/no-wait-for-timeout
-        await page.waitForTimeout(1 * 1000);
-
         // open sidebar
         await page.locator('button.c-notebook__toggle-nav-button').click();
     });
 
-    test('Locked page should now be in a locked state @addInit', async ({ page }, testInfo) => {
+    test('Locked page should now be in a locked state @addInit @unstable', async ({ page }, testInfo) => {
         test.fixme(testInfo.project === 'chrome-beta', "Test is unreliable on chrome-beta");
         // main lock message on page
         const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
