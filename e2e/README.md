@@ -75,6 +75,10 @@ A single e2e test in Open MCT is extended to run:
 
 ### (TBD) Architecture
 
+### Configuration
+- The Open MCT is leveraging the [config file](link) pattern to describe the capabilities of Open MCT e2e _where_ it's run
+- ./playwright-ci.config.js - Used when running in CI
+
 #### (TBD)  Continuous Integration
 
 - Test maturation
@@ -104,6 +108,7 @@ A single e2e test in Open MCT is extended to run:
   - `@addInit` - Initializes the browser with an injected and artificial state. Useful for non-default plugins.
   - `@localStorage` - Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).
   - `@snapshot` - Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of a container.
+  - `@unstable` - A new test or test which is known to be flaky.
 
 ### (TBD) Best Practices
 
@@ -126,3 +131,6 @@ Code coverage is collected during test execution and reported with [nyc](https:/
 
 - Why is my test failing on CI and not locally?
 - How can I view the failing tests on CI?
+- Tests won't start because 'Error: http://localhost:8080/# is already used...'
+This error will appear when running the tests locally. Sometimes, the webserver is left in an orphaned state and needs to be cleaned up. To clear up the orphaned webserver, execute the following from your Terminal:
+```lsof -n -i4TCP:8080 | awk '{print$2}' | tail -1 | xargs kill -9```

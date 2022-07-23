@@ -58,10 +58,6 @@ module.exports = (config) => {
                 base: 'Chrome',
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
-            },
-            FirefoxESR: {
-                base: 'FirefoxHeadless',
-                name: 'FirefoxESR'
             }
         },
         colors: true,
