@@ -24,9 +24,9 @@
  * This test suite is dedicated to tests which verify search functionalities.
  */
 
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require('../baseFixtures.js');
 
-test.describe("Search Tests", () => {
+test.describe("Search Tests @unstable", () => {
     const searchResultSelector = '.c-gsearch-result__title';
 
     test('Validate empty search result [no match search]', async ({ page }) => {
