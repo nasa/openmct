@@ -27,7 +27,7 @@
 const { test, expect } = require("@playwright/test");
 
 test.describe("Search Tests", () => {
-    const searchResultSelector = '.c-tree__scrollable .c-tree__item a';
+    const searchResultSelector = '.c-gsearch-result__title';
 
     test('Validate empty search result [no match search]', async ({ page }) => {
         // Go to baseURL
@@ -44,7 +44,6 @@ test.describe("Search Tests", () => {
 
         // Verify that no results are found
         expect(await searchResults.count()).toBe(0);
-        expect(await page.locator('text=No results found').count()).toBe(1);
     });
 
     test('Validate single object in search result [full search]', async ({ page }) => {
