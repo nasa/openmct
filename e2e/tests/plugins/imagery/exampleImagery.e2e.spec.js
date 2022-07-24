@@ -156,7 +156,7 @@ test.describe('Example Imagery Object', () => {
 
     });
 
-    test('Can use + - buttons to zoom on the image', async ({ page }) => {
+    test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
         // Get initial image dimensions
         const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
