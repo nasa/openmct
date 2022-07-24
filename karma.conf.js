@@ -64,13 +64,13 @@ module.exports = (config) => {
         logLevel: config.LOG_INFO,
         autoWatch: true,
         junitReporter: {
-            outputDir: "dist/reports/tests",
-            outputFile: "test-results.xml",
-            useBrowserName: false
+            outputDir: "dist/reports/tests", //Useful for CircleCI
+            outputFile: "test-results.xml", //Useful for CircleCI
+            useBrowserName: false //Disable since we only want chrome
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: "coverage/unit",
+            dir: "coverage/unit", //Sets coverage file to be consumed by codecov.io
             reports: ['lcovonly']
         },
         specReporter: {
