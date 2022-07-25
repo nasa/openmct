@@ -30,7 +30,7 @@ const { expect } = require('@playwright/test');
 test.describe('Move item tests', () => {
     test('Create a basic object and verify that it can be moved to another folder', async ({ page }) => {
         // Go to Open MCT
-        await page.goto('/');
+        await page.goto('./');
 
         // Create a new folder in the root my items folder
         let folder1 = "Folder1";
@@ -82,7 +82,7 @@ test.describe('Move item tests', () => {
     });
     test('Create a basic object and verify that it cannot be moved to telemetry object without Composition Provider', async ({ page }) => {
         // Go to Open MCT
-        await page.goto('/');
+        await page.goto('./');
 
         // Create Telemetry Table
         let telemetryTable = 'Test Telemetry Table';

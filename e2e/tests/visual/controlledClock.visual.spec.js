@@ -57,7 +57,7 @@ test.use({ storageState: './e2e/test-data/VisualTestData_storage.json' });
 
 test('Visual - Overlay Plot Loading Indicator @localstorage', async ({ page }) => {
     // Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
     //Ensure that we're on the Unnamed Overlay Plot object
