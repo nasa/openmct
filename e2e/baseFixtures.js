@@ -130,7 +130,7 @@ exports.test = base.test.extend({
      * Extends the base page class to enable console log error detection.
      * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
      */
-    page: async ({ baseURL, page }, use) => {
+    page: async ({ page, failOnConsoleError }, use) => {
         // Capture any console errors during test execution
         const messages = [];
         page.on('console', (msg) => messages.push(msg));
