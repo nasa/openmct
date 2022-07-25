@@ -22,8 +22,19 @@
 
 /*
 * This test suite template is to be used when creating new testsuites. It will be kept up to date with the latest improvements
-* made by the Open MCT team. It will also follow our best pratices as those evolve. This particular example is for renaming a
-* Timer object using appActions and new functions specifically for this test suite.
+* made by the Open MCT team. It will also follow our best pratices as those evolve. Please use this structure as a _reference_ and clear
+* or update any references when creating a new test suite!
+*
+* To illustrate current best practices, we've included a mocked up test suite for Renaming a Timer domain object. In this example
+* this test suite should be cloned and renamed as /e2e/tests/plugins/timer/renameTimer.e2e.spec.js
+*
+* Demonstrated:
+* - Using appActions to leverage existing functions
+* - Structure
+* - @unstable annotation
+* - await, expect, test, describe syntax
+* - Writing a custom function for a test suite
+* - Test stub for unfinished test coverage (test.fixme)
 *
 * The structure should follow
 * 1. imports
@@ -35,26 +46,24 @@
 *
 */
 
-//Some standard Imports. Please update the required pathing
+//Structure: Some standard Imports. Please update the required pathing
 const { test, expect } = require('../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
-// Try to keep a single describe block per logical groups of tests. If your test runtime exceeds 5 minutes or 500 lines,
-// it's likely that it will need to be split.
-// Please use the @unstable tag so that our automation can pick it up as a part of our test promotion pipeline.
+// Structure: Try to keep a single describe block per logical groups of tests. If your test runtime exceeds 5 minutes or 500 lines, it's likely that it will need to be split.
+// Annotations: Please use the @unstable tag so that our automation can pick it up as a part of our test promotion pipeline.
 test.describe('Renaming Timer Object @unstable', () => {
     //Create a testcase name which will be obvious when it fails in CI
     test('Can create a new Timer object and rename it from actions Menu', async ({ page }) => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
-        //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create
-        //a Timer object
+        //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create a Timer object
         await createDomainObjectWithDefaults(page, 'Timer');
         //Assert the object to be created and check it's name in the title
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Timer');
 
         const newObjectName = "Renamed Timer";
-        //I've created an example of a shared function which pases the page and newObjectName values
+        //We've created an example of a shared function which pases the page and newObjectName values
         await renameObjectFrom3DotMenu(page, newObjectName);
 
         //Assert that the name has changed in the browser bar to the value we assigned above
@@ -64,15 +73,14 @@ test.describe('Renaming Timer Object @unstable', () => {
     test('An existing Timer object can be renamed twice', async ({ page }) => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
-        //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create
-        //a Timer object
+        //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create a Timer object
         await createDomainObjectWithDefaults(page, 'Timer');
         //Expect the object to be created and check it's name in the title
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Timer');
 
         const newObjectName = "Renamed Timer";
         const newObjectName2 = "Re-Renamed Timer";
-        //I've created an example of a shared function which pases the page and newObjectName values
+        //We've created an example of a shared function which pases the page and newObjectName values
         await renameObjectFrom3DotMenu(page, newObjectName);
 
         //Assert that the name has changed in the browser bar to the value we assigned above
@@ -84,17 +92,16 @@ test.describe('Renaming Timer Object @unstable', () => {
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName2);
     });
 
-    //If you run out of time to write new tests, please stub in the missing tests in place with a test.fixme and BDD-style
-    //test steps. Someone will carry the baton!
+    //If you run out of time to write new tests, please stub in the missing tests in place with a test.fixme and BDD-style test steps. Someone will carry the baton!
     test.fixme('Can Rename Timer Object from Tree', async ({ page }) => {
-    //Create a new object
-    //Copy this object
-    //Delete first object
-    //Expect copied object to persist
+        //Create a new object
+        //Copy this object
+        //Delete first object
+        //Expect copied object to persist
     });
 });
 
-//This is where custom functions should be declared. We are leaning on JSDoc pretty heavily to describe functionality.
+//Structure: custom functions should be declared last. We are leaning on JSDoc pretty heavily to describe functionality. It is not required, but heavily recommended.
 
 /**
  * This is an example of a function which is shared between testcases in this test suite. When refactoring, we'll be looking
