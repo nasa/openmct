@@ -70,7 +70,7 @@ test.describe('Log plot tests', () => {
  */
 async function makeOverlayPlot(page) {
     // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Set a specific time range for consistency, otherwise it will change
     // on every test to a range based on the current time.
