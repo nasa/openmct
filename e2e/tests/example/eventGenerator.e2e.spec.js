@@ -30,7 +30,7 @@ const { expect } = require('@playwright/test');
 test.describe('Example Event Generator Operations', () => {
     test('Can create example event generator with a name', async ({ page }) => {
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
         // let's make an event generator
         await page.locator('button:has-text("Create")').click();
         // Click li:has-text("Event Message Generator")

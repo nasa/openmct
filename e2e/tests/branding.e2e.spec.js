@@ -30,7 +30,7 @@ const { expect } = require('@playwright/test');
 test.describe('Branding tests', () => {
     test('About Modal launches with basic branding properties', async ({ page }) => {
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click About button
         await page.click('.l-shell__app-logo');
@@ -48,7 +48,7 @@ test.describe('Branding tests', () => {
     });
     test('Verify Links in About Modal', async ({ page }) => {
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click About button
         await page.click('.l-shell__app-logo');

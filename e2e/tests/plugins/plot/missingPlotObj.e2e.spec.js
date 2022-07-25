@@ -82,7 +82,7 @@ test.describe('Handle missing object for plots', () => {
  */
 async function makeStackedPlot(page) {
     // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // create stacked plot
     await page.locator('button.c-create-button').click();
