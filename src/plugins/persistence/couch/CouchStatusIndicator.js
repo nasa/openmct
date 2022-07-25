@@ -56,10 +56,10 @@ export const DISCONNECTED = {
     description: "CouchDB is offline and unavailable for requests."
 };
 /** @type {IndicatorState} */
-export const MAINTENANCE = {
-    statusClass: "s-status-warning-lo",
-    text: "CouchDB is in maintenance mode",
-    description: "CouchDB is online, but not currently accepting requests."
+export const UNKNOWN = {
+    statusClass: "s-status-info",
+    text: "CouchDB connectivity unknown",
+    description: "CouchDB is in an unknown state of connectivity."
 };
 
 export default class CouchStatusIndicator {

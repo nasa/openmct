@@ -42,6 +42,7 @@
                     v-for="(objectResult, index) in objectResults"
                     :key="index"
                     :result="objectResult"
+                    @preview-changed="previewChanged"
                     @click.native="selectedResult"
                 />
             </div>
@@ -76,12 +77,18 @@ export default {
         return {
             resultsShown: false,
             annotationResults: [],
-            objectResults: []
+            objectResults: [],
+            previewVisible: false
         };
     },
     methods: {
         selectedResult() {
-            this.resultsShown = false;
+            if (!this.previewVisible) {
+                this.resultsShown = false;
+            }
+        },
+        previewChanged(changedPreviewState) {
+            this.previewVisible = changedPreviewState;
         },
         showResults(passedAnnotationResults, passedObjectResults) {
             if ((passedAnnotationResults && passedAnnotationResults.length)

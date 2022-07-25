@@ -459,7 +459,7 @@ describe("the plugin", function () {
                 max: 10
             });
             Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[1].component.$children[0].xScale.domain()).toEqual({
+                expect(plotViewComponentObject.$children[1].component.$children[1].xScale.domain()).toEqual({
                     min: 0,
                     max: 10
                 });
@@ -473,7 +473,7 @@ describe("the plugin", function () {
                 max: 20
             });
             Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[1].component.$children[0].yScale.domain()).toEqual({
+                expect(plotViewComponentObject.$children[1].component.$children[1].yScale.domain()).toEqual({
                     min: 10,
                     max: 20
                 });

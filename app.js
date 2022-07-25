@@ -12,6 +12,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const request = require('request');
+const __DEV__ = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 // Defaults
 options.port = options.port || options.p || 8080;
@@ -49,14 +50,18 @@ class WatchRunPlugin {
 }
 
 const webpack = require('webpack');
-const webpackConfig = require('./webpack.dev.js');
-webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-webpackConfig.plugins.push(new WatchRunPlugin());
-
-webpackConfig.entry.openmct = [
-    'webpack-hot-middleware/client?reload=true',
-    webpackConfig.entry.openmct
-];
+let webpackConfig;
+if (__DEV__) {
+    webpackConfig = require('./webpack.dev');
+    webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+    webpackConfig.entry.openmct = [
+        'webpack-hot-middleware/client?reload=true',
+        webpackConfig.entry.openmct
+    ];
+    webpackConfig.plugins.push(new WatchRunPlugin());
+} else {
+    webpackConfig = require('./webpack.coverage');
+}
 
 const compiler = webpack(webpackConfig);
 
@@ -68,10 +73,12 @@ app.use(require('webpack-dev-middleware')(
     }
 ));
 
-app.use(require('webpack-hot-middleware')(
-    compiler,
-    {}
-));
+if (__DEV__) {
+    app.use(require('webpack-hot-middleware')(
+        compiler,
+        {}
+    ));
+}
 
 // Expose index.html for development users.
 app.get('/', function (req, res) {
@@ -82,3 +89,4 @@ app.get('/', function (req, res) {
 app.listen(options.port, options.host, function () {
     console.log('Open MCT application running at %s:%s', options.host, options.port);
 });
+

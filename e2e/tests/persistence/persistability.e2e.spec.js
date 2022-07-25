@@ -28,9 +28,7 @@ const { test } = require('../../fixtures.js');
 const { expect } = require('@playwright/test');
 const path = require('path');
 
-// https://github.com/nasa/openmct/issues/4323#issuecomment-1067282651
-
-test.describe('Persistence operations', () => {
+test.describe('Persistence operations @addInit', () => {
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef
@@ -38,8 +36,12 @@ test.describe('Persistence operations', () => {
     });
 
     test('Persistability should be respected in the create form location field', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/4323'
+        });
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click the Create button
         await page.click('button:has-text("Create")');
@@ -56,7 +58,7 @@ test.describe('Persistence operations', () => {
     });
     test('Non-persistable objects should not show persistence related actions', async ({ page }) => {
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click text=Persistence Testing >> nth=0
         await page.locator('text=Persistence Testing').first().click({

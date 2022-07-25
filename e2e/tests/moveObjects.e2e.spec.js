@@ -30,7 +30,7 @@ const { expect } = require('@playwright/test');
 test.describe('Move item tests', () => {
     test('Create a basic object and verify that it can be moved to another folder', async ({ page }) => {
         // Go to Open MCT
-        await page.goto('/');
+        await page.goto('./');
 
         // Create a new folder in the root my items folder
         let folder1 = "Folder1";
@@ -39,9 +39,6 @@ test.describe('Move item tests', () => {
 
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder1);
-
-        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-        await page.click('form[name="mctForm"] a:has-text("My Items")');
 
         await Promise.all([
             page.waitForNavigation(),
@@ -58,9 +55,6 @@ test.describe('Move item tests', () => {
         await page.locator('li.icon-folder').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder2);
-
-        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-        await page.click('form[name="mctForm"] a:has-text("My Items")');
 
         await Promise.all([
             page.waitForNavigation(),
@@ -88,7 +82,7 @@ test.describe('Move item tests', () => {
     });
     test('Create a basic object and verify that it cannot be moved to telemetry object without Composition Provider', async ({ page }) => {
         // Go to Open MCT
-        await page.goto('/');
+        await page.goto('./');
 
         // Create Telemetry Table
         let telemetryTable = 'Test Telemetry Table';
@@ -96,9 +90,6 @@ test.describe('Move item tests', () => {
         await page.locator('li:has-text("Telemetry Table")').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(telemetryTable);
-
-        // Click on My Items in Tree. Workaround for https://github.com/nasa/openmct/issues/5184
-        await page.click('form[name="mctForm"] a:has-text("My Items")');
 
         await page.locator('text=OK').click();
 

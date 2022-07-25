@@ -32,7 +32,8 @@ to "fail" on assertions. Instead, they should be used to detect changes between 
 Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test } = require('../../fixtures.js');
+const { expect } = require('@playwright/test');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
 const sinon = require('sinon');
@@ -56,7 +57,7 @@ test.beforeEach(async ({ context }) => {
 
 test('Visual - Root and About', async ({ page }) => {
     // Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Verify that Create button is actionable
     await expect(page.locator('button:has-text("Create")')).toBeEnabled();
@@ -80,7 +81,7 @@ test('Visual - Root and About', async ({ page }) => {
 
 test('Visual - Default Condition Set', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -96,9 +97,13 @@ test('Visual - Default Condition Set', async ({ page }) => {
     await percySnapshot(page, 'Default Condition Set');
 });
 
-test('Visual - Default Condition Widget', async ({ page }) => {
+test.fixme('Visual - Default Condition Widget', async ({ page }) => {
+    test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/5349'
+    });
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -116,7 +121,7 @@ test('Visual - Default Condition Widget', async ({ page }) => {
 
 test('Visual - Time Conductor start time is less than end time', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
     const year = new Date().getFullYear();
 
     let startDate = 'xxxx-01-01 01:00:00.000Z';
@@ -155,7 +160,7 @@ test('Visual - Time Conductor start time is less than end time', async ({ page }
 
 test('Visual - Sine Wave Generator Form', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -176,7 +181,7 @@ test('Visual - Sine Wave Generator Form', async ({ page }) => {
 
 test('Visual - Save Successful Banner', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -196,7 +201,7 @@ test('Visual - Save Successful Banner', async ({ page }) => {
 
 test('Visual - Display Layout Icon is correct', async ({ page }) => {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -206,3 +211,22 @@ test('Visual - Display Layout Icon is correct', async ({ page }) => {
     await percySnapshot(page, 'Display Layout Create Menu');
 
 });
+
+test('Visual - Default Gauge is correct', async ({ page }) => {
+
+    //Go to baseURL
+    await page.goto('./', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    await page.click('text=Gauge');
+
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Gauge object
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Gauge');
+
+});
+

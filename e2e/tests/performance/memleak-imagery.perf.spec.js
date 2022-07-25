@@ -40,7 +40,7 @@ const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 test.describe.skip('Memory Performance tests', () => {
     test.beforeEach(async ({ page, browser }, testInfo) => {
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click a:has-text("My Items")
         await page.locator('a:has-text("My Items")').click({
@@ -61,7 +61,7 @@ test.describe.skip('Memory Performance tests', () => {
 
     test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
 
-        await page.goto('/', {waitUntil: 'networkidle'});
+        await page.goto('./', {waitUntil: 'networkidle'});
 
         // To to Search Available after Launch
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
