@@ -1,10 +1,10 @@
-import {NOTEBOOK_TYPE} from './notebook-constants';
+import { isNotebookType } from './notebook-constants';
 
 export default function (openmct) {
     const apiSave = openmct.objects.save.bind(openmct.objects);
 
     openmct.objects.save = async (domainObject) => {
-        if (domainObject.type !== NOTEBOOK_TYPE) {
+        if (!isNotebookType(domainObject)) {
             return apiSave(domainObject);
         }
 

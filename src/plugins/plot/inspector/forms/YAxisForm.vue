@@ -227,14 +227,23 @@ export default {
 
             const path = objectPath(formField.objectPath);
             if (!_.isEqual(newVal, oldVal)) {
-                // TODO: Why do we mutate yAxis twice, once directly, once via objects.mutate? Or are they different objects?
+                // We mutate the model for the plots first PlotConfigurationModel - this triggers changes that affects the plot behavior
                 this.yAxis.set(formKey, newVal);
+                // Then we mutate the domain object configuration to persist the settings
                 if (path) {
-                    this.openmct.objects.mutate(
-                        this.domainObject,
-                        path(this.domainObject, this.yAxis),
-                        newVal
-                    );
+                    if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
+                        this.$emit('seriesUpdated', {
+                            identifier: this.domainObject.identifier,
+                            path: `yAxis.${formKey}`,
+                            value: newVal
+                        });
+                    } else {
+                        this.openmct.objects.mutate(
+                            this.domainObject,
+                            path(this.domainObject, this.yAxis),
+                            newVal
+                        );
+                    }
                 }
             }
         }

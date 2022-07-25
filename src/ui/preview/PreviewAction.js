@@ -21,9 +21,11 @@
  *****************************************************************************/
 import Preview from './Preview.vue';
 import Vue from 'vue';
+import EventEmitter from 'EventEmitter';
 
-export default class PreviewAction {
+export default class PreviewAction extends EventEmitter {
     constructor(openmct) {
+        super();
         /**
          * Metadata
          */
@@ -75,10 +77,12 @@ export default class PreviewAction {
             onDestroy: () => {
                 PreviewAction.isVisible = false;
                 preview.$destroy();
+                this.emit('isVisible', false);
             }
         });
 
         PreviewAction.isVisible = true;
+        this.emit('isVisible', true);
     }
 
     appliesTo(objectPath, view = {}) {

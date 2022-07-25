@@ -87,6 +87,13 @@
 .icon-unlocked {  @include glyphBefore($glyph-icon-unlocked); }
 .icon-circle {  @include glyphBefore($glyph-icon-circle); }
 .icon-draft {  @include glyphBefore($glyph-icon-draft); }
+.icon-question-mark {  @include glyphBefore($glyph-icon-question-mark); }
+.icon-circle-slash {  @include glyphBefore($glyph-icon-circle-slash); }
+.icon-status-poll-check {  @include glyphBefore($glyph-icon-status-poll-check); }
+.icon-status-poll-caution {  @include glyphBefore($glyph-icon-status-poll-caution); }
+.icon-status-poll-circle-slash {  @include glyphBefore($glyph-icon-status-poll-circle-slash); }
+.icon-status-poll-question-mark {  @include glyphBefore($glyph-icon-status-poll-question-mark); }
+.icon-status-poll-edit {  @include glyphBefore($glyph-icon-status-poll-edit); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
@@ -195,6 +202,7 @@
 .icon-map {  @include glyphBefore($glyph-icon-map); }
 .icon-plan {  @include glyphBefore($glyph-icon-plan); }
 .icon-timelist {  @include glyphBefore($glyph-icon-timelist); }
+.icon-notebook-shift-log {  @include glyphBefore($glyph-icon-notebook-shift-log); }
 .icon-plot-scatter {  @include glyphBefore($glyph-icon-plot-scatter); }
 
 /************************** 12 PX CLASSES */
@@ -233,12 +241,10 @@
 .bg-icon-tabular { @include glyphBg($bg-icon-tabular); }
 .bg-icon-tabular-lad { @include glyphBg($bg-icon-tabular-lad); }
 .bg-icon-tabular-lad-set { @include glyphBg($bg-icon-tabular-lad-set); }
-.bg-icon-tabular-realtime { @include glyphBg($bg-icon-tabular-realtime); }
 .bg-icon-tabular-scrolling { @include glyphBg($bg-icon-tabular-scrolling); }
 .bg-icon-telemetry { @include glyphBg($bg-icon-telemetry); }
 .bg-icon-timeline { @include glyphBg($bg-icon-timeline); }
 .bg-icon-timer { @include glyphBg($bg-icon-timer); }
-.bg-icon-topic { @include glyphBg($bg-icon-topic); }
 .bg-icon-box-with-dashed-lines { @include glyphBg($bg-icon-box-with-dashed-lines); }
 .bg-icon-summary-widget { @include glyphBg($bg-icon-summary-widget); }
 .bg-icon-notebook { @include glyphBg($bg-icon-notebook); }
@@ -257,3 +263,4 @@
 .bg-icon-plan { @include glyphBg($bg-icon-plan); }
 .bg-icon-timelist { @include glyphBg($bg-icon-timelist); }
 .bg-icon-plot-scatter { @include glyphBg($bg-icon-plot-scatter); }
+.bg-icon-notebook-shift-log { @include glyphBg($bg-icon-notebook-shift-log); }

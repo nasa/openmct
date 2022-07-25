@@ -29,10 +29,10 @@
         v-for="timeSystemItem in timeSystems"
         :key="timeSystemItem.timeSystem.key"
     >
-        <template slot="label">
+        <template #label>
             {{ timeSystemItem.timeSystem.name }}
         </template>
-        <template slot="object">
+        <template #object>
             <timeline-axis
                 :bounds="timeSystemItem.bounds"
                 :time-system="timeSystemItem.timeSystem"
@@ -50,7 +50,7 @@
         <timeline-object-view
             v-for="item in items"
             :key="item.keyString"
-            class="c-timeline__content"
+            class="c-timeline__content js-timeline__content"
             :item="item"
         />
     </div>
@@ -93,15 +93,15 @@ export default {
         this.stopFollowingTimeContext();
     },
     mounted() {
+        this.items = [];
+        this.setTimeContext();
+
         if (this.composition) {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.reorder);
             this.composition.load();
         }
-
-        this.setTimeContext();
-        this.getTimeSystems();
     },
     methods: {
         addItem(domainObject) {
@@ -165,6 +165,7 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.getTimeSystems();
             this.updateViewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.updateViewBounds);
         },
