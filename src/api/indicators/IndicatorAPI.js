@@ -37,8 +37,8 @@ class IndicatorAPI extends EventEmitter {
         return sortedIndicators;
     }
 
-    simpleIndicator() {
-        return new SimpleIndicator(this.openmct);
+    simpleIndicator(key) {
+        return new SimpleIndicator(this.openmct, key);
     }
 
     /**
@@ -82,6 +82,8 @@ class IndicatorAPI extends EventEmitter {
 
         if (indicatorToPrioritize !== undefined) {
             indicatorToPrioritize.priority = priority;
+
+            this.emit('setPriority', indicatorToPrioritize);
         } else {
             console.warn(`Could not find an installed indicator: ${key}`);
         }
