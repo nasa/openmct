@@ -41,7 +41,7 @@ test.describe('Persistence operations @addInit', () => {
             description: 'https://github.com/nasa/openmct/issues/4323'
         });
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click the Create button
         await page.click('button:has-text("Create")');
@@ -58,7 +58,7 @@ test.describe('Persistence operations @addInit', () => {
     });
     test('Non-persistable objects should not show persistence related actions', async ({ page }) => {
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click text=Persistence Testing >> nth=0
         await page.locator('text=Persistence Testing').first().click({

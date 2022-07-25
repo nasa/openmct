@@ -31,7 +31,7 @@ const TEST_FOLDER = 'test folder';
 test.describe('forms set', () => {
     test('New folder form has title as required field', async ({ page }) => {
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click button:has-text("Create")
         await page.click('button:has-text("Create")');

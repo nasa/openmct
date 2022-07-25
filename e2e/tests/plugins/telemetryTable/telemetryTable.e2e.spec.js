@@ -33,7 +33,7 @@ test.describe('Telemetry Table', () => {
         const bannerMessage = '.c-message-banner__message';
         const createButton = 'button:has-text("Create")';
 
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click create button
         await page.locator(createButton).click();

@@ -32,7 +32,7 @@ test.describe('Sine Wave Generator', () => {
         test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
 
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');
