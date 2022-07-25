@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="grid-row">
+<div class="grid-row grid-row--pad-label-for-button">
     <template v-if="canEdit">
         <div
             class="grid-cell label"

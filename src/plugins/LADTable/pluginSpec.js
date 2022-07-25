@@ -155,7 +155,7 @@ describe("The LAD Table", () => {
         // add another telemetry object as composition in lad table to test multi rows
         mockObj.ladTable.composition.push(anotherTelemetryObj.identifier);
 
-        beforeEach(async (done) => {
+        beforeEach(async () => {
             let telemetryRequestResolve;
             let telemetryObjectResolve;
             let anotherTelemetryObjectResolve;
@@ -204,8 +204,6 @@ describe("The LAD Table", () => {
 
             await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
             await Vue.nextTick();
-
-            done();
         });
 
         it("should show one row per object in the composition", () => {

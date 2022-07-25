@@ -1,0 +1,22 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:8080",
+      "localStorage": [
+        {
+          "name": "tcHistory",
+          "value": "{\"utc\":[{\"start\":1654537164464,\"end\":1654538964464},{\"start\":1652301954635,\"end\":1652303754635}]}"
+        },
+        {
+          "name": "mct",
+          "value": "{\"mine\":{\"identifier\":{\"key\":\"mine\",\"namespace\":\"\"},\"name\":\"My Items\",\"type\":\"folder\",\"composition\":[{\"key\":\"f64bea3b-58a7-4586-8c05-8b651e5f0bfd\",\"namespace\":\"\"},{\"key\":\"2d02a680-eb7e-4645-bba2-dd298f76efb8\",\"namespace\":\"\"}],\"location\":\"ROOT\",\"persisted\":1654538965703,\"modified\":1654538965703},\"f64bea3b-58a7-4586-8c05-8b651e5f0bfd\":{\"name\":\"Unnamed Condition Set\",\"type\":\"conditionSet\",\"identifier\":{\"key\":\"f64bea3b-58a7-4586-8c05-8b651e5f0bfd\",\"namespace\":\"\"},\"configuration\":{\"conditionTestData\":[],\"conditionCollection\":[{\"isDefault\":true,\"id\":\"73f2d9ae-d1f3-4561-b7fc-ecd5df557249\",\"configuration\":{\"name\":\"Default\",\"output\":\"Default\",\"trigger\":\"all\",\"criteria\":[]},\"summary\":\"Default condition\"}]},\"composition\":[],\"telemetry\":{},\"modified\":1652303755999,\"location\":\"mine\",\"persisted\":1652303756002},\"2d02a680-eb7e-4645-bba2-dd298f76efb8\":{\"name\":\"Unnamed Condition Set\",\"type\":\"conditionSet\",\"identifier\":{\"key\":\"2d02a680-eb7e-4645-bba2-dd298f76efb8\",\"namespace\":\"\"},\"configuration\":{\"conditionTestData\":[],\"conditionCollection\":[{\"isDefault\":true,\"id\":\"4291d80c-303c-4d8d-85e1-10f012b864fb\",\"configuration\":{\"name\":\"Default\",\"output\":\"Default\",\"trigger\":\"all\",\"criteria\":[]},\"summary\":\"Default condition\"}]},\"composition\":[],\"telemetry\":{},\"modified\":1654538965702,\"location\":\"mine\",\"persisted\":1654538965702}}"
+        },
+        {
+          "name": "mct-tree-expanded",
+          "value": "[]"
+        }
+      ]
+    }
+  ]
+}
