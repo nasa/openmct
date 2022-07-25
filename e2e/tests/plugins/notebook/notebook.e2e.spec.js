@@ -28,7 +28,9 @@ This test suite is dedicated to tests which verify the basic operations surround
 // eslint-disable-next-line no-unused-vars
 const { test, expect } = require('../../../baseFixtures');
 
-test.describe('Notebook CRUD Operations', () => {
+// Need to put a `.skip` on empty test suites to hopefully shard properly
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Notebook CRUD Operations', () => {
     test.fixme('Can create a Notebook Object', async ({ page }) => {
         //Create domain object
         //Newly created notebook should have one Section and one page, 'Unnamed Section'/'Unnamed Page'
@@ -40,7 +42,8 @@ test.describe('Notebook CRUD Operations', () => {
     });
 });
 
-test.describe('Default Notebook', () => {
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Default Notebook', () => {
     // General Default Notebook statements
     // ## Useful commands:
     // 1.  - To check default notebook:
@@ -65,7 +68,8 @@ test.describe('Default Notebook', () => {
     });
 });
 
-test.describe('Notebook section tests', () => {
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Notebook section tests', () => {
     //The following test cases are associated with Notebook Sections
     test.fixme('New sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
         //Create new notebook A
@@ -88,7 +92,8 @@ test.describe('Notebook section tests', () => {
     });
 });
 
-test.describe('Notebook page tests', () => {
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Notebook page tests', () => {
     //The following test cases are associated with Notebook Pages
     test.fixme('Page selection operations and associated behavior', async ({ page }) => {
         //Create new notebook A
@@ -109,7 +114,8 @@ test.describe('Notebook page tests', () => {
     });
 });
 
-test.describe('Notebook search tests', () => {
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Notebook search tests', () => {
     test.fixme('Can search for a single result', async ({ page }) => {});
     test.fixme('Can search for many results', async ({ page }) => {});
     test.fixme('Can search for new and recently modified entries', async ({ page }) => {});
@@ -118,7 +124,8 @@ test.describe('Notebook search tests', () => {
     test.fixme('Can search for entry text', async ({ page }) => {});
 });
 
-test.describe('Notebook entry tests', () => {
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Notebook entry tests', () => {
     test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
     test.fixme('When a telemetry object is dropped into a notebook, a new entry is created and it should be focused', async ({ page }) => {
         // Drag and drop any telmetry object on 'drop object'
@@ -131,8 +138,8 @@ test.describe('Notebook entry tests', () => {
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
     test.fixme('previous and new entries can be deleted', async ({ page }) => {});
 });
-
-test.describe('Snapshot Menu tests', () => {
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Snapshot Menu tests', () => {
     test.fixme('When no default notebook is selected, Snapshot Menu dropdown should only have a single option', async ({ page }) => {
         // There should be no default notebook
         // Clear default notebook if exists using `localStorage.setItem('notebook-storage', null);`
@@ -167,7 +174,8 @@ test.describe('Snapshot Menu tests', () => {
     });
 });
 
-test.describe('Snapshot Container tests', () => {
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Snapshot Container tests', () => {
     test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
     test.fixme('5 Snapshots can be added to a container and Deleted with Delete All action', async ({ page }) => {});
     test.fixme('A snapshot can be Deleted from Container', async ({ page }) => {});
