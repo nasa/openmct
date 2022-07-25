@@ -37,7 +37,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         const context = await browser.newContext();
         const page = await context.newPage();
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');
@@ -150,7 +150,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     });
     test('condition set object can be deleted by Search Tree Actions menu on @localStorage', async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
         await expect(page.locator('a:has-text("Unnamed Condition Set Condition Set") >> nth=0')).toBeVisible();

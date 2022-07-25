@@ -27,7 +27,7 @@ test.describe('Timer', () => {
 
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');
