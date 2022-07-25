@@ -28,9 +28,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 // eslint-disable-next-line no-unused-vars
 const { test, expect } = require('../../../baseFixtures.js');
 
-// Need to put a `.skip` on empty test suites to hopefully shard properly
-// eslint-disable-next-line playwright/no-skipped-test
-test.describe.skip('ExportAsJSON', () => {
+test.describe('ExportAsJSON', () => {
     test.fixme('Verify that domain object can be importAsJSON from Tree', async ({ page }) => {
         //Verify that an testdata JSON file can be imported from Tree
         //Verify correctness of imported domain object
