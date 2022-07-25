@@ -27,7 +27,7 @@ Tests to verify log plot functionality when objects are missing
 const { test, expect } = require('../../../baseFixtures.js');
 
 test.describe('Handle missing object for plots', () => {
-    test('Displays empty div for missing stacked plot item', async ({ page, browserName }) => {
+    test('Displays empty div for missing stacked plot item @unstable', async ({ page, browserName }) => {
         test.fixme(browserName === 'firefox', 'Firefox failing due to console events being missed');
         const errorLogs = [];
 
