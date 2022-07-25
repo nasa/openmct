@@ -22,6 +22,7 @@
 
 import TimelineViewProvider from './TimelineViewProvider';
 import timelineInterceptor from "./timelineInterceptor";
+import TimelineCompositionPolicy from "./TimelineCompositionPolicy";
 
 export default function () {
     return function install(openmct) {
@@ -39,6 +40,8 @@ export default function () {
             }
         });
         timelineInterceptor(openmct);
+        openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
+
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
     };
 }

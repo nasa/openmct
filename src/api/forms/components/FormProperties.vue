@@ -47,18 +47,14 @@
             >
                 {{ section.name }}
             </h2>
-            <div
+            <FormRow
                 v-for="(row, index) in section.rows"
                 :key="row.id"
-                class="u-contents"
-            >
-                <FormRow
-                    :css-class="section.cssClass"
-                    :first="index < 1"
-                    :row="row"
-                    @onChange="onChange"
-                />
-            </div>
+                :css-class="row.cssClass"
+                :first="index < 1"
+                :row="row"
+                @onChange="onChange"
+            />
         </div>
     </form>
 
@@ -67,6 +63,7 @@
             tabindex="0"
             :disabled="isInvalid"
             class="c-button c-button--major"
+            aria-label="Save"
             @click="onSave"
         >
             {{ submitLabel }}
@@ -75,6 +72,7 @@
             v-if="!shouldHideCancelButton"
             tabindex="0"
             class="c-button js-cancel-button"
+            aria-label="Cancel"
             @click="onDismiss"
         >
             {{ cancelLabel }}
@@ -85,7 +83,7 @@
 
 <script>
 import FormRow from "@/api/forms/components/FormRow.vue";
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export default {
     components: {

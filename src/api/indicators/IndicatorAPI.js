@@ -19,27 +19,27 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    './SimpleIndicator',
-    'lodash'
-], function (
-    SimpleIndicator,
-    _
-) {
-    function IndicatorAPI(openmct) {
+
+import EventEmitter from "EventEmitter";
+import SimpleIndicator from "./SimpleIndicator";
+
+class IndicatorAPI extends EventEmitter {
+    constructor(openmct) {
+        super();
+
         this.openmct = openmct;
         this.indicatorObjects = [];
     }
 
-    IndicatorAPI.prototype.getIndicatorObjectsByPriority = function () {
+    getIndicatorObjectsByPriority() {
         const sortedIndicators = this.indicatorObjects.sort((a, b) => b.priority - a.priority);
 
         return sortedIndicators;
-    };
+    }
 
-    IndicatorAPI.prototype.simpleIndicator = function () {
+    simpleIndicator() {
         return new SimpleIndicator(this.openmct);
-    };
+    }
 
     /**
      * Accepts an indicator object, which is a simple object
@@ -62,14 +62,16 @@ define([
      * myIndicator.iconClass("icon-info");
      *
      */
-    IndicatorAPI.prototype.add = function (indicator) {
+    add(indicator) {
         if (!indicator.priority) {
             indicator.priority = this.openmct.priority.DEFAULT;
         }
 
         this.indicatorObjects.push(indicator);
-    };
 
-    return IndicatorAPI;
+        this.emit('addIndicator', indicator);
+    }
 
-});
+}
+
+export default IndicatorAPI;

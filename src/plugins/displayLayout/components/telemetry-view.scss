@@ -17,12 +17,12 @@
         }
     }
 
-    > * + * {
-        margin-left: $interiorMargin;
-    }
-
     &__value {
         @include isLimit();
+    }
+
+    &__label {
+        margin-right: $interiorMargin;
     }
 
     .c-frame & {

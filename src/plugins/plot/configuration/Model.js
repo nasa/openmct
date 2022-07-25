@@ -34,6 +34,12 @@ export default class Model extends EventEmitter {
      */
     constructor(options) {
         super();
+        Object.defineProperty(this, '_events', {
+            value: this._events,
+            enumerable: false,
+            configurable: false,
+            writable: true
+        });
 
         //need to do this as we're already extending EventEmitter
         eventHelpers.extend(this);

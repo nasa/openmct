@@ -49,6 +49,7 @@ describe("the plugin", () => {
         let parentObject;
         let parentObjectPath;
         let changedParentObject;
+        let unobserve;
         beforeEach((done) => {
             parentObject = {
                 name: 'mock folder',
@@ -73,13 +74,16 @@ describe("the plugin", () => {
                 });
             });
 
-            openmct.objects.observe(parentObject, '*', (newObject) => {
+            unobserve = openmct.objects.observe(parentObject, '*', (newObject) => {
                 changedParentObject = newObject;
 
                 done();
             });
 
             newFolderAction.invoke(parentObjectPath);
+        });
+        afterEach(() => {
+            unobserve();
         });
 
         it('creates a new folder object', () => {

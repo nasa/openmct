@@ -25,6 +25,7 @@ import TimelistPlugin from "./plugin";
 import { TIMELIST_TYPE } from "./constants";
 import Vue from 'vue';
 import moment from "moment";
+import EventEmitter from "EventEmitter";
 
 const LIST_ITEM_CLASS = '.js-table__body .js-list-item';
 const LIST_ITEM_VALUE_CLASS = '.js-list-item__value';
@@ -37,6 +38,41 @@ describe('the plugin', function () {
     let openmct;
     let appHolder;
     let originalRouterPath;
+    let mockComposition;
+    let now = Date.now();
+    let twoHoursPast = now - (1000 * 60 * 60 * 2);
+    let oneHourPast = now - (1000 * 60 * 60);
+    let twoHoursFuture = now + (1000 * 60 * 60 * 2);
+    let planObject = {
+        identifier: {
+            key: 'test-plan-object',
+            namespace: ''
+        },
+        type: 'plan',
+        id: "test-plan-object",
+        selectFile: {
+            body: JSON.stringify({
+                "TEST-GROUP": [
+                    {
+                        "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+                        "start": twoHoursPast,
+                        "end": oneHourPast,
+                        "type": "TEST-GROUP",
+                        "color": "fuchsia",
+                        "textColor": "black"
+                    },
+                    {
+                        "name": "Sed ut perspiciatis",
+                        "start": now,
+                        "end": twoHoursFuture,
+                        "type": "TEST-GROUP",
+                        "color": "fuchsia",
+                        "textColor": "black"
+                    }
+                ]
+            })
+        }
+    };
 
     beforeEach((done) => {
         appHolder = document.createElement('div');
@@ -57,6 +93,15 @@ describe('the plugin', function () {
         element.appendChild(child);
 
         originalRouterPath = openmct.router.path;
+
+        mockComposition = new EventEmitter();
+        mockComposition.load = () => {
+            mockComposition.emit('add', planObject);
+
+            return Promise.resolve([planObject]);
+        };
+
+        spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
         openmct.on('start', done);
         openmct.start(appHolder);
@@ -112,13 +157,13 @@ describe('the plugin', function () {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
                     futureEventsDurationIndex: 0,
-                    futureEventsDuration: 20,
+                    futureEventsDuration: 0,
                     currentEventsIndex: 1,
                     currentEventsDurationIndex: 0,
-                    currentEventsDuration: 20,
+                    currentEventsDuration: 0,
                     pastEventsIndex: 1,
                     pastEventsDurationIndex: 0,
-                    pastEventsDuration: 20,
+                    pastEventsDuration: 0,
                     filter: ''
                 },
                 selectFile: {
@@ -126,16 +171,16 @@ describe('the plugin', function () {
                         "TEST-GROUP": [
                             {
                                 "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                                "start": 1597170002854,
-                                "end": 1597171032854,
+                                "start": twoHoursPast,
+                                "end": oneHourPast,
                                 "type": "TEST-GROUP",
                                 "color": "fuchsia",
                                 "textColor": "black"
                             },
                             {
                                 "name": "Sed ut perspiciatis",
-                                "start": 1597171132854,
-                                "end": 1597171232854,
+                                "start": now,
+                                "end": twoHoursFuture,
                                 "type": "TEST-GROUP",
                                 "color": "fuchsia",
                                 "textColor": "black"
@@ -171,10 +216,163 @@ describe('the plugin', function () {
                 const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
                 expect(itemValues.length).toEqual(4);
                 expect(itemValues[3].innerHTML.trim()).toEqual('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua');
-                expect(itemValues[0].innerHTML.trim()).toEqual(`${moment(1597170002854).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
-                expect(itemValues[1].innerHTML.trim()).toEqual(`${moment(1597171032854).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
+                expect(itemValues[0].innerHTML.trim()).toEqual(`${moment(twoHoursPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
+                expect(itemValues[1].innerHTML.trim()).toEqual(`${moment(oneHourPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
 
                 done();
+            });
+        });
+    });
+
+    describe('the timelist composition', () => {
+        let timelistDomainObject;
+        let timelistView;
+
+        beforeEach(() => {
+            timelistDomainObject = {
+                identifier: {
+                    key: 'test-object',
+                    namespace: ''
+                },
+                type: TIMELIST_TYPE,
+                id: "test-object",
+                configuration: {
+                    sortOrderIndex: 0,
+                    futureEventsIndex: 1,
+                    futureEventsDurationIndex: 0,
+                    futureEventsDuration: 0,
+                    currentEventsIndex: 1,
+                    currentEventsDurationIndex: 0,
+                    currentEventsDuration: 0,
+                    pastEventsIndex: 1,
+                    pastEventsDurationIndex: 0,
+                    pastEventsDuration: 0,
+                    filter: ''
+                },
+                composition: [{
+                    identifier: {
+                        key: 'test-plan-object',
+                        namespace: ''
+                    }
+                }]
+            };
+
+            openmct.router.path = [timelistDomainObject];
+
+            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            view.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it('loads the plan from composition', () => {
+            return Vue.nextTick(() => {
+                const items = element.querySelectorAll(LIST_ITEM_CLASS);
+                expect(items.length).toEqual(2);
+            });
+        });
+    });
+
+    describe('filters', () => {
+        let timelistDomainObject;
+        let timelistView;
+
+        beforeEach(() => {
+            timelistDomainObject = {
+                identifier: {
+                    key: 'test-object',
+                    namespace: ''
+                },
+                type: TIMELIST_TYPE,
+                id: "test-object",
+                configuration: {
+                    sortOrderIndex: 0,
+                    futureEventsIndex: 1,
+                    futureEventsDurationIndex: 0,
+                    futureEventsDuration: 0,
+                    currentEventsIndex: 1,
+                    currentEventsDurationIndex: 0,
+                    currentEventsDuration: 0,
+                    pastEventsIndex: 1,
+                    pastEventsDurationIndex: 0,
+                    pastEventsDuration: 0,
+                    filter: 'perspiciatis'
+                },
+                composition: [{
+                    identifier: {
+                        key: 'test-plan-object',
+                        namespace: ''
+                    }
+                }]
+            };
+
+            openmct.router.path = [timelistDomainObject];
+
+            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            view.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it('activities', () => {
+            return Vue.nextTick(() => {
+                const items = element.querySelectorAll(LIST_ITEM_CLASS);
+                expect(items.length).toEqual(1);
+            });
+        });
+    });
+
+    describe('time filtering - past', () => {
+        let timelistDomainObject;
+        let timelistView;
+
+        beforeEach(() => {
+            timelistDomainObject = {
+                identifier: {
+                    key: 'test-object',
+                    namespace: ''
+                },
+                type: TIMELIST_TYPE,
+                id: "test-object",
+                configuration: {
+                    sortOrderIndex: 0,
+                    futureEventsIndex: 1,
+                    futureEventsDurationIndex: 0,
+                    futureEventsDuration: 0,
+                    currentEventsIndex: 1,
+                    currentEventsDurationIndex: 0,
+                    currentEventsDuration: 0,
+                    pastEventsIndex: 0,
+                    pastEventsDurationIndex: 0,
+                    pastEventsDuration: 0,
+                    filter: ''
+                },
+                composition: [{
+                    identifier: {
+                        key: 'test-plan-object',
+                        namespace: ''
+                    }
+                }]
+            };
+
+            openmct.router.path = [timelistDomainObject];
+
+            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            view.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it('hides past events', () => {
+            return Vue.nextTick(() => {
+                const items = element.querySelectorAll(LIST_ITEM_CLASS);
+                expect(items.length).toEqual(1);
             });
         });
     });

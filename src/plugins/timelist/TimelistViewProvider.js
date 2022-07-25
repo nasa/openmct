@@ -52,7 +52,8 @@ export default function TimelistViewProvider(openmct) {
                         provide: {
                             openmct,
                             domainObject,
-                            path: objectPath
+                            path: objectPath,
+                            composition: openmct.composition.get(domainObject)
                         },
                         template: '<timelist></timelist>'
                     });

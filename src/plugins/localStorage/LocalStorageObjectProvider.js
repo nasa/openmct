@@ -41,6 +41,10 @@ export default class LocalStorageObjectProvider {
         }
     }
 
+    getAllObjects() {
+        return this.getSpaceAsObject();
+    }
+
     create(object) {
         return this.persistObject(object);
     }

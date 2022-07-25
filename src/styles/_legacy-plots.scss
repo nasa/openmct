@@ -65,7 +65,6 @@ mct-plot {
 .c-plot {
     @include abs($mainViewPad);
     display: flex;
-    flex-direction: column;
     overflow: hidden;
     min-height: $plotMinH;
 
@@ -83,11 +82,18 @@ mct-plot {
     }
 
     .c-plot--stacked-container {
+        border: 1px solid transparent;
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
         min-height: $plotMinH;
         overflow: hidden;
+
+        &[s-selected] {
+            .is-editing & {
+                border: $editMarqueeBorder;
+            }
+        }
     }
 ;
 
@@ -118,7 +124,7 @@ mct-plot {
         }
     }
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         .c-control-bar {
             display: none;
         }
@@ -498,7 +504,7 @@ mct-plot {
         margin-bottom: $interiorMarginSm;
     }
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         &.is-legend-hidden {
             display: none;
         }
