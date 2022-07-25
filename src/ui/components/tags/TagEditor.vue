@@ -114,7 +114,10 @@ export default {
     methods: {
         addAnnotationListener(annotation) {
             if (annotation && !this.removeTagsListener) {
-                this.removeTagsListener = this.openmct.objects.observe(annotation, 'tags', this.tagsChanged);
+                this.removeTagsListener = this.openmct.objects.observe(annotation, '*', (newAnnotation) => {
+                    this.tagsChanged(newAnnotation.tags);
+                    this.annotation = newAnnotation;
+                });
             }
         },
         tagsChanged(newTags) {
@@ -133,8 +136,11 @@ export default {
             this.addedTags.push(newTagValue);
             this.userAddingTag = true;
         },
-        tagRemoved(tagToRemove) {
-            return this.openmct.annotation.removeAnnotationTag(this.annotation, tagToRemove);
+        async tagRemoved(tagToRemove) {
+            const result = await this.openmct.annotation.removeAnnotationTag(this.annotation, tagToRemove);
+            this.$emit('tags-updated');
+
+            return result;
         },
         async tagAdded(newTag) {
             const annotationWasCreated = this.annotation === null || this.annotation === undefined;
@@ -146,6 +152,8 @@ export default {
 
             this.tagsChanged(this.annotation.tags);
             this.userAddingTag = false;
+
+            this.$emit('tags-updated');
         }
     }
 };
