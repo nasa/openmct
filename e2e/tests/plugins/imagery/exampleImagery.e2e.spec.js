@@ -183,7 +183,7 @@ test.describe('Example Imagery Object', () => {
         expect(finalBoundingBox).toEqual(initialBoundingBox);
     });
 
-    test('Can use the reset button to reset the image', async ({ page }, testInfo) => {
+    test('Can use the reset button to reset the image @unstable', async ({ page }, testInfo) => {
         test.slow(testInfo.project === 'chrome-beta', "This test is slow in chrome-beta");
         // Get initial image dimensions
         const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
