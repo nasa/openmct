@@ -29,9 +29,9 @@ const { test, expect } = require('../baseFixtures.js');
 test.describe("Search Tests @unstable", () => {
     const searchResultSelector = '.c-gsearch-result__title';
 
-    test('Validate empty search result [no match search]', async ({ page }) => {
+    test('Validate empty search result', async ({ page }) => {
         // Go to baseURL
-        await page.goto("/", { waitUntil: "networkidle" });
+        await page.goto("./", { waitUntil: "networkidle" });
 
         // Invalid search for objects
         await page.type("input[type=search]", 'not found');
@@ -46,9 +46,9 @@ test.describe("Search Tests @unstable", () => {
         expect(await searchResults.count()).toBe(0);
     });
 
-    test('Validate single object in search result [full search]', async ({ page }) => {
+    test('Validate single object in search result', async ({ page }) => {
         //Go to baseURL
-        await page.goto("/", { waitUntil: "networkidle" });
+        await page.goto("./", { waitUntil: "networkidle" });
 
         // Create a folder object
         const folderName = 'testFolder';
@@ -68,7 +68,7 @@ test.describe("Search Tests @unstable", () => {
         await expect(searchResults).toHaveText(folderName);
     });
 
-    test("Validate multiple objects in search results [partial search]", async ({ page }) => {
+    test("Validate multiple objects in search results return partial matches", async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/4667'
