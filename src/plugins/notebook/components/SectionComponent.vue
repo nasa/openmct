@@ -131,11 +131,12 @@ export default {
         },
         updateName(event) {
             const ESCAPE = 27;
+            const ENTER = 13;
             const { target, keyCode, type } = event;
 
             if (keyCode === ESCAPE) {
                 target.textContent = this.section.name;
-            } else if (keyCode === 13 || type === 'blur') {
+            } else if (keyCode === ENTER || type === 'blur') {
                 this.renameSection(target);
             }
 
