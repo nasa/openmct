@@ -171,7 +171,7 @@ export default class FormsAPI extends EventEmitter {
                 }
 
                 if (callback) {
-                    callback();
+                    callback(changes);
                 }
             };
         }
