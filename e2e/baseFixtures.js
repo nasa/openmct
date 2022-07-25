@@ -125,17 +125,24 @@ exports.test = base.test.extend({
             await page.evaluate(() => (window).collectIstanbulCoverage(JSON.stringify((window).__coverage__)));
         }
     },
+    failOnConsoleError: [true, { option: true }],
     /**
      * Extends the base page class to enable console log error detection.
      * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
      */
     page: async ({ baseURL, page }, use) => {
+        // Capture any console errors during test execution
         const messages = [];
         page.on('console', (msg) => messages.push(msg));
+
         await use(page);
-        messages.forEach(
-            msg => expect.soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`).not.toEqual('error')
-        );
+
+        // Assert against console errors during teardown
+        if (failOnConsoleError) {
+            messages.forEach(
+                msg => expect.soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`).not.toEqual('error')
+            );
+        }
     },
     /**
      * Extends the base browser class to enable CDP connection definition in playwright.config.js. Once
