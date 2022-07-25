@@ -144,9 +144,7 @@ export default {
             return 'Cancel';
         },
         shouldHideCancelButton() {
-            return this.model.buttons
-                && this.model.buttons.cancel
-                && this.model.buttons.cancel.hide === true;
+            return this.model.buttons?.cancel?.hide === true;
         }
     },
     mounted() {
