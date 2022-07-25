@@ -296,10 +296,15 @@ export default {
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
+        this.unlistenToEntryChanges = this.openmct.objects.observe(this.domainObject, "configuration.entries", () => this.filterAndSortEntries());
     },
     beforeDestroy() {
         if (this.unlisten) {
             this.unlisten();
+        }
+
+        if (this.unlistenToEntryChanges) {
+            this.unlistenToEntryChanges();
         }
 
         window.removeEventListener('orientationchange', this.formatSidebar);

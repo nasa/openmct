@@ -52,8 +52,8 @@ class MutableDomainObject {
                 // Property should not be serialized
                 enumerable: false
             },
-            _observers: {
-                value: [],
+            _callbacksForPaths: {
+                value: {},
                 // Property should not be serialized
                 enumerable: false
             },
@@ -64,15 +64,31 @@ class MutableDomainObject {
             }
         });
     }
+    /**
+     * BRAND new approach
+     * - Register a listener on $_synchronize_model
+     * - The $_synchronize_model event provides the path. Figure out whether the mutated path is equal to, or a parent of the observed path.
+     * - If so, trigger callback with new value
+     * - As an optimization, ONLY trigger if value has actually changed. Could be deferred until later?
+     */
+
     $observe(path, callback) {
-        let fullPath = qualifiedEventName(this, path);
-        let eventOff =
-            this._globalEventEmitter.off.bind(this._globalEventEmitter, fullPath, callback);
+        let callbacksForPath = this._callbacksForPaths[path];
+        if (callbacksForPath === undefined) {
+            callbacksForPath = [];
+            this._callbacksForPaths[path] = callbacksForPath;
+        }
 
-        this._globalEventEmitter.on(fullPath, callback);
-        this._observers.push(eventOff);
+        callbacksForPath.push(callback);
 
-        return eventOff;
+        return function unlisten() {
+            let index = callbacksForPath.indexOf(callback);
+            callbacksForPath.splice(index, 1);
+            if (callbacksForPath.length === 0) {
+                delete this._callbacksForPaths[path];
+            }
+        }.bind(this);
+
     }
     $set(path, value) {
         _.set(this, path, value);
@@ -88,25 +104,14 @@ class MutableDomainObject {
         this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this);
         //Emit wildcard event, with path so that callback knows what changed
         this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value);
-
-        //Emit events specific to properties affected
-        let parentPropertiesList = path.split('.');
-        for (let index = parentPropertiesList.length; index > 0; index--) {
-            let parentPropertyPath = parentPropertiesList.slice(0, index).join('.');
-            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath));
-        }
-
-        //TODO: Emit events for listeners of child properties when parent changes.
-        // Do it at observer time - also register observers for parent attribute path.
     }
 
     $refresh(model) {
-        //TODO: Currently we are updating the entire object.
-        // In the future we could update a specific property of the object using the 'path' parameter.
+        const clone = JSON.parse(JSON.stringify(this));
         this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), model);
 
-        //Emit wildcard event, with path so that callback knows what changed
-        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this);
+        //Emit wildcard event
+        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, '*', this, clone);
     }
 
     $on(event, callback) {
@@ -114,23 +119,53 @@ class MutableDomainObject {
 
         return () => this._instanceEventEmitter.off(event, callback);
     }
-    $destroy() {
-        while (this._observers.length > 0) {
-            const observer = this._observers.pop();
-            observer();
-        }
+    $updateListenersOnPath(updatedModel, mutatedPath, newValue, oldModel) {
+        const isRefresh = mutatedPath === '*';
 
+        Object.entries(this._callbacksForPaths).forEach(([observedPath, callbacks]) => {
+            if (isChildOf(observedPath, mutatedPath)
+                || isParentOf(observedPath, mutatedPath)) {
+                let newValueOfObservedPath;
+
+                if (observedPath === '*') {
+                    newValueOfObservedPath = updatedModel;
+
+                } else {
+                    newValueOfObservedPath = _.get(updatedModel, observedPath);
+                }
+
+                if (isRefresh && observedPath !== '*') {
+                    const oldValueOfObservedPath = _.get(oldModel, observedPath);
+                    if (!_.isEqual(newValueOfObservedPath, oldValueOfObservedPath)) {
+                        callbacks.forEach(callback => callback(newValueOfObservedPath));
+                    }
+                } else {
+                    //Assumed to be different if result of mutation.
+                    callbacks.forEach(callback => callback(newValueOfObservedPath));
+                }
+            }
+        });
+    }
+    $synchronizeModel(updatedObject) {
+        let clone = JSON.parse(JSON.stringify(updatedObject));
+        utils.refresh(this, clone);
+    }
+    $destroy() {
+        Object.keys(this._callbacksForPaths).forEach(key => delete this._callbacksForPaths[key]);
         this._instanceEventEmitter.emit('$_destroy');
+        this._globalEventEmitter.off(qualifiedEventName(this, '$_synchronize_model'), this.$synchronizeModel);
+        this._globalEventEmitter.off(qualifiedEventName(this, '*'), this.$updateListenersOnPath);
     }
 
     static createMutable(object, mutationTopic) {
         let mutable = Object.create(new MutableDomainObject(mutationTopic));
         Object.assign(mutable, object);
 
-        mutable.$observe('$_synchronize_model', (updatedObject) => {
-            let clone = JSON.parse(JSON.stringify(updatedObject));
-            utils.refresh(mutable, clone);
-        });
+        mutable.$updateListenersOnPath = mutable.$updateListenersOnPath.bind(mutable);
+        mutable.$synchronizeModel = mutable.$synchronizeModel.bind(mutable);
+
+        mutable._globalEventEmitter.on(qualifiedEventName(mutable, '$_synchronize_model'), mutable.$synchronizeModel);
+        mutable._globalEventEmitter.on(qualifiedEventName(mutable, '*'), mutable.$updateListenersOnPath);
 
         return mutable;
     }
@@ -145,6 +180,14 @@ function qualifiedEventName(object, eventName) {
     let keystring = utils.makeKeyString(object.identifier);
 
     return [keystring, eventName].join(':');
+}
+
+function isChildOf(observedPath, mutatedPath) {
+    return Boolean(mutatedPath === '*' || observedPath?.startsWith(mutatedPath));
+}
+
+function isParentOf(observedPath, mutatedPath) {
+    return Boolean(observedPath === '*' || mutatedPath?.startsWith(observedPath));
 }
 
 export default MutableDomainObject;

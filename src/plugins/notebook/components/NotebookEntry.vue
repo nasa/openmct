@@ -233,6 +233,13 @@ export default {
     },
     mounted() {
         this.dropOnEntry = this.dropOnEntry.bind(this);
+        this.$on('tags-updated', async () => {
+            const user = await this.openmct.user.getCurrentUser();
+            this.entry.modified = Date.now();
+            this.entry.modifiedBy = user.getId();
+
+            this.$emit('updateEntry', this.entry);
+        });
     },
     methods: {
         async addNewEmbed(objectPath) {

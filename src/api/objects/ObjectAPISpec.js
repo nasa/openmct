@@ -1,7 +1,7 @@
 import ObjectAPI from './ObjectAPI.js';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
-describe("The Object API", () => {
+fdescribe("The Object API", () => {
     let objectAPI;
     let typeRegistry;
     let openmct = {};
@@ -287,53 +287,167 @@ describe("The Object API", () => {
                 mutableSecondInstance.$destroy();
             });
 
-            it('to stay synchronized when mutated', function () {
-                objectAPI.mutate(mutable, 'otherAttribute', 'new-attribute-value');
-                expect(mutableSecondInstance.otherAttribute).toBe('new-attribute-value');
-            });
-
-            it('to indicate when a property changes', function () {
-                let mutationCallback = jasmine.createSpy('mutation-callback');
-                let unlisten;
-
-                return new Promise(function (resolve) {
-                    mutationCallback.and.callFake(resolve);
-                    unlisten = objectAPI.observe(mutableSecondInstance, 'otherAttribute', mutationCallback);
-                    objectAPI.mutate(mutable, 'otherAttribute', 'some-new-value');
-                }).then(function () {
-                    expect(mutationCallback).toHaveBeenCalledWith('some-new-value');
-                    unlisten();
+            describe('on mutation', () => {
+                it('to stay synchronized', function () {
+                    objectAPI.mutate(mutable, 'otherAttribute', 'new-attribute-value');
+                    expect(mutableSecondInstance.otherAttribute).toBe('new-attribute-value');
                 });
-            });
 
-            it('to indicate when a child property has changed', function () {
-                let embeddedKeyCallback = jasmine.createSpy('embeddedKeyCallback');
-                let embeddedObjectCallback = jasmine.createSpy('embeddedObjectCallback');
-                let objectAttributeCallback = jasmine.createSpy('objectAttribute');
-                let listeners = [];
+                it('to indicate when a property changes', function () {
+                    let mutationCallback = jasmine.createSpy('mutation-callback');
+                    let unlisten;
 
-                return new Promise(function (resolve) {
-                    objectAttributeCallback.and.callFake(resolve);
-
-                    listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject.embeddedKey', embeddedKeyCallback));
-                    listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject', embeddedObjectCallback));
-                    listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute', objectAttributeCallback));
-
-                    objectAPI.mutate(mutable, 'objectAttribute.embeddedObject.embeddedKey', 'updated-embedded-value');
-                }).then(function () {
-                    expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value');
-                    expect(embeddedObjectCallback).toHaveBeenCalledWith({
-                        embeddedKey: 'updated-embedded-value'
+                    return new Promise(function (resolve) {
+                        mutationCallback.and.callFake(resolve);
+                        unlisten = objectAPI.observe(mutableSecondInstance, 'otherAttribute', mutationCallback);
+                        objectAPI.mutate(mutable, 'otherAttribute', 'some-new-value');
+                    }).then(function () {
+                        expect(mutationCallback).toHaveBeenCalledWith('some-new-value');
+                        unlisten();
                     });
-                    expect(objectAttributeCallback).toHaveBeenCalledWith({
-                        embeddedObject: {
+                });
+
+                it('to indicate when a child property has changed', function () {
+                    let embeddedKeyCallback = jasmine.createSpy('embeddedKeyCallback');
+                    let embeddedObjectCallback = jasmine.createSpy('embeddedObjectCallback');
+                    let objectAttributeCallback = jasmine.createSpy('objectAttribute');
+                    let listeners = [];
+
+                    return new Promise(function (resolve) {
+                        objectAttributeCallback.and.callFake(resolve);
+
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject.embeddedKey', embeddedKeyCallback));
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject', embeddedObjectCallback));
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute', objectAttributeCallback));
+
+                        objectAPI.mutate(mutable, 'objectAttribute.embeddedObject.embeddedKey', 'updated-embedded-value');
+                    }).then(function () {
+                        expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value');
+                        expect(embeddedObjectCallback).toHaveBeenCalledWith({
                             embeddedKey: 'updated-embedded-value'
-                        }
-                    });
+                        });
+                        expect(objectAttributeCallback).toHaveBeenCalledWith({
+                            embeddedObject: {
+                                embeddedKey: 'updated-embedded-value'
+                            }
+                        });
 
-                    listeners.forEach(listener => listener());
+                        listeners.forEach(listener => listener());
+                    });
+                });
+
+                it('to indicate when a parent property has changed', function () {
+                    let embeddedKeyCallback = jasmine.createSpy('embeddedKeyCallback');
+                    let embeddedObjectCallback = jasmine.createSpy('embeddedObjectCallback');
+                    let objectAttributeCallback = jasmine.createSpy('objectAttribute');
+                    let listeners = [];
+
+                    return new Promise(function (resolve) {
+                        objectAttributeCallback.and.callFake(resolve);
+
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject.embeddedKey', embeddedKeyCallback));
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject', embeddedObjectCallback));
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute', objectAttributeCallback));
+
+                        objectAPI.mutate(mutable, 'objectAttribute.embeddedObject', 'updated-embedded-value');
+                    }).then(function () {
+                        expect(embeddedKeyCallback).toHaveBeenCalledWith(undefined);
+                        expect(embeddedObjectCallback).toHaveBeenCalledWith('updated-embedded-value');
+                        expect(objectAttributeCallback).toHaveBeenCalledWith({
+                            embeddedObject: 'updated-embedded-value'
+                        });
+
+                        listeners.forEach(listener => listener());
+                    });
                 });
             });
+
+            describe('on refresh', () => {
+                let refreshModel;
+
+                beforeEach(() => {
+                    refreshModel = JSON.parse(JSON.stringify(mutable));
+                });
+
+                it('to stay synchronized', function () {
+                    refreshModel.otherAttribute = 'new-attribute-value';
+                    mutable.$refresh(refreshModel);
+                    expect(mutableSecondInstance.otherAttribute).toBe('new-attribute-value');
+                });
+
+                it('to indicate when a property changes', function () {
+                    let mutationCallback = jasmine.createSpy('mutation-callback');
+                    let unlisten;
+
+                    return new Promise(function (resolve) {
+                        mutationCallback.and.callFake(resolve);
+                        unlisten = objectAPI.observe(mutableSecondInstance, 'otherAttribute', mutationCallback);
+                        refreshModel.otherAttribute = 'some-new-value';
+                        mutable.$refresh(refreshModel);
+                    }).then(function () {
+                        expect(mutationCallback).toHaveBeenCalledWith('some-new-value');
+                        unlisten();
+                    });
+                });
+
+                it('to indicate when a child property has changed', function () {
+                    let embeddedKeyCallback = jasmine.createSpy('embeddedKeyCallback');
+                    let embeddedObjectCallback = jasmine.createSpy('embeddedObjectCallback');
+                    let objectAttributeCallback = jasmine.createSpy('objectAttribute');
+                    let listeners = [];
+
+                    return new Promise(function (resolve) {
+                        objectAttributeCallback.and.callFake(resolve);
+
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject.embeddedKey', embeddedKeyCallback));
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject', embeddedObjectCallback));
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute', objectAttributeCallback));
+
+                        refreshModel.objectAttribute.embeddedObject.embeddedKey = 'updated-embedded-value';
+                        mutable.$refresh(refreshModel);
+                    }).then(function () {
+                        expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value');
+                        expect(embeddedObjectCallback).toHaveBeenCalledWith({
+                            embeddedKey: 'updated-embedded-value'
+                        });
+                        expect(objectAttributeCallback).toHaveBeenCalledWith({
+                            embeddedObject: {
+                                embeddedKey: 'updated-embedded-value'
+                            }
+                        });
+
+                        listeners.forEach(listener => listener());
+                    });
+                });
+
+                it('to indicate when a parent property has changed', function () {
+                    let embeddedKeyCallback = jasmine.createSpy('embeddedKeyCallback');
+                    let embeddedObjectCallback = jasmine.createSpy('embeddedObjectCallback');
+                    let objectAttributeCallback = jasmine.createSpy('objectAttribute');
+                    let listeners = [];
+
+                    return new Promise(function (resolve) {
+                        objectAttributeCallback.and.callFake(resolve);
+
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject.embeddedKey', embeddedKeyCallback));
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject', embeddedObjectCallback));
+                        listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute', objectAttributeCallback));
+
+                        refreshModel.objectAttribute.embeddedObject = 'updated-embedded-value';
+
+                        mutable.$refresh(refreshModel);
+                    }).then(function () {
+                        expect(embeddedKeyCallback).toHaveBeenCalledWith(undefined);
+                        expect(embeddedObjectCallback).toHaveBeenCalledWith('updated-embedded-value');
+                        expect(objectAttributeCallback).toHaveBeenCalledWith({
+                            embeddedObject: 'updated-embedded-value'
+                        });
+
+                        listeners.forEach(listener => listener());
+                    });
+                });
+            });
+
         });
     });
 
