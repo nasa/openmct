@@ -49,7 +49,7 @@ export default class OperatorStatusIndicator extends AbstractStatusIndicator {
     }
 
     createIndicator() {
-        const operatorIndicator = this.openmct.indicators.simpleIndicator();
+        const operatorIndicator = this.openmct.indicators.simpleIndicator('operator-indicator');
 
         operatorIndicator.text("My Operator Status");
         operatorIndicator.description("Set my operator status");
