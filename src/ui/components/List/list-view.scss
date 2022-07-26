@@ -22,7 +22,7 @@
 
                 &:hover {
                     background: $colorListItemBgHov;
-                    filter: $filterHov;
+                    //filter: $filterHov;  // FILTER REMOVAL, CONVERT TO THEME CONSTANT
                     transition: $transIn;
                 }
             }

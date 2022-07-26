@@ -86,7 +86,7 @@ $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.7;
-$objectLabelNameFilter: brightness(1.3);
+$objectLabelNameFilter: brightness(1.3); // FILTER REMOVAL
 
 // Layout
 $shellMainPad: 4px 0;

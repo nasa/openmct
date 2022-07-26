@@ -81,7 +81,9 @@
     }
 
     .c-object-label__name {
-        filter: $objectLabelNameFilter;
+        // FILTER REMOVAL
+        //filter: $objectLabelNameFilter;
+        color: deeppink !important;
     }
 }
 

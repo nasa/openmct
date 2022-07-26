@@ -403,7 +403,7 @@
     }
 
     .c-object-label__name {
-        filter: $objectLabelNameFilter;
+        //filter: $objectLabelNameFilter; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
     }
 
     .c-object-label__type-icon {

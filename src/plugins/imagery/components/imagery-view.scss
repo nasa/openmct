@@ -476,7 +476,7 @@
         &:hover {
             z-index: 2;
 
-            filter: brightness(1) contrast(1) !important;
+            //filter: brightness(1) contrast(1) !important; // FILTER REMOVAL
             [class*='__image-handle'] {
                 background-color: $colorBodyFg;
             }
@@ -503,6 +503,6 @@
 
     &:hover div.c-imagery-tsv__image-wrapper {
         // TODO CH: convert to theme constants
-        filter: brightness(0.5) contrast(0.7);
+        filter: brightness(0.5) contrast(0.7); // FILTER REMOVAL
     }
 }

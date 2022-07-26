@@ -42,7 +42,7 @@
     padding: $interiorMarginLg;
 
     &__type-icon {
-        filter: $colorKeyFilter;
+        filter: $colorKeyFilter; // FILTER REMOVAL
         flex: 0 0 $gridItemMobile;
         font-size: floor(math.div($gridItemMobile, 2));
         margin-right: $interiorMarginLg;
@@ -145,7 +145,7 @@
         transition: $transOutMs ease-in-out;
 
         &:hover {
-            filter: $filterItemHoverFg;
+            //filter: $filterItemHoverFg; // FILTER REMOVAL
             transition: $transIn;
 
             .c-grid-item__type-icon {

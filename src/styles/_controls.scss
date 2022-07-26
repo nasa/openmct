@@ -547,7 +547,7 @@ select {
     }
 
     @include hover() {
-        filter: $filterHov;
+        //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
     }
 
     &.is-current {
@@ -1116,7 +1116,7 @@ input[type="range"] {
         background-repeat: no-repeat;
         content: '';
         display: block;
-        filter: $colorKeyFilterHov;
+        //filter: $colorKeyFilterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
         height: $h; width: $h;
         max-height: $mh; max-width: $mh;
     }

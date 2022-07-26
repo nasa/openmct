@@ -498,7 +498,8 @@
     }
 
     @include hover() {
-        filter: $filterHov;
+        background: deeppink !important;
+        //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
     }
 
     &[class*="--major"],
@@ -563,9 +564,9 @@
 
     @include hover() {
         transition: $transIn;
-        background: $colorClickIconButtonBgHov;
+        background: green !important; //$colorClickIconButtonBgHov;
         //color: $colorClickIconButtonFgHov;
-        filter: $filterHov;
+        //filter: $filterHov;  // FILTER REMOVAL, CONVERT TO THEME CONSTANT
     }
 
     &[class*="--major"] {
@@ -624,7 +625,8 @@
     }
 
     @include hover {
-        filter: $filterHov;
+        //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
+        color: deeppink !important;
     }
 
     &--up, &--prev {
