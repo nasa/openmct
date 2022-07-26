@@ -38,7 +38,7 @@ const { test, expect } = require('../pluginFixtures.js');
 test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({ page }) => {
 
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -52,7 +52,7 @@ test('Verify that My Items Tree appears @ipad', async ({ page, openmctConfig }) 
     //Test.slow annotation is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
     test.slow();
     //Go to baseURL
-    await page.goto('/');
+    await page.goto('./');
 
     //My Items to be visible
     await expect(page.locator(`a:has-text("${myItemsFolderName}")`)).toBeEnabled();

@@ -37,7 +37,7 @@ test('Generate Visual Test Data @localStorage', async ({ page, context, openmctC
     const { myItemsFolderName } = openmctConfig;
 
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     await page.locator('button:has-text("Create")').click();
 

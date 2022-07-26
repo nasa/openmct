@@ -35,7 +35,7 @@ test.describe('Example Imagery Object', () => {
 
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');
@@ -234,7 +234,7 @@ test('Example Imagery in Display layout @unstable', async ({ page }) => {
     });
 
     // Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Click the Create button
     await page.click('button:has-text("Create")');
@@ -345,7 +345,7 @@ test('Example Imagery in Display layout @unstable', async ({ page }) => {
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
     test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
         // Click button:has-text("Create")
@@ -447,7 +447,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         });
 
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click the Create button
         await page.click('button:has-text("Create")');

@@ -32,7 +32,7 @@ test.describe('baseFixtures tests', () => {
     test('Verify that tests fail if console.error is thrown @framework', async ({ page }) => {
         test.fail();
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Verify that ../fixtures.js detects console log errors
         await Promise.all([
@@ -43,7 +43,7 @@ test.describe('baseFixtures tests', () => {
     });
     test('Verify that tests pass if console.warn is thrown @framework', async ({ page }) => {
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Verify that ../fixtures.js detects console log errors
         await Promise.all([

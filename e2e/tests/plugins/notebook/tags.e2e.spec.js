@@ -33,7 +33,7 @@ const { test, expect } = require('../../../pluginFixtures');
   */
 async function createNotebookAndEntry(page, myItemsFolderName, iterations = 1) {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Click button:has-text("Create")
     await page.locator('button:has-text("Create")').click();
@@ -158,7 +158,7 @@ test.describe('Tagging in Notebooks', () => {
         const { myItemsFolderName } = openmctConfig;
 
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create a clock object we can navigate to
         await page.click('button:has-text("Create")');
