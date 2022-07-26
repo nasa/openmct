@@ -67,7 +67,6 @@ class IndicatorAPI extends EventEmitter {
             && this.indicatorObjects.some(installedIndicator => indicator.key === installedIndicator.key);
 
         if (keyExists) {
-            console.log('called');
             console.warn(`An Indicator with key { ${indicator.key} } has already been installed.`);
         }
 
