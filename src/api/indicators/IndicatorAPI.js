@@ -63,6 +63,14 @@ class IndicatorAPI extends EventEmitter {
      *
      */
     add(indicator) {
+        const keyExists = indicator.key !== undefined
+            && this.indicatorObjects.some(installedIndicator => indicator.key === installedIndicator.key);
+
+        if (keyExists) {
+            console.log('called');
+            console.warn(`An Indicator with key { ${indicator.key} } has already been installed.`);
+        }
+
         if (!indicator.priority) {
             indicator.priority = this.openmct.priority.DEFAULT;
         }
