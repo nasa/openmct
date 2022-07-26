@@ -26,7 +26,8 @@ but only assume that example imagery is present.
 */
 /* globals process */
 
-const { test, expect, waitForAnimations } = require('../../../baseFixtures.js');
+const { waitForAnimations } = require('../../../baseFixtures.js');
+const { test, expect } = require('../../../pluginFixtures.js');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
@@ -436,7 +437,9 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 // test.fixme('If the imagery view is in pause mode, images still come in');
 // test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Flexible layout', () => {
-    test('Example Imagery in Flexible layout', async ({ page, browserName }) => {
+    test('Example Imagery in Flexible layout', async ({ page, browserName, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
         test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
         test.info().annotations.push({
             type: 'issue',
@@ -474,10 +477,10 @@ test.describe('Example Imagery in Flexible layout', () => {
         // Click text=Flexible Layout
         await page.click('text=Flexible Layout');
 
-        // Assert Flexable layout
+        // Assert Flexible layout
         await expect(page.locator('.js-form-title')).toHaveText('Create a New Flexible Layout');
 
-        await page.locator('form[name="mctForm"] >> text=My Items').click();
+        await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
 
         // Click My Items
         await Promise.all([
@@ -510,7 +513,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await mouseZoomIn(page);
 
         // Center the mouse pointer
-        const zoomedBoundingBox = await await page.locator(backgroundImageSelector).boundingBox();
+        const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
         const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
         await page.mouse.move(imageCenterX, imageCenterY);

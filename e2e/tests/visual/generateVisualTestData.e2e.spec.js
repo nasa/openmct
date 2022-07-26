@@ -31,9 +31,11 @@ TODO: Provide additional validation of object properties as it grows.
 
 */
 
-const { test, expect } = require('../../baseFixtures.js');
+const { test, expect } = require('../../pluginFixtures.js');
 
-test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
+test('Generate Visual Test Data @localStorage', async ({ page, context, openmctConfig }) => {
+    const { myItemsFolderName } = openmctConfig;
+
     //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -70,7 +72,7 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     ]);
 
     // focus the overlay plot
-    await page.locator('text=Open MCT My Items >> span').nth(3).click();
+    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()

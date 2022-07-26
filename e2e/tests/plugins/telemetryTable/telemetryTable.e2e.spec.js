@@ -20,15 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../baseFixtures');
+const { test, expect } = require('../../../pluginFixtures');
 
 test.describe('Telemetry Table', () => {
-    test('unpauses and filters data when paused by button and user changes bounds', async ({ page }) => {
+    test('unpauses and filters data when paused by button and user changes bounds', async ({ page, openmctConfig }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5113'
         });
 
+        const { myItemsFolderName } = openmctConfig;
         const bannerMessage = '.c-message-banner__message';
         const createButton = 'button:has-text("Create")';
 
@@ -63,7 +64,7 @@ test.describe('Telemetry Table', () => {
         ]);
 
         // focus the Telemetry Table
-        await page.locator('text=Open MCT My Items >> span').nth(3).click();
+        await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=Unnamed Telemetry Table').first().click()

@@ -24,10 +24,12 @@
 Tests to verify log plot functionality when objects are missing
 */
 
-const { test, expect } = require('../../../baseFixtures.js');
+const { test, expect } = require('../../../pluginFixtures.js');
 
 test.describe('Handle missing object for plots', () => {
-    test('Displays empty div for missing stacked plot item @unstable', async ({ page, browserName }) => {
+    test('Displays empty div for missing stacked plot item @unstable', async ({ page, browserName, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
         test.fixme(browserName === 'firefox', 'Firefox failing due to console events being missed');
         const errorLogs = [];
 
@@ -38,7 +40,7 @@ test.describe('Handle missing object for plots', () => {
         });
 
         //Make stacked plot
-        await makeStackedPlot(page);
+        await makeStackedPlot(page, myItemsFolderName);
 
         //Gets local storage and deletes the last sine wave generator in the stacked plot
         const localStorage = await page.evaluate(() => window.localStorage);
@@ -62,7 +64,7 @@ test.describe('Handle missing object for plots', () => {
         //Verify Main section is there on load
         await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Stacked Plot');
 
-        await page.locator('text=Open MCT My Items >> span').nth(3).click();
+        await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=Unnamed Stacked Plot').first().click()
@@ -79,7 +81,7 @@ test.describe('Handle missing object for plots', () => {
  * This is used the create a stacked plot object
  * @private
  */
-async function makeStackedPlot(page) {
+async function makeStackedPlot(page, myItemsFolderName) {
     // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
     await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -101,7 +103,7 @@ async function makeStackedPlot(page) {
     await createSineWaveGenerator(page);
 
     // click on stacked plot
-    await page.locator('text=Open MCT My Items >> span').nth(3).click();
+    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Stacked Plot').first().click()
@@ -111,7 +113,7 @@ async function makeStackedPlot(page) {
     await createSineWaveGenerator(page);
 
     // click on stacked plot
-    await page.locator('text=Open MCT My Items >> span').nth(3).click();
+    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Stacked Plot').first().click()

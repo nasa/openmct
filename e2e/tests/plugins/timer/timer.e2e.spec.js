@@ -29,17 +29,19 @@ const options = {
 
 test.describe('Timer', () => {
     test.use({ objectCreateOptions: options });
-    test('Can perform actions on the Timer', async ({ page }) => {
+    test('Can perform actions on the Timer', async ({ page, openmctConfig }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/4313'
         });
 
+        const { myItemsFolderName } = await openmctConfig;
+
         await test.step("From the tree context menu", async () => {
-            await triggerTimerContextMenuAction(page, 'Start');
-            await triggerTimerContextMenuAction(page, 'Pause');
-            await triggerTimerContextMenuAction(page, 'Restart at 0');
-            await triggerTimerContextMenuAction(page, 'Stop');
+            await triggerTimerContextMenuAction(page, myItemsFolderName, 'Start');
+            await triggerTimerContextMenuAction(page, myItemsFolderName, 'Pause');
+            await triggerTimerContextMenuAction(page, myItemsFolderName, 'Restart at 0');
+            await triggerTimerContextMenuAction(page, myItemsFolderName, 'Stop');
         });
 
         await test.step("From the 3dot menu", async () => {
@@ -72,9 +74,9 @@ test.describe('Timer', () => {
  * @param {import('@playwright/test').Page} page
  * @param {TimerAction} action
  */
-async function triggerTimerContextMenuAction(page, action) {
+async function triggerTimerContextMenuAction(page, myItemsFolderName, action) {
     const menuAction = `.c-menu ul li >> text="${action}"`;
-    await openObjectTreeContextMenu(page, "Unnamed Timer");
+    await openObjectTreeContextMenu(page, myItemsFolderName, "Unnamed Timer");
     await page.locator(menuAction).click();
     assertTimerStateAfterAction(page, action);
 }

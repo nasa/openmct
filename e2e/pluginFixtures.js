@@ -89,7 +89,21 @@ async function getOrCreateDomainObject(page, options) {
  */
 const objectCreateOptions = null;
 
+/**
+ * The name of the "My Items" folder in the domain object tree.
+ *
+ * Default: `"My Items"`
+ *
+ * @type {string}
+ */
+const myItemsFolderName = "My Items";
+
 exports.test = test.extend({
+    myItemsFolderName: [myItemsFolderName, { option: true }],
+    // eslint-disable-next-line no-shadow
+    openmctConfig: async ({ myItemsFolderName }, use) => {
+        await use({ myItemsFolderName });
+    },
     objectCreateOptions: [objectCreateOptions, {option: true}],
     // eslint-disable-next-line no-shadow
     domainObject: [async ({ page, objectCreateOptions }, use) => {
