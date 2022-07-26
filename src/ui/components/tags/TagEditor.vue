@@ -97,14 +97,17 @@ export default {
                 this.tagsChanged(this.annotation.tags);
             },
             deep: true
+        },
+        annotationQuery: {
+            handler() {
+                this.unloadAnnotation();
+                this.loadAnnotation();
+            },
+            deep: true
         }
     },
-    async mounted() {
-        this.annotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
-        this.addAnnotationListener(this.annotation);
-        if (this.annotation && this.annotation.tags) {
-            this.tagsChanged(this.annotation.tags);
-        }
+    mounted() {
+        this.loadAnnotation();
     },
     destroyed() {
         if (this.removeTagsListener) {
@@ -118,6 +121,19 @@ export default {
                     this.tagsChanged(newAnnotation.tags);
                     this.annotation = newAnnotation;
                 });
+            }
+        },
+        async loadAnnotation() {
+            this.annotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
+            this.addAnnotationListener(this.annotation);
+            if (this.annotation && this.annotation.tags) {
+                this.tagsChanged(this.annotation.tags);
+            }
+        },
+        unloadAnnotation() {
+            if (this.removeTagsListener) {
+                this.removeTagsListener();
+                this.removeTagsListener = undefined;
             }
         },
         tagsChanged(newTags) {

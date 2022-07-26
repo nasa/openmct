@@ -207,7 +207,8 @@ export default {
 
             return {
                 targetKeyString,
-                entryId: this.entry.id
+                entryId: this.entry.id,
+                modified: this.entry.modified
             };
         },
         createdOnTime() {
