@@ -72,7 +72,6 @@ function waitForAnimations(locator) {
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 
 exports.test = base.test.extend({
-
     /**
      * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
      * the Time Indicator Clock to be in a specific state.
@@ -84,6 +83,9 @@ exports.test = base.test.extend({
      *       shouldAdvanceTime: true
      * ```
      * If clockOptions are provided, will override the default clock with fake timers provided by SinonJS.
+     *
+     * Default: `undefined`
+     *
      * @see {@link https://github.com/microsoft/playwright/issues/6347 Github RFE}
      * @see {@link https://github.com/sinonjs/fake-timers/#var-clock--faketimersinstallconfig SinonJS FakeTimers Config}
      */
@@ -125,6 +127,12 @@ exports.test = base.test.extend({
             await page.evaluate(() => (window).collectIstanbulCoverage(JSON.stringify((window).__coverage__)));
         }
     },
+    /**
+     * If true, will assert against any console.error calls that occur during the test. Assertions occur
+     * during test teardown (after the test has completed).
+     *
+     * Default: `true`
+     */
     failOnConsoleError: [true, { option: true }],
     /**
      * Extends the base page class to enable console log error detection.
