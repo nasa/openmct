@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// this will be called from the test suite with
+// This should be used to install the non-default Restricted Notebook plugin since it is not installed by default.
+// e.g.
 // await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
-// it will install the RestrictedNotebook since it is not installed by default
 
 document.addEventListener('DOMContentLoaded', () => {
     const openmct = window.openmct;
