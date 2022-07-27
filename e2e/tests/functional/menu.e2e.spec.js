@@ -35,7 +35,7 @@ test.describe('Persistence operations @addInit', () => {
         await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
     });
 
-    test.only('Non-persistable objects should not show persistence related actions', async ({ page }) => {
+    test('Non-persistable objects should not show persistence related actions', async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         await page.locator('text=Persistence Testing').first().click({
