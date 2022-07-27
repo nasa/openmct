@@ -43,7 +43,7 @@ const CUSTOM_NAME = 'CUSTOM_NAME';
 test.describe('Visual - addInit', () => {
     test.use({
         clockOptions: {
-            shouldAdvanceTime: true
+            shouldAdvanceTime: false
         }
     });
 

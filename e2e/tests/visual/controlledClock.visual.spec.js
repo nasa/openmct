@@ -39,7 +39,6 @@ test.describe('Visual - Controlled Clock', () => {
     test.use({
         storageState: './e2e/test-data/VisualTestData_storage.json',
         clockOptions: {
-            now: 0, //Set browser clock to UNIX Epoch
             shouldAdvanceTime: false, //Don't advance the clock
             toFake: ["setTimeout", "nextTick"]
         }
