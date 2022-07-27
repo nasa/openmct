@@ -24,7 +24,58 @@
  * This test suite is dedicated to tests which verify search functionalities.
  */
 
-const { test, expect } = require('../baseFixtures.js');
+const { test, expect } = require('../pluginFixtures');
+
+test.describe('Grand Search', () => {
+    test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
+        await createClockAndDisplayLayout(page, myItemsFolderName);
+
+        // Click [aria-label="OpenMCT Search"] input[type="search"]
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        // Fill [aria-label="OpenMCT Search"] input[type="search"]
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cl');
+        await expect(page.locator('[aria-label="Search Result"]')).toContainText('Clock');
+        // Click text=Elements >> nth=0
+        await page.locator('text=Elements').first().click();
+        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
+
+        // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
+        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
+        // Click [aria-label="Unnamed Clock clock result"] >> text=Unnamed Clock
+        await page.locator('[aria-label="Unnamed Clock clock result"] >> text=Unnamed Clock').click();
+        await expect(page.locator('.js-preview-window')).toBeVisible();
+
+        // Click [aria-label="Close"]
+        await page.locator('[aria-label="Close"]').click();
+        await expect(page.locator('[aria-label="Search Result"]')).toBeVisible();
+        await expect(page.locator('[aria-label="Search Result"]')).toContainText('Cloc');
+
+        // Click [aria-label="OpenMCT Search"] a >> nth=0
+        await page.locator('[aria-label="OpenMCT Search"] a').first().click();
+        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
+
+        // Fill [aria-label="OpenMCT Search"] input[type="search"]
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('foo');
+        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
+
+        // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
+        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+        // Click text=Save and Finish Editing
+        await page.locator('text=Save and Finish Editing').click();
+        // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
+        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
+        // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]
+        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Cl');
+        // Click text=Unnamed Clock
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=Unnamed Clock').click()
+        ]);
+        await expect(page.locator('.is-object-type-clock')).toBeVisible();
+    });
+});
 
 test.describe("Search Tests @unstable", () => {
     const searchResultSelector = '.c-gsearch-result__title';
@@ -120,4 +171,39 @@ async function createFolderObject(page, folderName) {
 async function waitForSearchCompletion(page) {
     // Wait loading spinner to disappear
     await page.waitForSelector('.c-tree-and-search__loading', { state: 'detached' });
+}
+
+/**
+  * Creates a notebook object and adds an entry.
+  * @param {import('@playwright/test').Page} page
+  * @param {string} myItemsFolderName
+  */
+async function createClockAndDisplayLayout(page, myItemsFolderName) {
+    //Go to baseURL
+    await page.goto('./', { waitUntil: 'networkidle' });
+
+    // Click button:has-text("Create")
+    await page.locator('button:has-text("Create")').click();
+    // Click li:has-text("Notebook")
+    await page.locator('li:has-text("Clock")').click();
+    // Click button:has-text("OK")
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator('button:has-text("OK")').click()
+    ]);
+
+    // Click a:has-text("My Items")
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator(`a:has-text("${myItemsFolderName}") >> nth=0`).click()
+    ]);
+    // Click button:has-text("Create")
+    await page.locator('button:has-text("Create")').click();
+    // Click li:has-text("Notebook")
+    await page.locator('li:has-text("Display Layout")').click();
+    // Click button:has-text("OK")
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator('button:has-text("OK")').click()
+    ]);
 }
