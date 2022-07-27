@@ -25,11 +25,19 @@ This test suite is dedicated to tests which verify search functionality.
 */
 
 const { test, expect } = require('../../baseFixtures.js');
+const { createDomainObjectWithDefaults } = require('../../appActions');
+
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Grand Search', () => {
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page }) => {
-        await createClockAndDisplayLayout(page);
+
+        //Go to baseURL
+        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+
+        await createDomainObjectWithDefaults(page, 'Clock');
+
+        await createDomainObjectWithDefaults(page, 'Display Layout');
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
@@ -73,9 +81,7 @@ test.describe('Grand Search', () => {
   * Creates a notebook object and adds an entry.
   * @param {import('@playwright/test').Page} page
   */
- async function createClockAndDisplayLayout(page) {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+async function createClockAndDisplayLayout(page) {
 
     // Click button:has-text("Create")
     await page.locator('button:has-text("Create")').click();
