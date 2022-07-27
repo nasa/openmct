@@ -27,40 +27,6 @@ This test suite is dedicated to tests which verify search functionality.
 const { test, expect } = require('../../baseFixtures.js');
 const percySnapshot = require('@percy/playwright');
 
-/**
-  * Creates a notebook object and adds an entry.
-  * @param {import('@playwright/test').Page} page
-  */
-async function createClockAndDisplayLayout(page) {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-
-    // Click button:has-text("Create")
-    await page.locator('button:has-text("Create")').click();
-    // Click li:has-text("Notebook")
-    await page.locator('li:has-text("Clock")').click();
-    // Click button:has-text("OK")
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('button:has-text("OK")').click()
-    ]);
-
-    // Click a:has-text("My Items")
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('a:has-text("My Items") >> nth=0').click()
-    ]);
-    // Click button:has-text("Create")
-    await page.locator('button:has-text("Create")').click();
-    // Click li:has-text("Notebook")
-    await page.locator('li:has-text("Display Layout")').click();
-    // Click button:has-text("OK")
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('button:has-text("OK")').click()
-    ]);
-}
-
 test.describe('Grand Search', () => {
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page }) => {
         await createClockAndDisplayLayout(page);
@@ -102,3 +68,38 @@ test.describe('Grand Search', () => {
 
     });
 });
+
+/**
+  * Creates a notebook object and adds an entry.
+  * @param {import('@playwright/test').Page} page
+  */
+ async function createClockAndDisplayLayout(page) {
+    //Go to baseURL
+    await page.goto('./', { waitUntil: 'networkidle' });
+
+    // Click button:has-text("Create")
+    await page.locator('button:has-text("Create")').click();
+    // Click li:has-text("Notebook")
+    await page.locator('li:has-text("Clock")').click();
+    // Click button:has-text("OK")
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator('button:has-text("OK")').click()
+    ]);
+
+    // Click a:has-text("My Items")
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator('a:has-text("My Items") >> nth=0').click()
+    ]);
+    // Click button:has-text("Create")
+    await page.locator('button:has-text("Create")').click();
+    // Click li:has-text("Notebook")
+    await page.locator('li:has-text("Display Layout")').click();
+    // Click button:has-text("OK")
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator('button:has-text("OK")').click()
+    ]);
+}
+
