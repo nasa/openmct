@@ -108,26 +108,26 @@ These tests are expected to become blocking and gating with assertions as we ext
 
 ## Test Architecture and CI
 
-### Architecture
+### Architecture (TODO)
 
 
 
-### Test Case Organization (Needs Updating)
+### File Structure
 
-Our functional tests end in `*.e2e.spec.js`. At the moment, we're actively re-organizing our test suite structure to match closed source execution.
+Our file structure follows the type of type of testing being excercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
 
-Visual tests should be written within the `./tests/visual` folder so that they can be ignored during git clones to avoid leaking env variables when executing percy cli commands
+ - `./helper` - contains helper functions or scripts which are leveraged directly within the testsuites. i.e. non-default plugin scripts injected into DOM
+ - `./test-data` - contains test data which is leveraged or generated in the functional, performance, or visual test suites. i.e. localStorage data
+ - `./tests/functional` - the bulk of the tests are contained within this folder to verify the functionality of open mct
+ - `./tests/functional/example/` - tests which specifically verify the example plugins
+ - `./tests/functional/plugins/` - tests which loosely test each plugin. This folder is the most likely to change. Note: some @snapshot tests are still contained within this structure
+ - `./tests/framework/` - tests which verify that our testframework functionality and assumptions will continue to work based on further refactoring or playwright version changes
+ - `./tests/performance/` - performance tests
+ - `./tests/visual/` - Visual tests
+ - `./appActions.js` - Contains common fixtures which can be leveraged by testcase authors to quickly move through the application when writing new tests.
+ - `./baseFixture.js` - Contains base fixtures which only extend default `@playwright/test` functionality. The goal is to remove these fixtures as native Playwright APIs improve.
 
-#### Test Tags
-
-Test tags are a great way of organizing tests outside of a file structure. To learn more see the official documentation [here](https://playwright.dev/docs/test-annotations#tag-tests)
-Current list of test tags:
-- `@ipad` - Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no Create button).
-- `@gds` - Denotes a GDS Test Case used in the VIPER Mission.
-- `@addInit` - Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of app.js.
-- `@localStorage` - Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).
-- `@snapshot` - Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.
-- `@unstable` - A new test or test which is known to be flaky.
+Our functional tests end in `*.e2e.spec.js`, visual tests in `*.visual.spec.js` and performance tests in `*.perf.spec.js`. 
 
 ### Configuration
 
@@ -138,6 +138,16 @@ Open MCT is leveraging the [config file](https://playwright.dev/docs/test-config
 - `./playwright-local.config.js` - Used when running locally
 - `./playwright-performance.config.js` - Used when running performance tests in CI or locally
 - `./playwright-visual.config.js` - Used to run the visual tests in CI or locally
+#### Test Tags
+
+Test tags are a great way of organizing tests outside of a file structure. To learn more see the official documentation [here](https://playwright.dev/docs/test-annotations#tag-tests)
+Current list of test tags:
+- `@ipad` - Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no Create button).
+- `@gds` - Denotes a GDS Test Case used in the VIPER Mission.
+- `@addInit` - Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of app.js.
+- `@localStorage` - Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).
+- `@snapshot` - Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.
+- `@unstable` - A new test or test which is known to be flaky.
 
 ### Continuous Integration
 
@@ -198,7 +208,7 @@ A testcase and testsuite are to be unmarked as @unstable when:
 
 ## Test Design, Best Practices, and Tips & Tricks
 
-### Test Design
+### Test Design (TODO)
 
 - How to make tests robust to function in other contexts (VISTA, VIPER, etc.)
   - Leverage the use of appActions.js like getOrCreateDomainObject
@@ -207,19 +217,15 @@ A testcase and testsuite are to be unmarked as @unstable when:
   - Leverage ```await page.goto('/', { waitUntil: 'networkidle' });```
   - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
-### How to write a great test
+### How to write a great test (TODO)
 
-A great
-
-#### How to write a great visual test
-
-
+#### How to write a great visual test (TODO)
 
 ### Best Practices
 
 For now, our best practices exist as self-tested, living documentation in our [exampleTemplate.e2e.spec.js](./tests/framework/exampleTemplate.e2e.spec.js) file.
 
-### Tips & Tricks
+### Tips & Tricks (TODO)
 
 The following contains a list of tips and tricks which don't exactly fit into a FAQ or Best Practices doc.
 
@@ -228,11 +234,14 @@ There are instances where multiple browser pages will need to be opened to verif
 
 ### Reporting
 
+Test Reporting is done through official Playwright reporters and the CI Systems which execute them.
+
 We leverage the following official Playwright reporters:
 - HTML
 - junit
 - github annotations
 - Tracefile
+- Screenshots
 
 When running the tests locally with the `npm run test:local` command, the html report will open automatically on failure. Inside this HTML report will be a complete summary of the finished tests. If the tests failed, you'll see embedded links to screenshot failure, execution logs, and the Tracefile.
 
