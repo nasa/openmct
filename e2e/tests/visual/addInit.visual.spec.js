@@ -49,7 +49,7 @@ test.describe('Visual - addInit', () => {
 
     test('Restricted Notebook is visually correct @addInit', async ({ page }) => {
         // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../plugins/notebook', './addInitRestrictedNotebook.js') });
+        await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
         //Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
         //Click the Create button

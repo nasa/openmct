@@ -32,10 +32,10 @@ test.describe('Persistence operations @addInit', () => {
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../../helper/', 'addNoneditableObject.js') });
+        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
     });
 
-    test('Non-persistable objects should not show persistence related actions', async ({ page }) => {
+    test.only('Non-persistable objects should not show persistence related actions', async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         await page.locator('text=Persistence Testing').first().click({

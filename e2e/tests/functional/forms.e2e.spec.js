@@ -70,7 +70,7 @@ test.describe('Persistence operations @addInit', () => {
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../../helper/', 'addNoneditableObject.js') });
+        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
     });
 
     test('Persistability should be respected in the create form location field', async ({ page }) => {
