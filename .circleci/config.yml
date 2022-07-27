@@ -94,30 +94,13 @@ jobs:
     parameters:
       node-version:
         type: string
-      browser:
-        type: string
     executor: pw-focal-development
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - when:
-          condition:
-            equal: [ "FirefoxESR", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-firefox:
-                version: "91.7.1esr" #https://archive.mozilla.org/pub/firefox/releases/
-      - when:
-          condition:
-            equal: [ "FirefoxHeadless", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-firefox
-      - when:
-          condition:
-            equal: [ "ChromeHeadless", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-chrome:
-                replace-existing: false
-      - run: npm run test -- --browsers=<<parameters.browser>>
+      - browser-tools/install-chrome:
+          replace-existing: false
+      - run: npm run test
       - run: npm run cov:unit:publish
       - save_cache_cmd:
           node-version: <<parameters.node-version>>
@@ -130,14 +113,14 @@ jobs:
     parameters:
       node-version:
         type: string
-      suite:
+      suite: #stable or full
         type: string
     executor: pw-focal-development
     parallelism: 4
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - when: #Only install chrome-beta when running the full suite to save $$$
+      - when: #Only install chrome-beta when running the 'full' suite to save $$$
           condition:
             equal: [ "full", <<parameters.suite>> ]
           steps:
@@ -177,41 +160,25 @@ workflows:
           name: node14-lint
           node-version: lts/fermium
       - unit-test:
-          name: node16-chrome
-          node-version: lts/gallium
-          browser: ChromeHeadless
-      - unit-test:
           name: node18-chrome
           node-version: "18"
-          browser: ChromeHeadless
       - e2e-test:
-          name: e2e-ci
+          name: e2e-stable
           node-version: lts/gallium
-          suite: ci
+          suite: stable
       - perf-test:
           node-version: lts/gallium
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node16-firefoxESR-nightly
-          node-version: lts/gallium
-          browser: FirefoxESR
-      - unit-test:
-          name: node14-firefox-nightly
-          node-version: lts/fermium
-          browser: FirefoxHeadless
-      - unit-test:
           name: node14-chrome-nightly
           node-version: lts/fermium
-          browser: ChromeHeadless
       - unit-test:
           name: node16-chrome-nightly
           node-version: lts/gallium
-          browser: ChromeHeadless
       - unit-test:
           name: node18-chrome
           node-version: "18"
-          browser: ChromeHeadless
       - npm-audit:
           node-version: lts/gallium
       - e2e-test:
