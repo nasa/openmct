@@ -24,12 +24,14 @@
 This test suite is dedicated to tests which verify the basic operations surrounding moving objects.
 */
 
-const { test, expect } = require('../baseFixtures.js');
+const { test, expect } = require('../pluginFixtures.js');
 
 test.describe('Move item tests', () => {
-    test('Create a basic object and verify that it can be moved to another folder', async ({ page }) => {
+    test('Create a basic object and verify that it can be moved to another folder', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
         // Go to Open MCT
-        await page.goto('/');
+        await page.goto('./');
 
         // Create a new folder in the root my items folder
         let folder1 = "Folder1";
@@ -65,23 +67,25 @@ test.describe('Move item tests', () => {
         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
         // Move Folder 2 from Folder 1 to My Items
-        await page.locator('text=Open MCT My Items >> span').nth(3).click();
+        await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
         await page.locator('.c-tree__scrollable div div:nth-child(2) .c-tree__item .c-tree__item__view-control').click();
 
         await page.locator(`a:has-text("${folder2}")`).click({
             button: 'right'
         });
         await page.locator('li.icon-move').click();
-        await page.locator('form[name="mctForm"] >> text=My Items').click();
+        await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
 
         await page.locator('text=OK').click();
 
         // Expect that Folder 2 is in My Items, the root folder
-        expect(page.locator(`text=My Items >> nth=0:has(text=${folder2})`)).toBeTruthy();
+        expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=${folder2})`)).toBeTruthy();
     });
-    test('Create a basic object and verify that it cannot be moved to telemetry object without Composition Provider', async ({ page }) => {
+    test('Create a basic object and verify that it cannot be moved to telemetry object without Composition Provider', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
         // Go to Open MCT
-        await page.goto('/');
+        await page.goto('./');
 
         // Create Telemetry Table
         let telemetryTable = 'Test Telemetry Table';
@@ -110,11 +114,11 @@ test.describe('Move item tests', () => {
         expect.soft(okButtonStateDisabled).toBeTruthy();
 
         // Continue test regardless of assertion and create it in My Items
-        await page.locator('form[name="mctForm"] >> text=My Items').click();
+        await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
         await page.locator('text=OK').click();
 
         // Open My Items
-        await page.locator('text=Open MCT My Items >> span').nth(3).click();
+        await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
 
         // Select Folder Object and select Move from context menu
         await Promise.all([
@@ -127,7 +131,7 @@ test.describe('Move item tests', () => {
         await page.locator('li.icon-move').click();
 
         // See if it's possible to put the folder in the Telemetry object after creation
-        await page.locator('text=Location Open MCT My Items >> span').nth(3).click();
+        await page.locator(`text=Location Open MCT ${myItemsFolderName} >> span`).nth(3).click();
         await page.locator(`form[name="mctForm"] >> text=${telemetryTable}`).click();
         let okButton2 = await page.locator('button.c-button.c-button--major:has-text("OK")');
         let okButtonStateDisabled2 = await okButton2.isDisabled();

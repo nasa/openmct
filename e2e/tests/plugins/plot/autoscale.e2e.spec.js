@@ -24,7 +24,7 @@
 Testsuite for plot autoscale.
 */
 
-const { test, expect } = require('../../../baseFixtures.js');
+const { test, expect } = require('../../../pluginFixtures.js');
 test.use({
     viewport: {
         width: 1280,
@@ -33,15 +33,17 @@ test.use({
 });
 
 test.describe('ExportAsJSON', () => {
-    test('User can set autoscale with a valid range @snapshot', async ({ page }) => {
+    test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
         //This is necessary due to the size of the test suite.
         test.slow();
 
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         await setTimeRange(page);
 
-        await createSinewaveOverlayPlot(page);
+        await createSinewaveOverlayPlot(page, myItemsFolderName);
 
         await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
 
@@ -101,8 +103,9 @@ async function setTimeRange(page, start = '2022-03-29 22:00:00.000Z', end = '202
 
 /**
  * @param {import('@playwright/test').Page} page
+ * @param {string} myItemsFolderName
  */
-async function createSinewaveOverlayPlot(page) {
+async function createSinewaveOverlayPlot(page, myItemsFolderName) {
     // click create button
     await page.locator('button:has-text("Create")').click();
 
@@ -138,7 +141,7 @@ async function createSinewaveOverlayPlot(page) {
     await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 
     // focus the overlay plot
-    await page.locator('text=Open MCT My Items >> span').nth(3).click();
+    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()

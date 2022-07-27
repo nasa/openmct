@@ -26,7 +26,7 @@ suite is sharing state between tests which is considered an anti-pattern. Implim
 demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
 */
 
-const { test, expect } = require('../../../baseFixtures.js');
+const { test, expect } = require('../../../pluginFixtures.js');
 
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
@@ -36,7 +36,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         const context = await browser.newContext();
         const page = await context.newPage();
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');
@@ -87,7 +87,9 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
 
     });
-    test('condition set object can be modified on @localStorage', async ({ page }) => {
+    test('condition set object can be modified on @localStorage', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
         await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
 
         //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
@@ -116,7 +118,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         // Verify Tree reflects updated Name proprety
         // Expand Tree
-        await page.locator('text=Open MCT My Items >> span >> nth=3').click();
+        await page.locator(`text=Open MCT ${myItemsFolderName} >> span >> nth=3`).click();
         // Verify Condition Set Object is renamed in Tree
         expect(page.locator('a:has-text("Renamed Condition Set")')).toBeTruthy();
         // Verify Search Tree reflects renamed Name property
@@ -140,7 +142,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         // Verify Tree reflects updated Name proprety
         // Expand Tree
-        await page.locator('text=Open MCT My Items >> span >> nth=3').click();
+        await page.locator(`text=Open MCT ${myItemsFolderName} >> span >> nth=3`).click();
         // Verify Condition Set Object is renamed in Tree
         expect(page.locator('a:has-text("Renamed Condition Set")')).toBeTruthy();
         // Verify Search Tree reflects renamed Name property
@@ -149,7 +151,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     });
     test('condition set object can be deleted by Search Tree Actions menu on @localStorage', async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
         await expect(page.locator('a:has-text("Unnamed Condition Set Condition Set") >> nth=0')).toBeVisible();

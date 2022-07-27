@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../baseFixtures');
+const { test, expect } = require('../../../pluginFixtures');
 const { openObjectTreeContextMenu } = require('../../../appActions');
 const path = require('path');
 
@@ -38,8 +38,10 @@ test.describe('Restricted Notebook', () => {
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed ${CUSTOM_NAME}`);
     });
 
-    test('Can be deleted if there are no locked pages @addInit', async ({ page }) => {
-        await openObjectTreeContextMenu(page, `Unnamed ${CUSTOM_NAME}`);
+    test('Can be deleted if there are no locked pages @addInit', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
+        await openObjectTreeContextMenu(page, myItemsFolderName, `Unnamed ${CUSTOM_NAME}`);
 
         const menuOptions = page.locator('.c-menu ul');
         await expect.soft(menuOptions).toContainText('Remove');
@@ -84,8 +86,9 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await page.locator('button.c-notebook__toggle-nav-button').click();
     });
 
-    test('Locked page should now be in a locked state @addInit @unstable', async ({ page }, testInfo) => {
+    test('Locked page should now be in a locked state @addInit @unstable', async ({ page, openmctConfig }, testInfo) => {
         test.fixme(testInfo.project === 'chrome-beta', "Test is unreliable on chrome-beta");
+        const { myItemsFolderName } = openmctConfig;
         // main lock message on page
         const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
         expect.soft(await lockMessage.count()).toEqual(1);
@@ -95,7 +98,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         expect.soft(await pageLockIcon.count()).toEqual(1);
 
         // no way to remove a restricted notebook with a locked page
-        await openObjectTreeContextMenu(page, `Unnamed ${CUSTOM_NAME}`);
+        await openObjectTreeContextMenu(page, myItemsFolderName, `Unnamed ${CUSTOM_NAME}`);
         const menuOptions = page.locator('.c-menu ul');
 
         await expect(menuOptions).not.toContainText('Remove');
@@ -143,9 +146,10 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
 test.describe('Restricted Notebook with a page locked and with an embed @addInit', () => {
 
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
         await startAndAddRestrictedNotebookObject(page);
-        await dragAndDropEmbed(page);
+        await dragAndDropEmbed(page, myItemsFolderName);
     });
 
     test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {
@@ -174,7 +178,7 @@ async function startAndAddRestrictedNotebookObject(page) {
     // eslint-disable-next-line no-undef
     await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
     //Click the Create button
     await page.click('button:has-text("Create")');
     // Click text=CUSTOME_NAME
@@ -202,17 +206,17 @@ async function enterTextEntry(page) {
 /**
  * @param {import('@playwright/test').Page} page
  */
-async function dragAndDropEmbed(page) {
+async function dragAndDropEmbed(page, myItemsFolderName) {
     // Click button:has-text("Create")
     await page.locator('button:has-text("Create")').click();
     // Click li:has-text("Sine Wave Generator")
     await page.locator('li:has-text("Sine Wave Generator")').click();
     // Click form[name="mctForm"] >> text=My Items
-    await page.locator('form[name="mctForm"] >> text=My Items').click();
+    await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
     // Click text=OK
     await page.locator('text=OK').click();
     // Click text=Open MCT My Items >> span >> nth=3
-    await page.locator('text=Open MCT My Items >> span').nth(3).click();
+    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
     // Click text=Unnamed CUSTOM_NAME
     await Promise.all([
         page.waitForNavigation(),

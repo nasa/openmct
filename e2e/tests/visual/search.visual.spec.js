@@ -33,7 +33,7 @@ const percySnapshot = require('@percy/playwright');
   */
 async function createClockAndDisplayLayout(page) {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Click button:has-text("Create")
     await page.locator('button:has-text("Create")').click();

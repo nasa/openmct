@@ -89,10 +89,26 @@ async function getOrCreateDomainObject(page, options) {
  */
 const objectCreateOptions = null;
 
+/**
+ * The name of the "My Items" folder in the domain object tree.
+ *
+ * Default: `"My Items"`
+ *
+ * @type {string}
+ */
+const myItemsFolderName = "My Items";
+
 exports.test = test.extend({
+    myItemsFolderName: [myItemsFolderName, { option: true }],
+    // eslint-disable-next-line no-shadow
+    openmctConfig: async ({ myItemsFolderName }, use) => {
+        await use({ myItemsFolderName });
+    },
     objectCreateOptions: [objectCreateOptions, {option: true}],
     // eslint-disable-next-line no-shadow
     domainObject: [async ({ page, objectCreateOptions }, use) => {
+        // FIXME: This is a false-positive caused by a bug in the eslint-plugin-playwright rule.
+        // eslint-disable-next-line playwright/no-conditional-in-test
         if (objectCreateOptions === null) {
             await use(page);
 

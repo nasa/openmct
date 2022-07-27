@@ -26,15 +26,18 @@ but only assume that example imagery is present.
 */
 /* globals process */
 
-const { test, expect, waitForAnimations } = require('../../../baseFixtures.js');
+const { waitForAnimations } = require('../../../baseFixtures.js');
+const { test, expect } = require('../../../pluginFixtures.js');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
+const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
 
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');
@@ -93,7 +96,6 @@ test.describe('Example Imagery Object', () => {
 
     test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
-        const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 
         await page.locator(backgroundImageSelector).hover({trial: true});
 
@@ -113,7 +115,6 @@ test.describe('Example Imagery Object', () => {
         const getUA = await page.evaluate(() => navigator.userAgent);
         console.log('navigator.userAgent ' + getUA);
         // Pan Imagery Hints
-        const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
         const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
         expect(expectedAltText).toEqual(imageryHintsText);
 
@@ -233,7 +234,7 @@ test('Example Imagery in Display layout @unstable', async ({ page }) => {
     });
 
     // Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Click the Create button
     await page.click('button:has-text("Create")');
@@ -285,7 +286,6 @@ test('Example Imagery in Display layout @unstable', async ({ page }) => {
     await page.mouse.move(imageCenterX, imageCenterY);
 
     // Pan Imagery Hints
-    const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
     expect(expectedAltText).toEqual(imageryHintsText);
 
@@ -344,7 +344,7 @@ test('Example Imagery in Display layout @unstable', async ({ page }) => {
 
 test.describe('Example imagery thumbnails resize in display layouts', () => {
     test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
         // Click button:has-text("Create")
@@ -436,7 +436,9 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 // test.fixme('If the imagery view is in pause mode, images still come in');
 // test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Flexible layout', () => {
-    test('Example Imagery in Flexible layout', async ({ page, browserName }) => {
+    test('Example Imagery in Flexible layout', async ({ page, browserName, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
         test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
         test.info().annotations.push({
             type: 'issue',
@@ -444,7 +446,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         });
 
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click the Create button
         await page.click('button:has-text("Create")');
@@ -474,10 +476,10 @@ test.describe('Example Imagery in Flexible layout', () => {
         // Click text=Flexible Layout
         await page.click('text=Flexible Layout');
 
-        // Assert Flexable layout
+        // Assert Flexible layout
         await expect(page.locator('.js-form-title')).toHaveText('Create a New Flexible Layout');
 
-        await page.locator('form[name="mctForm"] >> text=My Items').click();
+        await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
 
         // Click My Items
         await Promise.all([
@@ -510,7 +512,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await mouseZoomIn(page);
 
         // Center the mouse pointer
-        const zoomedBoundingBox = await await page.locator(backgroundImageSelector).boundingBox();
+        const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
         const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
         await page.mouse.move(imageCenterX, imageCenterY);
@@ -676,8 +678,6 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function panZoomAndAssertImageProperties(page) {
-    const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
-    const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
     expect(expectedAltText).toEqual(imageryHintsText);
     const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();

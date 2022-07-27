@@ -24,15 +24,16 @@
 This test suite is dedicated to tests which verify search functionality.
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
 
 /**
   * Creates a notebook object and adds an entry.
   * @param {import('@playwright/test').Page} page
+  * @param {string} myItemsFolderName
   */
-async function createClockAndDisplayLayout(page) {
+async function createClockAndDisplayLayout(page, myItemsFolderName) {
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Click button:has-text("Create")
     await page.locator('button:has-text("Create")').click();
@@ -47,7 +48,7 @@ async function createClockAndDisplayLayout(page) {
     // Click a:has-text("My Items")
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('a:has-text("My Items") >> nth=0').click()
+        page.locator(`a:has-text("${myItemsFolderName}") >> nth=0`).click()
     ]);
     // Click button:has-text("Create")
     await page.locator('button:has-text("Create")').click();
@@ -61,8 +62,10 @@ async function createClockAndDisplayLayout(page) {
 }
 
 test.describe('Grand Search', () => {
-    test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page }) => {
-        await createClockAndDisplayLayout(page);
+    test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
+        await createClockAndDisplayLayout(page, myItemsFolderName);
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();

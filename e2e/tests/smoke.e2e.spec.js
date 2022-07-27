@@ -33,12 +33,12 @@ comfortable running this test during a live mission?" Avoid creating or deleting
 Make no assumptions about the order that elements appear in the DOM.
 */
 
-const { test, expect } = require('../baseFixtures.js');
+const { test, expect } = require('../pluginFixtures.js');
 
 test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({ page }) => {
 
     //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -47,12 +47,13 @@ test('Verify that the create button appears and that the Folder Domain Object is
     await expect(page.locator(':nth-match(:text("Folder"), 2)')).toBeEnabled();
 });
 
-test('Verify that My Items Tree appears @ipad', async ({ page }) => {
+test('Verify that My Items Tree appears @ipad', async ({ page, openmctConfig }) => {
+    const { myItemsFolderName } = openmctConfig;
     //Test.slow annotation is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
     test.slow();
     //Go to baseURL
-    await page.goto('/');
+    await page.goto('./');
 
     //My Items to be visible
-    await expect(page.locator('a:has-text("My Items")')).toBeEnabled();
+    await expect(page.locator(`a:has-text("${myItemsFolderName}")`)).toBeEnabled();
 });

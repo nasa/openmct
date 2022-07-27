@@ -25,13 +25,15 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../baseFixtures.js');
+const { test, expect } = require('../../../pluginFixtures.js');
 test.describe('Log plot tests', () => {
-    test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page }) => {
+    test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
         //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
         test.slow();
 
-        await makeOverlayPlot(page);
+        await makeOverlayPlot(page, myItemsFolderName);
         await testRegularTicks(page);
         await enableEditMode(page);
         await enableLogMode(page);
@@ -46,8 +48,10 @@ test.describe('Log plot tests', () => {
 
     // Leaving test as 'TODO' for now.
     // NOTE: Not eligible for community contributions.
-    test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
-        await makeOverlayPlot(page);
+    test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
+        await makeOverlayPlot(page, myItemsFolderName);
         await enableEditMode(page);
         await enableLogMode(page);
         await saveOverlayPlot(page);
@@ -65,10 +69,11 @@ test.describe('Log plot tests', () => {
 /**
  * Makes an overlay plot with a sine wave generator and clicks on the overlay plot in the sidebar so it is the active thing displayed.
  * @param {import('@playwright/test').Page} page
+ * @param {string} myItemsFolderName
  */
-async function makeOverlayPlot(page) {
+async function makeOverlayPlot(page, myItemsFolderName) {
     // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
     // Set a specific time range for consistency, otherwise it will change
     // on every test to a range based on the current time.
@@ -128,7 +133,7 @@ async function makeOverlayPlot(page) {
 
     // click on overlay plot
 
-    await page.locator('text=Open MCT My Items >> span').nth(3).click();
+    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()
