@@ -8,7 +8,7 @@ const config = {
     testDir: 'tests/visual',
     testMatch: '**/*.visual.spec.js', // only run visual tests
     timeout: 90 * 1000,
-    workers: 1, // visual tests should never run in parallel due to test pollution
+    workers: 2, // visual tests should never run in parallel due to test pollution
     webServer: {
         command: 'cross-env NODE_ENV=test npm run start',
         url: 'http://localhost:8080/#',
@@ -21,7 +21,7 @@ const config = {
         headless: true, // this needs to remain headless to avoid visual changes due to GPU rendering in headed browsers
         ignoreHTTPSErrors: true,
         screenshot: 'on',
-        trace: 'off',
+        trace: 'on',
         video: 'off'
     },
     reporter: [
