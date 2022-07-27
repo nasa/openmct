@@ -24,7 +24,7 @@
 * This test suite template is to be used when verifying Test Data files found in /e2e/test-data/
 */
 
-const { test, expect } = require('../../baseFixtures');
+const { test } = require('../../baseFixtures');
 
 test.describe('recycled_local_storage @localStorage', () => {
     //We may want to do some additional level of verification of this file. For now, we just verify that it exists and can be used in a test suite.
