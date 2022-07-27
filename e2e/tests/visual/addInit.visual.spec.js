@@ -33,6 +33,7 @@ Note: Larger testsuite sizes are OK due to the setup time associated with these 
 
 // eslint-disable-next-line no-unused-vars
 const { test, expect } = require('../../baseFixtures.js');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
 
@@ -47,20 +48,13 @@ test.describe('Visual - addInit', () => {
         }
     });
 
-    test('Restricted Notebook is visually correct @addInit', async ({ page }) => {
+    test('Restricted Notebook is visually correct @addInit @unstable', async ({ page }) => {
         // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
         //Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-        // Click text=CUSTOM_NAME
-        await page.click(`text=${CUSTOM_NAME}`);
-        // Click text=OK
-        await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK')
-        ]);
+
+        await createDomainObjectWithDefaults(page, CUSTOM_NAME);
 
         // Take a snapshot of the newly created CUSTOM_NAME notebook
         await page.waitForTimeout(VISUAL_GRACE_PERIOD);
