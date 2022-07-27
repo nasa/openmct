@@ -107,6 +107,8 @@ exports.test = test.extend({
     objectCreateOptions: [objectCreateOptions, {option: true}],
     // eslint-disable-next-line no-shadow
     domainObject: [async ({ page, objectCreateOptions }, use) => {
+        // FIXME: This is a false-positive caused by a bug in the eslint-plugin-playwright rule.
+        // eslint-disable-next-line playwright/no-conditional-in-test
         if (objectCreateOptions === null) {
             await use(page);
 
