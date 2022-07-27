@@ -21,57 +21,54 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify form functionality.
+This test suite is dedicated to tests which verify form functionality in isolation
 */
 
 const { test, expect } = require('../baseFixtures.js');
 
 const TEST_FOLDER = 'test folder';
 
-test.describe('forms set', () => {
-    test('New folder form has title as required field', async ({ page }) => {
+test.describe('Form Validation Behavior', () => {
+    test('Required Field indicators appear if title is empty and can be corrected', async ({ page }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        // Click button:has-text("Create")
         await page.click('button:has-text("Create")');
-        // Click :nth-match(:text("Folder"), 2)
         await page.click(':nth-match(:text("Folder"), 2)');
-        // Click text=Properties Title Notes >> input[type="text"]
+
+        // Fill in empty string into title and trigger validation with 'Tab'
         await page.click('text=Properties Title Notes >> input[type="text"]');
-        // Fill text=Properties Title Notes >> input[type="text"]
         await page.fill('text=Properties Title Notes >> input[type="text"]', '');
-        // Press Tab
         await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
 
-        const okButton = page.locator('text=OK');
-
-        await expect(okButton).toBeDisabled();
+        //Required Field Form Validation
+        await expect(page.locator('text=OK')).toBeDisabled();
         await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/invalid/);
 
-        // Click text=Properties Title Notes >> input[type="text"]
+        //Correct Form Validation for missing title and trigger validation with 'Tab'
         await page.click('text=Properties Title Notes >> input[type="text"]');
-        // Fill text=Properties Title Notes >> input[type="text"]
         await page.fill('text=Properties Title Notes >> input[type="text"]', TEST_FOLDER);
-        // Press Tab
         await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
 
+        //Required Field Form Validation is corrected
+        await expect(page.locator('text=OK')).toBeEnabled();
         await expect(page.locator('.c-form-row__state-indicator').first()).not.toHaveClass(/invalid/);
 
-        // Click text=OK
+        //Finish Creating Domain Object
         await Promise.all([
             page.waitForNavigation(),
             page.click('text=OK')
         ]);
 
+        //Verify that the Domain Object has been created with the corrected title property
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(TEST_FOLDER);
     });
-    test.fixme('Create all object types and verify correctness', async ({ page }) => {
-        //Create the following Domain Objects with their unique Object Types
-        // Sine Wave Generator (number object)
-        // Timer Object
-        // Plan View Object
-        // Clock Object
-        // Hyperlink
-    });
+});
+
+test.describe('Form Correctness by Object Type', () => {
+    test.fixme('Verify correct behavior of number object (SWG)', async ({page}) => {});
+    test.fixme('Verify correct behavior of number object Timer', async ({page}) => {});
+    test.fixme('Verify correct behavior of number object Plan View', async ({page}) => {});
+    test.fixme('Verify correct behavior of number object Clock', async ({page}) => {});
+    test.fixme('Verify correct behavior of number object Hyperlink', async ({page}) => {});
 });
