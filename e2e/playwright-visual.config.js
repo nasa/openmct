@@ -6,6 +6,7 @@
 const config = {
     retries: 0, // visual tests should never retry due to snapshot comparison errors
     testDir: 'tests/visual',
+    testMatch: '**/*.visual.spec.js', // only run visual tests
     timeout: 90 * 1000,
     workers: 1, // visual tests should never run in parallel due to test pollution
     webServer: {
@@ -17,7 +18,7 @@ const config = {
     use: {
         browserName: "chromium",
         baseURL: 'http://localhost:8080/',
-        headless: true, // this needs to remain headless to avoid visual changes due to GPU
+        headless: true, // this needs to remain headless to avoid visual changes due to GPU rendering in headed browsers
         ignoreHTTPSErrors: true,
         screenshot: 'on',
         trace: 'off',
