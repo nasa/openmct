@@ -52,7 +52,7 @@ async function createDomainObjectWithDefaults(page, type, name) {
 
     // Click OK button and wait for Navigate event
     await Promise.all([
-        page.waitForNavigation({waitUntil: 'networkidle'}),
+        page.waitForNavigation(),
         page.click('text=OK')
     ]);
 }
