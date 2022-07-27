@@ -436,7 +436,7 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 // test.fixme('If the imagery view is in pause mode, images still come in');
 // test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Flexible layout', () => {
-    test('Example Imagery in Flexible layout', async ({ page, browserName, openmctConfig }) => {
+    test('Example Imagery in Flexible layout @unstable', async ({ page, browserName, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
         test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
