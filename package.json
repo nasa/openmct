@@ -5,7 +5,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.18.2",
     "@braintree/sanitize-url": "6.0.0",
-    "@percy/cli": "1.2.1",
+    "@percy/cli": "1.6.4",
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.23.0",
     "@types/eventemitter3": "^1.0.0",
@@ -103,7 +103,7 @@
     "update-copyright-date": "npm run update-about-dialog-copyright && grep -lr --null --include=*.{js,scss,vue,ts,sh,html,md,frag} 'Copyright (c) 20' . | xargs -r0 perl -pi -e 's/Copyright\\s\\(c\\)\\s20\\d\\d\\-20\\d\\d/Copyright \\(c\\)\\ 2014\\-2022/gm'",
     "otherdoc": "node docs/gendocs.js --in docs/src --out dist/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
     "docs": "npm run jsdoc ; npm run otherdoc",
-    "cov:e2e:report":"nyc report --reporter=lcovonly --report-dir=./coverage/e2e || true",
+    "cov:e2e:report":"nyc report --reporter=lcovonly --report-dir=./coverage/e2e",
     "cov:e2e:full:publish":"codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e-full",
     "cov:e2e:stable:publish":"codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e-stable",
     "cov:unit:publish":"codecov --disable=gcov -f ./coverage/unit/lcov.info -F unit",
