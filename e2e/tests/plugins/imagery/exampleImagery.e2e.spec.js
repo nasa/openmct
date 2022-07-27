@@ -31,6 +31,8 @@ const { expect } = require('@playwright/test');
 const { waitForAnimations } = require('../../../commonActions.js');
 
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
+const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
@@ -96,7 +98,6 @@ test.describe('Example Imagery Object', () => {
 
     test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
-        const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 
         await page.locator(backgroundImageSelector).hover({trial: true});
 
@@ -116,7 +117,6 @@ test.describe('Example Imagery Object', () => {
         const getUA = await page.evaluate(() => navigator.userAgent);
         console.log('navigator.userAgent ' + getUA);
         // Pan Imagery Hints
-        const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
         const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
         expect(expectedAltText).toEqual(imageryHintsText);
 
@@ -289,7 +289,6 @@ test('Example Imagery in Display layout', async ({ page, browserName }) => {
     await page.mouse.move(imageCenterX, imageCenterY);
 
     // Pan Imagery Hints
-    const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
     expect(expectedAltText).toEqual(imageryHintsText);
 
@@ -680,8 +679,6 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function panZoomAndAssertImageProperties(page) {
-    const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
-    const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
     const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
     expect(expectedAltText).toEqual(imageryHintsText);
     const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
