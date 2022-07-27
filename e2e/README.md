@@ -2,9 +2,9 @@
 
 This document captures information specific to the e2e testing of Open MCT. For general information about testing, please see [the Open MCT README](https://github.com/nasa/openmct/blob/master/README.md#tests).
 
-## Overview
+## Table of Contents
 
-This document is designed to capture on the What, Why, and How's of writing and running e2e tests in Open MCT. 
+This document is designed to capture on the What, Why, and How's of writing and running e2e tests in Open MCT. Please use the built-in Github Table of Contents functionality at the top left of this page or the markup.
 
 1. [Getting Started](#GettingStarted)
 2. [Types of Testing](#typesoftesting)
@@ -51,9 +51,9 @@ Next, you should walk through our implementation of Playwright in Open MCT:
 
 e2e testing describes the layer at which a test is performed without prescribing the assertions which are made. Generally, when writing an e2e test, we have three choices:
 
-1. Functional - Verifies the functional correctness of the application
-2. Visual - Verifies the "look and feel" of the application and can only detect _undesirable changes_.
-3. Snapshot - Similar to Visual in that it captures the "look" of the application and can only detect _undesirable changes_. **Generally not preferred due to the maintenance costs of the associated.**
+1. Functional - Verifies the functional correctness of the application. Sometimes interchanged with e2e or regression testing.
+2. Visual - Verifies the "look and feel" of the application and can only detect _undesirable changes when compared to a previous baseline_.
+3. Snapshot - Similar to Visual in that it captures the "look" of the application and can only detect _undesirable changes when compared to a previous baseline_. **Generally not preferred due to the maintenance costs of the tooling.**
 
 When choosing between the different testing strategies, think only about the assertion that is made at the end of the series of test steps. "I want to verify that the Timer plugin functions correctly" vs "I want to verify that the Timer plugin does not look different than originally designed".
 
@@ -99,9 +99,6 @@ npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep
 
 (Active Development) Updating Snapshots
 When the @snapshot tests fail, they will need to be evaluated to see if the failure is an acceptable change or 
-#### How to write a good visual test
-
-TBD
 
 ## Performance Testing
 
@@ -112,6 +109,10 @@ They're found in the `/e2e/tests/performance` repo and are to be executed with t
 ```npm run test:perf```
 
 These tests are expected to become blocking and gating with assertions as we extend the base capabilities of playwright.
+
+#### How to write a good visual test
+
+TBD
 ## Test Architecture and CI <a name="architecture"></a>
 
 ### Architecture
