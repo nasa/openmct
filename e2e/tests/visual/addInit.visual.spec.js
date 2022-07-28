@@ -32,7 +32,7 @@ Note: Larger testsuite sizes are OK due to the setup time associated with these 
 */
 
 // eslint-disable-next-line no-unused-vars
-const { test, expect } = require('../../baseFixtures.js');
+const { test, expect } = require('../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
