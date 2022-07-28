@@ -37,8 +37,6 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
 
-const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
-
 const CUSTOM_NAME = 'CUSTOM_NAME';
 
 test.describe('Visual - addInit', () => {
@@ -57,7 +55,6 @@ test.describe('Visual - addInit', () => {
         await createDomainObjectWithDefaults(page, CUSTOM_NAME);
 
         // Take a snapshot of the newly created CUSTOM_NAME notebook
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'Restricted Notebook with CUSTOM_NAME');
 
     });

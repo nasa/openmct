@@ -34,15 +34,8 @@ Note: Larger testsuite sizes are OK due to the setup time associated with these 
 
 const { test, expect } = require('../../baseFixtures.js');
 const percySnapshot = require('@percy/playwright');
-const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
 
 test.describe('Visual - Default', () => {
-    test.use({
-        clockOptions: {
-            now: 0,
-            shouldAdvanceTime: true
-        }
-    });
 
     test('Visual - Root and About', async ({ page }) => {
         // Go to baseURL
@@ -52,7 +45,6 @@ test.describe('Visual - Default', () => {
         await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
         // Take a snapshot of the Dashboard
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'Root');
 
         // Click About button
@@ -64,7 +56,6 @@ test.describe('Visual - Default', () => {
         await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
 
         // Take a snapshot of the About modal
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'About');
     });
 
@@ -82,7 +73,6 @@ test.describe('Visual - Default', () => {
         await page.click('text=OK');
 
         // Take a snapshot of the newly created Condition Set object
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'Default Condition Set');
     });
 
@@ -104,7 +94,6 @@ test.describe('Visual - Default', () => {
         await page.click('text=OK');
 
         // Take a snapshot of the newly created Condition Widget object
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'Default Condition Widget');
     });
 
@@ -123,7 +112,6 @@ test.describe('Visual - Default', () => {
         await page.locator('input[type="text"]').first().fill(startDate.toString());
 
         //  verify no error msg
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'Default Time conductor');
 
         startDate = (year + 1) + startDate.substring(4);
@@ -131,7 +119,6 @@ test.describe('Visual - Default', () => {
         await page.locator('input[type="text"]').nth(1).click();
 
         //  verify error msg for start time (unable to capture snapshot of popup)
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'Start time error');
 
         startDate = (year - 1) + startDate.substring(4);
@@ -143,7 +130,6 @@ test.describe('Visual - Default', () => {
         await page.locator('input[type="text"]').first().click();
 
         //  verify error msg for end time (unable to capture snapshot of popup)
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'End time error');
     });
 
@@ -157,14 +143,12 @@ test.describe('Visual - Default', () => {
         // Click text=Sine Wave Generator
         await page.click('text=Sine Wave Generator');
 
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'Default Sine Wave Generator Form');
 
         await page.locator('.field.control.l-input-sm input').first().click();
         await page.locator('.field.control.l-input-sm input').first().fill('');
 
         // Validate red x mark
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'removed amplitude property value');
     });
 
@@ -214,7 +198,6 @@ test.describe('Visual - Default', () => {
         await page.click('text=OK');
 
         // Take a snapshot of the newly created Gauge object
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
         await percySnapshot(page, 'Default Gauge');
 
     });
