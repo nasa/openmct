@@ -147,6 +147,8 @@ import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '..
 
 import Moment from 'moment';
 
+const UNKNOWN_USER = 'Unknown';
+
 export default {
     components: {
         NotebookEmbed,
@@ -340,8 +342,8 @@ export default {
         async timestampAndUpdate() {
             const user = await this.openmct.user.getCurrentUser();
 
-            if (user !== undefined) {
-                this.entry.modifiedBy = 'Unknown';
+            if (user === undefined) {
+                this.entry.modifiedBy = UNKNOWN_USER;
             }
 
             this.entry.modified = Date.now();

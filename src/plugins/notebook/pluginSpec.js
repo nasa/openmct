@@ -214,7 +214,7 @@ describe("Notebook plugin:", () => {
             let objectCloneToSyncFrom;
 
             beforeEach(() => {
-                objectCloneToSyncFrom = JSON.parse(JSON.stringify(notebookViewObject));
+                objectCloneToSyncFrom = structuredClone(notebookViewObject);
                 objectCloneToSyncFrom.persisted = notebookViewObject.modified + 1;
             });
 
