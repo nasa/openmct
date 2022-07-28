@@ -24,8 +24,7 @@
 This test suite is dedicated to tests which verify search functionality.
 */
 
-const { test } = require('../../fixtures.js');
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../baseFixtures.js');
 const percySnapshot = require('@percy/playwright');
 
 /**
