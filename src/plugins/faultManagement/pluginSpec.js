@@ -40,13 +40,6 @@ describe("The Fault Management Plugin", () => {
             namespace: 'fault'
         }
     };
-    const faultDomainObjectSelection = [[
-        {
-            context: {
-                item: faultDomainObject
-            }
-        }
-    ]];
 
     beforeEach(() => {
         openmct = createOpenMct();
@@ -79,12 +72,19 @@ describe("The Fault Management Plugin", () => {
             const faultManagementView = applicableViews.find(
                 (viewProvider) => viewProvider.key === FAULT_MANAGEMENT_VIEW
             );
-            console.log(faultManagementView);
+
             expect(applicableViews.length).toEqual(1);
             expect(faultManagementView).toBeDefined();
         });
 
         it('provides an inspector view for fault management types', () => {
+            const faultDomainObjectSelection = [[
+                {
+                    context: {
+                        item: faultDomainObject
+                    }
+                }
+            ]];
             const applicableInspectorViews = openmct.inspectorViews.get(faultDomainObjectSelection);
 
             expect(applicableInspectorViews.length).toEqual(1);
