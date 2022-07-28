@@ -35,14 +35,10 @@ test.describe('Grand Search', () => {
 
         //Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-
-
         // await createDomainObjectWithDefaults(page, 'Display Layout');
         // await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-
         // await page.locator('text=Save and Finish Editing').click();
         const folder1 = 'Folder1';
-        const folder2 = 'Folder2';
         await createDomainObjectWithDefaults(page, 'Folder', folder1);
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
