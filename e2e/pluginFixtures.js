@@ -28,6 +28,7 @@
 
 const { test, expect } = require('./baseFixtures');
 const { createDomainObjectWithDefaults } = require('./appActions');
+const path = require('path');
 
 /**
  * @typedef {Object} ObjectCreateOptions
@@ -90,6 +91,12 @@ async function getOrCreateDomainObject(page, options) {
 const objectCreateOptions = null;
 
 /**
+ *
+ * @type {ObjectCreateOptions}
+ */
+const theme = null;
+
+/**
  * The name of the "My Items" folder in the domain object tree.
  *
  * Default: `"My Items"`
@@ -99,6 +106,20 @@ const objectCreateOptions = null;
 const myItemsFolderName = "My Items";
 
 exports.test = test.extend({
+    theme: [theme, { option: true }],
+    /**
+     * Extends the base page class to run in snow theme mode when set to true
+     */
+    // eslint-disable-next-line no-shadow
+    page: async ({ page, theme }, use) => {
+        // eslint-disable-next-line playwright/no-conditional-in-test
+        if (theme === 'snow') {
+            //inject snow theme
+            await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
+        }
+
+        await use(page);
+    },
     myItemsFolderName: [myItemsFolderName, { option: true }],
     // eslint-disable-next-line no-shadow
     openmctConfig: async ({ myItemsFolderName }, use) => {

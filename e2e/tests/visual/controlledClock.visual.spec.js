@@ -44,7 +44,7 @@ test.describe('Visual - Controlled Clock', () => {
         }
     });
 
-    test('Overlay Plot Loading Indicator @localstorage', async ({ page }) => {
+    test('Overlay Plot Loading Indicator @localstorage', async ({ page, theme }) => {
         // Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 
@@ -56,6 +56,6 @@ test.describe('Visual - Controlled Clock', () => {
         await page.locator('canvas >> nth=1').hover({trial: true});
 
         //Take snapshot of Sine Wave Generator within Overlay Plot
-        await percySnapshot(page, 'SineWaveInOverlayPlot');
+        await percySnapshot(page, 'SineWaveInOverlayPlot' + theme);
     });
 });

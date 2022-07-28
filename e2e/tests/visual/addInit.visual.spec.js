@@ -46,7 +46,7 @@ test.describe('Visual - addInit', () => {
         }
     });
 
-    test('Restricted Notebook is visually correct @addInit @unstable', async ({ page }) => {
+    test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
         // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
         //Go to baseURL
@@ -55,7 +55,7 @@ test.describe('Visual - addInit', () => {
         await createDomainObjectWithDefaults(page, CUSTOM_NAME);
 
         // Take a snapshot of the newly created CUSTOM_NAME notebook
-        await percySnapshot(page, 'Restricted Notebook with CUSTOM_NAME');
+        await percySnapshot(page, 'Restricted Notebook with CUSTOM_NAME' + theme);
 
     });
 });

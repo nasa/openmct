@@ -2,13 +2,13 @@
 // playwright.config.js
 // @ts-check
 
-/** @type {import('@playwright/test').PlaywrightTestConfig} */
+/** @type {import('@playwright/test').PlaywrightTestConfig<{ theme: string }>} */
 const config = {
     retries: 0, // visual tests should never retry due to snapshot comparison errors
     testDir: 'tests/visual',
     testMatch: '**/*.visual.spec.js', // only run visual tests
-    timeout: 90 * 1000,
-    workers: 2, // visual tests should never run in parallel due to test pollution
+    timeout: 60 * 1000,
+    workers: 2, // TODO See if this works
     webServer: {
         command: 'cross-env NODE_ENV=test npm run start',
         url: 'http://localhost:8080/#',
@@ -16,7 +16,6 @@ const config = {
         reuseExistingServer: !process.env.CI
     },
     use: {
-        browserName: "chromium",
         baseURL: 'http://localhost:8080/',
         headless: true, // this needs to remain headless to avoid visual changes due to GPU rendering in headed browsers
         ignoreHTTPSErrors: true,
@@ -24,6 +23,21 @@ const config = {
         trace: 'on',
         video: 'off'
     },
+    projects: [
+        {
+            name: 'chrome',
+            use: {
+                browserName: 'chromium'
+            }
+        },
+        {
+            name: 'snow-theme-chrome',
+            use: {
+                browserName: 'chromium',
+                theme: 'snow'
+            }
+        }
+    ],
     reporter: [
         ['list'],
         ['junit', { outputFile: 'test-results/results.xml' }],

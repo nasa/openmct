@@ -32,15 +32,17 @@ to "fail" on assertions. Instead, they should be used to detect changes between 
 Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
-const { test, expect } = require('../../baseFixtures.js');
+const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe('Visual - Default', () => {
-
-    test('Visual - Root and About', async ({ page }) => {
-        // Go to baseURL
+    test.beforeEach(async ({ page, theme }) => {
+        //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    });
 
+    test('Visual - Root and About', async ({ page, theme }) => {
         // Verify that Create button is actionable
         await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
@@ -56,50 +58,30 @@ test.describe('Visual - Default', () => {
         await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
 
         // Take a snapshot of the About modal
-        await percySnapshot(page, 'About');
+        await percySnapshot(page, 'About' + theme);
     });
 
-    test('Visual - Default Condition Set', async ({ page }) => {
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+    test('Visual - Default Condition Set', async ({ page, theme }) => {
 
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-
-        // Click text=Condition Set
-        await page.click('text=Condition Set');
-
-        // Click text=OK
-        await page.click('text=OK');
+        await createDomainObjectWithDefaults(page, 'Condition Set');
 
         // Take a snapshot of the newly created Condition Set object
-        await percySnapshot(page, 'Default Condition Set');
+        await percySnapshot(page, 'Default Condition Set' + theme);
     });
 
-    test.fixme('Visual - Default Condition Widget', async ({ page }) => {
+    test.fixme('Visual - Default Condition Widget', async ({ page, theme }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5349'
         });
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
 
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-
-        // Click text=Condition Widget
-        await page.click('text=Condition Widget');
-
-        // Click text=OK
-        await page.click('text=OK');
+        await createDomainObjectWithDefaults(page, 'Condition Widget');
 
         // Take a snapshot of the newly created Condition Widget object
-        await percySnapshot(page, 'Default Condition Widget');
+        await percySnapshot(page, 'Default Condition Widget' + theme);
     });
 
-    test('Visual - Time Conductor start time is less than end time', async ({ page }) => {
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+    test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
         const year = new Date().getFullYear();
 
         let startDate = 'xxxx-01-01 01:00:00.000Z';
@@ -112,14 +94,14 @@ test.describe('Visual - Default', () => {
         await page.locator('input[type="text"]').first().fill(startDate.toString());
 
         //  verify no error msg
-        await percySnapshot(page, 'Default Time conductor');
+        await percySnapshot(page, 'Default Time conductor' + theme);
 
         startDate = (year + 1) + startDate.substring(4);
         await page.locator('input[type="text"]').first().fill(startDate.toString());
         await page.locator('input[type="text"]').nth(1).click();
 
         //  verify error msg for start time (unable to capture snapshot of popup)
-        await percySnapshot(page, 'Start time error');
+        await percySnapshot(page, 'Start time error' + theme);
 
         startDate = (year - 1) + startDate.substring(4);
         await page.locator('input[type="text"]').first().fill(startDate.toString());
@@ -130,75 +112,50 @@ test.describe('Visual - Default', () => {
         await page.locator('input[type="text"]').first().click();
 
         //  verify error msg for end time (unable to capture snapshot of popup)
-        await percySnapshot(page, 'End time error');
+        await percySnapshot(page, 'End time error' + theme);
     });
 
-    test('Visual - Sine Wave Generator Form', async ({ page }) => {
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
-
+    test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
         //Click the Create button
         await page.click('button:has-text("Create")');
 
         // Click text=Sine Wave Generator
         await page.click('text=Sine Wave Generator');
 
-        await percySnapshot(page, 'Default Sine Wave Generator Form');
+        await percySnapshot(page, 'Default Sine Wave Generator Form' + theme);
 
         await page.locator('.field.control.l-input-sm input').first().click();
         await page.locator('.field.control.l-input-sm input').first().fill('');
 
         // Validate red x mark
-        await percySnapshot(page, 'removed amplitude property value');
+        await percySnapshot(page, 'removed amplitude property value' + theme);
     });
 
-    test('Visual - Save Successful Banner', async ({ page }) => {
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+    test('Visual - Save Successful Banner', async ({ page, theme }) => {
+        await createDomainObjectWithDefaults(page, 'Timer');
 
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-
-        //NOTE Something other than example imagery
-        await page.click('text=Timer');
-
-        // Click text=OK
-        await page.click('text=OK');
         await page.locator('.c-message-banner__message').hover({ trial: true });
-        await percySnapshot(page, 'Banner message shown');
+        await percySnapshot(page, 'Banner message shown' + theme);
 
         //Wait until Save Banner is gone
         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-        await percySnapshot(page, 'Banner message gone');
+        await percySnapshot(page, 'Banner message gone' + theme);
     });
 
-    test('Visual - Display Layout Icon is correct', async ({ page }) => {
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
-
+    test('Visual - Display Layout Icon is correct', async ({ page, theme }) => {
         //Click the Create button
         await page.click('button:has-text("Create")');
 
         //Hover on Display Layout option.
         await page.locator('text=Display Layout').hover();
-        await percySnapshot(page, 'Display Layout Create Menu');
+        await percySnapshot(page, 'Display Layout Create Menu' + theme);
 
     });
 
-    test('Visual - Default Gauge is correct', async ({ page }) => {
-
-        //Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
-
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-
-        await page.click('text=Gauge');
-
-        await page.click('text=OK');
+    test('Visual - Default Gauge is correct', async ({ page, theme }) => {
+        await createDomainObjectWithDefaults(page, 'Gauge');
 
         // Take a snapshot of the newly created Gauge object
-        await percySnapshot(page, 'Default Gauge');
-
+        await percySnapshot(page, 'Default Gauge' + theme);
     });
 });

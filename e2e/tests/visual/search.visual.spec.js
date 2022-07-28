@@ -30,11 +30,12 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Grand Search', () => {
-    //This needs to be rewritten to use a non clock or non display layout object
-    test('Can search for objects, and subsequent search dropdown behaves properly @unstable', async ({ page }) => {
-
-        //Go to baseURL
+    test.beforeEach(async ({ page, theme }) => {
+        //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    });
+    //This needs to be rewritten to use a non clock or non display layout object
+    test('Can search for objects, and subsequent search dropdown behaves properly @unstable', async ({ page, theme }) => {
         // await createDomainObjectWithDefaults(page, 'Display Layout');
         // await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
         // await page.locator('text=Save and Finish Editing').click();
@@ -67,7 +68,7 @@ test.describe('Grand Search', () => {
             page.waitForNavigation(),
             page.locator('text=Unnamed Clock').click()
         ]);
-        await percySnapshot(page, 'Clicking on search results should navigate to them if not editing');
+        await percySnapshot(page, 'Clicking on search results should navigate to them if not editing' + theme);
 
     });
 });
