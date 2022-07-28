@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// This should be used to install the non-default Restricted Notebook plugin since it is not installed by default.
+// This should be used to install the Snow theme for Open MCT. Espresso is the default
 // e.g.
-// await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
+// await page.addInitScript({ path: path.join(__dirname, 'useSnowTheme.js') });
 
 document.addEventListener('DOMContentLoaded', () => {
     const openmct = window.openmct;

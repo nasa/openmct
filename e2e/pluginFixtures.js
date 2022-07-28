@@ -91,8 +91,9 @@ async function getOrCreateDomainObject(page, options) {
 const objectCreateOptions = null;
 
 /**
- *
- * @type {ObjectCreateOptions}
+ * If provided, this will run start the Open MCT application in Snow Theme. This should be referenced in a Project config
+ * and will initialize Open MCT with the Snow theme which is used in some other Open MCT projects.
+ * @type {'snow' | null}
  */
 const theme = null;
 
@@ -107,9 +108,6 @@ const myItemsFolderName = "My Items";
 
 exports.test = test.extend({
     theme: [theme, { option: true }],
-    /**
-     * Extends the base page class to run in snow theme mode when set to true
-     */
     // eslint-disable-next-line no-shadow
     page: async ({ page, theme }, use) => {
         // eslint-disable-next-line playwright/no-conditional-in-test
