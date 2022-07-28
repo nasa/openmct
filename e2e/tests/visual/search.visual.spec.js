@@ -30,44 +30,43 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Grand Search', () => {
-    test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page }) => {
+    //This needs to be rewritten to use a non clock or non display layout object
+    test('Can search for objects, and subsequent search dropdown behaves properly @unstable', async ({ page }) => {
 
         //Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 
-        await createDomainObjectWithDefaults(page, 'Clock');
 
-        await createDomainObjectWithDefaults(page, 'Display Layout');
+        // await createDomainObjectWithDefaults(page, 'Display Layout');
+        // await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+
+        // await page.locator('text=Save and Finish Editing').click();
+        const folder1 = 'Folder1';
+        const folder2 = 'Folder2';
+        await createDomainObjectWithDefaults(page, 'Folder', folder1);
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cl');
-        await expect(page.locator('[aria-label="Search Result"]')).toContainText('Clock');
-        await percySnapshot(page, 'Searching for Clocks');
-        // Click text=Elements >> nth=0
-        await page.locator('text=Elements').first().click();
-        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill(folder1);
+        await expect(page.locator('[aria-label="Search Result"]')).toContainText(folder1);
+        await percySnapshot(page, 'Searching for Folder Object');
 
-        // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
-        // Click [aria-label="Unnamed Clock clock result"] >> text=Unnamed Clock
         await page.locator('[aria-label="Unnamed Clock clock result"] >> text=Unnamed Clock').click();
         await percySnapshot(page, 'Preview for clock should display when editing enabled and search item clicked');
 
-        // Click [aria-label="Close"]
         await page.locator('[aria-label="Close"]').click();
         await percySnapshot(page, 'Search should still be showing after preview closed');
 
-        // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
         await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-        // Click text=Save and Finish Editing
+
         await page.locator('text=Save and Finish Editing').click();
-        // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
+
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
-        // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]
+
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Cl');
-        // Click text=Unnamed Clock
+
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=Unnamed Clock').click()
