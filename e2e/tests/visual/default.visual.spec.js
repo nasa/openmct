@@ -156,6 +156,6 @@ test.describe('Visual - Default', () => {
         await createDomainObjectWithDefaults(page, 'Gauge');
 
         // Take a snapshot of the newly created Gauge object
-        await percySnapshot(page, 'Default Gauge' + theme);
+        await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
     });
 });
