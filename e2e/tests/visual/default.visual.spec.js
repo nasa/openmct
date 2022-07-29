@@ -101,7 +101,7 @@ test.describe('Visual - Default', () => {
         await page.locator('input[type="text"]').nth(1).click();
 
         //  verify error msg for start time (unable to capture snapshot of popup)
-        await percySnapshot(page, 'Start time error' + theme);
+        await percySnapshot(page, `Start time error (theme: '${theme}')`);
 
         startDate = (year - 1) + startDate.substring(4);
         await page.locator('input[type="text"]').first().fill(startDate.toString());
