@@ -148,6 +148,7 @@ Current list of test tags:
 - `@localStorage` - Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).
 - `@snapshot` - Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.
 - `@unstable` - A new test or test which is known to be flaky.
+- `@2p` - Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.
 
 ### Continuous Integration
 
