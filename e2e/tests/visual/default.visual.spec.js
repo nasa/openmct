@@ -78,7 +78,7 @@ test.describe('Visual - Default', () => {
         await createDomainObjectWithDefaults(page, 'Condition Widget');
 
         // Take a snapshot of the newly created Condition Widget object
-        await percySnapshot(page, 'Default Condition Widget' + theme);
+        await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
     });
 
     test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
