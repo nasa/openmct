@@ -8,7 +8,7 @@ const config = {
     testDir: 'tests/visual',
     testMatch: '**/*.visual.spec.js', // only run visual tests
     timeout: 60 * 1000,
-    workers: 2, // TODO See if this works
+    workers: 2, //Limit to 2 for CircleCI Agent
     webServer: {
         command: 'cross-env NODE_ENV=test npm run start',
         url: 'http://localhost:8080/#',
@@ -31,7 +31,7 @@ const config = {
             }
         },
         {
-            name: 'snow-theme-chrome',
+            name: 'chrome-snow-theme',
             use: {
                 browserName: 'chromium',
                 theme: 'snow'

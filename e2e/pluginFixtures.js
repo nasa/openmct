@@ -95,7 +95,7 @@ const objectCreateOptions = null;
  * and will initialize Open MCT with the Snow theme which is used in some other Open MCT projects.
  * @type {'snow' | 'espresso'}
  */
-const theme = null;
+const theme = 'espresso';
 
 /**
  * The name of the "My Items" folder in the domain object tree.
