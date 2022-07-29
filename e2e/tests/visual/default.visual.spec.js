@@ -58,7 +58,7 @@ test.describe('Visual - Default', () => {
         await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
 
         // Take a snapshot of the About modal
-        await percySnapshot(page, 'About' + theme);
+        await percySnapshot(page, `About (theme: '${theme}')`);
     });
 
     test('Visual - Default Condition Set', async ({ page, theme }) => {
