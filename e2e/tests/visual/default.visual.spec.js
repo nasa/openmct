@@ -94,7 +94,7 @@ test.describe('Visual - Default', () => {
         await page.locator('input[type="text"]').first().fill(startDate.toString());
 
         //  verify no error msg
-        await percySnapshot(page, 'Default Time conductor' + theme);
+        await percySnapshot(page, `Default Time conductor (theme: '${theme}')`);
 
         startDate = (year + 1) + startDate.substring(4);
         await page.locator('input[type="text"]').first().fill(startDate.toString());
