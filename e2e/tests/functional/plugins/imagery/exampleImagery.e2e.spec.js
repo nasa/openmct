@@ -43,9 +43,13 @@ test.describe('Example Imagery Object', () => {
         // Create a default 'Example Imagery' object
         createDomainObjectWithDefaults(page, 'Example Imagery');
 
-        // Verify that the created imagery object is focused
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator(backgroundImageSelector).hover({trial: true})
+        ]);
+
+        // Verify that the created object is focused
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-        await page.locator(backgroundImageSelector).hover({trial: true});
     });
 
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
@@ -195,7 +199,7 @@ test.describe('Example Imagery Object', () => {
         const pausePlayButton = page.locator('.c-button.pause-play');
 
         // open the time conductor drop down
-        await page.locator('button:has-text("Fixed Timespan")').click();
+        await page.locator('.c-mode-button').click();
 
         // Click local clock
         await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
@@ -519,7 +523,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.locator('.c-mode-button').click();
 
         // Select local clock mode
-        await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+        await page.locator('[data-testid=conductor-modeOption-realtime]').nth(0).click();
 
         // Zoom in on next image
         await mouseZoomIn(page);
