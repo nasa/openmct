@@ -45,11 +45,12 @@ test.describe('Example Imagery Object', () => {
 
         await Promise.all([
             page.waitForNavigation(),
-            page.locator(backgroundImageSelector).hover({trial: true})
+            page.locator(backgroundImageSelector).hover({trial: true}),
+            // eslint-disable-next-line playwright/missing-playwright-await
+            expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery')
         ]);
 
         // Verify that the created object is focused
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
     });
 
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
