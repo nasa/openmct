@@ -40,7 +40,7 @@ async function createDomainObjectWithDefaults(page, type, name) {
     // Navigate to focus the 'My Items' folder, and hide the object tree
     // This is necessary so that subsequent objects can be created without a parent
     // TODO: Ideally this would navigate to a common `e2e` folder
-    await page.goto('./#/browse/mine?hideTree=true');
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     //Click the Create button
     await page.click('button:has-text("Create")');
 
