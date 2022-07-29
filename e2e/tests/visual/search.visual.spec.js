@@ -34,6 +34,12 @@ test.describe('Grand Search', () => {
         //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     });
+    test.use({
+        clockOptions: {
+            now: 0, //Set browser clock to UNIX Epoch
+            shouldAdvanceTime: false //Don't advance the clock
+        }
+    });
     //This needs to be rewritten to use a non clock or non display layout object
     test('Can search for objects, and subsequent search dropdown behaves properly @unstable', async ({ page, theme }) => {
         // await createDomainObjectWithDefaults(page, 'Display Layout');

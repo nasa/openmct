@@ -56,7 +56,7 @@ test.describe('Visual - addInit', () => {
         await createDomainObjectWithDefaults(page, CUSTOM_NAME);
 
         // Take a snapshot of the newly created CUSTOM_NAME notebook
-        await percySnapshot(page, 'Restricted Notebook with CUSTOM_NAME' + theme);
+        await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
 
     });
 });

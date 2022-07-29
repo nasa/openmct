@@ -37,9 +37,15 @@ const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe('Visual - Default', () => {
-    test.beforeEach(async ({ page, theme }) => {
+    test.beforeEach(async ({ page }) => {
         //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    });
+    test.use({
+        clockOptions: {
+            now: 0, //Set browser clock to UNIX Epoch
+            shouldAdvanceTime: false //Don't advance the clock
+        }
     });
 
     test('Visual - Root and About', async ({ page, theme }) => {
@@ -53,7 +59,7 @@ test.describe('Visual - Default', () => {
         await page.click('.l-shell__app-logo');
 
         // Modify the Build information in 'about' to be consistent run-over-run
-        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info');
+        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
         await expect(versionInformationLocator).toBeEnabled();
         await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
 
@@ -138,6 +144,7 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `Banner message shown (theme: '${theme}')`);
 
         //Wait until Save Banner is gone
+        await page.locator('.c-message-banner__close-button').click();
         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
         await percySnapshot(page, `Banner message gone (theme: '${theme}')`);
     });
