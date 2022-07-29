@@ -68,7 +68,7 @@ test.describe('Grand Search', () => {
             page.waitForNavigation(),
             page.locator('text=Unnamed Clock').click()
         ]);
-        await percySnapshot(page, 'Clicking on search results should navigate to them if not editing' + theme);
+        await percySnapshot(page, `Clicking on search results should navigate to them if not editing (theme: '${theme}')`);
 
     });
 });
