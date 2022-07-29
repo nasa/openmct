@@ -112,7 +112,7 @@ test.describe('Visual - Default', () => {
         await page.locator('input[type="text"]').first().click();
 
         //  verify error msg for end time (unable to capture snapshot of popup)
-        await percySnapshot(page, 'End time error' + theme);
+        await percySnapshot(page, `End time error (theme: '${theme}')`);
     });
 
     test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
