@@ -26,7 +26,7 @@ This test suite is dedicated to tests which verify branding related components.
 
 const { test, expect } = require('../../baseFixtures.js');
 
-test.describe('Branding tests @localStorage', () => {
+test.describe('Branding tests', () => {
     test('About Modal launches with basic branding properties', async ({ page }) => {
         // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -38,7 +38,7 @@ test.describe('Branding tests @localStorage', () => {
         await expect(page.locator('.c-about__image')).toBeVisible();
 
         // Modify the Build information in 'about' Modal
-        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info');
+        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
         await expect(versionInformationLocator).toBeEnabled();
         await expect.soft(versionInformationLocator).toContainText(/Version: \d/);
         await expect.soft(versionInformationLocator).toContainText(/Build Date: ((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun))/);
