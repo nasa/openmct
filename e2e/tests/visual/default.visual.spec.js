@@ -148,7 +148,7 @@ test.describe('Visual - Default', () => {
 
         //Hover on Display Layout option.
         await page.locator('text=Display Layout').hover();
-        await percySnapshot(page, 'Display Layout Create Menu' + theme);
+        await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
 
     });
 
