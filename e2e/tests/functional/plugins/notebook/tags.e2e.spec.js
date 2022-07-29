@@ -45,7 +45,6 @@ async function createNotebookAndEntry(page, iterations = 1) {
         await page.locator(entryLocator).click();
         await page.locator(entryLocator).fill(`Entry ${iteration}`);
     }
-
 }
 
 /**
@@ -74,7 +73,7 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
     }
 }
 
-test.describe('Tagging in Notebooks', () => {
+test.describe('Tagging in Notebooks @addInit', () => {
     test('Can load tags', async ({ page }) => {
 
         await createNotebookAndEntry(page);
