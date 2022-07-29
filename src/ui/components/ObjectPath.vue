@@ -22,7 +22,7 @@
 
 <template>
 <ul
-    v-if="originalPath.length"
+    v-if="orderedOriginalPath.length"
     class="c-location"
 >
     <li
@@ -48,14 +48,18 @@ export default {
     },
     inject: ['openmct'],
     props: {
-        enableSelectionListening: {
+        domainObject: {
+            type: Object,
+            required: true
+        },
+        readOnly: {
             type: Boolean,
             required: false,
             default() {
-                return true;
+                return false;
             }
         },
-        readOnly: {
+        showObjectItself: {
             type: Boolean,
             required: false,
             default() {
@@ -65,73 +69,34 @@ export default {
     },
     data() {
         return {
-            domainObject: {},
-            originalPath: [],
-            keyString: ''
+            orderedOriginalPath: []
         };
     },
-    computed: {
-        orderedOriginalPath() {
-            return this.originalPath.slice().reverse();
-        }
-    },
-    mounted() {
-        if (this.enableSelectionListening) {
-            this.openmct.selection.on('change', this.updateSelection);
-            this.updateSelection(this.openmct.selection.get());
-        }
-    },
-    beforeDestroy() {
-        this.openmct.selection.off('change', this.updateSelection);
-    },
-    methods: {
-        setOriginalPath(path, skipSlice) {
-            let originalPath = path;
+    async mounted() {
+        const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
-            if (!skipSlice) {
-                originalPath = path.slice(1, -1);
-            }
+        if (keyString && this.keyString !== keyString) {
+            this.keyString = keyString;
+            this.originalPath = [];
 
-            this.originalPath = originalPath.map((domainObject, index, pathArray) => {
+            const rawOriginalPath = await this.openmct.objects.getOriginalPath(keyString);
+
+            const pathWithDomainObject = rawOriginalPath.map((domainObject, index, pathArray) => {
                 let key = this.openmct.objects.makeKeyString(domainObject.identifier);
+                const objectPath = pathArray.slice(index);
 
                 return {
                     domainObject,
                     key,
-                    objectPath: pathArray.slice(index)
+                    objectPath
                 };
             });
-        },
-        clearData() {
-            this.domainObject = {};
-            this.originalPath = [];
-            this.keyString = '';
-        },
-        updateSelection(selection) {
-            if (!selection.length || !selection[0].length) {
-                this.clearData();
-
-                return;
-            }
-
-            this.domainObject = selection[0][0].context.item;
-            let parentObject = selection[0][1];
-
-            if (!this.domainObject && parentObject && parentObject.context.item) {
-                this.setOriginalPath([parentObject.context.item], true);
-                this.keyString = '';
-
-                return;
-            }
-
-            let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
-            if (keyString && this.keyString !== keyString) {
-                this.keyString = keyString;
-                this.originalPath = [];
-
-                this.openmct.objects.getOriginalPath(this.keyString)
-                    .then(this.setOriginalPath);
+            if (this.showObjectItself) {
+                // remove ROOT only
+                this.orderedOriginalPath = pathWithDomainObject.slice(0, pathWithDomainObject.length - 1).reverse();
+            } else {
+                // remove ROOT and object itself from path
+                this.orderedOriginalPath = pathWithDomainObject.slice(1, pathWithDomainObject.length - 1).reverse();
             }
         }
     }

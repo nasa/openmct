@@ -88,6 +88,7 @@
                 :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
                 :annotation-search-type="openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS"
                 :target-specific-details="{entryId: entry.id}"
+                @tags-updated="timestampAndUpdate"
             />
 
             <div class="c-snapshots c-ne__embeds">
@@ -145,6 +146,8 @@ import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
 import Moment from 'moment';
+
+const UNKNOWN_USER = 'Unknown';
 
 export default {
     components: {
@@ -206,7 +209,8 @@ export default {
 
             return {
                 targetKeyString,
-                entryId: this.entry.id
+                entryId: this.entry.id,
+                modified: this.entry.modified
             };
         },
         createdOnTime() {
@@ -283,7 +287,7 @@ export default {
                 await this.addNewEmbed(objectPath);
             }
 
-            this.$emit('updateEntry', this.entry);
+            this.timestampAndUpdate();
         },
         findPositionInArray(array, id) {
             let position = -1;
@@ -321,7 +325,7 @@ export default {
             // TODO: remove notebook snapshot object using object remove API
             this.entry.embeds.splice(embedPosition, 1);
 
-            this.$emit('updateEntry', this.entry);
+            this.timestampAndUpdate();
         },
         updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
@@ -333,6 +337,17 @@ export default {
                 return found;
             });
 
+            this.timestampAndUpdate();
+        },
+        async timestampAndUpdate() {
+            const user = await this.openmct.user.getCurrentUser();
+
+            if (user === undefined) {
+                this.entry.modifiedBy = UNKNOWN_USER;
+            }
+
+            this.entry.modified = Date.now();
+
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
@@ -342,7 +357,7 @@ export default {
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;
-                this.$emit('updateEntry', this.entry);
+                this.timestampAndUpdate();
             } else {
                 this.$emit('cancelEdit');
             }
