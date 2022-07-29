@@ -52,7 +52,7 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
 
 // Structure: Try to keep a single describe block per logical groups of tests. If your test runtime exceeds 5 minutes or 500 lines, it's likely that it will need to be split.
 // Annotations: Please use the @unstable tag so that our automation can pick it up as a part of our test promotion pipeline.
-test.describe('Renaming Timer Object @unstable', () => {
+test.describe('Renaming Timer Object', () => {
     //Create a testcase name which will be obvious when it fails in CI
     test('Can create a new Timer object and rename it from actions Menu', async ({ page }) => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve
@@ -68,7 +68,6 @@ test.describe('Renaming Timer Object @unstable', () => {
 
         //Assert that the name has changed in the browser bar to the value we assigned above
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName);
-
     });
     test('An existing Timer object can be renamed twice', async ({ page }) => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve

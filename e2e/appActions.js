@@ -37,11 +37,16 @@
  * @param {string | undefined} name
  */
 async function createDomainObjectWithDefaults(page, type, name) {
+    // Navigate to focus the 'My Items' folder, and hide the object tree
+    // This is necessary so that subsequent objects can be created without a parent
+    // TODO: Ideally this would navigate to a common `e2e` folder
+    await page.goto('./#/browse/mine?hideTree=true');
+    await page.waitForNavigation({ waitUntil: 'networkidle' });
     //Click the Create button
     await page.click('button:has-text("Create")');
 
     // Click the object specified by 'type'
-    await page.click(`text=${type}`);
+    await page.click(`li:text("${type}")`);
 
     // Modify the name input field of the domain object to accept 'name'
     if (name) {
@@ -53,7 +58,7 @@ async function createDomainObjectWithDefaults(page, type, name) {
     // Click OK button and wait for Navigate event
     await Promise.all([
         page.waitForNavigation({waitUntil: 'networkidle'}),
-        page.click('text=OK')
+        page.click('[aria-label="Save"]')
     ]);
 }
 
