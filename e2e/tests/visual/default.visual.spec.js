@@ -128,7 +128,7 @@ test.describe('Visual - Default', () => {
         await page.locator('.field.control.l-input-sm input').first().fill('');
 
         // Validate red x mark
-        await percySnapshot(page, 'removed amplitude property value' + theme);
+        await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
     });
 
     test('Visual - Save Successful Banner', async ({ page, theme }) => {
