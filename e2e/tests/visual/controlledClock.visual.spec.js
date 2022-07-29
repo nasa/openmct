@@ -56,6 +56,6 @@ test.describe('Visual - Controlled Clock', () => {
         await page.locator('canvas >> nth=1').hover({trial: true});
 
         //Take snapshot of Sine Wave Generator within Overlay Plot
-        await percySnapshot(page, 'SineWaveInOverlayPlot' + theme);
+        await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);
     });
 });
