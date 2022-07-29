@@ -91,15 +91,16 @@ describe("The Object API", () => {
                     openmct.notifications.error = jasmine.createSpy('error');
                 });
 
-                it("on create", async () => {
+                it("on create", () => {
                     mockProvider.create.and.returnValue(Promise.reject(new openmct.objects.errors.Conflict("Test Conflict error")));
+
                     return objectAPI.save(mockDomainObject).catch(() => {
                         expect(openmct.notifications.error).toHaveBeenCalledWith(`Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`);
                     });
-                    
+
                 });
 
-                it("on update", async () => {
+                it("on update", () => {
                     mockProvider.update.and.returnValue(Promise.reject(new openmct.objects.errors.Conflict("Test Conflict error")));
                     mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
                     mockDomainObject.modified = Date.now();
@@ -162,7 +163,7 @@ describe("The Object API", () => {
                 objectAPI.addGetInterceptor(notApplicableMockInterceptor);
             });
 
-            it("Caches multiple requests for the same object", async () => {
+            it("Caches multiple requests for the same object", () => {
                 const promises = [];
                 expect(mockProvider.get.calls.count()).toBe(0);
                 promises.push(objectAPI.get(mockDomainObject.identifier));
