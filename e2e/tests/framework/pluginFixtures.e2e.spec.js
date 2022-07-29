@@ -27,7 +27,8 @@ that they are working as expected.
 
 const { test, expect } = require('../../pluginFixtures.js');
 
-test.describe('pluginFixtures tests', () => {
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('pluginFixtures tests', () => {
     test.use({ domainObjectName: 'Timer' });
     let timerUUID;
 
