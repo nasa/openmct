@@ -135,7 +135,7 @@ test.describe('Visual - Default', () => {
         await createDomainObjectWithDefaults(page, 'Timer');
 
         await page.locator('.c-message-banner__message').hover({ trial: true });
-        await percySnapshot(page, 'Banner message shown' + theme);
+        await percySnapshot(page, `Banner message shown (theme: '${theme}')`);
 
         //Wait until Save Banner is gone
         await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
