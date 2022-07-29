@@ -47,7 +47,7 @@ test.describe('Visual - Default', () => {
         await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
         // Take a snapshot of the Dashboard
-        await percySnapshot(page, 'Root');
+        await percySnapshot(page, `Root (theme: '${theme}')`);
 
         // Click About button
         await page.click('.l-shell__app-logo');
