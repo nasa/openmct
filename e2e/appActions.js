@@ -65,7 +65,6 @@ async function createDomainObjectWithDefaults(page, type, name) {
 
     // Close and wait until Save Banner is gone
     await Promise.all([
-        page.waitForNavigation(),
         page.locator('.c-message-banner__close-button').click(),
         page.waitForSelector('.c-message-banner__message', { state: 'detached' })
     ]);
