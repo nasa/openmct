@@ -41,7 +41,6 @@ async function createDomainObjectWithDefaults(page, type, name) {
     // This is necessary so that subsequent objects can be created without a parent
     // TODO: Ideally this would navigate to a common `e2e` folder
     await page.goto('./#/browse/mine?hideTree=true');
-    await page.waitForNavigation({ waitUntil: 'networkidle' });
     //Click the Create button
     await page.click('button:has-text("Create")');
 
@@ -61,12 +60,6 @@ async function createDomainObjectWithDefaults(page, type, name) {
         page.click('[aria-label="Save"]'),
         // Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
-    ]);
-
-    // Close and wait until Save Banner is gone
-    await Promise.all([
-        page.locator('.c-message-banner__close-button').click(),
-        page.waitForSelector('.c-message-banner__message', { state: 'detached' })
     ]);
 }
 
