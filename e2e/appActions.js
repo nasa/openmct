@@ -62,6 +62,8 @@ async function createDomainObjectWithDefaults(page, type, name) {
         // Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
+
+    return name || `Unnamed ${type}`;
 }
 
 /**
