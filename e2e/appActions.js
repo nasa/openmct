@@ -58,8 +58,13 @@ async function createDomainObjectWithDefaults(page, type, name) {
     // Click OK button and wait for Navigate event
     await Promise.all([
         page.waitForNavigation({waitUntil: 'networkidle'}),
-        page.click('[aria-label="Save"]')
+        page.click('[aria-label="Save"]'),
+        // Wait for Save Banner to appear
+        page.waitForSelector('.c-message-banner__message')
     ]);
+
+    // Wait until Save Banner is gone
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
 }
 
 /**
