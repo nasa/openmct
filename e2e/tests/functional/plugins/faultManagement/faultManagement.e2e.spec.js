@@ -20,179 +20,146 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*
-This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
-*/
+const { test, expect } = require('../../../../pluginFixtures');
+const path = require('path');
+const { first } = require('lodash');
 
-const { test } = require('../../../fixtures');
+test.describe('The Fault Management Plugin', () => {
+    test.beforeEach(async ({ page }) => {
+        await startAndNavigateToFaultManagement(page);
+    });
 
-test.describe('Notebook CRUD Operations', () => {
-    test.fixme('Can create a Notebook Object', async ({ page }) => {
-        //Create domain object
-        //Newly created notebook should have one Section and one page, 'Unnamed Section'/'Unnamed Page'
+    test('Shows a criticality icon for every fault', async ({ page }) => {
+        const faultCount = await page.locator('c-fault-mgmt__list').count();
+        const criticalityIconCount = await page.locator('c-fault-mgmt__list-severity').count();
+
+        expect.soft(faultCount).toEqual(criticalityIconCount);
     });
-    test.fixme('Can update a Notebook Object', async ({ page }) => {});
-    test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
-    test.fixme('Can Delete a Notebook Object', async ({ page }) => {
-        // Other than non-persistible objects
+
+    test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector', async ({ page }) => {
+        await selectFaultItem(page, 1);
+
+        const selectedFaultName = await page.locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname').textContent();
+        const inspectorFaultNameCount = await page.locator(`.c-inspector__properties >> :text("${selectedFaultName}")`).count();
+
+        await expect.soft(page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').first()).toHaveClass(/is-selected/);
+        expect.soft(inspectorFaultNameCount).toEqual(1);
     });
+
+    test('When selecting multiple faults, no specific fault information is shown in the inspector', async ({ page }) => {
+        await selectFaultItem(page, 1);
+        await selectFaultItem(page, 2);
+
+        const selectedRows = page.locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname');
+        expect.soft(await selectedRows.count()).toEqual(2);
+
+        const firstSelectedFaultName = await selectedRows.nth(0).textContent();
+        const secondSelectedFaultName = await selectedRows.nth(1).textContent();
+        const firstNameInInspectorCount = await page.locator(`.c-inspector__properties >> :text("${firstSelectedFaultName}")`).count();
+        const secondNameInInspectorCount = await page.locator(`.c-inspector__properties >> :text("${secondSelectedFaultName}")`).count();
+
+        expect.soft(firstNameInInspectorCount).toEqual(0);
+        expect.soft(secondNameInInspectorCount).toEqual(0);
+    });
+
+    test('Allows you to shelve a fault', async ({ page }) => {
+        const shelvedFaultName = await getFaultName(page, 2);
+
+        await shelveFault(page, 2);
+        await changeViewTo(page, 'shelved');
+
+        const shelvedViewFaultName = await getFaultName(page, 1);
+
+        expect.soft(shelvedFaultName).toEqual(shelvedViewFaultName);
+    });
+
+    test('Allows you to acknowledge a fault', async ({ page }) => {
+        const acknowledgedFaultName = await getFaultName(page, 3);
+
+        await acknowledgeFault(page, 3);
+        await changeViewTo(page, 'acknowledged');
+
+        const acknowledgedViewFaultName = await getFaultName(page, 1);
+
+        expect.soft(acknowledgedFaultName).toEqual(acknowledgedViewFaultName);
+    });
+
 });
 
-test.describe('Default Notebook', () => {
-    // General Default Notebook statements
-    // ## Useful commands:
-    // 1.  - To check default notebook:
-    //     `JSON.parse(localStorage.getItem('notebook-storage'));`
-    // 1.  - Clear default notebook:
-    //     `localStorage.setItem('notebook-storage', null);`
-    test.fixme('A newly created Notebook is automatically set as the default notebook if no other notebooks exist', async ({ page }) => {
-        //Create new notebook
-        //Verify Default Notebook Characteristics
-    });
-    test.fixme('A newly created Notebook is automatically set as the default notebook if at least one other notebook exists', async ({ page }) => {
-        //Create new notebook A
-        //Create second notebook B
-        //Verify Non-Default Notebook A Characteristics
-        //Verify Default Notebook B Characteristics
-    });
-    test.fixme('If a default notebook is deleted, the second most recent notebook becomes the default', async ({ page }) => {
-        //Create new notebook A
-        //Create second notebook B
-        //Delete Notebook B
-        //Verify Default Notebook A Characteristics
-    });
-});
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function startAndNavigateToFaultManagement(page) {
 
-test.describe('Notebook section tests', () => {
-    //The following test cases are associated with Notebook Sections
-    test.fixme('New sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
-        //Create new notebook A
-        //Add section
-        //Verify new section and new page details
-    });
-    test.fixme('Section selection operations and associated behavior', async ({ page }) => {
-        //Create new notebook A
-        //Add Sections until 6 total with no default section/page
-        //Select 3rd section
-        //Delete 4th section
-        //3rd section is still selected
-        //Delete 3rd section
-        //1st section is selected
-        //Set 3rd section as default
-        //Delete 2nd section
-        //3rd section is still default
-        //Delete 3rd section
-        //1st is selected and there is no default notebook
-    });
-});
+    // eslint-disable-next-line no-undef
+    await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleFaultProvider.js') });
+    await page.goto('./', { waitUntil: 'networkidle' });
 
-test.describe('Notebook page tests', () => {
-    //The following test cases are associated with Notebook Pages
-    test.fixme('Page selection operations and associated behavior', async ({ page }) => {
-        //Create new notebook A
-        //Delete existing Page
-        //New 'Unnamed Page' automatically created
-        //Create 6 total Pages without a default page
-        //Select 3rd
-        //Delete 3rd
-        //First is now selected
-        //Set 3rd as default
-        //Select 2nd page
-        //Delete 2nd page
-        //3rd (default) is now selected
-        //Set 3rd as default page
-        //Select 3rd (default) page
-        //Delete 3rd page
-        //First is now selected and there is no default notebook
-    });
-});
+    // Click text=Fault Management
+    await page.click('text=Fault Management'); // this verifies the plugin has been added
+    await page.waitForNavigation({waitUntil: 'networkidle'});
+}
 
-test.describe('Notebook search tests', () => {
-    test.fixme('Can search for a single result', async ({ page }) => {});
-    test.fixme('Can search for many results', async ({ page }) => {});
-    test.fixme('Can search for new and recently modified entries', async ({ page }) => {});
-    test.fixme('Can search for section text', async ({ page }) => {});
-    test.fixme('Can search for page text', async ({ page }) => {});
-    test.fixme('Can search for entry text', async ({ page }) => {});
-});
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function acknowledgeFault(page, rowNumber) {
+    await openFaultRowMenu(page, rowNumber);
+    await page.locator('.c-menu >> text="Acknowledge"').click();
+    // Click [aria-label="Save"]
+    await page.locator('[aria-label="Save"]').click();
 
-test.describe('Notebook entry tests', () => {
-    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
-    test.fixme('When a telemetry object is dropped into a notebook, a new entry is created and it should be focused', async ({ page }) => {
-        // Drag and drop any telmetry object on 'drop object'
-        // new entry gets created with telemtry object
-    });
-    test.fixme('When a telemetry object is dropped into a notebooks existing entry, it should be focused', async ({ page }) => {
-        // Drag and drop any telemetry object onto existing entry
-        // Entry updated with object and snapshot
-    });
-    test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
-    test.fixme('previous and new entries can be deleted', async ({ page }) => {});
-});
+}
 
-test.describe('Snapshot Menu tests', () => {
-    test.fixme('When no default notebook is selected, Snapshot Menu dropdown should only have a single option', async ({ page }) => {
-        // There should be no default notebook
-        // Clear default notebook if exists using `localStorage.setItem('notebook-storage', null);`
-        // refresh page
-        // Click on 'Notebook Snaphot Menu'
-        // 'save to Notebook Snapshots' should be only option there
-    });
-    test.fixme('When default notebook is updated selected, Snapshot Menu dropdown should list it as the newest option', async ({ page }) => {
-        // Create 2a notebooks
-        // Set Notebook A as Default
-        // Open Snapshot Menu and note that Notebook A is listed
-        // Close Snapshot Menu
-        // Set Default Notebook to Notebook B
-        // Open Snapshot Notebook and note that Notebook B is listed
-        // Select Default Notebook Option and verify that Snapshot is added to Notebook B
-    });
-    test.fixme('Can add Snapshots via Snapshot Menu and details are correct', async ({ page }) => {
-        //Note this should be a visual test, too
-        // Create Telemetry object
-        // Create A notebook with many pages and sections.
-        // Set page and section defaults to be between first and last of many. i.e. 3 of 5
-        // Navigate to Telemetry object
-        // Select Default Notebook Option and verify that Snapshot is added to Notebook A
-        // Verify Snapshot Details appear correctly
-    });
-    test.fixme('Snapshots adjust time conductor', async ({ page }) => {
-        // Create Telemetry object
-        // Set Telemetry object's timeconductor to Fixed time with Start and Endtimes are recorded
-        // Embed Telemetry object into notebook
-        // Set Time Conductor to Local clock
-        // Click into embedded telemetry object and verify object appears with same fixed time from record
-    });
-});
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function shelveFault(page, rowNumber) {
+    await openFaultRowMenu(page, rowNumber);
+    await page.locator('.c-menu >> text="Shelve"').click();
+    // Click [aria-label="Save"]
+    await page.locator('[aria-label="Save"]').click();
+}
 
-test.describe('Snapshot Container tests', () => {
-    test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
-    test.fixme('5 Snapshots can be added to a container and Deleted with Delete All action', async ({ page }) => {});
-    test.fixme('A snapshot can be Deleted from Container', async ({ page }) => {});
-    test.fixme('A snapshot can be Previewed from Container', async ({ page }) => {});
-    test.fixme('A snapshot Container can be open and closed', async ({ page }) => {});
-    test.fixme('Can add object to Snapshot container and pull into notebook and create a new entry', async ({ page }) => {
-        //Create Notebook
-        //Create Telemetry Object
-        //From Telemetry Object, use 'save to Notebook Snapshots'
-        //Snapshots indicator should blink, click on it to view snapshots
-        //Navigate to Notebook
-        //Drag and Drop onto droppable area for new entry
-        //New Entry created with given snapshot added
-        //Snapshot removed from container?
-    });
-    test.fixme('Can add object to Snapshot container and pull into notebook and existing entry', async ({ page }) => {
-        //Create Notebook
-        //Create Telemetry Object
-        //From Telemetry Object, use 'save to Notebook Snapshots'
-        //Snapshots indicator should blink, click on it to view snapshots
-        //Navigate to Notebook
-        //Drag and Drop into exiting entry
-        //Existing Entry updated with given snapshot
-        //Snapshot removed from container?
-    });
-    test.fixme('Verify Embedded options for PNG, JPG, and Annotate work correctly', async ({ page }) => {
-        //Add snapshot to container
-        //Verify PNG, JPG, and Annotate buttons work correctly
-    });
-});
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function changeViewTo(page, view) {
+    await page.locator('.c-fault-mgmt__search-row select').first().selectOption(view);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function selectFaultItem(page, rowNumber) {
+    await page.locator(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`).check();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function getFaultName(page, rowNumber) {
+    const faultName = await page.locator(`.c-fault-mgmt__list-faultname >> nth=${rowNumber - 1}`).textContent();
+
+    return faultName;
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function openFaultRowMenu(page, rowNumber) {
+    // select
+    await page.locator(`.c-fault-mgmt-item > .c-fault-mgmt__list-action-button >> nth=${rowNumber - 1}`).click();
+
+}
+
+// Ensure that the disposition button for an individual fault works by selecting acknowledge or shelve.
+// Then, navigate to each view and ensure that the correct faults appear in the correct disposition views.
+// Also, check the same with selecting multiple faults and using the larger disposition options located directly under search.
+// Ensure that search works properly by entering keywords and observing the correct faults are shown.
+// Check to see if the sort button works and changes according to the options selected (Newest First, Oldest First, Severity)
+// When selecting the Acknowledged view, ensure that the criticality icons are not blinking. and that the criticality icon includes a checkmark.
+// When selecting the Unacknowledged view, check that the criticality icons are blinking.
+// When selecting the Shelved view, check that the contents of the fault are italicized and _slightly greyed out, and criticality icon is not blinking.
+// When selecting Standard View, ensure that only acknowledged and unacknowledged faults appear, and its criticality icons are blinking accordingly.
+// Shelve a fault for a short period of time. When the time specified runs out, ensure that the fault returns back to its Unacknowledged state and is NOT shelved.
