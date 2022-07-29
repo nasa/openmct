@@ -21,14 +21,14 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { openObjectTreeContextMenu } = require('../../../../appActions');
-
-const options = {
-    type: 'Timer'
-};
+const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Timer', () => {
-    test.use({ objectCreateOptions: options });
+    test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+        await createDomainObjectWithDefaults(page, 'timer');
+    });
+
     test('Can perform actions on the Timer', async ({ page, openmctConfig }) => {
         test.info().annotations.push({
             type: 'issue',
