@@ -66,7 +66,7 @@ test.describe('Visual - Default', () => {
         await createDomainObjectWithDefaults(page, 'Condition Set');
 
         // Take a snapshot of the newly created Condition Set object
-        await percySnapshot(page, 'Default Condition Set' + theme);
+        await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
     });
 
     test.fixme('Visual - Default Condition Widget', async ({ page, theme }) => {
