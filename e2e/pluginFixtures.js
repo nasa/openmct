@@ -93,7 +93,7 @@ const objectCreateOptions = null;
 /**
  * If provided, this will run start the Open MCT application in Snow Theme. This should be referenced in a Project config
  * and will initialize Open MCT with the Snow theme which is used in some other Open MCT projects.
- * @type {'snow' | null}
+ * @type {'snow' | 'espresso'}
  */
 const theme = null;
 
