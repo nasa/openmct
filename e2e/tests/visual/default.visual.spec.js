@@ -122,7 +122,7 @@ test.describe('Visual - Default', () => {
         // Click text=Sine Wave Generator
         await page.click('text=Sine Wave Generator');
 
-        await percySnapshot(page, 'Default Sine Wave Generator Form' + theme);
+        await percySnapshot(page, `Default Sine Wave Generator Form (theme: '${theme}')`);
 
         await page.locator('.field.control.l-input-sm input').first().click();
         await page.locator('.field.control.l-input-sm input').first().fill('');
