@@ -287,7 +287,7 @@ class CouchObjectProvider {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
 
-            if (isNotebookType(object)) {
+            if (isNotebookType(object) || object.type === 'annotation') {
                 //Temporary measure until object sync is supported for all object types
                 //Always update notebook revision number because we have realtime sync, so always assume it's the latest.
                 this.objectQueue[key].updateRevision(response[REV]);
