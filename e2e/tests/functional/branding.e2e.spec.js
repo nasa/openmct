@@ -26,7 +26,7 @@ This test suite is dedicated to tests which verify branding related components.
 
 const { test, expect } = require('../../baseFixtures.js');
 
-test.describe('Branding tests', () => {
+test.describe('Branding tests @localStorage', () => {
     test('About Modal launches with basic branding properties', async ({ page }) => {
         // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
