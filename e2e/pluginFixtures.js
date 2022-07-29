@@ -91,8 +91,18 @@ async function getOrCreateDomainObject(page, options) {
 const objectCreateOptions = null;
 
 /**
- * If provided, this will run start the Open MCT application in Snow Theme. This should be referenced in a Project config
- * and will initialize Open MCT with the Snow theme which is used in some other Open MCT projects.
+ * The default theme for VIPER and Open MCT is the 'espresso' theme. Overriding this value with 'snow' in our playwright config.js
+ * will override the default theme by injecting the 'snow' theme on launch.
+ *
+ * ### Example:
+ * ```js
+ * projects: [
+ * {
+ *     name: 'chrome-snow-theme',
+ *     use: {
+ *         browserName: 'chromium',
+ *         theme: 'snow'
+ * ```
  * @type {'snow' | 'espresso'}
  */
 const theme = 'espresso';
@@ -107,6 +117,7 @@ const theme = 'espresso';
 const myItemsFolderName = "My Items";
 
 exports.test = test.extend({
+    // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
     theme: [theme, { option: true }],
     // eslint-disable-next-line no-shadow
     page: async ({ page, theme }, use) => {

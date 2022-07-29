@@ -42,7 +42,8 @@ const CUSTOM_NAME = 'CUSTOM_NAME';
 test.describe('Visual - addInit', () => {
     test.use({
         clockOptions: {
-            shouldAdvanceTime: false
+            now: 0, //Set browser clock to UNIX Epoch
+            shouldAdvanceTime: false //Don't advance the clock
         }
     });
 
