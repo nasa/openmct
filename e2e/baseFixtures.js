@@ -75,8 +75,13 @@ exports.test = base.test.extend({
     /**
      * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
      * the Time Indicator Clock to be in a specific state.
+     *
+     * Warning: Has many limitations and secondary side effects in Open MCT.
+     * 1. The tree component does not render.
+     * 2. page.WaitForNavigation does not trigger.
+     *
      * Usage:
-     * ```
+     * ```js
      * test.use({
      *   clockOptions: {
      *       now: 0,
@@ -88,6 +93,7 @@ exports.test = base.test.extend({
      *
      * @see {@link https://github.com/microsoft/playwright/issues/6347 Github RFE}
      * @see {@link https://github.com/sinonjs/fake-timers/#var-clock--faketimersinstallconfig SinonJS FakeTimers Config}
+     * @type {import('@types/sinonjs__fake-timers').FakeTimerInstallOpts}
      */
     clockOptions: [undefined, { option: true }],
     overrideClock: [async ({ context, clockOptions }, use) => {
