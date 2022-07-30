@@ -28,6 +28,7 @@
 
 const { test, expect } = require('./baseFixtures');
 // const { createDomainObjectWithDefaults } = require('./appActions');
+const path = require('path');
 
 /**
  * @typedef {Object} ObjectCreateOptions
@@ -96,6 +97,23 @@ const { test, expect } = require('./baseFixtures');
 // const objectCreateOptions = null;
 
 /**
+ * The default theme for VIPER and Open MCT is the 'espresso' theme. Overriding this value with 'snow' in our playwright config.js
+ * will override the default theme by injecting the 'snow' theme on launch.
+ *
+ * ### Example:
+ * ```js
+ * projects: [
+ * {
+ *     name: 'chrome-snow-theme',
+ *     use: {
+ *         browserName: 'chromium',
+ *         theme: 'snow'
+ * ```
+ * @type {'snow' | 'espresso'}
+ */
+const theme = 'espresso';
+
+/**
  * The name of the "My Items" folder in the domain object tree.
  *
  * Default: `"My Items"`
@@ -105,6 +123,18 @@ const { test, expect } = require('./baseFixtures');
 const myItemsFolderName = "My Items";
 
 exports.test = test.extend({
+    // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
+    theme: [theme, { option: true }],
+    // eslint-disable-next-line no-shadow
+    page: async ({ page, theme }, use) => {
+        // eslint-disable-next-line playwright/no-conditional-in-test
+        if (theme === 'snow') {
+            //inject snow theme
+            await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
+        }
+
+        await use(page);
+    },
     myItemsFolderName: [myItemsFolderName, { option: true }],
     // eslint-disable-next-line no-shadow
     openmctConfig: async ({ myItemsFolderName }, use) => {

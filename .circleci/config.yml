@@ -5,6 +5,7 @@ executors:
       - image: mcr.microsoft.com/playwright:v1.23.0-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
+      PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
 parameters:
   BUST_CACHE:
     description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
@@ -64,8 +65,8 @@ commands:
       suite:
         type: string
    steps:
-    - run: npm run cov:e2e:report 
-    - run: npm run cov:e2e:<<parameters.suite>>:publish       
+    - run: npm run cov:e2e:report || true
+    - run: npm run cov:e2e:<<parameters.suite>>:publish
 orbs:
   node: circleci/node@4.9.0
   browser-tools: circleci/browser-tools@1.3.0
@@ -153,6 +154,22 @@ jobs:
       - store_artifacts:
           path: html-test-results
       - generate_and_store_version_and_filesystem_artifacts
+  visual-test:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: npm run test:e2e:visual
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: html-test-results
+      - generate_and_store_version_and_filesystem_artifacts
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
@@ -168,6 +185,9 @@ workflows:
           suite: stable
       - perf-test:
           node-version: lts/gallium
+      - visual-test:
+          node-version: lts/gallium
+        
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
@@ -185,6 +205,10 @@ workflows:
           name: e2e-full-nightly
           node-version: lts/gallium
           suite: full
+      - perf-test:
+          node-version: lts/gallium
+      - visual-test:
+          node-version: lts/gallium
     triggers:
       - schedule:
           cron: "0 0 * * *"

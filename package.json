@@ -5,7 +5,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.18.2",
     "@braintree/sanitize-url": "6.0.0",
-    "@percy/cli": "1.2.1",
+    "@percy/cli": "1.6.4",
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.23.0",
     "@types/eventemitter3": "^1.0.0",
@@ -94,7 +94,7 @@
     "test:e2e:unstable": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @unstable",
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js --project=chrome",
     "test:e2e:updatesnapshots": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot --update-snapshots",
-    "test:e2e:visual": "percy exec --config ./e2e/.percy.yml -- npx playwright test --config=e2e/playwright-visual.config.js",
+    "test:e2e:visual": "percy exec --config ./e2e/.percy.yml -- npx playwright test --config=e2e/playwright-visual.config.js --grep-invert @unstable",
     "test:e2e:full": "npx playwright test --config=e2e/playwright-ci.config.js",
     "test:perf": "npx playwright test --config=e2e/playwright-performance.config.js",
     "test:watch": "cross-env NODE_ENV=test NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --no-single-run",
