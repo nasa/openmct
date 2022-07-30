@@ -28,6 +28,7 @@
 
 const { test, expect } = require('./baseFixtures');
 // const { createDomainObjectWithDefaults } = require('./appActions');
+const path = require('path');
 
 /**
  * @typedef {Object} ObjectCreateOptions
