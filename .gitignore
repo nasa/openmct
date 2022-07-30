@@ -11,6 +11,7 @@
 *.css
 *.css.map
 
+
 # Intellij project configuration files
 *.idea
 *.iml
