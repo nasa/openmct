@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 /*
-Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct started by `npm start` within the
+Collection of Visual Tests set to run in a default context with default Plugins. The tests within this suite
+are only meant to run against openmct's app.js started by `npm run start` within the
 `./e2e/playwright-visual.config.js` file.
 
 These should only use functional expect statements to verify assumptions about the state
@@ -75,50 +75,12 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
     });
 
-    test('Visual - Default Condition Widget @unstable', async ({ page, theme }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/5349'
-        });
+    test('Visual - Default Condition Widget', async ({ page, theme }) => {
 
         await createDomainObjectWithDefaults(page, { type: 'Condition Widget' });
 
         // Take a snapshot of the newly created Condition Widget object
         await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
-    });
-
-    test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
-        const year = new Date().getFullYear();
-
-        let startDate = 'xxxx-01-01 01:00:00.000Z';
-        startDate = year + startDate.substring(4);
-
-        let endDate = 'xxxx-01-01 02:00:00.000Z';
-        endDate = year + endDate.substring(4);
-
-        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
-
-        //  verify no error msg
-        await percySnapshot(page, `Default Time conductor (theme: '${theme}')`);
-
-        startDate = (year + 1) + startDate.substring(4);
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
-        await page.locator('input[type="text"]').nth(1).click();
-
-        //  verify error msg for start time (unable to capture snapshot of popup)
-        await percySnapshot(page, `Start time error (theme: '${theme}')`);
-
-        startDate = (year - 1) + startDate.substring(4);
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
-
-        endDate = (year - 2) + endDate.substring(4);
-        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
-
-        await page.locator('input[type="text"]').first().click();
-
-        //  verify error msg for end time (unable to capture snapshot of popup)
-        await percySnapshot(page, `End time error (theme: '${theme}')`);
     });
 
     test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {

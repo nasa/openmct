@@ -21,36 +21,56 @@
  *****************************************************************************/
 
 /*
-Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct started by `npm start` within the
-`./e2e/playwright-visual.config.js` file.
-
+Collection of Visual Tests set to run with browser clock manipulate made possible with the
+clockOptions plugin fixture.
 */
 
 const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 
-test.describe('Visual - Controlled Clock @localStorage', () => {
+test.describe('Visual - Controlled Clock', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL and Hide Tree
+        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    });
     test.use({
-        storageState: './e2e/test-data/VisualTestData_storage.json',
         clockOptions: {
             now: 0, //Set browser clock to UNIX Epoch
             shouldAdvanceTime: false //Don't advance the clock
         }
     });
 
-    test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-        // Go to baseURL
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
+        const year = new Date().getFullYear();
 
-        await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
-        //Ensure that we're on the Unnamed Overlay Plot object
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Overlay Plot');
+        let startDate = 'xxxx-01-01 01:00:00.000Z';
+        startDate = year + startDate.substring(4);
 
-        //Wait for canvas to be rendered and stop animating
-        await page.locator('canvas >> nth=1').hover({trial: true});
+        let endDate = 'xxxx-01-01 02:00:00.000Z';
+        endDate = year + endDate.substring(4);
 
-        //Take snapshot of Sine Wave Generator within Overlay Plot
-        await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);
+        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+        await page.locator('input[type="text"]').first().fill(startDate.toString());
+
+        //  verify no error msg
+        await percySnapshot(page, `Default Time conductor (theme: '${theme}')`);
+
+        startDate = (year + 1) + startDate.substring(4);
+        await page.locator('input[type="text"]').first().fill(startDate.toString());
+        await page.locator('input[type="text"]').nth(1).click();
+
+        //  verify error msg for start time (unable to capture snapshot of popup)
+        await percySnapshot(page, `Start time error (theme: '${theme}')`);
+
+        startDate = (year - 1) + startDate.substring(4);
+        await page.locator('input[type="text"]').first().fill(startDate.toString());
+
+        endDate = (year - 2) + endDate.substring(4);
+        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+
+        await page.locator('input[type="text"]').first().click();
+
+        //  verify error msg for end time (unable to capture snapshot of popup)
+        await percySnapshot(page, `End time error (theme: '${theme}')`);
     });
 });

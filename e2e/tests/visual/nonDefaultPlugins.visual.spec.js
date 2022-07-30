@@ -39,7 +39,11 @@ const path = require('path');
 
 const CUSTOM_NAME = 'CUSTOM_NAME';
 
-test.describe('Visual - addInit', () => {
+test.describe('Visual - Non-default plugins', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL and Hide Tree
+        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    });
     test.use({
         clockOptions: {
             now: 0, //Set browser clock to UNIX Epoch
