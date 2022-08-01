@@ -27,7 +27,7 @@
  */
 
 const { test, expect } = require('./baseFixtures');
-// const { createDomainObjectWithDefaults } = require('./appActions');
+const { createDomainObjectWithDefaults, getUUIDFromURL } = require('./appActions');
 const path = require('path');
 
 /**
@@ -45,8 +45,6 @@ const path = require('path');
 // const createdObjects = new Map();
 
 /**
- * **NOTE: This feature is a work-in-progress and should not currently be used.**
- *
  * This action will create a domain object for the test to reference and return the uuid. If an object
  * of a given name already exists, it will return the uuid of that object to the test instead of creating
  * a new file. The intent is to move object creation out of test suites which are not explicitly worried
@@ -55,25 +53,22 @@ const path = require('path');
  * @param {ObjectCreateOptions} options
  * @returns {Promise<string>} uuid of the domain object
  */
-// async function getOrCreateDomainObject(page, options) {
-//     const { type, name } = options;
-//     const objectName = name ? `${type}:${name}` : type;
+async function getOrCreateDomainObject(page, options) {
+    const { type, name } = options;
+    const objectName = name ? `${type}:${name}` : type;
 
-//     if (createdObjects.has(objectName)) {
-//         return createdObjects.get(objectName);
-//     }
+    if (createdObjects.has(objectName)) {
+        return createdObjects.get(objectName);
+    }
 
-//     await createDomainObjectWithDefaults(page, type, name);
+    await createDomainObjectWithDefaults(page, type, name);
 
-//     // Once object is created, get the uuid from the url
-//     const uuid = await page.evaluate(() => {
-//         return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
-//     });
+    const uuid = getUUIDFromURL(page);
 
-//     createdObjects.set(objectName, uuid);
+    createdObjects.set(objectName, uuid);
 
-//     return uuid;
-// }
+    return uuid;
+}
 
 /**
  * **NOTE: This feature is a work-in-progress and should not currently be used.**
@@ -149,18 +144,6 @@ exports.test = test.extend({
         await use({ myItemsFolderName });
     }
 });
+
 exports.expect = expect;
-
-/**
- * Takes a readable stream and returns a string.
- * @param {ReadableStream} readable - the readable stream
- * @return {Promise<String>} the stringified stream
- */
-exports.streamToString = async function (readable) {
-    let result = '';
-    for await (const chunk of readable) {
-        result += chunk;
-    }
-
-    return result;
-};
+exports.getOrCreateDomainObject = getOrCreateDomainObject;

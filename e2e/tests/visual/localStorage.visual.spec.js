@@ -29,7 +29,7 @@ test.describe('Visual - localStorage execution @localStorage', () => {
     test.use({
         storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
         clockOptions: {
-            shouldAdvanceTime: true //Don't advance the clock
+            shouldAdvanceTime: true //Advance the clock
         }
     });
     test.beforeEach(async ({ page }) => {
@@ -46,7 +46,10 @@ test.describe('Visual - localStorage execution @localStorage', () => {
         //Wait for canvas to be rendered and stop animating
         await page.locator('canvas >> nth=1').hover({trial: true});
 
-        //Take snapshot of Sine Wave Generator within Overlay Plot
         await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);
+
+        // //TODO Figure out how to freeze animation
+        // await page.screenshot({animations: 'disabled'});
+        // await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}') frozen`);
     });
 });

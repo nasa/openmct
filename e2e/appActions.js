@@ -209,6 +209,62 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 }
 
 /**
+ * Create a SineWaveGenerator with properties ideal for local app.js testing. The goal is to call this make this function
+ * interchangeable with 'getting' a telemetry endpoint from YAMCS Dictionary.
+ * @param {import('@playwright/test').Page} page
+ * @returns {Promise<string>} uuid of the domain object
+ */
+async function createExampleTelemetryObject(page) {
+
+    //TODO Make this field more accessible
+    const nameInput = page.locator('input[type="text"]').nth(2);
+
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+
+    await page.locator('button:has-text("Create")').click();
+
+    await page.locator('li:has-text("Sine Wave Generator")').click();
+
+    await page.locator(nameInput).fill('VIPER Rover Heading');
+
+    await page.locator('[aria-label="Period"]').fill('1');
+
+    await page.locator('[aria-label="Amplitude"]').fill('1');
+
+    await page.locator('[aria-label="Offset"]').fill('0');
+
+    await page.locator('[aria-label="Phase \\(radians\\)"]').fill('0');
+
+    await page.locator('[aria-label="Data Rate \\(hz\\)"]').fill('1');
+
+    await page.locator('[aria-label="Randomness"]').fill('0');
+
+    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('0');
+
+    await page.locator('text=OK').click();
+
+    await page.waitForLoadState();
+
+    const uuid = getUUIDFromURL(page);
+
+    return uuid;
+}
+
+/**
+* Get domain object UUID from URL.
+* @param {import('@playwright/test').Page} page
+* @returns {Promise<string>} uuid of the domain object
+*/
+async function getUUIDFromURL(page) {
+    // Once object is created, get the uuid from the url
+    const uuid = await page.evaluate(() => {
+        return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
+    });
+
+    return uuid;
+}
+
+/**
 * Open the given `domainObject`'s context menu from the object tree.
 * Expands the path to the object and scrolls to it if necessary.
 *
@@ -480,18 +536,7 @@ async function getCanvasPixels(page, canvasSelector) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
-    createNotification,
-    createPlanFromJSON,
-    expandEntireTree,
-    expandTreePaneItemByName,
-    getCanvasPixels,
-    getHashUrlToDomainObject,
-    getFocusedObjectUuid,
     openObjectTreeContextMenu,
-    setFixedTimeMode,
-    setRealTimeMode,
-    setStartOffset,
-    setEndOffset,
-    selectInspectorTab,
-    waitForPlotsToRender
+    createExampleTelemetryObject,
+    getUUIDFromURL
 };

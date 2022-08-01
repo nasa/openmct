@@ -35,7 +35,6 @@ test.describe('Visual - Controlled Clock', () => {
     });
     test.use({
         clockOptions: {
-            now: 0, //Set browser clock to UNIX Epoch
             shouldAdvanceTime: false //Don't advance the clock
         }
     });
