@@ -114,6 +114,32 @@ async function acknowledgeFault(page, rowNumber) {
 /**
  * @param {import('@playwright/test').Page} page
  */
+async function shelveMultipleFaults(page, ...nums) {
+    const selectRows = nums.map((num) => {
+        return selectFaultItem(page, num);
+    });
+    await Promise.all(selectRows);
+
+    await page.locator('.c-menu >> text="Acknowledge"').click();
+    // Click [aria-label="Save"]
+    await page.locator('[aria-label="Save"]').click();
+
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function acknowledgeMultipleFaults(page, ...nums) {
+    await openFaultRowMenu(page, rowNumber);
+    await page.locator('.c-menu >> text="Acknowledge"').click();
+    // Click [aria-label="Save"]
+    await page.locator('[aria-label="Save"]').click();
+
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function shelveFault(page, rowNumber) {
     await openFaultRowMenu(page, rowNumber);
     await page.locator('.c-menu >> text="Shelve"').click();
