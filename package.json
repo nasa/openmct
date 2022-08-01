@@ -3,9 +3,9 @@
   "version": "2.1.0-SNAPSHOT",
   "description": "The Open MCT core platform",
   "devDependencies": {
-    "@babel/eslint-parser": "7.18.2",
+    "@babel/eslint-parser": "7.18.9",
     "@braintree/sanitize-url": "6.0.0",
-    "@percy/cli": "1.6.4",
+    "@percy/cli": "1.7.2",
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.23.0",
     "@types/eventemitter3": "^1.0.0",
