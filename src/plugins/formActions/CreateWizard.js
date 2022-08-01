@@ -35,7 +35,7 @@ export default class CreateWizard {
     addNotes(sections) {
         const row = {
             control: 'textarea',
-            cssClass: 'l-input-lg',
+            cssClass: 'l-input-lg form-notes',
             key: 'notes',
             name: 'Notes',
             required: false,
@@ -54,7 +54,7 @@ export default class CreateWizard {
     addTitle(sections) {
         const row = {
             control: 'textfield',
-            cssClass: 'l-input-lg',
+            cssClass: 'l-input-lg form-title',
             key: 'name',
             name: 'Title',
             pattern: `\\S+`,
