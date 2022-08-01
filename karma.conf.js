@@ -58,29 +58,20 @@ module.exports = (config) => {
                 base: 'Chrome',
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
-            },
-            FirefoxESR: {
-                base: 'FirefoxHeadless',
-                name: 'FirefoxESR'
             }
         },
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
         junitReporter: {
-            outputDir: "dist/reports/tests",
-            outputFile: "test-results.xml",
-            useBrowserName: false
+            outputDir: "dist/reports/tests", //Useful for CircleCI
+            outputFile: "test-results.xml", //Useful for CircleCI
+            useBrowserName: false //Disable since we only want chrome
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: "dist/reports/coverage",
-            reports: ['lcovonly', 'text-summary'],
-            thresholds: {
-                global: {
-                    lines: 52
-                }
-            }
+            dir: "coverage/unit", //Sets coverage file to be consumed by codecov.io
+            reports: ['lcovonly']
         },
         specReporter: {
             maxLogLines: 5,

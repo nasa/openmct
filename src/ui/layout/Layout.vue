@@ -18,6 +18,9 @@
         }"
     >
         <CreateButton class="l-shell__create-button" />
+        <GrandSearch
+            ref="grand-search"
+        />
         <indicators class="l-shell__head-section l-shell__indicators" />
         <button
             class="l-shell__head__collapse-button c-icon-button"
@@ -122,6 +125,7 @@ import Inspector from '../inspector/Inspector.vue';
 import MctTree from './mct-tree.vue';
 import ObjectView from '../components/ObjectView.vue';
 import CreateButton from './CreateButton.vue';
+import GrandSearch from './search/GrandSearch.vue';
 import multipane from './multipane.vue';
 import pane from './pane.vue';
 import BrowseBar from './BrowseBar.vue';
@@ -136,6 +140,7 @@ export default {
         MctTree,
         ObjectView,
         CreateButton,
+        GrandSearch,
         multipane,
         pane,
         BrowseBar,
