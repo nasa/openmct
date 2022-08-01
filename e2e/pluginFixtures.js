@@ -27,7 +27,8 @@
  */
 
 const { test, expect } = require('./baseFixtures');
-const { createDomainObjectWithDefaults } = require('./appActions');
+// const { createDomainObjectWithDefaults } = require('./appActions');
+const path = require('path');
 
 /**
  * @typedef {Object} ObjectCreateOptions
@@ -36,12 +37,16 @@ const { createDomainObjectWithDefaults } = require('./appActions');
  */
 
 /**
+ * **NOTE: This feature is a work-in-progress and should not currently be used.**
+ *
  * Used to create a new domain object as a part of getOrCreateDomainObject.
  * @type {Map<string, string>}
  */
-const createdObjects = new Map();
+// const createdObjects = new Map();
 
 /**
+ * **NOTE: This feature is a work-in-progress and should not currently be used.**
+ *
  * This action will create a domain object for the test to reference and return the uuid. If an object
  * of a given name already exists, it will return the uuid of that object to the test instead of creating
  * a new file. The intent is to move object creation out of test suites which are not explicitly worried
@@ -50,27 +55,29 @@ const createdObjects = new Map();
  * @param {ObjectCreateOptions} options
  * @returns {Promise<string>} uuid of the domain object
  */
-async function getOrCreateDomainObject(page, options) {
-    const { type, name } = options;
-    const objectName = name ? `${type}:${name}` : type;
+// async function getOrCreateDomainObject(page, options) {
+//     const { type, name } = options;
+//     const objectName = name ? `${type}:${name}` : type;
 
-    if (createdObjects.has(objectName)) {
-        return createdObjects.get(objectName);
-    }
+//     if (createdObjects.has(objectName)) {
+//         return createdObjects.get(objectName);
+//     }
 
-    await createDomainObjectWithDefaults(page, type, name);
+//     await createDomainObjectWithDefaults(page, type, name);
 
-    // Once object is created, get the uuid from the url
-    const uuid = await page.evaluate(() => {
-        return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
-    });
+//     // Once object is created, get the uuid from the url
+//     const uuid = await page.evaluate(() => {
+//         return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
+//     });
 
-    createdObjects.set(objectName, uuid);
+//     createdObjects.set(objectName, uuid);
 
-    return uuid;
-}
+//     return uuid;
+// }
 
 /**
+ * **NOTE: This feature is a work-in-progress and should not currently be used.**
+ *
  * If provided, these options will be used to get or create the desired domain object before
  * any tests or test hooks have run.
  * The `uuid` of the `domainObject` will then be available to use within the scoped tests.
@@ -87,7 +94,24 @@ async function getOrCreateDomainObject(page, options) {
  * ```
  * @type {ObjectCreateOptions}
  */
-const objectCreateOptions = null;
+// const objectCreateOptions = null;
+
+/**
+ * The default theme for VIPER and Open MCT is the 'espresso' theme. Overriding this value with 'snow' in our playwright config.js
+ * will override the default theme by injecting the 'snow' theme on launch.
+ *
+ * ### Example:
+ * ```js
+ * projects: [
+ * {
+ *     name: 'chrome-snow-theme',
+ *     use: {
+ *         browserName: 'chromium',
+ *         theme: 'snow'
+ * ```
+ * @type {'snow' | 'espresso'}
+ */
+const theme = 'espresso';
 
 /**
  * The name of the "My Items" folder in the domain object tree.
@@ -99,27 +123,39 @@ const objectCreateOptions = null;
 const myItemsFolderName = "My Items";
 
 exports.test = test.extend({
+    // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
+    theme: [theme, { option: true }],
+    // eslint-disable-next-line no-shadow
+    page: async ({ page, theme }, use) => {
+        // eslint-disable-next-line playwright/no-conditional-in-test
+        if (theme === 'snow') {
+            //inject snow theme
+            await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
+        }
+
+        await use(page);
+    },
     myItemsFolderName: [myItemsFolderName, { option: true }],
     // eslint-disable-next-line no-shadow
     openmctConfig: async ({ myItemsFolderName }, use) => {
         await use({ myItemsFolderName });
-    },
-    objectCreateOptions: [objectCreateOptions, {option: true}],
+    }
+    // objectCreateOptions: [objectCreateOptions, {option: true}],
     // eslint-disable-next-line no-shadow
-    domainObject: [async ({ page, objectCreateOptions }, use) => {
-        // FIXME: This is a false-positive caused by a bug in the eslint-plugin-playwright rule.
-        // eslint-disable-next-line playwright/no-conditional-in-test
-        if (objectCreateOptions === null) {
-            await use(page);
+    // domainObject: [async ({ page, objectCreateOptions }, use) => {
+    //     // FIXME: This is a false-positive caused by a bug in the eslint-plugin-playwright rule.
+    //     // eslint-disable-next-line playwright/no-conditional-in-test
+    //     if (objectCreateOptions === null) {
+    //         await use(page);
 
-            return;
-        }
+    //         return;
+    //     }
 
-        //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+    //     //Go to baseURL
+    //     await page.goto('./', { waitUntil: 'networkidle' });
 
-        const uuid = await getOrCreateDomainObject(page, objectCreateOptions);
-        await use({ uuid });
-    }, { auto: true }]
+    //     const uuid = await getOrCreateDomainObject(page, objectCreateOptions);
+    //     await use({ uuid });
+    // }, { auto: true }]
 });
 exports.expect = expect;
