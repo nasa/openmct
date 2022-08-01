@@ -32,39 +32,31 @@ Note: Larger testsuite sizes are OK due to the setup time associated with these 
 */
 
 // eslint-disable-next-line no-unused-vars
-const { test, expect } = require('../../baseFixtures.js');
+const { test, expect } = require('../../pluginFixtures');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
-
-const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
 
 const CUSTOM_NAME = 'CUSTOM_NAME';
 
 test.describe('Visual - addInit', () => {
     test.use({
         clockOptions: {
-            shouldAdvanceTime: true
+            now: 0, //Set browser clock to UNIX Epoch
+            shouldAdvanceTime: false //Don't advance the clock
         }
     });
 
-    test('Restricted Notebook is visually correct @addInit', async ({ page }) => {
+    test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
         // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
         //Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-        // Click text=CUSTOM_NAME
-        await page.click(`text=${CUSTOM_NAME}`);
-        // Click text=OK
-        await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK')
-        ]);
+
+        await createDomainObjectWithDefaults(page, CUSTOM_NAME);
 
         // Take a snapshot of the newly created CUSTOM_NAME notebook
-        await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-        await percySnapshot(page, 'Restricted Notebook with CUSTOM_NAME');
+        await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
 
     });
 });

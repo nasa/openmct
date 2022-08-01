@@ -25,25 +25,18 @@ This test suite is dedicated to tests which verify form functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 /**
   * Creates a notebook object and adds an entry.
   * @param {import('@playwright/test').Page} - page to load
   * @param {number} [iterations = 1] - the number of entries to create
   */
-async function createNotebookAndEntry(page, myItemsFolderName, iterations = 1) {
+async function createNotebookAndEntry(page, iterations = 1) {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'networkidle' });
 
-    // Click button:has-text("Create")
-    await page.locator('button:has-text("Create")').click();
-    await page.locator('[title="Create and save timestamped notes with embedded object snapshots."]').click();
-    // Click button:has-text("OK")
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator(`[name="mctForm"] >> text=${myItemsFolderName}`).click(),
-        page.locator('button:has-text("OK")').click()
-    ]);
+    createDomainObjectWithDefaults(page, 'Notebook');
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Click text=To start a new entry, click here or drag and drop any object
@@ -52,7 +45,6 @@ async function createNotebookAndEntry(page, myItemsFolderName, iterations = 1) {
         await page.locator(entryLocator).click();
         await page.locator(entryLocator).fill(`Entry ${iteration}`);
     }
-
 }
 
 /**
@@ -60,8 +52,8 @@ async function createNotebookAndEntry(page, myItemsFolderName, iterations = 1) {
   * @param {import('@playwright/test').Page} page
   * @param {number} [iterations = 1] - the number of entries (and tags) to create
   */
-async function createNotebookEntryAndTags(page, myItemsFolderName, iterations = 1) {
-    await createNotebookAndEntry(page, myItemsFolderName, iterations);
+async function createNotebookEntryAndTags(page, iterations = 1) {
+    await createNotebookAndEntry(page, iterations);
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Click text=To start a new entry, click here or drag and drop any object
@@ -81,11 +73,10 @@ async function createNotebookEntryAndTags(page, myItemsFolderName, iterations = 
     }
 }
 
-test.describe('Tagging in Notebooks', () => {
-    test('Can load tags', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
+test.describe('Tagging in Notebooks @addInit', () => {
+    test('Can load tags', async ({ page }) => {
 
-        await createNotebookAndEntry(page, myItemsFolderName);
+        await createNotebookAndEntry(page);
         // Click text=To start a new entry, click here or drag and drop any object
         await page.locator('button:has-text("Add Tag")').click();
 
@@ -96,10 +87,8 @@ test.describe('Tagging in Notebooks', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Driving");
     });
-    test('Can add tags', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-
-        await createNotebookEntryAndTags(page, myItemsFolderName);
+    test('Can add tags', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
 
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Driving");
@@ -113,10 +102,8 @@ test.describe('Tagging in Notebooks', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Driving");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
-    test('Can search for tags', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-
-        await createNotebookEntryAndTags(page, myItemsFolderName);
+    test('Can search for tags', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
@@ -139,10 +126,8 @@ test.describe('Tagging in Notebooks', () => {
         await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
     });
 
-    test('Can delete tags', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-
-        await createNotebookEntryAndTags(page, myItemsFolderName);
+    test('Can delete tags', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
         await page.locator('[aria-label="Notebook Entries"]').click();
         // Delete Driving
         await page.locator('text=Science Driving Add Tag >> button').nth(1).click();
@@ -154,28 +139,14 @@ test.describe('Tagging in Notebooks', () => {
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
     });
-    test('Tags persist across reload', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-
+    test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        // Create a clock object we can navigate to
-        await page.click('button:has-text("Create")');
-
-        // Click Clock
-        await page.click('text=Clock');
-        // Click button:has-text("OK")
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator(`[name="mctForm"] >> text=${myItemsFolderName}`).click(),
-            page.locator('button:has-text("OK")').click()
-        ]);
-
-        await page.click('.c-disclosure-triangle');
+        await createDomainObjectWithDefaults(page, 'Clock');
 
         const ITERATIONS = 4;
-        await createNotebookEntryAndTags(page, myItemsFolderName, ITERATIONS);
+        await createNotebookEntryAndTags(page, ITERATIONS);
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
@@ -183,6 +154,11 @@ test.describe('Tagging in Notebooks', () => {
             await expect(page.locator(entryLocator)).toContainText("Driving");
         }
 
+        await Promise.all([
+            page.waitForNavigation(),
+            page.goto('./#/browse/mine?hideTree=false'),
+            page.click('.c-disclosure-triangle')
+        ]);
         // Click Unnamed Clock
         await page.click('text="Unnamed Clock"');
 
