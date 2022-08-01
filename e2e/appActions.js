@@ -101,6 +101,101 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 }
 
 /**
+ * Create a Plan object from JSON with the provided options.
+ * @param {import('@playwright/test').Page} page
+ * @param {*} options
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
+ */
+async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
+    const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+    // Navigate to the parent object. This is necessary to create the object
+    // in the correct location, such as a folder, layout, or plot.
+    await page.goto(`${parentUrl}?hideTree=true`);
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click 'Plan' menu option
+    await page.click(`li:text("Plan")`);
+
+    // Modify the name input field of the domain object to accept 'name'
+    if (name) {
+        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+        await nameInput.fill("");
+        await nameInput.fill(name);
+    }
+
+    // Upload buffer from memory
+    await page.locator('input#fileElem').setInputFiles({
+        name: 'plan.txt',
+        mimeType: 'text/plain',
+        buffer: Buffer.from(JSON.stringify(json))
+    });
+
+    // Click OK button and wait for Navigate event
+    await Promise.all([
+        page.waitForLoadState(),
+        page.click('[aria-label="Save"]'),
+        // Wait for Save Banner to appear
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+
+    // Wait until the URL is updated
+    await page.waitForURL(`**/mine/*`);
+    const uuid = await getFocusedObjectUuid(page);
+    const objectUrl = await getHashUrlToDomainObject(page, uuid);
+
+    return {
+        uuid,
+        name,
+        url: objectUrl
+    };
+}
+
+/**
+ * Create a SineWaveGenerator with properties ideal for local app.js testing. The goal is to call this make this function
+ * interchangeable with 'getting' a telemetry endpoint from YAMCS Dictionary.
+ * @param {import('@playwright/test').Page} page
+ * @returns {Promise<string>} uuid of the domain object
+ */
+async function createExampleTelemetryObject(page) {
+
+    //TODO Make this field more accessible
+    const nameInput = page.locator('input[type="text"]').nth(2);
+
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+
+    await page.locator('button:has-text("Create")').click();
+
+    await page.locator('li:has-text("Sine Wave Generator")').click();
+
+    await page.locator(nameInput).fill('VIPER Rover Heading');
+
+    await page.locator('[aria-label="Period"]').fill('1');
+
+    await page.locator('[aria-label="Amplitude"]').fill('1');
+
+    await page.locator('[aria-label="Offset"]').fill('0');
+
+    await page.locator('[aria-label="Phase \\(radians\\)"]').fill('0');
+
+    await page.locator('[aria-label="Data Rate \\(hz\\)"]').fill('1');
+
+    await page.locator('[aria-label="Randomness"]').fill('0');
+
+    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('0');
+
+    await page.locator('text=OK').click();
+
+    await page.waitForLoadState();
+
+    const uuid = getFocusedObjectUuid(page);
+
+    return uuid;
+}
+
+/**
 * Open the given `domainObject`'s context menu from the object tree.
 * Expands the 'My Items' folder if it is not already expanded.
 *
@@ -173,6 +268,8 @@ async function _isInEditMode(page, identifier) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    createExampleTelemetryObject,
+    createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
     getFocusedObjectUuid
