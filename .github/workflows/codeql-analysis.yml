@@ -3,9 +3,9 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, 'release/*' ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, 'release/*' ]
     paths-ignore:
       - '**/*Spec.js'
       - '**/*.md'
@@ -35,6 +35,7 @@ jobs:
       uses: github/codeql-action/init@v2
       with:
         languages: javascript
+        queries: security-and-quality
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v2
