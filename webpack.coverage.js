@@ -2,7 +2,6 @@
 // instrumentation using babel-plugin-istanbul (see babel.coverage.js)
 
 const config = require('./webpack.dev');
-const path = require('path');
 const vueLoaderRule = config.module.rules.find(r => r.use === 'vue-loader');
 // eslint-disable-next-line no-undef
 const CI = process.env.CI === 'true';
@@ -34,8 +33,11 @@ config.module.rules.push({
     use: {
         loader: 'babel-loader',
         options: {
+            retainLines: true,
             // eslint-disable-next-line no-undef
-            configFile: path.resolve(process.cwd(), 'babel.coverage.js')
+            plugins: [['babel-plugin-istanbul', {
+                extension: ['.js', '.vue']
+            }]]
         }
     }
 });
