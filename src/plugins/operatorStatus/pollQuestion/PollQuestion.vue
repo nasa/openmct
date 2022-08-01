@@ -34,7 +34,7 @@
 
     <div class="c-status-poll__section c-status-poll-panel__content c-spq">
         <!-- Grid layout -->
-        <div class="c-spq__label">Current:</div>
+        <div class="c-spq__label">Current poll:</div>
         <div class="c-spq__value c-status-poll-panel__poll-question">{{ currentPollQuestion }}</div>
 
         <template v-if="statusCountViewModel.length > 0">
@@ -43,6 +43,7 @@
                 <div
                     v-for="entry in statusCountViewModel"
                     :key="entry.status.key"
+                    :title="entry.status.label"
                     class="c-status-poll-report__count"
                     :style="[{
                         background: entry.status.statusBgColor,
@@ -69,6 +70,7 @@
             >
             <button
                 class="c-button"
+                title="Publish a new poll question and reset previous responses"
                 @click="updatePollQuestion"
             >Update</button>
         </div>
@@ -78,6 +80,7 @@
 </template>
 
 <script>
+import _ from 'lodash';
 
 export default {
     inject: ['openmct', 'indicator', 'configuration'],
@@ -117,6 +120,9 @@ export default {
     beforeDestroy() {
         this.openmct.user.status.off('statusChange', this.fetchStatusSummary);
         this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
+    },
+    created() {
+        this.fetchStatusSummary = _.debounce(this.fetchStatusSummary);
     },
     methods: {
         async fetchCurrentPoll() {

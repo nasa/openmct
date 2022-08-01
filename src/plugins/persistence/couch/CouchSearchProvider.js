@@ -102,7 +102,7 @@ class CouchSearchProvider {
                     },
                     {
                         "model.annotationType": {
-                            "$eq": "notebook"
+                            "$eq": "NOTEBOOK"
                         }
                     },
                     {

@@ -93,8 +93,7 @@
             message.state = 'close';
             break;
         default:
-            // Assume connection is closed
-            message.state = 'close';
+            message.state = 'unknown';
             console.error('🚨 Received unexpected readyState value from CouchDB EventSource feed: 🚨', readyState);
             break;
         }

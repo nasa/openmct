@@ -28,9 +28,9 @@ export default function () {
     return function install(openmct) {
         openmct.types.addType(BAR_GRAPH_KEY, {
             key: BAR_GRAPH_KEY,
-            name: "Graph (Bar or Line)",
+            name: "Graph",
             cssClass: "icon-bar-chart",
-            description: "View data as a bar graph. Can be added to Display Layouts.",
+            description: "Visualize data as a bar or line graph.",
             creatable: true,
             initialize: function (domainObject) {
                 domainObject.composition = [];

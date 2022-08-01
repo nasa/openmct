@@ -39,9 +39,10 @@
             >
                 <div class="c-gsearch__results-section-title">Object Results</div>
                 <object-search-result
-                    v-for="(objectResult, index) in objectResults"
-                    :key="index"
+                    v-for="(objectResult) in objectResults"
+                    :key="openmct.objects.makeKeyString(objectResult.identifier)"
                     :result="objectResult"
+                    @preview-changed="previewChanged"
                     @click.native="selectedResult"
                 />
             </div>
@@ -51,8 +52,8 @@
             >
                 <div class="c-gsearch__results-section-title">Annotation Results</div>
                 <annotation-search-result
-                    v-for="(annotationResult, index) in annotationResults"
-                    :key="index"
+                    v-for="(annotationResult) in annotationResults"
+                    :key="openmct.objects.makeKeyString(annotationResult.identifier)"
                     :result="annotationResult"
                     @click.native="selectedResult"
                 />
@@ -72,16 +73,23 @@ export default {
         AnnotationSearchResult,
         ObjectSearchResult
     },
+    inject: ['openmct'],
     data() {
         return {
             resultsShown: false,
             annotationResults: [],
-            objectResults: []
+            objectResults: [],
+            previewVisible: false
         };
     },
     methods: {
         selectedResult() {
-            this.resultsShown = false;
+            if (!this.previewVisible) {
+                this.resultsShown = false;
+            }
+        },
+        previewChanged(changedPreviewState) {
+            this.previewVisible = changedPreviewState;
         },
         showResults(passedAnnotationResults, passedObjectResults) {
             if ((passedAnnotationResults && passedAnnotationResults.length)

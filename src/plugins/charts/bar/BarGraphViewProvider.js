@@ -66,12 +66,15 @@ export default function BarGraphViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<bar-graph-view :options="options"></bar-graph-view>'
+                        template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
                     });
                 },
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
+                },
+                onClearData() {
+                    component.$refs.graphComponent.refreshData();
                 }
             };
         }

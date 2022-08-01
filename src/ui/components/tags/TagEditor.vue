@@ -97,14 +97,17 @@ export default {
                 this.tagsChanged(this.annotation.tags);
             },
             deep: true
+        },
+        annotationQuery: {
+            handler() {
+                this.unloadAnnotation();
+                this.loadAnnotation();
+            },
+            deep: true
         }
     },
-    async mounted() {
-        this.annontation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
-        this.addAnnotationListener(this.annotation);
-        if (this.annotation && this.annotation.tags) {
-            this.tagsChanged(this.annotation.tags);
-        }
+    mounted() {
+        this.loadAnnotation();
     },
     destroyed() {
         if (this.removeTagsListener) {
@@ -114,7 +117,23 @@ export default {
     methods: {
         addAnnotationListener(annotation) {
             if (annotation && !this.removeTagsListener) {
-                this.removeTagsListener = this.openmct.objects.observe(annotation, 'tags', this.tagsChanged);
+                this.removeTagsListener = this.openmct.objects.observe(annotation, '*', (newAnnotation) => {
+                    this.tagsChanged(newAnnotation.tags);
+                    this.annotation = newAnnotation;
+                });
+            }
+        },
+        async loadAnnotation() {
+            this.annotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
+            this.addAnnotationListener(this.annotation);
+            if (this.annotation && this.annotation.tags) {
+                this.tagsChanged(this.annotation.tags);
+            }
+        },
+        unloadAnnotation() {
+            if (this.removeTagsListener) {
+                this.removeTagsListener();
+                this.removeTagsListener = undefined;
             }
         },
         tagsChanged(newTags) {
@@ -134,21 +153,23 @@ export default {
             this.userAddingTag = true;
         },
         async tagRemoved(tagToRemove) {
-            const existingAnnotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
+            const result = await this.openmct.annotation.removeAnnotationTag(this.annotation, tagToRemove);
+            this.$emit('tags-updated');
 
-            return this.openmct.annotation.removeAnnotationTag(existingAnnotation, tagToRemove);
+            return result;
         },
         async tagAdded(newTag) {
-            const existingAnnotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
-
-            const newAnnotation = await this.openmct.annotation.addAnnotationTag(existingAnnotation,
+            const annotationWasCreated = this.annotation === null || this.annotation === undefined;
+            this.annotation = await this.openmct.annotation.addAnnotationTag(this.annotation,
                 this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
-            if (!this.annotation) {
-                this.addAnnotationListener(newAnnotation);
+            if (annotationWasCreated) {
+                this.addAnnotationListener(this.annotation);
             }
 
-            this.tagsChanged(newAnnotation.tags);
+            this.tagsChanged(this.annotation.tags);
             this.userAddingTag = false;
+
+            this.$emit('tags-updated');
         }
     }
 };

@@ -80,7 +80,7 @@
     &__content {
         $m: $interiorMargin;
         display: grid;
-        grid-template-columns: min-content 1fr;
+        grid-template-columns: max-content 1fr;
         grid-column-gap: $m;
         grid-row-gap: $m;
 

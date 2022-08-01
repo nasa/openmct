@@ -23,6 +23,8 @@
 <template>
 <div
     class="c-gsearch-result c-gsearch-result--annotation"
+    aria-label="Search Result"
+    role="presentation"
 >
     <div
         class="c-gsearch-result__type-icon"
@@ -40,8 +42,9 @@
         </div>
 
         <ObjectPath
-            ref="location"
+            :domain-object="domainObject"
             :read-only="false"
+            :show-object-itself="true"
         />
 
         <div class="c-gsearch-result__tags">
@@ -122,18 +125,15 @@ export default {
             return this.result.fullTagModels[0].foregroundColor;
         }
     },
-    mounted() {
-        const selectionObject = {
-            context: {
-                item: this.domainObject
-            }
-        };
-        this.$refs.location.updateSelection([[selectionObject]]);
-    },
     methods: {
         clickedResult() {
             const objectPath = this.domainObject.originalPath;
-            const resultUrl = objectPathToUrl(this.openmct, objectPath);
+            let resultUrl = objectPathToUrl(this.openmct, objectPath);
+            // get rid of ROOT if extant
+            if (resultUrl.includes('/ROOT')) {
+                resultUrl = resultUrl.split('/ROOT').join('');
+            }
+
             this.openmct.router.navigate(resultUrl);
         },
         isSearchMatched(tag) {

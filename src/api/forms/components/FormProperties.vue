@@ -24,7 +24,10 @@
 <div class="c-form js-form">
     <div class="c-overlay__top-bar c-form__top-bar">
         <div class="c-overlay__dialog-title js-form-title">{{ model.title }}</div>
-        <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
+        <div
+            v-if="hasRequiredFields"
+            class="c-overlay__dialog-hint hint"
+        >All fields marked <span class="req icon-asterisk"></span> are required.</div>
     </div>
     <form
         name="mctForm"
@@ -60,13 +63,16 @@
             tabindex="0"
             :disabled="isInvalid"
             class="c-button c-button--major"
+            aria-label="Save"
             @click="onSave"
         >
             {{ submitLabel }}
         </button>
         <button
+            v-if="!shouldHideCancelButton"
             tabindex="0"
             class="c-button js-cancel-button"
+            aria-label="Cancel"
             @click="onDismiss"
         >
             {{ cancelLabel }}
@@ -103,6 +109,10 @@ export default {
         };
     },
     computed: {
+        hasRequiredFields() {
+            return this.model.sections.some(section =>
+                section.rows.some(row => row.required));
+        },
         isInvalid() {
             return Object.entries(this.invalidProperties)
                 .some(([key, value]) => {
@@ -130,6 +140,9 @@ export default {
             }
 
             return 'Cancel';
+        },
+        shouldHideCancelButton() {
+            return this.model.buttons?.cancel?.hide === true;
         }
     },
     mounted() {
