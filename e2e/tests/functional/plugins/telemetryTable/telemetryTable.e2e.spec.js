@@ -41,7 +41,7 @@ test.describe('Telemetry Table', () => {
 
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=OK').click(),
+            page.locator('[aria-label="Save"]').click(),
             // Wait for Save Banner to appear
             page.waitForSelector(bannerMessage)
         ]);
@@ -58,7 +58,7 @@ test.describe('Telemetry Table', () => {
 
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=OK').click(),
+            page.locator('[aria-label="Save"]').click(),
             // Wait for Save Banner to appear
             page.waitForSelector(bannerMessage)
         ]);
