@@ -1,10 +1,10 @@
-import { isNotebookType } from './notebook-constants';
+import { isAnnotationType, isNotebookType, isNotebookOrAnnotationType } from './notebook-constants';
 
 export default function (openmct) {
     const apiSave = openmct.objects.save.bind(openmct.objects);
 
     openmct.objects.save = async (domainObject) => {
-        if (!isNotebookType(domainObject)) {
+        if (!isNotebookOrAnnotationType(domainObject)) {
             return apiSave(domainObject);
         }
 
@@ -16,9 +16,9 @@ export default function (openmct) {
             result = await apiSave(localMutable);
         } catch (error) {
             if (error instanceof openmct.objects.errors.Conflict) {
-                result = resolveConflicts(localMutable, openmct);
+                result = await resolveConflicts(domainObject, localMutable, openmct);
             } else {
-                result = Promise.reject(error);
+                throw new Error(error);
             }
         } finally {
             if (isNewMutable) {
@@ -30,16 +30,49 @@ export default function (openmct) {
     };
 }
 
-function resolveConflicts(localMutable, openmct) {
-    const localEntries = JSON.parse(JSON.stringify(localMutable.configuration.entries));
+function resolveConflicts(domainObject, localMutable, openmct) {
+    if (isNotebookType(domainObject)) {
+        return resolveNotebookEntryConflicts(localMutable, openmct);
+    } else if (isAnnotationType(domainObject)) {
+        return resolveNotebookTagConflicts(localMutable, openmct);
+    }
+}
 
-    return openmct.objects.getMutable(localMutable.identifier).then((remoteMutable) => {
-        applyLocalEntries(remoteMutable, localEntries, openmct);
+async function resolveNotebookTagConflicts(localAnnotation, openmct) {
+    const localClonedAnnotation = structuredClone(localAnnotation);
+    const remoteMutable = await openmct.objects.getMutable(localClonedAnnotation.identifier);
 
-        openmct.objects.destroyMutable(remoteMutable);
+    // should only be one annotation per targetID & entryID, so for sanity, ensure we have the
+    // same targetID & entryID for this conflict
+    Object.keys(localClonedAnnotation.targets).forEach(localTargetKey => {
+        if (!remoteMutable.targets[localTargetKey]) {
+            throw new Error(`Conflict on annotation target is missing ${localTargetKey}`);
+        }
 
-        return true;
+        if (remoteMutable.targets[localTargetKey].entryId !== localClonedAnnotation.targets[localTargetKey].entryId) {
+            throw new Error(`Conflict on annotation entryID ${remoteMutable.targets[localTargetKey].entryId} has a different entry Id ${localClonedAnnotation.targets[localClonedAnnotation].entryId}`);
+        }
     });
+
+    const uniqueMergedTags = [...new Set([...remoteMutable.tags, ...localClonedAnnotation.tags])];
+    if (uniqueMergedTags.length !== remoteMutable.tags.length) {
+        openmct.objects.mutate(remoteMutable, 'tags', uniqueMergedTags);
+    }
+
+    openmct.objects.destroyMutable(remoteMutable);
+
+    return true;
+}
+
+async function resolveNotebookEntryConflicts(localMutable, openmct) {
+    if (localMutable.configuration.entries) {
+        const localEntries = structuredClone(localMutable.configuration.entries);
+        const remoteMutable = await openmct.objects.getMutable(localMutable.identifier);
+        applyLocalEntries(remoteMutable, localEntries, openmct);
+        openmct.objects.destroyMutable(remoteMutable);
+    }
+
+    return true;
 }
 
 function applyLocalEntries(mutable, entries, openmct) {
