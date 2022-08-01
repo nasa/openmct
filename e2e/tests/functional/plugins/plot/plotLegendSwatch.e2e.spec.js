@@ -25,8 +25,7 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test } = require('../../../fixtures.js');
-const { expect } = require('@playwright/test');
+const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Legend color in sync with plot color', () => {
     test('Testing', async ({ page }) => {
