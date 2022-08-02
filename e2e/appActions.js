@@ -30,9 +30,19 @@
  */
 
 /**
+ * Uniquely identifies a domain object.
+ *
+ * @typedef Identifier
+ * @property {string} namespace the namespace to/from which this domain
+ *           object should be loaded/stored.
+ * @property {string} key a unique identifier for the domain object
+ *           within that namespace
+ */
+
+/**
  * @typedef {Object} CreateObjectOptions
  * @property {string} type the type of object to create
- * @property {string} name the name of the object to create
+ * @property {string | Identifier} identifier the identifier or uuid of the object
  * @property {string} parent the identifier (uuid) of the parent object
  */
 
@@ -84,6 +94,12 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     await page.waitForNavigation('networkidle');
     const uuid = await getFocusedObjectUuid(page);
     const objectUrl = await getHashUrlToDomainObject(page, uuid);
+
+    if (await _isInEditMode(page, uuid)) {
+        // Save (exit edit mode)
+        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(3).click();
+        await page.locator('text=Save and Finish Editing').click();
+    }
 
     return {
         name: name || `Unnamed ${type}`,
@@ -153,6 +169,18 @@ async function getHashUrlToDomainObject(page, uuid) {
     }, uuid);
 
     return hashUrl;
+}
+
+/**
+ *
+ * @private
+ * @param {*} page
+ * @param {*} identifier
+ * @return {Promise<boolean>}
+ */
+async function _isInEditMode(page, identifier) {
+    // eslint-disable-next-line no-return-await
+    return await page.evaluate((objectIdentifier) => window.openmct.objects.isTransactionActive(objectIdentifier), identifier);
 }
 
 // eslint-disable-next-line no-undef
