@@ -30,18 +30,35 @@
  */
 
 /**
+ * @typedef {Object} CreateObjectOptions
+ * @property {string} type the type of object to create
+ * @property {string} name the name of the object to create
+ * @property {string} parent the identifier (uuid) of the parent object
+ */
+
+/**
+ * @typedef {Object} CreatedObjectInfo
+ * @property {string} name the name of the object
+ * @property {string} uuid the uuid of the object
+ * @property {string} url the url of the object
+ */
+
+/**
  * This common function creates a `domainObject` with default options. It is the preferred way of creating objects
  * in the e2e suite when uninterested in properties of the objects themselves.
+ *
  * @param {import('@playwright/test').Page} page
- * @param {string} type
- * @param {string | undefined} name
+ * @param {CreateObjectOptions} options
+ * @returns {Promise<CreatedObjectInfo>} objectInfo
  */
-async function createDomainObjectWithDefaults(page, type, name) {
-    // Navigate to focus the 'My Items' folder, and hide the object tree
-    // This is necessary so that subsequent objects can be created without a parent
-    // TODO: Ideally this would navigate to a common `e2e` folder
-    await page.goto('./#/browse/mine?hideTree=true');
+async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+    const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+    // Navigate to the parent object. This is necessary to create the object
+    // in the correct location, such as a folder, layout, or plot.
+    await page.goto(`${parentUrl}?hideTree=true`);
     await page.waitForLoadState('networkidle');
+
     //Click the Create button
     await page.click('button:has-text("Create")');
 
@@ -63,12 +80,22 @@ async function createDomainObjectWithDefaults(page, type, name) {
         page.waitForSelector('.c-message-banner__message')
     ]);
 
-    return name || `Unnamed ${type}`;
+    // Wait until the URL is updated
+    await page.waitForNavigation('networkidle');
+    const uuid = await getFocusedObjectUuid(page);
+    const objectUrl = await getHashUrlToDomainObject(page, uuid);
+
+    return {
+        name: name || `Unnamed ${type}`,
+        uuid: uuid,
+        url: objectUrl
+    };
 }
 
 /**
 * Open the given `domainObject`'s context menu from the object tree.
 * Expands the 'My Items' folder if it is not already expanded.
+*
 * @param {import('@playwright/test').Page} page
 * @param {string} myItemsFolderName the name of the "My Items" folder
 * @param {string} domainObjectName the display name of the `domainObject`
@@ -85,8 +112,53 @@ async function openObjectTreeContextMenu(page, myItemsFolderName, domainObjectNa
     });
 }
 
+/**
+ * Gets the UUID of the currently focused object by parsing the current URL
+ * and returning the last UUID in the path.
+ * @param {import('@playwright/test').Page} page
+ * @returns {string} the uuid of the focused object
+ */
+async function getFocusedObjectUuid(page) {
+    const UUIDv4Regexp = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi;
+    const focusedObjectUuid = await page.evaluate((regexp) => {
+        return window.location.href.match(regexp).at(-1);
+    }, UUIDv4Regexp);
+
+    return focusedObjectUuid;
+}
+
+/**
+ * Returns the hashUrl to the domainObject given its uuid.
+ * Useful for directly navigating to the given domainObject.
+ *
+ * URLs returned will be of the form `'./browse/#/mine/<uuid0>/<uuid1>/...'`
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} uuid the uuid of the object to get the url for
+ * @returns {string} the url of the object
+ */
+async function getHashUrlToDomainObject(page, uuid) {
+    const hashUrl = await page.evaluate(async (objectUuid) => {
+        const path = await window.openmct.objects.getOriginalPath(objectUuid);
+        let url = './#/browse/' + [...path].reverse()
+            .map((object) => window.openmct.objects.makeKeyString(object.identifier))
+            .join('/');
+
+        // Drop the vestigial '/ROOT' if it exists
+        if (url.includes('/ROOT')) {
+            url = url.split('/ROOT').join('');
+        }
+
+        return url;
+    }, uuid);
+
+    return hashUrl;
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
-    openObjectTreeContextMenu
+    openObjectTreeContextMenu,
+    getHashUrlToDomainObject,
+    getFocusedObjectUUID: getFocusedObjectUuid
 };
