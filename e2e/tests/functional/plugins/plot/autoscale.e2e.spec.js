@@ -56,7 +56,7 @@ test.describe('ExportAsJSON', () => {
 
         await canvas.hover({trial: true});
 
-        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan');
+        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan.png', { animations: 'disabled' });
 
         //Alt Drag Start
         await page.keyboard.down('Alt');
@@ -80,7 +80,7 @@ test.describe('ExportAsJSON', () => {
 
         await canvas.hover({trial: true});
 
-        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned');
+        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
     });
 });
 
