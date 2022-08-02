@@ -30,36 +30,28 @@
  */
 
 /**
- * Uniquely identifies a domain object.
- *
- * @typedef Identifier
- * @property {string} namespace the namespace to/from which this domain
- *           object should be loaded/stored.
- * @property {string} key a unique identifier for the domain object
- *           within that namespace
- */
-
-/**
+ * Defines parameters to be used in the creation of a domain object.
  * @typedef {Object} CreateObjectOptions
- * @property {string} type the type of object to create
- * @property {string | Identifier} identifier the identifier or uuid of the object
- * @property {string} parent the identifier (uuid) of the parent object
+ * @property {string} type the type of domain object to create (e.g.: "Sine Wave Generator").
+ * @property {string} [name] the desired name of the created domain object.
+ * @property {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
  */
 
 /**
+ * Contains information about the newly created domain object.
  * @typedef {Object} CreatedObjectInfo
- * @property {string} name the name of the object
- * @property {string} uuid the uuid of the object
- * @property {string} url the url of the object
+ * @property {string} name the name of the created object
+ * @property {string} uuid the uuid of the created object
+ * @property {string} url the relative url to the object (for use with `page.goto()`)
  */
 
 /**
- * This common function creates a `domainObject` with default options. It is the preferred way of creating objects
+ * This common function creates a domain object with the default options. It is the preferred way of creating objects
  * in the e2e suite when uninterested in properties of the objects themselves.
  *
  * @param {import('@playwright/test').Page} page
  * @param {CreateObjectOptions} options
- * @returns {Promise<CreatedObjectInfo>} objectInfo
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
     const parentUrl = await getHashUrlToDomainObject(page, parent);
@@ -171,20 +163,12 @@ async function getHashUrlToDomainObject(page, uuid) {
     return hashUrl;
 }
 
-async function setLocalClockMode(page, { startDelta = 900000, endDelta = 15000, timeSystem = 'utc', path = './browse/#/mine' }) {
-    await page.goto(`${path}?tc.mode=local&tc.timeSystem=${timeSystem}&tc.startDelta=${startDelta}&tc.endDelta=${endDelta}`);
-}
-
-async function setFixedClockMode(page, { startBound = Date.now() - 90000, endBound = Date.now() + 15000, timeSystem = 'utc', path = './browse/#/mine' }) {
-    await page.goto(`${path}?tc.mode=fixed&tc.timeSystem=${timeSystem}&tc.startBound=${startBound}&tc.endBound=${endBound}`);
-}
-
 /**
- *
+ * Utilizes the OpenMCT API to detect if the given object has an active transaction (is in Edit mode).
  * @private
- * @param {*} page
- * @param {*} identifier
- * @return {Promise<boolean>}
+ * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier
+ * @return {Promise<boolean>} true if the object has an active transaction, false otherwise
  */
 async function _isInEditMode(page, identifier) {
     // eslint-disable-next-line no-return-await
@@ -196,7 +180,5 @@ module.exports = {
     createDomainObjectWithDefaults,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
-    getFocusedObjectUuid,
-    setLocalClockMode,
-    setFixedClockMode
+    getFocusedObjectUuid
 };
