@@ -158,6 +158,9 @@ export default {
                 return;
             }
 
+            // forcibly reset the imageContainer size to prevent an aspect ratio distortion
+            delete this.imageContainerWidth;
+            delete this.imageContainerHeight;
             this.bounds = bounds; // setting bounds for ImageryView watcher
         },
         timeSystemChange() {

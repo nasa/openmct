@@ -170,12 +170,11 @@
         >
             <ImageThumbnail
                 v-for="(image, index) in imageHistory"
-                :key="`${image.thumbnailUrl || image.url}-${image.time}-${index}`"
+                :key="image.url + image.time"
                 :image="image"
                 :active="focusedImageIndex === index"
                 :selected="focusedImageIndex === index && isPaused"
                 :real-time="!isFixed"
-                :viewable-area="focusedImageIndex === index ? viewableArea : null"
                 @click.native="thumbnailClicked(index)"
             />
         </div>
@@ -584,37 +583,14 @@ export default {
             },
             deep: true
         },
-        focusedImage: {
-            handler(newImage, oldImage) {
-                const newTime = newImage?.time;
-                const oldTime = oldImage?.time;
-                const newUrl = newImage?.url;
-                const oldUrl = oldImage?.url;
-
-                // Skip if it's all falsy
-                if (!newTime && !oldTime && !newUrl && !oldUrl) {
-                    return;
-                }
-
-                // Skip if it's the same image
-                if (newTime === oldTime && newUrl === oldUrl) {
-                    return;
-                }
-
-                // Update image duration and reset age CSS
-                this.trackDuration();
-                this.resetAgeCSS();
-
-                // Reset image dimensions and calculate new dimensions
-                // on new image load
-                this.getImageNaturalDimensions();
-
-                // Get the related telemetry for the new image
-                this.updateRelatedTelemetryForFocusedImage();
-            }
+        focusedImageIndex() {
+            this.trackDuration();
+            this.resetAgeCSS();
+            this.updateRelatedTelemetryForFocusedImage();
+            this.getImageNaturalDimensions();
         },
         bounds() {
-            this.scrollHandler();
+            this.scrollToFocused();
         },
         isFixed(newValue) {
             const isRealTime = !newValue;
@@ -926,7 +902,17 @@ export default {
             }
 
             let domThumb = thumbsWrapper.children[this.focusedImageIndex];
-            if (!domThumb) {
+
+            if (domThumb) {
+                domThumb.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            }
+        },
+        scrollToRight(type) {
+            if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
 
