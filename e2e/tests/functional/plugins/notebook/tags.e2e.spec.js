@@ -36,7 +36,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'networkidle' });
 
-    createDomainObjectWithDefaults(page, 'Notebook');
+    createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Click text=To start a new entry, click here or drag and drop any object
@@ -143,7 +143,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        await createDomainObjectWithDefaults(page, 'Clock');
+        await createDomainObjectWithDefaults(page, { type: 'Clock' });
 
         const ITERATIONS = 4;
         await createNotebookEntryAndTags(page, ITERATIONS);

@@ -58,7 +58,7 @@ test.describe('Renaming Timer Object', () => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
         //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create a Timer object
-        await createDomainObjectWithDefaults(page, 'Timer');
+        await createDomainObjectWithDefaults(page, { type: 'Timer' });
         //Assert the object to be created and check it's name in the title
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Timer');
 
@@ -73,7 +73,7 @@ test.describe('Renaming Timer Object', () => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
         //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create a Timer object
-        await createDomainObjectWithDefaults(page, 'Timer');
+        await createDomainObjectWithDefaults(page, { type: 'Timer' });
         //Expect the object to be created and check it's name in the title
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Timer');
 

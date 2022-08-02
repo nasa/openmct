@@ -69,7 +69,7 @@ test.describe('Visual - Default', () => {
 
     test('Visual - Default Condition Set', async ({ page, theme }) => {
 
-        await createDomainObjectWithDefaults(page, 'Condition Set');
+        await createDomainObjectWithDefaults(page, { type: 'Condition Set' });
 
         // Take a snapshot of the newly created Condition Set object
         await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
@@ -81,7 +81,7 @@ test.describe('Visual - Default', () => {
             description: 'https://github.com/nasa/openmct/issues/5349'
         });
 
-        await createDomainObjectWithDefaults(page, 'Condition Widget');
+        await createDomainObjectWithDefaults(page, { type: 'Condition Widget' });
 
         // Take a snapshot of the newly created Condition Widget object
         await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
@@ -138,7 +138,7 @@ test.describe('Visual - Default', () => {
     });
 
     test('Visual - Save Successful Banner', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, 'Timer');
+        await createDomainObjectWithDefaults(page, { type: 'Timer' });
 
         await page.locator('.c-message-banner__message').hover({ trial: true });
         await percySnapshot(page, `Banner message shown (theme: '${theme}')`);
@@ -160,7 +160,7 @@ test.describe('Visual - Default', () => {
     });
 
     test('Visual - Default Gauge is correct', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, 'Gauge');
+        await createDomainObjectWithDefaults(page, { type: 'Gauge' });
 
         // Take a snapshot of the newly created Gauge object
         await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
