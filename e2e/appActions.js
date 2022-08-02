@@ -97,8 +97,8 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 
     if (await _isInEditMode(page, uuid)) {
         // Save (exit edit mode)
-        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(3).click();
-        await page.locator('text=Save and Finish Editing').click();
+        await page.locator('button[title="Save"]').click();
+        await page.locator('li[title="Save and Finish Editing"]').click();
     }
 
     return {
