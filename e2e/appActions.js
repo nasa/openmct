@@ -160,5 +160,5 @@ module.exports = {
     createDomainObjectWithDefaults,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
-    getFocusedObjectUUID: getFocusedObjectUuid
+    getFocusedObjectUuid
 };
