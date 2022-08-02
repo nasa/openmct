@@ -77,7 +77,7 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 
     // Modify the name input field of the domain object to accept 'name'
     if (name) {
-        const nameInput = page.locator('input[type="text"]').nth(2);
+        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
         await nameInput.fill("");
         await nameInput.fill(name);
     }
