@@ -62,18 +62,14 @@ test.describe('Testing LAD table @unstable', () => {
     });
 });
 
-//Structure: custom functions should be declared last. We are leaning on JSDoc pretty heavily to describe functionality. It is not required, but heavily recommended.
-
 /**
- * This is an example of a function which is shared between testcases in this test suite. When refactoring, we'll be looking
- * for common functionality which makes sense to generalize for the entire test framework.
+ * Function that renames the object
  * @param {import('@playwright/test').Page} page
  * @param {string} newName New Name for object
  */
-async function renameObjectFrom3DotMenu(page, newName) {
+ async function renameObjectFrom3DotMenu(page, newName) {
     await page.locator('button[title="More options"]').click();
     await page.locator('text=Edit Properties...').click();
     await page.locator('span.form-title >> input[type="text"]').fill(newName);
-    // await page.locator('form[name="mctForm"] >> text=My Items').click();
     await page.locator('text=OK').click();
 }

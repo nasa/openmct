@@ -57,34 +57,24 @@ test.describe('Testing Display Layout @unstable', () => {
 
         await page.evaluate(async (telemetryIdentifier) => {
             const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
-            let wasCalledOnce = false;
-            window.openmct.telemetry.subscribe(telemetryObject, async (obj) => {
-                if (wasCalledOnce) {
-                    return;
-                }
-
-                wasCalledOnce = true;
-                await document.querySelector('.l-layout').__vue__.$nextTick();
+            window.openmct.telemetry.subscribe(telemetryObject, (obj) => {
                 window.getTelemValue(obj.sin);
             });
         }, sineWaveGeneratorIdentifier);
 
         const subscribeTelemValue = await exposeFunctionPromise;
-        const displayLayoutValue = await page.locator('.c-telemetry-view__value-text').textContent();
-        const trimmedDisplayValue = displayLayoutValue.trim();
         const roundedTelemValue = parseFloat(subscribeTelemValue).toFixed(2);
 
-        console.log(trimmedDisplayValue);
-        console.log(roundedTelemValue);
+        const displayLayoutValuePromise = await page.waitForSelector(`text="${roundedTelemValue}"`);
+        const displayLayoutValue = await displayLayoutValuePromise.textContent();
+        const trimmedDisplayValue = displayLayoutValue.trim();
+
         await expect(trimmedDisplayValue).toBe(roundedTelemValue);
     });
 });
 
-//Structure: custom functions should be declared last. We are leaning on JSDoc pretty heavily to describe functionality. It is not required, but heavily recommended.
-
 /**
- * This is an example of a function which is shared between testcases in this test suite. When refactoring, we'll be looking
- * for common functionality which makes sense to generalize for the entire test framework.
+ * Function that renames the object
  * @param {import('@playwright/test').Page} page
  * @param {string} newName New Name for object
  */
