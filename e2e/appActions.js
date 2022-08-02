@@ -116,7 +116,7 @@ async function openObjectTreeContextMenu(page, myItemsFolderName, domainObjectNa
  * Gets the UUID of the currently focused object by parsing the current URL
  * and returning the last UUID in the path.
  * @param {import('@playwright/test').Page} page
- * @returns {string} the uuid of the focused object
+ * @returns {Promise<string>} the uuid of the focused object
  */
 async function getFocusedObjectUuid(page) {
     const UUIDv4Regexp = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi;
@@ -135,7 +135,7 @@ async function getFocusedObjectUuid(page) {
  *
  * @param {import('@playwright/test').Page} page
  * @param {string} uuid the uuid of the object to get the url for
- * @returns {string} the url of the object
+ * @returns {Promise<string>} the url of the object
  */
 async function getHashUrlToDomainObject(page, uuid) {
     const hashUrl = await page.evaluate(async (objectUuid) => {
