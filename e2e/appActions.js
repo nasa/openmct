@@ -171,6 +171,14 @@ async function getHashUrlToDomainObject(page, uuid) {
     return hashUrl;
 }
 
+async function setLocalClockMode(page, { startDelta = 900000, endDelta = 15000, timeSystem = 'utc', path = './browse/#/mine' }) {
+    await page.goto(`${path}?tc.mode=local&tc.timeSystem=${timeSystem}&tc.startDelta=${startDelta}&tc.endDelta=${endDelta}`);
+}
+
+async function setFixedClockMode(page, { startBound = Date.now() - 90000, endBound = Date.now() + 15000, timeSystem = 'utc', path = './browse/#/mine' }) {
+    await page.goto(`${path}?tc.mode=fixed&tc.timeSystem=${timeSystem}&tc.startBound=${startBound}&tc.endBound=${endBound}`);
+}
+
 /**
  *
  * @private
@@ -188,5 +196,7 @@ module.exports = {
     createDomainObjectWithDefaults,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
-    getFocusedObjectUuid
+    getFocusedObjectUuid,
+    setLocalClockMode,
+    setFixedClockMode
 };
