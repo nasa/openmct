@@ -617,9 +617,10 @@ export default class ObjectAPI {
     areIdsEqual(...identifiers) {
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
-                return identifier === identifiers[0]
-                    || (identifier.namespace === identifiers[0].namespace
-                        && identifier.key === identifiers[0].key);
+                const firstIdentifier = utils.parseKeyString(identifiers[0]);
+                return identifier === firstIdentifier
+                    || (identifier.namespace === firstIdentifier.namespace
+                        && identifier.key === firstIdentifier.key);
             });
     }
 
