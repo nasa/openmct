@@ -33,7 +33,7 @@ test.describe('Telemetry Table', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
-        const sineWaveGen = await createDomainObjectWithDefaults(page, {
+        await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
             parent: table.uuid
         });
