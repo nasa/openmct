@@ -23,19 +23,66 @@
 const { test, expect } = require('../../baseFixtures.js');
 const { createDomainObjectWithDefaults } = require('../../appActions.js');
 
-test.describe('appActions tests', () => {
-    test('createDomainObjectsWithDefaults can create multiple objects in a row', async ({ page }) => {
+test.describe('AppActions', () => {
+    test('createDomainObjectsWithDefaults', async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        await createDomainObjectWithDefaults(page, 'Timer', 'Timer Foo');
-        await createDomainObjectWithDefaults(page, 'Timer', 'Timer Bar');
-        await createDomainObjectWithDefaults(page, 'Timer', 'Timer Baz');
 
-        // Expand the tree
-        await page.click('.c-disclosure-triangle');
+        const e2eFolder = await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            name: 'e2e folder'
+        });
 
-        // Verify the objects were created
-        await expect(page.locator('a :text("Timer Foo")')).toBeVisible();
-        await expect(page.locator('a :text("Timer Bar")')).toBeVisible();
-        await expect(page.locator('a :text("Timer Baz")')).toBeVisible();
+        await test.step('Create multiple flat objects in a row', async () => {
+            const timer1 = await createDomainObjectWithDefaults(page, {
+                type: 'Timer',
+                name: 'Timer Foo',
+                parent: e2eFolder.uuid
+            });
+            const timer2 = await createDomainObjectWithDefaults(page, {
+                type: 'Timer',
+                name: 'Timer Bar',
+                parent: e2eFolder.uuid
+            });
+            const timer3 = await createDomainObjectWithDefaults(page, {
+                type: 'Timer',
+                name: 'Timer Baz',
+                parent: e2eFolder.uuid
+            });
+
+            await page.goto(timer1.url, { waitUntil: 'networkidle' });
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Timer Foo');
+            await page.goto(timer2.url, { waitUntil: 'networkidle' });
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Timer Bar');
+            await page.goto(timer3.url, { waitUntil: 'networkidle' });
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Timer Baz');
+        });
+
+        await test.step('Create multiple nested objects in a row', async () => {
+            const folder1 = await createDomainObjectWithDefaults(page, {
+                type: 'Folder',
+                name: 'Folder Foo',
+                parent: e2eFolder.uuid
+            });
+            const folder2 = await createDomainObjectWithDefaults(page, {
+                type: 'Folder',
+                name: 'Folder Bar',
+                parent: folder1.uuid
+            });
+            const folder3 = await createDomainObjectWithDefaults(page, {
+                type: 'Folder',
+                name: 'Folder Baz',
+                parent: folder2.uuid
+            });
+            await page.goto(folder1.url, { waitUntil: 'networkidle' });
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Folder Foo');
+            await page.goto(folder2.url, { waitUntil: 'networkidle' });
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Folder Bar');
+            await page.goto(folder3.url, { waitUntil: 'networkidle' });
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Folder Baz');
+
+            expect(folder1.url).toBe(`${e2eFolder.url}/${folder1.uuid}`);
+            expect(folder2.url).toBe(`${e2eFolder.url}/${folder1.uuid}/${folder2.uuid}`);
+            expect(folder3.url).toBe(`${e2eFolder.url}/${folder1.uuid}/${folder2.uuid}/${folder3.uuid}`);
+        });
     });
 });
