@@ -32,6 +32,7 @@ const config = {
     projects: [
         {
             name: 'chrome',
+            testMatch: '**/*.e2e.spec.js', // only run e2e tests
             use: {
                 browserName: 'chromium'
             }

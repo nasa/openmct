@@ -38,14 +38,14 @@ test.describe('Branding tests', () => {
         await expect(page.locator('.c-about__image')).toBeVisible();
 
         // Modify the Build information in 'about' Modal
-        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info');
+        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
         await expect(versionInformationLocator).toBeEnabled();
         await expect.soft(versionInformationLocator).toContainText(/Version: \d/);
         await expect.soft(versionInformationLocator).toContainText(/Build Date: ((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun))/);
         await expect.soft(versionInformationLocator).toContainText(/Revision: \b[0-9a-f]{5,40}\b/);
         await expect.soft(versionInformationLocator).toContainText(/Branch: ./);
     });
-    test('Verify Links in About Modal', async ({ page }) => {
+    test('Verify Links in About Modal @2p', async ({ page }) => {
         // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
