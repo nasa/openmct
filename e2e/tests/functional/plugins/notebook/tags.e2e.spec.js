@@ -139,6 +139,22 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
     });
+
+    test('Can delete objects with tags and neither return in serch', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
+        await page.locator('[aria-label="Notebook Entries"]').click();
+        // Delete Notebook
+        await page.locator('button[title="More options"]').click();
+        await page.locator('text=Remove').click();
+        await page.locator('button:has-text("OK")').click();
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Fill [aria-label="OpenMCT Search"] input[type="search"]
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
+        await expect(page.locator('text=No matching results.')).toBeVisible();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
+        await expect(page.locator('text=No matching results.')).toBeVisible();
+    });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
