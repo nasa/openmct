@@ -77,7 +77,6 @@ export default {
             }
 
             this.searchValue = value;
-            this.searchLoading = true;
             // clear any previous search results
             this.annotationSearchResults = [];
             this.objectSearchResults = [];
@@ -85,8 +84,7 @@ export default {
             if (this.searchValue) {
                 await this.getSearchResults();
             } else {
-                this.searchLoading = false;
-                this.$refs.searchResultsDropDown.showResults(this.searchValue, this.annotationSearchResults, this.objectSearchResults);
+                this.$refs.searchResultsDropDown.showResults(this.searchLoading, this.searchValue, this.annotationSearchResults, this.objectSearchResults);
             }
         },
         getPathsForObjects(objectsNeedingPaths) {
@@ -103,6 +101,8 @@ export default {
         async getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
+            this.searchLoading = true;
+            this.$refs.searchResultsDropDown.showSearchStarted();
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
             try {
@@ -118,6 +118,7 @@ export default {
                     return result.originalPath && (result.originalPath.length > 1);
                 });
                 this.objectSearchResults = filterAnnotationsAndValidPaths;
+                this.searchLoading = false;
                 this.showSearchResults();
             } catch (error) {
                 console.error(`😞 Error searching`, error);
@@ -129,7 +130,7 @@ export default {
             }
         },
         showSearchResults() {
-            this.$refs.searchResultsDropDown.showResults(this.searchValue, this.annotationSearchResults, this.objectSearchResults);
+            this.$refs.searchResultsDropDown.showResults(this.searchLoading, this.searchValue, this.annotationSearchResults, this.objectSearchResults);
             document.body.addEventListener('click', this.handleOutsideClick);
         },
         handleOutsideClick(event) {
