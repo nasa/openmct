@@ -35,6 +35,7 @@
 <script>
 import PopupMenu from './PopupMenu.vue';
 import RemoveDialog from '../utils/removeDialog';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
 
 export default {
     components: {
@@ -142,13 +143,11 @@ export default {
             this.$emit('renamePage', Object.assign(this.page, { name: target.textContent }));
         },
         updateName(event) {
-            const ESCAPE = 27;
-            const ENTER = 13;
             const { target, keyCode, type } = event;
 
-            if (keyCode === ESCAPE) {
+            if (keyCode === KEY_ESCAPE) {
                 target.textContent = this.page.name;
-            } else if (keyCode === ENTER || type === 'blur') {
+            } else if (keyCode === KEY_ENTER || type === 'blur') {
                 this.renamePage(target);
             }
 

@@ -21,8 +21,9 @@
 </template>
 
 <script>
-import PopupMenu from './PopupMenu.vue';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
 import RemoveDialog from '../utils/removeDialog';
+import PopupMenu from './PopupMenu.vue';
 
 export default {
     components: {
@@ -130,13 +131,11 @@ export default {
             this.$emit('renameSection', Object.assign(this.section, { name: target.textContent }));
         },
         updateName(event) {
-            const ESCAPE = 27;
-            const ENTER = 13;
             const { target, keyCode, type } = event;
 
-            if (keyCode === ESCAPE) {
+            if (keyCode === KEY_ESCAPE) {
                 target.textContent = this.section.name;
-            } else if (keyCode === ENTER || type === 'blur') {
+            } else if (keyCode === KEY_ENTER || type === 'blur') {
                 this.renameSection(target);
             }
 
