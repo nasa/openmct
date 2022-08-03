@@ -28,6 +28,7 @@ but only assume that example imagery is present.
 
 const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
@@ -39,26 +40,17 @@ test.describe('Example Imagery Object', () => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        //Click the Create button
-        await page.click('button:has-text("Create")');
+        // Create a default 'Example Imagery' object
+        createDomainObjectWithDefaults(page, 'Example Imagery');
 
-        // Click text=Example Imagery
-        await page.click('text=Example Imagery');
-
-        // Click text=OK
         await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
-            //Wait for Save Banner to appear
-            page.waitForSelector('.c-message-banner__message')
+            page.waitForNavigation(),
+            page.locator(backgroundImageSelector).hover({trial: true}),
+            // eslint-disable-next-line playwright/missing-playwright-await
+            expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery')
         ]);
-        // Close Banner
-        await page.locator('.c-message-banner__close-button').click();
 
-        //Wait until Save Banner is gone
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        // Verify that the created object is focused
     });
 
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
@@ -208,7 +200,7 @@ test.describe('Example Imagery Object', () => {
         const pausePlayButton = page.locator('.c-button.pause-play');
 
         // open the time conductor drop down
-        await page.locator('button:has-text("Fixed Timespan")').click();
+        await page.locator('.c-mode-button').click();
 
         // Click local clock
         await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
@@ -532,7 +524,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.locator('.c-mode-button').click();
 
         // Select local clock mode
-        await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+        await page.locator('[data-testid=conductor-modeOption-realtime]').nth(0).click();
 
         // Zoom in on next image
         await mouseZoomIn(page);
