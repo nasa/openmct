@@ -26,8 +26,8 @@ const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('.
 test.describe('Timer', () => {
     let timer;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
-        timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
+        await page.goto('./', { waitUntil: 'networkidle' });
+        await createDomainObjectWithDefaults(page, { type: 'timer' });
     });
 
     test('Can perform actions on the Timer', async ({ page }) => {

@@ -58,12 +58,14 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
  *  as a part of our test promotion pipeline.
  */
 test.describe('Renaming Timer Object', () => {
-    // Top-level declaration of the Timer object created in beforeEach().
-    // We can then use this throughout the entire test suite.
-    let timer;
-    test.beforeEach(async ({ page }) => {
-        // Open a browser, navigate to the main page, and wait until all network events to resolve
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+    //Create a testcase name which will be obvious when it fails in CI
+    test('Can create a new Timer object and rename it from actions Menu', async ({ page }) => {
+        //Open a browser, navigate to the main page, and wait until all networkevents to resolve
+        await page.goto('./', { waitUntil: 'networkidle' });
+        //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create a Timer object
+        await createDomainObjectWithDefaults(page, { type: 'Timer' });
+        //Assert the object to be created and check it's name in the title
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Timer');
 
         // We provide some helper functions in appActions like `createDomainObjectWithDefaults()`.
         // This example will create a Timer object with default properties, under the root folder:
@@ -87,6 +89,13 @@ test.describe('Renaming Timer Object', () => {
         // Assert that the name has changed in the browser bar to the value we assigned above
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName);
     });
+    test('An existing Timer object can be renamed twice', async ({ page }) => {
+        //Open a browser, navigate to the main page, and wait until all networkevents to resolve
+        await page.goto('./', { waitUntil: 'networkidle' });
+        //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create a Timer object
+        await createDomainObjectWithDefaults(page, { type: 'Timer' });
+        //Expect the object to be created and check it's name in the title
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Timer');
 
     test('An existing Timer object can be renamed twice', async ({ page }) => {
         const newObjectName = "Renamed Timer";

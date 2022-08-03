@@ -34,7 +34,10 @@ const nbUtils = require('../../../../helper/notebookUtils');
   * @param {number} [iterations = 1] - the number of entries to create
   */
 async function createNotebookAndEntry(page, iterations = 1) {
-    const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
+    //Go to baseURL
+    await page.goto('./', { waitUntil: 'networkidle' });
+
+    createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         await nbUtils.enterTextEntry(page, `Entry ${iteration}`);
@@ -225,7 +228,9 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        await createDomainObjectWithDefaults(page, { type: 'Clock' });
 
         const ITERATIONS = 4;
         const notebook = await createNotebookEntryAndTags(page, ITERATIONS);

@@ -30,7 +30,7 @@ test.describe('Telemetry Table', () => {
             description: 'https://github.com/nasa/openmct/issues/5113'
         });
 
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
         await createDomainObjectWithDefaults(page, {

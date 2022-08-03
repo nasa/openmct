@@ -33,7 +33,7 @@ import InMemorySearchProvider from './InMemorySearchProvider';
 /**
  * Uniquely identifies a domain object.
  *
- * @typedef {object} Identifier
+ * @typedef Identifier
  * @property {string} namespace the namespace to/from which this domain
  *           object should be loaded/stored.
  * @property {string} key a unique identifier for the domain object
