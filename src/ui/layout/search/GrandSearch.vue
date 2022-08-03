@@ -84,7 +84,13 @@ export default {
             if (this.searchValue) {
                 await this.getSearchResults();
             } else {
-                this.$refs.searchResultsDropDown.showResults(this.searchLoading, this.searchValue, this.annotationSearchResults, this.objectSearchResults);
+                const dropdownOptions = {
+                    searchLoading: this.searchLoading,
+                    searchValue: this.searchValue,
+                    annotationSearchResults: this.annotationSearchResults,
+                    objectSearchResults: this.objectSearchResults
+                };
+                this.$refs.searchResultsDropDown.showResults(dropdownOptions);
             }
         },
         getPathsForObjects(objectsNeedingPaths) {
@@ -115,7 +121,7 @@ export default {
                         return false;
                     }
 
-                    return result.originalPath && (result.originalPath.length > 1);
+                    return result?.originalPath?.length > 2;
                 });
                 this.objectSearchResults = filterAnnotationsAndValidPaths;
                 this.searchLoading = false;
@@ -130,7 +136,13 @@ export default {
             }
         },
         showSearchResults() {
-            this.$refs.searchResultsDropDown.showResults(this.searchLoading, this.searchValue, this.annotationSearchResults, this.objectSearchResults);
+            const dropdownOptions = {
+                searchLoading: this.searchLoading,
+                searchValue: this.searchValue,
+                annotationSearchResults: this.annotationSearchResults,
+                objectSearchResults: this.objectSearchResults
+            };
+            this.$refs.searchResultsDropDown.showResults(dropdownOptions);
             document.body.addEventListener('click', this.handleOutsideClick);
         },
         handleOutsideClick(event) {

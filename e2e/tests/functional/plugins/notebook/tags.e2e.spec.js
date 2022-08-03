@@ -144,7 +144,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await createNotebookEntryAndTags(page);
         // Delete Notebook
         await page.locator('button[title="More options"]').click();
-        await page.locator('text=Remove').click();
+        await page.locator('li[title="Remove this object from its containing object."]').click();
         await page.locator('button:has-text("OK")').click();
         await page.goto('./', { waitUntil: 'networkidle' });
 

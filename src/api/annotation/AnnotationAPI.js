@@ -278,8 +278,7 @@ export default class AnnotationAPI extends EventEmitter {
         const appliedTagSearchResults = this.#addTagMetaInformationToResults(searchResults, matchingTagKeys);
         const appliedTargetsModels = await this.#addTargetModelsToResults(appliedTagSearchResults);
         const resultsWithValidPath = appliedTargetsModels.filter(result => {
-            return result && result.targetModels && result.targetModels.length
-             && result.targetModels[0].originalPath && (result.targetModels[0].originalPath.length > 1);
+            return (result?.targetModels?.[0]?.originalPath?.length > 2);
         });
 
         return resultsWithValidPath;

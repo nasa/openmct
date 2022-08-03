@@ -110,11 +110,11 @@ export default {
             this.annotationResults = [];
             this.objectResults = [];
         },
-        showResults(searchLoading, passedSearchQuery, passedAnnotationResults, passedObjectResults) {
+        showResults({searchLoading, searchValue, annotationSearchResults, objectSearchResults}) {
             this.searchLoading = searchLoading;
-            this.annotationResults = passedAnnotationResults;
-            this.objectResults = passedObjectResults;
-            if (passedSearchQuery && passedSearchQuery.length) {
+            this.annotationResults = annotationSearchResults;
+            this.objectResults = objectSearchResults;
+            if (searchValue?.length) {
                 this.resultsShown = true;
             } else {
                 this.resultsShown = false;
