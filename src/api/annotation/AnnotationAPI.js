@@ -201,7 +201,10 @@ export default class AnnotationAPI extends EventEmitter {
         contentText,
         targets,
       };
-      return this.create(annotationCreationArguments);
+
+      const newAnnotation = await this.create(annotationCreationArguments);
+
+      return newAnnotation;
     } else {
       const tagArray = [tag, ...existingAnnotation.tags];
       this.openmct.objects.mutate(existingAnnotation, "tags", tagArray);
@@ -242,6 +245,7 @@ export default class AnnotationAPI extends EventEmitter {
           .toLowerCase()
           .includes(query.toLowerCase());
       }
+
       return false;
     });
   }
@@ -264,7 +268,7 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   async #addTargetModelsToResults(results) {
-    return Promise.all(
+    const modelAddedToResults = await Promise.all(
       results.map(async (result) => {
         const targetModels = await Promise.all(
           Object.keys(result.targets).map(async (targetID) => {
@@ -288,6 +292,8 @@ export default class AnnotationAPI extends EventEmitter {
         };
       })
     );
+
+    return modelAddedToResults;
   }
 
   /**
@@ -311,8 +317,7 @@ export default class AnnotationAPI extends EventEmitter {
       searchResults,
       matchingTagKeys
     );
-    return this.#addTargetModelsToResults(
-      appliedTagSearchResults
-    );
+
+    return this.#addTargetModelsToResults(appliedTagSearchResults);
   }
 }
