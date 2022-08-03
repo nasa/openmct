@@ -23,20 +23,30 @@
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import ExampleTagsPlugin from "../../../example/exampleTags/plugin";
 
-describe("The Annotation API", () => {
+fdescribe("The Annotation API", () => {
     let openmct;
     let mockObjectProvider;
     let mockDomainObject;
+    let mockFolderObject;
     let mockAnnotationObject;
 
     beforeEach((done) => {
         openmct = createOpenMct();
         openmct.install(new ExampleTagsPlugin());
         const availableTags = openmct.annotation.getAvailableTags();
+        mockFolderObject = {
+            type: 'folder',
+            name: 'folderFoo',
+            location: 'someTopObject',
+            identifier: {
+                key: 'someParent',
+                namespace: 'fooNameSpace'
+            }
+        };
         mockDomainObject = {
             type: 'notebook',
             name: 'fooRabbitNotebook',
-            location: 'someParent',
+            location: 'fooNameSpace:someParent',
             identifier: {
                 key: 'some-object',
                 namespace: 'fooNameSpace'
@@ -69,6 +79,8 @@ describe("The Annotation API", () => {
                 return mockDomainObject;
             } else if (identifier.key === mockAnnotationObject.identifier.key) {
                 return mockAnnotationObject;
+            } else if (identifier.key === mockFolderObject.identifier.key) {
+                return mockFolderObject;
             } else {
                 return null;
             }
@@ -151,6 +163,7 @@ describe("The Annotation API", () => {
             // use local worker
             sharedWorkerToRestore = openmct.objects.inMemorySearchProvider.worker;
             openmct.objects.inMemorySearchProvider.worker = null;
+            await openmct.objects.inMemorySearchProvider.index(mockFolderObject);
             await openmct.objects.inMemorySearchProvider.index(mockDomainObject);
             await openmct.objects.inMemorySearchProvider.index(mockAnnotationObject);
         });
