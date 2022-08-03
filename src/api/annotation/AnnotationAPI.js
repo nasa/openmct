@@ -271,7 +271,11 @@ export default class AnnotationAPI extends EventEmitter {
         const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
         const appliedTagSearchResults = this.#addTagMetaInformationToResults(searchResults, matchingTagKeys);
         const appliedTargetsModels = await this.#addTargetModelsToResults(appliedTagSearchResults);
+        const resultsWithValidPath = appliedTargetsModels.filter(result => {
+            return result && result.targetModels && result.targetModels.length &&
+             result.targetModels[0].originalPath && (result.targetModels[0].originalPath.length > 1);
+        });
 
-        return appliedTargetsModels;
+        return resultsWithValidPath;
     }
 }
