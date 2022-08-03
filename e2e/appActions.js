@@ -83,7 +83,7 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     ]);
 
     // Wait until the URL is updated
-    await page.waitForNavigation('networkidle');
+    await page.waitForURL(`**/${parentUrl.replace('./', '')}/**?**`);
     const uuid = await getFocusedObjectUuid(page);
     const objectUrl = await getHashUrlToDomainObject(page, uuid);
 

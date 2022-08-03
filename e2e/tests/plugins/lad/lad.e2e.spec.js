@@ -20,56 +20,53 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../baseFixtures');
+const { test, expect } = require('../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../appActions');
 
 test.describe('Testing LAD table @unstable', () => {
-    test('telemetry value exactly matches latest telemetry value received', async ({ page }) => {
+    test('telemetry value exactly matches latest telemetry value received', async ({ page, openmctConfig }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
+        const { myItemsFolderName } = openmctConfig;
 
         await page.locator('button:has-text("Fixed Timespan")').click();
         await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
 
-        await createDomainObjectWithDefaults(page, 'Sine Wave Generator');
-        await renameObjectFrom3DotMenu(page, "Test Sine Wave Generator");
+        await createDomainObjectWithDefaults(page, {
+            type: 'Sine Wave Generator',
+            name: "Test Sine Wave Generator"
+        });
         const pageURL = page.url();
         const sineWaveGeneratorIdentifier = pageURL.split('/').pop().split('?')[0];
 
-        await page.locator('text=My Items').first().click();
+        await page.locator(`text=${myItemsFolderName}`).first().click();
 
-        await createDomainObjectWithDefaults(page, 'LAD Table');
-        await renameObjectFrom3DotMenu(page, "Test LAD Table");
+        await createDomainObjectWithDefaults(page, {
+            type: 'LAD Table',
+            name: "Test LAD Table"
+        });
+        await page.locator('[title="Edit"]').click();
 
-        await page.locator('text=Open MCT My Items >> span').nth(3).click();
+        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
 
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
-        const value = await page.locator('.js-third-data').textContent();
-        console.log(value);
+        const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
 
-        // const openmctObject = await page.evaluate(sineWaveGeneratorIdentifier => openmct.objects.get(sineWaveGeneratorIdentifier));
-        // console.log(openmctObject);
-        // const unsubscribe = openmct.telemetry.subscribe(telemetryObject,
-        //     data => this.addDataToGraph(telemetryObject, data)
-        //     , options);
-        await page.pause();
+        await page.evaluate(async (telemetryIdentifier) => {
+            const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
+            window.openmct.telemetry.subscribe(telemetryObject, (obj) => {
+                window.getTelemValue(obj.sin);
+            });
+        }, sineWaveGeneratorIdentifier);
 
-        // //Assert that the name has changed in the browser bar to the value we assigned above
-        // await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName);
-        expect(true).toBe(true);
+        const subscribeTelemValue = await getTelemValuePromise;
+        const roundedTelemValue = parseFloat(subscribeTelemValue).toFixed(2);
+
+        const ladTableValuePromise = await page.waitForSelector(`text="${roundedTelemValue}"`);
+        const ladTableValue = await ladTableValuePromise.textContent();
+
+        expect(ladTableValue).toBe(roundedTelemValue);
     });
 });
-
-/**
- * Function that renames the object
- * @param {import('@playwright/test').Page} page
- * @param {string} newName New Name for object
- */
- async function renameObjectFrom3DotMenu(page, newName) {
-    await page.locator('button[title="More options"]').click();
-    await page.locator('text=Edit Properties...').click();
-    await page.locator('span.form-title >> input[type="text"]').fill(newName);
-    await page.locator('text=OK').click();
-}
