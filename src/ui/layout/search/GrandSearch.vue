@@ -110,10 +110,14 @@ export default {
                 const fullObjectSearchResults = await Promise.all(this.openmct.objects.search(this.searchValue, abortSignal));
                 const aggregatedObjectSearchResults = fullObjectSearchResults.flat();
                 const aggregatedObjectSearchResultsWithPaths = await this.getPathsForObjects(aggregatedObjectSearchResults);
-                const filterAnnotations = aggregatedObjectSearchResultsWithPaths.filter(result => {
-                    return result.type !== 'annotation';
+                const filterAnnotationsAndValidPaths = aggregatedObjectSearchResultsWithPaths.filter(result => {
+                    if (this.openmct.annotation.isAnnotation(result)) {
+                        return false;
+                    }
+
+                    return result.originalPath && (result.originalPath.length > 1);
                 });
-                this.objectSearchResults = filterAnnotations;
+                this.objectSearchResults = filterAnnotationsAndValidPaths;
                 this.showSearchResults();
             } catch (error) {
                 console.error(`😞 Error searching`, error);
