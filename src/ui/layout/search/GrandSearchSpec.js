@@ -73,6 +73,7 @@ describe("GrandSearch", () => {
         mockFolderObject = {
             type: 'folder',
             name: 'Test Folder',
+            location: 'Some parent',
             identifier: {
                 key: 'some-folder',
                 namespace: 'fooNameSpace'

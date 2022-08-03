@@ -36,6 +36,7 @@ describe("The Annotation API", () => {
         mockDomainObject = {
             type: 'notebook',
             name: 'fooRabbitNotebook',
+            location: 'someParent',
             identifier: {
                 key: 'some-object',
                 namespace: 'fooNameSpace'
