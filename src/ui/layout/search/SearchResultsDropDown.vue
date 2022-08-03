@@ -22,12 +22,10 @@
 
 <template>
 <div
-    v-if="(annotationResults && annotationResults.length) ||
-        (objectResults && objectResults.length)"
     class="c-gsearch__dropdown"
 >
     <div
-        v-show="resultsShown"
+        v-if="resultsShown"
         class="c-gsearch__results-wrapper"
     >
         <div class="c-gsearch__results">
@@ -58,10 +56,14 @@
                     @click.native="selectedResult"
                 />
             </div>
+            <div
+                v-if="(!annotationResults || !annotationResults.length) &&
+                    (!objectResults || !objectResults.length)"
+            >No matching results.
+            </div>
         </div>
     </div>
-</div>
-</template>
+</div></template>
 
 <script>
 import AnnotationSearchResult from './AnnotationSearchResult.vue';
@@ -91,12 +93,11 @@ export default {
         previewChanged(changedPreviewState) {
             this.previewVisible = changedPreviewState;
         },
-        showResults(passedAnnotationResults, passedObjectResults) {
-            if ((passedAnnotationResults && passedAnnotationResults.length)
-                || (passedObjectResults && passedObjectResults.length)) {
+        showResults(passedSearchQuery, passedAnnotationResults, passedObjectResults) {
+            this.annotationResults = passedAnnotationResults;
+            this.objectResults = passedObjectResults;
+            if (passedSearchQuery && passedSearchQuery.length) {
                 this.resultsShown = true;
-                this.annotationResults = passedAnnotationResults;
-                this.objectResults = passedObjectResults;
             } else {
                 this.resultsShown = false;
             }

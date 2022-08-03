@@ -86,7 +86,7 @@ export default {
                 await this.getSearchResults();
             } else {
                 this.searchLoading = false;
-                this.$refs.searchResultsDropDown.showResults(this.annotationSearchResults, this.objectSearchResults);
+                this.$refs.searchResultsDropDown.showResults(this.searchValue, this.annotationSearchResults, this.objectSearchResults);
             }
         },
         getPathsForObjects(objectsNeedingPaths) {
@@ -125,7 +125,7 @@ export default {
             }
         },
         showSearchResults() {
-            this.$refs.searchResultsDropDown.showResults(this.annotationSearchResults, this.objectSearchResults);
+            this.$refs.searchResultsDropDown.showResults(this.searchValue, this.annotationSearchResults, this.objectSearchResults);
             document.body.addEventListener('click', this.handleOutsideClick);
         },
         handleOutsideClick(event) {
