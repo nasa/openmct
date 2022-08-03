@@ -142,7 +142,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
     test('Can delete objects with tags and neither return in serch', async ({ page }) => {
         await createNotebookEntryAndTags(page);
-        await page.locator('[aria-label="Notebook Entries"]').click();
         // Delete Notebook
         await page.locator('button[title="More options"]').click();
         await page.locator('text=Remove').click();
