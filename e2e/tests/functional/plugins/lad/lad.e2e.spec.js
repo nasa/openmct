@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../appActions');
+const { test, expect } = require('../../../../pluginFixtures');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Testing LAD table @unstable', () => {
     test('telemetry value exactly matches latest telemetry value received in real time', async ({ page, openmctConfig }) => {
