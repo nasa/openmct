@@ -278,7 +278,7 @@ export default class AnnotationAPI extends EventEmitter {
         const appliedTagSearchResults = this.#addTagMetaInformationToResults(searchResults, matchingTagKeys);
         const appliedTargetsModels = await this.#addTargetModelsToResults(appliedTagSearchResults);
         const resultsWithValidPath = appliedTargetsModels.filter(result => {
-            return (result?.targetModels?.[0]?.originalPath?.length > 2);
+            return this.openmct.objects.hasValidPath(result.targetModels?.[0]);
         });
 
         return resultsWithValidPath;

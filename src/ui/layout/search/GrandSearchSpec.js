@@ -73,7 +73,7 @@ describe("GrandSearch", () => {
             }
         };
         mockTopObject = {
-            type: 'folder',
+            type: 'root',
             name: 'Top Folder',
             identifier: {
                 key: 'topObject',

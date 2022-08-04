@@ -23,7 +23,7 @@
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import ExampleTagsPlugin from "../../../example/exampleTags/plugin";
 
-fdescribe("The Annotation API", () => {
+describe("The Annotation API", () => {
     let openmct;
     let mockObjectProvider;
     let mockDomainObject;
@@ -35,7 +35,7 @@ fdescribe("The Annotation API", () => {
         openmct.install(new ExampleTagsPlugin());
         const availableTags = openmct.annotation.getAvailableTags();
         mockFolderObject = {
-            type: 'folder',
+            type: 'root',
             name: 'folderFoo',
             location: 'someTopObject',
             identifier: {

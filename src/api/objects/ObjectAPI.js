@@ -623,6 +623,21 @@ export default class ObjectAPI {
             });
     }
 
+    /**
+     * Given a domain object, check if its path 
+     * @param {module:openmct.DomainObject} object the object to observe
+     * @returns {boolean} whether the domain object is orphaned
+     */
+    hasValidPath(domainObject) {
+        if (domainObject && domainObject.originalPath) {
+            return (domainObject.originalPath.some(pathEntry => {
+                return (pathEntry.type === 'root');
+            }));
+        }
+
+        return false;
+    }
+
     getOriginalPath(identifier, path = []) {
         return this.get(identifier).then((domainObject) => {
             path.push(domainObject);

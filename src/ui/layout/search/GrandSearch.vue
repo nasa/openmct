@@ -121,7 +121,9 @@ export default {
                         return false;
                     }
 
-                    return result?.originalPath?.length > 2;
+                    console.debug(`result?.originalPath`, result);
+
+                    return this.openmct.objects.hasValidPath(result);
                 });
                 this.objectSearchResults = filterAnnotationsAndValidPaths;
                 this.searchLoading = false;
