@@ -71,6 +71,10 @@ import FaultManagementToolbar from './FaultManagementToolbar.vue';
 
 import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS, SORT_ITEMS } from './constants';
 
+import _ from 'lodash';
+
+const SEARCH_KEYS = ['id', 'triggerValueInfo', 'currentValueInfo', 'triggerTime', 'severity', 'name', 'shortDescription', 'namespace'];
+
 export default {
     components: {
         FaultManagementListHeader,
@@ -123,29 +127,24 @@ export default {
             return this.openmct.faults.supportsActions();
         }
     },
+    mounted() {
+        this.updateSearchTerm = _.debounce(this.updateSearchTerm, 300);
+    },
     methods: {
         filterUsingSearchTerm(fault) {
-            if (fault?.id?.toString().toLowerCase().includes(this.searchTerm)) {
-                return true;
+            if (!fault) {
+                return false;
             }
 
-            if (fault?.triggerValueInfo?.toString().toLowerCase().includes(this.searchTerm)) {
-                return true;
-            }
+            let match = false;
 
-            if (fault?.currentValueInfo?.toString().toLowerCase().includes(this.searchTerm)) {
-                return true;
-            }
+            SEARCH_KEYS.forEach((key) => {
+                if (fault[key]?.toString().toLowerCase().includes(this.searchTerm)) {
+                    match = true;
+                }
+            });
 
-            if (fault?.triggerTime.toString().toLowerCase().includes(this.searchTerm)) {
-                return true;
-            }
-
-            if (fault?.severity.toString().toLowerCase().includes(this.searchTerm)) {
-                return true;
-            }
-
-            return false;
+            return match;
         },
         isSelected(fault) {
             return Boolean(this.selectedFaults[fault.id]);

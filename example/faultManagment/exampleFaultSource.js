@@ -33,25 +33,7 @@ export default function () {
                 return Promise.resolve(faultsData);
             },
             subscribe(domainObject, callback) {
-
-                function getRandomIndex(start, end) {
-                    return Math.floor(start + (Math.random() * (end - start + 1)));
-                }
-
-                let id = setInterval(() => {
-                    const index = getRandomIndex(0, faultsData.length - 1);
-                    const randomFaultData = faultsData[index];
-                    const randomFault = randomFaultData.fault;
-
-                    callback({
-                        fault: randomFault,
-                        type: 'alarms'
-                    });
-                }, 300);
-
-                return () => {
-                    clearInterval(id);
-                };
+                return () => {};
             },
             supportsRequest(domainObject) {
                 return domainObject.type === 'faultManagement';
