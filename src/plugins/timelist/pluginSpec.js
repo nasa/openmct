@@ -95,12 +95,14 @@ describe('the plugin', function () {
         originalRouterPath = openmct.router.path;
 
         mockComposition = new EventEmitter();
-        // eslint-disable-next-line require-await
-        mockComposition.load = async () => {
-            return [planObject];
+        mockComposition.load = () => {
+            mockComposition.emit('add', planObject);
+
+            return Promise.resolve([planObject]);
         };
 
         spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
         openmct.on('start', done);
         openmct.start(appHolder);
     });
@@ -266,8 +268,6 @@ describe('the plugin', function () {
         });
 
         it('loads the plan from composition', () => {
-            mockComposition.emit('add', planObject);
-
             return Vue.nextTick(() => {
                 const items = element.querySelectorAll(LIST_ITEM_CLASS);
                 expect(items.length).toEqual(2);
@@ -319,8 +319,6 @@ describe('the plugin', function () {
         });
 
         it('activities', () => {
-            mockComposition.emit('add', planObject);
-
             return Vue.nextTick(() => {
                 const items = element.querySelectorAll(LIST_ITEM_CLASS);
                 expect(items.length).toEqual(1);
@@ -372,8 +370,6 @@ describe('the plugin', function () {
         });
 
         it('hides past events', () => {
-            mockComposition.emit('add', planObject);
-
             return Vue.nextTick(() => {
                 const items = element.querySelectorAll(LIST_ITEM_CLASS);
                 expect(items.length).toEqual(1);
