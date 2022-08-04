@@ -624,11 +624,11 @@ export default class ObjectAPI {
     }
 
     /**
-     * Given a domain object, check if its path
-     * @param {module:openmct.DomainObject} object the object to observe
+     * Given a domain object, check if the domain object is reachable via root 
+     * @param {module:openmct.DomainObject} object the object to check
      * @returns {boolean} whether the domain object is orphaned
      */
-    hasValidPath(domainObject) {
+    isObjectOrphaned(domainObject) {
         if (domainObject && domainObject.originalPath) {
             return (domainObject.originalPath.some(pathEntry => {
                 return (pathEntry.type === 'root');
