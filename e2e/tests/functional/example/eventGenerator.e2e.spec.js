@@ -35,7 +35,10 @@ test.describe('Example Event Generator CRUD Operations', () => {
         //Create a name for the object
         const newObjectName = 'Test Event Generator';
 
-        await createDomainObjectWithDefaults(page, 'Event Message Generator', newObjectName);
+        await createDomainObjectWithDefaults(page, {
+            type: 'Event Message Generator',
+            name: newObjectName
+        });
 
         //Assertions against newly created object which define standard behavior
         await expect(page.waitForURL(/.*&view=table/)).toBeTruthy();
