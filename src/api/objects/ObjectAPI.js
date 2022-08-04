@@ -615,9 +615,9 @@ export default class ObjectAPI {
      * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
      */
     areIdsEqual(...identifiers) {
+        const firstIdentifier = utils.parseKeyString(identifiers[0]);
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
-                const firstIdentifier = utils.parseKeyString(identifiers[0]);
                 return identifier === firstIdentifier
                     || (identifier.namespace === firstIdentifier.namespace
                         && identifier.key === firstIdentifier.key);
