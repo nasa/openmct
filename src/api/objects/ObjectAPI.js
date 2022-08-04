@@ -623,6 +623,19 @@ export default class ObjectAPI {
             });
     }
 
+    /**
+     * Given an original path check if the path is reachable via root
+     * @param {Array<Object>} originalPath an array of path objects to check
+     * @returns {boolean} whether the domain object is reachable
+     */
+    isReachable(originalPath) {
+        if (originalPath && originalPath.length) {
+            return (originalPath[originalPath.length - 1].type === 'root');
+        }
+
+        return false;
+    }
+
     getOriginalPath(identifier, path = []) {
         return this.get(identifier).then((domainObject) => {
             path.push(domainObject);
