@@ -34,11 +34,11 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  * Uniquely identifies a domain object.
  *
  * @typedef Identifier
- * @memberof module:openmct.ObjectAPI~
  * @property {string} namespace the namespace to/from which this domain
  *           object should be loaded/stored.
  * @property {string} key a unique identifier for the domain object
  *           within that namespace
+ * @memberof module:openmct.ObjectAPI~
  */
 
 /**
@@ -622,6 +622,19 @@ export default class ObjectAPI {
                     || (identifier.namespace === firstIdentifier.namespace
                         && identifier.key === firstIdentifier.key);
             });
+    }
+
+    /**
+     * Given an original path check if the path is reachable via root
+     * @param {Array<Object>} originalPath an array of path objects to check
+     * @returns {boolean} whether the domain object is reachable
+     */
+    isReachable(originalPath) {
+        if (originalPath && originalPath.length) {
+            return (originalPath[originalPath.length - 1].type === 'root');
+        }
+
+        return false;
     }
 
     getOriginalPath(identifier, path = []) {

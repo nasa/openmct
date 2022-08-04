@@ -20,55 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Telemetry Table', () => {
-    test('unpauses and filters data when paused by button and user changes bounds', async ({ page, openmctConfig }) => {
+    test('unpauses and filters data when paused by button and user changes bounds', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5113'
         });
 
-        const { myItemsFolderName } = openmctConfig;
-        const bannerMessage = '.c-message-banner__message';
-        const createButton = 'button:has-text("Create")';
-
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        // Click create button
-        await page.locator(createButton).click();
-        await page.locator('li:has-text("Telemetry Table")').click();
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click(),
-            // Wait for Save Banner to appear
-            page.waitForSelector(bannerMessage)
-        ]);
-
-        // Save (exit edit mode)
-        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(3).click();
-        await page.locator('text=Save and Finish Editing').click();
-
-        // Click create button
-        await page.locator(createButton).click();
-
-        // add Sine Wave Generator with defaults
-        await page.locator('li:has-text("Sine Wave Generator")').click();
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click(),
-            // Wait for Save Banner to appear
-            page.waitForSelector(bannerMessage)
-        ]);
+        const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Sine Wave Generator',
+            parent: table.uuid
+        });
 
         // focus the Telemetry Table
-        await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=Unnamed Telemetry Table').first().click()
-        ]);
+        page.goto(table.url);
 
         // Click pause button
         const pauseButton = page.locator('button.c-button.icon-pause');
