@@ -22,7 +22,6 @@
 
 const { test, expect } = require('../../../../pluginFixtures');
 const path = require('path');
-const { first } = require('lodash');
 
 test.describe('The Fault Management Plugin', () => {
     test.beforeEach(async ({ page }) => {
@@ -64,24 +63,84 @@ test.describe('The Fault Management Plugin', () => {
 
     test('Allows you to shelve a fault', async ({ page }) => {
         const shelvedFaultName = await getFaultName(page, 2);
+        const beforeShelvedFault = getFaulBytName(page, shelvedFaultName);
+
+        expect.soft(await beforeShelvedFault.count()).toBe(1);
 
         await shelveFault(page, 2);
+
+        // check it is removed from standard view
+        const afterShelvedFault = getFaulBytName(page, shelvedFaultName);
+        expect.soft(await afterShelvedFault.count()).toBe(0);
+
         await changeViewTo(page, 'shelved');
 
-        const shelvedViewFaultName = await getFaultName(page, 1);
+        const shelvedViewFault = getFaulBytName(page, shelvedFaultName);
 
-        expect.soft(shelvedFaultName).toEqual(shelvedViewFaultName);
+        expect.soft(await shelvedViewFault.count()).toBe(1);
     });
 
     test('Allows you to acknowledge a fault', async ({ page }) => {
         const acknowledgedFaultName = await getFaultName(page, 3);
 
         await acknowledgeFault(page, 3);
+
+        const fault = getFault(page, 3);
+        await expect.soft(fault).toHaveClass(/is-acknowledged/);
+
         await changeViewTo(page, 'acknowledged');
 
         const acknowledgedViewFaultName = await getFaultName(page, 1);
-
         expect.soft(acknowledgedFaultName).toEqual(acknowledgedViewFaultName);
+    });
+
+    test('Allows you to shelve multiple faults', async ({ page }) => {
+        const shelvedFaultNameOne = await getFaultName(page, 1);
+        const shelvedFaultNameFour = await getFaultName(page, 4);
+
+        const beforeShelvedFaultOne = getFaulBytName(page, shelvedFaultNameOne);
+        const beforeShelvedFaultFour = getFaulBytName(page, shelvedFaultNameFour);
+
+        expect.soft(await beforeShelvedFaultOne.count()).toBe(1);
+        expect.soft(await beforeShelvedFaultFour.count()).toBe(1);
+
+        await shelveMultipleFaults(page, 1, 4);
+
+        // check it is removed from standard view
+        const afterShelvedFaultOne = getFaulBytName(page, shelvedFaultNameOne);
+        const afterShelvedFaultFour = getFaulBytName(page, shelvedFaultNameFour);
+        expect.soft(await afterShelvedFaultOne.count()).toBe(0);
+        expect.soft(await afterShelvedFaultFour.count()).toBe(0);
+
+        await changeViewTo(page, 'shelved');
+
+        const shelvedViewFaultOne = getFaulBytName(page, shelvedFaultNameOne);
+        const shelvedViewFaultFour = getFaulBytName(page, shelvedFaultNameFour);
+
+        expect.soft(await shelvedViewFaultOne.count()).toBe(1);
+        expect.soft(await shelvedViewFaultFour.count()).toBe(1);
+    });
+
+    test('Allows you to acknowledge multiple faults', async ({ page }) => {
+        const acknowledgedFaultNameTwo = await getFaultName(page, 2);
+        const acknowledgedFaultNameFive = await getFaultName(page, 5);
+
+        await acknowledgeMultipleFaults(page, 2, 5);
+
+        const faultTwo = getFault(page, 2);
+        const faultFive = getFault(page, 5);
+
+        // check they have been acknowledged
+        await expect.soft(faultTwo).toHaveClass(/is-acknowledged/);
+        await expect.soft(faultFive).toHaveClass(/is-acknowledged/);
+
+        await changeViewTo(page, 'acknowledged');
+
+        const acknowledgedViewFaultTwo = getFaulBytName(page, acknowledgedFaultNameTwo);
+        const acknowledgedViewFaultFive = getFaulBytName(page, acknowledgedFaultNameFive);
+
+        expect.soft(await acknowledgedViewFaultTwo.count()).toBe(1);
+        expect.soft(await acknowledgedViewFaultFive.count()).toBe(1);
     });
 
 });
@@ -120,21 +179,21 @@ async function shelveMultipleFaults(page, ...nums) {
     });
     await Promise.all(selectRows);
 
-    await page.locator('.c-menu >> text="Acknowledge"').click();
-    // Click [aria-label="Save"]
+    await page.locator('button:has-text("Shelve")').click();
     await page.locator('[aria-label="Save"]').click();
-
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function acknowledgeMultipleFaults(page, ...nums) {
-    await openFaultRowMenu(page, rowNumber);
-    await page.locator('.c-menu >> text="Acknowledge"').click();
-    // Click [aria-label="Save"]
-    await page.locator('[aria-label="Save"]').click();
+    const selectRows = nums.map((num) => {
+        return selectFaultItem(page, num);
+    });
+    await Promise.all(selectRows);
 
+    await page.locator('button:has-text("Acknowledge")').click();
+    await page.locator('[aria-label="Save"]').click();
 }
 
 /**
@@ -158,7 +217,25 @@ async function changeViewTo(page, view) {
  * @param {import('@playwright/test').Page} page
  */
 async function selectFaultItem(page, rowNumber) {
-    await page.locator(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`).check();
+    await page.check(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`, { force: true });
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+function getFault(page, rowNumber) {
+    const fault = page.locator(`.c-faults-list-view-item-body > .c-fault-mgmt__list >> nth=${rowNumber - 1}`);
+
+    return fault;
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+function getFaulBytName(page, name) {
+    const fault = page.locator(`.c-fault-mgmt__list-faultname:has-text("${name}")`);
+
+    return fault;
 }
 
 /**
@@ -179,9 +256,6 @@ async function openFaultRowMenu(page, rowNumber) {
 
 }
 
-// Ensure that the disposition button for an individual fault works by selecting acknowledge or shelve.
-// Then, navigate to each view and ensure that the correct faults appear in the correct disposition views.
-// Also, check the same with selecting multiple faults and using the larger disposition options located directly under search.
 // Ensure that search works properly by entering keywords and observing the correct faults are shown.
 // Check to see if the sort button works and changes according to the options selected (Newest First, Oldest First, Severity)
 // When selecting the Acknowledged view, ensure that the criticality icons are not blinking. and that the criticality icon includes a checkmark.

@@ -20,7 +20,7 @@ const getRandom = {
                 severity: getRandom.severity(),
                 shelved: false,
                 shortDescription: '',
-                triggerTime: Date.now(),
+                triggerTime: Date.now() - num,
                 triggerValueInfo: {
                     value: getRandom.value(),
                     rangeCondition: getRandom.severity(),
