@@ -121,7 +121,7 @@ export default {
                         return false;
                     }
 
-                    return this.openmct.objects.isObjectOrphaned(result);
+                    return this.openmct.objects.isReachable(result?.originalPath);
                 });
                 this.objectSearchResults = filterAnnotationsAndValidPaths;
                 this.searchLoading = false;
