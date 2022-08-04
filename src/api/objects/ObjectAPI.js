@@ -616,6 +616,7 @@ export default class ObjectAPI {
      */
     areIdsEqual(...identifiers) {
         const firstIdentifier = utils.parseKeyString(identifiers[0]);
+
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
                 return identifier === firstIdentifier
