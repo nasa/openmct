@@ -143,6 +143,69 @@ test.describe('The Fault Management Plugin', () => {
         expect.soft(await acknowledgedViewFaultFive.count()).toBe(1);
     });
 
+    test('Allows you to search faults', async ({ page }) => {
+        const faultThreeNamespace = await getFaultNamespace(page, 3);
+        const faultTwoName = await getFaultName(page, 2);
+        const faultFiveTriggerTime = await getFaultTriggerTime(page, 5);
+
+        // should be all faults (5)
+        let faultResultCount = await getFaultResultCount(page);
+        expect.soft(faultResultCount).toEqual(5);
+
+        // search namespace
+        await enterSearchTerm(page, faultThreeNamespace);
+
+        faultResultCount = await getFaultResultCount(page);
+        expect.soft(faultResultCount).toEqual(1);
+        expect.soft(await getFaultNamespace(page, 1)).toEqual(faultThreeNamespace);
+
+        // all faults
+        await clearSearch(page);
+        faultResultCount = await getFaultResultCount(page);
+        expect.soft(faultResultCount).toEqual(5);
+
+        // search name
+        await enterSearchTerm(page, faultTwoName);
+
+        faultResultCount = await getFaultResultCount(page);
+        expect.soft(faultResultCount).toEqual(1);
+        expect.soft(await getFaultName(page, 1)).toEqual(faultTwoName);
+
+        // all faults
+        await clearSearch(page);
+        faultResultCount = await getFaultResultCount(page);
+        expect.soft(faultResultCount).toEqual(5);
+
+        // search triggerTime
+        await enterSearchTerm(page, faultFiveTriggerTime);
+
+        faultResultCount = await getFaultResultCount(page);
+        expect.soft(faultResultCount).toEqual(1);
+        expect.soft(await getFaultTriggerTime(page, 1)).toEqual(faultFiveTriggerTime);
+    });
+
+    test('Allows you to sort faults', async ({ page }) => {
+        const highestSeverity = await getHighestSeverity(page);
+        const lowestSeverity = await getLowestSeverity(page);
+        const faultOneName = 'Example Fault 1';
+        const faultFiveName = 'Example Fault 5';
+        let firstFaultName = await getFaultName(page, 1);
+
+        expect.soft(firstFaultName).toEqual(faultOneName);
+
+        await sortFaultsBy(page, 'oldest-first');
+
+        firstFaultName = await getFaultName(page, 1);
+        expect.soft(firstFaultName).toEqual(faultFiveName);
+
+        await sortFaultsBy(page, 'severity');
+
+        const sortedHighestSeverity = await getFaultSeverity(page, 1);
+        const sortedLowestSeverity = await getFaultSeverity(page, 5);
+        expect.soft(sortedHighestSeverity).toEqual(highestSeverity);
+        expect.soft(sortedLowestSeverity).toEqual(lowestSeverity);
+    });
+
 });
 
 /**
@@ -216,8 +279,70 @@ async function changeViewTo(page, view) {
 /**
  * @param {import('@playwright/test').Page} page
  */
+async function sortFaultsBy(page, sort) {
+    await page.locator('.c-fault-mgmt__list-header-sortButton select').selectOption(sort);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function enterSearchTerm(page, term) {
+    await page.locator('.c-fault-mgmt-search [aria-label="Search Input"]').fill(term);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function clearSearch(page) {
+    await enterSearchTerm(page, '');
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function selectFaultItem(page, rowNumber) {
     await page.check(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`, { force: true });
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function getHighestSeverity(page) {
+    const criticalCount = await page.locator('[title=CRITICAL]').count();
+    const warningCount = await page.locator('[title=WARNING]').count();
+
+    if (criticalCount > 0) {
+        return 'CRITICAL';
+    } else if (warningCount > 0) {
+        return 'WARNING';
+    }
+
+    return 'WATCH';
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function getLowestSeverity(page) {
+    const warningCount = await page.locator('[title=WARNING]').count();
+    const watchCount = await page.locator('[title=WATCH]').count();
+
+    if (watchCount > 0) {
+        return 'WATCH';
+    } else if (warningCount > 0) {
+        return 'WARNING';
+    }
+
+    return 'CRITICAL';
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function getFaultResultCount(page) {
+    const count = await page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').count();
+
+    return count;
 }
 
 /**
@@ -250,16 +375,35 @@ async function getFaultName(page, rowNumber) {
 /**
  * @param {import('@playwright/test').Page} page
  */
+async function getFaultSeverity(page, rowNumber) {
+    const faultSeverity = await page.locator(`.c-faults-list-view-item-body .c-fault-mgmt__list-severity >> nth=${rowNumber - 1}`).getAttribute('title');
+
+    return faultSeverity;
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function getFaultNamespace(page, rowNumber) {
+    const faultNamespace = await page.locator(`.c-fault-mgmt__list-path >> nth=${rowNumber - 1}`).textContent();
+
+    return faultNamespace;
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function getFaultTriggerTime(page, rowNumber) {
+    const faultTriggerTime = await page.locator(`.c-fault-mgmt__list-trigTime >> nth=${rowNumber - 1} >> .c-fault-mgmt-item__value`).textContent();
+
+    return faultTriggerTime.toString().trim();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function openFaultRowMenu(page, rowNumber) {
     // select
     await page.locator(`.c-fault-mgmt-item > .c-fault-mgmt__list-action-button >> nth=${rowNumber - 1}`).click();
 
 }
-
-// Ensure that search works properly by entering keywords and observing the correct faults are shown.
-// Check to see if the sort button works and changes according to the options selected (Newest First, Oldest First, Severity)
-// When selecting the Acknowledged view, ensure that the criticality icons are not blinking. and that the criticality icon includes a checkmark.
-// When selecting the Unacknowledged view, check that the criticality icons are blinking.
-// When selecting the Shelved view, check that the contents of the fault are italicized and _slightly greyed out, and criticality icon is not blinking.
-// When selecting Standard View, ensure that only acknowledged and unacknowledged faults appear, and its criticality icons are blinking accordingly.
-// Shelve a fault for a short period of time. When the time specified runs out, ensure that the fault returns back to its Unacknowledged state and is NOT shelved.
