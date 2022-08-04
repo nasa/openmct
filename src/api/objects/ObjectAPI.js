@@ -625,7 +625,7 @@ export default class ObjectAPI {
 
     /**
      * Given a domain object, check if the domain object is reachable via root
-     * @param {module:openmct.DomainObject} object the object to check
+     * @param {module:openmct.DomainObject} domainObject the object to check
      * @returns {boolean} whether the domain object is orphaned
      */
     isObjectOrphaned(domainObject) {
