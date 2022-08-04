@@ -267,7 +267,6 @@ class InMemorySearchProvider {
     }
 
     onAnnotationCreation(annotationObject) {
-
         const objectProvider = this.openmct.objects.getProvider(annotationObject.identifier);
         if (objectProvider === undefined || objectProvider.search === undefined) {
             const provider = this;
@@ -291,7 +290,12 @@ class InMemorySearchProvider {
 
     onCompositionAdded(newDomainObjectToIndex) {
         const provider = this;
-        provider.index(newDomainObjectToIndex);
+        // The object comes in as a mutable domain object, which has functions,
+        // which the index function cannot handle as it will eventually be serialized
+        // using structuredClone. Thus we're using JSON.parse/JSON.stringify to discard
+        // those functions.
+        const nonMutableDomainObject = JSON.parse(JSON.stringify(newDomainObjectToIndex));
+        provider.index(nonMutableDomainObject);
     }
 
     onCompositionRemoved(domainObjectToRemoveIdentifier) {
