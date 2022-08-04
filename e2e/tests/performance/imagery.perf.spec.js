@@ -39,7 +39,7 @@ const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 test.describe('Performance tests', () => {
     test.beforeEach(async ({ page, browser }, testInfo) => {
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click a:has-text("My Items")
         await page.locator('a:has-text("My Items")').click({
@@ -100,7 +100,7 @@ test.describe('Performance tests', () => {
         // https://chromedevtools.github.io/devtools-protocol/tot/Performance/#method-getMetrics
         await client.send('Performance.enable');
         // Go to baseURL
-        await page.goto('/');
+        await page.goto('./');
 
         // Search Available after Launch
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
