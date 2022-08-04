@@ -71,8 +71,6 @@ import FaultManagementToolbar from './FaultManagementToolbar.vue';
 
 import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS, SORT_ITEMS } from './constants';
 
-import _ from 'lodash';
-
 const SEARCH_KEYS = ['id', 'triggerValueInfo', 'currentValueInfo', 'triggerTime', 'severity', 'name', 'shortDescription', 'namespace'];
 
 export default {
@@ -126,9 +124,6 @@ export default {
         showToolbar() {
             return this.openmct.faults.supportsActions();
         }
-    },
-    mounted() {
-        this.updateSearchTerm = _.debounce(this.updateSearchTerm, 300);
     },
     methods: {
         filterUsingSearchTerm(fault) {
