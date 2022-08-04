@@ -404,10 +404,13 @@ export default {
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
         },
         rangeFontSize() {
+            let RANGE_CHARS_MAX = 3;
             const CHAR_THRESHOLD = 3;
             const START_PERC = 8.5;
             const REDUCE_PERC = 0.8;
-            const RANGE_CHARS_MAX = Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length);
+            if (this.rangeLow && this.rangeHigh) {
+                RANGE_CHARS_MAX = Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length);
+            }
 
             return this.fontSizeFromChars(RANGE_CHARS_MAX, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
         },
@@ -617,11 +620,13 @@ export default {
 
             this.curVal = DEFAULT_CURRENT_VALUE;
             this.formats = null;
-            this.limitHigh = '';
-            this.limitLow = '';
             this.metadata = null;
-            this.rangeHigh = null;
-            this.rangeLow = null;
+            if (this.isUseTelemetryLimits) {
+                this.limitHigh = '';
+                this.limitLow = '';
+                this.rangeHigh = null;
+                this.rangeLow = null;
+            }
             this.valueKey = null;
         },
         request(domainObject = this.telemetryObject) {
@@ -659,7 +664,7 @@ export default {
         },
         updateLimits(telemetryLimit) {
             if (!telemetryLimit || !this.domainObject.configuration.gaugeController.isUseTelemetryLimits) {
-                return;
+                  return;
             }
 
             let limits = {
@@ -678,7 +683,6 @@ export default {
                 limits = telemetryLimit.WATCH;
             } else {
                 this.openmct.notifications.error('No limits definition for given telemetry, hiding low and high limits');
-                this.displayMinMax = false;
                 this.limitHigh = '';
                 this.limitLow = '';
 
@@ -694,25 +698,33 @@ export default {
         },
         updateValue(datum) {
             this.datum = datum;
+            let val = DEFAULT_CURRENT_VALUE;
 
             if (this.isRendering) {
                 return;
             }
 
-            const { start, end } = this.openmct.time.bounds();
-            const parsedValue = this.timeFormatter.parse(this.datum);
+            if (this.datum !== undefined) {
+                const {
+                    start,
+                    end
+                } = this.openmct.time.bounds();
+                const parsedValue = this.timeFormatter.parse(this.datum);
 
-            const beforeStartOfBounds = parsedValue < start;
-            const afterEndOfBounds = parsedValue > end;
-            if (afterEndOfBounds || beforeStartOfBounds) {
-                return;
+                const beforeStartOfBounds = parsedValue < start;
+                const afterEndOfBounds = parsedValue > end;
+                if (afterEndOfBounds || beforeStartOfBounds) {
+                    return;
+                }
+
+                val = this.round(this.formats[this.valueKey].format(this.datum), this.precision);
             }
 
             this.isRendering = true;
             requestAnimationFrame(() => {
                 this.isRendering = false;
 
-                this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);
+                this.curVal = val;
             });
         },
         valToPercent(vValue) {

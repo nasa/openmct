@@ -22,6 +22,7 @@
 
 import GaugeViewProvider from './GaugeViewProvider';
 import GaugeFormController from './components/GaugeFormController.vue';
+import GaugeCompositionPolicy from "./GaugeCompositionPolicy";
 import Vue from 'vue';
 
 export const GAUGE_TYPES = [
@@ -182,6 +183,7 @@ export default function () {
                 }
             ]
         });
+       openmct.composition.addPolicy(new GaugeCompositionPolicy(openmct).allow);
     };
 
     function getGaugeFormController(openmct) {
