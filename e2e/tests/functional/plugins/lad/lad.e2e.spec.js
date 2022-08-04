@@ -28,15 +28,13 @@ test.describe('Testing LAD table @unstable', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
         const { myItemsFolderName } = openmctConfig;
 
-        await page.locator('button:has-text("Fixed Timespan")').click();
+        await page.locator('button.c-mode-button').click();
         await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
 
-        await createDomainObjectWithDefaults(page, {
+        const sineWaveObject = await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
             name: "Test Sine Wave Generator"
         });
-        const pageURL = page.url();
-        const sineWaveGeneratorIdentifier = pageURL.split('/').pop().split('?')[0];
 
         await page.locator(`text=${myItemsFolderName}`).first().click();
 
@@ -54,7 +52,7 @@ test.describe('Testing LAD table @unstable', () => {
 
         let getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
 
-        await subscribeToTelemetry(page, sineWaveGeneratorIdentifier);
+        await subscribeToTelemetry(page, sineWaveObject.uuid);
 
         const subscribeTelemValue = await getTelemValuePromise;
         const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
@@ -66,15 +64,13 @@ test.describe('Testing LAD table @unstable', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
         const { myItemsFolderName } = openmctConfig;
 
-        await page.locator('button:has-text("Fixed Timespan")').click();
+        await page.locator('button.c-mode-button').click();
         await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
 
-        await createDomainObjectWithDefaults(page, {
+        const sineWaveObject = await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
             name: "Test Sine Wave Generator"
         });
-        const pageURL = page.url();
-        const sineWaveGeneratorIdentifier = pageURL.split('/').pop().split('?')[0];
 
         await page.locator(`text=${myItemsFolderName}`).first().click();
 
@@ -92,7 +88,7 @@ test.describe('Testing LAD table @unstable', () => {
 
         let getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
 
-        await subscribeToTelemetry(page, sineWaveGeneratorIdentifier);
+        await subscribeToTelemetry(page, sineWaveObject.uuid);
         await changeToFixedTime(page);
 
         const subscribeTelemValue = await getTelemValuePromise;
