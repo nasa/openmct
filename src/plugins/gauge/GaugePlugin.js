@@ -183,7 +183,7 @@ export default function () {
                 }
             ]
         });
-       openmct.composition.addPolicy(new GaugeCompositionPolicy(openmct).allow);
+        openmct.composition.addPolicy(new GaugeCompositionPolicy(openmct).allow);
     };
 
     function getGaugeFormController(openmct) {

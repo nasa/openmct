@@ -408,6 +408,7 @@ export default {
             const CHAR_THRESHOLD = 3;
             const START_PERC = 8.5;
             const REDUCE_PERC = 0.8;
+
             if (this.rangeLow && this.rangeHigh) {
                 RANGE_CHARS_MAX = Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length);
             }
@@ -627,6 +628,7 @@ export default {
                 this.rangeHigh = null;
                 this.rangeLow = null;
             }
+
             this.valueKey = null;
         },
         request(domainObject = this.telemetryObject) {
@@ -664,7 +666,7 @@ export default {
         },
         updateLimits(telemetryLimit) {
             if (!telemetryLimit || !this.domainObject.configuration.gaugeController.isUseTelemetryLimits) {
-                  return;
+                return;
             }
 
             let limits = {
