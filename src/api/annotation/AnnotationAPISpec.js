@@ -37,7 +37,7 @@ describe("The Annotation API", () => {
         mockFolderObject = {
             type: 'root',
             name: 'folderFoo',
-            location: 'someTopObject',
+            location: '',
             identifier: {
                 key: 'someParent',
                 namespace: 'fooNameSpace'
