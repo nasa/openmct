@@ -625,7 +625,7 @@ export default class ObjectAPI {
 
     /**
      * Given an original path check if the path is reachable via root
-     * @param {Array<Object>} originalPath the object to check
+     * @param {Array<Object>} originalPath an array of path objects to check
      * @returns {boolean} whether the domain object is reachable
      */
     isReachable(originalPath) {
