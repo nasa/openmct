@@ -25,13 +25,14 @@
 /******************************************************** CONTROL-SPECIFIC MIXINS */
 @mixin menuOuter() {
     border-radius: $basicCr;
-    box-shadow: $shdwMenuInner, $shdwMenu;
+    box-shadow: $shdwMenu;
+    @if $shdwMenuInner != none {
+        box-shadow: $shdwMenuInner, $shdwMenu;
+    }
     background: $colorMenuBg;
     color: $colorMenuFg;
-    //filter: $filterMenu; // 2022: causing all kinds of weird visual bugs in Chrome
     text-shadow: $shdwMenuText;
     padding: $interiorMarginSm;
-    //box-shadow: $shdwMenu;
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -60,14 +61,13 @@
         cursor: pointer;
         display: flex;
         padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
-        transition: $transIn;
         white-space: nowrap;
 
         @include hover {
             background: $colorMenuHovBg;
             color: $colorMenuHovFg;
             &:before {
-                color: $colorMenuHovIc;
+                color: $colorMenuHovIc !important;
             }
         }
 
