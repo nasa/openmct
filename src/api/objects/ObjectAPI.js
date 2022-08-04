@@ -624,7 +624,7 @@ export default class ObjectAPI {
     }
 
     /**
-     * Given a domain object, check if its path 
+     * Given a domain object, check if its path
      * @param {module:openmct.DomainObject} object the object to observe
      * @returns {boolean} whether the domain object is orphaned
      */
