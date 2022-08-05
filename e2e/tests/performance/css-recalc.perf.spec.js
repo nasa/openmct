@@ -21,25 +21,37 @@
  *****************************************************************************/
 
 const { test, expect } = require('@playwright/test');
+const { createDomainObjectWithDefaults } = require('../../appActions');
+
+const CSS_RECALC_COUNT_METRIC = 'RecalcStyleCount';
+
+/**
+* Open the given `domainObject`'s context menu from the object tree.
+* Expands the 'My Items' folder if it is not already expanded.
+* @param {object} client cdpSession client
+* @param {string} metricName the name of the metric to be extracted
+*/
+async function extractMetric(client, propertyName) {
+    const perfMetricObject = await client.send('Performance.getMetrics');
+    const extractedMetric = perfMetricObject?.metrics.find(({ name }) => name === propertyName);
+
+    return extractedMetric?.value;
+}
 
 test.describe('Compare css recalculations to check for unnecessary DOM repaints', () => {
-    test.fixme('Clicking create button', async ({ page, browser }) => {});
-    test.fixme('Searching', async ({ page, browser }) => {});
-    test.fixme('MCT Tree', async ({ page, browser }) => {});
-    test.fixme('Plot', async ({ page, browser }) => {});
-    test.fixme('Clicking on previous folder', async ({ page, browser }) => {});
     test('Inspector', async ({ page, browser}) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5247'
         });
+        const objectName = await createDomainObjectWithDefaults(page, 'Example Imagery');
 
+
+        console.log({objectName});
         const client = await page.context().newCDPSession(page);
 
         await client.send('Performance.enable');
-
-        const performanceMetricsBefore = await client.send('Performance.getMetrics');
-        const recalcCountBefore = performanceMetricsBefore.metrics.find(({ name }) => name === 'RecalcStyleCount').value;
+        const recalcCountBefore = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
         console.log({recalcCountBefore});
         await page.goto('./');
 
@@ -48,9 +60,15 @@ test.describe('Compare css recalculations to check for unnecessary DOM repaints'
         // Click local clock
         await page.locator('.icon-clock >> text=Local Clock').click();
 
-        const performanceMetricsAfter = await client.send('Performance.getMetrics');
-        const recalcCountAfter = performanceMetricsAfter.metrics.find(({ name }) => name === 'RecalcStyleCount').value;
+        const recalcCountAfter = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
         console.log({recalcCountAfter});
         expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
     });
+
+    test.fixme('Clicking create button', async ({ page, browser }) => {});
+    test.fixme('Searching', async ({ page, browser }) => {});
+    test.fixme('MCT Tree', async ({ page, browser }) => {});
+    test.fixme('Plot', async ({ page, browser }) => {});
+    test.fixme('Clicking on previous folder', async ({ page, browser }) => {});
+
 });
