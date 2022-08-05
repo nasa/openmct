@@ -24,6 +24,7 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
 
 test.describe('Testing Display Layout @unstable', () => {
+    let sineWaveObject;
     test.beforeEach(async ({ page, openmctConfig }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
         await setRealTimeMode(page);
