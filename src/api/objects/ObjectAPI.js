@@ -615,12 +615,27 @@ export default class ObjectAPI {
      * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
      */
     areIdsEqual(...identifiers) {
+        const firstIdentifier = utils.parseKeyString(identifiers[0]);
+
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
-                return identifier === identifiers[0]
-                    || (identifier.namespace === identifiers[0].namespace
-                        && identifier.key === identifiers[0].key);
+                return identifier === firstIdentifier
+                    || (identifier.namespace === firstIdentifier.namespace
+                        && identifier.key === firstIdentifier.key);
             });
+    }
+
+    /**
+     * Given an original path check if the path is reachable via root
+     * @param {Array<Object>} originalPath an array of path objects to check
+     * @returns {boolean} whether the domain object is reachable
+     */
+    isReachable(originalPath) {
+        if (originalPath && originalPath.length) {
+            return (originalPath[originalPath.length - 1].type === 'root');
+        }
+
+        return false;
     }
 
     getOriginalPath(identifier, path = []) {
