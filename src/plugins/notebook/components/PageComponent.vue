@@ -12,8 +12,9 @@
     <template v-if="!page.isLocked">
         <div
             class="c-list__item__name js-list__item__name"
+            :class="[{ 'c-input-inline': isSelected }]"
             :data-id="page.id"
-            :contenteditable="true"
+            :contenteditable="isSelected"
             @keydown.escape="updateName"
             @keydown.enter="updateName"
             @blur="updateName"
@@ -33,9 +34,9 @@
 </template>
 
 <script>
-import PopupMenu from './PopupMenu.vue';
-import RemoveDialog from '../utils/removeDialog';
 import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
+import RemoveDialog from '../utils/removeDialog';
+import PopupMenu from './PopupMenu.vue';
 
 export default {
     components: {
@@ -109,21 +110,9 @@ export default {
             removeDialog.show();
         },
         selectPage(event) {
-            const target = event.target;
-            const id = target.dataset.id;
+            const { target: { dataset: { id } } } = event;
 
-            if (!this.page.isLocked) {
-                const page = target.closest('.js-list__item');
-                const input = page.querySelector('.js-list__item__name');
-
-                if (page.className.indexOf('is-selected') > -1) {
-                    input.classList.add('c-input-inline');
-
-                    return;
-                }
-            }
-
-            if (!id) {
+            if (this.isSelected || !id) {
                 return;
             }
 
@@ -152,7 +141,6 @@ export default {
             }
 
             target.scrollLeft = '0';
-            target.classList.remove('c-input-inline');
 
             target.blur();
         }

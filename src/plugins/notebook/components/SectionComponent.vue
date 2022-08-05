@@ -7,8 +7,9 @@
 >
     <span
         class="c-list__item__name js-list__item__name"
+        :class="[{ 'c-input-inline': isSelected && !section.isLocked }]"
         :data-id="section.id"
-        contenteditable="true"
+        :contenteditable="isSelected && !section.isLocked"
         @keydown.escape="updateName"
         @keydown.enter="updateName"
         @blur="updateName"
@@ -98,20 +99,9 @@ export default {
             removeDialog.show();
         },
         selectSection(event) {
-            const { target, target: { dataset: { id } } } = event;
+            const { target: { dataset: { id } } } = event;
 
-            if (!this.section.isLocked) {
-                const section = target.closest('.js-list__item');
-                const input = section.querySelector('.js-list__item__name');
-
-                if (section.className.indexOf('is-selected') > -1) {
-                    input.classList.add('c-input-inline');
-
-                    return;
-                }
-            }
-
-            if (!id) {
+            if (this.isSelected || !id) {
                 return;
             }
 
@@ -140,7 +130,6 @@ export default {
             }
 
             target.scrollLeft = '0';
-            target.classList.remove('c-input-inline');
 
             target.blur();
         }
