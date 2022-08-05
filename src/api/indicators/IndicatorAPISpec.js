@@ -57,11 +57,14 @@ describe("The Indicator API", () => {
     });
 
     it("can register an indicator", () => {
-        const testIndicator = generateIndicator('test-indicator', 'This is a test indicator', 2);
-        openmct.indicators.add(testIndicator);
         let indicators = openmct.indicators.getIndicatorObjectsByPriority();
+        const defaultIndicatorsLength = indicators.length;
+        const testIndicator = generateIndicator('test-indicator', 'This is a test indicator', 2);
 
-        expect(indicators.length).toBe(2);
+        openmct.indicators.add(testIndicator);
+        indicators = openmct.indicators.getIndicatorObjectsByPriority();
+
+        expect(indicators.length).toBe(defaultIndicatorsLength + 1);
     });
 
     it("can order indicators based on priority", () => {
