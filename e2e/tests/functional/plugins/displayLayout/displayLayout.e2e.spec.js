@@ -89,7 +89,7 @@ test.describe('Testing Display Layout @unstable', () => {
  * @param {import('@playwright/test').Page} page
  * @param {string} objectIdentifier identifier for object
  */
- async function subscribeToTelemetry(page, objectIdentifier) {
+async function subscribeToTelemetry(page, objectIdentifier) {
     const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
 
     await page.evaluate(async (telemetryIdentifier) => {
