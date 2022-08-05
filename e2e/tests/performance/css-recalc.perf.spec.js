@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+const uuid = require('uuid');
 
 const { test, expect } = require('@playwright/test');
 const { createDomainObjectWithDefaults } = require('../../appActions');
@@ -38,37 +39,60 @@ async function extractMetric(client, propertyName) {
     return extractedMetric?.value;
 }
 
-test.describe('Compare css recalculations to check for unnecessary DOM repaints', () => {
-    test('Inspector', async ({ page, browser}) => {
+test.describe('Compare css recalculation count to check for unnecessary DOM repaints', () => {
+    let client;
+    test.beforeEach(async ({ page }) => {
+        client = await page.context().newCDPSession(page);
+
+        return client.send('Performance.enable');
+    });
+
+    test('Inspector', async ({ page, browser }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5247'
         });
         const objectName = await createDomainObjectWithDefaults(page, 'Example Imagery');
 
+        console.log({ objectName });
 
-        console.log({objectName});
-        const client = await page.context().newCDPSession(page);
-
-        await client.send('Performance.enable');
         const recalcCountBefore = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
-        console.log({recalcCountBefore});
         await page.goto('./');
 
         // open the time conductor drop down
         await page.locator('.c-conductor__controls button.c-mode-button').click();
-        // Click local clock
         await page.locator('.icon-clock >> text=Local Clock').click();
 
         const recalcCountAfter = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
-        console.log({recalcCountAfter});
+        console.table({
+            recalcCountBefore,
+            recalcCountAfter
+        });
         expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
     });
 
-    test.fixme('Clicking create button', async ({ page, browser }) => {});
-    test.fixme('Searching', async ({ page, browser }) => {});
-    test.fixme('MCT Tree', async ({ page, browser }) => {});
-    test.fixme('Plot', async ({ page, browser }) => {});
-    test.fixme('Clicking on previous folder', async ({ page, browser }) => {});
+    test('Clicking create button', async ({ page, browser }) => {
+        await page.goto('./');
+        const recalcCountBefore = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        await page.locator('.c-create-button').click();
+        const recalcCountAfter = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        console.table({
+            recalcCountBefore,
+            recalcCountAfter
+        });
+        expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
+    });
+
+    test.fixme('Searching', async ({ page, browser }) => { });
+    test.fixme('MCT Tree', async ({ page, browser }) => { });
+    test.fixme('Plot', async ({ page, browser }) => {
+        await page.goto('./');
+        const objectName = await createDomainObjectWithDefaults(page, 'Plot', 'Plot'.concat('-', uuid.v4()));
+
+        await page.goto('./#/browse/mine?hideTree=false');
+
+        await page.locator(`.c-tree__item a:has-text("${objectName}")`).click({});
+    });
+    test.fixme('Clicking on previous folder', async ({ page, browser }) => { });
 
 });
