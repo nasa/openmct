@@ -638,17 +638,35 @@ export default class ObjectAPI {
         return false;
     }
 
-    getOriginalPath(identifier, path = []) {
-        return this.get(identifier).then((domainObject) => {
-            path.push(domainObject);
-            let location = domainObject.location;
+    #pathContainsDomainObject(keyStringToCheck, path) {
+        if (!keyStringToCheck) {
+            return false;
+        }
 
-            if (location) {
-                return this.getOriginalPath(utils.parseKeyString(location), path);
-            } else {
-                return path;
-            }
+        return path.some(pathElement => {
+            const identifierToCheck = utils.parseKeyString(keyStringToCheck);
+
+            return this.areIdsEqual(identifierToCheck, pathElement.identifier);
         });
+    }
+
+    /**
+     * Given an identifier, constructs the original path by walking up its parents
+     * @param {module:openmct.ObjectAPI~Identifier} identifier
+     * @param {Array<Object>} path an array of path objects
+     * @returns {Array<Object>} an array of path objects
+     */
+    async getOriginalPath(identifier, path = []) {
+        const domainObject = await this.get(identifier);
+        path.push(domainObject);
+        let location = domainObject.location;
+        if (location && (!this.#pathContainsDomainObject(location, path))) {
+            // if we have a location, and we don't already have this in our constructed path,
+            // then keep walking up the path
+            return this.getOriginalPath(utils.parseKeyString(location), path);
+        } else {
+            return path;
+        }
     }
 
     isObjectPathToALink(domainObject, objectPath) {
