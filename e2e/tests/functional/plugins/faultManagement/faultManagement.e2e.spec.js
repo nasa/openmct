@@ -301,7 +301,8 @@ async function clearSearch(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function selectFaultItem(page, rowNumber) {
-    await page.check(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`, { force: true });
+    // eslint-disable-next-line playwright/no-force-option
+    await page.check(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`, { force: true }); // this will not work without force true, saw this may be a pw bug
 }
 
 /**
