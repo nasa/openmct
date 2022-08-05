@@ -377,7 +377,7 @@ describe("The Object API", () => {
         });
     });
 
-    fdescribe("getOriginalPath", () => {
+    describe("getOriginalPath", () => {
         let mockGrandParentObject;
         let mockParentObject;
         let mockChildObject;
@@ -438,8 +438,9 @@ describe("The Object API", () => {
             openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
         });
 
-        it('can construct paths even with cycles', () => {
-            expect(objectAPI.getOriginalPath(mockChildObject).length).toEqual(3);
+        it('can construct paths even with cycles', async () => {
+            const objectPath = await objectAPI.getOriginalPath(mockChildObject.identifier);
+            expect(objectPath.length).toEqual(3);
         });
     });
 
