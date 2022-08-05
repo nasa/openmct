@@ -32,12 +32,14 @@ define([
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
+    '../../example/faultManagment/exampleFaultSource',
     './imagery/plugin',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
-    './charts/plugin',
+    './charts/bar/plugin',
+    './charts/scatter/plugin',
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
@@ -76,7 +78,12 @@ define([
     './timer/plugin',
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
-    './localStorage/plugin'
+    './localStorage/plugin',
+    './operatorStatus/plugin',
+    './gauge/GaugePlugin',
+    './timelist/plugin',
+    './faultManagement/FaultManagementPlugin',
+    '../../example/exampleTags/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -89,12 +96,14 @@ define([
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
+    ExampleFaultSource,
     ImageryPlugin,
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
-    ChartPlugin,
+    BarChartPlugin,
+    ScatterPlotPlugin,
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
@@ -133,14 +142,21 @@ define([
     Timer,
     UserIndicator,
     ExampleUser,
-    LocalStorage
+    LocalStorage,
+    OperatorStatus,
+    GaugePlugin,
+    TimeList,
+    FaultManagementPlugin,
+    ExampleTags
 ) {
     const plugins = {};
 
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
     plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.ExampleFaultSource = ExampleFaultSource.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
+    plugins.example.ExampleTags = ExampleTags.default;
     plugins.example.Generator = () => GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
@@ -168,14 +184,17 @@ define([
 
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
-    plugins.Chart = ChartPlugin.default;
+    plugins.BarChart = BarChartPlugin.default;
+    plugins.ScatterPlot = ScatterPlotPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
-    plugins.Notebook = Notebook.default;
+    plugins.Notebook = Notebook.NotebookPlugin;
+    plugins.RestrictedNotebook = Notebook.RestrictedNotebookPlugin;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FaultManagement = FaultManagementPlugin.default;
     plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
@@ -210,6 +229,9 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
+    plugins.OperatorStatus = OperatorStatus.default;
+    plugins.Gauge = GaugePlugin.default;
+    plugins.Timelist = TimeList.default;
 
     return plugins;
 });

@@ -70,7 +70,23 @@
         padding: $formTBPad $formLRPad;
         text-transform: uppercase;
     }
+
+    &--sub-grid {
+        // 3 columns: <req> <label> <input/control>
+        display: grid;
+        grid-column-gap: $interiorMargin;
+        grid-template-columns: 20px max-content 1fr;
+        grid-row-gap: $interiorMargin;
+        margin-top: $interiorMarginLg;
+        width: max-content;
+
+        .c-form__row {
+            display: contents;
+        }
+    }
 }
+
+
 
 .c-form-row {
     align-items: start;
@@ -302,39 +318,6 @@
     &.l-checkbox {
         .composite-control-label {
             line-height: 18px;
-        }
-    }
-}
-
-.autocomplete {
-    input {
-        width: 226px;
-        padding: 5px 0px 5px 7px;
-    }
-    .icon-arrow-down {
-        position: absolute;
-        top: 8px;
-        left: 210px;
-        font-size: 10px;
-        cursor: pointer;
-    }
-    .autocompleteOptions {
-        border: 1px solid $colorFormLines;
-        border-radius: 5px;
-        width: 224px;
-        max-height: 170px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        li {
-            border: 1px solid $colorFormLines;
-            padding: 8px 0px 8px 5px;
-            .optionText {
-                cursor: pointer;
-            }
-        }
-        .optionPreSelected {
-            background-color: $colorInspectorSectionHeaderBg;
-            color: $colorInspectorSectionHeaderFg;
         }
     }
 }

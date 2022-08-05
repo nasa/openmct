@@ -51,6 +51,12 @@ export default {
                 return {};
             }
         },
+        isLocked: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
         isSnapshotContainer: {
             type: Boolean,
             default() {
@@ -79,6 +85,15 @@ export default {
                 : this.embed.snapshot.src;
         }
     },
+    watch: {
+        isLocked(value) {
+            if (value === true) {
+                let index = this.popupMenuItems.findIndex((item) => item.id === 'removeEmbed');
+
+                this.$delete(this.popupMenuItems, index);
+            }
+        }
+    },
     mounted() {
         this.addPopupMenuItems();
         this.imageExporter = new ImageExporter(this.openmct);
@@ -86,17 +101,24 @@ export default {
     methods: {
         addPopupMenuItems() {
             const removeEmbed = {
+                id: 'removeEmbed',
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
             };
             const preview = {
+                id: 'preview',
                 cssClass: 'icon-eye-open',
                 name: 'Preview',
                 callback: this.previewEmbed.bind(this)
             };
 
-            this.popupMenuItems = [removeEmbed, preview];
+            this.popupMenuItems = [preview];
+
+            if (!this.isLocked) {
+                this.popupMenuItems.unshift(removeEmbed);
+            }
+
         },
         annotateSnapshot() {
             const annotateVue = new Vue({

@@ -322,4 +322,57 @@ describe('Export as JSON plugin', () => {
 
         exportAsJSONAction.invoke([parent]);
     });
+
+    it('ExportAsJSONAction exports object references from tree', (done) => {
+        const parent = {
+            composition: [],
+            configuration: {
+                objectStyles: {
+                    conditionSetIdentifier: {
+                        key: 'child',
+                        namespace: ''
+                    }
+                }
+            },
+            identifier: {
+                key: 'parent',
+                namespace: ''
+            },
+            name: 'Parent',
+            type: 'folder',
+            modified: 1503598129176,
+            location: 'mine',
+            persisted: 1503598129176
+        };
+
+        const child = {
+            composition: [],
+            identifier: {
+                key: 'child',
+                namespace: ''
+            },
+            name: 'Child',
+            type: 'folder',
+            modified: 1503598132428,
+            location: null,
+            persisted: 1503598132428
+        };
+
+        spyOn(openmct.objects, 'get').and.callFake(object => {
+            return Promise.resolve(child);
+        });
+
+        spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
+            expect(Object.keys(completedTree).length).toBe(2);
+            const conditionSetId = Object.keys(completedTree.openmct)[1];
+            expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
+            expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
+            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'parent')).toBeTruthy();
+            expect(completedTree.openmct[conditionSetId].name).toBe('Child');
+
+            done();
+        });
+
+        exportAsJSONAction.invoke([parent]);
+    });
 });

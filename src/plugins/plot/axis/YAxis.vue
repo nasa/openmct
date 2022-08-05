@@ -29,9 +29,9 @@
 >
 
     <div
-        v-if="singleSeries"
+        v-if="canShowYAxisLabel"
         class="gl-plot-label gl-plot-y-label"
-        :class="{'icon-gear': (yKeyOptions.length > 1)}"
+        :class="{'icon-gear': (yKeyOptions.length > 1 && singleSeries)}"
     >{{ yAxisLabel }}
     </div>
 
@@ -76,6 +76,12 @@ export default {
                 return true;
             }
         },
+        hasSameRangeValue: {
+            type: Boolean,
+            default() {
+                return true;
+            }
+        },
         seriesModel: {
             type: Object,
             default() {
@@ -95,6 +101,11 @@ export default {
             loaded: false
         };
     },
+    computed: {
+        canShowYAxisLabel() {
+            return this.singleSeries === true || this.hasSameRangeValue === true;
+        }
+    },
     mounted() {
         this.yAxis = this.getYAxisFromConfig();
         this.loaded = true;
@@ -109,21 +120,25 @@ export default {
             }
         },
         setUpYAxisOptions() {
-            this.yKeyOptions = this.seriesModel.metadata
-                .valuesForHints(['range'])
-                .map(function (o) {
-                    return {
-                        name: o.name,
-                        key: o.key
-                    };
-                });
+            this.yKeyOptions = [];
+
+            if (this.seriesModel.metadata) {
+                this.yKeyOptions = this.seriesModel.metadata
+                    .valuesForHints(['range'])
+                    .map(function (o) {
+                        return {
+                            name: o.name,
+                            key: o.key
+                        };
+                    });
+            }
 
             //  set yAxisLabel if none is set yet
             if (this.yAxisLabel === 'none') {
                 let yKey = this.seriesModel.model.yKey;
                 let yKeyModel = this.yKeyOptions.filter(o => o.key === yKey)[0];
 
-                this.yAxisLabel = yKeyModel.name;
+                this.yAxisLabel = yKeyModel ? yKeyModel.name : '';
             }
         },
         toggleYAxisLabel() {

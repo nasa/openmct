@@ -15,7 +15,6 @@
 @import "../plugins/flexibleLayout/components/flexible-layout.scss";
 @import "../plugins/folderView/components/grid-view.scss";
 @import "../plugins/folderView/components/list-item.scss";
-@import "../plugins/folderView/components/list-view.scss";
 @import "../plugins/imagery/components/imagery-view.scss";
 @import "../plugins/imagery/components/Compass/compass.scss";
 @import "../plugins/telemetryTable/components/table-row.scss";
@@ -28,6 +27,7 @@
 @import "../plugins/timeConductor/conductor-mode-icon.scss";
 @import "../plugins/timeConductor/date-picker.scss";
 @import "../plugins/timeline/timeline.scss";
+@import "../plugins/timelist/timelist.scss";
 @import "../plugins/plan/plan";
 @import "../plugins/viewDatumAction/components/metadata-list.scss";
 @import "../ui/components/object-frame.scss";
@@ -35,8 +35,10 @@
 @import "../ui/components/progress-bar.scss";
 @import "../ui/components/search.scss";
 @import "../ui/components/swim-lane/swimlane.scss";
+@import "../ui/components/tags/tags.scss";
 @import "../ui/components/toggle-switch.scss";
 @import "../ui/components/timesystem-axis.scss";
+@import "../ui/components/List/list-view.scss";
 @import "../ui/inspector/elements.scss";
 @import "../ui/inspector/inspector.scss";
 @import "../ui/inspector/location.scss";
@@ -44,7 +46,7 @@
 @import "../ui/layout/create-button.scss";
 @import "../ui/layout/layout.scss";
 @import "../ui/layout/mct-tree.scss";
-@import "../ui/layout/mct-search.scss";
+@import "../ui/layout/search/search.scss";
 @import "../ui/layout/pane.scss";
 @import "../ui/layout/status-bar/indicators.scss";
 @import "../ui/layout/status-bar/notification-banner.scss";
@@ -52,6 +54,9 @@
 @import "../ui/toolbar/components/toolbar-checkbox.scss";
 @import "./notebook.scss";
 @import "../plugins/notebook/components/sidebar.scss";
+@import "../plugins/gauge/gauge.scss";
+@import "../plugins/faultManagement/fault-manager.scss";
+@import "../plugins/operatorStatus/operator-status";
 
 #splash-screen {
      display: none;

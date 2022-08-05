@@ -46,6 +46,7 @@ describe("The LAD Table", () => {
 
     let openmct;
     let ladPlugin;
+    let historicalProvider;
     let parent;
     let child;
     let telemetryCount = 3;
@@ -80,6 +81,13 @@ describe("The LAD Table", () => {
         openmct.install(ladPlugin);
 
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+
+        historicalProvider = {
+            request: () => {
+                return Promise.resolve([]);
+            }
+        };
+        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
 
         openmct.time.bounds({
             start: bounds.start,
@@ -166,11 +174,12 @@ describe("The LAD Table", () => {
                 callBack();
             });
 
-            openmct.telemetry.request.and.callFake(() => {
+            historicalProvider.request = () => {
                 telemetryRequestResolve(mockTelemetry);
 
                 return telemetryRequestPromise;
-            });
+            };
+
             openmct.objects.get.and.callFake((obj) => {
                 if (obj.key === 'telemetry-object') {
                     telemetryObjectResolve(mockObj.telemetry);

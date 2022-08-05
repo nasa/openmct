@@ -1,0 +1,268 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+$colorFaultItemFg: $colorBodyFg;
+$colorFaultItemFgEmphasis: $colorBodyFgEm;
+$colorFaultItemBg: pullForward($colorBodyBg, 5%);
+
+/*********************************************** SEARCH  */
+.c-fault-mgmt__search-row {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    > * + * {
+       margin-left: 10px;
+       float: right;
+    }
+}
+
+.c-fault-mgmt-search {
+    width: 95%;
+}
+
+/*********************************************** TOOLBAR */
+.c-fault-mgmt__toolbar {
+    display: flex;
+    justify-content: center;
+    flex: 0 0 auto;
+    > * + * {
+       margin-left: $interiorMargin;
+    }
+}
+
+/*********************************************** LIST VIEW */
+.c-faults-list-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+}
+
+.c-faults-list-view-header-item-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: max-content max-content repeat(5,minmax(max-content, 20%)) max-content;
+    grid-row-gap: $interiorMargin;
+
+    &-wrapper {
+        flex: 1 1 auto;
+        padding-right: $interiorMargin; // Fend of from scrollbar
+        overflow-y: auto;
+    }
+
+    .--width-less-than-600 & {
+        grid-template-columns: max-content max-content 1fr 1fr max-content;
+    }
+}
+
+.c-faults-list-view-item-body {
+   display: contents;
+}
+
+/*********************************************** LIST */
+.c-fault-mgmt__list {
+    display: contents;
+    color: $colorFaultItemFg;
+
+    &-checkbox{
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    &-severity {
+        font-size: 2em;
+
+        &.is-severity-critical {
+            @include glyphBefore($glyph-icon-alert-triangle);
+            color: $colorStatusError;
+        }
+
+        &.is-severity-warning {
+            @include glyphBefore($glyph-icon-alert-rect);
+            color: $colorStatusAlert;
+        }
+
+        &.is-severity-watch {
+            @include glyphBefore($glyph-icon-info);
+            color: $colorCommand;
+        }
+    }
+
+     &-content {
+        display: contents;
+
+        .--width-less-than-600 & {
+            display: flex;
+            flex-wrap: wrap;
+            grid-column: span 2;
+         }
+    }
+
+    &-pathname {
+        padding-right: $interiorMarginLg;
+        overflow-wrap: anywhere;
+        min-width: 100px;
+
+    }
+    &-path {
+        font-size: .85em;
+        margin-left: $interiorMargin;
+    }
+
+    &-faultname{
+        font-size: 1.3em;
+        margin-left: $interiorMargin;
+    }
+
+    &-content-right {
+        display: contents;
+    }
+
+    &-trigTime {
+        grid-column: 6 / span 2;
+    }
+
+    &-action-wrapper {
+        text-align: right;
+        flex: 0 0 auto;
+        align-items: stretch;
+    }
+
+    &-action-button {
+        flex: 0 0 auto;
+        margin-left: auto;
+        text-align: right;
+    }
+
+    // STATES
+    &.is-unacknowledged {
+        color: $colorFaultItemFgEmphasis;
+        .c-fault-mgmt__list-severity {
+            @include pulse($animName: severityAnim, $dur: 200ms);
+        }
+    }
+
+    &.is-acknowledged,
+    &.is-shelved {
+        .c-fault-mgmt__list-severity {
+            &:before {
+                opacity: 60%;
+                //font-size: 1.5em;
+            }
+
+            &:after {
+                color: $colorFaultItemFgEmphasis;
+                display: block;
+                font-family: symbolsfont;
+                position: absolute;
+                //text-shadow: black 0 0 2px;
+                right: -3px;
+                bottom: -3px;
+                transform-origin: right bottom;
+                transform: scale(0.6);
+            }
+        }
+    }
+
+    &.is-shelved {
+        .c-fault-mgmt__list-pathname {
+            font-style: italic;
+        }
+    }
+
+    &.is-acknowledged .c-fault-mgmt__list-severity:after {
+        content: $glyph-icon-check;
+    }
+
+    &.is-shelved .c-fault-mgmt__list-severity:after {
+        content: $glyph-icon-timer;
+    }
+}
+
+/*********************************************** LIST HEADER */
+.c-fault-mgmt__list-header {
+    display: contents;
+    border-radius: $controlCr;
+    align-items: center;
+
+    * {
+        margin: 0px;
+        border-radius: 0px;
+    }
+
+    .--width-less-than-600 & {
+        .c-fault-mgmt__list-content-right {
+            display:none;
+        }
+    }
+
+    &-content {
+        display: contents;
+    }
+
+    &-results {
+        grid-column: 2 / span 2;
+        font-size: 1em;
+        height: auto;
+    }
+
+    &-action-wrapper {
+        grid-column: 7 / span 2;
+
+        .--width-less-than-600 & {
+            grid-column: 4 / span 2;
+        }
+    }
+}
+
+/*********************************************** GRID ITEM */
+.c-fault-mgmt-item {
+    $p: $interiorMargin;
+    padding: $p;
+    background: $colorFaultItemBg;
+    white-space: nowrap;
+
+    &-header {
+        $c: $colorBodyBg;
+        background: $c;
+        border-bottom: 5px solid $c; // Creates illusion of "space" beneath header
+        min-height: 30px; // Needed to align cells
+        padding: $p;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    &__value {
+        @include isLimit();
+        background: rgba($colorBodyFg, 0.1);
+        padding: $p;
+        border-radius: $controlCr;
+        display: inline-flex;
+    }
+
+    .is-selected & {
+        background: $colorSelectedBg;
+    }
+}
