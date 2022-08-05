@@ -83,15 +83,29 @@ test.describe('Compare css recalculation count to check for unnecessary DOM repa
         expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
     });
 
-    test.fixme('Searching', async ({ page, browser }) => { });
+    test('Searching', async ({ page, browser }) => {
+        const objectName = await createDomainObjectWithDefaults(page, 'Example Imagery', 'Example Imagery'.concat(' ', uuid.v4()));
+        await page.goto('./');
+
+        const searchInput = page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]');
+        await searchInput.hover();
+        const recalcCountBefore = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        await searchInput.fill(objectName);
+        const recalcCountAfter = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        console.table({
+            recalcCountBefore,
+            recalcCountAfter
+        });
+        expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
+    });
     test.fixme('MCT Tree', async ({ page, browser }) => { });
     test.fixme('Plot', async ({ page, browser }) => {
         await page.goto('./');
-        const objectName = await createDomainObjectWithDefaults(page, 'Plot', 'Plot'.concat('-', uuid.v4()));
+        const objectName = await createDomainObjectWithDefaults(page, 'Plot', 'Plot'.concat(' ', uuid.v4()));
 
         await page.goto('./#/browse/mine?hideTree=false');
 
-        await page.locator(`.c-tree__item a:has-text("${objectName}")`).click({});
+        await page.locator(`.c-tree__item a:has-text("${objectName}")`).click();
     });
     test.fixme('Clicking on previous folder', async ({ page, browser }) => { });
 
