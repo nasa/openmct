@@ -98,7 +98,15 @@ test.describe('Compare css recalculation count to check for unnecessary DOM repa
         });
         expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
     });
-    test.fixme('MCT Tree', async ({ page, browser }) => { });
+    test.fixme('MCT Tree', async ({ page, browser }) => {
+        await page.goto('./#/browse/mine?hideTree=false');
+        const objectNames = await Promise.all([
+            createDomainObjectWithDefaults(page, 'Folder', 'Folder'.concat(' ', uuid.v4())),
+            // createDomainObjectWithDefaults(page, 'Folder', 'Folder'.concat(' ', uuid.v4()))
+        ]);
+        console.log({objectNames})
+        await Promise.all(objectNames.map(x => page.locator(`.c-tree__item a:has-text("${x}")`)));
+    });
     test.fixme('Plot', async ({ page, browser }) => {
         await page.goto('./');
         const objectName = await createDomainObjectWithDefaults(page, 'Plot', 'Plot'.concat(' ', uuid.v4()));
