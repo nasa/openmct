@@ -21,23 +21,22 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
 
 test.describe('Testing LAD table @unstable', () => {
-    test('telemetry value exactly matches latest telemetry value received in real time', async ({ page, openmctConfig }) => {
+    let sineWaveObject;
+    test.beforeEach(async ({ page, openmctConfig }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        const { myItemsFolderName } = openmctConfig;
-
-        await page.locator('button.c-mode-button').click();
-        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
-
-        const sineWaveObject = await createDomainObjectWithDefaults(page, {
+        await setRealTimeMode(page);
+        sineWaveObject = await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
             name: "Test Sine Wave Generator"
         });
 
+        const { myItemsFolderName } = openmctConfig;
         await page.locator(`text=${myItemsFolderName}`).first().click();
-
+    });
+    test('telemetry value exactly matches latest telemetry value received in real time', async ({ page }) => {
         await createDomainObjectWithDefaults(page, {
             type: 'LAD Table',
             name: "Test LAD Table"
@@ -50,30 +49,14 @@ test.describe('Testing LAD table @unstable', () => {
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
-        let getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
-
-        await subscribeToTelemetry(page, sineWaveObject.uuid);
-
+        const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
         const subscribeTelemValue = await getTelemValuePromise;
         const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
         const ladTableValue = await ladTableValuePromise.textContent();
 
         expect(ladTableValue).toBe(subscribeTelemValue);
     });
-    test('telemetry value exactly matches latest telemetry value received in fixed time', async ({ page, openmctConfig }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
-        const { myItemsFolderName } = openmctConfig;
-
-        await page.locator('button.c-mode-button').click();
-        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
-
-        const sineWaveObject = await createDomainObjectWithDefaults(page, {
-            type: 'Sine Wave Generator',
-            name: "Test Sine Wave Generator"
-        });
-
-        await page.locator(`text=${myItemsFolderName}`).first().click();
-
+    test('telemetry value exactly matches latest telemetry value received in fixed time', async ({ page }) => {
         await createDomainObjectWithDefaults(page, {
             type: 'LAD Table',
             name: "Test LAD Table"
@@ -86,10 +69,9 @@ test.describe('Testing LAD table @unstable', () => {
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
-        let getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
-
-        await subscribeToTelemetry(page, sineWaveObject.uuid);
-        await changeToFixedTime(page);
+        const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+        await setStartOffset(page, { mins: '1' });
+        await setFixedTimeMode(page);
 
         const subscribeTelemValue = await getTelemValuePromise;
         const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
@@ -104,7 +86,9 @@ test.describe('Testing LAD table @unstable', () => {
  * @param {import('@playwright/test').Page} page
  * @param {string} objectIdentifier identifier for object
  */
-async function subscribeToTelemetry(page, objectIdentifier) {
+ async function subscribeToTelemetry(page, objectIdentifier) {
+    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
+
     await page.evaluate(async (telemetryIdentifier) => {
         const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
         const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
@@ -115,17 +99,6 @@ async function subscribeToTelemetry(page, objectIdentifier) {
             window.getTelemValue(formattedSinVal);
         });
     }, objectIdentifier);
-}
 
-/**
- * This function uses the time conductor to change to a fixed time of 1 minute
- * @param {import('@playwright/test').Page} page
- */
-async function changeToFixedTime(page) {
-    await page.locator('[data-testid="conductor-start-offset-button"]').click();
-    await page.locator('input[type="number"]').nth(1).click();
-    await page.locator('input[type="number"]').nth(1).fill('1');
-    await page.locator('text=Hrs Mins Secs : : >> button').first().click();
-    await page.locator('button:has-text("Local Clock")').click();
-    await page.locator('[data-testid="conductor-modeOption-fixed"]').click();
+    return getTelemValuePromise;
 }

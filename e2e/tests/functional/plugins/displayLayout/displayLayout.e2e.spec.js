@@ -21,60 +21,21 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
 
 test.describe('Testing Display Layout @unstable', () => {
-    test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in real time', async ({ page, openmctConfig }) => {
+    test.beforeEach(async ({ page, openmctConfig }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        const { myItemsFolderName } = openmctConfig;
-
-        await page.locator('button.c-mode-button').click();
-        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
-
-        const sineWaveObject = await createDomainObjectWithDefaults(page, {
+        await setRealTimeMode(page);
+        sineWaveObject = await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
             name: "Test Sine Wave Generator"
         });
 
+        const { myItemsFolderName } = openmctConfig;
         await page.locator(`text=${myItemsFolderName}`).first().click();
-
-        await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
-            name: "Test Display Layout"
-        });
-        await page.locator('[title="Edit"]').click();
-
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
-
-        await page.locator('button[title="Save"]').click();
-        await page.locator('text=Save and Finish Editing').click();
-
-        const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
-
-        await subscribeToTelemetry(page, sineWaveObject.uuid);
-
-        const subscribeTelemValue = await getTelemValuePromise;
-        const displayLayoutValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
-        const displayLayoutValue = await displayLayoutValuePromise.textContent();
-        const trimmedDisplayValue = displayLayoutValue.trim();
-
-        await expect(trimmedDisplayValue).toBe(subscribeTelemValue);
     });
-    test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({ page, openmctConfig }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
-        const { myItemsFolderName } = openmctConfig;
-
-        await page.locator('button.c-mode-button').click();
-        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
-
-        const sineWaveObject = await createDomainObjectWithDefaults(page, {
-            type: 'Sine Wave Generator',
-            name: "Test Sine Wave Generator"
-        });
-
-        await page.locator(`text=${myItemsFolderName}`).first().click();
-
+    test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in real time', async ({ page }) => {
         await createDomainObjectWithDefaults(page, {
             type: 'Display Layout',
             name: "Test Display Layout"
@@ -87,17 +48,38 @@ test.describe('Testing Display Layout @unstable', () => {
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
-        const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
+        const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
 
-        await subscribeToTelemetry(page, sineWaveObject.uuid);
-        await changeToFixedTime(page);
-
-        const subscribeTelemValue = await getTelemValuePromise;
-        const displayLayoutValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
+        const formattedTelemetryValue = await getTelemValuePromise;
+        const displayLayoutValuePromise = await page.waitForSelector(`text="${formattedTelemetryValue}"`);
         const displayLayoutValue = await displayLayoutValuePromise.textContent();
         const trimmedDisplayValue = displayLayoutValue.trim();
 
-        await expect(trimmedDisplayValue).toBe(subscribeTelemValue);
+        await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+    });
+    test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({ page }) => {
+        await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout',
+            name: "Test Display Layout"
+        });
+        await page.locator('[title="Edit"]').click();
+
+        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+
+        await page.locator('button[title="Save"]').click();
+        await page.locator('text=Save and Finish Editing').click();
+
+        const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+        await setStartOffset(page, { mins: '1' });
+        await setFixedTimeMode(page);
+
+        const formattedTelemetryValue = await getTelemValuePromise;
+        const displayLayoutValuePromise = await page.waitForSelector(`text="${formattedTelemetryValue}"`);
+        const displayLayoutValue = await displayLayoutValuePromise.textContent();
+        const trimmedDisplayValue = displayLayoutValue.trim();
+
+        await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
     });
 });
 
@@ -106,7 +88,9 @@ test.describe('Testing Display Layout @unstable', () => {
  * @param {import('@playwright/test').Page} page
  * @param {string} objectIdentifier identifier for object
  */
-async function subscribeToTelemetry(page, objectIdentifier) {
+ async function subscribeToTelemetry(page, objectIdentifier) {
+    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
+
     await page.evaluate(async (telemetryIdentifier) => {
         const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
         const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
@@ -117,17 +101,6 @@ async function subscribeToTelemetry(page, objectIdentifier) {
             window.getTelemValue(formattedSinVal);
         });
     }, objectIdentifier);
-}
 
-/**
- * This function uses the time conductor to change to a fixed time of 1 minute
- * @param {import('@playwright/test').Page} page
- */
-async function changeToFixedTime(page) {
-    await page.locator('[data-testid="conductor-start-offset-button"]').click();
-    await page.locator('input[type="number"]').nth(1).click();
-    await page.locator('input[type="number"]').nth(1).fill('1');
-    await page.locator('text=Hrs Mins Secs : : >> button').first().click();
-    await page.locator('button:has-text("Local Clock")').click();
-    await page.locator('[data-testid="conductor-modeOption-fixed"]').click();
+    return getTelemValuePromise;
 }
