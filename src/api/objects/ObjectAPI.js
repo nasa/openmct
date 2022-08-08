@@ -654,7 +654,7 @@ export default class ObjectAPI {
      * Given an identifier, constructs the original path by walking up its parents
      * @param {module:openmct.ObjectAPI~Identifier} identifier
      * @param {Array<module:openmct.DomainObject>} path an array of path objects
-     * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of path objects
+     * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
      */
     async getOriginalPath(identifier, path = []) {
         const domainObject = await this.get(identifier);
