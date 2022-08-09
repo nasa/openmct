@@ -1,0 +1,5 @@
+name: 'Custom CodeQL config'
+
+# Ignore app.js, should never be used in production
+paths-ignore:
+  - 'app.js'
