@@ -25,30 +25,9 @@ This test suite is dedicated to tests which verify the basic operations surround
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
+const { createFolderInDefaultLocation } = require('../../../../appActions');
 
 test.describe('Move item tests', () => {
-    /**
-    * Creates a folder in the default location
-    * @param {import('@playwright/test').Page} page - page to load
-    * @param {string} name - the name of the folder
-    */
-    async function createFolder(page, name) {
-        await page.locator('button:has-text("Create")').click();
-        await page.locator('li.icon-folder').click();
-
-        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
-        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(name);
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click(),
-            page.waitForSelector('.c-message-banner__message')
-        ]);
-        //Wait until Save Banner is gone
-        await page.locator('.c-message-banner__close-button').click();
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-    }
-
     test('Create a basic object and verify that it can be moved to another folder', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
@@ -56,13 +35,13 @@ test.describe('Move item tests', () => {
         await page.goto('./');
 
         // Create a new folder in the root my items folder
-        await createFolder(page, "Parent Folder");
+        await createFolderInDefaultLocation(page, "Parent Folder");
 
         // Create another folder with a new name at default location, which is currently inside Parent Folder
-        await createFolder(page, "Child Folder");
+        await createFolderInDefaultLocation(page, "Child Folder");
 
         // Create another folder with a new name at default location, which is currently inside Child Folder
-        await createFolder(page, "Grandchild Folder");
+        await createFolderInDefaultLocation(page, "Grandchild Folder");
 
         // Attempt to move parent to its own grandparent
         await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();

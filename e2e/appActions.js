@@ -193,6 +193,28 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
 }
 
 /**
+    * Creates a folder in the default location
+    * @param {import('@playwright/test').Page} page - page to load
+    * @param {string} name - the name of the folder
+    */
+async function createFolderInDefaultLocation(page, name) {
+    await page.locator('button:has-text("Create")').click();
+    await page.locator('li.icon-folder').click();
+
+    await page.locator('text=Properties Title Notes >> input[type="text"]').click();
+    await page.locator('text=Properties Title Notes >> input[type="text"]').fill(name);
+
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator('text=OK').click(),
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+    //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+}
+
+/**
  * Set the time conductor to fixed timespan mode
  * @param {import('@playwright/test').Page} page
  */
@@ -263,6 +285,7 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    createFolderInDefaultLocation,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
     getFocusedObjectUuid,
