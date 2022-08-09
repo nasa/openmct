@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding moving objects.
 */
 
-const { test, expect } = require('../../pluginFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Move item tests', () => {
     /**
