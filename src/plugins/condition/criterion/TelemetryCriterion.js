@@ -52,7 +52,7 @@ export default class TelemetryCriterion extends EventEmitter {
 
     initialize() {
         this.telemetryObjectIdAsString = "";
-        if (this.telemetryDomainObjectDefinition?.telemetry !== "" && this.telemetryDomainObjectDefinition?.telemetry !== null) {
+        if (![undefined, null, ""].includes(this.telemetryDomainObjectDefinition?.telemetry)) {
             this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
         }
 
