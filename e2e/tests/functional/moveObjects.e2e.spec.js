@@ -27,6 +27,28 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Move item tests', () => {
+    /**
+    * Creates a folder in the default location
+    * @param {import('@playwright/test').Page} page - page to load
+    * @param {string} name - the name of the folder
+    */
+    async function createFolder(page, name) {
+        await page.locator('button:has-text("Create")').click();
+        await page.locator('li.icon-folder').click();
+
+        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(name);
+
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click(),
+            page.waitForSelector('.c-message-banner__message')
+        ]);
+        //Wait until Save Banner is gone
+        await page.locator('.c-message-banner__close-button').click();
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    }
+
     test('Create a basic object and verify that it can be moved to another folder', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
@@ -34,43 +56,41 @@ test.describe('Move item tests', () => {
         await page.goto('./');
 
         // Create a new folder in the root my items folder
-        let folder1 = "Folder1";
-        await page.locator('button:has-text("Create")').click();
-        await page.locator('li.icon-folder').click();
+        await createFolder(page, "Parent Folder");
 
-        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
-        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder1);
+        // Create another folder with a new name at default location, which is currently inside Parent Folder
+        await createFolder(page, "Child Folder");
 
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click(),
-            page.waitForSelector('.c-message-banner__message')
-        ]);
-        //Wait until Save Banner is gone
-        await page.locator('.c-message-banner__close-button').click();
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+        // Create another folder with a new name at default location, which is currently inside Child Folder
+        await createFolder(page, "Grandchild Folder");
 
-        // Create another folder with a new name at default location, which is currently inside Folder 1
-        let folder2 = "Folder2";
-        await page.locator('button:has-text("Create")').click();
-        await page.locator('li.icon-folder').click();
-        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
-        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder2);
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click(),
-            page.waitForSelector('.c-message-banner__message')
-        ]);
-        //Wait until Save Banner is gone
-        await page.locator('.c-message-banner__close-button').click();
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-
-        // Move Folder 2 from Folder 1 to My Items
+        // Attempt to move parent to its own grandparent
         await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-        await page.locator('.c-tree__scrollable div div:nth-child(2) .c-tree__item .c-tree__item__view-control').click();
+        await page.locator('.c-disclosure-triangle >> nth=0').click();
 
-        await page.locator(`a:has-text("${folder2}")`).click({
+        await page.locator(`a:has-text("Parent Folder") >> nth=0`).click({
+            button: 'right'
+        });
+
+        await page.locator('li.icon-move').click();
+        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=0').click();
+        await page.locator('form[name="mctForm"] >> text=Parent Folder').click();
+        await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=1').click();
+        await page.locator('form[name="mctForm"] >> text=Child Folder').click();
+        await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=2').click();
+        await page.locator('form[name="mctForm"] >> text=Grandchild Folder').click();
+        await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+        await page.locator('form[name="mctForm"] >> text=Parent Folder').click();
+        await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+        await page.locator('[aria-label="Cancel"]').click();
+
+        // Move Child Folder from Parent Folder to My Items
+        await page.locator('.c-disclosure-triangle >> nth=0').click();
+        await page.locator('.c-disclosure-triangle >> nth=1').click();
+
+        await page.locator(`a:has-text("Child Folder") >> nth=0`).click({
             button: 'right'
         });
         await page.locator('li.icon-move').click();
@@ -78,8 +98,8 @@ test.describe('Move item tests', () => {
 
         await page.locator('text=OK').click();
 
-        // Expect that Folder 2 is in My Items, the root folder
-        expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=${folder2})`)).toBeTruthy();
+        // Expect that Sibling Folder is in My Items, the root folder
+        expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=Child Folder)`)).toBeTruthy();
     });
     test('Create a basic object and verify that it cannot be moved to telemetry object without Composition Provider', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
