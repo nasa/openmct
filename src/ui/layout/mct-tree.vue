@@ -576,11 +576,14 @@ export default {
             };
         },
         addTreeItemObserver(domainObject, parentObjectPath) {
-            if (this.observers[domainObject.identifier.key]) {
-                this.observers[domainObject.identifier.key]();
+            const objectPath = [domainObject].concat(parentObjectPath);
+            const navigationPath = this.buildNavigationPath(objectPath);
+
+            if (this.observers[navigationPath]) {
+                this.observers[navigationPath]();
             }
 
-            this.observers[domainObject.identifier.key] = this.openmct.objects.observe(
+            this.observers[navigationPath] = this.openmct.objects.observe(
                 domainObject,
                 'name',
                 this.sortTreeItems.bind(this, parentObjectPath)
