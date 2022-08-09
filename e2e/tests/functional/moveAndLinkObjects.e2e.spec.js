@@ -21,13 +21,34 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify the basic operations surrounding moving objects.
+This test suite is dedicated to tests which verify the basic operations surrounding moving & linking objects.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createFolderInDefaultLocation } = require('../../../../appActions');
 
-test.describe('Move item tests', () => {
+test.describe('Move & link item tests', () => {
+    /**
+    * Creates a folder in the default location
+    * @param {import('@playwright/test').Page} page - page to load
+    * @param {string} name - the name of the folder
+    */
+    async function createFolderInDefaultLocation(page, name) {
+        await page.locator('button:has-text("Create")').click();
+        await page.locator('li.icon-folder').click();
+
+        await page.locator('text=Properties Title Notes >> input[type="text"]').click();
+        await page.locator('text=Properties Title Notes >> input[type="text"]').fill(name);
+
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('text=OK').click(),
+            page.waitForSelector('.c-message-banner__message')
+        ]);
+        //Wait until Save Banner is gone
+        await page.locator('.c-message-banner__close-button').click();
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    }
+
     test('Create a basic object and verify that it can be moved to another folder', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
@@ -135,6 +156,59 @@ test.describe('Move item tests', () => {
         let okButton2 = await page.locator('button.c-button.c-button--major:has-text("OK")');
         let okButtonStateDisabled2 = await okButton2.isDisabled();
         expect(okButtonStateDisabled2).toBeTruthy();
+    });
+
+    test('Create a basic object and verify that it can be linked to another folder', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+
+        // Go to Open MCT
+        await page.goto('./');
+
+        // Create a new folder in the root my items folder
+        await createFolderInDefaultLocation(page, "Parent Folder");
+
+        // Create another folder with a new name at default location, which is currently inside Parent Folder
+        await createFolderInDefaultLocation(page, "Child Folder");
+
+        // Create another folder with a new name at default location, which is currently inside Child Folder
+        await createFolderInDefaultLocation(page, "Grandchild Folder");
+
+        // Attempt to link parent to its own grandparent
+        await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
+        await page.locator('.c-disclosure-triangle >> nth=0').click();
+
+        await page.locator(`a:has-text("Parent Folder") >> nth=0`).click({
+            button: 'right'
+        });
+
+        await page.locator('li.icon-link').click();
+        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=0').click();
+        await page.locator('form[name="mctForm"] >> text=Parent Folder').click();
+        await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=1').click();
+        await page.locator('form[name="mctForm"] >> text=Child Folder').click();
+        await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=2').click();
+        await page.locator('form[name="mctForm"] >> text=Grandchild Folder').click();
+        await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+        await page.locator('form[name="mctForm"] >> text=Parent Folder').click();
+        await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+        await page.locator('[aria-label="Cancel"]').click();
+
+        // Link Child Folder from Parent Folder to My Items
+        await page.locator('.c-disclosure-triangle >> nth=0').click();
+        await page.locator('.c-disclosure-triangle >> nth=1').click();
+
+        await page.locator(`a:has-text("Child Folder") >> nth=0`).click({
+            button: 'right'
+        });
+        await page.locator('li.icon-link').click();
+        await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
+
+        await page.locator('text=OK').click();
+
+        // Expect that Child Folder is in My Items, the root folder
+        expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=Child Folder)`)).toBeTruthy();
     });
 });
 
