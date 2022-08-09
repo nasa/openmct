@@ -41,6 +41,8 @@
     <div
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
+        role="tree"
+        aria-expanded="true"
     >
         <div>
 
