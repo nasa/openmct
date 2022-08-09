@@ -212,6 +212,8 @@ import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
 import _ from "lodash";
 
+const OFFSET_THRESHOLD = 50;
+
 export default {
     components: {
         XAxis,
@@ -328,6 +330,8 @@ export default {
         }
     },
     mounted() {
+        this.offsetWidth = 0;
+
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         eventHelpers.extend(this);
@@ -843,7 +847,7 @@ export default {
             // needs to follow endMarquee so that plotHistory is pruned
             const isAction = Boolean(this.plotHistory.length);
             if (!isAction && !this.isFrozenOnMouseDown) {
-                return this.play();
+                return this.play(true);
             }
         },
 
@@ -1109,8 +1113,10 @@ export default {
             this.freeze();
         },
 
-        play() {
+        play(skipReloadOnInteraction) {
+            this.skipReloadOnInteraction = skipReloadOnInteraction === true;
             this.clear();
+            this.skipReloadOnInteraction = false;
         },
 
         showSynchronizeDialog() {
@@ -1185,9 +1191,12 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
+            const newOffsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+            //we ignore when width gets smaller
+            const offsetChange = newOffsetWidth - this.offsetWidth;
             if (this.$parent.$refs.plotWrapper
-                && (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth)) {
-                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+                && offsetChange >= OFFSET_THRESHOLD) {
+                this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
         },
