@@ -77,7 +77,7 @@ test.describe('Link item tests', () => {
 
         await page.locator('text=OK').click();
 
-        // Expect that Sibling Folder is in My Items, the root folder
+        // Expect that Child Folder is in My Items, the root folder
         expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=Child Folder)`)).toBeTruthy();
     });
 });

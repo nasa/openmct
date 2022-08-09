@@ -77,7 +77,7 @@ test.describe('Move item tests', () => {
 
         await page.locator('text=OK').click();
 
-        // Expect that Sibling Folder is in My Items, the root folder
+        // Expect that Child Folder is in My Items, the root folder
         expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=Child Folder)`)).toBeTruthy();
     });
     test('Create a basic object and verify that it cannot be moved to telemetry object without Composition Provider', async ({ page, openmctConfig }) => {
