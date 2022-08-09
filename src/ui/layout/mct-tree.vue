@@ -467,7 +467,7 @@ export default {
             }
         },
         scrollEndEvent() {
-            if (!this.$refs.srcrollable) {
+            if (!this.$refs.scrollable) {
                 return;
             }
 
