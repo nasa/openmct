@@ -1,11 +1,3 @@
-queries:
-  - exclude: '*'
-  - include:
-      tags:
-        - 'security'
-        - 'correctness'
-      severity: 'error'
-
 extraction:
   javascript:
     index:
