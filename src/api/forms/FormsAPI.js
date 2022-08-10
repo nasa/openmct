@@ -114,8 +114,8 @@ export default class FormsAPI extends EventEmitter {
         const self = this;
 
         const promise = new Promise((resolve, reject) => {
-            onSave = onFormSave(resolve);
-            onDismiss = onFormDismiss(reject);
+            onSave = onFormAction(resolve);
+            onDismiss = onFormAction(reject);
         });
 
         const vm = new Vue({
@@ -164,7 +164,7 @@ export default class FormsAPI extends EventEmitter {
             }
         }
 
-        function onFormDismiss(dismiss) {
+        function onFormAction(callback) {
             return () => {
                 if (element) {
                     formElement.remove();
@@ -172,17 +172,8 @@ export default class FormsAPI extends EventEmitter {
                     overlay.dismiss();
                 }
 
-                if (dismiss) {
-                    dismiss();
-                }
-            };
-        }
-
-        function onFormSave(save) {
-            return () => {
-                overlay.dismiss();
-                if (save) {
-                    save(changes);
+                if (callback) {
+                    callback(changes);
                 }
             };
         }

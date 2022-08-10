@@ -77,7 +77,6 @@ export default {
             }
 
             this.searchValue = value;
-            this.searchLoading = true;
             // clear any previous search results
             this.annotationSearchResults = [];
             this.objectSearchResults = [];
@@ -85,8 +84,13 @@ export default {
             if (this.searchValue) {
                 await this.getSearchResults();
             } else {
-                this.searchLoading = false;
-                this.$refs.searchResultsDropDown.showResults(this.annotationSearchResults, this.objectSearchResults);
+                const dropdownOptions = {
+                    searchLoading: this.searchLoading,
+                    searchValue: this.searchValue,
+                    annotationSearchResults: this.annotationSearchResults,
+                    objectSearchResults: this.objectSearchResults
+                };
+                this.$refs.searchResultsDropDown.showResults(dropdownOptions);
             }
         },
         getPathsForObjects(objectsNeedingPaths) {
@@ -103,6 +107,8 @@ export default {
         async getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
+            this.searchLoading = true;
+            this.$refs.searchResultsDropDown.showSearchStarted();
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
             try {
@@ -110,10 +116,15 @@ export default {
                 const fullObjectSearchResults = await Promise.all(this.openmct.objects.search(this.searchValue, abortSignal));
                 const aggregatedObjectSearchResults = fullObjectSearchResults.flat();
                 const aggregatedObjectSearchResultsWithPaths = await this.getPathsForObjects(aggregatedObjectSearchResults);
-                const filterAnnotations = aggregatedObjectSearchResultsWithPaths.filter(result => {
-                    return result.type !== 'annotation';
+                const filterAnnotationsAndValidPaths = aggregatedObjectSearchResultsWithPaths.filter(result => {
+                    if (this.openmct.annotation.isAnnotation(result)) {
+                        return false;
+                    }
+
+                    return this.openmct.objects.isReachable(result?.originalPath);
                 });
-                this.objectSearchResults = filterAnnotations;
+                this.objectSearchResults = filterAnnotationsAndValidPaths;
+                this.searchLoading = false;
                 this.showSearchResults();
             } catch (error) {
                 console.error(`😞 Error searching`, error);
@@ -125,7 +136,13 @@ export default {
             }
         },
         showSearchResults() {
-            this.$refs.searchResultsDropDown.showResults(this.annotationSearchResults, this.objectSearchResults);
+            const dropdownOptions = {
+                searchLoading: this.searchLoading,
+                searchValue: this.searchValue,
+                annotationSearchResults: this.annotationSearchResults,
+                objectSearchResults: this.objectSearchResults
+            };
+            this.$refs.searchResultsDropDown.showResults(dropdownOptions);
             document.body.addEventListener('click', this.handleOutsideClick);
         },
         handleOutsideClick(event) {

@@ -22,8 +22,6 @@
 
 <template>
 <div
-    v-if="(annotationResults && annotationResults.length) ||
-        (objectResults && objectResults.length)"
     class="c-gsearch__dropdown"
 >
     <div
@@ -39,8 +37,8 @@
             >
                 <div class="c-gsearch__results-section-title">Object Results</div>
                 <object-search-result
-                    v-for="(objectResult, index) in objectResults"
-                    :key="index"
+                    v-for="(objectResult) in objectResults"
+                    :key="openmct.objects.makeKeyString(objectResult.identifier)"
                     :result="objectResult"
                     @preview-changed="previewChanged"
                     @click.native="selectedResult"
@@ -52,30 +50,46 @@
             >
                 <div class="c-gsearch__results-section-title">Annotation Results</div>
                 <annotation-search-result
-                    v-for="(annotationResult, index) in annotationResults"
-                    :key="index"
+                    v-for="(annotationResult) in annotationResults"
+                    :key="openmct.objects.makeKeyString(annotationResult.identifier)"
                     :result="annotationResult"
                     @click.native="selectedResult"
                 />
             </div>
+            <div
+                v-if="searchLoading"
+            > <progress-bar
+                :model="{progressText: 'Searching...',
+                         progressPerc: undefined
+                }"
+            />
+            </div>
+            <div
+                v-if="!searchLoading && (!annotationResults || !annotationResults.length) &&
+                    (!objectResults || !objectResults.length)"
+            >No matching results.
+            </div>
         </div>
     </div>
-</div>
-</template>
+</div></template>
 
 <script>
 import AnnotationSearchResult from './AnnotationSearchResult.vue';
 import ObjectSearchResult from './ObjectSearchResult.vue';
+import ProgressBar from '@/ui/components/ProgressBar.vue';
 
 export default {
     name: 'SearchResultsDropDown',
     components: {
         AnnotationSearchResult,
-        ObjectSearchResult
+        ObjectSearchResult,
+        ProgressBar
     },
+    inject: ['openmct'],
     data() {
         return {
             resultsShown: false,
+            searchLoading: false,
             annotationResults: [],
             objectResults: [],
             previewVisible: false
@@ -90,12 +104,18 @@ export default {
         previewChanged(changedPreviewState) {
             this.previewVisible = changedPreviewState;
         },
-        showResults(passedAnnotationResults, passedObjectResults) {
-            if ((passedAnnotationResults && passedAnnotationResults.length)
-                || (passedObjectResults && passedObjectResults.length)) {
+        showSearchStarted() {
+            this.searchLoading = true;
+            this.resultsShown = true;
+            this.annotationResults = [];
+            this.objectResults = [];
+        },
+        showResults({searchLoading, searchValue, annotationSearchResults, objectSearchResults}) {
+            this.searchLoading = searchLoading;
+            this.annotationResults = annotationSearchResults;
+            this.objectResults = objectSearchResults;
+            if (searchValue?.length) {
                 this.resultsShown = true;
-                this.annotationResults = passedAnnotationResults;
-                this.objectResults = passedObjectResults;
             } else {
                 this.resultsShown = false;
             }
