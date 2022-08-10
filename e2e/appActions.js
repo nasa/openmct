@@ -105,18 +105,13 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 * Expands the 'My Items' folder if it is not already expanded.
 *
 * @param {import('@playwright/test').Page} page
-* @param {string} myItemsFolderName the name of the "My Items" folder
-* @param {string} domainObjectName the display name of the `domainObject`
+* @param {string} url the url to the object
 */
-async function openObjectTreeContextMenu(page, myItemsFolderName, domainObjectName) {
-    const myItemsFolder = page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3);
-    const className = await myItemsFolder.getAttribute('class');
-    if (!className.includes('c-disclosure-triangle--expanded')) {
-        await myItemsFolder.click();
-    }
+async function openObjectTreeContextMenu(page, url) {
+    await page.goto(url);
+    await page.click('button[title="Show selected item in tree"]');
 
-    // FIXME: Make this selector more deterministic
-    await page.locator(`a:has-text("${domainObjectName}")`).nth(0).click({
+    await page.locator('.is-navigated-object').click({
         button: 'right'
     });
 }
