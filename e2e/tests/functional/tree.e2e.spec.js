@@ -28,17 +28,17 @@ test.describe('Tree operations', () => {
         const { myItemsFolderName } = openmctConfig;
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        const fooFolder = await createDomainObjectWithDefaults(page, {
+        await createDomainObjectWithDefaults(page, {
             type: 'Folder',
             name: 'Foo'
         });
 
-        const barFolder = await createDomainObjectWithDefaults(page, {
+        await createDomainObjectWithDefaults(page, {
             type: 'Folder',
             name: 'Bar'
         });
 
-        const bazFolder = await createDomainObjectWithDefaults(page, {
+        await createDomainObjectWithDefaults(page, {
             type: 'Folder',
             name: 'Baz'
         });
@@ -48,17 +48,50 @@ test.describe('Tree operations', () => {
             name: 'aaa'
         });
 
-        const clock2 = await createDomainObjectWithDefaults(page, {
+        await createDomainObjectWithDefaults(page, {
             type: 'Clock',
             name: 'www'
         });
 
+        // Expand the root folder
+        await expandTreeItem(page, myItemsFolderName);
+
         await test.step("Reorders objects with the same tree depth", async () => {
-            // Expand the root folder
-            await expandTreeItem(page, myItemsFolderName);
             await getAndAssertTreeItems(page, ['aaa', 'Bar', 'Baz', 'Foo', 'www']);
             await renameObjectFromContextMenu(page, myItemsFolderName, clock1.name, 'zzz');
             await getAndAssertTreeItems(page, ['Bar', 'Baz', 'Foo', 'www', 'zzz']);
+        });
+
+        await test.step("Reorders links to objects as well as original objects", async () => {
+            await page.click('role=treeitem[name=/Bar/]');
+            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
+            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+            await page.click('role=treeitem[name=/Baz/]');
+            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
+            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+            await page.click('role=treeitem[name=/Foo/]');
+            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
+            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+            // Expand the unopened folders
+            await expandTreeItem(page, 'Bar');
+            await expandTreeItem(page, 'Baz');
+            await expandTreeItem(page, 'Foo');
+
+            await renameObjectFromContextMenu(page, myItemsFolderName, 'zzz', '___');
+            await getAndAssertTreeItems(page,
+                [
+                    "___",
+                    "Bar",
+                    "___",
+                    "www",
+                    "Baz",
+                    "___",
+                    "www",
+                    "Foo",
+                    "___",
+                    "www",
+                    "www"
+                ]);
         });
     });
 });
@@ -90,8 +123,12 @@ async function renameObjectFromContextMenu(page, myItemsFolderName, currentName,
     await page.click('[aria-label="Save"]');
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} name
+ */
 async function expandTreeItem(page, name) {
-    const treeItem = page.locator(`role=treeitem[expanded=false][name*='${name}']`);
+    const treeItem = page.locator(`role=treeitem[expanded=false][name=/${name}/]`);
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
 }
