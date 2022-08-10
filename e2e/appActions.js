@@ -115,7 +115,8 @@ async function openObjectTreeContextMenu(page, myItemsFolderName, domainObjectNa
         await myItemsFolder.click();
     }
 
-    await page.locator(`a:has-text("${domainObjectName}")`).click({
+    // FIXME: Make this selector more deterministic
+    await page.locator(`a:has-text("${domainObjectName}")`).nth(0).click({
         button: 'right'
     });
 }
