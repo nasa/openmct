@@ -130,7 +130,7 @@ async function openObjectTreeContextMenu(page, myItemsFolderName, domainObjectNa
 async function getFocusedObjectUuid(page) {
     const UUIDv4Regexp = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi;
     const focusedObjectUuid = await page.evaluate((regexp) => {
-        return window.location.href.match(regexp).at(-1);
+        return window.location.href.split('?')[0].match(regexp).at(-1);
     }, UUIDv4Regexp);
 
     return focusedObjectUuid;
