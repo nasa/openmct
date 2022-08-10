@@ -21,11 +21,15 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults, openObjectTreeContextMenu } = require('../../appActions.js');
+const {
+    createDomainObjectWithDefaults,
+    expandPathToTreeItem,
+    expandTreeItemByName,
+    openObjectTreeContextMenu
+} = require('../../appActions.js');
 
 test.describe('Tree operations', () => {
-    test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
+    test('Renaming an object reorders the tree @unstable', async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         await createDomainObjectWithDefaults(page, {
@@ -54,11 +58,11 @@ test.describe('Tree operations', () => {
         });
 
         // Expand the root folder
-        await expandTreeItem(page, myItemsFolderName);
+        await expandPathToTreeItem(page, clock1.url);
 
         await test.step("Reorders objects with the same tree depth", async () => {
             await getAndAssertTreeItems(page, ['aaa', 'Bar', 'Baz', 'Foo', 'www']);
-            await renameObjectFromContextMenu(page, myItemsFolderName, clock1.name, 'zzz');
+            await renameObjectFromContextMenu(page, clock1.url, 'zzz');
             await getAndAssertTreeItems(page, ['Bar', 'Baz', 'Foo', 'www', 'zzz']);
         });
 
@@ -73,11 +77,11 @@ test.describe('Tree operations', () => {
             await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
             await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
             // Expand the unopened folders
-            await expandTreeItem(page, 'Bar');
-            await expandTreeItem(page, 'Baz');
-            await expandTreeItem(page, 'Foo');
+            await expandTreeItemByName(page, 'Bar');
+            await expandTreeItemByName(page, 'Baz');
+            await expandTreeItemByName(page, 'Foo');
 
-            await renameObjectFromContextMenu(page, myItemsFolderName, 'zzz', '___');
+            await renameObjectFromContextMenu(page, clock1.url, '___');
             await getAndAssertTreeItems(page,
                 [
                     "___",
@@ -111,24 +115,14 @@ async function getAndAssertTreeItems(page, expected) {
 /**
  * @param {import('@playwright/test').Page} page
  * @param {string} myItemsFolderName
- * @param {string} currentName
+ * @param {string} url
  * @param {string} newName
  */
-async function renameObjectFromContextMenu(page, myItemsFolderName, currentName, newName) {
-    await openObjectTreeContextMenu(page, myItemsFolderName, currentName);
+async function renameObjectFromContextMenu(page, url, newName) {
+    await openObjectTreeContextMenu(page, url);
     await page.click('li:text("Edit Properties")');
     const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
     await nameInput.fill("");
     await nameInput.fill(newName);
     await page.click('[aria-label="Save"]');
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} name
- */
-async function expandTreeItem(page, name) {
-    const treeItem = page.locator(`role=treeitem[expanded=false][name=/${name}/]`);
-    const expandTriangle = treeItem.locator('.c-disclosure-triangle');
-    await expandTriangle.click();
 }
