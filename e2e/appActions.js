@@ -101,27 +101,6 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 }
 
 /**
- * Uses the 'target' button to expand the entire tree path to the given domain object by url.
- * @param {import('@playwright/test').Page} page
- * @param {string} url the url to the domain object
- */
-async function expandPathToTreeItem(page, url) {
-    await page.goto(url);
-    await page.click('button[title="Show selected item in tree"]');
-}
-
-/**
- * Expands the first matching expandable tree item with the given name.
- * @param {import('@playwright/test').Page} page
- * @param {string} name The name of the tree item to expand.
- */
-async function expandTreeItemByName(page, name) {
-    const treeItem = page.locator(`role=treeitem[expanded=false][name=/${name}/]`).nth(0);
-    const expandTriangle = treeItem.locator('.c-disclosure-triangle');
-    await expandTriangle.click();
-}
-
-/**
 * Open the given `domainObject`'s context menu from the object tree.
 * Expands the path to the object and scrolls to it if necessary.
 *
@@ -129,8 +108,8 @@ async function expandTreeItemByName(page, name) {
 * @param {string} url the url to the object
 */
 async function openObjectTreeContextMenu(page, url) {
-    await expandPathToTreeItem(page, url);
-
+    await page.goto(url);
+    await page.click('button[title="Show selected item in tree"]');
     await page.locator('.is-navigated-object').click({
         button: 'right'
     });
@@ -279,8 +258,6 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
-    expandPathToTreeItem,
-    expandTreeItemByName,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
     getFocusedObjectUuid,

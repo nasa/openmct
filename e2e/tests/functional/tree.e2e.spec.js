@@ -23,13 +23,12 @@
 const { test, expect } = require('../../pluginFixtures.js');
 const {
     createDomainObjectWithDefaults,
-    expandPathToTreeItem,
-    expandTreeItemByName,
     openObjectTreeContextMenu
 } = require('../../appActions.js');
 
 test.describe('Tree operations', () => {
-    test('Renaming an object reorders the tree @unstable', async ({ page }) => {
+    test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
         await page.goto('./', { waitUntil: 'networkidle' });
 
         await createDomainObjectWithDefaults(page, {
@@ -58,7 +57,7 @@ test.describe('Tree operations', () => {
         });
 
         // Expand the root folder
-        await expandPathToTreeItem(page, clock1.url);
+        await expandTreePaneItemByName(page, myItemsFolderName);
 
         await test.step("Reorders objects with the same tree depth", async () => {
             await getAndAssertTreeItems(page, ['aaa', 'Bar', 'Baz', 'Foo', 'www']);
@@ -77,9 +76,9 @@ test.describe('Tree operations', () => {
             await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
             await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
             // Expand the unopened folders
-            await expandTreeItemByName(page, 'Bar');
-            await expandTreeItemByName(page, 'Baz');
-            await expandTreeItemByName(page, 'Foo');
+            await expandTreePaneItemByName(page, 'Bar');
+            await expandTreePaneItemByName(page, 'Baz');
+            await expandTreePaneItemByName(page, 'Foo');
 
             await renameObjectFromContextMenu(page, clock1.url, '___');
             await getAndAssertTreeItems(page,
@@ -110,6 +109,17 @@ async function getAndAssertTreeItems(page, expected) {
     // Get rid of root folder ('My Items') as its position will not change
     allTexts.shift();
     expect(allTexts).toEqual(expected);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} name
+ */
+async function expandTreePaneItemByName(page, name) {
+    const treePane = page.locator('#tree-pane');
+    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
+    const expandTriangle = treeItem.locator('.c-disclosure-triangle');
+    await expandTriangle.click();
 }
 
 /**
