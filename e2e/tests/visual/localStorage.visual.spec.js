@@ -27,10 +27,7 @@ const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 test.describe('Visual - localStorage execution @localStorage', () => {
     test.use({
-        storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
-        clockOptions: {
-            shouldAdvanceTime: true //Advance the clock
-        }
+        storageState: './e2e/test-data/overlay_plot_with_delay_storage.json'
     });
     test.beforeEach(async ({ page }) => {
         //Go to baseURL and Hide Tree
@@ -38,7 +35,7 @@ test.describe('Visual - localStorage execution @localStorage', () => {
     });
 
     test('Visual - Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-        //Click on Overlay Plot which was generated in localStorage
+        // Click on Overlay Plot which was generated in localStorage
         await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
         //Ensure that we're on the Unnamed Overlay Plot object
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Overlay Plot');

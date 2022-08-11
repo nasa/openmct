@@ -25,7 +25,7 @@ Collection of Visual Tests set to run with browser clock manipulate made possibl
 clockOptions plugin fixture.
 */
 
-const { test, expect } = require('../../pluginFixtures');
+const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Controlled Clock', () => {

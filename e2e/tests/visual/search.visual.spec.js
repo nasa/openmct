@@ -34,11 +34,7 @@ test.describe('Grand Search', () => {
         //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     });
-    test.use({
-        clockOptions: {
-            shouldAdvanceTime: false //Don't advance the clock
-        }
-    });
+
     //This needs to be rewritten to use a non clock or non display layout object
     test('Can search for objects, and subsequent search dropdown behaves properly @unstable', async ({ page, theme }) => {
         // await createDomainObjectWithDefaults(page, 'Display Layout');
@@ -77,7 +73,6 @@ test.describe('Grand Search', () => {
             page.locator('text=Unnamed Clock').click()
         ]);
         await percySnapshot(page, `Clicking on search results should navigate to them if not editing (theme: '${theme}')`);
-
     });
 });
 

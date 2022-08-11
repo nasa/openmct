@@ -31,8 +31,7 @@ to "fail" on assertions. Instead, they should be used to detect changes between 
 Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
-// eslint-disable-next-line no-unused-vars
-const { test, expect } = require('../../pluginFixtures');
+const { test } = require('../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
@@ -40,25 +39,14 @@ const path = require('path');
 const CUSTOM_NAME = 'CUSTOM_NAME';
 
 test.describe('Visual - Non-default plugins', () => {
-    test.beforeEach(async ({ page }) => {
-        //Go to baseURL and Hide Tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-    });
-    test.use({
-        clockOptions: {
-            shouldAdvanceTime: false //Don't advance the clock
-        }
-    });
-
     test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
         await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
-        //Go to baseURL
+        //Go to baseURL and hide tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 
         await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 
         // Take a snapshot of the newly created CUSTOM_NAME notebook
         await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
-
     });
 });

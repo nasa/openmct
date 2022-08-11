@@ -41,11 +41,6 @@ test.describe('Visual - Default', () => {
         //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     });
-    test.use({
-        clockOptions: {
-            shouldAdvanceTime: false //Don't advance the clock
-        }
-    });
 
     test('Visual - Root and About', async ({ page, theme }) => {
         // Verify that Create button is actionable
@@ -111,13 +106,12 @@ test.describe('Visual - Default', () => {
     });
 
     test('Visual - Display Layout Icon is correct', async ({ page, theme }) => {
-        //Click the Create button
+        // Click the Create button
         await page.click('button:has-text("Create")');
 
-        //Hover on Display Layout option.
+        // Hover on Display Layout option.
         await page.locator('text=Display Layout').hover();
         await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
-
     });
 
     test.fixme('Visual - Default Gauge is correct', async ({ page, theme }) => {
