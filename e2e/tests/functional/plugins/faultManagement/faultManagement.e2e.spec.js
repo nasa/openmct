@@ -23,9 +23,9 @@
 const { test, expect } = require('../../../../pluginFixtures');
 const path = require('path');
 
-test.describe('The Fault Management Plugin', () => {
+test.describe('The Fault Management Plugin using example faults', () => {
     test.beforeEach(async ({ page }) => {
-        await startAndNavigateToFaultManagement(page);
+        await navigateToFaultManagementWithExample(page);
     });
 
     test('Shows a criticality icon for every fault', async ({ page }) => {
@@ -208,13 +208,58 @@ test.describe('The Fault Management Plugin', () => {
 
 });
 
+test.describe('The Fault Management Plugin without using example faults', () => {
+    test.beforeEach(async ({ page }) => {
+        await navigateToFaultManagementWithoutExample(page);
+    });
+
+    test('Shows no faults when no faults are provided', async ({ page }) => {
+        const faultCount = await page.locator('c-fault-mgmt__list').count();
+
+        expect.soft(faultCount).toEqual(0);
+
+        await changeViewTo(page, 'acknowledged');
+        const acknowledgedCount = await page.locator('c-fault-mgmt__list').count();
+        expect.soft(acknowledgedCount).toEqual(0);
+
+        await changeViewTo(page, 'shelved');
+        const shelvedCount = await page.locator('c-fault-mgmt__list').count();
+        expect.soft(shelvedCount).toEqual(0);
+    });
+
+    test('Will return no faults when searching', async ({ page }) => {
+        await enterSearchTerm(page, 'fault');
+
+        const faultCount = await page.locator('c-fault-mgmt__list').count();
+
+        expect.soft(faultCount).toEqual(0);
+    });
+});
+
 /**
  * @param {import('@playwright/test').Page} page
  */
-async function startAndNavigateToFaultManagement(page) {
-
+async function navigateToFaultManagementWithExample(page) {
     // eslint-disable-next-line no-undef
     await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleFaultProvider.js') });
+
+    await navigateToFaultItemInTree(page);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function navigateToFaultManagementWithoutExample(page) {
+    // eslint-disable-next-line no-undef
+    await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitFaultManagementPlugin.js') });
+
+    await navigateToFaultItemInTree(page);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function navigateToFaultItemInTree(page) {
     await page.goto('./', { waitUntil: 'networkidle' });
 
     // Click text=Fault Management
