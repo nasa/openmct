@@ -73,7 +73,7 @@
     "webpack": "5.68.0",
     "webpack-cli": "4.10.0",
     "webpack-dev-middleware": "5.3.3",
-    "webpack-hot-middleware": "2.25.1",
+    "webpack-hot-middleware": "2.25.2",
     "webpack-merge": "5.8.0"
   },
   "scripts": {
