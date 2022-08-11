@@ -40,6 +40,8 @@ const ANNOTATION_TYPES = Object.freeze({
     PLOT_SPATIAL: 'PLOT_SPATIAL'
 });
 
+const ANNOTATION_TYPE = 'annotation';
+
 /**
  * @typedef {Object} Tag
  * @property {String} key a unique identifier for the tag
@@ -54,7 +56,7 @@ export default class AnnotationAPI extends EventEmitter {
 
         this.ANNOTATION_TYPES = ANNOTATION_TYPES;
 
-        this.openmct.types.addType('annotation', {
+        this.openmct.types.addType(ANNOTATION_TYPE, {
             name: 'Annotation',
             description: 'A user created note or comment about time ranges, pixel space, and geospatial features.',
             creatable: false,
@@ -134,6 +136,10 @@ export default class AnnotationAPI extends EventEmitter {
 
     defineTag(tagKey, tagsDefinition) {
         this.availableTags[tagKey] = tagsDefinition;
+    }
+
+    isAnnotation(domainObject) {
+        return domainObject && (domainObject.type === ANNOTATION_TYPE);
     }
 
     getAvailableTags() {
@@ -271,7 +277,10 @@ export default class AnnotationAPI extends EventEmitter {
         const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
         const appliedTagSearchResults = this.#addTagMetaInformationToResults(searchResults, matchingTagKeys);
         const appliedTargetsModels = await this.#addTargetModelsToResults(appliedTagSearchResults);
+        const resultsWithValidPath = appliedTargetsModels.filter(result => {
+            return this.openmct.objects.isReachable(result.targetModels?.[0]?.originalPath);
+        });
 
-        return appliedTargetsModels;
+        return resultsWithValidPath;
     }
 }

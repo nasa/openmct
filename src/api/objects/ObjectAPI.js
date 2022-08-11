@@ -615,25 +615,58 @@ export default class ObjectAPI {
      * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
      */
     areIdsEqual(...identifiers) {
+        const firstIdentifier = utils.parseKeyString(identifiers[0]);
+
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
-                return identifier === identifiers[0]
-                    || (identifier.namespace === identifiers[0].namespace
-                        && identifier.key === identifiers[0].key);
+                return identifier === firstIdentifier
+                    || (identifier.namespace === firstIdentifier.namespace
+                        && identifier.key === firstIdentifier.key);
             });
     }
 
-    getOriginalPath(identifier, path = []) {
-        return this.get(identifier).then((domainObject) => {
-            path.push(domainObject);
-            let location = domainObject.location;
+    /**
+     * Given an original path check if the path is reachable via root
+     * @param {Array<Object>} originalPath an array of path objects to check
+     * @returns {boolean} whether the domain object is reachable
+     */
+    isReachable(originalPath) {
+        if (originalPath && originalPath.length) {
+            return (originalPath[originalPath.length - 1].type === 'root');
+        }
 
-            if (location) {
-                return this.getOriginalPath(utils.parseKeyString(location), path);
-            } else {
-                return path;
-            }
+        return false;
+    }
+
+    #pathContainsDomainObject(keyStringToCheck, path) {
+        if (!keyStringToCheck) {
+            return false;
+        }
+
+        return path.some(pathElement => {
+            const identifierToCheck = utils.parseKeyString(keyStringToCheck);
+
+            return this.areIdsEqual(identifierToCheck, pathElement.identifier);
         });
+    }
+
+    /**
+     * Given an identifier, constructs the original path by walking up its parents
+     * @param {module:openmct.ObjectAPI~Identifier} identifier
+     * @param {Array<module:openmct.DomainObject>} path an array of path objects
+     * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
+     */
+    async getOriginalPath(identifier, path = []) {
+        const domainObject = await this.get(identifier);
+        path.push(domainObject);
+        const { location } = domainObject;
+        if (location && (!this.#pathContainsDomainObject(location, path))) {
+            // if we have a location, and we don't already have this in our constructed path,
+            // then keep walking up the path
+            return this.getOriginalPath(utils.parseKeyString(location), path);
+        } else {
+            return path;
+        }
     }
 
     isObjectPathToALink(domainObject, objectPath) {

@@ -91,6 +91,10 @@ define([
      * @returns keyString
      */
     function makeKeyString(identifier) {
+        if (!identifier) {
+            throw new Error("Cannot make key string from null identifier");
+        }
+
         if (isKeyString(identifier)) {
             return identifier;
         }

@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "2.1.0-SNAPSHOT",
+  "version": "2.0.8",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@babel/eslint-parser": "7.18.9",

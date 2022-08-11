@@ -107,6 +107,9 @@ test.describe("Search Tests @unstable", () => {
 
         // Verify that no results are found
         expect(await searchResults.count()).toBe(0);
+
+        // Verify proper message appears
+        await expect(page.locator('text=No matching results.')).toBeVisible();
     });
 
     test('Validate single object in search result', async ({ page }) => {
