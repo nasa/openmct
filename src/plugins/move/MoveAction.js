@@ -145,25 +145,23 @@ export default class MoveAction {
             const parentCandidatePath = data.value;
             const parentCandidate = parentCandidatePath[0];
 
+            // check if moving to same place
+            if (this.openmct.objects.areIdsEqual(parentCandidate.identifier, currentParent.identifier)) {
+                return false;
+            }
+
+            // check if moving to a child
+            if (parentCandidatePath.some(candidatePath => {
+                return this.openmct.objects.areIdsEqual(candidatePath.identifier, this.object.identifier);
+            })) {
+                return false;
+            }
+
             if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
                 return false;
             }
 
-            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
             let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
-
-            if (!parentCandidateKeystring || !currentParentKeystring) {
-                return false;
-            }
-
-            if (parentCandidateKeystring === currentParentKeystring) {
-                return false;
-            }
-
-            if (parentCandidateKeystring === objectKeystring) {
-                return false;
-            }
 
             const parentCandidateComposition = parentCandidate.composition;
             if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
