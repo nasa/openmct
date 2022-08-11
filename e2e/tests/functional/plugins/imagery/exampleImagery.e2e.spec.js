@@ -41,7 +41,7 @@ test.describe('Example Imagery Object', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create a default 'Example Imagery' object
-        createDomainObjectWithDefaults(page, 'Example Imagery');
+        createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
 
         await Promise.all([
             page.waitForNavigation(),
