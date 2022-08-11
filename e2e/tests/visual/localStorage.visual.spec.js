@@ -37,7 +37,7 @@ test.describe('Visual - localStorage execution @localStorage', () => {
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     });
 
-    test.only('Visual - Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
+    test('Visual - Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
         //Click on Overlay Plot which was generated in localStorage
         await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
         //Ensure that we're on the Unnamed Overlay Plot object

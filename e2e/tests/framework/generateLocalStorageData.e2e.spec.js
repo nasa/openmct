@@ -32,7 +32,7 @@ TODO: Provide addition`al validation of object properties as it grows.
 */
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults, } = require('../../appActions.js');
+const { createDomainObjectWithDefaults, createExampleTelemetryObject } = require('../../appActions.js');
 
 test.describe('Generate Visual Test Data @localStorage', () => {
     // test.use({
@@ -56,7 +56,7 @@ test.describe('Generate Visual Test Data @localStorage', () => {
         await page.locator('text=Save and Finish Editing').click();
 
         //Create Telemetry Object
-        await createTelemetryObject(page);
+        await createExampleTelemetryObject(page);
 
         //Make Link to from Telemetry Object to Overlay Plot
         ////
@@ -132,42 +132,3 @@ test.describe('Generate Visual Test Data @localStorage', () => {
         await context.storageState({ path: './e2e/test-data/overlay_plot_with_delay_storage.json' });
     });
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function createTelemetryObject(page) {
-
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-
-    // Click button:has-text("Create")
-    await page.locator('button:has-text("Create")').click();
-
-    await page.locator('li:has-text("Sine Wave Generator")').click();
-
-    await page.locator('text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]').fill('VIPER Rover Heading');
-
-    // Fill [aria-label="Period"]
-    await page.locator('[aria-label="Period"]').fill('1');
-
-    // Fill [aria-label="Amplitude"]
-    await page.locator('[aria-label="Amplitude"]').fill('1');
-
-    // Fill [aria-label="Offset"]
-    await page.locator('[aria-label="Offset"]').fill('0');
-
-    // Fill [aria-label="Phase \(radians\)"]
-    await page.locator('[aria-label="Phase \\(radians\\)"]').fill('0');
-
-    // Fill [aria-label="Data Rate \(hz\)"]
-    await page.locator('[aria-label="Data Rate \\(hz\\)"]').fill('1');
-
-    // Fill [aria-label="Randomness"]
-    await page.locator('[aria-label="Randomness"]').fill('0');
-
-    // Fill [aria-label="Loading Delay \(ms\)"]
-    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('0');
-
-    // Click text=OK
-    await page.locator('text=OK').click();
-}
