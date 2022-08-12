@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const path = require('path');
+import utils from '../../../../helper/faultUtils';
 
 test.describe('The Fault Management Plugin using example faults', () => {
     test.beforeEach(async ({ page }) => {
-        await navigateToFaultManagementWithExample(page);
+        await utils.navigateToFaultManagementWithExample(page);
     });
 
     test('Shows a criticality icon for every fault', async ({ page }) => {
@@ -36,7 +36,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     });
 
     test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector', async ({ page }) => {
-        await selectFaultItem(page, 1);
+        await utils.selectFaultItem(page, 1);
 
         const selectedFaultName = await page.locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname').textContent();
         const inspectorFaultNameCount = await page.locator(`.c-inspector__properties >> :text("${selectedFaultName}")`).count();
@@ -46,8 +46,8 @@ test.describe('The Fault Management Plugin using example faults', () => {
     });
 
     test('When selecting multiple faults, no specific fault information is shown in the inspector', async ({ page }) => {
-        await selectFaultItem(page, 1);
-        await selectFaultItem(page, 2);
+        await utils.selectFaultItem(page, 1);
+        await utils.selectFaultItem(page, 2);
 
         const selectedRows = page.locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname');
         expect.soft(await selectedRows.count()).toEqual(2);
@@ -62,146 +62,146 @@ test.describe('The Fault Management Plugin using example faults', () => {
     });
 
     test('Allows you to shelve a fault', async ({ page }) => {
-        const shelvedFaultName = await getFaultName(page, 2);
-        const beforeShelvedFault = getFaulBytName(page, shelvedFaultName);
+        const shelvedFaultName = await utils.getFaultName(page, 2);
+        const beforeShelvedFault = utils.getFaulBytName(page, shelvedFaultName);
 
         expect.soft(await beforeShelvedFault.count()).toBe(1);
 
-        await shelveFault(page, 2);
+        await utils.shelveFault(page, 2);
 
         // check it is removed from standard view
-        const afterShelvedFault = getFaulBytName(page, shelvedFaultName);
+        const afterShelvedFault = utils.getFaulBytName(page, shelvedFaultName);
         expect.soft(await afterShelvedFault.count()).toBe(0);
 
-        await changeViewTo(page, 'shelved');
+        await utils.changeViewTo(page, 'shelved');
 
-        const shelvedViewFault = getFaulBytName(page, shelvedFaultName);
+        const shelvedViewFault = utils.getFaulBytName(page, shelvedFaultName);
 
         expect.soft(await shelvedViewFault.count()).toBe(1);
     });
 
     test('Allows you to acknowledge a fault', async ({ page }) => {
-        const acknowledgedFaultName = await getFaultName(page, 3);
+        const acknowledgedFaultName = await utils.getFaultName(page, 3);
 
-        await acknowledgeFault(page, 3);
+        await utils.acknowledgeFault(page, 3);
 
-        const fault = getFault(page, 3);
+        const fault = utils.getFault(page, 3);
         await expect.soft(fault).toHaveClass(/is-acknowledged/);
 
-        await changeViewTo(page, 'acknowledged');
+        await utils.changeViewTo(page, 'acknowledged');
 
-        const acknowledgedViewFaultName = await getFaultName(page, 1);
+        const acknowledgedViewFaultName = await utils.getFaultName(page, 1);
         expect.soft(acknowledgedFaultName).toEqual(acknowledgedViewFaultName);
     });
 
     test('Allows you to shelve multiple faults', async ({ page }) => {
-        const shelvedFaultNameOne = await getFaultName(page, 1);
-        const shelvedFaultNameFour = await getFaultName(page, 4);
+        const shelvedFaultNameOne = await utils.getFaultName(page, 1);
+        const shelvedFaultNameFour = await utils.getFaultName(page, 4);
 
-        const beforeShelvedFaultOne = getFaulBytName(page, shelvedFaultNameOne);
-        const beforeShelvedFaultFour = getFaulBytName(page, shelvedFaultNameFour);
+        const beforeShelvedFaultOne = utils.getFaulBytName(page, shelvedFaultNameOne);
+        const beforeShelvedFaultFour = utils.getFaulBytName(page, shelvedFaultNameFour);
 
         expect.soft(await beforeShelvedFaultOne.count()).toBe(1);
         expect.soft(await beforeShelvedFaultFour.count()).toBe(1);
 
-        await shelveMultipleFaults(page, 1, 4);
+        await utils.shelveMultipleFaults(page, 1, 4);
 
         // check it is removed from standard view
-        const afterShelvedFaultOne = getFaulBytName(page, shelvedFaultNameOne);
-        const afterShelvedFaultFour = getFaulBytName(page, shelvedFaultNameFour);
+        const afterShelvedFaultOne = utils.getFaulBytName(page, shelvedFaultNameOne);
+        const afterShelvedFaultFour = utils.getFaulBytName(page, shelvedFaultNameFour);
         expect.soft(await afterShelvedFaultOne.count()).toBe(0);
         expect.soft(await afterShelvedFaultFour.count()).toBe(0);
 
-        await changeViewTo(page, 'shelved');
+        await utils.changeViewTo(page, 'shelved');
 
-        const shelvedViewFaultOne = getFaulBytName(page, shelvedFaultNameOne);
-        const shelvedViewFaultFour = getFaulBytName(page, shelvedFaultNameFour);
+        const shelvedViewFaultOne = utils.getFaulBytName(page, shelvedFaultNameOne);
+        const shelvedViewFaultFour = utils.getFaulBytName(page, shelvedFaultNameFour);
 
         expect.soft(await shelvedViewFaultOne.count()).toBe(1);
         expect.soft(await shelvedViewFaultFour.count()).toBe(1);
     });
 
     test('Allows you to acknowledge multiple faults', async ({ page }) => {
-        const acknowledgedFaultNameTwo = await getFaultName(page, 2);
-        const acknowledgedFaultNameFive = await getFaultName(page, 5);
+        const acknowledgedFaultNameTwo = await utils.getFaultName(page, 2);
+        const acknowledgedFaultNameFive = await utils.getFaultName(page, 5);
 
-        await acknowledgeMultipleFaults(page, 2, 5);
+        await utils.acknowledgeMultipleFaults(page, 2, 5);
 
-        const faultTwo = getFault(page, 2);
-        const faultFive = getFault(page, 5);
+        const faultTwo = utils.getFault(page, 2);
+        const faultFive = utils.getFault(page, 5);
 
         // check they have been acknowledged
         await expect.soft(faultTwo).toHaveClass(/is-acknowledged/);
         await expect.soft(faultFive).toHaveClass(/is-acknowledged/);
 
-        await changeViewTo(page, 'acknowledged');
+        await utils.changeViewTo(page, 'acknowledged');
 
-        const acknowledgedViewFaultTwo = getFaulBytName(page, acknowledgedFaultNameTwo);
-        const acknowledgedViewFaultFive = getFaulBytName(page, acknowledgedFaultNameFive);
+        const acknowledgedViewFaultTwo = utils.getFaulBytName(page, acknowledgedFaultNameTwo);
+        const acknowledgedViewFaultFive = utils.getFaulBytName(page, acknowledgedFaultNameFive);
 
         expect.soft(await acknowledgedViewFaultTwo.count()).toBe(1);
         expect.soft(await acknowledgedViewFaultFive.count()).toBe(1);
     });
 
     test('Allows you to search faults', async ({ page }) => {
-        const faultThreeNamespace = await getFaultNamespace(page, 3);
-        const faultTwoName = await getFaultName(page, 2);
-        const faultFiveTriggerTime = await getFaultTriggerTime(page, 5);
+        const faultThreeNamespace = await utils.getFaultNamespace(page, 3);
+        const faultTwoName = await utils.getFaultName(page, 2);
+        const faultFiveTriggerTime = await utils.getFaultTriggerTime(page, 5);
 
         // should be all faults (5)
-        let faultResultCount = await getFaultResultCount(page);
+        let faultResultCount = await utils.getFaultResultCount(page);
         expect.soft(faultResultCount).toEqual(5);
 
         // search namespace
-        await enterSearchTerm(page, faultThreeNamespace);
+        await utils.enterSearchTerm(page, faultThreeNamespace);
 
-        faultResultCount = await getFaultResultCount(page);
+        faultResultCount = await utils.getFaultResultCount(page);
         expect.soft(faultResultCount).toEqual(1);
-        expect.soft(await getFaultNamespace(page, 1)).toEqual(faultThreeNamespace);
+        expect.soft(await utils.getFaultNamespace(page, 1)).toEqual(faultThreeNamespace);
 
         // all faults
-        await clearSearch(page);
-        faultResultCount = await getFaultResultCount(page);
+        await utils.clearSearch(page);
+        faultResultCount = await utils.getFaultResultCount(page);
         expect.soft(faultResultCount).toEqual(5);
 
         // search name
-        await enterSearchTerm(page, faultTwoName);
+        await utils.enterSearchTerm(page, faultTwoName);
 
-        faultResultCount = await getFaultResultCount(page);
+        faultResultCount = await utils.getFaultResultCount(page);
         expect.soft(faultResultCount).toEqual(1);
-        expect.soft(await getFaultName(page, 1)).toEqual(faultTwoName);
+        expect.soft(await utils.getFaultName(page, 1)).toEqual(faultTwoName);
 
         // all faults
-        await clearSearch(page);
-        faultResultCount = await getFaultResultCount(page);
+        await utils.clearSearch(page);
+        faultResultCount = await utils.getFaultResultCount(page);
         expect.soft(faultResultCount).toEqual(5);
 
         // search triggerTime
-        await enterSearchTerm(page, faultFiveTriggerTime);
+        await utils.enterSearchTerm(page, faultFiveTriggerTime);
 
-        faultResultCount = await getFaultResultCount(page);
+        faultResultCount = await utils.getFaultResultCount(page);
         expect.soft(faultResultCount).toEqual(1);
-        expect.soft(await getFaultTriggerTime(page, 1)).toEqual(faultFiveTriggerTime);
+        expect.soft(await utils.getFaultTriggerTime(page, 1)).toEqual(faultFiveTriggerTime);
     });
 
     test('Allows you to sort faults', async ({ page }) => {
-        const highestSeverity = await getHighestSeverity(page);
-        const lowestSeverity = await getLowestSeverity(page);
+        const highestSeverity = await utils.getHighestSeverity(page);
+        const lowestSeverity = await utils.getLowestSeverity(page);
         const faultOneName = 'Example Fault 1';
         const faultFiveName = 'Example Fault 5';
-        let firstFaultName = await getFaultName(page, 1);
+        let firstFaultName = await utils.getFaultName(page, 1);
 
         expect.soft(firstFaultName).toEqual(faultOneName);
 
-        await sortFaultsBy(page, 'oldest-first');
+        await utils.sortFaultsBy(page, 'oldest-first');
 
-        firstFaultName = await getFaultName(page, 1);
+        firstFaultName = await utils.getFaultName(page, 1);
         expect.soft(firstFaultName).toEqual(faultFiveName);
 
-        await sortFaultsBy(page, 'severity');
+        await utils.sortFaultsBy(page, 'severity');
 
-        const sortedHighestSeverity = await getFaultSeverity(page, 1);
-        const sortedLowestSeverity = await getFaultSeverity(page, 5);
+        const sortedHighestSeverity = await utils.getFaultSeverity(page, 1);
+        const sortedLowestSeverity = await utils.getFaultSeverity(page, 5);
         expect.soft(sortedHighestSeverity).toEqual(highestSeverity);
         expect.soft(sortedLowestSeverity).toEqual(lowestSeverity);
     });
@@ -210,7 +210,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
 test.describe('The Fault Management Plugin without using example faults', () => {
     test.beforeEach(async ({ page }) => {
-        await navigateToFaultManagementWithoutExample(page);
+        await utils.navigateToFaultManagementWithoutExample(page);
     });
 
     test('Shows no faults when no faults are provided', async ({ page }) => {
@@ -218,238 +218,20 @@ test.describe('The Fault Management Plugin without using example faults', () => 
 
         expect.soft(faultCount).toEqual(0);
 
-        await changeViewTo(page, 'acknowledged');
+        await utils.changeViewTo(page, 'acknowledged');
         const acknowledgedCount = await page.locator('c-fault-mgmt__list').count();
         expect.soft(acknowledgedCount).toEqual(0);
 
-        await changeViewTo(page, 'shelved');
+        await utils.changeViewTo(page, 'shelved');
         const shelvedCount = await page.locator('c-fault-mgmt__list').count();
         expect.soft(shelvedCount).toEqual(0);
     });
 
     test('Will return no faults when searching', async ({ page }) => {
-        await enterSearchTerm(page, 'fault');
+        await utils.enterSearchTerm(page, 'fault');
 
         const faultCount = await page.locator('c-fault-mgmt__list').count();
 
         expect.soft(faultCount).toEqual(0);
     });
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function navigateToFaultManagementWithExample(page) {
-    // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleFaultProvider.js') });
-
-    await navigateToFaultItemInTree(page);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function navigateToFaultManagementWithoutExample(page) {
-    // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitFaultManagementPlugin.js') });
-
-    await navigateToFaultItemInTree(page);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function navigateToFaultItemInTree(page) {
-    await page.goto('./', { waitUntil: 'networkidle' });
-
-    // Click text=Fault Management
-    await page.click('text=Fault Management'); // this verifies the plugin has been added
-    await page.waitForNavigation({waitUntil: 'networkidle'});
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function acknowledgeFault(page, rowNumber) {
-    await openFaultRowMenu(page, rowNumber);
-    await page.locator('.c-menu >> text="Acknowledge"').click();
-    // Click [aria-label="Save"]
-    await page.locator('[aria-label="Save"]').click();
-
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function shelveMultipleFaults(page, ...nums) {
-    const selectRows = nums.map((num) => {
-        return selectFaultItem(page, num);
-    });
-    await Promise.all(selectRows);
-
-    await page.locator('button:has-text("Shelve")').click();
-    await page.locator('[aria-label="Save"]').click();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function acknowledgeMultipleFaults(page, ...nums) {
-    const selectRows = nums.map((num) => {
-        return selectFaultItem(page, num);
-    });
-    await Promise.all(selectRows);
-
-    await page.locator('button:has-text("Acknowledge")').click();
-    await page.locator('[aria-label="Save"]').click();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function shelveFault(page, rowNumber) {
-    await openFaultRowMenu(page, rowNumber);
-    await page.locator('.c-menu >> text="Shelve"').click();
-    // Click [aria-label="Save"]
-    await page.locator('[aria-label="Save"]').click();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function changeViewTo(page, view) {
-    await page.locator('.c-fault-mgmt__search-row select').first().selectOption(view);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function sortFaultsBy(page, sort) {
-    await page.locator('.c-fault-mgmt__list-header-sortButton select').selectOption(sort);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function enterSearchTerm(page, term) {
-    await page.locator('.c-fault-mgmt-search [aria-label="Search Input"]').fill(term);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function clearSearch(page) {
-    await enterSearchTerm(page, '');
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function selectFaultItem(page, rowNumber) {
-    // eslint-disable-next-line playwright/no-force-option
-    await page.check(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`, { force: true }); // this will not work without force true, saw this may be a pw bug
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function getHighestSeverity(page) {
-    const criticalCount = await page.locator('[title=CRITICAL]').count();
-    const warningCount = await page.locator('[title=WARNING]').count();
-
-    if (criticalCount > 0) {
-        return 'CRITICAL';
-    } else if (warningCount > 0) {
-        return 'WARNING';
-    }
-
-    return 'WATCH';
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function getLowestSeverity(page) {
-    const warningCount = await page.locator('[title=WARNING]').count();
-    const watchCount = await page.locator('[title=WATCH]').count();
-
-    if (watchCount > 0) {
-        return 'WATCH';
-    } else if (warningCount > 0) {
-        return 'WARNING';
-    }
-
-    return 'CRITICAL';
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function getFaultResultCount(page) {
-    const count = await page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').count();
-
-    return count;
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-function getFault(page, rowNumber) {
-    const fault = page.locator(`.c-faults-list-view-item-body > .c-fault-mgmt__list >> nth=${rowNumber - 1}`);
-
-    return fault;
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-function getFaulBytName(page, name) {
-    const fault = page.locator(`.c-fault-mgmt__list-faultname:has-text("${name}")`);
-
-    return fault;
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function getFaultName(page, rowNumber) {
-    const faultName = await page.locator(`.c-fault-mgmt__list-faultname >> nth=${rowNumber - 1}`).textContent();
-
-    return faultName;
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function getFaultSeverity(page, rowNumber) {
-    const faultSeverity = await page.locator(`.c-faults-list-view-item-body .c-fault-mgmt__list-severity >> nth=${rowNumber - 1}`).getAttribute('title');
-
-    return faultSeverity;
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function getFaultNamespace(page, rowNumber) {
-    const faultNamespace = await page.locator(`.c-fault-mgmt__list-path >> nth=${rowNumber - 1}`).textContent();
-
-    return faultNamespace;
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function getFaultTriggerTime(page, rowNumber) {
-    const faultTriggerTime = await page.locator(`.c-fault-mgmt__list-trigTime >> nth=${rowNumber - 1} >> .c-fault-mgmt-item__value`).textContent();
-
-    return faultTriggerTime.toString().trim();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function openFaultRowMenu(page, rowNumber) {
-    // select
-    await page.locator(`.c-fault-mgmt-item > .c-fault-mgmt__list-action-button >> nth=${rowNumber - 1}`).click();
-
-}
