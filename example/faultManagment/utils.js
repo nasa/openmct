@@ -6,7 +6,7 @@ const getRandom = {
     fault: (num, staticFaults) => {
         let val = getRandom.value();
         let severity = getRandom.severity();
-        let time = Date.now();
+        let time = Date.now() - num;
 
         if (staticFaults) {
             let severityIndex = num > 3 ? num % 3 : num;
