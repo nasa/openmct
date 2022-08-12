@@ -95,6 +95,11 @@ export default {
         },
         getPathsForObjects(objectsNeedingPaths) {
             return Promise.all(objectsNeedingPaths.map(async (domainObject) => {
+                if (!domainObject) {
+                    // user interrupted search, return back
+                    return null;
+                }
+
                 const keyStringForObject = this.openmct.objects.makeKeyString(domainObject.identifier);
                 const originalPathObjects = await this.openmct.objects.getOriginalPath(keyStringForObject);
 
@@ -104,6 +109,9 @@ export default {
                 };
             }));
         },
+        timeout(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        },
         async getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
@@ -112,6 +120,7 @@ export default {
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
             try {
+                await this.timeout(3000);
                 this.annotationSearchResults = await this.openmct.annotation.searchForTags(this.searchValue, abortSignal);
                 const fullObjectSearchResults = await Promise.all(this.openmct.objects.search(this.searchValue, abortSignal));
                 const aggregatedObjectSearchResults = fullObjectSearchResults.flat();
@@ -127,11 +136,16 @@ export default {
                 this.searchLoading = false;
                 this.showSearchResults();
             } catch (error) {
-                console.error(`😞 Error searching`, error);
                 this.searchLoading = false;
 
                 if (this.abortSearchController) {
                     delete this.abortSearchController;
+                }
+
+                // Is this coming from the AbortController?
+                // If so, we can swallow the error. If not, 🤮 it to console
+                if (!error.name === 'AbortError') {
+                    console.error(`😞 Error searching`, error);
                 }
             }
         },
