@@ -27,7 +27,7 @@ const path = require('path');
  */
 async function navigateToFaultManagementWithExample(page) {
     // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, '../', 'addInitExampleFaultProvider.js') });
+    await page.addInitScript({ path: path.join(__dirname, './', 'addInitExampleFaultProvider.js') });
 
     await navigateToFaultItemInTree(page);
 }
@@ -47,7 +47,7 @@ async function navigateToFaultManagementWithStaticExample(page) {
  */
 async function navigateToFaultManagementWithoutExample(page) {
     // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, '../', 'addInitFaultManagementPlugin.js') });
+    await page.addInitScript({ path: path.join(__dirname, './', 'addInitFaultManagementPlugin.js') });
 
     await navigateToFaultItemInTree(page);
 }
