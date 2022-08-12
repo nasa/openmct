@@ -18,8 +18,8 @@ jobs:
         with:
           node-version: '16'
       - run: npx playwright@1.23.0 install
-      - run: npx playwright install chrome-beta
       - run: npm install
+      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
       - run: npm run test:e2e:couchdb
       - name: Archive test results
         uses: actions/upload-artifact@v3
