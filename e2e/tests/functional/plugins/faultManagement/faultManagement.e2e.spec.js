@@ -63,19 +63,19 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     test('Allows you to shelve a fault', async ({ page }) => {
         const shelvedFaultName = await utils.getFaultName(page, 2);
-        const beforeShelvedFault = utils.getFaulBytName(page, shelvedFaultName);
+        const beforeShelvedFault = utils.getFaultByName(page, shelvedFaultName);
 
         expect.soft(await beforeShelvedFault.count()).toBe(1);
 
         await utils.shelveFault(page, 2);
 
         // check it is removed from standard view
-        const afterShelvedFault = utils.getFaulBytName(page, shelvedFaultName);
+        const afterShelvedFault = utils.getFaultByName(page, shelvedFaultName);
         expect.soft(await afterShelvedFault.count()).toBe(0);
 
         await utils.changeViewTo(page, 'shelved');
 
-        const shelvedViewFault = utils.getFaulBytName(page, shelvedFaultName);
+        const shelvedViewFault = utils.getFaultByName(page, shelvedFaultName);
 
         expect.soft(await shelvedViewFault.count()).toBe(1);
     });
@@ -98,8 +98,8 @@ test.describe('The Fault Management Plugin using example faults', () => {
         const shelvedFaultNameOne = await utils.getFaultName(page, 1);
         const shelvedFaultNameFour = await utils.getFaultName(page, 4);
 
-        const beforeShelvedFaultOne = utils.getFaulBytName(page, shelvedFaultNameOne);
-        const beforeShelvedFaultFour = utils.getFaulBytName(page, shelvedFaultNameFour);
+        const beforeShelvedFaultOne = utils.getFaultByName(page, shelvedFaultNameOne);
+        const beforeShelvedFaultFour = utils.getFaultByName(page, shelvedFaultNameFour);
 
         expect.soft(await beforeShelvedFaultOne.count()).toBe(1);
         expect.soft(await beforeShelvedFaultFour.count()).toBe(1);
@@ -107,15 +107,15 @@ test.describe('The Fault Management Plugin using example faults', () => {
         await utils.shelveMultipleFaults(page, 1, 4);
 
         // check it is removed from standard view
-        const afterShelvedFaultOne = utils.getFaulBytName(page, shelvedFaultNameOne);
-        const afterShelvedFaultFour = utils.getFaulBytName(page, shelvedFaultNameFour);
+        const afterShelvedFaultOne = utils.getFaultByName(page, shelvedFaultNameOne);
+        const afterShelvedFaultFour = utils.getFaultByName(page, shelvedFaultNameFour);
         expect.soft(await afterShelvedFaultOne.count()).toBe(0);
         expect.soft(await afterShelvedFaultFour.count()).toBe(0);
 
         await utils.changeViewTo(page, 'shelved');
 
-        const shelvedViewFaultOne = utils.getFaulBytName(page, shelvedFaultNameOne);
-        const shelvedViewFaultFour = utils.getFaulBytName(page, shelvedFaultNameFour);
+        const shelvedViewFaultOne = utils.getFaultByName(page, shelvedFaultNameOne);
+        const shelvedViewFaultFour = utils.getFaultByName(page, shelvedFaultNameFour);
 
         expect.soft(await shelvedViewFaultOne.count()).toBe(1);
         expect.soft(await shelvedViewFaultFour.count()).toBe(1);
@@ -136,8 +136,8 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
         await utils.changeViewTo(page, 'acknowledged');
 
-        const acknowledgedViewFaultTwo = utils.getFaulBytName(page, acknowledgedFaultNameTwo);
-        const acknowledgedViewFaultFive = utils.getFaulBytName(page, acknowledgedFaultNameFive);
+        const acknowledgedViewFaultTwo = utils.getFaultByName(page, acknowledgedFaultNameTwo);
+        const acknowledgedViewFaultFive = utils.getFaultByName(page, acknowledgedFaultNameFive);
 
         expect.soft(await acknowledgedViewFaultTwo.count()).toBe(1);
         expect.soft(await acknowledgedViewFaultFive.count()).toBe(1);

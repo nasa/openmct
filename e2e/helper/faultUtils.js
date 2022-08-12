@@ -199,7 +199,7 @@ function getFault(page, rowNumber) {
 /**
  * @param {import('@playwright/test').Page} page
  */
-function getFaulBytName(page, name) {
+function getFaultByName(page, name) {
     const fault = page.locator(`.c-fault-mgmt__list-faultname:has-text("${name}")`);
 
     return fault;
@@ -269,7 +269,7 @@ module.exports = {
     getLowestSeverity,
     getFaultResultCount,
     getFault,
-    getFaulBytName,
+    getFaultByName,
     getFaultName,
     getFaultSeverity,
     getFaultNamespace,
