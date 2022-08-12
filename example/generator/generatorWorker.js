@@ -161,8 +161,12 @@
     }
 
     function sin(timestamp, period, amplitude, offset, phase, randomness) {
-        return amplitude
-            * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+        if (Math.round(Math.random())) {
+            return 1 / 0;
+        } else {
+            return amplitude
+                * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+        }
     }
 
     function wavelengths() {
