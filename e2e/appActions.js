@@ -157,42 +157,45 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
  * Create a SineWaveGenerator with properties ideal for local app.js testing. The goal is to call this make this function
  * interchangeable with 'getting' a telemetry endpoint from YAMCS Dictionary.
  * @param {import('@playwright/test').Page} page
- * @returns {Promise<string>} uuid of the domain object
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} parent the uuid or identifier of the parent object. Defaults to 'mine'
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
  */
-async function createExampleTelemetryObject(page) {
+async function createExampleTelemetryObject(page, parent = 'mine') {
+    const parentUrl = await getHashUrlToDomainObject(page, parent);
     //TODO Make this field more accessible
-    const nameInput = page.locator('input[type="text"]').nth(2);
+    const name = 'VIPER Rover Heading';
+    const nameInputLocator = page.locator('input[type="text"]').nth(2);
 
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto(`${parentUrl}?hideTree=true`);
 
     await page.locator('button:has-text("Create")').click();
 
     await page.locator('li:has-text("Sine Wave Generator")').click();
 
-    await nameInput.fill('VIPER Rover Heading');
+    await nameInputLocator.fill(name);
 
+    // Fill out the fields with default values
     await page.locator('[aria-label="Period"]').fill('1');
-
     await page.locator('[aria-label="Amplitude"]').fill('1');
-
     await page.locator('[aria-label="Offset"]').fill('0');
-
     await page.locator('[aria-label="Phase \\(radians\\)"]').fill('0');
-
     await page.locator('[aria-label="Data Rate \\(hz\\)"]').fill('1');
-
     await page.locator('[aria-label="Randomness"]').fill('0');
-
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('0');
 
-    await page.locator('text=OK').click();
+    await page.locator('[aria-label="Save"]').click();
 
     // Wait until the URL is updated
     await page.waitForURL(`**/mine/*`);
 
     const uuid = getFocusedObjectUuid(page);
+    const url = await getHashUrlToDomainObject(page, uuid);
 
-    return uuid;
+    return {
+        name,
+        uuid,
+        url
+    };
 }
 
 /**
@@ -232,12 +235,12 @@ async function getFocusedObjectUuid(page) {
  * URLs returned will be of the form `'./browse/#/mine/<uuid0>/<uuid1>/...'`
  *
  * @param {import('@playwright/test').Page} page
- * @param {string} uuid the uuid of the object to get the url for
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier the uuid or identifier of the object to get the url for
  * @returns {Promise<string>} the url of the object
  */
-async function getHashUrlToDomainObject(page, uuid) {
-    const hashUrl = await page.evaluate(async (objectUuid) => {
-        const path = await window.openmct.objects.getOriginalPath(objectUuid);
+async function getHashUrlToDomainObject(page, identifier) {
+    const hashUrl = await page.evaluate(async (objectIdentifier) => {
+        const path = await window.openmct.objects.getOriginalPath(objectIdentifier);
         let url = './#/browse/' + [...path].reverse()
             .map((object) => window.openmct.objects.makeKeyString(object.identifier))
             .join('/');
@@ -248,7 +251,7 @@ async function getHashUrlToDomainObject(page, uuid) {
         }
 
         return url;
-    }, uuid);
+    }, identifier);
 
     return hashUrl;
 }
