@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../baseFixtures');
+const { setFixedTimeMode, setRealTimeMode, setStartOffset, setEndOffset } = require('../../../../appActions');
 
 test.describe('Time conductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
@@ -147,88 +148,3 @@ test.describe('Time conductor input fields real-time mode', () => {
         expect(page.url()).toContain(`endDelta=${endDelta}`);
     });
 });
-
-/**
- * @typedef {Object} OffsetValues
- * @property {string | undefined} hours
- * @property {string | undefined} mins
- * @property {string | undefined} secs
- */
-
-/**
- * Set the values (hours, mins, secs) for the start time offset when in realtime mode
- * @param {import('@playwright/test').Page} page
- * @param {OffsetValues} offset
- */
-async function setStartOffset(page, offset) {
-    const startOffsetButton = page.locator('data-testid=conductor-start-offset-button');
-    await setTimeConductorOffset(page, offset, startOffsetButton);
-}
-
-/**
- * Set the values (hours, mins, secs) for the end time offset when in realtime mode
- * @param {import('@playwright/test').Page} page
- * @param {OffsetValues} offset
- */
-async function setEndOffset(page, offset) {
-    const endOffsetButton = page.locator('data-testid=conductor-end-offset-button');
-    await setTimeConductorOffset(page, offset, endOffsetButton);
-}
-
-/**
- * Set the time conductor to fixed timespan mode
- * @param {import('@playwright/test').Page} page
- */
-async function setFixedTimeMode(page) {
-    await setTimeConductorMode(page, true);
-}
-
-/**
- * Set the time conductor to realtime mode
- * @param {import('@playwright/test').Page} page
- */
-async function setRealTimeMode(page) {
-    await setTimeConductorMode(page, false);
-}
-
-/**
- * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode
- * @param {import('@playwright/test').Page} page
- * @param {OffsetValues} offset
- * @param {import('@playwright/test').Locator} offsetButton
- */
-async function setTimeConductorOffset(page, {hours, mins, secs}, offsetButton) {
-    await offsetButton.click();
-
-    if (hours) {
-        await page.fill('.pr-time-controls__hrs', hours);
-    }
-
-    if (mins) {
-        await page.fill('.pr-time-controls__mins', mins);
-    }
-
-    if (secs) {
-        await page.fill('.pr-time-controls__secs', secs);
-    }
-
-    // Click the check button
-    await page.locator('.icon-check').click();
-}
-
-/**
- * Set the time conductor mode to either fixed timespan or realtime mode.
- * @param {import('@playwright/test').Page} page
- * @param {boolean} [isFixedTimespan=true] true for fixed timespan mode, false for realtime mode; default is true
- */
-async function setTimeConductorMode(page, isFixedTimespan = true) {
-    // Click 'mode' button
-    await page.locator('.c-mode-button').click();
-
-    // Switch time conductor mode
-    if (isFixedTimespan) {
-        await page.locator('data-testid=conductor-modeOption-fixed').click();
-    } else {
-        await page.locator('data-testid=conductor-modeOption-realtime').click();
-    }
-}

@@ -166,26 +166,15 @@
             class="c-imagery__thumbs-scroll-area"
             @scroll="handleScroll"
         >
-            <div
+            <ImageThumbnail
                 v-for="(image, index) in imageHistory"
                 :key="image.url + image.time"
-                class="c-imagery__thumb c-thumb"
-                :class="{ selected: focusedImageIndex === index && isPaused }"
-                :title="image.formattedTime"
-                @click="thumbnailClicked(index)"
-            >
-                <a
-                    href=""
-                    :download="image.imageDownloadName"
-                    @click.prevent
-                >
-                    <img
-                        class="c-thumb__image"
-                        :src="image.url"
-                    >
-                </a>
-                <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
-            </div>
+                :image="image"
+                :active="focusedImageIndex === index"
+                :selected="focusedImageIndex === index && isPaused"
+                :real-time="!isFixed"
+                @click.native="thumbnailClicked(index)"
+            />
         </div>
 
         <button
@@ -205,6 +194,7 @@ import moment from 'moment';
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
 import ImageControls from './ImageControls.vue';
+import ImageThumbnail from './ImageThumbnail.vue';
 import imageryData from "../../imagery/mixins/imageryData";
 
 const REFRESH_CSS_MS = 500;
@@ -229,9 +219,11 @@ const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
 const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
 export default {
+    name: 'ImageryView',
     components: {
         Compass,
-        ImageControls
+        ImageControls,
+        ImageThumbnail
     },
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
@@ -254,6 +246,7 @@ export default {
             visibleLayers: [],
             durationFormatter: undefined,
             imageHistory: [],
+            bounds: {},
             timeSystem: timeSystem,
             keyString: undefined,
             autoScroll: true,
@@ -569,6 +562,16 @@ export default {
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
             this.getImageNaturalDimensions();
+        },
+        bounds() {
+            this.scrollToFocused();
+        },
+        isFixed(newValue) {
+            const isRealTime = !newValue;
+            // if realtime unpause which will focus on latest image
+            if (isRealTime) {
+                this.paused(false);
+            }
         }
     },
     async mounted() {
@@ -610,6 +613,7 @@ export default {
         this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
         this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
         this.handleThumbWindowResizeStart = _.debounce(this.handleThumbWindowResizeStart, SCROLL_LATENCY);
+        this.scrollToFocused = _.debounce(this.scrollToFocused, 400);
 
         if (this.$refs.thumbsWrapper) {
             this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
@@ -845,7 +849,8 @@ export default {
             if (domThumb) {
                 domThumb.scrollIntoView({
                     behavior: 'smooth',
-                    block: 'center'
+                    block: 'center',
+                    inline: 'center'
                 });
             }
         },
