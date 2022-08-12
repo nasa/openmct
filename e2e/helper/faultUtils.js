@@ -37,7 +37,7 @@ async function navigateToFaultManagementWithExample(page) {
  */
 async function navigateToFaultManagementWithStaticExample(page) {
     // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, '../../helper/', 'addInitExampleFaultProviderStatic.js') });
+    await page.addInitScript({ path: path.join(__dirname, './', 'addInitExampleFaultProviderStatic.js') });
 
     await navigateToFaultItemInTree(page);
 }
