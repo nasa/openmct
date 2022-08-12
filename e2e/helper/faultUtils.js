@@ -250,7 +250,8 @@ async function openFaultRowMenu(page, rowNumber) {
 
 }
 
-export default {
+// eslint-disable-next-line no-undef
+module.exports = {
     navigateToFaultManagementWithExample,
     navigateToFaultManagementWithStaticExample,
     navigateToFaultManagementWithoutExample,
