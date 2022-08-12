@@ -58,6 +58,7 @@ define([
     './condition/plugin',
     './conditionWidget/plugin',
     './themes/espresso',
+    './themes/maelstrom',
     './themes/snow',
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
@@ -121,6 +122,7 @@ define([
     ConditionPlugin,
     ConditionWidgetPlugin,
     Espresso,
+    Maelstrom,
     Snow,
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
@@ -205,6 +207,7 @@ define([
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
     plugins.Espresso = Espresso.default;
+    plugins.Maelstrom = Maelstrom.default;
     plugins.Snow = Snow.default;
     plugins.Condition = ConditionPlugin.default;
     plugins.ConditionWidget = ConditionWidgetPlugin.default;
