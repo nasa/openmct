@@ -28,7 +28,7 @@
 const { test, expect } = require('../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
-test.describe("CouchDB Status Indicator", async () => {
+test.describe("CouchDB Status Indicator @couchdb", async () => {
     //TODO BeforeAll Verify CouchDB Connectivity with APIContext
     test('Shows green if connected', async ({ page, context }) => {
         context.routeFromHAR(path.join(__dirname, './har/CouchDBResponse200.har'), {
