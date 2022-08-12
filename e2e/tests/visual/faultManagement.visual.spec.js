@@ -24,7 +24,7 @@ const path = require('path');
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 
-import utils from '../../helper/faultUtils';
+const utils = require('../../helper/faultUtils');
 
 test.describe('The Fault Management Plugin Visual Test', () => {
 

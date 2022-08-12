@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-import utils from '../../../../helper/faultUtils';
+const utils = require('../../../../helper/faultUtils');
 
 test.describe('The Fault Management Plugin using example faults', () => {
     test.beforeEach(async ({ page }) => {
