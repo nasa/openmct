@@ -3,28 +3,40 @@ const NAMESPACE = '/Example/fault-';
 const getRandom = {
     severity: () => SEVERITIES[Math.floor(Math.random() * 3)],
     value: () => Math.random() + Math.floor(Math.random() * 21) - 10,
-    fault: (num) => {
+    fault: (num, staticFaults) => {
+        let val = getRandom.value();
+        let severity = getRandom.severity();
+        let time = Date.now();
+
+        if (staticFaults) {
+            let severityIndex = num > 3 ? num % 3 : num;
+
+            val = num;
+            severity = SEVERITIES[severityIndex - 1];
+            time = num;
+        }
+
         return {
             type: num,
             fault: {
                 acknowledged: false,
                 currentValueInfo: {
-                    value: getRandom.value(),
-                    rangeCondition: getRandom.severity(),
-                    monitoringResult: getRandom.severity()
+                    value: val,
+                    rangeCondition: severity,
+                    monitoringResult: severity
                 },
                 id: `id-${num}`,
                 name: `Example Fault ${num}`,
                 namespace: NAMESPACE + num,
                 seqNum: 0,
-                severity: getRandom.severity(),
+                severity: severity,
                 shelved: false,
                 shortDescription: '',
-                triggerTime: Date.now() - num,
+                triggerTime: time,
                 triggerValueInfo: {
-                    value: getRandom.value(),
-                    rangeCondition: getRandom.severity(),
-                    monitoringResult: getRandom.severity()
+                    value: val,
+                    rangeCondition: severity,
+                    monitoringResult: severity
                 }
             }
         };
@@ -47,11 +59,11 @@ function acknowledgeFault(fault) {
     fault.acknowledged = true;
 }
 
-function randomFaults(count = 5) {
+function randomFaults(staticFaults, count = 5) {
     let faults = [];
 
     for (let x = 1, y = count + 1; x < y; x++) {
-        faults.push(getRandom.fault(x));
+        faults.push(getRandom.fault(x, staticFaults));
     }
 
     return faults;

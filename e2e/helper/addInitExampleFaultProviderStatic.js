@@ -20,41 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from './utils';
+// This should be used to install the Example Fault Provider, this will also install the FaultManagementPlugin (neither of which are installed by default).
 
-export default function (staticFaults = false) {
-    return function install(openmct) {
-        openmct.install(openmct.plugins.FaultManagement());
+document.addEventListener('DOMContentLoaded', () => {
+    const openmct = window.openmct;
+    const staticFaults = true;
 
-        const faultsData = utils.randomFaults(staticFaults);
-
-        openmct.faults.addProvider({
-            request(domainObject, options) {
-                return Promise.resolve(faultsData);
-            },
-            subscribe(domainObject, callback) {
-                return () => {};
-            },
-            supportsRequest(domainObject) {
-                return domainObject.type === 'faultManagement';
-            },
-            supportsSubscribe(domainObject) {
-                return domainObject.type === 'faultManagement';
-            },
-            acknowledgeFault(fault, { comment = '' }) {
-                utils.acknowledgeFault(fault);
-
-                return Promise.resolve({
-                    success: true
-                });
-            },
-            shelveFault(fault, duration) {
-                utils.shelveFault(fault, duration);
-
-                return Promise.resolve({
-                    success: true
-                });
-            }
-        });
-    };
-}
+    openmct.install(openmct.plugins.example.ExampleFaultSource(staticFaults));
+});
