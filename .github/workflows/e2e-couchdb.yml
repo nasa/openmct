@@ -1,0 +1,27 @@
+name: "e2e-couchdb"
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - labeled
+      - opened
+
+jobs:
+  e2e-full:
+    if: ${{ github.event.label.name == 'pr:couchdb' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run : docker-compose up -d -f src/plugins/persistence/couch/couchdb-compose.yaml
+      - run : sh src/plugins/persistence/couch/setup-couchdb.sh
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: npx playwright@1.23.0 install
+      - run: npx playwright install chrome-beta
+      - run: npm install
+      - run: npm run test:e2e:couchdb
+      - name: Archive test results
+        uses: actions/upload-artifact@v3
+        with:
+          path: test-results
