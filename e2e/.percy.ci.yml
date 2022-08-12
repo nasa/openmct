@@ -1,6 +1,6 @@
 version: 2
 snapshot:
-  widths: [1024, 2000]
+  widths: [1024]
   min-height: 1440 # px
   percyCSS: |
     .t-indicator-clock > .label {

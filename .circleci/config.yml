@@ -213,11 +213,13 @@ jobs:
     parameters:
       node-version:
         type: string
+      suite:
+        type: string # ci or full
     executor: pw-focal-development
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npm run test:e2e:visual
+      - run: npm run test:e2e:visual:<<parameters.suite>>
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -245,7 +247,8 @@ workflows:
       - perf-test:
           node-version: lts/hydrogen
       - visual-test:
-          node-version: lts/hydrogen
+          node-version: lts/gallium
+          suite: ci
         
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
@@ -264,9 +267,8 @@ workflows:
       - perf-test:
           node-version: lts/hydrogen
       - visual-test:
-          node-version: lts/hydrogen
-      - e2e-couchdb:
-          node-version: lts/hydrogen
+          node-version: lts/gallium
+          suite: full
     triggers:
       - schedule:
           cron: "0 0 * * *"
