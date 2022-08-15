@@ -70,7 +70,11 @@ describe("The Independent Time API", function () {
     });
 
     it("Gets an independent time context given the objectPath", () => {
-        let timeContext = api.getContextForView([{ identifier: domainObjectKey },
+        let timeContext = api.getContextForView([
+            {
+                identifier: domainObjectKey,
+                location: 'blah'
+            },
             {
                 identifier: {
                     namespace: '',
@@ -97,7 +101,8 @@ describe("The Independent Time API", function () {
             identifier: {
                 namespace: '',
                 key: 'blah'
-            }
+            },
+            location: domainObjectKey
         }, {
             identifier: {
                 namespace: '',
