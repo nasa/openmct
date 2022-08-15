@@ -172,26 +172,24 @@ class TimeAPI extends GlobalTimeContext {
      * @method getContextForView
      */
     getContextForView(objectPath = []) {
-        const viewKey = objectPath.length && this.openmct.objects.makeKeyString(objectPath[0].identifier);
-
-        if (viewKey) {
-            let viewTimeContext = this.getIndependentContext(viewKey);
-            if (viewTimeContext) {
-                this.independentContexts.delete(viewKey);
-            } else {
-                viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
-            }
-
-            // return a new IndependentContext in case the objectPath is different
-            this.independentContexts.set(viewKey, viewTimeContext);
-
-            return viewTimeContext;
+        // If no objectPath, return the global time context
+        if (!objectPath.length) {
+            return this;
         }
 
-        // always follow the global time context
-        return this;
-    }
+        const relativePath = this.openmct.objects.getRelativePath(objectPath);
+        let viewTimeContext = this.getIndependentContext(relativePath);
+        if (viewTimeContext) {
+            this.independentContexts.delete(relativePath);
+        } else {
+            viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
+        }
 
+        // return a new IndependentContext in case the objectPath is different
+        this.independentContexts.set(relativePath, viewTimeContext);
+
+        return viewTimeContext;
+    }
 }
 
 export default TimeAPI;
