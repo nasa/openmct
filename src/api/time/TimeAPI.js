@@ -164,6 +164,12 @@ class TimeAPI extends GlobalTimeContext {
         return this.independentContexts.get(key);
     }
 
+    #getIndependentContextKey(objectPath) {
+        return this.openmct.objects.isObjectPathToALink(objectPath[0], objectPath)
+            ? this.openmct.objects.getRelativePath(objectPath)
+            : this.openmct.objects.makeKeyString(objectPath[0].identifier);
+    }
+
     /**
      * Get the a timeContext for a view based on it's objectPath. If there is any object in the objectPath with an independent time context, it will be returned.
      * Otherwise, the global time context will be returned.
@@ -177,16 +183,16 @@ class TimeAPI extends GlobalTimeContext {
             return this;
         }
 
-        const relativePath = this.openmct.objects.getRelativePath(objectPath);
-        let viewTimeContext = this.getIndependentContext(relativePath);
+        const key = this.#getIndependentContextKey(objectPath);
+        let viewTimeContext = this.getIndependentContext(key);
         if (viewTimeContext) {
-            this.independentContexts.delete(relativePath);
+            this.independentContexts.delete(key);
         } else {
             viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
         }
 
         // return a new IndependentContext in case the objectPath is different
-        this.independentContexts.set(relativePath, viewTimeContext);
+        this.independentContexts.set(key, viewTimeContext);
 
         return viewTimeContext;
     }
