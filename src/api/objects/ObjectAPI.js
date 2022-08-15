@@ -88,7 +88,7 @@ export default class ObjectAPI {
         this.cache = {};
         this.interceptorRegistry = new InterceptorRegistry();
 
-        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
+        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan', 'annotation'];
 
         this.errors = {
             Conflict: ConflictError
@@ -230,6 +230,7 @@ export default class ObjectAPI {
             return result;
         }).catch((result) => {
             console.warn(`Failed to retrieve ${keystring}:`, result);
+            this.openmct.notifications.error(`Failed to retrieve object ${keystring}`);
 
             delete this.cache[keystring];
 
@@ -387,7 +388,13 @@ export default class ObjectAPI {
             }
         }
 
-        return result;
+        return result.catch((error) => {
+            if (error instanceof this.errors.Conflict) {
+                this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+            }
+
+            throw error;
+        });
     }
 
     /**
