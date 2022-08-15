@@ -519,7 +519,7 @@ export default {
     },
     watch: {
         imageHistory: {
-            handler(newHistory, oldHistory) {
+            handler(newHistory, _oldHistory) {
                 const newSize = newHistory.length;
                 let imageIndex = newSize > 0 ? newSize - 1 : undefined;
                 if (this.focusedImageTimestamp !== undefined) {
