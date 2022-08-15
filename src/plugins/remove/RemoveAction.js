@@ -35,11 +35,10 @@ export default class RemoveAction {
         let object = objectPath[0];
         let parent = objectPath[1];
         this.showConfirmDialog(object).then(() => {
-            this.removeFromComposition(parent, object).then(() => {
-                if (this.inNavigationPath(object)) {
-                    this.navigateTo(objectPath.slice(1));
-                }
-            });
+            this.removeFromComposition(parent, object);
+            if (this.inNavigationPath(object)) {
+                this.navigateTo(objectPath.slice(1));
+            }
         }).catch(() => {});
     }
 
@@ -82,10 +81,12 @@ export default class RemoveAction {
         this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
-    async removeFromComposition(parent, child) {
-        let compositionCollection = await this.openmct.composition.get(parent);
+    removeFromComposition(parent, child) {
+        let composition = parent.composition.filter(id =>
+            !this.openmct.objects.areIdsEqual(id, child.identifier)
+        );
 
-        compositionCollection.remove(child);
+        this.openmct.objects.mutate(parent, 'composition', composition);
 
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
