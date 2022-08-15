@@ -39,6 +39,8 @@ describe("GrandSearch", () => {
     let mockAnnotationObject;
     let mockDisplayLayout;
     let mockFolderObject;
+    let mockAnotherFolderObject;
+    let mockTopObject;
     let originalRouterPath;
 
     beforeEach((done) => {
@@ -70,11 +72,29 @@ describe("GrandSearch", () => {
                 }
             }
         };
+        mockTopObject = {
+            type: 'root',
+            name: 'Top Folder',
+            identifier: {
+                key: 'topObject',
+                namespace: 'fooNameSpace'
+            }
+        };
+        mockAnotherFolderObject = {
+            type: 'folder',
+            name: 'Another Test Folder',
+            location: 'fooNameSpace:topObject',
+            identifier: {
+                key: 'someParent',
+                namespace: 'fooNameSpace'
+            }
+        };
         mockFolderObject = {
             type: 'folder',
             name: 'Test Folder',
+            location: 'fooNameSpace:someParent',
             identifier: {
-                key: 'some-folder',
+                key: 'someFolder',
                 namespace: 'fooNameSpace'
             }
         };
@@ -122,6 +142,10 @@ describe("GrandSearch", () => {
                 return mockDisplayLayout;
             } else if (identifier.key === mockFolderObject.identifier.key) {
                 return mockFolderObject;
+            } else if (identifier.key === mockAnotherFolderObject.identifier.key) {
+                return mockAnotherFolderObject;
+            } else if (identifier.key === mockTopObject.identifier.key) {
+                return mockTopObject;
             } else {
                 return null;
             }
