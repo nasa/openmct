@@ -96,6 +96,18 @@ describe('the plugin', function () {
             let planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
             expect(planView).toBeDefined();
         });
+
+        it('is not an editable view', () => {
+            const testViewObject = {
+                id: "test-object",
+                type: "plan"
+            };
+            openmct.router.path = [testViewObject];
+
+            const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
+            let planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
+            expect(planView.canEdit()).toBeFalse();
+        });
     });
 
     describe('the plan view displays activities', () => {

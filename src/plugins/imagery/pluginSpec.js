@@ -84,11 +84,11 @@ describe("The Imagery View Layouts", () => {
     let telemetryPromise;
     let telemetryPromiseResolve;
     let cleanupFirst;
-    let isClearDataTriggered;
 
     let openmct;
     let parent;
     let child;
+    let historicalProvider;
     let imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
     let imageryObject = {
         identifier: {
@@ -100,61 +100,29 @@ describe("The Imagery View Layouts", () => {
         location: "parentId",
         modified: 0,
         persisted: 0,
+        configuration: {
+            layers: [{
+                name: '16:9',
+                visible: true
+            }]
+        },
         telemetry: {
             values: [
                 {
                     "name": "Image",
                     "key": "url",
                     "format": "image",
+                    "layers": [
+                        {
+                            source: location.host + '/images/bg-splash.jpg',
+                            name: '16:9'
+                        }
+                    ],
                     "hints": {
                         "image": 1,
                         "priority": 3
                     },
                     "source": "url"
-                    // "relatedTelemetry": {
-                    //     "heading": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "heading",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "roll": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "roll",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "pitch": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "pitch",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "cameraPan": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "cameraPan",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "cameraTilt": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "cameraTilt",
-                    //             "valueKey": "value"
-                    //         }
-                    //     },
-                    //     "sunOrientation": {
-                    //         "comparisonFunction": comparisonFunction,
-                    //         "historical": {
-                    //             "telemetryObjectId": "sunOrientation",
-                    //             "valueKey": "value"
-                    //         }
-                    //     }
-                    // }
                 },
                 {
                     "name": "Name",
@@ -193,20 +161,19 @@ describe("The Imagery View Layouts", () => {
         cleanupFirst = [];
 
         openmct = createOpenMct();
-        openmct.time.timeSystem('utc', {
-            start: START - (5 * ONE_MINUTE),
-            end: START + (5 * ONE_MINUTE)
-        });
 
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
         });
 
-        spyOn(openmct.telemetry, 'request').and.callFake(() => {
-            if (isClearDataTriggered) {
-                return [];
+        historicalProvider = {
+            request: () => {
+                return Promise.resolve(imageTelemetry);
             }
+        };
+        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
 
+        spyOn(openmct.telemetry, 'request').and.callFake(() => {
             telemetryPromiseResolve(imageTelemetry);
 
             return telemetryPromise;
@@ -325,19 +292,26 @@ describe("The Imagery View Layouts", () => {
         expect(imageryView).toBeDefined();
     });
 
-    describe("imagery view", () => {
+    describe("Clear data action for imagery", () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
+        let componentView;
         let clearDataPlugin;
         let clearDataAction;
 
         beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
 
             applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
             imageryView.show(child);
+            componentView = imageryView._getInstance().$children[0];
+
             clearDataPlugin = new ClearDataPlugin(
                 ['example.imagery'],
                 {indicator: true}
@@ -347,35 +321,82 @@ describe("The Imagery View Layouts", () => {
 
             return Vue.nextTick();
         });
-        afterEach(() => {
-            isClearDataTriggered = false;
-            // openmct.time.stopClock();
-            // openmct.router.removeListener('change:hash', resolveFunction);
-            // imageryView.destroy();
+
+        it('clear data action is installed', () => {
+            expect(clearDataAction).toBeDefined();
         });
 
-        it("on mount should show the the most recent image", (done) => {
-            //Looks like we need Vue.nextTick here so that computed properties settle down
+        it('on clearData action should clear data for object is selected', (done) => {
+            // force show the thumbnails
+            componentView.forceShowThumbnails = true;
             Vue.nextTick(() => {
-                const imageInfo = getImageInfo(parent);
+                let clearDataResolve;
+                let telemetryRequestPromise = new Promise((resolve) => {
+                    clearDataResolve = resolve;
+                });
+                expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
 
-                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
-                done();
-            });
-        });
+                openmct.objectViews.on('clearData', (_domainObject) => {
+                    return Vue.nextTick(() => {
+                        expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
 
-        it("should show the clicked thumbnail as the main image", (done) => {
-            //Looks like we need Vue.nextTick here so that computed properties settle down
-            Vue.nextTick(() => {
-                const target = imageTelemetry[5].url;
-                parent.querySelectorAll(`img[src='${target}']`)[0].click();
-                Vue.nextTick(() => {
-                    const imageInfo = getImageInfo(parent);
+                        clearDataResolve();
+                    });
+                });
+                clearDataAction.invoke(imageryObject);
 
-                    expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
+                telemetryRequestPromise.then(() => {
                     done();
                 });
             });
+        });
+    });
+
+    describe("imagery view", () => {
+        let applicableViews;
+        let imageryViewProvider;
+        let imageryView;
+
+        beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
+
+            applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
+            imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
+            imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
+            imageryView.show(child);
+
+            imageryView._getInstance().$children[0].forceShowThumbnails = true;
+
+            return Vue.nextTick();
+        });
+
+        it("on mount should show the the most recent image", async () => {
+            //Looks like we need Vue.nextTick here so that computed properties settle down
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
+        });
+
+        it("on mount should show the any image layers", async () => {
+            //Looks like we need Vue.nextTick here so that computed properties settle down
+            await Vue.nextTick();
+            const layerEls = parent.querySelectorAll('.js-layer-image');
+            console.log(layerEls);
+            expect(layerEls.length).toEqual(1);
+        });
+
+        it("should show the clicked thumbnail as the main image", async () => {
+            //Looks like we need Vue.nextTick here so that computed properties settle down
+            await Vue.nextTick();
+            const target = imageTelemetry[5].url;
+            parent.querySelectorAll(`img[src='${target}']`)[0].click();
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
+
+            expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
         });
 
         xit("should show that an image is new", (done) => {
@@ -394,71 +415,60 @@ describe("The Imagery View Layouts", () => {
             });
         });
 
-        it("should show that an image is not new", (done) => {
-            Vue.nextTick(() => {
-                const target = imageTelemetry[2].url;
-                parent.querySelectorAll(`img[src='${target}']`)[0].click();
+        it("should show that an image is not new", async () => {
+            await Vue.nextTick();
+            const target = imageTelemetry[4].url;
+            parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
-                Vue.nextTick(() => {
-                    const imageIsNew = isNew(parent);
+            await Vue.nextTick();
+            const imageIsNew = isNew(parent);
 
-                    expect(imageIsNew).toBeFalse();
-                    done();
-                });
-            });
+            expect(imageIsNew).toBeFalse();
         });
 
-        it("should navigate via arrow keys", (done) => {
-            Vue.nextTick(() => {
-                let keyOpts = {
-                    element: parent.querySelector('.c-imagery'),
-                    key: 'ArrowLeft',
-                    keyCode: 37,
-                    type: 'keyup'
-                };
+        it("should navigate via arrow keys", async () => {
+            await Vue.nextTick();
+            const keyOpts = {
+                element: parent.querySelector('.c-imagery'),
+                key: 'ArrowLeft',
+                keyCode: 37,
+                type: 'keyup'
+            };
 
-                simulateKeyEvent(keyOpts);
+            simulateKeyEvent(keyOpts);
 
-                Vue.nextTick(() => {
-                    const imageInfo = getImageInfo(parent);
-
-                    expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
-                    done();
-                });
-            });
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
         });
 
-        it("should navigate via numerous arrow keys", (done) => {
-            Vue.nextTick(() => {
-                let element = parent.querySelector('.c-imagery');
-                let type = 'keyup';
-                let leftKeyOpts = {
-                    element,
-                    type,
-                    key: 'ArrowLeft',
-                    keyCode: 37
-                };
-                let rightKeyOpts = {
-                    element,
-                    type,
-                    key: 'ArrowRight',
-                    keyCode: 39
-                };
+        it("should navigate via numerous arrow keys", async () => {
+            await Vue.nextTick();
+            const element = parent.querySelector('.c-imagery');
+            const type = 'keyup';
+            const leftKeyOpts = {
+                element,
+                type,
+                key: 'ArrowLeft',
+                keyCode: 37
+            };
+            const rightKeyOpts = {
+                element,
+                type,
+                key: 'ArrowRight',
+                keyCode: 39
+            };
 
-                // left thrice
-                simulateKeyEvent(leftKeyOpts);
-                simulateKeyEvent(leftKeyOpts);
-                simulateKeyEvent(leftKeyOpts);
-                // right once
-                simulateKeyEvent(rightKeyOpts);
+            // left thrice
+            simulateKeyEvent(leftKeyOpts);
+            simulateKeyEvent(leftKeyOpts);
+            simulateKeyEvent(leftKeyOpts);
+            // right once
+            simulateKeyEvent(rightKeyOpts);
 
-                Vue.nextTick(() => {
-                    const imageInfo = getImageInfo(parent);
-
-                    expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
-                    done();
-                });
-            });
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
         });
         it ('shows an auto scroll button when scroll to left', (done) => {
             Vue.nextTick(() => {
@@ -519,20 +529,32 @@ describe("The Imagery View Layouts", () => {
             done();
         });
 
-        it('clear data action is installed', () => {
-            expect(clearDataAction).toBeDefined();
-        });
+        it('should reset the brightness and contrast when clicking the reset button', async () => {
+            const viewInstance = imageryView._getInstance();
+            await Vue.nextTick();
 
-        it('on clearData action should clear data for object is selected', (done) => {
-            expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
-            openmct.objectViews.on('clearData', async (_domainObject) => {
-                await Vue.nextTick();
-                expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
-                done();
+            // Save the original brightness and contrast values
+            const origBrightness = viewInstance.$refs.ImageryContainer.filters.brightness;
+            const origContrast = viewInstance.$refs.ImageryContainer.filters.contrast;
+
+            // Change them to something else (default: 100)
+            viewInstance.$refs.ImageryContainer.setFilters({
+                brightness: 200,
+                contrast: 200
             });
-            // stubbed telemetry data will return empty array when true
-            isClearDataTriggered = true;
-            clearDataAction.invoke(imageryObject);
+            await Vue.nextTick();
+
+            // Verify that the values actually changed
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(200);
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(200);
+
+            // Click the reset button
+            parent.querySelector('.t-btn-reset').click();
+            await Vue.nextTick();
+
+            // Verify that the values were reset
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(origBrightness);
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(origContrast);
         });
     });
 
@@ -544,6 +566,20 @@ describe("The Imagery View Layouts", () => {
 
         beforeEach(() => {
             openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
+
+            const mockClock = jasmine.createSpyObj("clock", [
+                "on",
+                "off",
+                "currentValue"
+            ]);
+            mockClock.key = 'mockClock';
+            mockClock.currentValue.and.returnValue(1);
+
+            openmct.time.addClock(mockClock);
+            openmct.time.clock('mockClock', {
                 start: START - (5 * ONE_MINUTE),
                 end: START + (5 * ONE_MINUTE)
             });
@@ -582,7 +618,7 @@ describe("The Imagery View Layouts", () => {
         it("on mount should show imagery within the given bounds", (done) => {
             Vue.nextTick(() => {
                 const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
-                expect(imageElements.length).toEqual(6);
+                expect(imageElements.length).toEqual(5);
                 done();
             });
         });
@@ -601,6 +637,47 @@ describe("The Imagery View Layouts", () => {
                     done();
                 });
             });
+        });
+
+        it("should remove images when clock advances", async () => {
+            openmct.time.tick(ONE_MINUTE * 2);
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(4);
+        });
+
+        it("should remove images when start bounds shorten", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START,
+                end: START + (5 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(1);
+        });
+
+        it("should remove images when end bounds shorten", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START - (2 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(4);
+        });
+
+        it("should remove images when both bounds shorten", async () => {
+            openmct.time.timeSystem('utc', {
+                start: START - (2 * ONE_MINUTE),
+                end: START + (2 * ONE_MINUTE)
+            });
+            await Vue.nextTick();
+            await Vue.nextTick();
+            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            expect(imageElements.length).toEqual(3);
         });
     });
 });

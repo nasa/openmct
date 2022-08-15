@@ -26,14 +26,20 @@ import Collection from "./Collection";
 import Color from "@/ui/color/Color";
 import ColorPalette from "@/ui/color/ColorPalette";
 
+/**
+ * @extends {Collection<SeriesCollectionModelType, SeriesCollectionOptions>}
+ */
 export default class SeriesCollection extends Collection {
-
+    /**
+    @override
+    @param {import('./Model').ModelOptions<SeriesCollectionModelType, SeriesCollectionOptions>} options
+    */
     initialize(options) {
         super.initialize(options);
         this.modelClass = PlotSeries;
         this.plot = options.plot;
         this.openmct = options.openmct;
-        this.palette = new ColorPalette();
+        this.palette = options.palette || new ColorPalette();
         this.listenTo(this, 'add', this.onSeriesAdd, this);
         this.listenTo(this, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
@@ -83,11 +89,15 @@ export default class SeriesCollection extends Collection {
         // Clone to prevent accidental mutation by ref.
         seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
 
+        if (!seriesConfig) {
+            throw "not possible";
+        }
+
         this.add(new PlotSeries({
             model: seriesConfig,
             domainObject: domainObject,
-            collection: this,
             openmct: this.openmct,
+            collection: this,
             persistedConfig: this.plot
                 .getPersistedSeriesConfig(domainObject.identifier),
             filters: filters
@@ -163,3 +173,13 @@ export default class SeriesCollection extends Collection {
         })[0];
     }
 }
+
+/**
+@typedef {PlotSeries} SeriesCollectionModelType
+*/
+
+/**
+@typedef {{
+    plot: import('./PlotConfigurationModel').default
+}} SeriesCollectionOptions
+*/

@@ -7,6 +7,7 @@ describe("The Object API", () => {
     let openmct = {};
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
+    const TEST_KEY = "test-key";
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     beforeEach((done) => {
@@ -22,7 +23,7 @@ describe("The Object API", () => {
         mockDomainObject = {
             identifier: {
                 namespace: TEST_NAMESPACE,
-                key: "test-key"
+                key: TEST_KEY
             },
             name: "test object",
             type: "test-type"
@@ -84,6 +85,31 @@ describe("The Object API", () => {
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).not.toHaveBeenCalled();
             });
+
+            describe("Shows a notification on persistence conflict", () => {
+                beforeEach(() => {
+                    openmct.notifications.error = jasmine.createSpy('error');
+                });
+
+                it("on create", () => {
+                    mockProvider.create.and.returnValue(Promise.reject(new openmct.objects.errors.Conflict("Test Conflict error")));
+
+                    return objectAPI.save(mockDomainObject).catch(() => {
+                        expect(openmct.notifications.error).toHaveBeenCalledWith(`Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`);
+                    });
+
+                });
+
+                it("on update", () => {
+                    mockProvider.update.and.returnValue(Promise.reject(new openmct.objects.errors.Conflict("Test Conflict error")));
+                    mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
+                    mockDomainObject.modified = Date.now();
+
+                    return objectAPI.save(mockDomainObject).catch(() => {
+                        expect(openmct.notifications.error).toHaveBeenCalledWith(`Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`);
+                    });
+                });
+            });
         });
     });
 
@@ -138,19 +164,31 @@ describe("The Object API", () => {
             });
 
             it("Caches multiple requests for the same object", () => {
+                const promises = [];
                 expect(mockProvider.get.calls.count()).toBe(0);
-                objectAPI.get(mockDomainObject.identifier);
+                promises.push(objectAPI.get(mockDomainObject.identifier));
                 expect(mockProvider.get.calls.count()).toBe(1);
-                objectAPI.get(mockDomainObject.identifier);
+                promises.push(objectAPI.get(mockDomainObject.identifier));
                 expect(mockProvider.get.calls.count()).toBe(1);
+
+                return Promise.all(promises);
             });
 
             it("applies any applicable interceptors", () => {
                 expect(mockDomainObject.changed).toBeUndefined();
-                objectAPI.get(mockDomainObject.identifier).then((object) => {
+
+                return objectAPI.get(mockDomainObject.identifier).then((object) => {
                     expect(object.changed).toBeTrue();
                     expect(object.alsoChanged).toBeTrue();
                     expect(object.shouldNotBeChanged).toBeUndefined();
+                });
+            });
+
+            it("displays a notification in the event of an error", () => {
+                mockProvider.get.and.returnValue(Promise.reject());
+
+                return objectAPI.get(mockDomainObject.identifier).catch(() => {
+                    expect(openmct.notifications.error).toHaveBeenCalledWith(`Failed to retrieve object ${TEST_NAMESPACE}:${TEST_KEY}`);
                 });
             });
         });
@@ -168,7 +206,7 @@ describe("The Object API", () => {
             testObject = {
                 identifier: {
                     namespace: TEST_NAMESPACE,
-                    key: 'test-key'
+                    key: TEST_KEY
                 },
                 name: 'test object',
                 type: 'notebook',
@@ -195,6 +233,8 @@ describe("The Object API", () => {
                 "observeObjectChanges"
             ]);
             mockProvider.get.and.returnValue(Promise.resolve(testObject));
+            mockProvider.create.and.returnValue(Promise.resolve(true));
+            mockProvider.update.and.returnValue(Promise.resolve(true));
             mockProvider.observeObjectChanges.and.callFake(() => {
                 callbacks[0](updatedTestObject);
                 callbacks.splice(0, 1);

@@ -1,3 +1,15 @@
+@use 'sass:math';
+
+@keyframes fade-out {
+    from {
+        background-color: rgba($colorOk, 0.5);
+    }
+    to {
+        background-color: rgba($colorOk, 0);
+        color: inherit;
+    }
+}
+
 .c-imagery {
     display: flex;
     flex-direction: column;
@@ -16,6 +28,27 @@
         display: flex;
         flex-direction: column;
         flex: 1 1 auto;
+
+        &.unnsynced{
+            @include sUnsynced();
+        }
+
+        &.cursor-zoom-in {
+            cursor: zoom-in;
+        }
+
+        &.cursor-zoom-out {
+            cursor: zoom-out;
+        }
+
+        &.pannable {
+            @include cursorGrab();
+        }
+    }
+
+    .image-wrapper {
+        overflow: visible clip;
+        background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px);
     }
 
     .image-wrapper {
@@ -33,30 +66,26 @@
             flex: 1 1 auto;
             height: 0;
             overflow: hidden;
-            &.unnsynced{
-                @include sUnsynced();
-            }
-            &.cursor-zoom-in {
-                cursor: zoom-in;
-            }
-            &.cursor-zoom-out {
-                cursor: zoom-out;
-            }
-            &.pannable {
-                @include cursorGrab();
-
-            }
         }
         &__background-image {
+            // Actually does the image display
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
+            height: 100%; //fallback value
         }
         &__image {
+            // Present to allow Save As... image
+            position: absolute;
             height: 100%;
             width: 100%;
-            visibility: hidden;
-            display: contents;
+            opacity: 0;
+        }
+
+        &__image-save-proxy {
+            height: 100%;
+            width: 100%;
+            z-index: 10;
         }
     }
 
@@ -65,6 +94,7 @@
         background: rgba(black, 0.2);
         border-radius: $smallCr;
         padding: 2px $interiorMargin;
+        pointer-events: none;
         position: absolute;
         right: $m;
         top: $m;
@@ -123,12 +153,25 @@
         // New imagery
         $bgColor: $colorOk;
         color: $colorOkFg;
-        background: rgba($bgColor, 0.5);
-        @include flash($animName: flashImageAge, $iter: 2, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
+        background-color: rgba($bgColor, 0.5);
+        animation-name: fade-out;
+        animation-timing-function: ease-in;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        &.no-animation {
+            animation: none;
+        }
+    }
+
+
+    &__layer-image {
+        pointer-events: none;
+        z-index: 1;
     }
 
     &__thumbs-wrapper {
         display: flex; // Uses row layout
+        justify-content: flex-end;
 
         &.is-autoscroll-off {
             background: $colorInteriorBorder;
@@ -146,17 +189,11 @@
         flex: 0 1 auto;
         display: flex;
         flex-direction: row;
-        height: 135px;
+        height: 145px;
         overflow-x: auto;
         overflow-y: hidden;
         margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
-
-        .c-thumb:last-child {
-            // Hilite the lastest thumb
-            background: $colorBodyFg;
-            color: $colorBodyBg;
-        }
     }
 
     &__auto-scroll-resume-button {
@@ -165,22 +202,78 @@
         font-size: 0.8em;
         margin: $interiorMarginSm;
     }
+
+    .c-control-menu {
+        // Controls on left of flex column layout, close btn on right
+        @include menuOuter();
+
+        border-radius: $controlCr;
+        display: flex;
+        align-items: flex-start;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: $interiorMargin;
+        width: max-content;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
+
+    .c-switcher-menu {
+        display: contents;
+
+        &__content {
+            // Menu panel
+            top: 28px;
+            position: absolute;
+
+            .c-so-view & {
+                top: 25px;
+            }
+        }
+    }
+}
+
+.--width-less-than-220 .--show-if-less-than-220.c-switcher-menu {
+    display: contents !important;
+}
+
+.s-image-layer {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    opacity: 0.5;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 /*************************************** THUMBS */
 .c-thumb {
+    $w: $imageThumbsD;
     display: flex;
     flex-direction: column;
     padding: 4px;
-    width: $imageThumbsD;
+    min-width: $w;
+    width: $w;
 
+    &.active {
+        background: $colorSelectedBg;
+        color: $colorSelectedFg;
+    }
     &:hover {
         background: $colorThumbHoverBg;
     }
-
     &.selected {
-        background: $colorPausedBg !important;
-        color: $colorPausedFg !important;
+        // fixed time - selected bg will match active bg color
+        background: $colorSelectedBg;
+        color: $colorSelectedFg;
+        &.real-time {
+            // real time - bg orange when selected
+            background: $colorPausedBg !important;
+            color: $colorPausedFg !important;
+        }
     }
 
     &__image {
@@ -194,81 +287,55 @@
     }
 }
 
-.l-layout,
-.c-fl {
+.is-small-thumbs {
     .c-imagery__thumbs-scroll-area {
-        //  When Imagery is in a layout, hide the thumbs area
-        display: none;
+        height: 60px; // Allow room for scrollbar
+    }
+
+    .c-thumb {
+        $w: math.div($imageThumbsD, 2);
+        min-width: $w;
+        width: $w;
+
+        &__timestamp {
+            display: none;
+        }
     }
 }
 
 /*************************************** IMAGERY LOCAL CONTROLS*/
 .c-imagery {
     .h-local-controls--overlay-content {
+        display: flex;
+        flex-direction: row;
         position: absolute;
         left: $interiorMargin; top: $interiorMargin;
-        z-index: 2;
+        z-index: 70;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
-        max-width: 250px;
-        min-width: 170px;
-        width: 35%;
         align-items: center;
-        padding: $interiorMargin $interiorMarginLg;
-
-        input[type="range"] {
-            display: block;
-            width: 100%;
-            &:not(:first-child) {
-                margin-top: $interiorMarginLg;
-            }
-
-            &:before {
-                margin-right: $interiorMarginSm;
-            }
-        }
+        padding: $interiorMargin $interiorMargin;
 
         .s-status-taking-snapshot & {
             display: none;
         }
     }
-
-    &__lc {
-        &__reset-btn {
-            // Span that holds bracket graphics and button
-            $bc: $scrollbarTrackColorBg;
-
-            &:before,
-            &:after {
-                border-right: 1px solid $bc;
-                content:'';
-                display: block;
-                width: 5px;
-                height: 4px;
-            }
-
-            &:before {
-                border-top: 1px solid $bc;
-                margin-bottom: 2px;
-            }
-
-            &:after {
-                border-bottom: 1px solid $bc;
-                margin-top: 2px;
-            }
-
-            .c-icon-link {
-                color: $colorBtnFg;
-            }
+    [class*='--menus-aligned'] {
+        > * + * {
+            button { margin-left: $interiorMarginSm; }
         }
     }
 }
 
 .c-image-controls {
+    &__controls-wrapper {
+        // Wraps __controls and __close-btn
+        display: flex;
+    }
+
     &__controls {
         display: flex;
         align-items: stretch;
-        flex-direction: column;
 
         > * + * {
             margin-top: $interiorMargin;
@@ -281,7 +348,6 @@
     &__input {
         display: flex;
         align-items: center;
-        width: 100%;
 
         &:before {
             color: rgba($colorMenuFg, 0.5);
@@ -290,30 +356,69 @@
 
     }
 
-    &__input {
-        // A wrapper is needed to add the type icon to left of each control
-
-        input[type='range'] {
-            //width: 100%; // Do we need this?
-        }
-    }
-
     &__zoom {
-        > * + * { margin-left: $interiorMargin; }
+        > * + * { margin-left: $interiorMargin; } // Is this used?
     }
 
-    &__sliders {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
+    &--filters {
+        // Styles specific to the brightness and contrast controls
+        .c-image-controls {
+            &__controls {
+                width: 80px; // About the minimum this element can be; cannot size based on % due to markup structure
+            }
 
-        > * + * {
-            margin-top: 11px;
+            &__sliders {
+                display: flex;
+                flex: 1 1 auto;
+                flex-direction: column;
+                width: 100%;
+
+                > * + * {
+                    margin-top: 11px;
+                }
+
+                input[type="range"] {
+                    display: block;
+                    width: 100%;
+                }
+            }
+
+            &__slider-wrapper {
+                display: flex;
+                align-items: center;
+
+                &:before { margin-right: $interiorMargin; }
+            }
+
+            &__reset-btn {
+                // Span that holds bracket graphics and button
+                $bc: $scrollbarTrackColorBg;
+                flex: 0 0 auto;
+
+                &:before,
+                &:after {
+                    border-right: 1px solid $bc;
+                    content:'';
+                    display: block;
+                    width: 5px;
+                    height: 4px;
+                }
+
+                &:before {
+                    border-top: 1px solid $bc;
+                    margin-bottom: 2px;
+                }
+
+                &:after {
+                    border-bottom: 1px solid $bc;
+                    margin-top: 2px;
+                }
+
+                .c-icon-link {
+                    color: $colorBtnFg;
+                }
+            }
         }
-    }
-
-    &__btn-reset {
-        flex: 0 0 auto;
     }
 }
 
@@ -359,7 +464,7 @@
     @include cArrowButtonSizing($dimOuter: 48px);
     border-radius: $controlCr;
 
-    .is-in-small-container & {
+    .--width-less-than-600 & {
         @include cArrowButtonSizing($dimOuter: 32px);
     }
 }
@@ -384,10 +489,6 @@
             [class*='__image-handle'] {
                 background-color: $colorBodyFg;
             }
-
-            //[class*='__image-placeholder'] {
-            //    display: none;
-            //}
 
             img {
                 display: block !important;

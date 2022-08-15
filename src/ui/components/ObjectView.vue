@@ -28,6 +28,7 @@ const SupportedViewTypes = [
     'plot-stacked',
     'plot-overlay',
     'bar-graph.view',
+    'scatter-plot.view',
     'time-strip.view'
 ];
 export default {
@@ -213,12 +214,6 @@ export default {
                     }
                 }
             });
-
-            if (this.domainObject && this.domainObject.type === 'conditionWidget' && keys.includes('output')) {
-                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', styleObj.output);
-            } else {
-                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', '');
-            }
         },
         updateView(immediatelySelect) {
             this.clear();
@@ -450,4 +445,3 @@ export default {
     }
 };
 </script>
-

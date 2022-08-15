@@ -28,6 +28,7 @@
     >
         <input
             v-model="field"
+            :aria-label="model.name"
             type="number"
             :min="model.min"
             :max="model.max"
@@ -58,7 +59,6 @@ export default {
     },
     methods: {
         updateText() {
-            console.log('updateText', this.field);
             const data = {
                 model: this.model,
                 value: this.field

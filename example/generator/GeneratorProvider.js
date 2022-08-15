@@ -32,11 +32,12 @@ define([
         offset: 0,
         dataRateInHz: 1,
         randomness: 0,
-        phase: 0
+        phase: 0,
+        loadDelay: 0
     };
 
-    function GeneratorProvider() {
-        this.workerInterface = new WorkerInterface();
+    function GeneratorProvider(openmct) {
+        this.workerInterface = new WorkerInterface(openmct);
     }
 
     GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
@@ -53,8 +54,9 @@ define([
             'period',
             'offset',
             'dataRateInHz',
+            'randomness',
             'phase',
-            'randomness'
+            'loadDelay'
         ];
 
         request = request || {};

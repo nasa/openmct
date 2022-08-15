@@ -7,7 +7,14 @@
         "allowJs": true,
         "checkJs": false,
         "strict": true,
+        "esModuleInterop": true,
+        "noImplicitOverride": true,
         "module": "esnext",
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+
+        "paths": {
+            // matches the alias in webpack config, so that types for those imports are visible.
+            "@/*": ["src/*"]
+        }
     }
 }

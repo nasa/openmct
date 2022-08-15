@@ -26,6 +26,7 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend
+        v-if="!isNestedWithinAStackedPlot"
         :cursor-locked="!!lockHighlightPoint"
         :series="seriesModels"
         :highlights="highlights"
@@ -37,6 +38,7 @@
             v-if="seriesModels.length > 0"
             :tick-width="tickWidth"
             :single-series="seriesModels.length === 1"
+            :has-same-range-value="hasSameRangeValue"
             :series-model="seriesModels[0]"
             :style="{
                 left: (plotWidth - tickWidth) + 'px'
@@ -76,6 +78,9 @@
                 <div
                     ref="chartContainer"
                     class="gl-plot-chart-wrapper"
+                    :class="[
+                        { 'alt-pressed': altPressed },
+                    ]"
                 >
                     <mct-chart
                         :rectangles="rectangles"
@@ -150,6 +155,22 @@
                         >
                         </button>
                     </div>
+                    <div class="c-button-set c-button-set--strip-h">
+                        <button
+                            class="c-button icon-crosshair"
+                            :class="{ 'is-active': cursorGuide }"
+                            title="Toggle cursor guides"
+                            @click="toggleCursorGuide"
+                        >
+                        </button>
+                        <button
+                            class="c-button"
+                            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
+                            title="Toggle grid lines"
+                            @click="toggleGridLines"
+                        >
+                        </button>
+                    </div>
                 </div>
 
                 <!--Cursor guides-->
@@ -209,16 +230,16 @@ export default {
                 };
             }
         },
-        gridLines: {
+        initGridLines: {
             type: Boolean,
             default() {
                 return true;
             }
         },
-        cursorGuide: {
+        initCursorGuide: {
             type: Boolean,
             default() {
-                return true;
+                return false;
             }
         },
         plotTickWidth: {
@@ -226,10 +247,23 @@ export default {
             default() {
                 return 0;
             }
+        },
+        limitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        colorPalette: {
+            type: Object,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
         return {
+            altPressed: false,
             highlights: [],
             lockHighlightPoint: false,
             tickWidth: 0,
@@ -245,18 +279,30 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: undefined,
-            isFrozenOnMouseDown: false
+            showLimitLineLabels: this.limitLineLabels,
+            isFrozenOnMouseDown: false,
+            hasSameRangeValue: true,
+            cursorGuide: this.initCursorGuide,
+            gridLines: this.initGridLines
         };
     },
     computed: {
+        isNestedWithinAStackedPlot() {
+            const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
+
+            return !isNavigatedObject && this.path.find((pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked');
+        },
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         plotLegendPositionClass() {
-            return `plot-legend-${this.config.legend.get('position')}`;
+            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
         },
         plotLegendExpandedStateClass() {
+            if (this.isNestedWithinAStackedPlot) {
+                return '';
+            }
+
             if (this.config.legend.get('expanded')) {
                 return 'plot-legend-expanded';
             } else {
@@ -267,7 +313,23 @@ export default {
             return this.plotTickWidth || this.tickWidth;
         }
     },
+    watch: {
+        limitLineLabels: {
+            handler(limitLineLabels) {
+                this.legendHoverChanged(limitLineLabels);
+            },
+            deep: true
+        },
+        initGridLines(newGridLines) {
+            this.gridLines = newGridLines;
+        },
+        initCursorGuide(newCursorGuide) {
+            this.cursorGuide = newCursorGuide;
+        }
+    },
     mounted() {
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
         eventHelpers.extend(this);
         this.updateRealTime = this.updateRealTime.bind(this);
         this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
@@ -275,6 +337,11 @@ export default {
 
         this.config = this.getConfig();
         this.legend = this.config.legend;
+
+        if (this.isNestedWithinAStackedPlot) {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.$emit('configLoaded', configId);
+        }
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -299,9 +366,21 @@ export default {
 
     },
     beforeDestroy() {
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
         this.destroy();
     },
     methods: {
+        handleKeyDown(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = true;
+            }
+        },
+        handleKeyUp(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = false;
+            }
+        },
         setTimeContext() {
             this.stopFollowingTimeContext();
 
@@ -329,6 +408,7 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
+                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -344,6 +424,7 @@ export default {
                 this.setDisplayRange(series, xKey);
             }, this);
             this.listenTo(series, 'change:yKey', () => {
+                this.checkSameRangeValue();
                 this.loadSeriesData(series);
             }, this);
 
@@ -351,10 +432,18 @@ export default {
                 this.loadSeriesData(series);
             }, this);
 
+            this.checkSameRangeValue();
             this.loadSeriesData(series);
         },
 
+        checkSameRangeValue() {
+            this.hasSameRangeValue = this.seriesModels.every((model) => {
+                return model.get('yKey') === this.seriesModels[0].get('yKey');
+            });
+        },
+
         removeSeries(plotSeries) {
+            this.checkSameRangeValue();
             this.stopListening(plotSeries);
         },
 
@@ -395,7 +484,7 @@ export default {
                     end: range.max,
                     domain: this.config.xAxis.get('key')
                 })
-                    .then(this.stopLoading());
+                    .then(this.stopLoading.bind(this));
                 if (purge) {
                     plotSeries.purgeRecordsOutsideRange(range);
                 }
@@ -470,7 +559,7 @@ export default {
         },
 
         setDisplayRange(series, xKey) {
-            if (this.config.series.length !== 1) {
+            if (this.config.series.models.length !== 1) {
                 return;
             }
 
@@ -643,7 +732,7 @@ export default {
             this.positionOverElement = {
                 x: event.clientX - this.chartElementBounds.left,
                 y: this.chartElementBounds.height
-              - (event.clientY - this.chartElementBounds.top)
+                    - (event.clientY - this.chartElementBounds.top)
             };
 
             this.positionOverPlot = {
@@ -703,6 +792,8 @@ export default {
                         };
                     });
             }
+
+            this.$emit('highlights', this.highlights);
         },
 
         untrackMousePosition() {
@@ -737,6 +828,7 @@ export default {
 
             if (this.isMouseClick()) {
                 this.lockHighlightPoint = !this.lockHighlightPoint;
+                this.$emit('lockHighlightPoint', this.lockHighlightPoint);
             }
 
             if (this.pan) {
@@ -1101,6 +1193,14 @@ export default {
         },
         legendHoverChanged(data) {
             this.showLimitLineLabels = data;
+        },
+        toggleCursorGuide() {
+            this.cursorGuide = !this.cursorGuide;
+            this.$emit('cursorGuide', this.cursorGuide);
+        },
+        toggleGridLines() {
+            this.gridLines = !this.gridLines;
+            this.$emit('gridLines', this.gridLines);
         }
     }
 };

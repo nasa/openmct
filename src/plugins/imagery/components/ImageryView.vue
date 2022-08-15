@@ -28,34 +28,34 @@
     @keydown="arrowDownHandler"
     @mouseover="focusElement"
 >
-    <div class="c-imagery__main-image-wrapper has-local-controls">
+    <div
+        class="c-imagery__main-image-wrapper has-local-controls"
+        :class="imageWrapperStyle"
+        @mousedown="handlePanZoomClick"
+    >
         <ImageControls
             ref="imageControls"
             :zoom-factor="zoomFactor"
             :image-url="imageUrl"
+            :layers="layers"
             @resetImage="resetImage"
             @panZoomUpdated="handlePanZoomUpdate"
             @filtersUpdated="setFilters"
             @cursorsUpdated="setCursorStates"
             @startPan="startPan"
+            @toggleLayerVisibility="toggleLayerVisibility"
         />
-
         <div
             ref="imageBG"
             class="c-imagery__main-image__bg"
-            :class="{
-                'paused unnsynced': isPaused && !isFixed,
-                'stale': false,
-                'pannable': cursorStates.isPannable,
-                'cursor-zoom-in': cursorStates.showCursorZoomIn,
-                'cursor-zoom-out': cursorStates.showCursorZoomOut
-            }"
             @click="expand"
         >
             <div
                 v-if="zoomFactor > 1"
                 class="c-imagery__hints"
-            >Alt-drag to pan</div>
+            >
+                {{ formatImageAltText }}
+            </div>
             <div
                 ref="focusedImageWrapper"
                 class="image-wrapper"
@@ -65,6 +65,13 @@
                 }"
                 @mousedown="handlePanZoomClick"
             >
+                <div
+                    v-for="(layer, index) in visibleLayers"
+                    :key="index"
+                    class="layer-image s-image-layer c-imagery__layer-image js-layer-image"
+                    :style="getVisibleLayerStyles(layer)"
+                >
+                </div>
                 <img
                     ref="focusedImage"
                     class="c-imagery__main-image__image js-imageryView-image "
@@ -81,25 +88,7 @@
                     ref="focusedImageElement"
                     class="c-imagery__main-image__background-image"
                     :draggable="!isSelectable"
-                    :style="{
-                        'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
-                        'background-image':
-                            `${imageUrl ? (
-                                `url(${imageUrl}),
-                                    repeating-linear-gradient(
-                                        45deg,
-                                        transparent,
-                                        transparent 4px,
-                                        rgba(125,125,125,.2) 4px,
-                                        rgba(125,125,125,.2) 8px
-                                    )`
-                            ) : ''}`,
-                        'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
-                        'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
-                        'width': `${sizedImageWidth}px`,
-                        'height': `${sizedImageHeight}px`,
-
-                    }"
+                    :style="focusImageStyles"
                 ></div>
                 <Compass
                     v-if="shouldDisplayCompass"
@@ -132,6 +121,10 @@
                 <!-- image fresh -->
                 <div
                     v-if="canTrackDuration"
+                    :style="{
+                        'animation-delay': imageFreshnessOptions.fadeOutDelayTime,
+                        'animation-duration': imageFreshnessOptions.fadeOutDurationTime
+                    }"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
@@ -139,13 +132,13 @@
                 <!-- spacecraft position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
-                    class="c-imagery__age icon-check c-imagery--new"
+                    class="c-imagery__age icon-check c-imagery--new no-animation"
                 >POS</div>
 
                 <!-- camera position fresh -->
                 <div
                     v-if="relatedTelemetry.hasRelatedTelemetry && isCameraPositionFresh"
-                    class="c-imagery__age icon-check c-imagery--new"
+                    class="c-imagery__age icon-check c-imagery--new no-animation"
                 >CAM</div>
             </div>
             <div class="h-local-controls">
@@ -159,10 +152,13 @@
         </div>
     </div>
     <div
+        v-if="displayThumbnails"
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused && !isFixed },
-            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused },
+            { 'is-small-thumbs': displayThumbnailsSmall },
+            { 'hide': !displayThumbnails }
         ]"
     >
         <div
@@ -170,25 +166,15 @@
             class="c-imagery__thumbs-scroll-area"
             @scroll="handleScroll"
         >
-            <div
+            <ImageThumbnail
                 v-for="(image, index) in imageHistory"
                 :key="image.url + image.time"
-                class="c-imagery__thumb c-thumb"
-                :class="{ selected: focusedImageIndex === index && isPaused }"
-                @click="thumbnailClicked(index)"
-            >
-                <a
-                    href=""
-                    :download="image.imageDownloadName"
-                    @click.prevent
-                >
-                    <img
-                        class="c-thumb__image"
-                        :src="image.url"
-                    >
-                </a>
-                <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
-            </div>
+                :image="image"
+                :active="focusedImageIndex === index"
+                :selected="focusedImageIndex === index && isPaused"
+                :real-time="!isFixed"
+                @click.native="thumbnailClicked(index)"
+            />
         </div>
 
         <button
@@ -208,6 +194,7 @@ import moment from 'moment';
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
 import ImageControls from './ImageControls.vue';
+import ImageThumbnail from './ImageThumbnail.vue';
 import imageryData from "../../imagery/mixins/imageryData";
 
 const REFRESH_CSS_MS = 500;
@@ -228,14 +215,18 @@ const ARROW_LEFT = 37;
 const SCROLL_LATENCY = 250;
 
 const ZOOM_SCALE_DEFAULT = 1;
+const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
+const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
 export default {
+    name: 'ImageryView',
     components: {
         Compass,
-        ImageControls
+        ImageControls,
+        ImageThumbnail
     },
     mixins: [imageryData],
-    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
     props: {
         focusedImageTimestamp: {
             type: Number,
@@ -250,8 +241,12 @@ export default {
         this.requestCount = 0;
 
         return {
+            timeFormat: '',
+            layers: [],
+            visibleLayers: [],
             durationFormatter: undefined,
             imageHistory: [],
+            bounds: {},
             timeSystem: timeSystem,
             keyString: undefined,
             autoScroll: true,
@@ -268,6 +263,7 @@ export default {
             imageContainerHeight: undefined,
             sizedImageWidth: 0,
             sizedImageHeight: 0,
+            viewHeight: 0,
             lockCompass: true,
             resizingWindow: false,
             timeContext: undefined,
@@ -286,7 +282,8 @@ export default {
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
-            imagePanned: false
+            imagePanned: false,
+            forceShowThumbnails: false
         };
     },
     computed: {
@@ -302,14 +299,62 @@ export default {
 
             return compassRoseSizingClasses;
         },
+        displayThumbnails() {
+            return (
+                this.forceShowThumbnails
+                || this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT
+            );
+        },
+        displayThumbnailsSmall() {
+            return this.viewHeight > SHOW_THUMBS_THRESHOLD_HEIGHT && this.viewHeight <= SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT;
+        },
+        focusImageStyles() {
+            return {
+                'filter': `brightness(${this.filters.brightness}%) contrast(${this.filters.contrast}%)`,
+                'background-image':
+                    `${this.imageUrl ? (
+                        `url(${this.imageUrl}),
+                            repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 4px,
+                                rgba(125,125,125,.2) 4px,
+                                rgba(125,125,125,.2) 8px
+                            )`
+                    ) : ''}`,
+                'transform': `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                'transition': `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
+                'width': `${this.sizedImageWidth}px`,
+                'height': `${this.sizedImageHeight}px`
+            };
+        },
         time() {
             return this.formatTime(this.focusedImage);
         },
         imageUrl() {
             return this.formatImageUrl(this.focusedImage);
         },
+        imageWrapperStyle() {
+            return {
+                'cursor-zoom-in': this.cursorStates.showCursorZoomIn,
+                'cursor-zoom-out': this.cursorStates.showCursorZoomOut,
+                'pannable': this.cursorStates.isPannable,
+                'paused unnsynced': this.isPaused && !this.isFixed,
+                'stale': false
+            };
+        },
         isImageNew() {
             let cutoff = FIVE_MINUTES;
+            if (this.imageFreshnessOptions) {
+                const { fadeOutDelayTime, fadeOutDurationTime} = this.imageFreshnessOptions;
+                // convert css duration to IS8601 format for parsing
+                const isoFormattedDuration = 'PT' + fadeOutDurationTime.toUpperCase();
+                const isoFormattedDelay = 'PT' + fadeOutDelayTime.toUpperCase();
+                const parsedDuration = moment.duration(isoFormattedDuration).asMilliseconds();
+                const parsedDelay = moment.duration(isoFormattedDelay).asMilliseconds();
+                cutoff = parsedDuration + parsedDelay;
+            }
+
             let age = this.numericDuration;
 
             return age < cutoff && !this.refreshCSS;
@@ -351,6 +396,9 @@ export default {
         formattedDuration() {
             let result = 'N/A';
             let negativeAge = -1;
+            if (!Number.isInteger(this.numericDuration)) {
+                return result;
+            }
 
             if (this.numericDuration > TWENTYFOUR_HOURS) {
                 negativeAge *= (this.numericDuration / TWENTYFOUR_HOURS);
@@ -457,6 +505,16 @@ export default {
                 width: this.sizedImageWidth,
                 height: this.sizedImageHeight
             };
+        },
+        formatImageAltText() {
+            const regexLinux = /Linux/;
+            const navigator = window.navigator.userAgent;
+
+            if (regexLinux.test(navigator)) {
+                return 'Ctrl+Alt drag to pan';
+            }
+
+            return 'Alt drag to pan';
         }
     },
     watch: {
@@ -493,6 +551,8 @@ export default {
                 if (!this.isPaused) {
                     this.setFocusedImage(imageIndex);
                     this.scrollToRight();
+                } else {
+                    this.scrollToFocused();
                 }
             },
             deep: true
@@ -502,6 +562,16 @@ export default {
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
             this.getImageNaturalDimensions();
+        },
+        bounds() {
+            this.scrollToFocused();
+        },
+        isFixed(newValue) {
+            const isRealTime = !newValue;
+            // if realtime unpause which will focus on latest image
+            if (isRealTime) {
+                this.paused(false);
+            }
         }
     },
     async mounted() {
@@ -532,7 +602,7 @@ export default {
         this.updateRelatedTelemetryForFocusedImage = _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
 
         // for resizing the object view
-        this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400);
+        this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400, { leading: true });
 
         if (this.$refs.imageBG) {
             this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
@@ -543,6 +613,7 @@ export default {
         this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
         this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
         this.handleThumbWindowResizeStart = _.debounce(this.handleThumbWindowResizeStart, SCROLL_LATENCY);
+        this.scrollToFocused = _.debounce(this.scrollToFocused, 400);
 
         if (this.$refs.thumbsWrapper) {
             this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
@@ -550,8 +621,10 @@ export default {
         }
 
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+        this.loadVisibleLayers();
     },
     beforeDestroy() {
+        this.persistVisibleLayers();
         this.stopFollowingTimeContext();
 
         if (this.thumbWrapperResizeObserver) {
@@ -579,6 +652,16 @@ export default {
 
     },
     methods: {
+        calculateViewHeight() {
+            this.viewHeight = this.$el.clientHeight;
+        },
+        getVisibleLayerStyles(layer) {
+            return {
+                'background-image': `url(${layer.source})`,
+                'transform': `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                'transition': `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
+            };
+        },
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -646,6 +729,37 @@ export default {
             mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
             return mostRecent[valueKey];
+        },
+        loadVisibleLayers() {
+            const metaDataValues = this.metadata.valuesForHints(['image'])[0];
+            this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
+            let layersMetadata = metaDataValues.layers;
+            if (layersMetadata) {
+                this.layers = layersMetadata;
+                if (this.domainObject.configuration) {
+                    let persistedLayers = this.domainObject.configuration.layers;
+                    layersMetadata.forEach((layer) => {
+                        const persistedLayer = persistedLayers.find(object => object.name === layer.name);
+                        if (persistedLayer) {
+                            layer.visible = persistedLayer.visible === true;
+                        }
+                    });
+                    this.visibleLayers = this.layers.filter(layer => layer.visible);
+                } else {
+                    this.visibleLayers = [];
+                    this.layers.forEach((layer) => {
+                        layer.visible = false;
+                    });
+                }
+            }
+        },
+        persistVisibleLayers() {
+            if (this.domainObject.configuration) {
+                this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
+            }
+
+            this.visibleLayers = [];
+            this.layers = [];
         },
         // will subscribe to data for this key if not already done
         subscribeToDataForKey(key) {
@@ -735,7 +849,8 @@ export default {
             if (domThumb) {
                 domThumb.scrollIntoView({
                     behavior: 'smooth',
-                    block: 'center'
+                    block: 'center',
+                    inline: 'center'
                 });
             }
         },
@@ -798,8 +913,10 @@ export default {
             let currentTime = this.timeContext.clock() && this.timeContext.clock().currentValue();
             if (currentTime === undefined) {
                 this.numericDuration = currentTime;
-            } else {
+            } else if (Number.isInteger(this.parsedSelectedTime)) {
                 this.numericDuration = currentTime - this.parsedSelectedTime;
+            } else {
+                this.numericDuration = undefined;
             }
         },
         resetAgeCSS() {
@@ -841,10 +958,6 @@ export default {
             this.imageTranslateY = 0;
         },
         handlePanZoomUpdate({ newScaleFactor, screenClientX, screenClientY }) {
-            if (!this.isPaused) {
-                this.paused(true);
-            }
-
             if (!(screenClientX || screenClientY)) {
                 return this.updatePanZoom(newScaleFactor, 0, 0);
             }
@@ -952,6 +1065,8 @@ export default {
             }
 
             this.setSizedImageDimensions();
+            this.calculateViewHeight();
+            this.scrollToFocused();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
@@ -980,19 +1095,17 @@ export default {
                 this.scrollToRight('reset');
             }
 
+            this.calculateViewHeight();
+
             this.$nextTick(() => {
                 this.resizingWindow = false;
             });
         },
-        // debounced method
         clearWheelZoom() {
             this.$refs.imageControls.clearWheelZoom();
         },
         wheelZoom(e) {
             e.preventDefault();
-            if (!this.isPaused) {
-                this.paused(true);
-            }
 
             this.$refs.imageControls.wheelZoom(e);
         },
@@ -1050,6 +1163,11 @@ export default {
         },
         setCursorStates(states) {
             this.cursorStates = states;
+        },
+        toggleLayerVisibility(index) {
+            let isVisible = this.layers[index].visible === true;
+            this.layers[index].visible = !isVisible;
+            this.visibleLayers = this.layers.filter(layer => layer.visible);
         }
     }
 };
