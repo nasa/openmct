@@ -25,6 +25,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 but only assume that example imagery is present.
 */
 /* globals process */
+const uuid = require('uuid');
 
 const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
@@ -571,6 +572,32 @@ test.describe('Example Imagery in Tabs view', () => {
     test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
     test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
     test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
+});
+
+test.describe('Example Imagery in Time Strip', () => {
+    test('Example Imagery in Time Strip', async ({ page, browserName }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5632'
+        });
+        await page.goto('./', { waitUntil: 'networkidle' });
+        const { name: timeStripName } = await createDomainObjectWithDefaults(page, {
+            type: 'Time Strip',
+            name: 'Time Strip'.concat(' ', uuid.v4())
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: 'Example Imagery',
+            name: 'Example Imagery'.concat(' ', uuid.v4()),
+            parent: timeStripName.uuid
+        });
+
+        await page.goto('./#/browse/mine?hideTree=false');
+        // expand root folder
+        await page.locator('text=Open MCT My Items >> span').nth(3).click();
+        await page.locator(`.c-tree__item a:has-text("${timeStripName}")`).click();
+
+    });
 });
 
 /**
