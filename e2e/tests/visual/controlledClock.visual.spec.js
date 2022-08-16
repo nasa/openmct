@@ -26,6 +26,7 @@ clockOptions plugin fixture.
 */
 
 const { test } = require('../../pluginFixtures');
+const { setFixedTimeMode } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Controlled Clock', () => {
@@ -40,36 +41,34 @@ test.describe('Visual - Controlled Clock', () => {
     });
 
     test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
-        const year = new Date().getFullYear();
+        await setFixedTimeMode(page);
+        const startTimeInput = page.locator('input[type="text"].c-input--datetime').nth(0);
+        const endTimeInput = page.locator('input[type="text"].c-input--datetime').nth(1);
 
-        let startDate = 'xxxx-01-01 01:00:00.000Z';
-        startDate = year + startDate.substring(4);
-
-        let endDate = 'xxxx-01-01 02:00:00.000Z';
-        endDate = year + endDate.substring(4);
-
-        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
-
-        //  verify no error msg
+        // verify no error msg
         await percySnapshot(page, `Default Time conductor (theme: '${theme}')`);
 
-        startDate = (year + 1) + startDate.substring(4);
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
-        await page.locator('input[type="text"]').nth(1).click();
+        let date = await endTimeInput.inputValue();
+        date = new Date(date);
+
+        date.setUTCMinutes(date.getUTCMinutes() + 5);
+        const startDate = date.toISOString().replace(/T/, ' ');
+
+        await startTimeInput.fill('');
+        await startTimeInput.fill(startDate);
+        await page.keyboard.press('Enter');
 
         //  verify error msg for start time (unable to capture snapshot of popup)
         await percySnapshot(page, `Start time error (theme: '${theme}')`);
 
-        startDate = (year - 1) + startDate.substring(4);
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
+        date.setUTCMinutes(date.getUTCMinutes() - 15);
+        const endDate = date.toISOString().replace(/T/, ' ');
 
-        endDate = (year - 2) + endDate.substring(4);
-        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+        await endTimeInput.fill('');
+        await endTimeInput.fill(endDate);
+        await page.keyboard.press('Enter');
 
-        await page.locator('input[type="text"]').first().click();
-
-        //  verify error msg for end time (unable to capture snapshot of popup)
+        // verify error msg for end time (unable to capture snapshot of popup)
         await percySnapshot(page, `End time error (theme: '${theme}')`);
     });
 });
