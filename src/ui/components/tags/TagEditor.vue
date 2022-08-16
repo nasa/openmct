@@ -76,7 +76,7 @@ export default {
     },
     data() {
         return {
-            annontation: null,
+            annontations: [],
             addedTags: [],
             userAddingTag: false
         };
@@ -92,7 +92,7 @@ export default {
         }
     },
     watch: {
-        annotation: {
+        annontations: {
             handler() {
                 this.tagsChanged(this.annotation.tags);
             },
@@ -100,14 +100,14 @@ export default {
         },
         annotationQuery: {
             handler() {
-                this.unloadAnnotation();
-                this.loadAnnotation();
+                this.unloadAnnotations();
+                this.loadAnnotations();
             },
             deep: true
         }
     },
     mounted() {
-        this.loadAnnotation();
+        this.loadAnnotations();
     },
     destroyed() {
         if (this.removeTagsListener) {
@@ -123,14 +123,21 @@ export default {
                 });
             }
         },
-        async loadAnnotation() {
+        async loadAnnotations() {
+            //TODO get all annotations associated with this entry
+            if (!this.availableTags()) {
+                // don't load annotations if we have no tags to select from
+                return;
+            }
+
             this.annotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
             this.addAnnotationListener(this.annotation);
             if (this.annotation && this.annotation.tags) {
                 this.tagsChanged(this.annotation.tags);
             }
         },
-        unloadAnnotation() {
+        unloadAnnotations() {
+            //TODO remove all annotations listeners associated with this entry
             if (this.removeTagsListener) {
                 this.removeTagsListener();
                 this.removeTagsListener = undefined;
@@ -153,12 +160,14 @@ export default {
             this.userAddingTag = true;
         },
         async tagRemoved(tagToRemove) {
+            // TODO need to remove all instances of this tag (might be more than one due to conflicts)
             const result = await this.openmct.annotation.removeAnnotationTag(this.annotation, tagToRemove);
             this.$emit('tags-updated');
 
             return result;
         },
         async tagAdded(newTag) {
+            // TODO need to always add an annotation here, don't modify an existing one
             const annotationWasCreated = this.annotation === null || this.annotation === undefined;
             this.annotation = await this.openmct.annotation.addAnnotationTag(this.annotation,
                 this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
