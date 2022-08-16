@@ -83,9 +83,11 @@ class UserAPI extends EventEmitter {
      * @throws Will throw an error if no user provider is set
      */
     getCurrentUser() {
-        this.noProviderCheck();
-
-        return this._provider.getCurrentUser();
+        if (!this.hasProvider()) {
+            return Promise.resolve(undefined);
+        } else {
+            return this._provider.getCurrentUser();
+        }
     }
 
     /**

@@ -258,13 +258,22 @@
     min-width: $w;
     width: $w;
 
+    &.active {
+        background: $colorSelectedBg;
+        color: $colorSelectedFg;
+    }
     &:hover {
         background: $colorThumbHoverBg;
     }
-
     &.selected {
-        background: $colorPausedBg !important;
-        color: $colorPausedFg !important;
+        // fixed time - selected bg will match active bg color
+        background: $colorSelectedBg;
+        color: $colorSelectedFg;
+        &.real-time {
+            // real time - bg orange when selected
+            background: $colorPausedBg !important;
+            color: $colorPausedFg !important;
+        }
     }
 
     &__image {
