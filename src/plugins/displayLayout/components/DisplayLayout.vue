@@ -520,10 +520,12 @@ export default {
 
             let removedItems = [];
             this.layoutItems.forEach((item) => {
-                if (this.containsObject(item.identifier)) {
-                    this.trackItem(item);
-                } else {
-                    removedItems.push(this.openmct.objects.makeKeyString(item.identifier));
+                if (item.identifier) {
+                    if (this.containsObject(item.identifier)) {
+                        this.trackItem(item);
+                    } else {
+                        removedItems.push(this.openmct.objects.makeKeyString(item.identifier));
+                    }
                 }
             });
 
@@ -569,7 +571,6 @@ export default {
             this.addItem(type, child);
         },
         removeChild(identifier) {
-            console.log(identifier);
             let keyString = this.openmct.objects.makeKeyString(identifier);
 
             if (this.objectViewMap[keyString]) {
