@@ -54,6 +54,7 @@ test.describe('Visual - Controlled Clock', () => {
         date.setUTCMinutes(date.getUTCMinutes() + 5);
         const startDate = date.toISOString().replace(/T/, ' ');
 
+        // Fill start time with a value >= the current end time
         await startTimeInput.fill('');
         await startTimeInput.fill(startDate);
         await page.keyboard.press('Enter');
@@ -64,6 +65,7 @@ test.describe('Visual - Controlled Clock', () => {
         date.setUTCMinutes(date.getUTCMinutes() - 15);
         const endDate = date.toISOString().replace(/T/, ' ');
 
+        // Fill end time with a value <= the current start time
         await endTimeInput.fill('');
         await endTimeInput.fill(endDate);
         await page.keyboard.press('Enter');
