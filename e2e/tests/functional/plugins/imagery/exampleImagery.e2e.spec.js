@@ -25,8 +25,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 but only assume that example imagery is present.
 */
 /* globals process */
-const uuid = require('uuid');
-
+const { v4: uuid } = require('uuid');
 const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
@@ -575,28 +574,38 @@ test.describe('Example Imagery in Tabs view', () => {
 });
 
 test.describe('Example Imagery in Time Strip', () => {
-    test('Example Imagery in Time Strip', async ({ page, browserName }) => {
+    test('ensure that clicking a thumbnail loads the image in large view', async ({ page, browserName }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5632'
         });
         await page.goto('./', { waitUntil: 'networkidle' });
-        const { name: timeStripName } = await createDomainObjectWithDefaults(page, {
+        const timeStripObject = await createDomainObjectWithDefaults(page, {
             type: 'Time Strip',
-            name: 'Time Strip'.concat(' ', uuid.v4())
+            name: 'Time Strip'.concat(' ', uuid())
         });
 
         await createDomainObjectWithDefaults(page, {
             type: 'Example Imagery',
-            name: 'Example Imagery'.concat(' ', uuid.v4()),
-            parent: timeStripName.uuid
+            name: 'Example Imagery'.concat(' ', uuid()),
+            parent: timeStripObject.uuid
         });
 
         await page.goto('./#/browse/mine?hideTree=false');
         // expand root folder
         await page.locator('text=Open MCT My Items >> span').nth(3).click();
-        await page.locator(`.c-tree__item a:has-text("${timeStripName}")`).click();
-
+        await page.locator(`.c-tree__item a:has-text("${timeStripObject.name}")`).click();
+        await page.locator('.c-imagery-tsv-container').hover();
+        // get url of the hovered image
+        const hoveredImg = await page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
+        const hoveredImgSrc = await hoveredImg.getAttribute('src');
+        expect(hoveredImgSrc).toBeTruthy();
+        await page.locator('.c-imagery-tsv-container').click();
+        // get image of view large container
+        const viewLargeImg = await page.locator('img.c-imagery__main-image__image');
+        const viewLargeImgSrc = await viewLargeImg.getAttribute('src');
+        expect(viewLargeImgSrc).toBeTruthy();
+        expect(viewLargeImgSrc).toEqual(hoveredImgSrc);
     });
 });
 
