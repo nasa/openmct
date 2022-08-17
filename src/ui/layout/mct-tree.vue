@@ -629,7 +629,7 @@ export default {
             directDescendants.sort(this.sortNameAscending);
 
             // Take a copy of the sorted descendants array
-            const temp = directDescendants.slice();
+            const sortedTreeItems = directDescendants.slice();
 
             directDescendants.forEach(descendant => {
                 const parent = this.getTreeItemByPath(descendant.navigationPath);
@@ -646,12 +646,12 @@ export default {
                 }
 
                 // Splice in the children of the descendant
-                const parentIndex = temp.map(item => item.navigationPath).indexOf(parent.navigationPath);
-                temp.splice(parentIndex + 1, 0, ...children);
+                const parentIndex = sortedTreeItems.map(item => item.navigationPath).indexOf(parent.navigationPath);
+                sortedTreeItems.splice(parentIndex + 1, 0, ...children);
             });
 
             // Splice in all of the sorted descendants
-            this.treeItems.splice(this.treeItems.indexOf(parentItem) + 1, temp.length, ...temp);
+            this.treeItems.splice(this.treeItems.indexOf(parentItem) + 1, sortedTreeItems.length, ...sortedTreeItems);
         },
         buildNavigationPath(objectPath) {
             return '/browse/' + [...objectPath].reverse()
