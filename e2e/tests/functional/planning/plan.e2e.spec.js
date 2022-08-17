@@ -19,9 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { getFocusedObjectUuid, getHashUrlToDomainObject } = require('../../../appActions');
 const { test, expect } = require('../../../pluginFixtures');
-const Buffer = require('buffer').Buffer;
+const { createPlanFromJSON } = require('../../../appActions');
 
 const testPlan = {
     "TEST_GROUP": [
@@ -67,46 +66,6 @@ const testPlan = {
         }
     ]
 };
-
-async function createPlanFromJSON(page, { name, json }) {
-    //Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click 'Plan' menu option
-    await page.click(`li:text("Plan")`);
-
-    // Modify the name input field of the domain object to accept 'name'
-    if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
-        await nameInput.fill(name);
-    }
-
-    // Upload buffer from memory
-    await page.locator('input#fileElem').setInputFiles({
-        name: 'plan.txt',
-        mimeType: 'text/plain',
-        buffer: Buffer.from(JSON.stringify(json))
-    });
-
-    // Click OK button and wait for Navigate event
-    await Promise.all([
-        page.waitForLoadState(),
-        page.click('[aria-label="Save"]'),
-        // Wait for Save Banner to appear
-        page.waitForSelector('.c-message-banner__message')
-    ]);
-
-    // Wait until the URL is updated
-    await page.waitForURL(`**/mine/*`);
-    const uuid = await getFocusedObjectUuid(page);
-    const objectUrl = await getHashUrlToDomainObject(page, uuid);
-
-    return {
-        uuid,
-        url: objectUrl
-    };
-}
 
 test.describe("Plan", () => {
     test("Create a Plan and display all plan events @unstable", async ({ page }) => {
