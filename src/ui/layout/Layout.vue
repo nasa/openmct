@@ -53,6 +53,7 @@
         type="horizontal"
     >
         <pane
+            id="tree-pane"
             class="l-shell__pane-tree"
             handle="after"
             label="Browse"

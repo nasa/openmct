@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { openObjectTreeContextMenu } = require('../../../../appActions');
+const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
 const path = require('path');
 
 const TEST_TEXT = 'Testing text for entries.';
@@ -30,8 +30,9 @@ const CUSTOM_NAME = 'CUSTOM_NAME';
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 
 test.describe('Restricted Notebook', () => {
+    let notebook;
     test.beforeEach(async ({ page }) => {
-        await startAndAddRestrictedNotebookObject(page);
+        notebook = await startAndAddRestrictedNotebookObject(page);
     });
 
     test('Can be renamed @addInit', async ({ page }) => {
@@ -39,9 +40,7 @@ test.describe('Restricted Notebook', () => {
     });
 
     test('Can be deleted if there are no locked pages @addInit', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-
-        await openObjectTreeContextMenu(page, myItemsFolderName, `Unnamed ${CUSTOM_NAME}`);
+        await openObjectTreeContextMenu(page, notebook.url);
 
         const menuOptions = page.locator('.c-menu ul');
         await expect.soft(menuOptions).toContainText('Remove');
@@ -76,9 +75,9 @@ test.describe('Restricted Notebook', () => {
 });
 
 test.describe('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
-
+    let notebook;
     test.beforeEach(async ({ page }) => {
-        await startAndAddRestrictedNotebookObject(page);
+        notebook = await startAndAddRestrictedNotebookObject(page);
         await enterTextEntry(page);
         await lockPage(page);
 
@@ -86,9 +85,8 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await page.locator('button.c-notebook__toggle-nav-button').click();
     });
 
-    test('Locked page should now be in a locked state @addInit @unstable', async ({ page, openmctConfig }, testInfo) => {
+    test('Locked page should now be in a locked state @addInit @unstable', async ({ page }, testInfo) => {
         test.fixme(testInfo.project === 'chrome-beta', "Test is unreliable on chrome-beta");
-        const { myItemsFolderName } = openmctConfig;
         // main lock message on page
         const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
         expect.soft(await lockMessage.count()).toEqual(1);
@@ -98,7 +96,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         expect.soft(await pageLockIcon.count()).toEqual(1);
 
         // no way to remove a restricted notebook with a locked page
-        await openObjectTreeContextMenu(page, myItemsFolderName, `Unnamed ${CUSTOM_NAME}`);
+        await openObjectTreeContextMenu(page, notebook.url);
         const menuOptions = page.locator('.c-menu ul');
 
         await expect(menuOptions).not.toContainText('Remove');
@@ -178,13 +176,8 @@ async function startAndAddRestrictedNotebookObject(page) {
     // eslint-disable-next-line no-undef
     await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitRestrictedNotebook.js') });
     await page.goto('./', { waitUntil: 'networkidle' });
-    await page.click('button:has-text("Create")');
-    await page.click(`text=${CUSTOM_NAME}`); // secondarily tests renamability also
-    // Click text=OK
-    await Promise.all([
-        page.waitForNavigation({waitUntil: 'networkidle'}),
-        page.click('text=OK')
-    ]);
+
+    return createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 }
 
 /**
