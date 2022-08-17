@@ -152,7 +152,10 @@ test.describe("Time Strip", () => {
 
             // Activate Independent Time Conductor in Fixed Time Mode
             await page.click('.c-toggle-switch__slider');
-            expect(await activityBounds.count()).toEqual(0);
+
+            // All events should be displayed at this point because the
+            // initial independent context bounds will match the global bounds
+            expect(await activityBounds.count()).toEqual(5);
 
             // Set the independent time bounds so that two events are shown
             const startBound = testPlan.TEST_GROUP[0].start;
