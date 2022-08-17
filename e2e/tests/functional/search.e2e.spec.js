@@ -215,7 +215,7 @@ async function createObjectsForSearch(page, myItemsFolderName) {
     ]);
 
     await page.locator('button:has-text("Create")').click();
-    await page.locator('li[title="A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts."]').click();
+    await page.locator('li[title="A digital clock that uses system time and supports a variety of display formats and timezones."]').click();
     await Promise.all([
         page.waitForNavigation(),
         await page.locator('text=Properties Title Notes >> input[type="text"] >> nth=0').fill('Clock A'),
@@ -224,7 +224,7 @@ async function createObjectsForSearch(page, myItemsFolderName) {
     ]);
 
     await page.locator('button:has-text("Create")').click();
-    await page.locator('li[title="A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts."]').click();
+    await page.locator('li[title="A digital clock that uses system time and supports a variety of display formats and timezones."]').click();
     await Promise.all([
         page.waitForNavigation(),
         await page.locator('text=Properties Title Notes >> input[type="text"] >> nth=0').fill('Clock B'),
@@ -233,7 +233,7 @@ async function createObjectsForSearch(page, myItemsFolderName) {
     ]);
 
     await page.locator('button:has-text("Create")').click();
-    await page.locator('li[title="A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts."]').click();
+    await page.locator('li[title="A digital clock that uses system time and supports a variety of display formats and timezones."]').click();
     await Promise.all([
         page.waitForNavigation(),
         await page.locator('text=Properties Title Notes >> input[type="text"] >> nth=0').fill('Clock C'),
@@ -242,7 +242,7 @@ async function createObjectsForSearch(page, myItemsFolderName) {
     ]);
 
     await page.locator('button:has-text("Create")').click();
-    await page.locator('li[title="A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts."]').click();
+    await page.locator('li[title="A digital clock that uses system time and supports a variety of display formats and timezones."]').click();
     await Promise.all([
         page.waitForNavigation(),
         await page.locator('text=Properties Title Notes >> input[type="text"] >> nth=0').fill('Clock D'),
