@@ -52,6 +52,8 @@ $meterNeedleBorderRadius: 5px;
 .c-dial {
   max-height: 100%;
   max-width: 100%;
+  display: block;
+  margin: auto; // Centers SVG in container while allowing scaling
 
   &__bg {
     fill: $colorGaugeBg;
