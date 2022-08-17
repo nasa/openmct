@@ -70,6 +70,11 @@ const testPlan = {
 
 test.describe("Time Strip", () => {
     test("Create two Time Strips, add a single Plan to both, and verify they can have separate Indepdenent Time Contexts @unstable", async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5627'
+        });
+
         // Constant locators
         const independentTimeConductorInputs = page.locator('.l-shell__main-independent-time-conductor .c-input--datetime');
         const activityBounds = page.locator('.activity-bounds');
@@ -111,11 +116,6 @@ test.describe("Time Strip", () => {
         });
 
         await test.step("TimeStrip can use the Independent Time Conductor", async () => {
-            test.info().annotations.push({
-                type: 'issue',
-                description: 'https://github.com/nasa/openmct/issues/5627'
-            });
-
             // Activate Independent Time Conductor in Fixed Time Mode
             await page.click('.c-toggle-switch__slider');
             expect(await activityBounds.count()).toEqual(0);
