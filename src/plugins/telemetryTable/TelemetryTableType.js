@@ -23,9 +23,9 @@
 define(function () {
     return {
         name: 'Telemetry Table',
-        description: 'Display telemetry values for the current time bounds in tabular form. Supports filtering and sorting.',
+        description: 'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
         creatable: true,
-        cssClass: 'icon-tabular-realtime',
+        cssClass: 'icon-tabular-scrolling',
         initialize(domainObject) {
             domainObject.composition = [];
             domainObject.configuration = {
