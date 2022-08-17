@@ -110,14 +110,31 @@ export default {
     },
     mounted() {
         this.isEditing = this.openmct.editor.isEditing();
-        this.timestamp = Date.now();
+        this.timestamp = this.openmct.time.clock().currentValue();
+
+        this.openmct.time.on('clock', (newClock) => {
+            //newclock can be undefined
+            if (newClock === undefined) {
+                // Show everything
+                // Use logic in this.setEditState which does the same thing
+            } else {
+                // Use logic in this.setEditState which does the same thing
+            }
+        });
+        this.openmct.time.on('bounds', (bounds, isTick) => {
+            if (isTick === true) {
+                this.timestamp = this.openmct.time.clock().currentValue();
+            }
+        });
+
         this.getPlanDataAndSetConfig(this.domainObject);
 
         this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.planFileUpdated);
         this.unlistenConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.setViewFromConfig);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
-        this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
+        //Remove ticker service, we don't need it any more.
+        //this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
         this.openmct.editor.on('isEditing', this.setEditState);
 
         this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
