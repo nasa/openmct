@@ -139,7 +139,7 @@ export default class FormsAPI extends EventEmitter {
         } else {
             overlay = self.openmct.overlays.overlay({
                 element: vm.$el,
-                size: 'small',
+                size: 'dialog',
                 onDestroy: () => vm.$destroy()
             });
         }
