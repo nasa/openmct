@@ -590,10 +590,8 @@ test.describe('Example Imagery in Time Strip', () => {
             name: 'Example Imagery'.concat(' ', uuid()),
             parent: timeStripObject.uuid
         });
-        // First navigate to the object you want to drag and drop
+        // Navigate to timestrip
         await page.goto(timeStripObject.url);
-        // Expand the tree to reveal the selected object
-        await page.click('button[title="Show selected item in tree"]');
 
         await page.locator('.c-imagery-tsv-container').hover();
         // get url of the hovered image
