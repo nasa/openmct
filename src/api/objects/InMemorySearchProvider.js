@@ -63,6 +63,8 @@ class InMemorySearchProvider {
         this.localSearchForTags = this.localSearchForTags.bind(this);
         this.localSearchForNotebookAnnotations = this.localSearchForNotebookAnnotations.bind(this);
         this.onAnnotationCreation = this.onAnnotationCreation.bind(this);
+        this.onCompositionAdded = this.onCompositionAdded.bind(this);
+        this.onCompositionRemoved = this.onCompositionRemoved.bind(this);
         this.onerror = this.onWorkerError.bind(this);
         this.startIndexing = this.startIndexing.bind(this);
 
@@ -74,6 +76,12 @@ class InMemorySearchProvider {
                 this.worker.port.onmessageerror = null;
                 this.worker.port.close();
             }
+
+            Object.keys(this.indexedCompositions).forEach(keyString => {
+                const composition = this.indexedCompositions[keyString];
+                composition.off('add', this.onCompositionAdded);
+                composition.off('remove', this.onCompositionRemoved);
+            });
 
             this.destroyObservers(this.indexedIds);
             this.destroyObservers(this.indexedCompositions);
@@ -280,7 +288,7 @@ class InMemorySearchProvider {
         provider.index(domainObject);
     }
 
-    onCompositionMutation(domainObject, composition) {
+    onCompositionAdded(newDomainObjectToIndex) {
         const provider = this;
         // The object comes in as a mutable domain object, which has functions,
         // which the index function cannot handle as it will eventually be serialized
@@ -321,6 +329,7 @@ class InMemorySearchProvider {
     async index(domainObject) {
         const provider = this;
         const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+        const composition = this.openmct.composition.get(domainObject);
 
         if (!this.indexedIds[keyString]) {
             this.indexedIds[keyString] = this.openmct.objects.observe(
@@ -328,11 +337,12 @@ class InMemorySearchProvider {
                 'name',
                 this.onNameMutation.bind(this, domainObject)
             );
-            this.indexedCompositions[keyString] = this.openmct.objects.observe(
-                domainObject,
-                'composition',
-                this.onCompositionMutation.bind(this, domainObject)
-            );
+            if (composition) {
+                composition.on('add', this.onCompositionAdded);
+                composition.on('remove', this.onCompositionRemoved);
+                this.indexedCompositions[keyString] = composition;
+            }
+
             if (domainObject.type === 'annotation') {
                 this.indexedTags[keyString] = this.openmct.objects.observe(
                     domainObject,
@@ -353,8 +363,6 @@ class InMemorySearchProvider {
                 this.localIndexItem(keyString, domainObject);
             }
         }
-
-        const composition = this.openmct.composition.get(domainObject);
 
         if (composition !== undefined) {
             const children = await composition.load();
