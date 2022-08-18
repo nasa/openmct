@@ -35,7 +35,6 @@ const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
-
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -220,178 +219,146 @@ test.describe('Example Imagery Object', () => {
 // ('Clicking on the left arrow should pause the imagery and go to previous image');
 // ('If the imagery view is in pause mode, it should not be updated when new images come in');
 // ('If the imagery view is not in pause mode, it should be updated when new images come in');
-test('Example Imagery in Display layout @unstable', async ({ page }) => {
-    test.info().annotations.push({
-        type: 'issue',
-        description: 'https://github.com/nasa/openmct/issues/5265'
-    });
-
-    // Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-
-    // Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click text=Example Imagery
-    await page.click('text=Example Imagery');
-
-    // Clear and set Image load delay to minimum value
-    await page.locator('input[type="number"]').fill('');
-    await page.locator('input[type="number"]').fill('5000');
-
-    // Click text=OK
-    await Promise.all([
-        page.waitForNavigation({waitUntil: 'networkidle'}),
-        page.click('text=OK'),
-        //Wait for Save Banner to appear
-        page.waitForSelector('.c-message-banner__message')
-    ]);
-
-    // Wait until Save Banner is gone
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-    await page.locator(backgroundImageSelector).hover({trial: true});
-
-    // Click previous image button
-    const previousImageButton = page.locator('.c-nav--prev');
-    await previousImageButton.click();
-
-    // Verify previous image
-    const selectedImage = page.locator('.selected');
-    await expect(selectedImage).toBeVisible();
-
-    // Zoom in
-    const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-    await page.locator(backgroundImageSelector).hover({trial: true});
-    const deltaYStep = 100; // equivalent to 1x zoom
-    await page.mouse.wheel(0, deltaYStep * 2);
-    const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-    const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
-    const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
-
-    // Wait for zoom animation to finish
-    await page.locator(backgroundImageSelector).hover({trial: true});
-    const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-    expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-    expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
-
-    // Center the mouse pointer
-    await page.mouse.move(imageCenterX, imageCenterY);
-
-    // Pan Imagery Hints
-    const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-    expect(expectedAltText).toEqual(imageryHintsText);
-
-    // Click next image button
-    const nextImageButton = page.locator('.c-nav--next');
-    await nextImageButton.click();
-
-    // Click time conductor mode button
-    await page.locator('.c-mode-button').click();
-
-    // Select local clock mode
-    await page.locator('[data-testid=conductor-modeOption-realtime]').click();
-
-    // Zoom in on next image
-    await page.locator(backgroundImageSelector).hover({trial: true});
-    await page.mouse.wheel(0, deltaYStep * 2);
-
-    // Wait for zoom animation to finish
-    await page.locator(backgroundImageSelector).hover({trial: true});
-    const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-    expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-    expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
-
-    // Click previous image button
-    await previousImageButton.click();
-
-    // Verify previous image
-    await expect(selectedImage).toBeVisible();
-
-    const imageCount = await page.locator('.c-imagery__thumb').count();
-    await expect.poll(async () => {
-        const newImageCount = await page.locator('.c-imagery__thumb').count();
-
-        return newImageCount;
-    }, {
-        message: "verify that old images are discarded",
-        timeout: 6 * 1000
-    }).toBe(imageCount);
-
-    // Verify selected image is still displayed
-    await expect(selectedImage).toBeVisible();
-
-    // Unpause imagery
-    await page.locator('.pause-play').click();
-
-    //Get background-image url from background-image css prop
-    await assertBackgroundImageUrlFromBackgroundCss(page);
-
-    // Open the image filter menu
-    await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
-
-    // Drag the brightness and contrast sliders around and assert filter values
-    await dragBrightnessSliderAndAssertFilterValues(page);
-    await dragContrastSliderAndAssertFilterValues(page);
-});
-
-test.describe('Example imagery thumbnails resize in display layouts', () => {
-    test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
+test.describe('Example Imagery in Display Layout', () => {
+    let displayLayout;
+    test.beforeEach(async ({ page }) => {
+        // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
-        // Click button:has-text("Create")
-        await page.locator('button:has-text("Create")').click();
+        displayLayout = await createDomainObjectWithDefaults(page, { type: 'Display Layout' });
+        await page.goto(displayLayout.url);
 
-        // Click li:has-text("Display Layout")
-        await page.locator('li:has-text("Display Layout")').click();
-        const displayLayoutTitleField = page.locator('text=Properties Title Notes Horizontal grid (px) Vertical grid (px) Horizontal size ( >> input[type="text"]');
-        await displayLayoutTitleField.click();
+        /* Create Sine Wave Generator with minimum Image Load Delay */
+        // Click the Create button
+        await page.click('button:has-text("Create")');
 
-        await displayLayoutTitleField.fill('Thumbnail Display Layout');
+        // Click text=Example Imagery
+        await page.click('text=Example Imagery');
 
-        // Click text=OK
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click()
-        ]);
-
-        // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
-        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-
-        // Click text=Save and Finish Editing
-        await page.locator('text=Save and Finish Editing').click();
-
-        // Click button:has-text("Create")
-        await page.locator('button:has-text("Create")').click();
-
-        // Click li:has-text("Example Imagery")
-        await page.locator('li:has-text("Example Imagery")').click();
-
-        const imageryTitleField = page.locator('text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]');
-        // Click text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]
-        await imageryTitleField.click();
-
-        // Fill text=Properties Title Notes Images url list (comma separated) Image load delay (milli >> input[type="text"]
-        await imageryTitleField.fill('Thumbnail Example Imagery');
+        // Clear and set Image load delay to minimum value
+        await page.locator('input[type="number"]').fill('');
+        await page.locator('input[type="number"]').fill('5000');
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click()
+            page.waitForNavigation({waitUntil: 'networkidle'}),
+            page.click('text=OK'),
+            //Wait for Save Banner to appear
+            page.waitForSelector('.c-message-banner__message')
         ]);
 
-        // Click text=Thumbnail Example Imagery Imagery Layout Snapshot >> button >> nth=0
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=Thumbnail Example Imagery Imagery Layout Snapshot >> button').first().click()
-        ]);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+
+        await page.goto(displayLayout.url);
+    });
+    test('Example Imagery operations @unstable', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5265'
+        });
 
         // Edit mode
-        await page.locator('text=Thumbnail Display Layout Snapshot >> button').nth(3).click();
+        await page.click('button[title="Edit"]');
 
         // Click on example imagery to expose toolbar
-        await page.locator('text=Thumbnail Example Imagery Snapshot Large View').click();
+        await page.locator('.c-so-view__header').click();
+
+        await page.locator('div[title="Resize object height"] > input').click();
+        await page.locator('div[title="Resize object height"] > input').fill('50');
+
+        await page.locator('div[title="Resize object width"] > input').click();
+        await page.locator('div[title="Resize object width"] > input').fill('50');
+
+        // Click previous image button
+        const previousImageButton = page.locator('.c-nav--prev');
+        await previousImageButton.click();
+
+        // Verify previous image
+        const selectedImage = page.locator('.selected');
+        await expect(selectedImage).toBeVisible();
+
+        // Zoom in
+        const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
+        await page.locator(backgroundImageSelector).hover({trial: true});
+        const deltaYStep = 100; // equivalent to 1x zoom
+        await page.mouse.wheel(0, deltaYStep * 2);
+        const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+        const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+
+        // Wait for zoom animation to finish
+        await page.locator(backgroundImageSelector).hover({trial: true});
+        const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+        expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+        expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+
+        // Center the mouse pointer
+        await page.mouse.move(imageCenterX, imageCenterY);
+
+        // Pan Imagery Hints
+        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+        expect(expectedAltText).toEqual(imageryHintsText);
+
+        // Click next image button
+        const nextImageButton = page.locator('.c-nav--next');
+        await nextImageButton.click();
+
+        // Click time conductor mode button
+        await page.locator('.c-mode-button').click();
+
+        // Select local clock mode
+        await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+
+        // Zoom in on next image
+        await page.locator(backgroundImageSelector).hover({trial: true});
+        await page.mouse.wheel(0, deltaYStep * 2);
+
+        // Wait for zoom animation to finish
+        await page.locator(backgroundImageSelector).hover({trial: true});
+        const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+        expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+        expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+
+        // Click previous image button
+        await previousImageButton.click();
+
+        // Verify previous image
+        await expect(selectedImage).toBeVisible();
+
+        const imageCount = await page.locator('.c-imagery__thumb').count();
+        await expect.poll(async () => {
+            const newImageCount = await page.locator('.c-imagery__thumb').count();
+
+            return newImageCount;
+        }, {
+            message: "verify that old images are discarded",
+            timeout: 7 * 1000
+        }).toBe(imageCount);
+
+        // Verify selected image is still displayed
+        await expect(selectedImage).toBeVisible();
+
+        // Unpause imagery
+        await page.locator('.pause-play').click();
+
+        //Get background-image url from background-image css prop
+        await assertBackgroundImageUrlFromBackgroundCss(page);
+
+        // Open the image filter menu
+        await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+
+        // Drag the brightness and contrast sliders around and assert filter values
+        await dragBrightnessSliderAndAssertFilterValues(page);
+        await dragContrastSliderAndAssertFilterValues(page);
+    });
+
+    test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
+        const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
+        // Edit mode
+        await page.click('button[title="Edit"]');
+
+        // Click on example imagery to expose toolbar
+        await page.locator('.c-so-view__header').click();
 
         // expect thumbnails not be visible when first added
         expect.soft(thumbsWrapperLocator.isHidden()).toBeTruthy();
@@ -402,21 +369,15 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
         conditions of the thumbnails (hidden, small thumbnails, regular thumbnails).
         Specifically, height is set to 50px for small thumbs and 100px for regular
         */
-        // Click #mct-input-id-103
-        await page.locator('#mct-input-id-103').click();
-
-        // Fill #mct-input-id-103
-        await page.locator('#mct-input-id-103').fill('50');
+        await page.locator('div[title="Resize object height"] > input').click();
+        await page.locator('div[title="Resize object height"] > input').fill('50');
 
         expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
         await expect(thumbsWrapperLocator).toHaveClass(/is-small-thumbs/);
 
         // Resize the example imagery vertically to change the thumbnail visibility
-        // Click #mct-input-id-103
-        await page.locator('#mct-input-id-103').click();
-
-        // Fill #mct-input-id-103
-        await page.locator('#mct-input-id-103').fill('100');
+        await page.locator('div[title="Resize object height"] > input').click();
+        await page.locator('div[title="Resize object height"] > input').fill('100');
 
         expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
         await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
@@ -424,28 +385,23 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
 });
 
 test.describe('Example Imagery in Flexible layout', () => {
-    test('Example Imagery in Flexible layout @unstable', async ({ page, browserName, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-
-        // eslint-disable-next-line playwright/no-skipped-test
-        test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/5326'
-        });
-
-        // Go to baseURL
+    let flexibleLayout;
+    test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
+        flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
+        await page.goto(flexibleLayout.url);
+
+        /* Create Sine Wave Generator with minimum Image Load Delay */
         // Click the Create button
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
         await page.click('text=Example Imagery');
 
-        // Clear and set Image load delay (milliseconds)
-        await page.click('input[type="number"]', {clickCount: 3});
-        await page.type('input[type="number"]', "20");
+        // Clear and set Image load delay to minimum value
+        await page.locator('input[type="number"]').fill('');
+        await page.locator('input[type="number"]').fill('5000');
 
         // Click text=OK
         await Promise.all([
@@ -454,48 +410,18 @@ test.describe('Example Imagery in Flexible layout', () => {
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
-        // Wait until Save Banner is gone
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-        await page.locator(backgroundImageSelector).hover({trial: true});
 
-        // Click the Create button
-        await page.click('button:has-text("Create")');
+        await page.goto(flexibleLayout.url);
+    });
+    test('Example Imagery in Flexible layout @unstable', async ({ page, browserName }) => {
 
-        // Click text=Flexible Layout
-        await page.click('text=Flexible Layout');
-
-        // Assert Flexible layout
-        await expect(page.locator('.js-form-title')).toHaveText('Create a New Flexible Layout');
-
-        await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
-
-        // Click My Items
-        await Promise.all([
-            page.locator('text=OK').click(),
-            page.waitForNavigation({waitUntil: 'networkidle'})
-        ]);
-
-        // Click My Items
-        await page.locator('.c-disclosure-triangle').click();
-
-        // Right click example imagery
-        await page.click(('text=Unnamed Example Imagery'), { button: 'right' });
-
-        // Click move
-        await page.locator('.icon-move').click();
-
-        // Click triangle to open sub menu
-        await page.locator('.c-form__section .c-disclosure-triangle').click();
-
-        // Click Flexable Layout
-        await page.click('.c-overlay__outer >> text=Unnamed Flexible Layout');
-
-        // Click text=OK
-        await page.locator('text=OK').click();
-
-        // Save template
-        await saveTemplate(page);
+        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5326'
+        });
 
         // Zoom in
         await mouseZoomIn(page);
@@ -539,7 +465,7 @@ test.describe('Example Imagery in Flexible layout', () => {
             return newImageCount;
         }, {
             message: "verify that old images are discarded",
-            timeout: 6 * 1000
+            timeout: 7 * 1000
         }).toBe(imageCount);
 
         // Verify selected image is still displayed
@@ -692,7 +618,7 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
         return backgroundImageUrl2;
     }, {
         message: "verify next image has updated",
-        timeout: 6 * 1000
+        timeout: 7 * 1000
     }).not.toBe(backgroundImageUrl1);
     console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
 }
