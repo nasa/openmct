@@ -93,6 +93,70 @@ test.describe('Testing Display Layout @unstable', () => {
 
         await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
     });
+    test('items in a display layout can be removed with object tree context menu when viewing the display layout', async ({ page }) => {
+        // Create a Display Layout
+        await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout',
+            name: "Test Display Layout"
+        });
+        // Edit Display Layout
+        await page.locator('[title="Edit"]').click();
+
+        // Expand the 'My Items' folder in the left tree
+        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+        // Add the Sine Wave Generator to the Display Layout and save changes
+        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        await page.locator('button[title="Save"]').click();
+        await page.locator('text=Save and Finish Editing').click();
+
+        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
+
+        // Expand the Display Layout so we can remove the sine wave generator
+        await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
+
+        // Bring up context menu and remove
+        await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').first().click({ button: 'right' });
+        await page.locator('text=Remove').click();
+        await page.locator('text=OK').click();
+
+        // delete
+
+        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+    });
+    test('items in a display layout can be removed with object tree context menu when viewing another item', async ({ page }) => {
+        // Create a Display Layout
+        await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout',
+            name: "Test Display Layout"
+        });
+        // Edit Display Layout
+        await page.locator('[title="Edit"]').click();
+
+        // Expand the 'My Items' folder in the left tree
+        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+        // Add the Sine Wave Generator to the Display Layout and save changes
+        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        await page.locator('button[title="Save"]').click();
+        await page.locator('text=Save and Finish Editing').click();
+
+        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
+
+        // Expand the Display Layout so we can remove the sine wave generator
+        await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
+
+        // Click the original Sine Wave Generator to navigate away from the Display Layout
+        await page.locator('.c-tree__item .c-tree__item__name:text("Test Sine Wave Generator")').click();
+
+        // Bring up context menu and remove
+        await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').click({ button: 'right' });
+        await page.locator('text=Remove').click();
+        await page.locator('text=OK').click();
+
+        // navigate back to the display layout to confirm it has been removed
+        await page.locator('.c-tree__item .c-tree__item__name:text("Test Display Layout")').click();
+
+        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+    });
 });
 
 /**
