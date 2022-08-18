@@ -597,12 +597,12 @@ test.describe('Example Imagery in Time Strip', () => {
         await page.locator(`.c-tree__item a:has-text("${timeStripObject.name}")`).click();
         await page.locator('.c-imagery-tsv-container').hover();
         // get url of the hovered image
-        const hoveredImg = await page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
+        const hoveredImg = page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
         const hoveredImgSrc = await hoveredImg.getAttribute('src');
         expect(hoveredImgSrc).toBeTruthy();
         await page.locator('.c-imagery-tsv-container').click();
         // get image of view large container
-        const viewLargeImg = await page.locator('img.c-imagery__main-image__image');
+        const viewLargeImg = page.locator('img.c-imagery__main-image__image');
         const viewLargeImgSrc = await viewLargeImg.getAttribute('src');
         expect(viewLargeImgSrc).toBeTruthy();
         expect(viewLargeImgSrc).toEqual(hoveredImgSrc);
