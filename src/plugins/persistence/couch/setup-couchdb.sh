@@ -80,7 +80,7 @@ admin_user_exists () {
 
 create_admin_user () {
     echo Creating admin user
-    curl -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER?raw=true -d [here]
+    curl -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER -d \'"$COUCH_ADMIN_PASSWORD"\'
 }
 
 if [ "$(admin_user_exists)" == "FALSE" ]; then
