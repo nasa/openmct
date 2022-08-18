@@ -590,11 +590,11 @@ test.describe('Example Imagery in Time Strip', () => {
             name: 'Example Imagery'.concat(' ', uuid()),
             parent: timeStripObject.uuid
         });
+        // First navigate to the object you want to drag and drop
+        await page.goto(timeStripObject.url);
+        // Expand the tree to reveal the selected object
+        await page.click('button[title="Show selected item in tree"]');
 
-        await page.goto('./#/browse/mine?hideTree=false');
-        // expand root folder
-        await page.locator('text=Open MCT My Items >> span').nth(3).click();
-        await page.locator(`.c-tree__item a:has-text("${timeStripObject.name}")`).click();
         await page.locator('.c-imagery-tsv-container').hover();
         // get url of the hovered image
         const hoveredImg = page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
