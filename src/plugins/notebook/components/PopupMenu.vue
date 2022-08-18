@@ -65,6 +65,10 @@ export default {
             return;
         },
         showMenuItems($event) {
+            if (this.menuItems) {
+                this.hideMenuItems();
+            }
+
             const menuItems = new Vue({
                 components: {
                     MenuItems
