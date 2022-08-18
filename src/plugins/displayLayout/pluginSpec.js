@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+import Vue from 'vue';
 import DisplayLayoutPlugin from './plugin';
 
 describe('the plugin', function () {
@@ -115,6 +116,59 @@ describe('the plugin', function () {
 
         expect(error).toBeUndefined();
 
+    });
+
+    describe('on load', () => {
+        let displayLayoutItem;
+        let item;
+
+        beforeEach((done) => {
+            item = {
+                'width': 32,
+                'height': 18,
+                'x': 78,
+                'y': 8,
+                'identifier': {
+                    'namespace': '',
+                    'key': 'bdeb91ab-3a7e-4a71-9dd2-39d73644e136'
+                },
+                'hasFrame': true,
+                'type': 'line-view', // so no telemetry functionality is triggered, just want to test the sync
+                'id': 'c0ff485a-344c-4e70-8d83-a9d9998a69fc'
+
+            };
+            displayLayoutItem = {
+                'composition': [
+                    // no item in compostion, but item in configuration items
+                ],
+                'configuration': {
+                    'items': [
+                        item
+                    ],
+                    'layoutGrid': [
+                        10,
+                        10
+                    ]
+                },
+                'name': 'Display Layout',
+                'type': 'layout',
+                'identifier': {
+                    'namespace': '',
+                    'key': 'c5e636c1-6771-4c9c-b933-8665cab189b3'
+                }
+            };
+
+            const applicableViews = openmct.objectViews.get(displayLayoutItem, []);
+            const displayLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'layout.view');
+            const view = displayLayoutViewProvider.view(displayLayoutItem);
+            view.show(child, false);
+
+            Vue.nextTick(done);
+        });
+
+        it('will sync compostion and layout items', () => {
+            expect(displayLayoutItem.configuration.items.length).toBe(0);
+        });
     });
 
     describe('the alpha numeric format view', () => {
