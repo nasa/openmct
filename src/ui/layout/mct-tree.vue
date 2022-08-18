@@ -5,7 +5,6 @@
     :class="{
         'c-selector': isSelectorTree
     }"
-    :style="treeHeight"
 >
     <div
         ref="search"
