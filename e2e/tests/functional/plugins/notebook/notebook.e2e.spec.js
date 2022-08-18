@@ -78,14 +78,13 @@ test.describe('Notebook section tests', () => {
             name: "Test Notebook"
         });
     });
-    test('Default sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
+    test('Default and new sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
         // Check that the default section and page are created and the name matches the defaults
         const defaultSectionName = await page.locator('.c-notebook__sections .c-list__item__name').textContent();
         expect(defaultSectionName).toBe('Unnamed Section');
         const defaultPageName = await page.locator('.c-notebook__pages .c-list__item__name').textContent();
         expect(defaultPageName).toBe('Unnamed Page');
-    });
-    test('New sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
+
         // Expand sidebar and add a section
         await page.locator('.c-notebook__toggle-nav-button').click();
         await page.locator('.js-sidebar-sections .c-icon-button.icon-plus').click();
