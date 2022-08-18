@@ -27,6 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
 const { test, expect } = require('../../../../baseFixtures');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Notebook CRUD Operations', () => {
     test.fixme('Can create a Notebook Object', async ({ page }) => {
@@ -67,10 +68,33 @@ test.describe('Default Notebook', () => {
 
 test.describe('Notebook section tests', () => {
     //The following test cases are associated with Notebook Sections
-    test.fixme('New sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
-        //Create new notebook A
-        //Add section
-        //Verify new section and new page details
+    test.beforeEach(async ({ page }) => {
+        //Navigate to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Test Notebook"
+        });
+    });
+    test('Default sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
+        // Check that the default section and page are created and the name matches the defaults
+        const defaultSectionName = await page.locator('.c-notebook__sections .c-list__item__name').textContent();
+        expect(defaultSectionName).toBe('Unnamed Section');
+        const defaultPageName = await page.locator('.c-notebook__pages .c-list__item__name').textContent();
+        expect(defaultPageName).toBe('Unnamed Page');
+    });
+    test('New sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
+        // Expand sidebar and add a section
+        await page.locator('.c-notebook__toggle-nav-button').click();
+        await page.locator('.js-sidebar-sections .c-icon-button.icon-plus').click();
+
+        // Check that new section and page within the new section match the defaults
+        const newSectionName = await page.locator('.c-notebook__sections .c-list__item__name').nth(1).textContent();
+        expect(newSectionName).toBe('Unnamed Section');
+        const newPageName = await page.locator('.c-notebook__pages .c-list__item__name').textContent();
+        expect(newPageName).toBe('Unnamed Page');
     });
     test.fixme('Section selection operations and associated behavior', async ({ page }) => {
         //Create new notebook A
@@ -90,6 +114,30 @@ test.describe('Notebook section tests', () => {
 
 test.describe('Notebook page tests', () => {
     //The following test cases are associated with Notebook Pages
+    test.beforeEach(async ({ page }) => {
+        //Navigate to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Test Notebook"
+        });
+    });
+    test('Delete page popup is removed properly on clicking dropdown again', async ({ page }) => {
+        // Expand sidebar and add a page
+        await page.locator('.c-notebook__toggle-nav-button').click();
+        await page.locator('.js-sidebar-pages .c-icon-button.icon-plus').click();
+
+        // Click on the 2nd page dropdown twice and then click on first page dropdown once
+        await page.locator('.c-popup-menu-button').nth(2).click();
+        await page.locator('.c-popup-menu-button').nth(2).click();
+        await page.locator('.c-popup-menu-button').nth(1).click();
+
+        // Check that there is only ever 1 Delete Page popup displayed
+        const numOfDeletePagePopups = await page.locator('div:has-text("Delete Page")').count();
+        expect(numOfDeletePagePopups).toBe(1);
+    });
     test.fixme('Page selection operations and associated behavior', async ({ page }) => {
         //Create new notebook A
         //Delete existing Page
