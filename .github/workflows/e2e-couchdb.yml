@@ -13,7 +13,7 @@ env:
   COUCH_NODE_NAME: nonode@nohost
 jobs:
   e2e-couchdb:
-    if: ${{ github.event.label.name == 'pr:couchdb' }}
+    if: ${{ github.event.label.name == 'pr:e2e:couchdb' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,3 +31,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: test-results
+      - name: Archive html test results
+        uses: actions/upload-artifact@v3
+        with:
+          path: html-test-results
