@@ -519,20 +519,17 @@ export default {
     },
     watch: {
         imageHistory: {
-            handler(newHistory, oldHistory) {
+            handler(newHistory, _oldHistory) {
                 const newSize = newHistory.length;
-                let imageIndex;
+                let imageIndex = newSize > 0 ? newSize - 1 : undefined;
                 if (this.focusedImageTimestamp !== undefined) {
                     const foundImageIndex = newHistory.findIndex(img => img.time === this.focusedImageTimestamp);
-                    imageIndex = foundImageIndex > -1
-                        ? foundImageIndex
-                        : newSize - 1;
-                } else {
-                    imageIndex = newSize > 0
-                        ? newSize - 1
-                        : undefined;
+                    if (foundImageIndex > -1) {
+                        imageIndex = foundImageIndex;
+                    }
                 }
 
+                this.setFocusedImage(imageIndex);
                 this.nextImageIndex = imageIndex;
 
                 if (this.previousFocusedImage && newHistory.length) {
