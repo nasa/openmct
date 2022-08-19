@@ -147,14 +147,16 @@
     }
 
     &--datetime {
-        $size: min-content;
+        $size: max-content;
         display: grid;
-        grid-template-columns: repeat(5, min-content);
-        grid-template-rows: auto;
+        grid-template-columns: repeat(5, $size);
+        grid-template-rows: $size;
         grid-row-gap: 3px;
         grid-column-gap: $interiorMargin;
+        align-items: stretch;
 
         .hint {
+            align-self: center;
             opacity: 0.7;
         }
     }
