@@ -20,42 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.c-timelist {
-  & .nowMarker.hasCurrent {
-    height: 2px;
-    position: absolute;
-    z-index: 10;
-    background: cyan;
-    width: 100%;
-  }
+// This should be used to install the Example Fault Provider, this will also install the FaultManagementPlugin (neither of which are installed by default).
 
-  .c-list-item {
-    /* Time Lists */
+document.addEventListener('DOMContentLoaded', () => {
+    const openmct = window.openmct;
+    const staticFaults = true;
 
-    td {
-      $p: $interiorMarginSm;
-      padding-top: $p;
-      padding-bottom: $p;
-    }
-
-    &.--is-current {
-      background-color: $colorCurrentBg;
-      border-top: 1px solid $colorCurrentBorder !important;
-      color: $colorCurrentFg;
-      font-weight: bold;
-    }
-
-    &.--is-future {
-      background-color: $colorFutureBg;
-      border-top-color: $colorFutureBorder !important;
-      color: $colorFutureFg;
-    }
-
-    &__value {
-      &.--duration {
-        width: 5%;
-      }
-    }
-  }
-
-}
+    openmct.install(openmct.plugins.example.ExampleFaultSource(staticFaults));
+});
