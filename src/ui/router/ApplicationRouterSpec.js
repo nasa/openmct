@@ -49,7 +49,6 @@ describe('Application router utility functions', () => {
     it('has initial hash when loaded', () => {
         const success = window.location.hash !== null;
         expect(success).toBe(true);
-        debugger;
     });
 
     it('The setSearchParam function sets an individual search parameter in the window location hash', () => {
