@@ -72,6 +72,7 @@ test.describe("CouchDB Status Indicator @couchdb", () => {
 });
 
 test.describe("CouchDB initialization @couchdb", () => {
+    test.use({ failOnConsoleError: false });
     test("'My Items' folder is created if it doesn't exist", async ({ page }) => {
         // Store any relevant PUT requests that happen on the page
         const createMineFolderRequests = [];
