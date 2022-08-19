@@ -8,6 +8,8 @@ let resolveFunction;
 
 describe('Application router utility functions', () => {
     beforeEach(done => {
+        //This makes the log visible again from the command line.
+        spyOn(console, 'log').and.callThrough();
         appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
@@ -28,6 +30,7 @@ describe('Application router utility functions', () => {
             };
 
             openmct.router.on('change:hash', resolveFunction);
+            openmct.router.setHash.flush();
             openmct.router.setLocationFromUrl();
         });
 
@@ -46,12 +49,11 @@ describe('Application router utility functions', () => {
     it('has initial hash when loaded', () => {
         const success = window.location.hash !== null;
         expect(success).toBe(true);
+        debugger;
     });
 
     it('The setSearchParam function sets an individual search parameter in the window location hash', () => {
-        openmct.router.setHash.flush();
         openmct.router.setSearchParam('testParam1', 'testValue1');
-        openmct.router.setHash.flush();
 
         const searchParams = openmct.router.getAllSearchParams();
         expect(searchParams.get('testParam1')).toBe('testValue1');
