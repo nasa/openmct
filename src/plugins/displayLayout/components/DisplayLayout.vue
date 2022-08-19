@@ -517,7 +517,19 @@ export default {
         initializeItems() {
             this.telemetryViewMap = {};
             this.objectViewMap = {};
-            this.layoutItems.forEach(this.trackItem);
+
+            let removedItems = [];
+            this.layoutItems.forEach((item) => {
+                if (item.identifier) {
+                    if (this.containsObject(item.identifier)) {
+                        this.trackItem(item);
+                    } else {
+                        removedItems.push(this.openmct.objects.makeKeyString(item.identifier));
+                    }
+                }
+            });
+
+            removedItems.forEach(this.removeFromConfiguration);
         },
         isItemAlreadyTracked(child) {
             let found = false;
