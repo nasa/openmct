@@ -12,7 +12,7 @@ env:
   COUCH_BASE_LOCAL: http://localhost:5984
   COUCH_NODE_NAME: nonode@nohost
 jobs:
-  e2e-full:
+  e2e-couchdb:
     if: ${{ github.event.label.name == 'pr:couchdb' }}
     runs-on: ubuntu-latest
     steps:
@@ -26,6 +26,7 @@ jobs:
       - run: npm install
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
       - run: npm run test:e2e:couchdb
+      - run: ls -latr
       - name: Archive test results
         uses: actions/upload-artifact@v3
         with:
