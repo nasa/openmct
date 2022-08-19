@@ -26,15 +26,17 @@
 */
 
 const { test, expect } = require('../../baseFixtures');
-const path = require('path');
 
 test.describe("CouchDB Status Indicator @couchdb", () => {
+    test.use({ failOnConsoleError: false });
     //TODO BeforeAll Verify CouchDB Connectivity with APIContext
     test('Shows green if connected', async ({ page, context }) => {
-        // eslint-disable-next-line no-undef
-        context.routeFromHAR(path.join(__dirname, './har/CouchDBResponse200.har'), {
-            // Respond with 200 for all CouchDB requests
-            url: '**/couchdb/**'
+        await page.route('**/openmct/mine', route => {
+            route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({})
+            });
         });
 
         //Go to baseURL
@@ -42,10 +44,12 @@ test.describe("CouchDB Status Indicator @couchdb", () => {
         await expect(page.locator('div:has-text("CouchDB is connected")').nth(3)).toBeVisible();
     });
     test('Shows red if not connected', async ({ page, context }) => {
-        // eslint-disable-next-line no-undef
-        context.routeFromHAR(path.join(__dirname, './har/CouchDBResponse503.har'), {
-            // Respond with 503 for all CouchDB requests
-            url: '**/couchdb/**'
+        await page.route('**/openmct/**', route => {
+            route.fulfill({
+                status: 503,
+                contentType: 'application/json',
+                body: JSON.stringify({})
+            });
         });
 
         //Go to baseURL
@@ -53,10 +57,12 @@ test.describe("CouchDB Status Indicator @couchdb", () => {
         await expect(page.locator('div:has-text("CouchDB is offline")').nth(3)).toBeVisible();
     });
     test('Shows unknown if it receives an unexpected response code', async ({ page, context }) => {
-        // eslint-disable-next-line no-undef
-        context.routeFromHAR(path.join(__dirname, './har/CouchDBResponse418.har'), {
-            // Respond with 418 for all CouchDB requests
-            url: '**/couchdb/**'
+        await page.route('**/openmct/mine', route => {
+            route.fulfill({
+                status: 418,
+                contentType: 'application/json',
+                body: JSON.stringify({})
+            });
         });
 
         //Go to baseURL
