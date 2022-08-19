@@ -27,6 +27,7 @@ demonstrate some playwright for test developers. This pattern should not be re-u
 */
 
 const { test, expect } = require('../../../../pluginFixtures.js');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
@@ -176,5 +177,26 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
 
+    });
+});
+
+test.describe('Basic Condition Set Use', () => {
+    test('Can add a condition', async ({ page }) => {
+        //Navigate to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create a new condition set
+        await createDomainObjectWithDefaults(page, {
+            type: 'Condition Set',
+            name: "Test Condition Set"
+        });
+        // Change the object to edit mode
+        await page.locator('[title="Edit"]').click();
+
+        // Click Add Condition button
+        await page.locator('#addCondition').click();
+        // Check that the new Unnamed Condition section appears
+        const numOfUnnamedConditions = await page.locator('text=Unnamed Condition').count();
+        expect(numOfUnnamedConditions).toEqual(1);
     });
 });
