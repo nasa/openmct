@@ -342,16 +342,17 @@ input[type=password],
 input[type=date],
 textarea {
     @include reactive-input();
-    padding: $inputTextP;
     &.numeric {
         text-align: right;
     }
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    margin-right: -5px !important;
-    margin-top: -1px !important;
+input[type=text],
+input[type=search],
+input[type=password],
+input[type=date],
+textarea {
+    padding: $inputTextP;
 }
 
 .c-input {
