@@ -5,7 +5,12 @@ on:
     types:
       - labeled
       - opened
-
+env:
+  OPENMCT_DATABASE_NAME: openmct
+  COUCH_ADMIN_USER: admin
+  COUCH_ADMIN_PASSWORD: password
+  COUCH_BASE_LOCAL: http://localhost:5984
+  COUCH_NODE_NAME: nonode@nohost
 jobs:
   e2e-full:
     if: ${{ github.event.label.name == 'pr:couchdb' }}
@@ -13,7 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run : docker-compose up -d -f src/plugins/persistence/couch/couchdb-compose.yaml
-      - run : export $(cat src/plugins/persistence/couch/.env.ci | xargs)
       - run : sh src/plugins/persistence/couch/setup-couchdb.sh
       - uses: actions/setup-node@v3
         with:
