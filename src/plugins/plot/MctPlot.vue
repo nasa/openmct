@@ -140,7 +140,7 @@
                             v-if="isFrozen"
                             class="c-button icon-arrow-right pause-play is-paused"
                             title="Resume displaying real-time data"
-                            @click="play()"
+                            @click="clear()"
                         >
                         </button>
                     </div>
@@ -584,9 +584,8 @@ export default {
             };
             this.config.xAxis.set('range', newRange);
             if (!isTick) {
-                this.skipReloadOnInteraction = true;
-                this.clear();
-                this.skipReloadOnInteraction = false;
+                this.clearPanZoomHistory();
+                this.synchronizeIfBoundsMatch();
                 this.loadMoreData(newRange, true);
             } else {
                 // If we're not panning or zooming (time conductor and plot x-axis times are not out of sync)
@@ -609,16 +608,20 @@ export default {
 
         /**
        * Handle end of user viewport change: load more data for current display
-       * bounds, and mark view as synchronized if bounds match configured bounds.
+       * bounds, and mark view as synchronized if necessary.
        */
         userViewportChangeEnd() {
+            this.synchronizeIfBoundsMatch();
+            const xDisplayRange = this.config.xAxis.get('displayRange');
+            this.loadMoreData(xDisplayRange);
+        },
+
+        /**
+       * mark view as synchronized if bounds match configured bounds.
+       */
+        synchronizeIfBoundsMatch() {
             const xDisplayRange = this.config.xAxis.get('displayRange');
             const xRange = this.config.xAxis.get('range');
-
-            if (!this.skipReloadOnInteraction) {
-                this.loadMoreData(xDisplayRange);
-            }
-
             this.synchronized(xRange.min === xDisplayRange.min
             && xRange.max === xDisplayRange.max);
         },
@@ -847,7 +850,8 @@ export default {
             // needs to follow endMarquee so that plotHistory is pruned
             const isAction = Boolean(this.plotHistory.length);
             if (!isAction && !this.isFrozenOnMouseDown) {
-                return this.play(true);
+                this.clearPanZoomHistory();
+                this.synchronizeIfBoundsMatch();
             }
         },
 
@@ -1085,11 +1089,15 @@ export default {
         },
 
         clear() {
+            this.clearPanZoomHistory();
+            this.userViewportChangeEnd();
+        },
+
+        clearPanZoomHistory() {
             this.config.yAxis.set('frozen', false);
             this.config.xAxis.set('frozen', false);
             this.setStatus();
             this.plotHistory = [];
-            this.userViewportChangeEnd();
         },
 
         back() {
@@ -1111,12 +1119,6 @@ export default {
 
         pause() {
             this.freeze();
-        },
-
-        play(skipReloadOnInteraction) {
-            this.skipReloadOnInteraction = skipReloadOnInteraction === true;
-            this.clear();
-            this.skipReloadOnInteraction = false;
         },
 
         showSynchronizeDialog() {
