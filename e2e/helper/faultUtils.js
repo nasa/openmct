@@ -60,7 +60,6 @@ async function navigateToFaultItemInTree(page) {
 
     // Click text=Fault Management
     await page.click('text=Fault Management'); // this verifies the plugin has been added
-    await page.waitForNavigation({waitUntil: 'networkidle'});
 }
 
 /**
