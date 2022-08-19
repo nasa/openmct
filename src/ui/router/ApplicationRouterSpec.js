@@ -51,6 +51,7 @@ describe('Application router utility functions', () => {
     it('The setSearchParam function sets an individual search parameter in the window location hash', () => {
         openmct.router.setHash.flush();
         openmct.router.setSearchParam('testParam1', 'testValue1');
+        openmct.router.setHash.flush();
 
         const searchParams = openmct.router.getAllSearchParams();
         expect(searchParams.get('testParam1')).toBe('testValue1');
