@@ -109,9 +109,6 @@ export default {
                 };
             }));
         },
-        timeout(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        },
         async getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
@@ -120,7 +117,6 @@ export default {
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
             try {
-                await this.timeout(3000);
                 this.annotationSearchResults = await this.openmct.annotation.searchForTags(this.searchValue, abortSignal);
                 const fullObjectSearchResults = await Promise.all(this.openmct.objects.search(this.searchValue, abortSignal));
                 const aggregatedObjectSearchResults = fullObjectSearchResults.flat();

@@ -8,8 +8,6 @@ let resolveFunction;
 
 describe('Application router utility functions', () => {
     beforeEach(done => {
-        //This makes the log visible again from the command line.
-        spyOn(console, 'log').and.callThrough();
         appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
