@@ -32,6 +32,12 @@
   .c-list-item {
     /* Time Lists */
 
+    td {
+      $p: $interiorMarginSm;
+      padding-top: $p;
+      padding-bottom: $p;
+    }
+
     &.--is-current {
       background-color: $colorCurrentBg;
       border-top: 1px solid $colorCurrentBorder !important;
