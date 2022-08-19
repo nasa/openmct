@@ -121,7 +121,7 @@
                         <button
                             class="c-button icon-reset"
                             title="Reset pan/zoom"
-                            @click="clear()"
+                            @click="resumeRealtimeData()"
                         >
                         </button>
                     </div>
@@ -140,7 +140,7 @@
                             v-if="isFrozen"
                             class="c-button icon-arrow-right pause-play is-paused"
                             title="Resume displaying real-time data"
-                            @click="clear()"
+                            @click="resumeRealtimeData()"
                         >
                         </button>
                     </div>
@@ -1088,7 +1088,7 @@ export default {
             this.setStatus();
         },
 
-        clear() {
+        resumeRealtimeData() {
             this.clearPanZoomHistory();
             this.userViewportChangeEnd();
         },
@@ -1103,7 +1103,7 @@ export default {
         back() {
             const previousAxisRanges = this.plotHistory.pop();
             if (this.plotHistory.length === 0) {
-                this.clear();
+                this.resumeRealtimeData();
 
                 return;
             }
