@@ -104,7 +104,8 @@ export default {
     watch: {
         bounds: {
             handler() {
-                if (this.isFixed) { // only for fixed time since we track offsets for realtime
+                // only for fixed time since we track offsets for realtime
+                if (this.isFixed) {
                     this.updateMode();
                     this.addTimespan();
                 }
@@ -198,9 +199,7 @@ export default {
         },
         addTimespan() {
             const key = this.timeSystem.key;
-
             let [...currentHistory] = this[this.currentHistory][key] || [];
-
             const timespan = {
                 start: this.isFixed ? this.bounds.start : this.offsets.start,
                 end: this.isFixed ? this.bounds.end : this.offsets.end
