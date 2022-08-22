@@ -39,7 +39,7 @@
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
-const DEFAULT_RECORDS = 10;
+const DEFAULT_RECORDS_LENGTH = 10;
 
 import { millisecondsToDHMS } from "utils/duration";
 import UTCTimeFormat from "../utcTimeSystem/UTCTimeFormat.js";
@@ -94,7 +94,7 @@ export default {
         },
         storageKey() {
             let key = LOCAL_STORAGE_HISTORY_KEY_FIXED;
-            if (this.mode !== 'fixed') {
+            if (!this.isFixed) {
                 key = LOCAL_STORAGE_HISTORY_KEY_REALTIME;
             }
 
@@ -104,8 +104,8 @@ export default {
     watch: {
         bounds: {
             handler() {
-                // only for fixed time since we track offsets for realtime
-                if (this.isFixed) {
+                if (this.isFixed) { // only for fixed time since we track offsets for realtime
+                    this.updateMode();
                     this.addTimespan();
                 }
             },
@@ -113,12 +113,14 @@ export default {
         },
         offsets: {
             handler() {
+                this.updateMode();
                 this.addTimespan();
             },
             deep: true
         },
         timeSystem: {
             handler(ts) {
+                this.updateMode();
                 this.loadConfiguration();
                 this.addTimespan();
             },
@@ -126,8 +128,6 @@ export default {
         },
         mode: function () {
             this.updateMode();
-            this.getHistoryFromLocalStorage();
-            this.initializeHistoryIfNoHistory();
             this.loadConfiguration();
         }
     },
@@ -139,6 +139,8 @@ export default {
     methods: {
         updateMode() {
             this.isFixed = this.openmct.time.clock() === undefined;
+            this.getHistoryFromLocalStorage();
+            this.initializeHistoryIfNoHistory();
         },
         getHistoryMenuItems() {
             const history = this.historyForCurrentTimeSystem.map(timespan => {
@@ -196,6 +198,7 @@ export default {
         },
         addTimespan() {
             const key = this.timeSystem.key;
+
             let [...currentHistory] = this[this.currentHistory][key] || [];
 
             const timespan = {
@@ -207,8 +210,8 @@ export default {
             currentHistory = currentHistory.filter(ts => !(ts.start === timespan.start && ts.end === timespan.end));
             currentHistory.unshift(timespan); // add to front
 
-            if (currentHistory.length > this.records) {
-                currentHistory.length = this.records;
+            if (currentHistory.length > this.MAX_RECORDS_LENGTH) {
+                currentHistory.length = this.MAX_RECORDS_LENGTH;
             }
 
             this.$set(this[this.currentHistory], key, currentHistory);
@@ -235,7 +238,7 @@ export default {
                 .filter(option => option.timeSystem === this.timeSystem.key);
 
             this.presets = this.loadPresets(configurations);
-            this.records = this.loadRecords(configurations);
+            this.MAX_RECORDS_LENGTH = this.loadRecords(configurations);
         },
         loadPresets(configurations) {
             const configuration = configurations.find(option => {
@@ -247,9 +250,9 @@ export default {
         },
         loadRecords(configurations) {
             const configuration = configurations.find(option => option.records);
-            const records = configuration ? configuration.records : DEFAULT_RECORDS;
+            const maxRecordsLength = configuration ? configuration.records : DEFAULT_RECORDS_LENGTH;
 
-            return records;
+            return maxRecordsLength;
         },
         formatTime(time) {
             let format = this.timeSystem.timeFormat;
