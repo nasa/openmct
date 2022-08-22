@@ -33,28 +33,16 @@ export default function () {
             description: 'A configurable, time-ordered list view of activities for a compatible mission plan file.',
             creatable: true,
             cssClass: 'icon-timelist',
-            form: [
-                {
-                    name: 'Upload Plan (JSON File)',
-                    key: 'selectFile',
-                    control: 'file-input',
-                    text: 'Select File...',
-                    type: 'application/json',
-                    property: [
-                        "selectFile"
-                    ]
-                }
-            ],
             initialize: function (domainObject) {
                 domainObject.configuration = {
                     sortOrderIndex: 0,
-                    futureEventsIndex: 0,
+                    futureEventsIndex: 1,
                     futureEventsDurationIndex: 0,
                     futureEventsDuration: 20,
                     currentEventsIndex: 1,
                     currentEventsDurationIndex: 0,
                     currentEventsDuration: 20,
-                    pastEventsIndex: 0,
+                    pastEventsIndex: 1,
                     pastEventsDurationIndex: 0,
                     pastEventsDuration: 20,
                     filter: ''

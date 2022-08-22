@@ -25,7 +25,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 but only assume that example imagery is present.
 */
 /* globals process */
-
+const { v4: uuid } = require('uuid');
 const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
@@ -571,6 +571,40 @@ test.describe('Example Imagery in Tabs view', () => {
     test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
     test.fixme('If the imagery view is in pause mode, it should not be updated when new images come in');
     test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
+});
+
+test.describe('Example Imagery in Time Strip', () => {
+    test('ensure that clicking a thumbnail loads the image in large view', async ({ page, browserName }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5632'
+        });
+        await page.goto('./', { waitUntil: 'networkidle' });
+        const timeStripObject = await createDomainObjectWithDefaults(page, {
+            type: 'Time Strip',
+            name: 'Time Strip'.concat(' ', uuid())
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: 'Example Imagery',
+            name: 'Example Imagery'.concat(' ', uuid()),
+            parent: timeStripObject.uuid
+        });
+        // Navigate to timestrip
+        await page.goto(timeStripObject.url);
+
+        await page.locator('.c-imagery-tsv-container').hover();
+        // get url of the hovered image
+        const hoveredImg = page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
+        const hoveredImgSrc = await hoveredImg.getAttribute('src');
+        expect(hoveredImgSrc).toBeTruthy();
+        await page.locator('.c-imagery-tsv-container').click();
+        // get image of view large container
+        const viewLargeImg = page.locator('img.c-imagery__main-image__image');
+        const viewLargeImgSrc = await viewLargeImg.getAttribute('src');
+        expect(viewLargeImgSrc).toBeTruthy();
+        expect(viewLargeImgSrc).toEqual(hoveredImgSrc);
+    });
 });
 
 /**
