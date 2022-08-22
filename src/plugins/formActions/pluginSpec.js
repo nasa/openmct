@@ -151,6 +151,7 @@ describe('EditPropertiesAction plugin', () => {
         function callback(newObject) {
             expect(newObject.name).not.toEqual(oldName);
             expect(newObject.name).toEqual(newName);
+            expect(openmct.editor.isEditing()).toBeFalse();
 
             unObserve();
             done();
@@ -164,6 +165,7 @@ describe('EditPropertiesAction plugin', () => {
         openmct.forms.on('onFormPropertyChange', deBouncedFormChange);
 
         function handleFormPropertyChange(data) {
+            expect(openmct.editor.isEditing()).toBeTrue();
             const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             const notes = form.querySelector('textArea');
@@ -213,10 +215,12 @@ describe('EditPropertiesAction plugin', () => {
         editPropertiesAction.invoke([domainObject])
             .then(() => {
                 expect(domainObject.name).toEqual(name);
+                expect(openmct.editor.isEditing()).toBeFalse();
                 done();
             })
             .catch(() => {
                 expect(domainObject.name).toEqual(name);
+                expect(openmct.editor.isEditing()).toBeFalse();
 
                 done();
             });
