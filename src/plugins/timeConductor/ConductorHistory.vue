@@ -66,6 +66,8 @@ export default {
         }
     },
     data() {
+        let isFixedTime = this.openmct.time.clock() === undefined;
+
         return {
             /**
              * previous bounds entries available for easy re-use
@@ -79,7 +81,8 @@ export default {
              * @timespans {start, end} number representing timestamp
              */
             fixedHistory: {},
-            presets: []
+            presets: [],
+            isFixed: isFixedTime
         };
     },
     computed: {
@@ -104,7 +107,7 @@ export default {
         bounds: {
             handler() {
                 // only for fixed time since we track offsets for realtime
-                if (this.isFixed()) {
+                if (this.isFixed) {
                     this.addTimespan();
                 }
             },
@@ -124,18 +127,20 @@ export default {
             deep: true
         },
         mode: function () {
+            this.updateMode();
             this.getHistoryFromLocalStorage();
             this.initializeHistoryIfNoHistory();
             this.loadConfiguration();
         }
     },
     mounted() {
+        this.updateMode();
         this.getHistoryFromLocalStorage();
         this.initializeHistoryIfNoHistory();
     },
     methods: {
-        isFixed() {
-            return this.openmct.time.clock() === undefined;
+        updateMode() {
+            this.isFixed = this.openmct.time.clock() === undefined;
         },
         getHistoryMenuItems() {
             const history = this.historyForCurrentTimeSystem.map(timespan => {
@@ -196,8 +201,8 @@ export default {
             let [...currentHistory] = this[this.currentHistory][key] || [];
 
             const timespan = {
-                start: this.isFixed() ? this.bounds.start : this.offsets.start,
-                end: this.isFixed() ? this.bounds.end : this.offsets.end
+                start: this.isFixed ? this.bounds.start : this.offsets.start,
+                end: this.isFixed ? this.bounds.end : this.offsets.end
             };
 
             // no dupes
@@ -212,7 +217,7 @@ export default {
             this.persistHistoryToLocalStorage();
         },
         selectTimespan(timespan) {
-            if (this.isFixed()) {
+            if (this.isFixed) {
                 this.openmct.time.bounds(timespan);
             } else {
                 this.openmct.time.clockOffsets(timespan);
@@ -252,7 +257,7 @@ export default {
             let format = this.timeSystem.timeFormat;
             let isNegativeOffset = false;
 
-            if (!this.isFixed()) {
+            if (!this.isFixed) {
                 if (time < 0) {
                     isNegativeOffset = true;
                 }
