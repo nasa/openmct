@@ -66,8 +66,6 @@ export default {
         }
     },
     data() {
-        let isFixedTime = this.openmct.time.clock() === undefined;
-
         return {
             /**
              * previous bounds entries available for easy re-use
@@ -82,7 +80,7 @@ export default {
              */
             fixedHistory: {},
             presets: [],
-            isFixed: this.openmct.time.clock() === undefined;
+            isFixed: this.openmct.time.clock() === undefined
         };
     },
     computed: {
