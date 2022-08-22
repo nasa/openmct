@@ -69,27 +69,27 @@ describe("the plugin", () => {
         });
 
         describe('adds an interceptor that returns a "My Items" model for', () => {
-            let myItemsMissing;
-            let mockMissingProvider;
+            let myItemsObject;
+            let mockNotFoundProvider;
             let activeProvider;
 
             beforeEach(async () => {
-                mockMissingProvider = {
-                    get: () => Promise.resolve(missingObj),
+                mockNotFoundProvider = {
+                    get: () => Promise.reject(new Error('Not found')),
                     create: () => Promise.resolve(missingObj),
                     update: () => Promise.resolve(missingObj)
                 };
 
-                activeProvider = mockMissingProvider;
+                activeProvider = mockNotFoundProvider;
                 spyOn(openmct.objects, 'getProvider').and.returnValue(activeProvider);
-                myItemsMissing = await openmct.objects.get(myItemsIdentifier);
+                myItemsObject = await openmct.objects.get(myItemsIdentifier);
             });
 
             it('missing objects', () => {
-                let idsMatchMissing = openmct.objects.areIdsEqual(myItemsMissing.identifier, myItemsIdentifier);
+                let idsMatch = openmct.objects.areIdsEqual(myItemsObject.identifier, myItemsIdentifier);
 
-                expect(myItemsMissing).toBeDefined();
-                expect(idsMatchMissing).toBeTrue();
+                expect(myItemsObject).toBeDefined();
+                expect(idsMatch).toBeTrue();
             });
         });
 
