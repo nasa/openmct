@@ -232,10 +232,12 @@ export default {
             this.removeSelectable();
         }
 
-        this.telemetryCollection.off('add', this.setLatestValues);
-        this.telemetryCollection.off('clear', this.refreshData);
+        if (this.telemetryCollection) {
+            this.telemetryCollection.off('add', this.setLatestValues);
+            this.telemetryCollection.off('clear', this.refreshData);
 
-        this.telemetryCollection.destroy();
+            this.telemetryCollection.destroy();
+        }
 
         if (this.mutablePromise) {
             this.mutablePromise.then(() => {
