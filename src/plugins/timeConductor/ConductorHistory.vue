@@ -82,7 +82,7 @@ export default {
              */
             fixedHistory: {},
             presets: [],
-            isFixed: isFixedTime
+            isFixed: this.openmct.time.clock() === undefined;
         };
     },
     computed: {
