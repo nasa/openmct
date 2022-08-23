@@ -188,7 +188,8 @@ export default {
             if (domainObject.type === 'plan') {
                 this.getPlanDataAndSetConfig({
                     ...this.domainObject,
-                    selectFile: domainObject.selectFile
+                    selectFile: domainObject.selectFile,
+                    sourceMap: domainObject.sourceMap
                 });
             }
         },

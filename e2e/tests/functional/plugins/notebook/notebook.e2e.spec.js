@@ -86,6 +86,23 @@ test.describe('Notebook section tests', () => {
         //Delete 3rd section
         //1st is selected and there is no default notebook
     });
+    test.fixme('Section rename operations', async ({ page }) => {
+        // Create a new notebook
+        // Add a section
+        // Rename the section but do not confirm
+        // Keyboard press 'Escape'
+        // Verify that the section name reverts to the default name
+        // Rename the section but do not confirm
+        // Keyboard press 'Enter'
+        // Verify that the section name is updated
+        // Rename the section to "" (empty string)
+        // Keyboard press 'Enter' to confirm
+        // Verify that the section name reverts to the default name
+        // Rename the section to something long that overflows the text box
+        // Verify that the section name is not truncated while input is active
+        // Confirm the section name edit
+        // Verify that the section name is truncated now that input is not active
+    });
 });
 
 test.describe('Notebook page tests', () => {
@@ -106,6 +123,23 @@ test.describe('Notebook page tests', () => {
         //Select 3rd (default) page
         //Delete 3rd page
         //First is now selected and there is no default notebook
+    });
+    test.fixme('Page rename operations', async ({ page }) => {
+        // Create a new notebook
+        // Add a page
+        // Rename the page but do not confirm
+        // Keyboard press 'Escape'
+        // Verify that the page name reverts to the default name
+        // Rename the page but do not confirm
+        // Keyboard press 'Enter'
+        // Verify that the page name is updated
+        // Rename the page to "" (empty string)
+        // Keyboard press 'Enter' to confirm
+        // Verify that the page name reverts to the default name
+        // Rename the page to something long that overflows the text box
+        // Verify that the page name is not truncated while input is active
+        // Confirm the page name edit
+        // Verify that the page name is truncated now that input is not active
     });
 });
 
