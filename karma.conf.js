@@ -23,7 +23,7 @@
 /*global module,process*/
 
 module.exports = (config) => {
-    const webpackConfig = require('./webpack.coverage.js');
+    const webpackConfig = require('./webpack.dev.js');
     delete webpackConfig.output;
 
     config.set({

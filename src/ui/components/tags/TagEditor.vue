@@ -76,7 +76,7 @@ export default {
     },
     data() {
         return {
-            annontations: [],
+            annontations: {},
             addedTags: [],
             userAddingTag: false
         };
@@ -125,12 +125,12 @@ export default {
         },
         async loadAnnotations() {
             //TODO get all annotations associated with this entry
-            if (!this.availableTags()) {
+            if (!this.availableTags) {
                 // don't load annotations if we have no tags to select from
                 return;
             }
 
-            this.annotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
+            this.annotations = await this.openmct.annotation.getAnnotations(this.annotationQuery, this.annotationSearchType);
             this.addAnnotationListener(this.annotation);
             if (this.annotation && this.annotation.tags) {
                 this.tagsChanged(this.annotation.tags);
@@ -160,8 +160,8 @@ export default {
             this.userAddingTag = true;
         },
         async tagRemoved(tagToRemove) {
-            // TODO need to remove all instances of this tag (might be more than one due to conflicts)
-            const result = await this.openmct.annotation.removeAnnotationTag(this.annotation, tagToRemove);
+            const annotationToRemove = this.annontations[tagToRemove];
+            const result = await this.openmct.annotation.softDeleteAnnotation(annotationToRemove);
             this.$emit('tags-updated');
 
             return result;
