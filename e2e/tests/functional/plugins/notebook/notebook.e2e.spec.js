@@ -130,17 +130,17 @@ test.describe('Notebook page tests', () => {
         });
         // Expand sidebar and add a second page
         await page.locator('.c-notebook__toggle-nav-button').click();
-        await page.locator('.js-sidebar-pages .c-icon-button.icon-plus').click();
+        await page.locator('text=Page Add >> button').click();
 
         // Click on the 2nd page dropdown button and expect the Delete Page option to appear
-        await page.locator('.c-popup-menu-button').nth(2).click();
+        await page.locator('button[title="Open context menu"]').nth(2).click();
         await expect(page.locator('text=Delete Page')).toBeEnabled();
         // Clicking on the same page a second time causes the same Delete Page option to recreate
-        await page.locator('.c-popup-menu-button').nth(2).click();
+        await page.locator('button[title="Open context menu"]').nth(2).click();
         await expect(page.locator('text=Delete Page')).toBeEnabled();
         // Clicking on the first page causes the first delete button to detach and recreate on the first page
-        await page.locator('.c-popup-menu-button').nth(1).click();
-        const numOfDeletePagePopups = await page.locator('div:has-text("Delete Page")').count();
+        await page.locator('button[title="Open context menu"]').nth(1).click();
+        const numOfDeletePagePopups = await page.locator('li[title="Delete Page"]').count();
         expect(numOfDeletePagePopups).toBe(1);
     });
     test.fixme('Page selection operations and associated behavior', async ({ page }) => {
