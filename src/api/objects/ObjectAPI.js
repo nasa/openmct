@@ -230,15 +230,10 @@ export default class ObjectAPI {
             return result;
         }).catch((result) => {
             console.warn(`Failed to retrieve ${keystring}:`, result);
-            this.openmct.notifications.error(`Failed to retrieve object ${keystring}`);
 
             delete this.cache[keystring];
 
-            if (!result) {
-                //no result means resource either doesn't exist or is missing
-                //otherwise it's an error, and we shouldn't apply interceptors
-                result = this.applyGetInterceptors(identifier);
-            }
+            result = this.applyGetInterceptors(identifier);
 
             return result;
         });

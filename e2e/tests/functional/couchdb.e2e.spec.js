@@ -30,7 +30,7 @@ const { test, expect } = require('../../baseFixtures');
 test.describe("CouchDB Status Indicator @couchdb", () => {
     test.use({ failOnConsoleError: false });
     //TODO BeforeAll Verify CouchDB Connectivity with APIContext
-    test('Shows green if connected', async ({ page, context }) => {
+    test('Shows green if connected', async ({ page }) => {
         await page.route('**/openmct/mine', route => {
             route.fulfill({
                 status: 200,
@@ -43,7 +43,7 @@ test.describe("CouchDB Status Indicator @couchdb", () => {
         await page.goto('./#/browse/mine?hideTree=true&hideInspector=true', { waitUntil: 'networkidle' });
         await expect(page.locator('div:has-text("CouchDB is connected")').nth(3)).toBeVisible();
     });
-    test('Shows red if not connected', async ({ page, context }) => {
+    test('Shows red if not connected', async ({ page }) => {
         await page.route('**/openmct/**', route => {
             route.fulfill({
                 status: 503,
@@ -56,7 +56,7 @@ test.describe("CouchDB Status Indicator @couchdb", () => {
         await page.goto('./#/browse/mine?hideTree=true&hideInspector=true', { waitUntil: 'networkidle' });
         await expect(page.locator('div:has-text("CouchDB is offline")').nth(3)).toBeVisible();
     });
-    test('Shows unknown if it receives an unexpected response code', async ({ page, context }) => {
+    test('Shows unknown if it receives an unexpected response code', async ({ page }) => {
         await page.route('**/openmct/mine', route => {
             route.fulfill({
                 status: 418,
@@ -71,3 +71,38 @@ test.describe("CouchDB Status Indicator @couchdb", () => {
     });
 });
 
+test.describe("CouchDB initialization @couchdb", () => {
+    test.use({ failOnConsoleError: false });
+    test("'My Items' folder is created if it doesn't exist", async ({ page }) => {
+        // Store any relevant PUT requests that happen on the page
+        const createMineFolderRequests = [];
+        page.on('request', req => {
+            // eslint-disable-next-line playwright/no-conditional-in-test
+            if (req.method() === 'PUT' && req.url().endsWith('openmct/mine')) {
+                createMineFolderRequests.push(req);
+            }
+        });
+
+        // Override the first request to GET openmct/mine to return a 404
+        await page.route('**/openmct/mine', route => {
+            route.fulfill({
+                status: 404,
+                contentType: 'application/json',
+                body: JSON.stringify({})
+            });
+        }, { times: 1 });
+
+        // Go to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Verify that error banner is displayed
+        const bannerMessage = await page.locator('.c-message-banner__message').innerText();
+        expect(bannerMessage).toEqual('Failed to retrieve object mine');
+
+        // Verify that a PUT request to create "My Items" folder was made
+        expect.poll(() => createMineFolderRequests.length, {
+            message: 'Verify that PUT request to create "mine" folder was made',
+            timeout: 1000
+        }).toBeGreaterThanOrEqual(1);
+    });
+});
