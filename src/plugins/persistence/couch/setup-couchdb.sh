@@ -83,6 +83,14 @@ create_admin_user () {
     curl -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER -d \'"$COUCH_ADMIN_PASSWORD"\'
 }
 
+enable_cors () {
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/httpd/enable_cors -d '"true"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/origins -d '"http://localhost:8080"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/credentials -d '"true"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
+}
+
 if [ "$(admin_user_exists)" == "FALSE" ]; then
     echo "Admin user does not exist, creating..."
     create_admin_user
@@ -123,3 +131,7 @@ if [ "{\"ok\":true}" == "${response}" ]; then
 else
     echo "Database permissions not updated"
 fi
+
+echo "Enabling CORS"
+enable_cors
+echo "CORS successfully enabled"
