@@ -170,10 +170,6 @@ describe("GrandSearch", () => {
             }
         };
 
-        mockObjectProvider.appliesTo = (someObject) => {
-            return true;
-        };
-
         mockObjectProvider.create.and.returnValue(Promise.resolve(true));
         mockObjectProvider.update.and.returnValue(Promise.resolve(true));
 
@@ -220,6 +216,7 @@ describe("GrandSearch", () => {
         openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
         openmct.router.path = originalRouterPath;
         grandSearchComponent.$destroy();
+        document.body.removeChild(parent);
 
         return resetApplicationState(openmct);
     });
@@ -227,8 +224,9 @@ describe("GrandSearch", () => {
     it("should render an object search result", async () => {
         await grandSearchComponent.$children[0].searchEverything('foo');
         await Vue.nextTick();
-        const searchResults = document.querySelector('[aria-label="fooRabbitNotebook notebook result"]');
-        expect(searchResults.innerText).toContain('Rabbit');
+        const searchResults = document.querySelectorAll('[aria-label="fooRabbitNotebook notebook result"]');
+        expect(searchResults.length).toBe(1);
+        expect(searchResults[0].innerText).toContain('Rabbit');
     });
 
     it("should render an object search result if new object added", async () => {
@@ -236,33 +234,51 @@ describe("GrandSearch", () => {
         composition.add(mockNewObject);
         await grandSearchComponent.$children[0].searchEverything('apple');
         await Vue.nextTick();
-        const searchResults = document.querySelector('[aria-label="fooRabbitNotebook notebook result"]');
-        expect(searchResults.innerText).toContain('Rabbit');
+        const searchResults = document.querySelectorAll('[aria-label="New Apple Test Folder folder result"]');
+        expect(searchResults.length).toBe(1);
+        expect(searchResults[0].innerText).toContain('Apple');
     });
 
-    it("should render one object search result if object provider provides search", async () => {
+    it("should not use InMemorySearch provider if object provider provides search", async () => {
+        // eslint-disable-next-line require-await
+        mockObjectProvider.search = async (query, abortSignal, searchType) => {
+            if (searchType === openmct.objects.SEARCH_TYPES.OBJECTS) {
+                return mockNewObject;
+            } else {
+                return [];
+            }
+        };
+
+        mockObjectProvider.supportsSearchType = (someType) => {
+            return true;
+        };
+
         const composition = openmct.composition.get(mockFolderObject);
         composition.add(mockNewObject);
         await grandSearchComponent.$children[0].searchEverything('apple');
         await Vue.nextTick();
-        const searchResults = document.querySelector('[aria-label="fooRabbitNotebook notebook result"]');
-        expect(searchResults.innerText).toContain('Rabbit');
+        const searchResults = document.querySelectorAll('[aria-label="New Apple Test Folder folder result"]');
+        // This will be of length 2 (doubles) if we're incorrectly searching with InMemorySearchProvider as well
+        expect(searchResults.length).toBe(1);
+        expect(searchResults[0].innerText).toContain('Apple');
     });
 
     it("should render an annotation search result", async () => {
         await grandSearchComponent.$children[0].searchEverything('S');
         await Vue.nextTick();
-        const annotationResults = document.querySelector('[aria-label="Search Result"]');
-        expect(annotationResults.innerText).toContain('Notebook');
+        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        expect(annotationResults.length).toBe(2);
+        expect(annotationResults[1].innerText).toContain('Driving');
     });
 
     it("should preview object search results in edit mode if object clicked", async () => {
         await grandSearchComponent.$children[0].searchEverything('Folder');
         grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
         await Vue.nextTick();
-        const searchResult = document.querySelector('[name="Test Folder"]');
-        expect(searchResult.innerText).toContain('Folder');
-        searchResult.click();
+        const searchResults = document.querySelectorAll('[name="Test Folder"]');
+        expect(searchResults.length).toBe(1);
+        expect(searchResults[0].innerText).toContain('Folder');
+        searchResults[0].click();
         const previewWindow = document.querySelector('.js-preview-window');
         expect(previewWindow.innerText).toContain('Snapshot');
     });
