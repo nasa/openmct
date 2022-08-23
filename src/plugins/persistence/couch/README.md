@@ -8,7 +8,7 @@ These instructions are for setting up CouchDB for a **development** environment.
 
 ## Docker Quickstart
 
-The following process is the preferred way of using couchdb as it is automatic and closely resembles a production environment.
+The following process is the preferred way of using CouchDB as it is automatic and closely resembles a production environment.
 
 Requirement:
 Get docker compose (or recent version of docker) installed on your machine. We recommend [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -45,7 +45,7 @@ Open MCT will now use your local CouchDB container as its persistence store. Acc
 
 ## macOS
 
-While we highly recommend using the couchdb docker-compose installation, it is still possible to install couchdb through other means.
+While we highly recommend using the CouchDB docker-compose installation, it is still possible to install CouchDB through other means.
 
 ### Installing CouchDB
 
@@ -76,7 +76,7 @@ While we highly recommend using the couchdb docker-compose installation, it is s
 
 ### Installing CouchDB without admin privileges to your computer
 
-If `brew` is not available on your mac machine, you'll need to get the couchdb installed using the official sourcefiles.
+If `brew` is not available on your mac machine, you'll need to get the CouchDB installed using the official sourcefiles.
 1. Install CouchDB following these instructions: <https://docs.brew.sh/Installation#untar-anywhere>.
 1. Edit `local.ini` in Homebrew's `/etc/` directory as directed above in the 'Installing with admin privileges to your computer' section.
 
@@ -88,7 +88,7 @@ Follow the installation instructions from the CouchDB installation guide: <https
 
 ## Configuration script
 
-The simplest way to config a couchdb instance is to use our provided tooling:
+The simplest way to config a CouchDB instance is to use our provided tooling:
 1. Copy `.env.ci` file to file named `.env.local`
 2. Set the environment variables in bash by sourcing the env file
 
@@ -111,10 +111,10 @@ sh ./setup-couchdb.sh
 5. Navigate to <http://127.0.0.1:5984/_utils/#/database/openmct/permissions>
 6. Remove permission restrictions in CouchDB from Open MCT by deleting `_admin` roles for both `Admin` and `Member`.
 
-# Configuring Open MCT to use couchdb
+# Configuring Open MCT to use CouchDB
 
 ## Configuration script
-The simplest way to config a couchdb instance is to use our provided tooling:
+The simplest way to config a CouchDB instance is to use our provided tooling:
 1. `cd` to the workspace root directory (the same directory as `index.html`)
 2. Update `index.html` to use the CouchDB plugin as persistence store:
 
@@ -136,7 +136,7 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
   openmct.install(openmct.plugins.CouchDB("http://localhost:5984/openmct"));
   ```
 
-# Validating a successful deployment
+# Validating a successful Installation
 
 1. Start Open MCT by running `npm start` in the `openmct` path.
 2. Navigate to <http://localhost:8080/> and create a random object in Open MCT (e.g., a 'Clock') and save. You may get an error saying that the object failed to persist - this is a known error that you can ignore, and will only happen the first time you save - just try again.
