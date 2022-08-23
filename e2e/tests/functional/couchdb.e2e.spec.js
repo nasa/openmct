@@ -26,8 +26,6 @@
 */
 
 const { test, expect } = require('../../baseFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const { v4: uuid } = require('uuid');
 
 test.describe("CouchDB Status Indicator @couchdb", () => {
     test.use({ failOnConsoleError: false });
