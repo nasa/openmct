@@ -115,7 +115,7 @@ export default {
         this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
     beforeDestroy() {
-        if (this.domainObject.isMutable) {
+        if (this.domainObject !== undefined && this.domainObject.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
 
