@@ -129,7 +129,6 @@ export default function DisplayLayoutPlugin(options) {
 
         for (const [type, definition] of Object.entries(DisplayLayoutDrawingObjectTypes)) {
             openmct.types.addType(type, definition);
-            console.log(type, definition);
         }
 
         DisplayLayoutPlugin._installed = true;
