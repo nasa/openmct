@@ -1,7 +1,7 @@
 <template>
 <button
     class="c-popup-menu-button c-disclosure-button"
-    title="popup menu"
+    title="Open context menu"
     @click="showMenuItems"
 >
 </button>
