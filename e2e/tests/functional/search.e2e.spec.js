@@ -24,6 +24,8 @@
  */
 
 const { test, expect } = require('../../pluginFixtures');
+const { createDomainObjectWithDefaults } = require('../../appActions');
+const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
@@ -112,13 +114,16 @@ test.describe("Search Tests @unstable", () => {
         await expect(page.locator('text=No matching results.')).toBeVisible();
     });
 
-    test('Validate single object in search result', async ({ page }) => {
+    test('Validate single object in search result @couchdb', async ({ page }) => {
         //Go to baseURL
         await page.goto("./", { waitUntil: "networkidle" });
 
         // Create a folder object
-        const folderName = 'testFolder';
-        await createFolderObject(page, folderName);
+        const folderName = uuid();
+        await createDomainObjectWithDefaults(page, {
+            type: 'folder',
+            name: folderName
+        });
 
         // Full search for object
         await page.type("input[type=search]", folderName);
@@ -127,7 +132,7 @@ test.describe("Search Tests @unstable", () => {
         await waitForSearchCompletion(page);
 
         // Get the search results
-        const searchResults = await page.locator(searchResultSelector);
+        const searchResults = page.locator(searchResultSelector);
 
         // Verify that one result is found
         expect(await searchResults.count()).toBe(1);
