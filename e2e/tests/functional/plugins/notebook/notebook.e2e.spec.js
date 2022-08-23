@@ -124,16 +124,22 @@ test.describe('Notebook page tests', () => {
         });
     });
     test('Delete page popup is removed properly on clicking dropdown again', async ({ page }) => {
-        // Expand sidebar and add a page
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5679'
+        });
+        // Expand sidebar and add a second page
         await page.locator('.c-notebook__toggle-nav-button').click();
         await page.locator('.js-sidebar-pages .c-icon-button.icon-plus').click();
 
-        // Click on the 2nd page dropdown twice and then click on first page dropdown once
+        // Click on the 2nd page dropdown button and expect the Delete Page option to appear
         await page.locator('.c-popup-menu-button').nth(2).click();
+        await expect(page.locator('text=Delete Page')).toBeEnabled();
+        // Clicking on the same page a second time causes the same Delete Page option to recreate
         await page.locator('.c-popup-menu-button').nth(2).click();
+        await expect(page.locator('text=Delete Page')).toBeEnabled();
+        // Clicking on the first page causes the first delete button to detach and recreate on the first page
         await page.locator('.c-popup-menu-button').nth(1).click();
-
-        // Check that there is only ever 1 Delete Page popup displayed
         const numOfDeletePagePopups = await page.locator('div:has-text("Delete Page")').count();
         expect(numOfDeletePagePopups).toBe(1);
     });
