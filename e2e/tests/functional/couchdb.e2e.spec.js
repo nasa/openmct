@@ -108,37 +108,3 @@ test.describe("CouchDB initialization @couchdb", () => {
         }).toBeGreaterThanOrEqual(1);
     });
 });
-
-test.describe("Grand Search @couchdb", () => {
-    const searchResultSelector = '.c-gsearch-result__title';
-
-    test('Validate single object in search result', async ({ page }) => {
-        //Go to baseURL
-        await page.goto("./", { waitUntil: "networkidle" });
-
-        // Create a folder object
-        const folderName = uuid();
-        await createDomainObjectWithDefaults(page, {
-            type: 'folder',
-            name: folderName
-        });
-
-        // Full search for object
-        await page.type("input[type=search]", folderName);
-
-        // Wait for search to complete
-        await waitForSearchCompletion(page);
-
-        // Get the search results
-        const searchResults = page.locator(searchResultSelector);
-
-        // Verify that one result is found
-        expect(await searchResults.count()).toBe(1);
-        await expect(searchResults).toHaveText(folderName);
-    });
-
-    async function waitForSearchCompletion(page) {
-        // Wait loading spinner to disappear
-        await page.waitForSelector('.c-tree-and-search__loading', { state: 'detached' });
-    }
-});
