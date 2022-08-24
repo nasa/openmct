@@ -83,7 +83,6 @@ export default class LinkAction {
                 }
             ]
         };
-
         this.openmct.forms.showForm(formStructure)
             .then(this.onSave.bind(this));
     }
@@ -91,8 +90,8 @@ export default class LinkAction {
     validate(currentParent) {
         return (data) => {
 
-            // default current parent to ROOT, if it's undefined, then it's a root level item
-            if (currentParent === undefined) {
+            // default current parent to ROOT, if it's null, then it's a root level item
+            if (!currentParent) {
                 currentParent = {
                     identifier: {
                         key: 'ROOT',
@@ -101,24 +100,23 @@ export default class LinkAction {
                 };
             }
 
-            const parentCandidate = data.value[0];
-            const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
+            const parentCandidatePath = data.value;
+            const parentCandidate = parentCandidatePath[0];
             const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
 
             if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
                 return false;
             }
 
-            if (!parentCandidateKeystring || !currentParentKeystring) {
+            // check if moving to same place
+            if (this.openmct.objects.areIdsEqual(parentCandidate.identifier, currentParent.identifier)) {
                 return false;
             }
 
-            if (parentCandidateKeystring === currentParentKeystring) {
-                return false;
-            }
-
-            if (parentCandidateKeystring === objectKeystring) {
+            // check if moving to a child
+            if (parentCandidatePath.some(candidatePath => {
+                return this.openmct.objects.areIdsEqual(candidatePath.identifier, this.object.identifier);
+            })) {
                 return false;
             }
 

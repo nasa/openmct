@@ -56,19 +56,23 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
     await createNotebookAndEntry(page, iterations);
 
     for (let iteration = 0; iteration < iterations; iteration++) {
-        // Click text=To start a new entry, click here or drag and drop any object
+        // Hover and click "Add Tag" button
+        // Hover is needed here to "slow down" the actions while running in headless mode
+        await page.hover(`button:has-text("Add Tag") >> nth = ${iteration}`);
         await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
 
-        // Click [placeholder="Type to select tag"]
+        // Click inside the tag search input
         await page.locator('[placeholder="Type to select tag"]').click();
-        // Click text=Driving
+        // Select the "Driving" tag
         await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
 
-        // Click button:has-text("Add Tag")
+        // Hover and click "Add Tag" button
+        // Hover is needed here to "slow down" the actions while running in headless mode
+        await page.hover(`button:has-text("Add Tag") >> nth = ${iteration}`);
         await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
-        // Click [placeholder="Type to select tag"]
+        // Click inside the tag search input
         await page.locator('[placeholder="Type to select tag"]').click();
-        // Click text=Science
+        // Select the "Science" tag
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
     }
 }
@@ -130,7 +134,8 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await createNotebookEntryAndTags(page);
         await page.locator('[aria-label="Notebook Entries"]').click();
         // Delete Driving
-        await page.locator('text=Science Driving Add Tag >> button').nth(1).click();
+        await page.hover('.c-tag__label:has-text("Driving")');
+        await page.locator('.c-tag__label:has-text("Driving") ~ .c-completed-tag-deletion').click();
 
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Notebook Entry"]')).not.toContainText("Driving");
