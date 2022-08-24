@@ -80,6 +80,7 @@
 
 <script>
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
+import eventHelpers from "@/plugins/plot/lib/eventHelpers";
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -141,12 +142,17 @@ export default {
         }
     },
     mounted() {
+        eventHelpers.extend(this);
+        this.listenTo(this.seriesObject, 'change:color', (newColor) => {
+            this.updateColor(newColor);
+        }, this);
+        this.listenTo(this.seriesObject, 'change:name', () => {
+            this.updateName();
+        }, this);
         this.initialize();
     },
-    destroy() {
-        if (this.removeColorObserver) {
-            this.removeColorObserver();
-        }
+    beforeDestroy() {
+        this.stopListening();
     },
     methods: {
         initialize(highlightedObject) {
@@ -175,43 +181,12 @@ export default {
                 this.formattedMinY = '';
                 this.formattedMaxY = '';
             }
-
-            if (this.domainObject.configuration) {
-                let index = this.domainObject.configuration.series.findIndex((seriesConfig) => {
-                    return this.openmct.objects.areIdsEqual(seriesConfig.identifier, seriesObject.domainObject.identifier);
-                });
-
-                if (index < 0) {
-                    this.removeColorObserver = this.openmct.objects.observe(
-                        this.domainObject,
-                        '*',
-                        this.changeColor.bind(this, seriesObject)
-                    );
-                } else {
-                    const key = this.domainObject.type === "telemetry.plot.stacked" ? 'series.color' : 'color';
-                    const getPath = this.dynamicPathForKey(key);
-                    const seriesColorPath = getPath(this.domainObject, seriesObject);
-
-                    this.removeColorObserver = this.openmct.objects.observe(
-                        this.domainObject,
-                        seriesColorPath,
-                        this.changeColor.bind(this, seriesObject)
-                    );
-                }
-            }
         },
-        changeColor(seriesObject) {
-            this.colorAsHexString = seriesObject.get('color').asHexString();
+        updateColor(newColor) {
+            this.colorAsHexString = newColor.asHexString();
         },
-        dynamicPathForKey(key) {
-            return function (object, model) {
-                const modelIdentifier = model.get('identifier');
-                const index = object.configuration.series.findIndex(s => {
-                    return _.isEqual(s.identifier, modelIdentifier);
-                });
-
-                return 'configuration.series[' + index + '].' + key;
-            };
+        updateName(newName) {
+            this.nameWithUnit = this.seriesObject.nameWithUnit();
         },
         toggleHover(hover) {
             this.hover = hover;
