@@ -41,6 +41,8 @@ describe("GrandSearch", () => {
     let mockFolderObject;
     let mockAnotherFolderObject;
     let mockTopObject;
+    let mockAnotherFolderObject;
+    let mockTopObject;
     let originalRouterPath;
     let mockNewObject;
     let mockObjectProvider;
