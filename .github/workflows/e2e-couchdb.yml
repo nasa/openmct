@@ -1,0 +1,37 @@
+name: "e2e-couchdb"
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - labeled
+      - opened
+env:
+  OPENMCT_DATABASE_NAME: openmct
+  COUCH_ADMIN_USER: admin
+  COUCH_ADMIN_PASSWORD: password
+  COUCH_BASE_LOCAL: http://localhost:5984
+  COUCH_NODE_NAME: nonode@nohost
+jobs:
+  e2e-couchdb:
+    if: ${{ github.event.label.name == 'pr:e2e:couchdb' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run : docker-compose up -d -f src/plugins/persistence/couch/couchdb-compose.yaml
+      - run : sh src/plugins/persistence/couch/setup-couchdb.sh
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: npx playwright@1.23.0 install
+      - run: npm install
+      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
+      - run: npm run test:e2e:couchdb
+      - run: ls -latr
+      - name: Archive test results
+        uses: actions/upload-artifact@v3
+        with:
+          path: test-results
+      - name: Archive html test results
+        uses: actions/upload-artifact@v3
+        with:
+          path: html-test-results
