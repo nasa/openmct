@@ -97,11 +97,11 @@ export default {
 
         },
         followTimeContext() {
-            this.timeContext.on('bounds', this.reloadTelemetry);
+            this.timeContext.on('bounds', this.reloadTelemetryOnBoundsChange);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off('bounds', this.reloadTelemetry);
+                this.timeContext.off('bounds', this.reloadTelemetryOnBoundsChange);
             }
         },
         addToComposition(telemetryObject) {
@@ -180,6 +180,11 @@ export default {
             this.composition.on('add', this.addToComposition);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
+        },
+        reloadTelemetryOnBoundsChange(bounds, isTick) {
+            if (!isTick) {
+                this.reloadTelemetry();
+            }
         },
         reloadTelemetry() {
             this.valuesByTimestamp = {};
