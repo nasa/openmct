@@ -295,7 +295,11 @@ class InMemorySearchProvider {
         // using structuredClone. Thus we're using JSON.parse/JSON.stringify to discard
         // those functions.
         const nonMutableDomainObject = JSON.parse(JSON.stringify(newDomainObjectToIndex));
-        provider.index(nonMutableDomainObject);
+
+        const objectProvider = this.openmct.objects.getProvider(nonMutableDomainObject.identifier);
+        if (objectProvider === undefined || objectProvider.search === undefined) {
+            provider.index(nonMutableDomainObject);
+        }
     }
 
     onCompositionRemoved(domainObjectToRemoveIdentifier) {
