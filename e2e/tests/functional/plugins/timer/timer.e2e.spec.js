@@ -24,9 +24,10 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Timer', () => {
+    let timer;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        await createDomainObjectWithDefaults(page, { type: 'timer' });
+        timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
     });
 
     test('Can perform actions on the Timer', async ({ page, openmctConfig }) => {
@@ -35,13 +36,13 @@ test.describe('Timer', () => {
             description: 'https://github.com/nasa/openmct/issues/4313'
         });
 
-        const { myItemsFolderName } = await openmctConfig;
+        const timerUrl = timer.url;
 
         await test.step("From the tree context menu", async () => {
-            await triggerTimerContextMenuAction(page, myItemsFolderName, 'Start');
-            await triggerTimerContextMenuAction(page, myItemsFolderName, 'Pause');
-            await triggerTimerContextMenuAction(page, myItemsFolderName, 'Restart at 0');
-            await triggerTimerContextMenuAction(page, myItemsFolderName, 'Stop');
+            await triggerTimerContextMenuAction(page, timerUrl, 'Start');
+            await triggerTimerContextMenuAction(page, timerUrl, 'Pause');
+            await triggerTimerContextMenuAction(page, timerUrl, 'Restart at 0');
+            await triggerTimerContextMenuAction(page, timerUrl, 'Stop');
         });
 
         await test.step("From the 3dot menu", async () => {
@@ -74,9 +75,9 @@ test.describe('Timer', () => {
  * @param {import('@playwright/test').Page} page
  * @param {TimerAction} action
  */
-async function triggerTimerContextMenuAction(page, myItemsFolderName, action) {
+async function triggerTimerContextMenuAction(page, timerUrl, action) {
     const menuAction = `.c-menu ul li >> text="${action}"`;
-    await openObjectTreeContextMenu(page, myItemsFolderName, "Unnamed Timer");
+    await openObjectTreeContextMenu(page, timerUrl);
     await page.locator(menuAction).click();
     assertTimerStateAfterAction(page, action);
 }

@@ -1,7 +1,9 @@
 <template>
 <div
-    :style="treeItemStyles"
     class="c-tree__item-h"
+    role="treeitem"
+    :style="treeItemStyles"
+    :aria-expanded="(!activeSearch && hasComposition) ? (isOpen || isLoading) ? 'true' : 'false' : undefined"
 >
     <div
         class="c-tree__item"
