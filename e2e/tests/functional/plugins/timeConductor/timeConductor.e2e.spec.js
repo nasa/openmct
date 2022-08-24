@@ -147,4 +147,24 @@ test.describe('Time conductor input fields real-time mode', () => {
         expect(page.url()).toContain(`startDelta=${startDelta}`);
         expect(page.url()).toContain(`endDelta=${endDelta}`);
     });
+
+    test.fixme('time conductor history in fixed time mode will track changing start and end times', async ({ page }) => {
+        // change start time, verify it's tracked in history
+        // change end time, verify it's tracked in history
+    });
+
+    test.fixme('time conductor history in realtime mode will track changing start and end times', async ({ page }) => {
+        // change start offset, verify it's tracked in history
+        // change end offset, verify it's tracked in history
+    });
+
+    test.fixme('time conductor history allows you to set a historical timeframe', async ({ page }) => {
+        // make sure there are historical history options
+        // select an option and make sure the time conductor start and end bounds are updated correctly
+    });
+
+    test.fixme('time conductor history allows you to set a realtime offsets', async ({ page }) => {
+        // make sure there are realtime history options
+        // select an option and verify the offsets are updated correctly
+    });
 });
