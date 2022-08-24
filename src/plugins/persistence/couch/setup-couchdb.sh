@@ -78,9 +78,8 @@ admin_user_exists () {
     fi
 }
 
-create_admin_user () {
-    echo Creating admin user
-    curl -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER -d \'"$COUCH_ADMIN_PASSWORD"\'
+is_cors_enabled() {
+    resource_exists $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/httpd/enable_cors
 }
 
 enable_cors () {
@@ -132,6 +131,9 @@ else
     echo "Database permissions not updated"
 fi
 
-echo "Enabling CORS"
-enable_cors
-echo "CORS successfully enabled"
+if [ "FALSE" == $(is_cors_enabled) ]; then
+    echo "Enabling CORS"
+    enable_cors
+else
+    echo "CORS enabled, nothing to do"
+fi
