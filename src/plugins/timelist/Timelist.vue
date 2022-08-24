@@ -38,7 +38,6 @@
 import {getValidatedData} from "../plan/util";
 import ListView from '../../ui/components/List/ListView.vue';
 import {getPreciseDuration} from "../../utils/duration";
-import ticker from 'utils/clock/Ticker';
 import {SORT_ORDER_OPTIONS} from "./constants";
 
 import moment from "moment";
@@ -68,7 +67,8 @@ const headerItems = [
         defaultDirection: false,
         property: 'duration',
         name: 'Time To/From',
-        format: function (value) {
+        format: function (value, object) {
+            console.log({object})
             let result;
             if (value < 0) {
                 result = `-${getPreciseDuration(Math.abs(value))}`;
@@ -110,7 +110,28 @@ export default {
     },
     mounted() {
         this.isEditing = this.openmct.editor.isEditing();
-        this.timestamp = Date.now();
+        this.timestamp = this.openmct.time.clock() ? this.openmct.time.clock().currentValue : undefined;
+        this.openmct.time.on('clock', (newClock) => {
+            this.filterValue = this.domainObject.configuration.filter;
+            //newclock can be undefined
+            if (newClock === undefined) {
+                // Show everything for fixed time
+                this.hideAll = false;
+                this.showAll = true;
+                // clear also invokes listActivities
+                this.clearPreviousActivities();
+            } else {
+                this.setSort();
+                this.setViewBounds();
+                this.listActivities();
+            }
+        });
+        this.openmct.time.on('bounds', (bounds, isTick) => {
+            if (isTick === true) {
+                this.timestamp = this.openmct.time.clock().currentValue();
+            }
+        });
+
         this.getPlanDataAndSetConfig(this.domainObject);
 
         this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.planFileUpdated);
@@ -128,6 +149,16 @@ export default {
             this.composition.on('remove', this.removeItem);
             this.composition.load();
         }
+
+        // initialize the full view if fixed time
+        if (this.timestamp === undefined) {
+            // Show everything
+            this.filterValue = this.domainObject.configuration.filter;
+            this.hideAll = false;
+            this.showAll = true;
+            this.listActivities();
+        }
+
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -377,7 +408,7 @@ export default {
                     activity.key = uuid();
                 }
 
-                activity.duration = activity.start - this.timestamp;
+                activity.duration = this.timestamp && activity.start ? activity.start - this.timestamp : undefined;
 
                 return activity;
             });
