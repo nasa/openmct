@@ -41,7 +41,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
         // Click text=Elements >> nth=0
         await page.locator('text=Elements').first().click();
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toBeVisible();
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
         await page.locator('[aria-label="Clock A clock result"] >> text=Clock A').click();
@@ -54,11 +54,11 @@ test.describe('Grand Search', () => {
 
         // Click [aria-label="OpenMCT Search"] a >> nth=0
         await page.locator('[aria-label="OpenMCT Search"] a').first().click();
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toBeVisible();
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('foo');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toBeVisible();
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
         await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
