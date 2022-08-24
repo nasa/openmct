@@ -77,7 +77,8 @@ test.describe('Example Imagery Object', () => {
     });
 
     test('Can adjust image brightness/contrast by dragging the sliders', async ({ page, browserName }) => {
-        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+        // eslint-disable-next-line playwright/no-skipped-test
+        test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
         // Open the image filter menu
         await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
 
@@ -422,16 +423,12 @@ test.describe('Example imagery thumbnails resize in display layouts', () => {
     });
 });
 
-// test.fixme('Can use Mouse Wheel to zoom in and out of previous image');
-// test.fixme('Can use alt+drag to move around image once zoomed in');
-// test.fixme('Clicking on the left arrow should pause the imagery and go to previous image');
-// test.fixme('If the imagery view is in pause mode, images still come in');
-// test.fixme('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Flexible layout', () => {
     test('Example Imagery in Flexible layout @unstable', async ({ page, browserName, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
-        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+        // eslint-disable-next-line playwright/no-skipped-test
+        test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5326'

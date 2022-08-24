@@ -28,9 +28,10 @@ const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Handle missing object for plots', () => {
     test('Displays empty div for missing stacked plot item @unstable', async ({ page, browserName, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
+        // eslint-disable-next-line playwright/no-skipped-test
+        test.skip(browserName === 'firefox', 'Firefox failing due to console events being missed');
 
-        test.fixme(browserName === 'firefox', 'Firefox failing due to console events being missed');
+        const { myItemsFolderName } = openmctConfig;
         const errorLogs = [];
 
         page.on("console", (message) => {

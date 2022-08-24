@@ -23,21 +23,23 @@ If this is your first time ever using the Playwright framework, we recommend goi
 Once you've got an understanding of Playwright, you'll need a baseline understanding of Open MCT:
 
 1. Follow the steps [Building and Running Open MCT Locally](../README.md#building-and-running-open-mct-locally)
-2. Once you're serving Open MCT locally, create an Example Telemetry Object (e.g.: 'Sine Wave Generator')
+2. Once you're serving Open MCT locally, create a 'Display Layout' object. Save it.
 3. Create a 'Plot' Object (e.g.: 'Stacked Plot')
-4. Expand the Tree on the left-hand nav and drag and drop the Example Telemetry Object into the Plot Object
-5. Create a 'Display Layout' object
-6. From the Tree, Drag the Plot object into the Display Layout
+4. Create an Example Telemetry Object (e.g.: 'Sine Wave Generator')
+5. Expand the Tree and note the hierarchy of objects which were created.
+6. Navigate to the Demo Display Layout Object to edit and modify the embedded plot.
+7. Modify the embedded plot with Telemetry Data.
 
 What you've created is a display which mimics the display that a mission control operator might use to understand and model telemetry data.
 
 Recreate the steps above with Playwright's codegen tool:
 
-1. `npm run start` in a terminal window
-2. Open another terminal window and start the Playwright codegen application `npx playwright codegen`
-3. Navigate the browser to `http://localhost:8080`
-4. Click the Create button and notice how your actions in the browser are being recorded in the Playwright Inspector
-5. Continue through the steps 2-6 above
+1. `npm run start` in a terminal window to serve Open MCT locally
+2. `npx @playwright/test install` to install playwright and dependencies
+3. Open another terminal window and start the Playwright codegen application `npx playwright codegen`
+4. Navigate the browser to `http://localhost:8080`
+5. Click the Create button and notice how your actions in the browser are being recorded in the Playwright Inspector
+6. Continue through the steps 2-6 above
 
 What you've created is an automated test which mimics the creation of a mission control display.
 
