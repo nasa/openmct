@@ -78,6 +78,11 @@ admin_user_exists () {
     fi
 }
 
+create_admin_user () {
+    echo Creating admin user
+    curl -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER -d \'"$COUCH_ADMIN_PASSWORD"\'
+}
+
 is_cors_enabled() {
     resource_exists $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/httpd/enable_cors
 }
