@@ -390,7 +390,7 @@ A telemetry object is a domain object with a telemetry property.  To take an exa
             {
                 "key": "value",
                 "name": "Value",
-                "units": "kilograms",
+                "unit": "kilograms",
                 "format": "float",
                 "min": 0,
                 "max": 100,
@@ -425,7 +425,7 @@ attribute      | type   | flags    | notes
 `name`         | string | optional | a human readable label for this field.  If omitted, defaults to `key`.
 `source`       | string | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
 `format`       | string | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format.  
-`units`        | string | optional | the units of this value, e.g. `km`, `seconds`, `parsecs`
+`unit`        | string | optional | the unit of this value, e.g. `km`, `seconds`, `parsecs`
 `min`          | number | optional | the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.
 `max`          | number | optional | the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.
 `enumerations` | array  | optional | for objects where `format` is `"enum"`, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a `value` property that is the numerical value of the enumeration, and a `string` property that is the text value of the enumeration.  ex: `{"value": 0, "string": "OFF"}`.  If you use an enumerations array, `min` and `max` will be set automatically for you.

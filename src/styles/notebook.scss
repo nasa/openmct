@@ -744,3 +744,9 @@ body.mobile {
         }
     }
 }
+
+.c-list__item {
+    &__name:focus {
+        text-overflow: clip;
+    }
+}

@@ -12,8 +12,10 @@
     <template v-if="!page.isLocked">
         <div
             class="c-list__item__name js-list__item__name"
+            :class="[{ 'c-input-inline': isSelected }]"
             :data-id="page.id"
-            :contenteditable="true"
+            :contenteditable="isSelected"
+            @keydown.escape="updateName"
             @keydown.enter="updateName"
             @blur="updateName"
         >{{ pageName }}</div>
@@ -32,8 +34,9 @@
 </template>
 
 <script>
-import PopupMenu from './PopupMenu.vue';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
 import RemoveDialog from '../utils/removeDialog';
+import PopupMenu from './PopupMenu.vue';
 
 export default {
     components: {
@@ -107,36 +110,39 @@ export default {
             removeDialog.show();
         },
         selectPage(event) {
-            const target = event.target;
-            const id = target.dataset.id;
+            const { target: { dataset: { id } } } = event;
 
-            if (!this.page.isLocked) {
-                const page = target.closest('.js-list__item');
-                const input = page.querySelector('.js-list__item__name');
-
-                if (page.className.indexOf('is-selected') > -1) {
-                    input.classList.add('c-input-inline');
-
-                    return;
-                }
-            }
-
-            if (!id) {
+            if (this.isSelected || !id) {
                 return;
             }
 
             this.$emit('selectPage', id);
         },
-        updateName(event) {
-            const target = event.target;
-            const name = target.textContent.toString();
-            target.classList.remove('c-input-inline');
-
-            if (name === '' || this.page.name === name) {
+        renamePage(target) {
+            if (!target) {
                 return;
             }
 
-            this.$emit('renamePage', Object.assign(this.page, { name }));
+            target.textContent = target.textContent ? target.textContent.trim() : `Unnamed ${this.pageTitle}`;
+
+            if (this.page.name === target.textContent) {
+                return;
+            }
+
+            this.$emit('renamePage', Object.assign(this.page, { name: target.textContent }));
+        },
+        updateName(event) {
+            const { target, keyCode, type } = event;
+
+            if (keyCode === KEY_ESCAPE) {
+                target.textContent = this.page.name;
+            } else if (keyCode === KEY_ENTER || type === 'blur') {
+                this.renamePage(target);
+            }
+
+            target.scrollLeft = '0';
+
+            target.blur();
         }
     }
 };
