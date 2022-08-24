@@ -7,12 +7,13 @@ updates:
       interval: "daily"  
     open-pull-requests-limit: 10
     labels:
+      - "pr:e2e"
       - "type:maintenance"
       - "dependencies"
-      - "pr:e2e"
       - "pr:daveit"
-      - "pr:visual"
       - "pr:platform"
+    ignore:
+      - dependency-name: "@playwright/test" #we source the container instead of the dependency in CI
 
   - package-ecosystem: "github-actions"
     directory: "/"

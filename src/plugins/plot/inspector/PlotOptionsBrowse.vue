@@ -136,7 +136,7 @@
                     <span v-if="showValueWhenExpanded">Value</span>
                     <span v-if="showMinimumWhenExpanded">Min</span>
                     <span v-if="showMaximumWhenExpanded">Max</span>
-                    <span v-if="showUnitsWhenExpanded">Units</span>
+                    <span v-if="showUnitsWhenExpanded">Unit</span>
                 </div>
             </li>
         </ul>
