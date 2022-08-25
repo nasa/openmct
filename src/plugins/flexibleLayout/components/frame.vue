@@ -100,14 +100,13 @@ export default {
     },
     mounted() {
         if (this.frame.domainObjectIdentifier) {
-            let domainObjectPromise;
             if (this.openmct.objects.supportsMutation(this.frame.domainObjectIdentifier)) {
-                domainObjectPromise = this.openmct.objects.getMutable(this.frame.domainObjectIdentifier);
+                this.domainObjectPromise = this.openmct.objects.getMutable(this.frame.domainObjectIdentifier);
             } else {
-                domainObjectPromise = this.openmct.objects.get(this.frame.domainObjectIdentifier);
+                this.domainObjectPromise = this.openmct.objects.get(this.frame.domainObjectIdentifier);
             }
 
-            domainObjectPromise.then((object) => {
+            this.domainObjectPromise.then((object) => {
                 this.setDomainObject(object);
             });
         }
@@ -115,7 +114,13 @@ export default {
         this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
     beforeDestroy() {
-        if (this.domainObject !== undefined && this.domainObject.isMutable) {
+        if (this.domainObjectPromise) {
+            this.domainObjectPromise.then(() => {
+                if (this?.domainObject?.isMutable) {
+                    this.openmct.objects.destroyMutable(this.domainObject);
+                }
+            });
+        } else if (this?.domainObject?.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
 
