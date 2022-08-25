@@ -22,6 +22,7 @@
 
 import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
+
 export default class EditPropertiesAction extends PropertiesAction {
     constructor(openmct) {
         super(openmct);
@@ -54,23 +55,26 @@ export default class EditPropertiesAction extends PropertiesAction {
     _onSave(changes) {
         try {
             Object.entries(changes).forEach(([key, value]) => {
-                const properties = key.split('.');
-                let object = this.domainObject;
-                const propertiesLength = properties.length;
-                properties.forEach((property, index) => {
-                    const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
-                    if (isComplexProperty && object[property] !== null) {
-                        object = object[property];
-                    } else {
-                        object[property] = value;
-                    }
-                });
+                const existingValue = this.domainObject[`${key}`];
+                if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
+                    value = {
+                        ...existingValue,
+                        ...value
+                    };
+                }
 
-                object = value;
-                this.openmct.objects.mutate(this.domainObject, key, value);
-                this.openmct.notifications.info('Save successful');
+                this.openmct.objects.mutate(this.domainObject, `${key}`, value);
             });
+            if (this.openmct.editor.isEditing()) {
+                this.openmct.editor.save();
+            }
+
+            this.openmct.notifications.info('Save successful');
         } catch (error) {
+            if (this.openmct.editor.isEditing()) {
+                this.openmct.editor.cancel();
+            }
+
             this.openmct.notifications.error('Error saving objects');
             console.error(error);
         }
@@ -81,6 +85,9 @@ export default class EditPropertiesAction extends PropertiesAction {
      */
     _onCancel() {
         //noop
+        if (this.openmct.editor.isEditing()) {
+            this.openmct.editor.cancel();
+        }
     }
 
     /**
@@ -92,6 +99,12 @@ export default class EditPropertiesAction extends PropertiesAction {
         const createWizard = new CreateWizard(this.openmct, this.domainObject, objectPath[1]);
         const formStructure = createWizard.getFormStructure(false);
         formStructure.title = 'Edit ' + this.domainObject.name;
+        //If we're in edit mode AND want to edit properties for the same domain object
+        //In this case, saving will put the object in view-only mode
+        //TODO: Maybe we should block editing properties if someone is in Edit mode?
+        if (!this.openmct.editor.isEditing()) {
+            this.openmct.editor.edit();
+        }
 
         return this.openmct.forms.showForm(formStructure)
             .then(this._onSave.bind(this))

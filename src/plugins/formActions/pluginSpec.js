@@ -102,7 +102,7 @@ describe('EditPropertiesAction plugin', () => {
         };
 
         const deBouncedFormChange = debounce(handleFormPropertyChange, 500);
-        openmct.forms.on('onFormPropertyChange', deBouncedFormChange);
+        openmct.forms.on('formPropertiesChanged', deBouncedFormChange);
 
         function handleFormPropertyChange(data) {
             const form = document.querySelector('.js-form');
@@ -119,7 +119,7 @@ describe('EditPropertiesAction plugin', () => {
             const clickEvent = createMouseEvent('click');
             buttons[1].dispatchEvent(clickEvent);
 
-            openmct.forms.off('onFormPropertyChange', deBouncedFormChange);
+            openmct.forms.off('formPropertiesChanged', deBouncedFormChange);
         }
 
         editPropertiesAction.invoke([domainObject])
@@ -151,6 +151,7 @@ describe('EditPropertiesAction plugin', () => {
         function callback(newObject) {
             expect(newObject.name).not.toEqual(oldName);
             expect(newObject.name).toEqual(newName);
+            expect(openmct.editor.isEditing()).toBeFalse();
 
             unObserve();
             done();
@@ -161,9 +162,10 @@ describe('EditPropertiesAction plugin', () => {
 
         let changed = false;
         const deBouncedFormChange = debounce(handleFormPropertyChange, 500);
-        openmct.forms.on('onFormPropertyChange', deBouncedFormChange);
+        openmct.forms.on('formPropertiesChanged', deBouncedFormChange);
 
         function handleFormPropertyChange(data) {
+            expect(openmct.editor.isEditing()).toBeTrue();
             const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             const notes = form.querySelector('textArea');
@@ -188,7 +190,7 @@ describe('EditPropertiesAction plugin', () => {
                 const clickEvent = createMouseEvent('click');
                 buttons[0].dispatchEvent(clickEvent);
 
-                openmct.forms.off('onFormPropertyChange', deBouncedFormChange);
+                openmct.forms.off('formPropertiesChanged', deBouncedFormChange);
             }
         }
 
@@ -213,10 +215,12 @@ describe('EditPropertiesAction plugin', () => {
         editPropertiesAction.invoke([domainObject])
             .then(() => {
                 expect(domainObject.name).toEqual(name);
+                expect(openmct.editor.isEditing()).toBeFalse();
                 done();
             })
             .catch(() => {
                 expect(domainObject.name).toEqual(name);
+                expect(openmct.editor.isEditing()).toBeFalse();
 
                 done();
             });

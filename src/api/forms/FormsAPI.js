@@ -25,6 +25,7 @@ import FormProperties from './components/FormProperties.vue';
 
 import EventEmitter from 'EventEmitter';
 import Vue from 'vue';
+import _ from 'lodash';
 
 export default class FormsAPI extends EventEmitter {
     constructor(openmct) {
@@ -145,7 +146,6 @@ export default class FormsAPI extends EventEmitter {
         }
 
         function onFormPropertyChange(data) {
-            self.emit('onFormPropertyChange', data);
             if (onChange) {
                 onChange(data);
             }
@@ -158,7 +158,8 @@ export default class FormsAPI extends EventEmitter {
                     key = property.join('.');
                 }
 
-                changes[key] = data.value;
+                _.set(changes, `${key}`, data.value);
+                self.emit('formPropertiesChanged', changes);
             }
         }
 
