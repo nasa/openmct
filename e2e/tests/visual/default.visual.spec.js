@@ -67,7 +67,7 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `About (theme: '${theme}')`);
     });
 
-    test.fixme('Visual - Default Condition Set', async ({ page, theme }) => {
+    test('Visual - Default Condition Set @unstable', async ({ page, theme }) => {
 
         await createDomainObjectWithDefaults(page, { type: 'Condition Set' });
 
@@ -75,7 +75,7 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
     });
 
-    test.fixme('Visual - Default Condition Widget', async ({ page, theme }) => {
+    test('Visual - Default Condition Widget @unstable', async ({ page, theme }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5349'
@@ -137,7 +137,7 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
     });
 
-    test.fixme('Visual - Save Successful Banner', async ({ page, theme }) => {
+    test('Visual - Save Successful Banner @unstable', async ({ page, theme }) => {
         await createDomainObjectWithDefaults(page, { type: 'Timer' });
 
         await page.locator('.c-message-banner__message').hover({ trial: true });
@@ -159,7 +159,7 @@ test.describe('Visual - Default', () => {
 
     });
 
-    test.fixme('Visual - Default Gauge is correct', async ({ page, theme }) => {
+    test('Visual - Default Gauge is correct @unstable', async ({ page, theme }) => {
         await createDomainObjectWithDefaults(page, { type: 'Gauge' });
 
         // Take a snapshot of the newly created Gauge object

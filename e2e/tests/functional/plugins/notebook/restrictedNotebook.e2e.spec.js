@@ -86,7 +86,8 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     });
 
     test('Locked page should now be in a locked state @addInit @unstable', async ({ page }, testInfo) => {
-        test.fixme(testInfo.project === 'chrome-beta', "Test is unreliable on chrome-beta");
+        // eslint-disable-next-line playwright/no-skipped-test
+        test.skip(testInfo.project === 'chrome-beta', "Test is unreliable on chrome-beta");
         // main lock message on page
         const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
         expect.soft(await lockMessage.count()).toEqual(1);
