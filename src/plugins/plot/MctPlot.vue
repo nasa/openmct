@@ -212,7 +212,7 @@ import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
 import _ from "lodash";
 
-const OFFSET_THRESHOLD = 50;
+const OFFSET_THRESHOLD = 10;
 
 export default {
     components: {
@@ -1197,7 +1197,8 @@ export default {
             //we ignore when width gets smaller
             const offsetChange = newOffsetWidth - this.offsetWidth;
             if (this.$parent.$refs.plotWrapper
-                && offsetChange >= OFFSET_THRESHOLD) {
+                && offsetChange > OFFSET_THRESHOLD) {
+                console.log('inside');
                 this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
