@@ -290,6 +290,7 @@ export default {
         this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
     },
     mounted() {
+        console.log('mounted notebook');
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
@@ -338,7 +339,7 @@ export default {
                 }
             });
         },
-        filterAndSortEntries() {
+        filterAndSortEntries() {')
             const filterTime = Date.now();
             const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
 
