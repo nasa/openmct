@@ -24,6 +24,8 @@
  */
 
 const { test, expect } = require('../../pluginFixtures');
+const { createDomainObjectWithDefaults } = require('../../appActions');
+const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
@@ -41,7 +43,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
         // Click text=Elements >> nth=0
         await page.locator('text=Elements').first().click();
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toBeVisible();
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
         await page.locator('[aria-label="Clock A clock result"] >> text=Clock A').click();
@@ -54,11 +56,11 @@ test.describe('Grand Search', () => {
 
         // Click [aria-label="OpenMCT Search"] a >> nth=0
         await page.locator('[aria-label="OpenMCT Search"] a').first().click();
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toBeVisible();
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('foo');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toBeVisible();
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
         await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
@@ -112,13 +114,16 @@ test.describe("Search Tests @unstable", () => {
         await expect(page.locator('text=No matching results.')).toBeVisible();
     });
 
-    test('Validate single object in search result', async ({ page }) => {
+    test('Validate single object in search result @couchdb', async ({ page }) => {
         //Go to baseURL
         await page.goto("./", { waitUntil: "networkidle" });
 
         // Create a folder object
-        const folderName = 'testFolder';
-        await createFolderObject(page, folderName);
+        const folderName = uuid();
+        await createDomainObjectWithDefaults(page, {
+            type: 'folder',
+            name: folderName
+        });
 
         // Full search for object
         await page.type("input[type=search]", folderName);
@@ -127,7 +132,7 @@ test.describe("Search Tests @unstable", () => {
         await waitForSearchCompletion(page);
 
         // Get the search results
-        const searchResults = await page.locator(searchResultSelector);
+        const searchResults = page.locator(searchResultSelector);
 
         // Verify that one result is found
         expect(await searchResults.count()).toBe(1);
