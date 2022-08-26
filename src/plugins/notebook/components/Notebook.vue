@@ -339,7 +339,7 @@ export default {
                 }
             });
         },
-        filterAndSortEntries() {')
+        filterAndSortEntries() {
             const filterTime = Date.now();
             const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
 
