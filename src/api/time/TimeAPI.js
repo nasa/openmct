@@ -171,7 +171,11 @@ class TimeAPI extends GlobalTimeContext {
      * @memberof module:openmct.TimeAPI#
      * @method getContextForView
      */
-    getContextForView(objectPath = []) {
+    getContextForView(objectPath) {
+        if (!objectPath || !Array.isArray(objectPath)) {
+            throw new Error('No objectPath provided');
+        }
+
         const viewKey = objectPath.length && this.openmct.objects.makeKeyString(objectPath[0].identifier);
 
         if (!viewKey) {
