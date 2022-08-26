@@ -123,14 +123,16 @@ test.describe('Notebook page tests', () => {
             name: "Test Notebook"
         });
     });
-    test('Delete page popup is removed properly on clicking dropdown again', async ({ page }) => {
+    //Test will need to be implemented after a refactor in #5713
+    // eslint-disable-next-line playwright/no-skipped-test
+    test.skip('Delete page popup is removed properly on clicking dropdown again', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/5679'
+            description: 'https://github.com/nasa/openmct/issues/5713'
         });
         // Expand sidebar and add a second page
         await page.locator('.c-notebook__toggle-nav-button').click();
-        await page.locator('.js-sidebar-pages .c-icon-button.icon-plus').click();
+        await page.locator('button.js-sidebar-pages .c-icon-button.icon-plus').click();
 
         // Click on the 2nd page dropdown button and expect the Delete Page option to appear
         await page.locator('.c-popup-menu-button').nth(2).click();
