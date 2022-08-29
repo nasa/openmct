@@ -24,6 +24,7 @@ import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
 import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from "./CouchStatusIndicator";
 import { isNotebookType } from '../../notebook/notebook-constants.js';
+import { ConsoleReporter } from "jasmine";
 
 const REV = "_rev";
 const ID = "_id";
@@ -42,13 +43,13 @@ class CouchObjectProvider {
         this.batchIds = [];
         this.onEventMessage = this.onEventMessage.bind(this);
         this.onEventError = this.onEventError.bind(this);
-        this.#startSharedWorker = this.#startSharedWorker.bind(this);
     }
 
     /**
      * @private
      */
     #startSharedWorker() {
+        console.log('start shared worker');
         let provider = this;
         let sharedWorker;
 
@@ -83,6 +84,7 @@ class CouchObjectProvider {
     }
 
     onSharedWorkerMessage(event) {
+        console.log('on shared worker message');
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else if (event.data.type === 'state') {
@@ -90,6 +92,7 @@ class CouchObjectProvider {
             this.indicator.setIndicatorToState(state);
         } else {
             let objectChanges = event.data.objectChanges;
+            console.log('object changes', objectChanges.id);
             const objectIdentifier = {
                 namespace: this.namespace,
                 key: objectChanges.id
@@ -97,11 +100,14 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
-
+            console.log('has observer?');
             if (observersForObject) {
+                console.log('yes, has observer');
                 observersForObject.forEach(async (observer) => {
                     const updatedObject = await this.get(objectIdentifier);
+                    console.log('is synchronized object?', updatedObject);
                     if (this.isSynchronizedObject(updatedObject)) {
+                        console.log('yes, is synchronized object', updatedObject);
                         observer(updatedObject);
                     }
                 });
