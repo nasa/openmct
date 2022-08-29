@@ -32,7 +32,6 @@ test.describe('Plot Integrity Testing @unstable', () => {
     test.beforeEach(async ({ page }) => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
-        //We provide some helper functions in appActions like createDomainObjectWithDefaults. This example will create a Timer object
         await createDomainObjectWithDefaults(page, { type: 'Sine Wave Generator' });
         //Edit Existing SWG to add randomness
     });
@@ -45,6 +44,33 @@ test.describe('Plot Integrity Testing @unstable', () => {
     });
 
     test('Plots re-request data when resizing at the appropriate threshold', async ({ page }) => {
+        //Navigate to Sine Wave Generator with Randomness
+        //Capture the number of plots points and store as const name numberOfPlotPoints
+        //Move the Inspector window by 1 pixel
+        //Capture the number of plot points and check against first value of numberOfPlotPoints
+        //Collpase the Inspector window
+        //Capture the number of plot points and ensure that plot has re-requested data
+    });
+});
+
+test.describe('Plot Integrity Testing within Display Layout @unstable', () => {
+    test.beforeEach(async ({ page }) => {
+        //Open a browser, navigate to the main page, and wait until all networkevents to resolve
+        await page.goto('./', { waitUntil: 'networkidle' });
+        await createDomainObjectWithDefaults(page, { type: 'Sine Wave Generator' });
+        //Edit Existing SWG to add randomness
+        //Create Display Layout
+        //Link SWG to Display Layout
+    });
+
+    test.fixme('Plots do not re-render when clicking clicking into plot', async ({ page }) => {
+        //Navigate to Sine Wave Generator with Randomness
+        //Capture the number of plots points and store as const name numberOfPlotPoints
+        //Click into center of SWG
+        //Capture the number of plot points and check against first value of numberOfPlotPoints
+    });
+
+    test.fixme('Plots re-request data when resizing at the appropriate threshold', async ({ page }) => {
         //Navigate to Sine Wave Generator with Randomness
         //Capture the number of plots points and store as const name numberOfPlotPoints
         //Move the Inspector window by 1 pixel
