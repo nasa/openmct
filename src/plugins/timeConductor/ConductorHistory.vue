@@ -39,7 +39,7 @@
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
-const DEFAULT_RECORDS = 10;
+const DEFAULT_RECORDS_LENGTH = 10;
 
 import { millisecondsToDHMS } from "utils/duration";
 import UTCTimeFormat from "../utcTimeSystem/UTCTimeFormat.js";
@@ -79,15 +79,13 @@ export default {
              * @timespans {start, end} number representing timestamp
              */
             fixedHistory: {},
-            presets: []
+            presets: [],
+            isFixed: this.openmct.time.clock() === undefined
         };
     },
     computed: {
         currentHistory() {
             return this.mode + 'History';
-        },
-        isFixed() {
-            return this.openmct.time.clock() === undefined;
         },
         historyForCurrentTimeSystem() {
             const history = this[this.currentHistory][this.timeSystem.key];
@@ -96,7 +94,7 @@ export default {
         },
         storageKey() {
             let key = LOCAL_STORAGE_HISTORY_KEY_FIXED;
-            if (this.mode !== 'fixed') {
+            if (!this.isFixed) {
                 key = LOCAL_STORAGE_HISTORY_KEY_REALTIME;
             }
 
@@ -108,6 +106,7 @@ export default {
             handler() {
                 // only for fixed time since we track offsets for realtime
                 if (this.isFixed) {
+                    this.updateMode();
                     this.addTimespan();
                 }
             },
@@ -115,28 +114,35 @@ export default {
         },
         offsets: {
             handler() {
+                this.updateMode();
                 this.addTimespan();
             },
             deep: true
         },
         timeSystem: {
             handler(ts) {
+                this.updateMode();
                 this.loadConfiguration();
                 this.addTimespan();
             },
             deep: true
         },
         mode: function () {
-            this.getHistoryFromLocalStorage();
-            this.initializeHistoryIfNoHistory();
+            this.updateMode();
             this.loadConfiguration();
         }
     },
     mounted() {
+        this.updateMode();
         this.getHistoryFromLocalStorage();
         this.initializeHistoryIfNoHistory();
     },
     methods: {
+        updateMode() {
+            this.isFixed = this.openmct.time.clock() === undefined;
+            this.getHistoryFromLocalStorage();
+            this.initializeHistoryIfNoHistory();
+        },
         getHistoryMenuItems() {
             const history = this.historyForCurrentTimeSystem.map(timespan => {
                 let name;
@@ -203,8 +209,8 @@ export default {
             currentHistory = currentHistory.filter(ts => !(ts.start === timespan.start && ts.end === timespan.end));
             currentHistory.unshift(timespan); // add to front
 
-            if (currentHistory.length > this.records) {
-                currentHistory.length = this.records;
+            if (currentHistory.length > this.MAX_RECORDS_LENGTH) {
+                currentHistory.length = this.MAX_RECORDS_LENGTH;
             }
 
             this.$set(this[this.currentHistory], key, currentHistory);
@@ -231,7 +237,7 @@ export default {
                 .filter(option => option.timeSystem === this.timeSystem.key);
 
             this.presets = this.loadPresets(configurations);
-            this.records = this.loadRecords(configurations);
+            this.MAX_RECORDS_LENGTH = this.loadRecords(configurations);
         },
         loadPresets(configurations) {
             const configuration = configurations.find(option => {
@@ -243,9 +249,9 @@ export default {
         },
         loadRecords(configurations) {
             const configuration = configurations.find(option => option.records);
-            const records = configuration ? configuration.records : DEFAULT_RECORDS;
+            const maxRecordsLength = configuration ? configuration.records : DEFAULT_RECORDS_LENGTH;
 
-            return records;
+            return maxRecordsLength;
         },
         formatTime(time) {
             let format = this.timeSystem.timeFormat;

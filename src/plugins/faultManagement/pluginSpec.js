@@ -24,10 +24,22 @@ import {
     createOpenMct,
     resetApplicationState
 } from '../../utils/testing';
-import { FAULT_MANAGEMENT_TYPE } from './constants';
+import {
+    FAULT_MANAGEMENT_TYPE,
+    FAULT_MANAGEMENT_VIEW,
+    FAULT_MANAGEMENT_NAMESPACE
+} from './constants';
 
 describe("The Fault Management Plugin", () => {
     let openmct;
+    const faultDomainObject = {
+        name: 'it is not your fault',
+        type: FAULT_MANAGEMENT_TYPE,
+        identifier: {
+            key: 'nobodies',
+            namespace: 'fault'
+        }
+    };
 
     beforeEach(() => {
         openmct = createOpenMct();
@@ -38,15 +50,54 @@ describe("The Fault Management Plugin", () => {
     });
 
     it('is not installed by default', () => {
-        let typeDef = openmct.types.get(FAULT_MANAGEMENT_TYPE).definition;
+        const typeDef = openmct.types.get(FAULT_MANAGEMENT_TYPE).definition;
 
         expect(typeDef.name).toBe('Unknown Type');
     });
 
     it('can be installed', () => {
         openmct.install(openmct.plugins.FaultManagement());
-        let typeDef = openmct.types.get(FAULT_MANAGEMENT_TYPE).definition;
+        const typeDef = openmct.types.get(FAULT_MANAGEMENT_TYPE).definition;
 
         expect(typeDef.name).toBe('Fault Management');
+    });
+
+    describe('once it is installed', () => {
+        beforeEach(() => {
+            openmct.install(openmct.plugins.FaultManagement());
+        });
+
+        it('provides a view for fault management types', () => {
+            const applicableViews = openmct.objectViews.get(faultDomainObject, []);
+            const faultManagementView = applicableViews.find(
+                (viewProvider) => viewProvider.key === FAULT_MANAGEMENT_VIEW
+            );
+
+            expect(applicableViews.length).toEqual(1);
+            expect(faultManagementView).toBeDefined();
+        });
+
+        it('provides an inspector view for fault management types', () => {
+            const faultDomainObjectSelection = [[
+                {
+                    context: {
+                        item: faultDomainObject
+                    }
+                }
+            ]];
+            const applicableInspectorViews = openmct.inspectorViews.get(faultDomainObjectSelection);
+
+            expect(applicableInspectorViews.length).toEqual(1);
+        });
+
+        it('creates a root object for fault management', async () => {
+            const root = await openmct.objects.getRoot();
+            const rootCompositionCollection = openmct.composition.get(root);
+            const rootComposition = await rootCompositionCollection.load();
+            const faultObject = rootComposition.find(obj => obj.identifier.namespace === FAULT_MANAGEMENT_NAMESPACE);
+
+            expect(faultObject).toBeDefined();
+        });
+
     });
 });
