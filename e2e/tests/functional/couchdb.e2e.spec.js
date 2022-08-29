@@ -28,7 +28,7 @@
 const { test, expect } = require('../../baseFixtures');
 
 test.describe("CouchDB Status Indicator @couchdb", () => {
-    test.use({ failOnConsoleError: false });
+    test.use({ failOnConsoleError: true });
     //TODO BeforeAll Verify CouchDB Connectivity with APIContext
     test('Shows green if connected', async ({ page }) => {
         await page.route('**/openmct/mine', route => {
