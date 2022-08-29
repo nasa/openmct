@@ -109,6 +109,23 @@ test.describe('Notebook section tests', () => {
         //Delete 3rd section
         //1st is selected and there is no default notebook
     });
+    test.fixme('Section rename operations', async ({ page }) => {
+        // Create a new notebook
+        // Add a section
+        // Rename the section but do not confirm
+        // Keyboard press 'Escape'
+        // Verify that the section name reverts to the default name
+        // Rename the section but do not confirm
+        // Keyboard press 'Enter'
+        // Verify that the section name is updated
+        // Rename the section to "" (empty string)
+        // Keyboard press 'Enter' to confirm
+        // Verify that the section name reverts to the default name
+        // Rename the section to something long that overflows the text box
+        // Verify that the section name is not truncated while input is active
+        // Confirm the section name edit
+        // Verify that the section name is truncated now that input is not active
+    });
 });
 
 test.describe('Notebook page tests', () => {
@@ -132,17 +149,17 @@ test.describe('Notebook page tests', () => {
         });
         // Expand sidebar and add a second page
         await page.locator('.c-notebook__toggle-nav-button').click();
-        await page.locator('button.js-sidebar-pages .c-icon-button.icon-plus').click();
+        await page.locator('text=Page Add >> button').click();
 
         // Click on the 2nd page dropdown button and expect the Delete Page option to appear
-        await page.locator('.c-popup-menu-button').nth(2).click();
+        await page.locator('button[title="Open context menu"]').nth(2).click();
         await expect(page.locator('text=Delete Page')).toBeEnabled();
         // Clicking on the same page a second time causes the same Delete Page option to recreate
-        await page.locator('.c-popup-menu-button').nth(2).click();
+        await page.locator('button[title="Open context menu"]').nth(2).click();
         await expect(page.locator('text=Delete Page')).toBeEnabled();
         // Clicking on the first page causes the first delete button to detach and recreate on the first page
-        await page.locator('.c-popup-menu-button').nth(1).click();
-        const numOfDeletePagePopups = await page.locator('div:has-text("Delete Page")').count();
+        await page.locator('button[title="Open context menu"]').nth(1).click();
+        const numOfDeletePagePopups = await page.locator('li[title="Delete Page"]').count();
         expect(numOfDeletePagePopups).toBe(1);
     });
     test.fixme('Page selection operations and associated behavior', async ({ page }) => {
@@ -161,6 +178,23 @@ test.describe('Notebook page tests', () => {
         //Select 3rd (default) page
         //Delete 3rd page
         //First is now selected and there is no default notebook
+    });
+    test.fixme('Page rename operations', async ({ page }) => {
+        // Create a new notebook
+        // Add a page
+        // Rename the page but do not confirm
+        // Keyboard press 'Escape'
+        // Verify that the page name reverts to the default name
+        // Rename the page but do not confirm
+        // Keyboard press 'Enter'
+        // Verify that the page name is updated
+        // Rename the page to "" (empty string)
+        // Keyboard press 'Enter' to confirm
+        // Verify that the page name reverts to the default name
+        // Rename the page to something long that overflows the text box
+        // Verify that the page name is not truncated while input is active
+        // Confirm the page name edit
+        // Verify that the page name is truncated now that input is not active
     });
 });
 

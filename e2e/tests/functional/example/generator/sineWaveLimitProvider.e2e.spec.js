@@ -28,7 +28,8 @@ const { test, expect } = require('../../../../baseFixtures');
 
 test.describe('Sine Wave Generator', () => {
     test('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page, browserName }) => {
-        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+        // eslint-disable-next-line playwright/no-skipped-test
+        test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
 
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
