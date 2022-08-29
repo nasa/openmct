@@ -149,9 +149,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
             }
         };
 
-        // We have a debounce set to 300ms on setHash, so if we don't flush,
-        // the above resolve function sometimes doesn't fire due to a race condition.
-        openmct.router.setHash.flush();
         openmct.router.on('change:hash', resolveFunction);
     });
 });
