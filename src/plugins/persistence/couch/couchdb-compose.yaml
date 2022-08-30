@@ -7,6 +7,7 @@ services:
     - "5986:5986"
     volumes:
     - couchdb:/opt/couchdb/data
+    - ./config/:/opt/couchdb/etc/local.d
     environment:
       COUCHDB_USER: admin
       COUCHDB_PASSWORD: password

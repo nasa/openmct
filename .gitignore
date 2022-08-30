@@ -38,6 +38,7 @@ html-test-results
 
 # couchdb scripting artifacts
 src/plugins/persistence/couch/.env.local
+src/plugins/persistence/couch/config/docker.ini
 index.html.bak
 
 # codecov artifacts
