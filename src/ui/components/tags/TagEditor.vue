@@ -76,7 +76,7 @@ export default {
     },
     data() {
         return {
-            annontation: null,
+            annontations: [],
             addedTags: [],
             userAddingTag: false
         };
@@ -100,14 +100,14 @@ export default {
         },
         annotationQuery: {
             handler() {
-                this.unloadAnnotation();
-                this.loadAnnotation();
+                this.unloadAnnotations();
+                this.loadAnnotations();
             },
             deep: true
         }
     },
     mounted() {
-        this.loadAnnotation();
+        this.loadAnnotations();
     },
     destroyed() {
         if (this.removeTagsListener) {
@@ -123,14 +123,18 @@ export default {
                 });
             }
         },
-        async loadAnnotation() {
+        async loadAnnotations() {
+            if (!this.availableTags().length) {
+                return;
+            }
+
             this.annotation = await this.openmct.annotation.getAnnotation(this.annotationQuery, this.annotationSearchType);
             this.addAnnotationListener(this.annotation);
             if (this.annotation && this.annotation.tags) {
                 this.tagsChanged(this.annotation.tags);
             }
         },
-        unloadAnnotation() {
+        unloadAnnotations() {
             if (this.removeTagsListener) {
                 this.removeTagsListener();
                 this.removeTagsListener = undefined;
@@ -153,12 +157,14 @@ export default {
             this.userAddingTag = true;
         },
         async tagRemoved(tagToRemove) {
+            // TODO soft delete annotations that match tag instead
             const result = await this.openmct.annotation.removeAnnotationTag(this.annotation, tagToRemove);
             this.$emit('tags-updated');
 
             return result;
         },
         async tagAdded(newTag) {
+            // TODO either undelete an annotation, or create one (1) new annotation
             const annotationWasCreated = this.annotation === null || this.annotation === undefined;
             this.annotation = await this.openmct.annotation.addAnnotationTag(this.annotation,
                 this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
