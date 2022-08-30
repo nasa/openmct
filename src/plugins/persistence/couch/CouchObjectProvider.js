@@ -54,7 +54,7 @@ class CouchObjectProvider {
 
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
-
+        console.log('shared worker url', sharedWorkerURL);
         sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
         sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
         sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);

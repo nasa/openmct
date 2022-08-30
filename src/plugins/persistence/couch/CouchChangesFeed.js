@@ -5,6 +5,7 @@
     const controller = new AbortController();
 
     self.onconnect = function (e) {
+        console.log('couch changes feed connected');
         let port = e.ports[0];
         connections.push(port);
 
@@ -56,6 +57,7 @@
         console.debug('📩 Received message from CouchDB 📩');
 
         const objectChanges = JSON.parse(event.data);
+        console.log('object changes', objectChanges, connections);
         connections.forEach(function (connection) {
             connection.postMessage({
                 objectChanges
@@ -64,6 +66,7 @@
     };
 
     self.listenForChanges = function (url) {
+        console.log('listening for changes', url);
         console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
         couchEventSource = new EventSource(url);
