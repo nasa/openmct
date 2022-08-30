@@ -80,7 +80,7 @@ admin_user_exists () {
 
 create_admin_user () {
     echo Creating admin user
-    curl -v -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER -d \'"$COUCH_ADMIN_PASSWORD"\'
+    curl -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER -d \'"$COUCH_ADMIN_PASSWORD"\'
 }
 
 is_cors_enabled() {
