@@ -99,7 +99,7 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
-            console.log('has observer?');
+            console.log('has observer?', this.observers);
             if (observersForObject) {
                 console.log('yes, has observer');
                 observersForObject.forEach(async (observer) => {
@@ -475,10 +475,11 @@ class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
-        console.log('observe', identifier);
+        console.log('couch observe', identifier);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);
+        console.log('observers after adding', this.observers);
 
         if (!this.isObservingObjectChanges()) {
             this.#observeObjectChanges();
