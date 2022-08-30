@@ -42,12 +42,13 @@ class CouchObjectProvider {
         this.batchIds = [];
         this.onEventMessage = this.onEventMessage.bind(this);
         this.onEventError = this.onEventError.bind(this);
+        this.startSharedWorker = this.startSharedWorker.bind(this);
     }
 
     /**
      * @private
      */
-    #startSharedWorker() {
+    startSharedWorker() {
         console.log('start shared worker');
         let provider = this;
         let sharedWorker;
