@@ -92,7 +92,6 @@ test.describe('Grand Search', () => {
 });
 
 test.describe("Search Tests @unstable", () => {
-    test.use({ failOnConsoleError: true });
     const searchResultSelector = '.c-gsearch-result__title';
 
     test('Validate empty search result', async ({ page }) => {
