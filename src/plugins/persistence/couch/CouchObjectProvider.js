@@ -32,7 +32,7 @@ const ALL_DOCS = "_all_docs?include_docs=true";
 
 class CouchObjectProvider {
     constructor(openmct, options, namespace, indicator) {
-        options = this.#normalize(options);
+        options = this.normalize(options);
         this.openmct = openmct;
         this.indicator = indicator;
         this.url = options.url;
@@ -88,7 +88,7 @@ class CouchObjectProvider {
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else if (event.data.type === 'state') {
-            const state = this.#messageToIndicatorState(event.data.state);
+            const state = this.messageToIndicatorState(event.data.state);
             this.indicator.setIndicatorToState(state);
         } else {
             let objectChanges = event.data.objectChanges;
@@ -121,7 +121,7 @@ class CouchObjectProvider {
      * @param {'open'|'close'|'pending'} message
      * @returns {import('./CouchStatusIndicator').IndicatorState}
      */
-    #messageToIndicatorState(message) {
+    messageToIndicatorState(message) {
         let state;
         switch (message) {
         case 'open':
@@ -147,7 +147,7 @@ class CouchObjectProvider {
      * @param {number} statusCode
      * @returns {import("./CouchStatusIndicator").IndicatorState}
      */
-    #statusCodeToIndicatorState(statusCode) {
+    statusCodeToIndicatorState(statusCode) {
         let state;
         switch (statusCode) {
         case CouchObjectProvider.HTTP_OK:
@@ -180,7 +180,7 @@ class CouchObjectProvider {
     }
 
     //backwards compatibility, options used to be a url. Now it's an object
-    #normalize(options) {
+    normalize(options) {
         if (typeof options === 'string') {
             return {
                 url: options
@@ -208,14 +208,14 @@ class CouchObjectProvider {
         let response = null;
 
         if (!this.isObservingObjectChanges()) {
-            this.#observeObjectChanges();
+            this.observeObjectChanges();
         }
 
         try {
             response = await fetch(this.url + '/' + subPath, fetchOptions);
             const { status } = response;
             const json = await response.json();
-            this.#handleResponseCode(status, json, fetchOptions);
+            this.handleResponseCode(status, json, fetchOptions);
 
             return json;
         } catch (error) {
@@ -237,8 +237,8 @@ class CouchObjectProvider {
      * Sets the CouchDB indicator status and throws an error if needed.
      * @private
      */
-    #handleResponseCode(status, json, fetchOptions) {
-        this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
+    handleResponseCode(status, json, fetchOptions) {
+        this.indicator.setIndicatorToState(this.statusCodeToIndicatorState(status));
         if (status === CouchObjectProvider.HTTP_CONFLICT) {
             throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
         } else if (status >= CouchObjectProvider.HTTP_BAD_REQUEST) {
@@ -257,7 +257,7 @@ class CouchObjectProvider {
      * persist any queued objects
      * @private
      */
-    #checkResponse(response, intermediateResponse, key) {
+    checkResponse(response, intermediateResponse, key) {
         let requestSuccess = false;
         const id = response ? response.id : undefined;
         let rev;
@@ -277,7 +277,7 @@ class CouchObjectProvider {
             this.objectQueue[id].updateRevision(rev);
             this.objectQueue[id].pending = false;
             if (this.objectQueue[id].hasNext()) {
-                this.#updateQueued(id);
+                this.updateQueued(id);
             }
         } else {
             this.objectQueue[key].pending = false;
@@ -287,7 +287,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #getModel(response) {
+    getModel(response) {
         if (response && response.model) {
             let key = response[ID];
             let object = this.fromPersistedModel(response.model, key);
@@ -315,7 +315,7 @@ class CouchObjectProvider {
         this.batchIds.push(identifier.key);
 
         if (this.bulkPromise === undefined) {
-            this.bulkPromise = this.#deferBatchedGet(abortSignal);
+            this.bulkPromise = this.deferBatchedGet(abortSignal);
         }
 
         return this.bulkPromise
@@ -327,23 +327,23 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #deferBatchedGet(abortSignal) {
+    deferBatchedGet(abortSignal) {
         // We until the next event loop cycle to "collect" all of the get
         // requests triggered in this iteration of the event loop
 
-        return this.#waitOneEventCycle().then(() => {
+        return this.waitOneEventCycle().then(() => {
             let batchIds = this.batchIds;
 
-            this.#clearBatch();
+            this.clearBatch();
 
             if (batchIds.length === 1) {
                 let objectKey = batchIds[0];
 
                 //If there's only one request, just do a regular get
                 return this.request(objectKey, "GET", undefined, abortSignal)
-                    .then(this.#returnAsMap(objectKey));
+                    .then(this.returnAsMap(objectKey));
             } else {
-                return this.#bulkGet(batchIds, abortSignal);
+                return this.bulkGet(batchIds, abortSignal);
             }
         });
     }
@@ -351,10 +351,10 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #returnAsMap(objectKey) {
+    returnAsMap(objectKey) {
         return (result) => {
             let objectMap = {};
-            objectMap[objectKey] = this.#getModel(result);
+            objectMap[objectKey] = this.getModel(result);
 
             return objectMap;
         };
@@ -363,7 +363,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #clearBatch() {
+    clearBatch() {
         this.batchIds = [];
         delete this.bulkPromise;
     }
@@ -371,7 +371,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #waitOneEventCycle() {
+    waitOneEventCycle() {
         return new Promise((resolve) => {
             setTimeout(resolve);
         });
@@ -380,7 +380,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #bulkGet(ids, signal) {
+    bulkGet(ids, signal) {
         ids = this.removeDuplicates(ids);
 
         const query = {
@@ -393,7 +393,7 @@ class CouchObjectProvider {
                     //row.doc === null if the document does not exist.
                     //row.doc === undefined if the document is not found.
                     if (row.doc !== undefined) {
-                        map[row.key] = this.#getModel(row.doc);
+                        map[row.key] = this.getModel(row.doc);
                     }
 
                     return map;
@@ -462,7 +462,7 @@ class CouchObjectProvider {
             if (json) {
                 let docs = json.docs;
                 docs.forEach(doc => {
-                    let object = this.#getModel(doc);
+                    let object = this.getModel(doc);
                     if (object) {
                         objects.push(object);
                     }
@@ -483,7 +483,7 @@ class CouchObjectProvider {
         console.log('observers after adding', this.observers);
 
         if (!this.isObservingObjectChanges()) {
-            this.#observeObjectChanges();
+            this.observeObjectChanges();
         }
 
         return () => {
@@ -503,7 +503,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #observeObjectChanges() {
+    observeObjectChanges() {
         const sseChangesPath = `${this.url}/_changes`;
         const sseURL = new URL(sseChangesPath);
         sseURL.searchParams.append('feed', 'eventsource');
@@ -513,16 +513,16 @@ class CouchObjectProvider {
         if (typeof SharedWorker === 'undefined') {
             this.fetchChanges(sseURL.toString());
         } else {
-            this.#initiateSharedWorkerFetchChanges(sseURL.toString());
+            this.initiateSharedWorkerFetchChanges(sseURL.toString());
         }
     }
 
     /**
      * @private
      */
-    #initiateSharedWorkerFetchChanges(url) {
+    initiateSharedWorkerFetchChanges(url) {
         if (!this.changesFeedSharedWorker) {
-            this.changesFeedSharedWorker = this.#startSharedWorker();
+            this.changesFeedSharedWorker = this.startSharedWorker();
 
             if (this.isObservingObjectChanges()) {
                 this.stopObservingObjectChanges();
@@ -542,12 +542,12 @@ class CouchObjectProvider {
     onEventError(error) {
         console.error('Error on feed', error);
         const { readyState } = error.target;
-        this.#updateIndicatorStatus(readyState);
+        this.updateIndicatorStatus(readyState);
     }
 
     onEventOpen(event) {
         const { readyState } = event.target;
-        this.#updateIndicatorStatus(readyState);
+        this.updateIndicatorStatus(readyState);
     }
 
     onEventMessage(event) {
@@ -558,7 +558,7 @@ class CouchObjectProvider {
             key: eventData.id
         };
         const keyString = this.openmct.objects.makeKeyString(identifier);
-        this.#updateIndicatorStatus(readyState);
+        this.updateIndicatorStatus(readyState);
         let observersForObject = this.observers[keyString];
 
         if (observersForObject) {
@@ -600,7 +600,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #getIntermediateResponse() {
+    getIntermediateResponse() {
         let intermediateResponse = {};
         intermediateResponse.promise = new Promise(function (resolve, reject) {
             intermediateResponse.resolve = resolve;
@@ -614,7 +614,7 @@ class CouchObjectProvider {
      * Update the indicator status based on the readyState of the EventSource
      * @private
      */
-    #updateIndicatorStatus(readyState) {
+    updateIndicatorStatus(readyState) {
         let message;
         switch (readyState) {
         case EventSource.CONNECTING:
@@ -631,7 +631,7 @@ class CouchObjectProvider {
             break;
         }
 
-        const indicatorState = this.#messageToIndicatorState(message);
+        const indicatorState = this.messageToIndicatorState(message);
         this.indicator.setIndicatorToState(indicatorState);
     }
 
@@ -653,7 +653,7 @@ class CouchObjectProvider {
     }
 
     create(model) {
-        let intermediateResponse = this.#getIntermediateResponse();
+        let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
         model = this.toPersistableModel(model);
         this.enqueueObject(key, model, intermediateResponse);
@@ -664,7 +664,7 @@ class CouchObjectProvider {
             let document = new CouchDocument(key, queued.model);
             document.metadata.created = Date.now();
             this.request(key, "PUT", document).then((response) => {
-                this.#checkResponse(response, queued.intermediateResponse, key);
+                this.checkResponse(response, queued.intermediateResponse, key);
             }).catch(error => {
                 queued.intermediateResponse.reject(error);
                 this.objectQueue[key].pending = false;
@@ -677,13 +677,13 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    #updateQueued(key) {
+    updateQueued(key) {
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
             this.request(key, "PUT", document).then((response) => {
-                this.#checkResponse(response, queued.intermediateResponse, key);
+                this.checkResponse(response, queued.intermediateResponse, key);
             }).catch((error) => {
                 queued.intermediateResponse.reject(error);
                 this.objectQueue[key].pending = false;
@@ -692,12 +692,12 @@ class CouchObjectProvider {
     }
 
     update(model) {
-        let intermediateResponse = this.#getIntermediateResponse();
+        let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
         model = this.toPersistableModel(model);
 
         this.enqueueObject(key, model, intermediateResponse);
-        this.#updateQueued(key);
+        this.updateQueued(key);
 
         return intermediateResponse.promise;
     }
