@@ -475,6 +475,7 @@ class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
+        console.log('observe', identifier);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);

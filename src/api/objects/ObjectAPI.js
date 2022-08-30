@@ -514,16 +514,17 @@ export default class ObjectAPI {
      */
     _toMutable(object) {
         let mutableObject;
+        console.log('objectAPI: to mutable', object.identifier?.key, object);
 
         if (object.isMutable) {
             mutableObject = object;
         } else {
             mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
-
+            console.log('creating mutable');
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
             let provider = this.getProvider(identifier);
-
+            console.log('provider', provider);
             if (provider !== undefined
                 && provider.observe !== undefined
                 && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
