@@ -48,13 +48,11 @@ class CouchObjectProvider {
      * @private
      */
     #startSharedWorker() {
-        console.log('start shared worker');
         let provider = this;
         let sharedWorker;
 
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
-        console.log('shared worker url', sharedWorkerURL);
         sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
         sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
         sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
@@ -83,7 +81,6 @@ class CouchObjectProvider {
     }
 
     onSharedWorkerMessage(event) {
-        console.log('on shared worker message');
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else if (event.data.type === 'state') {
@@ -91,7 +88,6 @@ class CouchObjectProvider {
             this.indicator.setIndicatorToState(state);
         } else {
             let objectChanges = event.data.objectChanges;
-            console.log('object changes', objectChanges.id);
             const objectIdentifier = {
                 namespace: this.namespace,
                 key: objectChanges.id
@@ -99,7 +95,7 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
-            console.log('has observer?', this.observers);
+
             if (observersForObject) {
                 console.log('yes, has observer');
                 observersForObject.forEach(async (observer) => {
@@ -475,11 +471,9 @@ class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
-        console.log('couch observe', identifier);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);
-        console.log('observers after adding', this.observers);
 
         if (!this.isObservingObjectChanges()) {
             this.#observeObjectChanges();

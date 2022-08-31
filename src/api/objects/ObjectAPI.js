@@ -348,18 +348,19 @@ export default class ObjectAPI {
      *          has been saved, or be rejected if it cannot be saved
      */
     save(domainObject) {
+        console.log('save', domainObject.identifier?.key);
         let provider = this.getProvider(domainObject.identifier);
         let savedResolve;
         let savedReject;
         let result;
 
         if (!this.isPersistable(domainObject.identifier)) {
-            console.log('save not persistable');
             result = Promise.reject('Object provider does not support saving');
         } else if (this.#hasAlreadyBeenPersisted(domainObject)) {
-            console.log('has already been persisted');
+            console.log('persisted already', domainObject.identifier?.key);
             result = Promise.resolve(true);
         } else {
+            console.log('is persistable, has not be persisted already', domainObject.identifier?.key);
             const persistedTime = Date.now();
             if (domainObject.persisted === undefined) {
                 result = new Promise((resolve, reject) => {
@@ -516,21 +517,18 @@ export default class ObjectAPI {
      */
     _toMutable(object) {
         let mutableObject;
-        console.log('objectAPI: to mutable', object.identifier?.key, object);
 
         if (object.isMutable) {
             mutableObject = object;
         } else {
             mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
-            console.log('creating mutable', object.identifier?.key);
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
             let provider = this.getProvider(identifier);
-            console.log('provider', provider);
+
             if (provider !== undefined
                 && provider.observe !== undefined
                 && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
-                    console.log('synchronizeing', object.identifier?.key);
                 let unobserve = provider.observe(identifier, (updatedModel) => {
                     if (updatedModel.persisted > mutableObject.modified) {
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen

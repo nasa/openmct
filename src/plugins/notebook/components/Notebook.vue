@@ -290,7 +290,6 @@ export default {
         this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
     },
     mounted() {
-        console.log('mounted notebook');
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
