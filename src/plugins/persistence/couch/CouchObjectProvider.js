@@ -687,6 +687,7 @@ class CouchObjectProvider {
     }
 
     update(model) {
+        console.log('cdb provder update', model.identifier?.key);
         let intermediateResponse = this.#getIntermediateResponse();
         const key = model.identifier.key;
         model = this.toPersistableModel(model);
