@@ -529,8 +529,10 @@ export default class ObjectAPI {
             if (provider !== undefined
                 && provider.observe !== undefined
                 && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
+                console.log('to mutable is synchronized object', object.identifier?.key);
                 let unobserve = provider.observe(identifier, (updatedModel) => {
                     if (updatedModel.persisted > mutableObject.modified) {
+                        console.log('persisted is greater than modified', object.identifier?.key);
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                         //in rapid succession and intermediate persistence states are returned by the observe function.
                         updatedModel = this.applyGetInterceptors(identifier, updatedModel);

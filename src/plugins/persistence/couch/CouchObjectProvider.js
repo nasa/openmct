@@ -24,6 +24,7 @@ import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
 import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from "./CouchStatusIndicator";
 import { isNotebookType } from '../../notebook/notebook-constants.js';
+import { keys } from "lodash";
 
 const REV = "_rev";
 const ID = "_id";
@@ -95,7 +96,7 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
-
+            console.log('cdb provider on shared worker message, observers', keyString);
             if (observersForObject) {
                 console.log('yes, has observer');
                 observersForObject.forEach(async (observer) => {
@@ -471,6 +472,7 @@ class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
+        console.log('cdb provider observe', identifier?.key);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);
