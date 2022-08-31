@@ -78,7 +78,8 @@ export default {
         return {
             annontations: [],
             addedTags: [],
-            userAddingTag: false
+            userAddingTag: false,
+            deleteAnnotationListeners: []
         };
     },
     computed: {
@@ -116,7 +117,7 @@ export default {
     },
     methods: {
         addAnnotationListeners(annotations) {
-            annotations.array.forEach(annotation => {
+            annotations.forEach(annotation => {
                 const deleteAnnotationListener = this.openmct.objects.observe(annotation, 'deleted', (deletedAnnotation) => {
                     this.annotations = this.annontations.filter(existingAnnotation => {
                         if (this.openmct.objects.areIdsEqual(existingAnnotation, deletedAnnotation)) {

@@ -189,7 +189,7 @@ export default class AnnotationAPI extends EventEmitter {
     }
 
     softDeleteAnnotations(existingAnnotations) {
-        existingAnnotations.array.forEach(existingAnnotation => {
+        existingAnnotations.forEach(existingAnnotation => {
             this.openmct.objects.mutate(existingAnnotation, 'deleted', true);
         });
     }
