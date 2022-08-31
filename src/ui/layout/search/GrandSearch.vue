@@ -140,7 +140,7 @@ export default {
 
                 // Is this coming from the AbortController?
                 // If so, we can swallow the error. If not, 🤮 it to console
-                if (!error.name === 'AbortError') {
+                if (error.name !== 'AbortError') {
                     console.error(`😞 Error searching`, error);
                 }
             }
