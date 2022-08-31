@@ -55,7 +55,11 @@ class CouchObjectProvider {
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
         sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
-        sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
+        // sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
+        sharedWorker.port.onmessage = (event) => {
+            console.log('shared worker on message', event);
+            provider.onSharedWorkerMessage(event);
+        };
         sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
         sharedWorker.port.start();
 
@@ -202,8 +206,9 @@ class CouchObjectProvider {
         }
 
         let response = null;
-        console.log('cdb request', subPath, method);
+        console.log('cdb request', subPath, method, 'is observing changes?', this.isObservingObjectChanges());
         if (!this.isObservingObjectChanges()) {
+            console.log('cdb request was not observing changes');
             this.#observeObjectChanges();
         }
 
@@ -212,6 +217,7 @@ class CouchObjectProvider {
             response = await fetch(this.url + '/' + subPath, fetchOptions);
             const { status } = response;
             const json = await response.json();
+            console.log('cdb request response', json);
             this.#handleResponseCode(status, json, fetchOptions);
 
             return json;
@@ -501,6 +507,7 @@ class CouchObjectProvider {
      * @private
      */
     #observeObjectChanges() {
+        console.log('cdb observe changes');
         const sseChangesPath = `${this.url}/_changes`;
         const sseURL = new URL(sseChangesPath);
         sseURL.searchParams.append('feed', 'eventsource');
@@ -518,6 +525,7 @@ class CouchObjectProvider {
      * @private
      */
     #initiateSharedWorkerFetchChanges(url) {
+        console.log('cdb initiate shared worker fetch changes', url);
         if (!this.changesFeedSharedWorker) {
             this.changesFeedSharedWorker = this.#startSharedWorker();
 
@@ -526,6 +534,7 @@ class CouchObjectProvider {
             }
 
             this.stopObservingObjectChanges = () => {
+                console.log('cdb initiate shared worker STOP observing changes');
                 delete this.stopObservingObjectChanges;
             };
 

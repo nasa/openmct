@@ -383,10 +383,12 @@ export default class ObjectAPI {
                 domainObject.persisted = persistedTime;
                 this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
+                console.log('objectapi save result', result);
             }
         }
 
         return result.catch((error) => {
+            console.log('objectapi save error', error);
             if (error instanceof this.errors.Conflict) {
                 this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
             }
