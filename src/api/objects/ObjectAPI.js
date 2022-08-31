@@ -354,8 +354,10 @@ export default class ObjectAPI {
         let result;
 
         if (!this.isPersistable(domainObject.identifier)) {
+            console.log('save not persistable');
             result = Promise.reject('Object provider does not support saving');
         } else if (this.#hasAlreadyBeenPersisted(domainObject)) {
+            console.log('has already been persisted');
             result = Promise.resolve(true);
         } else {
             const persistedTime = Date.now();
@@ -520,7 +522,7 @@ export default class ObjectAPI {
             mutableObject = object;
         } else {
             mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
-            console.log('creating mutable');
+            console.log('creating mutable', object.identifier?.key);
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
             let provider = this.getProvider(identifier);
@@ -528,6 +530,7 @@ export default class ObjectAPI {
             if (provider !== undefined
                 && provider.observe !== undefined
                 && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
+                    console.log('synchronizeing', object.identifier?.key);
                 let unobserve = provider.observe(identifier, (updatedModel) => {
                     if (updatedModel.persisted > mutableObject.modified) {
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
