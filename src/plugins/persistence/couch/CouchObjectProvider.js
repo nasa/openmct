@@ -202,12 +202,13 @@ class CouchObjectProvider {
         }
 
         let response = null;
-
+        console.log('cdb request', subPath, method);
         if (!this.isObservingObjectChanges()) {
             this.#observeObjectChanges();
         }
 
         try {
+            console.log('cdb reqeust');
             response = await fetch(this.url + '/' + subPath, fetchOptions);
             const { status } = response;
             const json = await response.json();
@@ -215,6 +216,7 @@ class CouchObjectProvider {
 
             return json;
         } catch (error) {
+            console.log('cdb reqeust error', error);
             // Network error, CouchDB unreachable.
             if (response === null) {
                 this.indicator.setIndicatorToState(DISCONNECTED);
@@ -634,12 +636,15 @@ class CouchObjectProvider {
      * @private
      */
     enqueueObject(key, model, intermediateResponse) {
+        console.log('cdb enqueue', key);
         if (this.objectQueue[key]) {
+            console.log('cdb enqueue exists');
             this.objectQueue[key].enqueue({
                 model,
                 intermediateResponse
             });
         } else {
+            console.log('cdb enqueue did not exist, creating');
             this.objectQueue[key] = new CouchObjectQueue({
                 model,
                 intermediateResponse
@@ -678,9 +683,11 @@ class CouchObjectProvider {
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
             this.request(key, "PUT", document).then((response) => {
+                console.log('cdb updated queued: request', key);
                 this.#checkResponse(response, queued.intermediateResponse, key);
             }).catch((error) => {
                 queued.intermediateResponse.reject(error);
+                console.log('cdb updated queued: request error', key, error);
                 this.objectQueue[key].pending = false;
             });
         }
