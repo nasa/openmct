@@ -24,7 +24,6 @@ import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
 import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from "./CouchStatusIndicator";
 import { isNotebookType } from '../../notebook/notebook-constants.js';
-import { keys } from "lodash";
 
 const REV = "_rev";
 const ID = "_id";
