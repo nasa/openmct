@@ -157,15 +157,10 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
-    async getAnnotation(query, searchType) {
-        let foundAnnotation = null;
-
+    async getAnnotations(query, searchType) {
         const searchResults = (await Promise.all(this.openmct.objects.search(query, null, searchType))).flat();
-        if (searchResults) {
-            foundAnnotation = searchResults[0];
-        }
 
-        return foundAnnotation;
+        return searchResults;
     }
 
     async addAnnotationTag(existingAnnotation, targetDomainObject, targetSpecificDetails, annotationType, tag) {
@@ -193,20 +188,10 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
-    removeAnnotationTag(existingAnnotation, tagToRemove) {
-        if (existingAnnotation && existingAnnotation.tags.includes(tagToRemove)) {
-            const cleanedArray = existingAnnotation.tags.filter(extantTag => extantTag !== tagToRemove);
-            this.openmct.objects.mutate(existingAnnotation, 'tags', cleanedArray);
-        } else {
-            throw new Error(`Asked to remove tag (${tagToRemove}) that doesn't exist`, existingAnnotation);
-        }
-    }
-
-    removeAnnotationTags(existingAnnotation) {
-        // just removes tags on the annotation as we can't really delete objects
-        if (existingAnnotation && existingAnnotation.tags) {
-            this.openmct.objects.mutate(existingAnnotation, 'tags', []);
-        }
+    softDeleteAnnotations(existingAnnotations) {
+        existingAnnotations.array.forEach(existingAnnotation => {
+            this.openmct.objects.mutate(existingAnnotation, 'deleted', true);
+        });
     }
 
     #getMatchingTags(query) {
