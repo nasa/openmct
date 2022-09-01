@@ -15,9 +15,11 @@ coverage:
 
 flags:
   unit:
-    carryforward: true 
+    carryforward: false
   e2e-ci:
-    carryforward: true
+    carryforward: false
+  e2e-stable:
+    carryforward: false
   e2e-full:
     carryforward: true    
 
