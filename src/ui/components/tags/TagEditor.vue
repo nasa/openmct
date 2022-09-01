@@ -93,19 +93,19 @@ export default {
         }
     },
     watch: {
-        annotations: {
-            handler() {
-                this.tagsChanged();
-            },
-            deep: true
-        },
-        annotationQuery: {
-            handler() {
-                this.unloadAnnotations();
-                this.loadAnnotations();
-            },
-            deep: true
-        }
+        // annotations: {
+        //     handler() {
+        //         this.tagsChanged();
+        //     },
+        //     deep: true
+        // },
+        // annotationQuery: {
+        //     handler() {
+        //         this.unloadAnnotations();
+        //         this.loadAnnotations();
+        //     },
+        //     deep: true
+        // }
     },
     mounted() {
         this.loadAnnotations();
@@ -118,14 +118,7 @@ export default {
     methods: {
         addAnnotationListeners(annotations) {
             annotations.forEach(annotation => {
-                const deleteAnnotationListener = this.openmct.objects.observe(annotation, 'deleted', (deletedAnnotation) => {
-                    this.annotations = this.annotations.filter(existingAnnotation => {
-                        if (this.openmct.objects.areIdsEqual(existingAnnotation, deletedAnnotation)) {
-                            return !(deletedAnnotation.deleted);
-                        }
-
-                        return true;
-                    });
+                const deleteAnnotationListener = this.openmct.objects.observe(annotation, 'deleted', (parameter) => {
                     this.tagsChanged();
                 });
                 this.deleteAnnotationListeners.push(deleteAnnotationListener);
@@ -150,21 +143,22 @@ export default {
         },
         tagsChanged() {
             // gather tags from annotations
-            const newTags = this.annotations.flatMap((annotation) => {
+            const tagsFromAnnotations = this.annotations.flatMap((annotation) => {
                 if (annotation.deleted) {
                     return [];
                 } else {
                     return annotation.tags;
                 }
+            }).filter((tag, index, array) => {
+                return array.indexOf(tag) === index;
             });
 
-            // TODO translate annotations to addedTags
-            if (newTags.length < this.addedTags.length) {
-                this.addedTags = this.addedTags.slice(0, newTags.length);
+            if (tagsFromAnnotations.length < this.addedTags.length) {
+                this.addedTags = this.addedTags.slice(0, tagsFromAnnotations.length);
             }
 
-            for (let index = 0; index < newTags.length; index += 1) {
-                this.$set(this.addedTags, index, newTags[index]);
+            for (let index = 0; index < tagsFromAnnotations.length; index += 1) {
+                this.$set(this.addedTags, index, tagsFromAnnotations[index]);
             }
         },
         addTag() {
@@ -185,17 +179,20 @@ export default {
             return result;
         },
         async tagAdded(newTag) {
-            console.debug(`🍉 adding tag`);
-            // TODO either undelete an annotation, or create one (1) new annotation
+            // Either undelete an annotation, or create one (1) new annotation
             const existingAnnotation = this.annotations.find((annotation) => {
                 return annotation.tags.includes(newTag);
             });
 
             const createdAnnotation = await this.openmct.annotation.addSingleAnnotationTag(existingAnnotation,
                 this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
-            this.annotations.push(createdAnnotation);
+
             this.userAddingTag = false;
-            this.tagsChanged();
+            if (!existingAnnotation) {
+                this.annotations.push(createdAnnotation);
+                this.tagsChanged();
+            }
+
             this.$emit('tags-updated');
         }
     }
