@@ -187,7 +187,7 @@ export default class AnnotationAPI extends EventEmitter {
             }
 
             if (existingAnnotation.deleted) {
-                this.openmct.objects.mutate(existingAnnotation, 'deleted', false);
+                this.unDeleteAnnotation(existingAnnotation);
             }
 
             return existingAnnotation;
