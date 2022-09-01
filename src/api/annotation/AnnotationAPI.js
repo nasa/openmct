@@ -163,7 +163,7 @@ export default class AnnotationAPI extends EventEmitter {
         return searchResults;
     }
 
-    async addAnnotationTag(existingAnnotation, targetDomainObject, targetSpecificDetails, annotationType, tag) {
+    async addSingleAnnotationTag(existingAnnotation, targetDomainObject, targetSpecificDetails, annotationType, tag) {
         if (!existingAnnotation) {
             const targets = {};
             const targetKeyString = this.openmct.objects.makeKeyString(targetDomainObject.identifier);
@@ -174,6 +174,7 @@ export default class AnnotationAPI extends EventEmitter {
                 domainObject: targetDomainObject,
                 annotationType,
                 tags: [tag],
+                deleted: false,
                 contentText,
                 targets
             };
@@ -181,17 +182,30 @@ export default class AnnotationAPI extends EventEmitter {
 
             return newAnnotation;
         } else {
-            const tagArray = [tag, ...existingAnnotation.tags];
-            this.openmct.objects.mutate(existingAnnotation, 'tags', tagArray);
+            if (!existingAnnotation.tags.includes(tag)) {
+                throw new Error(`Existing annotation did not contain tag ${tag}`);
+            }
+
+            if (existingAnnotation.deleted) {
+                this.openmct.objects.mutate(existingAnnotation, 'deleted', false);
+            }
 
             return existingAnnotation;
         }
     }
 
-    softDeleteAnnotations(existingAnnotations) {
-        existingAnnotations.forEach(existingAnnotation => {
-            this.openmct.objects.mutate(existingAnnotation, 'deleted', true);
+    deleteAnnotations(annotations) {
+        annotations.forEach(annotation => {
+            if (!annotation.deleted) {
+                this.openmct.objects.mutate(annotation, 'deleted', true);
+            }
         });
+    }
+
+    unDeleteAnnotation(annotation) {
+        if (annotation && annotation.deleted) {
+            this.openmct.objects.mutate(annotation, 'deleted', false);
+        }
     }
 
     #getMatchingTags(query) {

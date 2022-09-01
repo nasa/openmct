@@ -174,14 +174,13 @@ export default {
         },
         async tagAdded(newTag) {
             // TODO either undelete an annotation, or create one (1) new annotation
-            // const annotationWasCreated = this.annotation === null || this.annotation === undefined;
-            // this.annotation = await this.openmct.annotation.addAnnotationTag(this.annotation,
-            //     this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
-            // if (annotationWasCreated) {
-            //     this.addAnnotationListener(this.annotation);
-            // }
+            const existingAnnotation = this.annotations.find((annotation) => {
+                return annotation.tags.includes(newTag);
+            });
 
-            this.tagsChanged();
+            const createdAnnotation = await this.openmct.annotation.addSingleAnnotationTag(existingAnnotation,
+                this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
+            this.addedTags.concat(createdAnnotation.tags);
             this.userAddingTag = false;
 
             this.$emit('tags-updated');
