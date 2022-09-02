@@ -1,7 +1,5 @@
 name: "e2e-couchdb"
 on:
-  schedule:
-    - cron: '28 21 * * 3'
   workflow_dispatch:
   pull_request:
     types:
@@ -13,30 +11,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Load .env file
-        uses: xom9ikk/dotenv@v1.0.2
-        with:
-          path: src/plugins/persistence/couch/
-          mode: ci
-      - run : |
-          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
-          sleep 3
-          bash src/plugins/persistence/couch/setup-couchdb.sh
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
       - run: npx playwright@1.23.0 install
       - run: npm install
+      - name: Start CouchDB Docker Container and Init with Setup Scripts
+        run : |
+          export $(cat src/plugins/persistence/couch/.env.ci | xargs)
+          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          sleep 3
+          bash src/plugins/persistence/couch/setup-couchdb.sh
       - name: Replace LocalStorage Plugin with CouchDB Plugin and Config
         run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
       - run: npm run test:e2e:couchdb
       - run: npm run cov:e2e:report || true
       - run: npm run cov:e2e:full:publish
       - name: Archive test results
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           path: test-results
       - name: Archive html test results
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results
