@@ -96,9 +96,7 @@ export default {
         this.loadAnnotations();
     },
     destroyed() {
-        this.deleteAnnotationListeners.forEach(deleteAnnotationListener => {
-            deleteAnnotationListener();
-        });
+        this.unloadAnnotations();
     },
     methods: {
         addAnnotationListeners(annotations) {
@@ -125,12 +123,26 @@ export default {
             if (this.annotations && this.annotations.length) {
                 this.tagsChanged();
             }
+            // TODO need to listen to all annotations that match my domain object
+            // this.onAnnotationCreation = this.onAnnotationCreation.bind(this);
+            // this.openmct.annotation.on('annotationCreated', this.onAnnotationCreation);
         },
         unloadAnnotations() {
             this.deleteAnnotationListeners.forEach(deleteAnnotationListener => {
                 deleteAnnotationListener();
             });
             this.deleteAnnotationListeners = [];
+            // this.openmct.annotation.off('annotationCreated', this.onAnnotationCreation);
+        },
+        onAnnotationCreation(newAnnotation) {
+            const alreadyExists = this.annotations.some((existingAnnotation) => {
+                return this.openmct.objects.areIdsEqual(newAnnotation.identifier, existingAnnotation.identifier);
+            });
+            if (!alreadyExists) {
+                this.annotations.push(newAnnotation);
+                this.addAnnotationListeners([newAnnotation]);
+                this.tagsChanged();
+            }
         },
         tagsChanged() {
             // gather tags from annotations
@@ -180,6 +192,7 @@ export default {
 
             this.userAddingTag = false;
             if (!existingAnnotation) {
+                this.addAnnotationListeners([createdAnnotation]);
                 this.annotations.push(createdAnnotation);
                 this.tagsChanged();
             }
