@@ -519,6 +519,7 @@ export default class ObjectAPI {
             mutableObject = object;
         } else {
             mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
+
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
             let provider = this.getProvider(identifier);

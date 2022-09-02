@@ -53,6 +53,7 @@ class CouchObjectProvider {
 
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
+
         sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
         sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
         sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
@@ -70,6 +71,7 @@ class CouchObjectProvider {
     }
 
     onSharedWorkerMessageError(event) {
+        console.log('Error', event);
     }
 
     isSynchronizedObject(object) {
@@ -94,6 +96,7 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
+
             if (observersForObject) {
                 observersForObject.forEach(async (observer) => {
                     const updatedObject = await this.get(objectIdentifier);
@@ -196,6 +199,7 @@ class CouchObjectProvider {
         }
 
         let response = null;
+
         if (!this.isObservingObjectChanges()) {
             this.#observeObjectChanges();
         }
