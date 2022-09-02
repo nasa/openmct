@@ -1,4 +1,5 @@
 import { isAnnotationType, isNotebookType, isNotebookOrAnnotationType } from './notebook-constants';
+import _ from 'lodash';
 
 export default function (openmct) {
     const apiSave = openmct.objects.save.bind(openmct.objects);
@@ -42,21 +43,25 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
     const localClonedAnnotation = structuredClone(localAnnotation);
     const remoteMutable = await openmct.objects.getMutable(localClonedAnnotation.identifier);
 
-    // should only be one annotation per targetID & entryID, so for sanity, ensure we have the
-    // same targetID & entryID for this conflict
+    // should only be one annotation per targetID, entryID, and tag; so for sanity, ensure we have the
+    // same targetID, entryID, and tags for this conflict
+    if (!(_.isEqual(remoteMutable.tags, localClonedAnnotation.tags))) {
+        throw new Error('Conflict on annotation\'s tag has different tags than remote');
+    }
+
     Object.keys(localClonedAnnotation.targets).forEach(localTargetKey => {
         if (!remoteMutable.targets[localTargetKey]) {
-            throw new Error(`Conflict on annotation target is missing ${localTargetKey}`);
+            throw new Error(`Conflict on annotation's target is missing ${localTargetKey}`);
         }
 
         if (remoteMutable.targets[localTargetKey].entryId !== localClonedAnnotation.targets[localTargetKey].entryId) {
-            throw new Error(`Conflict on annotation entryID ${remoteMutable.targets[localTargetKey].entryId} has a different entry Id ${localClonedAnnotation.targets[localClonedAnnotation].entryId}`);
+            throw new Error(`Conflict on annotation's entryID ${remoteMutable.targets[localTargetKey].entryId} has a different entry Id ${localClonedAnnotation.targets[localClonedAnnotation].entryId}`);
         }
     });
 
-    const uniqueMergedTags = [...new Set([...remoteMutable.tags, ...localClonedAnnotation.tags])];
-    if (uniqueMergedTags.length !== remoteMutable.tags.length) {
-        openmct.objects.mutate(remoteMutable, 'tags', uniqueMergedTags);
+    if (remoteMutable.deleted && (remoteMutable.deleted !== localClonedAnnotation.deleted)) {
+        // not deleting wins 😘
+        openmct.objects.mutate(remoteMutable, 'deleted', false);
     }
 
     openmct.objects.destroyMutable(remoteMutable);

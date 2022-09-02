@@ -107,6 +107,7 @@ export default {
                     });
                     if (matchingAnnotation) {
                         matchingAnnotation.deleted = chanedAnnotation.deleted;
+                        this.userAddingTag = false;
                         this.tagsChanged();
                     }
                 });
