@@ -27,6 +27,8 @@ jobs:
       - run: npm run test:e2e:couchdb
       - run: npm run cov:e2e:report || true
       - run: npm run cov:e2e:full:publish
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Archive test results
         if: success() || failure()
         uses: actions/upload-artifact@v3
