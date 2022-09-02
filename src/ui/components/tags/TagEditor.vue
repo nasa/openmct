@@ -92,21 +92,6 @@ export default {
             return !(availableTags && availableTags.length && (this.addedTags.length < availableTags.length));
         }
     },
-    watch: {
-        // annotations: {
-        //     handler() {
-        //         this.tagsChanged();
-        //     },
-        //     deep: true
-        // },
-        // annotationQuery: {
-        //     handler() {
-        //         this.unloadAnnotations();
-        //         this.loadAnnotations();
-        //     },
-        //     deep: true
-        // }
-    },
     mounted() {
         this.loadAnnotations();
     },
@@ -118,8 +103,14 @@ export default {
     methods: {
         addAnnotationListeners(annotations) {
             annotations.forEach(annotation => {
-                const deleteAnnotationListener = this.openmct.objects.observe(annotation, 'deleted', (parameter) => {
-                    this.tagsChanged();
+                const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', (chanedAnnotation) => {
+                    const matchingAnnotation = this.annotations.find((possibleMatchingAnnotation) => {
+                        return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, chanedAnnotation.identifier);
+                    });
+                    if (matchingAnnotation) {
+                        matchingAnnotation.deleted = chanedAnnotation.deleted;
+                        this.tagsChanged();
+                    }
                 });
                 this.deleteAnnotationListeners.push(deleteAnnotationListener);
             });

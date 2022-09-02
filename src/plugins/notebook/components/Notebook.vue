@@ -480,7 +480,7 @@ export default {
                 entryId
             };
             const existingAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
-            this.openmct.annotation.softDeleteAnnotations(existingAnnotations);
+            this.openmct.annotation.deleteAnnotations(existingAnnotations);
         },
         checkEntryPos(entry) {
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
