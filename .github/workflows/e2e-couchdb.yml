@@ -28,12 +28,12 @@ jobs:
       - run: npm run cov:e2e:report || true
       - run: npm run cov:e2e:full:publish
       - name: Archive test results
-        if: always()
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           path: test-results
       - name: Archive html test results
-        if: always()
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results

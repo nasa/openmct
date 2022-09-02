@@ -35,6 +35,7 @@ jobs:
       - run: npm install
       - run: npm run test:e2e:full
       - name: Archive test results
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           path: test-results
