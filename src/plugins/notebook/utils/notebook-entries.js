@@ -209,7 +209,6 @@ export function deleteNotebookEntries(openmct, domainObject, selectedSection, se
 }
 
 export function mutateObject(openmct, object, key, value) {
-    console.log('mutate object (notebook utils)', object.identifier?.key, value);
     openmct.objects.mutate(object, key, value);
 }
 

@@ -7,7 +7,6 @@
     self.onconnect = function (e) {
         let port = e.ports[0];
         connections.push(port);
-        console.log('changes feed: on connect - port', port);
 
         port.postMessage({
             type: 'connection',
@@ -32,9 +31,7 @@
             }
 
             if (event.data.request === 'changes') {
-                console.log('changes feed: on message - changes');
                 if (connected === true) {
-                    console.log('changes feed: on message - changes - ALREADY CONNECTED');
                     return;
                 }
 
@@ -55,12 +52,10 @@
     };
 
     self.onCouchMessage = function (event) {
-        console.log('changes feed: on couch message', event);
         self.updateCouchStateIndicator();
         console.debug('📩 Received message from CouchDB 📩');
 
         const objectChanges = JSON.parse(event.data);
-        console.log('changes feed: on couch message - objectChanges', objectChanges);
         connections.forEach(function (connection) {
             connection.postMessage({
                 objectChanges
@@ -69,7 +64,6 @@
     };
 
     self.listenForChanges = function (url) {
-        console.log('changes feed: listenforchanges - url', url);
         console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
         couchEventSource = new EventSource(url);

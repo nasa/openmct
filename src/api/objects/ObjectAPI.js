@@ -348,7 +348,6 @@ export default class ObjectAPI {
      *          has been saved, or be rejected if it cannot be saved
      */
     save(domainObject) {
-        console.log('save', domainObject.identifier?.key);
         let provider = this.getProvider(domainObject.identifier);
         let savedResolve;
         let savedReject;
@@ -357,10 +356,8 @@ export default class ObjectAPI {
         if (!this.isPersistable(domainObject.identifier)) {
             result = Promise.reject('Object provider does not support saving');
         } else if (this.#hasAlreadyBeenPersisted(domainObject)) {
-            console.log('persisted already', domainObject.identifier?.key);
             result = Promise.resolve(true);
         } else {
-            console.log('is persistable, has not be persisted already', domainObject.identifier?.key);
             const persistedTime = Date.now();
             if (domainObject.persisted === undefined) {
                 result = new Promise((resolve, reject) => {
@@ -383,12 +380,10 @@ export default class ObjectAPI {
                 domainObject.persisted = persistedTime;
                 this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
-                console.log('objectapi save result', result);
             }
         }
 
         return result.catch((error) => {
-            console.log('objectapi save error', error);
             if (error instanceof this.errors.Conflict) {
                 this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
             }
@@ -531,10 +526,8 @@ export default class ObjectAPI {
             if (provider !== undefined
                 && provider.observe !== undefined
                 && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
-                console.log('to mutable is synchronized object', object.identifier?.key);
                 let unobserve = provider.observe(identifier, (updatedModel) => {
                     if (updatedModel.persisted > mutableObject.modified) {
-                        console.log('persisted is greater than modified', object.identifier?.key);
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                         //in rapid succession and intermediate persistence states are returned by the observe function.
                         updatedModel = this.applyGetInterceptors(identifier, updatedModel);

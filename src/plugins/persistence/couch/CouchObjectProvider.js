@@ -54,11 +54,7 @@ class CouchObjectProvider {
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
         sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
-        // sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
-        sharedWorker.port.onmessage = (event) => {
-            console.log('shared worker on message', event);
-            provider.onSharedWorkerMessage(event);
-        };
+        sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
         sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
         sharedWorker.port.start();
 
@@ -74,7 +70,6 @@ class CouchObjectProvider {
     }
 
     onSharedWorkerMessageError(event) {
-        console.log('Error', event);
     }
 
     isSynchronizedObject(object) {
@@ -99,14 +94,10 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
-            console.log('cdb provider on shared worker message, observers', keyString);
             if (observersForObject) {
-                console.log('yes, has observer');
                 observersForObject.forEach(async (observer) => {
                     const updatedObject = await this.get(objectIdentifier);
-                    console.log('is synchronized object?', updatedObject);
                     if (this.isSynchronizedObject(updatedObject)) {
-                        console.log('yes, is synchronized object', updatedObject);
                         observer(updatedObject);
                     }
                 });
@@ -205,23 +196,18 @@ class CouchObjectProvider {
         }
 
         let response = null;
-        console.log('cdb request', subPath, method, 'is observing changes?', this.isObservingObjectChanges());
         if (!this.isObservingObjectChanges()) {
-            console.log('cdb request was not observing changes');
             this.#observeObjectChanges();
         }
 
         try {
-            console.log('cdb reqeust');
             response = await fetch(this.url + '/' + subPath, fetchOptions);
             const { status } = response;
             const json = await response.json();
-            console.log('cdb request response', json);
             this.#handleResponseCode(status, json, fetchOptions);
 
             return json;
         } catch (error) {
-            console.log('cdb reqeust error', error);
             // Network error, CouchDB unreachable.
             if (response === null) {
                 this.indicator.setIndicatorToState(DISCONNECTED);
@@ -479,7 +465,6 @@ class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
-        console.log('cdb provider observe', identifier?.key);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);
@@ -506,7 +491,6 @@ class CouchObjectProvider {
      * @private
      */
     #observeObjectChanges() {
-        console.log('cdb observe changes');
         const sseChangesPath = `${this.url}/_changes`;
         const sseURL = new URL(sseChangesPath);
         sseURL.searchParams.append('feed', 'eventsource');
@@ -524,7 +508,6 @@ class CouchObjectProvider {
      * @private
      */
     #initiateSharedWorkerFetchChanges(url) {
-        console.log('cdb initiate shared worker fetch changes', url);
         if (!this.changesFeedSharedWorker) {
             this.changesFeedSharedWorker = this.#startSharedWorker();
 
@@ -533,7 +516,6 @@ class CouchObjectProvider {
             }
 
             this.stopObservingObjectChanges = () => {
-                console.log('cdb initiate shared worker STOP observing changes');
                 delete this.stopObservingObjectChanges;
             };
 
@@ -644,15 +626,12 @@ class CouchObjectProvider {
      * @private
      */
     enqueueObject(key, model, intermediateResponse) {
-        console.log('cdb enqueue', key);
         if (this.objectQueue[key]) {
-            console.log('cdb enqueue exists');
             this.objectQueue[key].enqueue({
                 model,
                 intermediateResponse
             });
         } else {
-            console.log('cdb enqueue did not exist, creating');
             this.objectQueue[key] = new CouchObjectQueue({
                 model,
                 intermediateResponse
@@ -691,18 +670,15 @@ class CouchObjectProvider {
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
             this.request(key, "PUT", document).then((response) => {
-                console.log('cdb updated queued: request', key);
                 this.#checkResponse(response, queued.intermediateResponse, key);
             }).catch((error) => {
                 queued.intermediateResponse.reject(error);
-                console.log('cdb updated queued: request error', key, error);
                 this.objectQueue[key].pending = false;
             });
         }
     }
 
     update(model) {
-        console.log('cdb provder update', model.identifier?.key);
         let intermediateResponse = this.#getIntermediateResponse();
         const key = model.identifier.key;
         model = this.toPersistableModel(model);
