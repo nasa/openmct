@@ -16,8 +16,8 @@ jobs:
       - name: Load .env file
         uses: xom9ikk/dotenv@v1.0.2
         with:
-          path: src/plugins/persistence/couch/.env.ci
-          mode: development
+          path: src/plugins/persistence/couch/
+          mode: ci
       - run : |
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
