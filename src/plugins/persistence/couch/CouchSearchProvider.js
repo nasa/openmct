@@ -130,7 +130,8 @@ class CouchSearchProvider {
                     {
                         "model.tags": {
                             "$elemMatch": {
-                                "$eq": `${tagsArray[0]}`
+                                "$or": [
+                                ]
                             }
                         }
                     },
@@ -142,6 +143,11 @@ class CouchSearchProvider {
                 ]
             }
         };
+        tagsArray.forEach(tag => {
+            filter.selector.$and[0]["model.tags"].$elemMatch.$or.push({
+                "$eq": `${tag}`
+            });
+        });
 
         return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
     }
