@@ -26,9 +26,11 @@ jobs:
         run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
       - run: npm run test:e2e:couchdb
       - run: npm run cov:e2e:report || true
-      - run: npm run cov:e2e:full:publish
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+      - shell: bash
+        env:
+          SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          npm run cov:e2e:full:publish
       - name: Archive test results
         if: success() || failure()
         uses: actions/upload-artifact@v3
