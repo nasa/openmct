@@ -30,7 +30,7 @@ const COUCH_SEARCH_ONLY_NAMESPACE = `COUCH_SEARCH_${Date.now()}`;
 
 export default function CouchPlugin(options) {
     return function install(openmct) {
-        const simpleIndicator = openmct.indicators.simpleIndicator();
+        const simpleIndicator = openmct.indicators.simpleIndicator('couch-indicator');
         openmct.indicators.add(simpleIndicator);
         const couchStatusIndicator = new CouchStatusIndicator(simpleIndicator);
         install.couchProvider = new CouchObjectProvider(openmct, options, NAMESPACE, couchStatusIndicator);

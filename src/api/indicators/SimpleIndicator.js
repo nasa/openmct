@@ -27,10 +27,11 @@ import { convertTemplateToHTML } from '@/utils/template/templateHelpers';
 const DEFAULT_ICON_CLASS = 'icon-info';
 
 class SimpleIndicator extends EventEmitter {
-    constructor(openmct) {
+    constructor(openmct, key) {
         super();
 
         this.openmct = openmct;
+        this.key = key;
         this.element = convertTemplateToHTML(indicatorTemplate)[0];
         this.priority = openmct.priority.DEFAULT;
 

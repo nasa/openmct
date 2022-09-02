@@ -37,8 +37,8 @@ class IndicatorAPI extends EventEmitter {
         return sortedIndicators;
     }
 
-    simpleIndicator() {
-        return new SimpleIndicator(this.openmct);
+    simpleIndicator(key) {
+        return new SimpleIndicator(this.openmct, key);
     }
 
     /**
@@ -63,6 +63,13 @@ class IndicatorAPI extends EventEmitter {
      *
      */
     add(indicator) {
+        const keyExists = indicator.key !== undefined
+            && this.indicatorObjects.some(installedIndicator => indicator.key === installedIndicator.key);
+
+        if (keyExists) {
+            console.warn(`An Indicator with key { ${indicator.key} } has already been installed.`);
+        }
+
         if (!indicator.priority) {
             indicator.priority = this.openmct.priority.DEFAULT;
         }
@@ -72,6 +79,22 @@ class IndicatorAPI extends EventEmitter {
         this.emit('addIndicator', indicator);
     }
 
+    /**
+     * @param {string} key the key of the indicator
+     * @param {number} priority the priority to set
+     */
+    setPriority(key, priority) {
+        const indicatorToPrioritize = this.indicatorObjects
+            .find(indicator => indicator.key === key);
+
+        if (indicatorToPrioritize !== undefined) {
+            indicatorToPrioritize.priority = priority;
+
+            this.emit('setPriority', indicatorToPrioritize);
+        } else {
+            console.warn(`Could not find an installed indicator: ${key}`);
+        }
+    }
 }
 
 export default IndicatorAPI;
