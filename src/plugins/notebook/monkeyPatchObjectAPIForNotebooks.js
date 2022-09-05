@@ -19,7 +19,7 @@ export default function (openmct) {
             if (error instanceof openmct.objects.errors.Conflict) {
                 result = await resolveConflicts(domainObject, localMutable, openmct);
             } else {
-                throw new Error(error);
+                result = Promise.reject(error);
             }
         } finally {
             if (isNewMutable) {
