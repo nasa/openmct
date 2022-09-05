@@ -64,6 +64,7 @@ export default class AnnotationAPI extends EventEmitter {
             cssClass: 'icon-notebook',
             initialize: function (domainObject) {
                 domainObject.targets = domainObject.targets || {};
+                domainObject.deleted = domainObject.deleted || false;
                 domainObject.originalContextPath = domainObject.originalContextPath || '';
                 domainObject.tags = domainObject.tags || [];
                 domainObject.contentText = domainObject.contentText || '';
@@ -114,6 +115,7 @@ export default class AnnotationAPI extends EventEmitter {
                 namespace
             },
             tags,
+            deleted: false,
             annotationType,
             contentText,
             originalContextPath
@@ -176,7 +178,6 @@ export default class AnnotationAPI extends EventEmitter {
                 domainObject: targetDomainObject,
                 annotationType,
                 tags: [tag],
-                deleted: false,
                 contentText,
                 targets
             };
