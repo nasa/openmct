@@ -106,7 +106,7 @@ export default {
                         return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, chanedAnnotation.identifier);
                     });
                     if (matchingAnnotation) {
-                        matchingAnnotation.deleted = chanedAnnotation.deleted;
+                        matchingAnnotation._deleted = chanedAnnotation._deleted;
                         this.userAddingTag = false;
                         this.tagsChanged();
                     }
@@ -148,7 +148,7 @@ export default {
         tagsChanged() {
             // gather tags from annotations
             const tagsFromAnnotations = this.annotations.flatMap((annotation) => {
-                if (annotation.deleted) {
+                if (annotation._deleted) {
                     return [];
                 } else {
                     return annotation.tags;

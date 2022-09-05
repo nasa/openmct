@@ -64,7 +64,7 @@ export default class AnnotationAPI extends EventEmitter {
             cssClass: 'icon-notebook',
             initialize: function (domainObject) {
                 domainObject.targets = domainObject.targets || {};
-                domainObject.deleted = domainObject.deleted || false;
+                domainObject._deleted = domainObject._deleted || false;
                 domainObject.originalContextPath = domainObject.originalContextPath || '';
                 domainObject.tags = domainObject.tags || [];
                 domainObject.contentText = domainObject.contentText || '';
@@ -109,13 +109,12 @@ export default class AnnotationAPI extends EventEmitter {
         const createdObject = {
             name,
             type,
-            modified: Date.now(),
             identifier: {
                 key: uuid(),
                 namespace
             },
             tags,
-            deleted: false,
+            _deleted: false,
             annotationType,
             contentText,
             originalContextPath
@@ -189,7 +188,7 @@ export default class AnnotationAPI extends EventEmitter {
                 throw new Error(`Existing annotation did not contain tag ${tag}`);
             }
 
-            if (existingAnnotation.deleted) {
+            if (existingAnnotation._deleted) {
                 this.unDeleteAnnotation(existingAnnotation);
             }
 
@@ -199,15 +198,15 @@ export default class AnnotationAPI extends EventEmitter {
 
     deleteAnnotations(annotations) {
         annotations.forEach(annotation => {
-            if (!annotation.deleted) {
-                this.openmct.objects.mutate(annotation, 'deleted', true);
+            if (!annotation._deleted) {
+                this.openmct.objects.mutate(annotation, '_deleted', true);
             }
         });
     }
 
     unDeleteAnnotation(annotation) {
-        if (annotation && annotation.deleted) {
-            this.openmct.objects.mutate(annotation, 'deleted', false);
+        if (annotation && annotation._deleted) {
+            this.openmct.objects.mutate(annotation, '_deleted', false);
         }
     }
 
@@ -294,7 +293,7 @@ export default class AnnotationAPI extends EventEmitter {
         const matchingTagKeys = this.#getMatchingTags(query);
         const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
         const filteredDeletedResults = searchResults.filter((result) => {
-            return !(result.deleted);
+            return !(result._deleted);
         });
         let combinedSameTargets;
         if (combineSameTargets) {

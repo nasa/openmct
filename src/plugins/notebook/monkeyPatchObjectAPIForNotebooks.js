@@ -59,9 +59,9 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
         }
     });
 
-    if (remoteMutable.deleted && (remoteMutable.deleted !== localClonedAnnotation.deleted)) {
+    if (remoteMutable._deleted && (remoteMutable._deleted !== localClonedAnnotation._deleted)) {
         // not deleting wins 😘
-        openmct.objects.mutate(remoteMutable, 'deleted', false);
+        openmct.objects.mutate(remoteMutable, '_deleted', false);
     }
 
     openmct.objects.destroyMutable(remoteMutable);

@@ -135,7 +135,7 @@ describe("The Annotation API", () => {
             const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
             expect(annotationObject).toBeDefined();
             openmct.annotation.deleteAnnotations([annotationObject]);
-            expect(annotationObject.deleted).toBeTrue();
+            expect(annotationObject._deleted).toBeTrue();
         });
         it("throws an error if deleting non-existent tag", async () => {
             const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
@@ -150,7 +150,7 @@ describe("The Annotation API", () => {
             expect(() => {
                 openmct.annotation.deleteAnnotations([annotationObject]);
             }).not.toThrow();
-            expect(annotationObject.deleted).toBeTrue();
+            expect(annotationObject._deleted).toBeTrue();
         });
     });
 
