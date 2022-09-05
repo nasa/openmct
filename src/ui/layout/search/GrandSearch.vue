@@ -117,7 +117,7 @@ export default {
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
             try {
-                this.annotationSearchResults = await this.openmct.annotation.searchForTags(this.searchValue, abortSignal);
+                this.annotationSearchResults = await this.openmct.annotation.searchForTags(this.searchValue, abortSignal, true);
                 const fullObjectSearchResults = await Promise.all(this.openmct.objects.search(this.searchValue, abortSignal));
                 const aggregatedObjectSearchResults = fullObjectSearchResults.flat();
                 const aggregatedObjectSearchResultsWithPaths = await this.getPathsForObjects(aggregatedObjectSearchResults);

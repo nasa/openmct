@@ -22,6 +22,7 @@
 
 import { v4 as uuid } from 'uuid';
 import EventEmitter from 'EventEmitter';
+import _ from 'lodash';
 
 /**
  * @readonly
@@ -265,19 +266,42 @@ export default class AnnotationAPI extends EventEmitter {
         return modelAddedToResults;
     }
 
+    #combineSameTargets(results) {
+        return results.reduce((accumulator, currentAnnotation) => {
+            const existingAnnotation = accumulator.find((annotationToFind) => {
+                return _.isEqual(currentAnnotation.targets, annotationToFind.targets);
+            });
+            if (!existingAnnotation) {
+                accumulator = [...accumulator, currentAnnotation];
+            } else {
+                existingAnnotation.tags = [...currentAnnotation.tags, ...existingAnnotation.tags];
+            }
+
+            return accumulator;
+        }, []);
+    }
+
     /**
     * @method searchForTags
     * @param {String} query A query to match against tags. E.g., "dr" will match the tags "drilling" and "driving"
-    * @param {Object} abortController An optional abort method to stop the query
+    * @param {Object} [abortController] An optional abort method to stop the query
+    * @param {Boolean} [combineSameTargets=false] An optional flag to combine annotations that point to the same targets
     * @returns {Promise} returns a model of matching tags with their target domain objects attached
     */
-    async searchForTags(query, abortController) {
+    async searchForTags(query, abortController, combineSameTargets = false) {
         const matchingTagKeys = this.#getMatchingTags(query);
         const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
         const filteredDeletedResults = searchResults.filter((result) => {
             return !(result.deleted);
         });
-        const appliedTagSearchResults = this.#addTagMetaInformationToResults(filteredDeletedResults, matchingTagKeys);
+        let combinedSameTargets;
+        if (combineSameTargets) {
+            combinedSameTargets = this.#combineSameTargets(filteredDeletedResults);
+        } else {
+            combinedSameTargets = filteredDeletedResults;
+        }
+
+        const appliedTagSearchResults = this.#addTagMetaInformationToResults(combinedSameTargets, matchingTagKeys);
         const appliedTargetsModels = await this.#addTargetModelsToResults(appliedTagSearchResults);
         const resultsWithValidPath = appliedTargetsModels.filter(result => {
             return this.openmct.objects.isReachable(result.targetModels?.[0]?.originalPath);
