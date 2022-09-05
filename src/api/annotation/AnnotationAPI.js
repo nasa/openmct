@@ -108,6 +108,7 @@ export default class AnnotationAPI extends EventEmitter {
         const createdObject = {
             name,
             type,
+            modified: Date.now(),
             identifier: {
                 key: uuid(),
                 namespace
