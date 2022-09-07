@@ -36,6 +36,10 @@ report.*.json
 test-results
 html-test-results
 
+# couchdb scripting artifacts
+src/plugins/persistence/couch/.env.local
+index.html.bak
+
 # codecov artifacts
 .nyc_output
 coverage
