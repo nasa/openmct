@@ -56,7 +56,7 @@ export default class EditPropertiesAction extends PropertiesAction {
         try {
             Object.entries(changes).forEach(([key, value]) => {
                 const existingValue = this.domainObject[key];
-                if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
+                if (!(Array.isArray(existingValue)) && (typeof existingValue === 'object')) {
                     value = {
                         ...existingValue,
                         ...value
