@@ -82,6 +82,7 @@
                     }"
                     :data-openmct-image-timestamp="time"
                     :data-openmct-object-keystring="keyString"
+                    fetchpriority="low"
                 >
                 <div
                     v-if="imageUrl"
