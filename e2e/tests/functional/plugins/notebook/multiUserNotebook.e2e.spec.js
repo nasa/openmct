@@ -30,28 +30,48 @@ const { test, expect } = require('../../../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 //this test suite requires 2 browser contexts and couchdb
-test.describe('Multi browser note editing@unstable @2p @couchdb', () => {
-    //User A or User 1 or Browser 1?
-    test.only('A fresh notebook entry entered by UserA will appear for UserB within 60 seconds', async ({ context, page }) => {
-        //Navigate to baseURL with page 1 (or User A)
-        await page.goto('./', { waitUntil: 'networkidle' });
+test.describe('Multi user notebook tests @unstable @2p @couchdb', () => {
+    test('A fresh notebook entry entered by User1 will appear for User2 within 60 seconds', async ({ browser, page: user1 }) => {
+        await user1.goto('./', { waitUntil: 'networkidle' });
         // Create Notebook
-        const notebookObject = await createDomainObjectWithDefaults(page, {
+        const notebookObject = await createDomainObjectWithDefaults(user1, {
             type: 'Notebook',
             name: "Test Notebook"
         });
+        //Create a Separate Browser Context to ensure that
+        const context2 = await browser.newContext();
+        const user2 = await context2.newPage();
 
+        await user2.goto(notebookObject.url, {waitUntil: 'networkidle'});
+        await user2.waitForLoadState('networkidle');
+
+        // Ensure that the Notebook is fresh
+        // eslint-disable-next-line playwright/no-useless-not
+        await expect(user1.locator('text=AAA')).not.toBeVisible();
+        //Enter AAA into notebook entry
+        await enterTextEntry(user1);
+        await expect(user1.locator('text=AAA')).toBeVisible();
+        await expect(user2.locator('text=AAA')).toBeVisible();
+    });
+    test('A fresh notebook entry entered by User1 will appear for User1s second tab within 60 seconds', async ({ context, page: page1 }) => {
+        await page1.goto('./', { waitUntil: 'networkidle' });
+        // Create Notebook
+        const notebookObject = await createDomainObjectWithDefaults(page1, {
+            type: 'Notebook',
+            name: "Test Notebook"
+        });
+        //Create a Separate Browser Context to ensure that
         const page2 = await context.newPage();
-        //page2 = await context.newPage();
 
         await page2.goto(notebookObject.url, {waitUntil: 'networkidle'});
-        await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
+        await page2.waitForLoadState('networkidle');
 
+        // Ensure that the Notebook is fresh
         // eslint-disable-next-line playwright/no-useless-not
-        await expect(page.locator('text=AAA')).not.toBeVisible();
+        await expect(page1.locator('text=AAA')).not.toBeVisible();
         //Enter AAA into notebook entry
-        await enterTextEntry(page);
-        await expect(page.locator('text=AAA')).toBeVisible();
+        await enterTextEntry(page1);
+        await expect(page1.locator('text=AAA')).toBeVisible();
         await expect(page2.locator('text=AAA')).toBeVisible();
     });
 });
