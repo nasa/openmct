@@ -377,6 +377,73 @@ describe("The Object API", () => {
         });
     });
 
+    describe("getOriginalPath", () => {
+        let mockGrandParentObject;
+        let mockParentObject;
+        let mockChildObject;
+
+        beforeEach(() => {
+            const mockObjectProvider = jasmine.createSpyObj("mock object provider", [
+                "create",
+                "update",
+                "get"
+            ]);
+
+            mockGrandParentObject = {
+                type: 'folder',
+                name: 'Grand Parent Folder',
+                location: 'fooNameSpace:child',
+                identifier: {
+                    key: 'grandParent',
+                    namespace: 'fooNameSpace'
+                }
+            };
+            mockParentObject = {
+                type: 'folder',
+                name: 'Parent Folder',
+                location: 'fooNameSpace:grandParent',
+                identifier: {
+                    key: 'parent',
+                    namespace: 'fooNameSpace'
+                }
+            };
+            mockChildObject = {
+                type: 'folder',
+                name: 'Child Folder',
+                location: 'fooNameSpace:parent',
+                identifier: {
+                    key: 'child',
+                    namespace: 'fooNameSpace'
+                }
+            };
+
+            // eslint-disable-next-line require-await
+            mockObjectProvider.get = async (identifier) => {
+                if (identifier.key === mockGrandParentObject.identifier.key) {
+                    return mockGrandParentObject;
+                } else if (identifier.key === mockParentObject.identifier.key) {
+                    return mockParentObject;
+                } else if (identifier.key === mockChildObject.identifier.key) {
+                    return mockChildObject;
+                } else {
+                    return null;
+                }
+            };
+
+            openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
+
+            mockObjectProvider.create.and.returnValue(Promise.resolve(true));
+            mockObjectProvider.update.and.returnValue(Promise.resolve(true));
+
+            openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
+        });
+
+        it('can construct paths even with cycles', async () => {
+            const objectPath = await objectAPI.getOriginalPath(mockChildObject.identifier);
+            expect(objectPath.length).toEqual(3);
+        });
+    });
+
     describe("transactions", () => {
         beforeEach(() => {
             spyOn(openmct.editor, 'isEditing').and.returnValue(true);
