@@ -55,7 +55,7 @@ export default class EditPropertiesAction extends PropertiesAction {
     _onSave(changes) {
         try {
             Object.entries(changes).forEach(([key, value]) => {
-                const existingValue = this.domainObject[`${key}`];
+                const existingValue = this.domainObject[key];
                 if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
                     value = {
                         ...existingValue,
@@ -63,7 +63,7 @@ export default class EditPropertiesAction extends PropertiesAction {
                     };
                 }
 
-                this.openmct.objects.mutate(this.domainObject, `${key}`, value);
+                this.openmct.objects.mutate(this.domainObject, key, value);
             });
             if (this.openmct.editor.isEditing()) {
                 this.openmct.editor.save();
