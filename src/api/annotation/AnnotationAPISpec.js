@@ -172,16 +172,5 @@ describe("The Annotation API", () => {
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
         });
-        it("can get notebook annotations", async () => {
-            const targetKeyString = openmct.objects.makeKeyString(mockDomainObject.identifier);
-            const query = {
-                targetKeyString,
-                entryId: 'fooBarEntry'
-            };
-
-            const results = await openmct.annotation.getAnnotations(query, openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
-            expect(results).toBeDefined();
-            expect(results[0].tags.length).toEqual(2);
-        });
     });
 });

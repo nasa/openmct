@@ -151,6 +151,7 @@
                     :key="entry.id"
                     :entry="entry"
                     :domain-object="domainObject"
+                    :annotations="annotationsForEntry(entry.id)"
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
@@ -159,6 +160,7 @@
                     @editingEntry="startTransaction"
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
+                    @tags-updated="tagsUpdated"
                 />
             </div>
             <div
@@ -222,7 +224,8 @@ export default {
             showTime: this.domainObject.configuration.showTime || 0,
             showNav: false,
             sidebarCoversEntries: false,
-            filteredAndSortedEntries: []
+            filteredAndSortedEntries: [],
+            notebookAnnotations: []
         };
     },
     computed: {
@@ -289,7 +292,8 @@ export default {
         this.getSearchResults = debounce(this.getSearchResults, 500);
         this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
     },
-    mounted() {
+    async mounted() {
+        await this.loadAnnotations();
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
@@ -316,6 +320,13 @@ export default {
         });
     },
     methods: {
+        annotationsForEntry(entryId) {
+            const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return this.notebookAnnotations.filter((annotation) => {
+                return (annotation.targets[domainObjectKeyString]?.entryId === entryId);
+            });
+        },
         changeSectionPage(newParams, oldParams, changedParams) {
             if (isNotebookViewType(newParams.view)) {
                 return;
@@ -337,6 +348,18 @@ export default {
                     });
                 }
             });
+        },
+        async tagsUpdated() {
+            await this.loadAnnotations();
+            this.filterAndSortEntries();
+        },
+        async loadAnnotations() {
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                return;
+            }
+
+            const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.notebookAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
         },
         filterAndSortEntries() {
             const filterTime = Date.now();
@@ -473,14 +496,8 @@ export default {
                 ]
             });
         },
-        async removeAnnotations(entryId) {
-            const targetKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const query = {
-                targetKeyString,
-                entryId
-            };
-            const existingAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
-            this.openmct.annotation.deleteAnnotations(existingAnnotations);
+        removeAnnotations(entryId) {
+            this.openmct.annotation.deleteAnnotations(this.annotationsForEntry(entryId));
         },
         checkEntryPos(entry) {
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);

@@ -76,7 +76,6 @@ export default class ObjectAPI {
         this.SEARCH_TYPES = Object.freeze({
             OBJECTS: 'OBJECTS',
             ANNOTATIONS: 'ANNOTATIONS',
-            NOTEBOOK_ANNOTATIONS: 'NOTEBOOK_ANNOTATIONS',
             TAGS: 'TAGS'
         });
         this.eventEmitter = new EventEmitter();

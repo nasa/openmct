@@ -61,7 +61,6 @@ class InMemorySearchProvider {
         this.localSearchForObjects = this.localSearchForObjects.bind(this);
         this.localSearchForAnnotations = this.localSearchForAnnotations.bind(this);
         this.localSearchForTags = this.localSearchForTags.bind(this);
-        this.localSearchForNotebookAnnotations = this.localSearchForNotebookAnnotations.bind(this);
         this.onAnnotationCreation = this.onAnnotationCreation.bind(this);
         this.onCompositionAdded = this.onCompositionAdded.bind(this);
         this.onCompositionRemoved = this.onCompositionRemoved.bind(this);
@@ -93,7 +92,7 @@ class InMemorySearchProvider {
 
         this.searchTypes = this.openmct.objects.SEARCH_TYPES;
 
-        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.NOTEBOOK_ANNOTATIONS, this.searchTypes.TAGS];
+        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.TAGS];
 
         this.scheduleForIndexing(rootObject.identifier);
 
@@ -163,8 +162,6 @@ class InMemorySearchProvider {
             return this.localSearchForObjects(queryId, query, maxResults);
         } else if (searchType === this.searchTypes.ANNOTATIONS) {
             return this.localSearchForAnnotations(queryId, query, maxResults);
-        } else if (searchType === this.searchTypes.NOTEBOOK_ANNOTATIONS) {
-            return this.localSearchForNotebookAnnotations(queryId, query, maxResults);
         } else if (searchType === this.searchTypes.TAGS) {
             return this.localSearchForTags(queryId, query, maxResults);
         } else {
@@ -569,43 +566,6 @@ class InMemorySearchProvider {
                         }
                     });
                 }
-            });
-        }
-
-        message.total = results.length;
-        message.results = results
-            .slice(0, maxResults);
-        const eventToReturn = {
-            data: message
-        };
-        this.onWorkerMessage(eventToReturn);
-    }
-
-    /**
-     * A local version of the same SharedWorker function
-     * if we don't have SharedWorkers available (e.g., iOS)
-     */
-    localSearchForNotebookAnnotations(queryId, {entryId, targetKeyString}, maxResults) {
-        // This results dictionary will have domain object ID keys which
-        // point to the value the domain object's score.
-        let results = [];
-        const message = {
-            request: 'searchForNotebookAnnotations',
-            results: [],
-            total: 0,
-            queryId
-        };
-
-        const matchingAnnotations = this.localIndexedAnnotationsByDomainObject[targetKeyString];
-        if (matchingAnnotations) {
-            results = matchingAnnotations.filter(matchingAnnotation => {
-                if (!matchingAnnotation.targets) {
-                    return false;
-                }
-
-                const target = matchingAnnotation.targets[targetKeyString];
-
-                return (target && target.entryId && (target.entryId === entryId));
             });
         }
 

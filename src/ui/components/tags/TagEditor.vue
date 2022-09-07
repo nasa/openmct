@@ -51,15 +51,11 @@ export default {
     },
     inject: ['openmct'],
     props: {
-        annotationQuery: {
-            type: Object,
+        annotations: {
+            type: Array,
             required: true
         },
         annotationType: {
-            type: String,
-            required: true
-        },
-        annotationSearchType: {
             type: String,
             required: true
         },
@@ -76,7 +72,6 @@ export default {
     },
     data() {
         return {
-            annotations: [],
             addedTags: [],
             userAddingTag: false,
             deleteAnnotationListeners: []
@@ -93,47 +88,32 @@ export default {
         }
     },
     mounted() {
-        this.loadAnnotations();
+        this.addAnnotationListeners(this.annotations);
+        if (this.annotations && this.annotations.length) {
+            this.tagsChanged();
+        }
     },
     destroyed() {
-        this.unloadAnnotations();
+        this.deleteAnnotationListeners.forEach(deleteAnnotationListener => {
+            deleteAnnotationListener();
+        });
+        this.deleteAnnotationListeners = [];
     },
     methods: {
         addAnnotationListeners(annotations) {
             annotations.forEach(annotation => {
-                const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', (chanedAnnotation) => {
+                const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', (changedAnnotation) => {
                     const matchingAnnotation = this.annotations.find((possibleMatchingAnnotation) => {
-                        return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, chanedAnnotation.identifier);
+                        return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, changedAnnotation.identifier);
                     });
                     if (matchingAnnotation) {
-                        matchingAnnotation._deleted = chanedAnnotation._deleted;
+                        matchingAnnotation._deleted = changedAnnotation._deleted;
                         this.userAddingTag = false;
                         this.tagsChanged();
                     }
                 });
                 this.deleteAnnotationListeners.push(deleteAnnotationListener);
             });
-        },
-        async loadAnnotations() {
-            if (!this.availableTags.length) {
-                return;
-            }
-
-            this.annotations = await this.openmct.annotation.getAnnotations(this.annotationQuery, this.annotationSearchType);
-            this.addAnnotationListeners(this.annotations);
-            if (this.annotations && this.annotations.length) {
-                this.tagsChanged();
-            }
-            // TODO need to listen to all annotations that match my domain object
-            // this.onAnnotationCreation = this.onAnnotationCreation.bind(this);
-            // this.openmct.annotation.on('annotationCreated', this.onAnnotationCreation);
-        },
-        unloadAnnotations() {
-            this.deleteAnnotationListeners.forEach(deleteAnnotationListener => {
-                deleteAnnotationListener();
-            });
-            this.deleteAnnotationListeners = [];
-            // this.openmct.annotation.off('annotationCreated', this.onAnnotationCreation);
         },
         onAnnotationCreation(newAnnotation) {
             const alreadyExists = this.annotations.some((existingAnnotation) => {
@@ -194,8 +174,6 @@ export default {
             this.userAddingTag = false;
             if (!existingAnnotation) {
                 this.addAnnotationListeners([createdAnnotation]);
-                this.annotations.push(createdAnnotation);
-                this.tagsChanged();
             }
 
             this.$emit('tags-updated');
