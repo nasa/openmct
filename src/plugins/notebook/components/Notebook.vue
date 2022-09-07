@@ -151,7 +151,7 @@
                     :key="entry.id"
                     :entry="entry"
                     :domain-object="domainObject"
-                    :annotations="annotationsForEntry(entry.id)"
+                    :notebook-annotations="notebookAnnotations"
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
@@ -349,9 +349,8 @@ export default {
                 }
             });
         },
-        async tagsUpdated() {
-            await this.loadAnnotations();
-            this.filterAndSortEntries();
+        tagsUpdated(annotation) {
+            this.loadAnnotations();
         },
         async loadAnnotations() {
             if (!this.openmct.annotation.getAvailableTags().length) {
@@ -359,7 +358,15 @@ export default {
             }
 
             const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.notebookAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
+            const foundAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
+
+            if (foundAnnotations.length < this.notebookAnnotations.length) {
+                this.notebookAnnotations = this.notebookAnnotations.slice(0, foundAnnotations.length);
+            }
+
+            for (let index = 0; index < foundAnnotations.length; index += 1) {
+                this.$set(this.notebookAnnotations, index, foundAnnotations[index]);
+            }
         },
         filterAndSortEntries() {
             const filterTime = Date.now();

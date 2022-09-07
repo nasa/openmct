@@ -87,6 +87,14 @@ export default {
             return !(availableTags && availableTags.length && (this.addedTags.length < availableTags.length));
         }
     },
+    watch: {
+        annotations: {
+            handler() {
+                this.tagsChanged();
+            },
+            deep: true
+        }
+    },
     mounted() {
         this.addAnnotationListeners(this.annotations);
         if (this.annotations && this.annotations.length) {
@@ -158,7 +166,7 @@ export default {
                 return annotation.tags.includes(tagToRemove);
             });
             const result = await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
-            this.$emit('tags-updated');
+            this.$emit('tags-updated', annotationsToDelete);
 
             return result;
         },
@@ -176,7 +184,7 @@ export default {
                 this.addAnnotationListeners([createdAnnotation]);
             }
 
-            this.$emit('tags-updated');
+            this.$emit('tags-updated', createdAnnotation);
         }
     }
 };
