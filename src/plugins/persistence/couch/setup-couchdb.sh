@@ -89,7 +89,7 @@ is_cors_enabled() {
 
 enable_cors () {
     curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/httpd/enable_cors -d '"true"'
-    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/origins -d '"http://localhost:8080"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/origins -d '"*"'
     curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/credentials -d '"true"'
     curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE"'
     curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
