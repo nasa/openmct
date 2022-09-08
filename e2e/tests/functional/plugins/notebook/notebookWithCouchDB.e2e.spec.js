@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
+This test suite is dedicated to tests which verify the basic operations surrounding Notebooks with CouchDB.
 */
 
 const { test, expect } = require('../../../../baseFixtures');
@@ -57,9 +57,24 @@ test.describe('Notebook Entry Operations Request Inspection @couchdb', () => {
         console.log(pageAddButtonClickRequest.postDataJSON());
         expect(pageAddButtonClickRequest.model.type).toBe('notebook');
     });
-    test.fixme('Can update a Notebook Object', async ({ page }) => {});
-    test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
-    test.fixme('Can Delete a Notebook Object', async ({ page }) => {
-        // Other than non-persistible objects
-    });
 });
+
+/**
+ * Listens to all requests made by a page, specified with regex matching and returns a list object of all
+ * Requests in a given timeframe
+ * @see {@link https://github.com/microsoft/playwright/issues/15660 Github RFE}
+ * @param {import('@playwright/test').Page} page
+ */
+function waitForRequests(page) {
+    // Capture any requests during test execution
+    const requests = [];
+    page.on('request', (rq) => requests.push(rq));
+
+    if (failOnConsoleError) {
+        messages.forEach(
+            msg => expect.soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`).not.toEqual('error')
+        );
+    }
+
+}
+
