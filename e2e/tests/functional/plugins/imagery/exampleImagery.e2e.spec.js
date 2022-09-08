@@ -53,26 +53,11 @@ test.describe('Example Imagery Object', () => {
     });
 
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
-        const deltaYStep = 100; //equivalent to 1x zoom
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-        // zoom in
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        await page.mouse.wheel(0, deltaYStep * 2);
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-        // zoom out
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        await page.mouse.wheel(0, -deltaYStep);
-        // wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        const imageMouseZoomedOut = await page.locator(backgroundImageSelector).boundingBox();
+        // Zoom in x2 and assert
+        await mouseZoomOnImageAndAssert(page, 2);
 
-        expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-        expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
-        expect(imageMouseZoomedOut.height).toBeLessThan(imageMouseZoomedIn.height);
-        expect(imageMouseZoomedOut.width).toBeLessThan(imageMouseZoomedIn.width);
+        // Zoom out x2 and assert
+        await mouseZoomOnImageAndAssert(page, -2);
     });
 
     test('Can adjust image brightness/contrast by dragging the sliders', async ({ page, browserName }) => {
@@ -213,12 +198,6 @@ test.describe('Example Imagery Object', () => {
 
 });
 
-// The following test case will cover these scenarios
-// ('Can use Mouse Wheel to zoom in and out of previous image');
-// ('Can use alt+drag to move around image once zoomed in');
-// ('Clicking on the left arrow should pause the imagery and go to previous image');
-// ('If the imagery view is in pause mode, it should not be updated when new images come in');
-// ('If the imagery view is not in pause mode, it should be updated when new images come in');
 test.describe('Example Imagery in Display Layout', () => {
     let displayLayout;
     test.beforeEach(async ({ page }) => {
@@ -277,27 +256,14 @@ test.describe('Example Imagery in Display Layout', () => {
         const selectedImage = page.locator('.selected');
         await expect(selectedImage).toBeVisible();
 
-        // Zoom in
-        const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        const deltaYStep = 100; // equivalent to 1x zoom
-        await page.mouse.wheel(0, deltaYStep * 2);
-        const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-        const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
-        const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+        // Use Mouse Wheel to zoom in to previous image
+        await mouseZoomOnImageAndAssert(page, 2);
 
-        // Wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-        expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-        expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+        // Use alt+drag to move around image once zoomed in
+        await panZoomAndAssertImageProperties(page);
 
-        // Center the mouse pointer
-        await page.mouse.move(imageCenterX, imageCenterY);
-
-        // Pan Imagery Hints
-        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-        expect(expectedAltText).toEqual(imageryHintsText);
+        // Use Mouse Wheel to zoom out of previous image
+        await mouseZoomOnImageAndAssert(page, -2);
 
         // Click next image button
         const nextImageButton = page.locator('.c-nav--next');
@@ -310,21 +276,14 @@ test.describe('Example Imagery in Display Layout', () => {
         await page.locator('[data-testid=conductor-modeOption-realtime]').click();
 
         // Zoom in on next image
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        await page.mouse.wheel(0, deltaYStep * 2);
+        await mouseZoomOnImageAndAssert(page, 2);
 
-        // Wait for zoom animation to finish
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        const imageNextMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-        expect(imageNextMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-        expect(imageNextMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
-
-        // Click previous image button
+        // Clicking on the left arrow should pause the imagery and go to previous image
         await previousImageButton.click();
-
-        // Verify previous image
+        await expect(page.locator('.c-button.pause-play')).toHaveClass(/is-paused/);
         await expect(selectedImage).toBeVisible();
 
+        // The imagery view should be updated when new images come in
         const imageCount = await page.locator('.c-imagery__thumb').count();
         await expect.poll(async () => {
             const newImageCount = await page.locator('.c-imagery__thumb').count();
@@ -424,7 +383,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         });
 
         // Zoom in
-        await mouseZoomIn(page);
+        await mouseZoomOnImageAndAssert(page, 2);
 
         // Center the mouse pointer
         const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
@@ -450,7 +409,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.locator('[data-testid=conductor-modeOption-realtime]').nth(0).click();
 
         // Zoom in on next image
-        await mouseZoomIn(page);
+        await mouseZoomOnImageAndAssert(page, 2);
 
         // Click previous image button
         await previousImageButton.click();
@@ -529,14 +488,6 @@ test.describe('Example Imagery in Time Strip', () => {
         expect(viewLargeImgSrc).toEqual(hoveredImgSrc);
     });
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function saveTemplate(page) {
-    await page.locator('.c-button--menu.c-button--major.icon-save').click();
-    await page.locator('text=Save and Finish Editing').click();
-}
 
 /**
  * Drag the brightness slider to max, min, and midpoint and assert the filter values
@@ -672,14 +623,17 @@ async function panZoomAndAssertImageProperties(page) {
 }
 
 /**
+ * Use the mouse wheel to zoom in or out of an image and assert that the image
+ * has been successfully zoomed in or out.
  * @param {import('@playwright/test').Page} page
+ * @param {number} [factor = 2] The zoom factor. Positive for zoom in, negative for zoom out.
 */
-async function mouseZoomIn(page) {
+async function mouseZoomOnImageAndAssert(page, factor = 2) {
     // Zoom in
     const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
     await page.locator(backgroundImageSelector).hover({trial: true});
     const deltaYStep = 100; // equivalent to 1x zoom
-    await page.mouse.wheel(0, deltaYStep * 2);
+    await page.mouse.wheel(0, deltaYStep * factor);
     const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
@@ -689,9 +643,15 @@ async function mouseZoomIn(page) {
 
     // Wait for zoom animation to finish
     await page.locator(backgroundImageSelector).hover({trial: true});
-    const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
-    expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
-    expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+    const imageMouseZoomed = await page.locator(backgroundImageSelector).boundingBox();
+
+    if (factor > 0) {
+        expect(imageMouseZoomed.height).toBeGreaterThan(originalImageDimensions.height);
+        expect(imageMouseZoomed.width).toBeGreaterThan(originalImageDimensions.width);
+    } else {
+        expect(imageMouseZoomed.height).toBeLessThan(originalImageDimensions.height);
+        expect(imageMouseZoomed.width).toBeLessThan(originalImageDimensions.width);
+    }
 }
 
 /**
