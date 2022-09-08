@@ -52,6 +52,9 @@ test.describe('Multi user notebook tests @unstable @2p @couchdb', () => {
         await enterTextEntry(user1);
         await expect(user1.locator('text=AAA')).toBeVisible();
         await expect(user2.locator('text=AAA')).toBeVisible();
+
+        //Need to explicitly close this tab
+        await user2.close();
     });
     test('A fresh notebook entry entered by User1 will appear for User1s second tab within 60 seconds', async ({ context, page: page1 }) => {
         await page1.goto('./', { waitUntil: 'networkidle' });
