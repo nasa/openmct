@@ -347,7 +347,8 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    save(domainObject) {
+    async save(domainObject) {
+        const UNKNOWN_USER = 'Unknown';
         let provider = this.getProvider(domainObject.identifier);
         let savedResolve;
         let savedReject;
@@ -359,24 +360,38 @@ export default class ObjectAPI {
             result = Promise.resolve(true);
         } else {
             const persistedTime = Date.now();
+            let username = UNKNOWN_USER;
+            const user = await this.openmct.user.getCurrentUser();
+
+            if (user !== undefined) {
+                username = user.getName();
+            }
+
             if (domainObject.persisted === undefined) {
                 result = new Promise((resolve, reject) => {
                     savedResolve = resolve;
                     savedReject = reject;
                 });
+                domainObject.createdBy = username;
                 domainObject.persisted = persistedTime;
                 const newObjectPromise = provider.create(domainObject);
+
                 if (newObjectPromise) {
-                    newObjectPromise.then(response => {
+                    let response;
+
+                    try {
+                        response = await newObjectPromise;
+
                         this.mutate(domainObject, 'persisted', persistedTime);
                         savedResolve(response);
-                    }).catch((error) => {
+                    } catch (error) {
                         savedReject(error);
-                    });
+                    }
                 } else {
                     result = Promise.reject(`[ObjectAPI][save] Object provider returned ${newObjectPromise} when creating new object.`);
                 }
             } else {
+                domainObject.modifiedBy = username;
                 domainObject.persisted = persistedTime;
                 this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);

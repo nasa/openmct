@@ -90,8 +90,11 @@ export default {
                 return;
             }
 
+            const UNKNOWN_USER = 'Unknown';
             const title = this.domainObject.name;
             const typeName = this.type ? this.type.definition.name : `Unknown: ${this.domainObject.type}`;
+            const createdBy = this.domainObject.createdBy ? this.domainObject.createdBy : UNKNOWN_USER;
+            const modifiedBy = this.domainObject.modifiedBy ? this.domainObject.modifiedBy : UNKNOWN_USER;
             const timestampLabel = this.domainObject.modified ? 'Modified' : 'Created';
             const timestamp = this.domainObject.modified ? this.domainObject.modified : this.domainObject.created;
             const notes = this.domainObject.notes;
@@ -104,6 +107,14 @@ export default {
                 {
                     name: 'Type',
                     value: typeName
+                },
+                {
+                    name: 'Created By',
+                    value: createdBy
+                },
+                {
+                    name: 'Modified By',
+                    value: modifiedBy
                 }
             ];
 
