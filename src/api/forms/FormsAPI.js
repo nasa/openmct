@@ -100,6 +100,7 @@ export default class FormsAPI extends EventEmitter {
      *      @property {HTMLElement} element Parent Element to render a Form
      *      @property {function} onChange a callback function when any changes detected
      *      @property {function} onSave a callback function when form is submitted
+     *      @property {function} onCancel a callback function when form is cancelled
      *      @property {function} onDismiss a callback function when form is dismissed
      */
     showForm(formStructure, {
@@ -108,6 +109,7 @@ export default class FormsAPI extends EventEmitter {
     } = {}) {
         const changes = {};
         let overlay;
+        let onCancel;
         let onDismiss;
         let onSave;
 
@@ -115,7 +117,8 @@ export default class FormsAPI extends EventEmitter {
 
         const promise = new Promise((resolve, reject) => {
             onSave = onFormAction(resolve);
-            onDismiss = onFormAction(reject);
+            onCancel = onFormAction(reject);
+            onDismiss = onFormDismiss(reject);
         });
 
         const vm = new Vue({
@@ -127,11 +130,11 @@ export default class FormsAPI extends EventEmitter {
                 return {
                     formStructure,
                     onChange: onFormPropertyChange,
-                    onDismiss,
+                    onCancel,
                     onSave
                 };
             },
-            template: '<FormProperties :model="formStructure" @onChange="onChange" @onDismiss="onDismiss" @onSave="onSave"></FormProperties>'
+            template: '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
         }).$mount();
 
         const formElement = vm.$el;
@@ -141,7 +144,8 @@ export default class FormsAPI extends EventEmitter {
             overlay = self.openmct.overlays.overlay({
                 element: vm.$el,
                 size: 'small',
-                onDestroy: () => vm.$destroy()
+                onDestroy: () => vm.$destroy(),
+                onDismiss: onDismiss
             });
         }
 
@@ -163,6 +167,7 @@ export default class FormsAPI extends EventEmitter {
             }
         }
 
+        //This is not called when a user dismisses a form by pressing escape or the close dialog button
         function onFormAction(callback) {
             return () => {
                 if (element) {
@@ -171,6 +176,14 @@ export default class FormsAPI extends EventEmitter {
                     overlay.dismiss();
                 }
 
+                if (callback) {
+                    callback(changes);
+                }
+            };
+        }
+
+        function onFormDismiss(callback) {
+            return () => {
                 if (callback) {
                     callback(changes);
                 }
