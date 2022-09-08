@@ -27,7 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-test.describe('Notebook Entry Operations Request Inspection @couchdb', () => {
+test.describe('Notebook Network Request Inspection @couchdb', () => {
     let testNotebook;
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
@@ -36,45 +36,33 @@ test.describe('Notebook Entry Operations Request Inspection @couchdb', () => {
         // Create Notebook
         testNotebook = await createDomainObjectWithDefaults(page, {
             type: 'Notebook',
-            name: "Test Notebook"
+            name: "TestNotebook"
         });
     });
 
-    test.only('Inspect Notebook Entry Addition', async ({ page }) => {
-        // Expand sidebar and add a second page
+    test('Inspect Notebook Entry Network Requests', async ({ page }) => {
+        // Expand sidebar
         await page.locator('.c-notebook__toggle-nav-button').click();
 
-        const [pageAddButtonClickRequest] = await Promise.all([
+        // Collect all request events to count and assert after notebook action
+        const requests = [];
+        page.on('request', (rq) => requests.push(rq));
+
+        const [notebookUrlRequest, allDocsRequest] = await Promise.all([
             // Waits for the next request with the specified url
             page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
-            //page.waitForRequest('**/openmct/_all_docs?include_docs=true'),
+            page.waitForRequest('**/openmct/_all_docs?include_docs=true'),
             // Triggers the request
             page.click('text=Page Add >> button'),
-            // eslint-disable-next-line playwright/no-wait-for-timeout
-            page.waitForTimeout(3 * 1000)
+            // Ensures that there are no other network requests
+            page.waitForLoadState('networkidle')
         ]);
-        console.log(pageAddButtonClickRequest);
-        console.log(pageAddButtonClickRequest.postDataJSON());
-        expect(pageAddButtonClickRequest.model.type).toBe('notebook');
+        // Assert that only two requests are made
+        expect(requests.length).toBe(2);
+
+        // Assert on request object
+        expect(notebookUrlRequest.postDataJSON().metadata.name).toBe('TestNotebook');
+        expect(notebookUrlRequest.postDataJSON().model.persisted).toBeGreaterThanOrEqual(notebookUrlRequest.postDataJSON().model.modified);
+        expect(allDocsRequest.postDataJSON().keys).toContain(testNotebook.uuid);
     });
 });
-
-/**
- * Listens to all requests made by a page, specified with regex matching and returns a list object of all
- * Requests in a given timeframe
- * @see {@link https://github.com/microsoft/playwright/issues/15660 Github RFE}
- * @param {import('@playwright/test').Page} page
- */
-function waitForRequests(page) {
-    // Capture any requests during test execution
-    const requests = [];
-    page.on('request', (rq) => requests.push(rq));
-
-    if (failOnConsoleError) {
-        messages.forEach(
-            msg => expect.soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`).not.toEqual('error')
-        );
-    }
-
-}
-
