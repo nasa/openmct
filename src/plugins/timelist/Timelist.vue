@@ -151,7 +151,7 @@ export default {
         }
 
         // initialize the full view if fixed time
-        if (this.timestamp === undefined) {
+        if (this.openmct.time.clock() === undefined) {
             // Show everything
             this.filterValue = this.domainObject.configuration.filter;
             this.hideAll = false;
@@ -431,7 +431,7 @@ export default {
 
             this.firstCurrentActivityIndex = -1;
             this.currentActivitiesCount = 0;
-            this.$el.parentElement.scrollTo({top: 0});
+            this.$el.parentElement?.scrollTo({top: 0});
             this.autoScrolled = false;
         },
         setScrollTop() {
