@@ -62,7 +62,7 @@ define(
             }
 
             addRows(rows) {
-                let rowsToAdd = this.manageRowsFromTables(rows);
+                let rowsToAdd = this.filterRows(rows);
 
                 this.sortAndMergeRows(rowsToAdd);
 
@@ -75,7 +75,7 @@ define(
 
             clearRowsFromTableAndFilter(rows) {
 
-                let rowsToAdd = this.manageRowsFromTables(rows);
+                let rowsToAdd = this.filterRows(rows);
                 // Reset of all rows, need to wipe current rows
                 this.rows = [];
 
@@ -85,12 +85,13 @@ define(
                 this.emit('filter', rowsToAdd);
             }
 
-            manageRowsFromTables(rows) {
-                if (this.sortOptions === undefined) {
-                    throw 'Please specify sort options';
+            filterRows(rows) {
+
+                if(Object.keys(this.columnFilters).length > 0){
+                    return rows.filter(this.matchesFilters, this);
                 }
 
-                return !(Object.keys(this.columnFilters).length > 0) ? rows : rows.filter(this.matchesFilters, this);
+                return rows;
             }
 
             sortAndMergeRows(rows) {
