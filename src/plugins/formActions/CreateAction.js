@@ -51,7 +51,7 @@ export default class CreateAction extends PropertiesAction {
                 return;
             }
 
-            const existingValue = this.domainObject[`${key}`];
+            const existingValue = this.domainObject[key];
             if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
                 value = {
                     ...existingValue,
@@ -59,7 +59,7 @@ export default class CreateAction extends PropertiesAction {
                 };
             }
 
-            _.set(this.domainObject, `${key}`, value);
+            _.set(this.domainObject, key, value);
         });
 
         const parentDomainObject = parentDomainObjectPath[0];

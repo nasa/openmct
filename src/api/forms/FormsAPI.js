@@ -23,14 +23,11 @@
 import FormController from './FormController';
 import FormProperties from './components/FormProperties.vue';
 
-import EventEmitter from 'EventEmitter';
 import Vue from 'vue';
 import _ from 'lodash';
 
-export default class FormsAPI extends EventEmitter {
+export default class FormsAPI {
     constructor(openmct) {
-        super();
-
         this.openmct = openmct;
         this.formController = new FormController(openmct);
     }
@@ -93,32 +90,24 @@ export default class FormsAPI extends EventEmitter {
 
     /**
      * Show form inside an Overlay dialog with given form structure
-     *
      * @public
      * @param {Array<Section>} formStructure a form structure, array of section
      * @param {Object} options
-     *      @property {HTMLElement} element Parent Element to render a Form
      *      @property {function} onChange a callback function when any changes detected
-     *      @property {function} onSave a callback function when form is submitted
-     *      @property {function} onCancel a callback function when form is cancelled
-     *      @property {function} onDismiss a callback function when form is dismissed
      */
     showForm(formStructure, {
-        element,
         onChange
     } = {}) {
         const changes = {};
         let overlay;
-        let onCancel;
-        let onDismiss;
-        let onSave;
+        let formCancel;
+        let formSave;
 
         const self = this;
 
         const promise = new Promise((resolve, reject) => {
-            onSave = onFormAction(resolve);
-            onCancel = onFormAction(reject);
-            onDismiss = onFormDismiss(reject);
+            formSave = onFormAction(resolve);
+            formCancel = onFormAction(reject);
         });
 
         const vm = new Vue({
@@ -130,24 +119,18 @@ export default class FormsAPI extends EventEmitter {
                 return {
                     formStructure,
                     onChange: onFormPropertyChange,
-                    onCancel,
-                    onSave
+                    onCancel: formCancel,
+                    onSave: formSave
                 };
             },
             template: '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
         }).$mount();
 
-        const formElement = vm.$el;
-        if (element) {
-            element.append(formElement);
-        } else {
-            overlay = self.openmct.overlays.overlay({
-                element: vm.$el,
-                size: 'small',
-                onDestroy: () => vm.$destroy(),
-                onDismiss: onDismiss
-            });
-        }
+        overlay = self.openmct.overlays.overlay({
+            element: vm.$el,
+            size: 'small',
+            onDestroy: () => vm.$destroy()
+        });
 
         function onFormPropertyChange(data) {
             if (onChange) {
@@ -162,19 +145,14 @@ export default class FormsAPI extends EventEmitter {
                     key = property.join('.');
                 }
 
-                _.set(changes, `${key}`, data.value);
-                self.emit('formPropertiesChanged', changes);
+                _.set(changes, key, data.value);
             }
         }
 
-        //This is not called when a user dismisses a form by pressing escape or the close dialog button
+        //The promise is never resolved/rejected when a user dismisses an overlay by pressing escape or using the [x] button
         function onFormAction(callback) {
             return () => {
-                if (element) {
-                    formElement.remove();
-                } else {
-                    overlay.dismiss();
-                }
+                overlay.dismiss();
 
                 if (callback) {
                     callback(changes);
@@ -182,8 +160,80 @@ export default class FormsAPI extends EventEmitter {
             };
         }
 
-        function onFormDismiss(callback) {
+        return promise;
+    }
+
+    /**
+     * Show form as a child of the element provided with given form structure
+     *
+     * @public
+     * @param {Array<Section>} formStructure a form structure, array of section
+     * @param {Object} options
+     *      @property {HTMLElement} element Parent Element to render a Form
+     *      @property {function} onChange a callback function when any changes detected
+     *      @property {function} onSave a callback function when form is submitted
+     *      @property {function} onCancel a callback function when form is cancelled
+     */
+    showCustomForm(formStructure, {
+        element,
+        onChange,
+        onCancel,
+        onSave
+    } = {}) {
+        if (element === undefined) {
+            return;
+        }
+
+        const changes = {};
+        let formSave;
+        let formCancel;
+
+        //Either a promise OR call the passed in onSave and onCancel but not both
+        const promise = new Promise((resolve, reject) => {
+            formSave = onFormAction(resolve);
+            formCancel = onFormAction(reject);
+        });
+
+        const vm = new Vue({
+            components: { FormProperties },
+            provide: {
+                openmct: self.openmct
+            },
+            data() {
+                return {
+                    formStructure,
+                    onChange: onFormPropertyChange,
+                    onCancel: formCancel,
+                    onSave: formSave
+                };
+            },
+            template: '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
+        }).$mount();
+
+        const formElement = vm.$el;
+        element.append(formElement);
+
+        function onFormPropertyChange(data) {
+            if (onChange) {
+                onChange(data);
+            }
+
+            if (data.model) {
+                const property = data.model.property;
+                let key = data.model.key;
+
+                if (property && property.length) {
+                    key = property.join('.');
+                }
+
+                _.set(changes, key, data.value);
+            }
+        }
+
+        function onFormAction(callback) {
             return () => {
+                formElement.remove();
+
                 if (callback) {
                     callback(changes);
                 }
