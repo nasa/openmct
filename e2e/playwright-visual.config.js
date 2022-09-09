@@ -16,7 +16,6 @@ const config = {
         reuseExistingServer: !process.env.CI
     },
     use: {
-        actionTimeout: 0,
         baseURL: 'http://localhost:8080/',
         headless: true, // this needs to remain headless to avoid visual changes due to GPU rendering in headed browsers
         ignoreHTTPSErrors: true,
