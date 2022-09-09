@@ -38,8 +38,8 @@
 import {getValidatedData} from "../plan/util";
 import ListView from '../../ui/components/List/ListView.vue';
 import {getPreciseDuration} from "../../utils/duration";
-import {SORT_ORDER_OPTIONS} from "./constants";
 import ticker from 'utils/clock/Ticker';
+import {SORT_ORDER_OPTIONS} from "./constants";
 
 import moment from "moment";
 import { v4 as uuid } from 'uuid';
