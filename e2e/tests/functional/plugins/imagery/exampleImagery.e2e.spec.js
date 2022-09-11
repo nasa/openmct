@@ -42,7 +42,7 @@ test.describe('Example Imagery Object', () => {
         // Create a default 'Example Imagery' object
         await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
 
-            // Verify that the created object is focused
+        // Verify that the created object is focused
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
         await page.locator(backgroundImageSelector).hover({trial: true});
     });
