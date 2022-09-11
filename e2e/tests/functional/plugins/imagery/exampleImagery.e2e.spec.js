@@ -42,13 +42,9 @@ test.describe('Example Imagery Object', () => {
         // Create a default 'Example Imagery' object
         await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
 
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator(backgroundImageSelector).hover({trial: true}),
             // Verify that the created object is focused
-            // eslint-disable-next-line playwright/missing-playwright-await
-            expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery')
-        ]);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await page.locator(backgroundImageSelector).hover({trial: true});
     });
 
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
