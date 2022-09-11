@@ -52,12 +52,14 @@
             <conductor-inputs-fixed
                 v-if="isFixed"
                 :key-string="domainObject.identifier.key"
+                :object-path="objectPath"
                 @updated="saveFixedOffsets"
             />
 
             <conductor-inputs-realtime
                 v-else
                 :key-string="domainObject.identifier.key"
+                :object-path="objectPath"
                 @updated="saveClockOffsets"
             />
         </div>
@@ -84,6 +86,10 @@ export default {
     props: {
         domainObject: {
             type: Object,
+            required: true
+        },
+        objectPath: {
+            type: Array,
             required: true
         }
     },
@@ -164,7 +170,7 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
-            this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
             this.timeContext.on('clock', this.setTimeOptions);
         },
         stopFollowingTimeContext() {
