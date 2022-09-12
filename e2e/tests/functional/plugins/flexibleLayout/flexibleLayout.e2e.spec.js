@@ -40,7 +40,7 @@ test.describe('Testing Flexible Layout @unstable', () => {
             name: "Test Clock"
         });
     });
-    test('dragging a pane in browse mode does not show drop locations', async ({ page }) => {
+    test('flexible layout panes have the appropriate draggable attribute while in Edit and Browse modes', async ({ page }) => {
         // Create a Flexible Layout
         await createDomainObjectWithDefaults(page, {
             type: 'Flexible Layout',
