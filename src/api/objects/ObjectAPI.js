@@ -355,7 +355,7 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-     save(domainObject) {
+    save(domainObject) {
         let provider = this.getProvider(domainObject.identifier);
         let savedResolve;
         let savedReject;
