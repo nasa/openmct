@@ -90,11 +90,11 @@ describe("The Object API", () => {
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).toHaveBeenCalled();
             });
-            it("Sets the current user for createdBy on new objects", () => {
+            it("Sets the current user for 'createdBy' on new objects", () => {
                 objectAPI.save(mockDomainObject);
                 expect(mockDomainObject.createdBy).toBe(USERNAME);
             });
-            it("Sets the current user for modifedBy on existing objects", () => {
+            it("Sets the current user for 'modifedBy' on existing objects", () => {
                 mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
                 mockDomainObject.modified = Date.now();
 
