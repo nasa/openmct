@@ -7,8 +7,8 @@ const config = {
     retries: 0, // visual tests should never retry due to snapshot comparison errors
     testDir: 'tests/visual',
     testMatch: '**/*.visual.spec.js', // only run visual tests
-    timeout: 60 * 1000,
-    workers: 2, //Limit to 2 for CircleCI Agent
+    timeout: 90 * 1000,
+    workers: 1, //Limit to 1 for CircleCI Agent
     webServer: {
         command: 'cross-env NODE_ENV=test npm run start',
         url: 'http://localhost:8080/#',

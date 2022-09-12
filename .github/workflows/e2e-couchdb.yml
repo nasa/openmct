@@ -17,12 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run : docker-compose up -d -f src/plugins/persistence/couch/couchdb-compose.yaml
-      - run : sh src/plugins/persistence/couch/setup-couchdb.sh
+      - run : docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+      - run : sleep 3 # wait until CouchDB has started (TODO: there must be a better way)
+      - run : bash src/plugins/persistence/couch/setup-couchdb.sh
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npx playwright@1.23.0 install
+      - run: npx playwright@1.25.2 install
       - run: npm install
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
       - run: npm run test:e2e:couchdb
