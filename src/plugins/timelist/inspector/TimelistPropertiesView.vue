@@ -32,7 +32,7 @@
                 <div
                     v-if="canEdit"
                     class="c-inspect-properties__hint span-all"
-                >These settings are not previewed and will be applied after editing is completed.</div>
+                >These settings don't affect the view while editing, but will be applied after editing is finished.</div>
                 <div
                     class="c-inspect-properties__label"
                     title="Sort order of the timelist."

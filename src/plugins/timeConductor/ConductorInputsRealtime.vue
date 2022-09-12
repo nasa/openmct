@@ -90,6 +90,12 @@ export default {
                 return undefined;
             }
         },
+        objectPath: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         inputBounds: {
             type: Object,
             default() {
@@ -162,7 +168,7 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTime();
-            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
+            this.timeContext = this.openmct.time.getContextForView(this.keyString ? this.objectPath : []);
             this.followTime();
         },
         handleNewBounds(bounds) {
