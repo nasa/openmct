@@ -45,6 +45,8 @@
  * @property {string} url the relative url to the object (for use with `page.goto()`)
  */
 
+const Buffer = require('buffer').Buffer;
+
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
  * in the e2e suite when uninterested in properties of the objects themselves.
@@ -96,6 +98,59 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     return {
         name: name || `Unnamed ${type}`,
         uuid: uuid,
+        url: objectUrl
+    };
+}
+
+/**
+ * Create a Plan object from JSON with the provided options.
+ * @param {import('@playwright/test').Page} page
+ * @param {*} options
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
+ */
+async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
+    const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+    // Navigate to the parent object. This is necessary to create the object
+    // in the correct location, such as a folder, layout, or plot.
+    await page.goto(`${parentUrl}?hideTree=true`);
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click 'Plan' menu option
+    await page.click(`li:text("Plan")`);
+
+    // Modify the name input field of the domain object to accept 'name'
+    if (name) {
+        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+        await nameInput.fill("");
+        await nameInput.fill(name);
+    }
+
+    // Upload buffer from memory
+    await page.locator('input#fileElem').setInputFiles({
+        name: 'plan.txt',
+        mimeType: 'text/plain',
+        buffer: Buffer.from(JSON.stringify(json))
+    });
+
+    // Click OK button and wait for Navigate event
+    await Promise.all([
+        page.waitForLoadState(),
+        page.click('[aria-label="Save"]'),
+        // Wait for Save Banner to appear
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+
+    // Wait until the URL is updated
+    await page.waitForURL(`**/mine/*`);
+    const uuid = await getFocusedObjectUuid(page);
+    const objectUrl = await getHashUrlToDomainObject(page, uuid);
+
+    return {
+        uuid,
+        name,
         url: objectUrl
     };
 }
@@ -258,6 +313,7 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
     getFocusedObjectUuid,
