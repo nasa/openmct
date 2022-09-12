@@ -1198,7 +1198,6 @@ export default {
             const offsetChange = newOffsetWidth - this.offsetWidth;
             if (this.$parent.$refs.plotWrapper
                 && offsetChange > OFFSET_THRESHOLD) {
-                console.log('inside');
                 this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
