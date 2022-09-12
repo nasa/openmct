@@ -39,7 +39,7 @@ test.describe('Testing Flexible Layout @unstable', () => {
             name: "Test Clock"
         });
     });
-    test('flexible layout panes have the appropriate draggable attribute while in Edit and Browse modes', async ({ page }) => {
+    test('panes have the appropriate draggable attribute while in Edit and Browse modes', async ({ page }) => {
         // Create a Flexible Layout
         await createDomainObjectWithDefaults(page, {
             type: 'Flexible Layout',
