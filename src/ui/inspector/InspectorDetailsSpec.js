@@ -28,7 +28,7 @@ import Vue from 'vue';
 
 const INSPECTOR_SELECTOR_PREFIX = '.c-inspect-properties__';
 
-describe('the inspector', () => {
+fdescribe('the inspector', () => {
     let appHolder;
     let openmct;
     let folderItem;
@@ -38,6 +38,8 @@ describe('the inspector', () => {
         folderItem = {
             name: 'folder',
             type: 'folder',
+            createdBy: 'John Q',
+            modifiedBy: 'Public',
             id: 'mock-folder-key',
             identifier: {
                 namespace: '',
@@ -74,6 +76,8 @@ describe('the inspector', () => {
         const [
             title,
             type,
+            createdBy,
+            modifiedBy,
             notes,
             timestamp
         ] = details;
@@ -87,6 +91,14 @@ describe('the inspector', () => {
             .toEqual('Type');
         expect(type.value.toLowerCase())
             .toEqual(folderItem.type);
+        expect(createdBy.name)
+            .toEqual('Created By');
+        expect(createdBy.value)
+            .toEqual(folderItem.createdBy);
+        expect(modifiedBy.name)
+            .toEqual('Modified By');
+        expect(modifiedBy.value)
+            .toEqual(folderItem.modifiedBy);
         expect(notes.value)
             .toEqual('This object should have some notes');
 
