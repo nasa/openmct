@@ -247,6 +247,7 @@ workflows:
       - perf-test:
           node-version: lts/hydrogen
       - visual-test:
+          name: visual-test-ci
           node-version: lts/gallium
           suite: ci
         
@@ -267,6 +268,7 @@ workflows:
       - perf-test:
           node-version: lts/hydrogen
       - visual-test:
+          name: visual-test-nightly
           node-version: lts/gallium
           suite: full
     triggers:
