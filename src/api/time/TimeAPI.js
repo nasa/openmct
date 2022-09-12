@@ -171,27 +171,38 @@ class TimeAPI extends GlobalTimeContext {
      * @memberof module:openmct.TimeAPI#
      * @method getContextForView
      */
-    getContextForView(objectPath = []) {
-        const viewKey = objectPath.length && this.openmct.objects.makeKeyString(objectPath[0].identifier);
-
-        if (viewKey) {
-            let viewTimeContext = this.getIndependentContext(viewKey);
-            if (viewTimeContext) {
-                this.independentContexts.delete(viewKey);
-            } else {
-                viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
-            }
-
-            // return a new IndependentContext in case the objectPath is different
-            this.independentContexts.set(viewKey, viewTimeContext);
-
-            return viewTimeContext;
+    getContextForView(objectPath) {
+        if (!objectPath || !Array.isArray(objectPath)) {
+            throw new Error('No objectPath provided');
         }
 
-        // always follow the global time context
-        return this;
-    }
+        const viewKey = objectPath.length && this.openmct.objects.makeKeyString(objectPath[0].identifier);
 
+        if (!viewKey) {
+            // Return the global time context
+            return this;
+        }
+
+        let viewTimeContext = this.getIndependentContext(viewKey);
+        if (!viewTimeContext) {
+            // If the context doesn't exist yet, create it.
+            viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
+            this.independentContexts.set(viewKey, viewTimeContext);
+        } else {
+            // If it already exists, compare the objectPath to see if it needs to be updated.
+            const currentPath = this.openmct.objects.getRelativePath(viewTimeContext.objectPath);
+            const newPath = this.openmct.objects.getRelativePath(objectPath);
+
+            if (currentPath !== newPath) {
+                // If the path has changed, update the context.
+                this.independentContexts.delete(viewKey);
+                viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
+                this.independentContexts.set(viewKey, viewTimeContext);
+            }
+        }
+
+        return viewTimeContext;
+    }
 }
 
 export default TimeAPI;
