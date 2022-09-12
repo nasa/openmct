@@ -165,7 +165,7 @@ export default class PlotSeries extends Model {
         this.removeMutationListener = this.openmct.objects.observe(
             this.domainObject,
             'name',
-            this.upateName.bind(this)
+            this.updateName.bind(this)
         );
     }
 
@@ -236,7 +236,7 @@ export default class PlotSeries extends Model {
         /* eslint-enable you-dont-need-lodash-underscore/concat */
     }
 
-    upateName(name) {
+    updateName(name) {
         if (name !== this.get('name')) {
             this.set('name', name);
         }
