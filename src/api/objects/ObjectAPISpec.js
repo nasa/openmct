@@ -8,13 +8,27 @@ describe("The Object API", () => {
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
     const TEST_KEY = "test-key";
+    const USERNAME = 'Joan Q Public';
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     beforeEach((done) => {
         typeRegistry = jasmine.createSpyObj('typeRegistry', [
             'get'
         ]);
+        const userProvider = {
+            isLoggedIn() {
+                return true;
+            },
+            getCurrentUser() {
+                return Promise.resolve({
+                    getName() {
+                        return USERNAME;
+                    }
+                });
+            }
+        };
         openmct = createOpenMct();
+        openmct.user.setProvider(userProvider);
         objectAPI = openmct.objects;
 
         openmct.editor = {};
@@ -75,6 +89,17 @@ describe("The Object API", () => {
                 objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).toHaveBeenCalled();
+            });
+            it("Sets the current user for createdBy on new objects", () => {
+                objectAPI.save(mockDomainObject);
+                expect(mockDomainObject.createdBy).toBe(USERNAME);
+            });
+            it("Sets the current user for modifedBy on existing objects", () => {
+                mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
+                mockDomainObject.modified = Date.now();
+
+                objectAPI.save(mockDomainObject);
+                expect(mockDomainObject.modifiedBy).toBe(USERNAME);
             });
 
             it("Does not persist if the object is unchanged", () => {

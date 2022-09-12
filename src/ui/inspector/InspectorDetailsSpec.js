@@ -28,7 +28,7 @@ import Vue from 'vue';
 
 const INSPECTOR_SELECTOR_PREFIX = '.c-inspect-properties__';
 
-fdescribe('the inspector', () => {
+describe('the inspector', () => {
     let appHolder;
     let openmct;
     let folderItem;
