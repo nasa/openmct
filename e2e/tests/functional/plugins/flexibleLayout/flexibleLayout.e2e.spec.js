@@ -21,12 +21,11 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setRealTimeMode } = require('../../../../appActions');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Testing Flexible Layout @unstable', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        await setRealTimeMode(page);
 
         // Create Sine Wave Generator
         await createDomainObjectWithDefaults(page, {
