@@ -90,16 +90,13 @@ export default {
     watch: {
         annotations: {
             handler() {
-                this.tagsChanged();
+                this.annotationsChanged();
             },
             deep: true
         }
     },
     mounted() {
-        this.addAnnotationListeners(this.annotations);
-        if (this.annotations && this.annotations.length) {
-            this.tagsChanged();
-        }
+        this.annotationsChanged();
     },
     destroyed() {
         this.deleteAnnotationListeners.forEach(deleteAnnotationListener => {
@@ -108,6 +105,12 @@ export default {
         this.deleteAnnotationListeners = [];
     },
     methods: {
+        annotationsChanged() {
+            this.addAnnotationListeners(this.annotations);
+            if (this.annotations && this.annotations.length) {
+                this.tagsChanged();
+            }
+        },
         addAnnotationListeners(annotations) {
             annotations.forEach(annotation => {
                 const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', (changedAnnotation) => {
@@ -122,16 +125,6 @@ export default {
                 });
                 this.deleteAnnotationListeners.push(deleteAnnotationListener);
             });
-        },
-        onAnnotationCreation(newAnnotation) {
-            const alreadyExists = this.annotations.some((existingAnnotation) => {
-                return this.openmct.objects.areIdsEqual(newAnnotation.identifier, existingAnnotation.identifier);
-            });
-            if (!alreadyExists) {
-                this.annotations.push(newAnnotation);
-                this.addAnnotationListeners([newAnnotation]);
-                this.tagsChanged();
-            }
         },
         tagsChanged() {
             // gather tags from annotations

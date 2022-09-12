@@ -43,6 +43,8 @@ const ANNOTATION_TYPES = Object.freeze({
 
 const ANNOTATION_TYPE = 'annotation';
 
+const ANNOTATION_MODIFIED = 'annotationModified';
+
 /**
  * @typedef {Object} Tag
  * @property {String} key a unique identifier for the tag
@@ -56,6 +58,8 @@ export default class AnnotationAPI extends EventEmitter {
         this.availableTags = {};
 
         this.ANNOTATION_TYPES = ANNOTATION_TYPES;
+        this.ANNOTATION_TYPE = ANNOTATION_TYPE;
+        this.ANNOTATION_MODIFIED = ANNOTATION_MODIFIED;
 
         this.openmct.types.addType(ANNOTATION_TYPE, {
             name: 'Annotation',
@@ -129,12 +133,17 @@ export default class AnnotationAPI extends EventEmitter {
 
         const success = await this.openmct.objects.save(createdObject);
         if (success) {
+            this.#updateAnnotationModified(domainObject);
             this.emit('annotationCreated', createdObject);
 
             return createdObject;
         } else {
             throw new Error('Failed to create object');
         }
+    }
+
+    #updateAnnotationModified(domainObject) {
+        this.openmct.objects.mutate(domainObject, this.ANNOTATION_MODIFIED, Date.now());
     }
 
     defineTag(tagKey, tagsDefinition) {

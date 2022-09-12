@@ -355,7 +355,6 @@ export default {
         },
         async tagsUpdated() {
             await this.timestampAndUpdate();
-            this.$emit('tags-updated');
         },
         editingEntry() {
             this.$emit('editingEntry');
