@@ -43,7 +43,7 @@ const ANNOTATION_TYPES = Object.freeze({
 
 const ANNOTATION_TYPE = 'annotation';
 
-const ANNOTATION_MODIFIED = 'annotationModified';
+const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
 
 /**
  * @typedef {Object} Tag
@@ -59,7 +59,7 @@ export default class AnnotationAPI extends EventEmitter {
 
         this.ANNOTATION_TYPES = ANNOTATION_TYPES;
         this.ANNOTATION_TYPE = ANNOTATION_TYPE;
-        this.ANNOTATION_MODIFIED = ANNOTATION_MODIFIED;
+        this.ANNOTATION_LAST_CREATED = ANNOTATION_LAST_CREATED;
 
         this.openmct.types.addType(ANNOTATION_TYPE, {
             name: 'Annotation',
@@ -143,7 +143,7 @@ export default class AnnotationAPI extends EventEmitter {
     }
 
     #updateAnnotationModified(domainObject) {
-        this.openmct.objects.mutate(domainObject, this.ANNOTATION_MODIFIED, Date.now());
+        this.openmct.objects.mutate(domainObject, this.ANNOTATION_LAST_CREATED, Date.now());
     }
 
     defineTag(tagKey, tagsDefinition) {

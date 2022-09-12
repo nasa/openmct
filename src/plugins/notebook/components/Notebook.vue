@@ -220,7 +220,7 @@ export default {
             isRestricted: this.domainObject.type === RESTRICTED_NOTEBOOK_TYPE,
             search: '',
             searchResults: [],
-            lastLocalAnnotationModification: 0,
+            lastLocalAnnotationCreation: 0,
             showTime: this.domainObject.configuration.showTime || 0,
             showNav: false,
             sidebarCoversEntries: false,
@@ -354,7 +354,7 @@ export default {
                 return;
             }
 
-            this.lastLocalAnnotationModification = this.domainObject.annotationModified ? this.domainObject.annotationModified : 0;
+            this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ? this.domainObject.annotationLastCreated : 0;
 
             const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const foundAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
@@ -380,7 +380,7 @@ export default {
                 ? filteredPageEntriesByTime
                 : [...filteredPageEntriesByTime].reverse();
 
-            if (this.lastLocalAnnotationModification < this.domainObject.annotationModified) {
+            if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
                 this.loadAnnotations();
             }
         },
