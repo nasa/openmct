@@ -111,21 +111,7 @@ export default {
     mounted() {
         this.isEditing = this.openmct.editor.isEditing();
         this.timestamp = this.openmct.time.clock()?.currentValue;
-        this.openmct.time.on('clock', (newClock) => {
-            this.filterValue = this.domainObject.configuration.filter;
-            //newclock can be undefined
-            if (newClock === undefined) {
-                // Show everything for fixed time
-                this.hideAll = false;
-                this.showAll = true;
-                // clear also invokes listActivities
-                this.clearPreviousActivities();
-            } else {
-                this.setSort();
-                this.setViewBounds();
-                this.listActivities();
-            }
-        });
+        this.openmct.time.on('clock', this.setViewFromClock);
 
         this.getPlanDataAndSetConfig(this.domainObject);
 
@@ -146,14 +132,7 @@ export default {
             this.composition.load();
         }
 
-        // initialize the full view if fixed time
-        if (this.openmct.time.clock() === undefined) {
-            // Show everything
-            this.filterValue = this.domainObject.configuration.filter;
-            this.hideAll = false;
-            this.showAll = true;
-            this.listActivities();
-        }
+        this.setViewFromClock();
 
     },
     beforeDestroy() {
@@ -175,6 +154,7 @@ export default {
 
         this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.time.off('bounds', this.updateTimestamp);
+        this.openmct.time.off('clock', this.setViewFromClock);
 
         this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
         if (this.clearAutoScrollDisabledTimer) {
@@ -190,6 +170,20 @@ export default {
         updateTimestamp(bounds, isTick) {
             if (isTick === true) {
                 this.timestamp = this.openmct.time.clock().currentValue();
+            }
+        },
+        setViewFromClock(newClock) {
+            this.filterValue = this.domainObject.configuration.filter;
+            const isFixedTime = newClock === undefined;
+            if (isFixedTime) {
+                this.hideAll = false;
+                this.showAll = true;
+                // clear invokes listActivities
+                this.clearPreviousActivities();
+            } else {
+                this.setSort();
+                this.setViewBounds();
+                this.listActivities();
             }
         },
         planFileUpdated(selectFile) {
