@@ -68,7 +68,7 @@ const headerItems = [
         defaultDirection: false,
         property: 'duration',
         name: 'Time To/From',
-        format: function (value, object) {
+        format: function (value) {
             let result;
             if (value < 0) {
                 result = `-${getPreciseDuration(Math.abs(value))}`;
