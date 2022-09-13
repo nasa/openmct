@@ -132,7 +132,7 @@ export default {
             this.composition.load();
         }
 
-        this.setViewFromClock();
+        this.setViewFromClock(this.openmct.time.clock());
 
     },
     beforeDestroy() {
@@ -167,25 +167,6 @@ export default {
         }
     },
     methods: {
-        updateTimestamp(bounds, isTick) {
-            if (isTick === true) {
-                this.timestamp = this.openmct.time.clock().currentValue();
-            }
-        },
-        setViewFromClock(newClock) {
-            this.filterValue = this.domainObject.configuration.filter;
-            const isFixedTime = newClock === undefined;
-            if (isFixedTime) {
-                this.hideAll = false;
-                this.showAll = true;
-                // clear invokes listActivities
-                this.clearPreviousActivities();
-            } else {
-                this.setSort();
-                this.setViewBounds();
-                this.listActivities();
-            }
-        },
         planFileUpdated(selectFile) {
             this.getPlanData({
                 selectFile,
@@ -204,6 +185,25 @@ export default {
                 this.listActivities();
             } else {
                 this.filterValue = configuration.filter;
+                this.setSort();
+                this.setViewBounds();
+                this.listActivities();
+            }
+        },
+        updateTimestamp(bounds, isTick) {
+            if (isTick === true) {
+                this.timestamp = this.openmct.time.clock().currentValue();
+            }
+        },
+        setViewFromClock(newClock) {
+            this.filterValue = this.domainObject.configuration.filter;
+            const isFixedTime = newClock === undefined;
+            if (isFixedTime) {
+                this.hideAll = false;
+                this.showAll = true;
+                // clear invokes listActivities
+                this.clearPreviousActivities();
+            } else {
                 this.setSort();
                 this.setViewBounds();
                 this.listActivities();
