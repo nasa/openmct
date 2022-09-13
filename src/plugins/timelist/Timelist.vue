@@ -126,11 +126,6 @@ export default {
                 this.listActivities();
             }
         });
-        this.openmct.time.on('bounds', (bounds, isTick) => {
-            if (isTick === true) {
-                this.timestamp = this.openmct.time.clock().currentValue();
-            }
-        });
 
         this.getPlanDataAndSetConfig(this.domainObject);
 
@@ -139,6 +134,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
         this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
+        this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
         this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
@@ -178,6 +174,7 @@ export default {
         }
 
         this.openmct.editor.off('isEditing', this.setEditState);
+        this.openmct.time.off('bounds', this.updateTimestamp);
 
         this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
         if (this.clearAutoScrollDisabledTimer) {
@@ -190,6 +187,11 @@ export default {
         }
     },
     methods: {
+        updateTimestamp(bounds, isTick) {
+            if (isTick === true) {
+                this.timestamp = this.openmct.time.clock().currentValue();
+            }
+        },
         planFileUpdated(selectFile) {
             this.getPlanData({
                 selectFile,
