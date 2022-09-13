@@ -7,8 +7,10 @@
 >
     <span
         class="c-list__item__name js-list__item__name"
+        :class="[{ 'c-input-inline': isSelected && !section.isLocked }]"
         :data-id="section.id"
-        contenteditable="true"
+        :contenteditable="isSelected && !section.isLocked"
+        @keydown.escape="updateName"
         @keydown.enter="updateName"
         @blur="updateName"
     >{{ sectionName }}</span>
@@ -20,8 +22,9 @@
 </template>
 
 <script>
-import PopupMenu from './PopupMenu.vue';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
 import RemoveDialog from '../utils/removeDialog';
+import PopupMenu from './PopupMenu.vue';
 
 export default {
     components: {
@@ -96,36 +99,39 @@ export default {
             removeDialog.show();
         },
         selectSection(event) {
-            const target = event.target;
-            const id = target.dataset.id;
+            const { target: { dataset: { id } } } = event;
 
-            if (!this.section.isLocked) {
-                const section = target.closest('.js-list__item');
-                const input = section.querySelector('.js-list__item__name');
-
-                if (section.className.indexOf('is-selected') > -1) {
-                    input.classList.add('c-input-inline');
-
-                    return;
-                }
-            }
-
-            if (!id) {
+            if (this.isSelected || !id) {
                 return;
             }
 
             this.$emit('selectSection', id);
         },
-        updateName(event) {
-            const target = event.target;
-            target.classList.remove('c-input-inline');
-            const name = target.textContent.trim();
-
-            if (name === '' || this.section.name === name) {
+        renameSection(target) {
+            if (!target) {
                 return;
             }
 
-            this.$emit('renameSection', Object.assign(this.section, { name }));
+            target.textContent = target.textContent ? target.textContent.trim() : `Unnamed ${this.sectionTitle}`;
+
+            if (this.section.name === target.textContent) {
+                return;
+            }
+
+            this.$emit('renameSection', Object.assign(this.section, { name: target.textContent }));
+        },
+        updateName(event) {
+            const { target, keyCode, type } = event;
+
+            if (keyCode === KEY_ESCAPE) {
+                target.textContent = this.section.name;
+            } else if (keyCode === KEY_ENTER || type === 'blur') {
+                this.renameSection(target);
+            }
+
+            target.scrollLeft = '0';
+
+            target.blur();
         }
     }
 };

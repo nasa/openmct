@@ -6,6 +6,7 @@
     >
         <independent-time-conductor
             :domain-object="domainObject"
+            :object-path="path"
             @stateChanged="updateIndependentTimeState"
             @updated="saveTimeOptions"
         />
@@ -67,6 +68,9 @@ export default {
         };
     },
     computed: {
+        path() {
+            return this.domainObject && (this.currentObjectPath || this.objectPath);
+        },
         objectFontStyle() {
             return this.domainObject && this.domainObject.configuration && this.domainObject.configuration.fontStyle;
         },
