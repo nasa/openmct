@@ -31,7 +31,7 @@
     <div
         ref="frame"
         class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
-        draggable="true"
+        :draggable="draggable"
         @dragstart="initDrag"
     >
         <object-frame
@@ -93,6 +93,9 @@ export default {
     computed: {
         hasFrame() {
             return !this.frame.noFrame;
+        },
+        draggable() {
+            return this.isEditing;
         }
     },
     mounted() {
