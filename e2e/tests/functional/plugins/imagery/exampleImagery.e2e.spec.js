@@ -212,6 +212,10 @@ test.describe('Example Imagery Object', () => {
         await expect(pausePlayButton).not.toHaveClass(/is-paused/);
     });
 
+    test('Uses low fetch priority', async ({ page }) => {
+        const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
+        await expect(priority).toBe('low');
+    });
 });
 
 // The following test case will cover these scenarios
