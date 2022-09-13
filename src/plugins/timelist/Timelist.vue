@@ -110,7 +110,7 @@ export default {
     },
     mounted() {
         this.isEditing = this.openmct.editor.isEditing();
-        this.timestamp = this.openmct.time.clock() ? this.openmct.time.clock().currentValue : undefined;
+        this.timestamp = this.openmct.time.clock()?.currentValue;
         this.openmct.time.on('clock', (newClock) => {
             this.filterValue = this.domainObject.configuration.filter;
             //newclock can be undefined
