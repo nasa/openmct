@@ -506,6 +506,23 @@ describe("the plugin", function () {
                 expect(playElAfterChartClick.length).toBe(1);
 
             });
+
+            it("clicking the plot does not request historical data", async () => {
+                expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
+
+                // simulate an errant mouse click
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
+                await Vue.nextTick();
+
+                expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
+
+            });
         });
 
         describe('controls in time strip view', () => {
