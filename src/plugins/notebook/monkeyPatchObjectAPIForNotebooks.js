@@ -14,7 +14,7 @@ export default function (openmct) {
         let result;
 
         try {
-            result = await apiSave(domainObject);
+            result = await apiSave(localMutable);
         } catch (error) {
             if (error instanceof openmct.objects.errors.Conflict) {
                 result = await resolveConflicts(domainObject, localMutable, openmct);
