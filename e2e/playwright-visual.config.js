@@ -4,10 +4,10 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig<{ theme: string }>} */
 const config = {
-    retries: 0, // visual tests should never retry due to snapshot comparison errors
+    retries: 1, // visual tests should never retry due to snapshot comparison errors
     testDir: 'tests/visual',
     testMatch: '**/*.visual.spec.js', // only run visual tests
-    timeout: 90 * 1000,
+    timeout: 60 * 1000,
     workers: 1, //Limit to 1 for CircleCI Agent
     webServer: {
         command: 'cross-env NODE_ENV=test npm run start',
@@ -19,8 +19,8 @@ const config = {
         baseURL: 'http://localhost:8080/',
         headless: true, // this needs to remain headless to avoid visual changes due to GPU rendering in headed browsers
         ignoreHTTPSErrors: true,
-        screenshot: 'on',
-        trace: 'on',
+        screenshot: 'only-on-failure',
+        trace: 'on-first-retry',
         video: 'off'
     },
     projects: [
