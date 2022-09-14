@@ -204,10 +204,37 @@ A testcase and testsuite are to be unmarked as @unstable when:
 2. They've been by a Open MCT Developer 5 times in the closed source repo without failure.
 
 ### Cross-browser and Cross-operating system
+- What's supported
+
+We are leveraging the `browserslist` project to declare our supported list of browsers.
 
 - Where is it tested
-- What's supported
+
+We lint on `browserlist` to ensure that we're not implementing deprecated browser APIs and are aware of browser API improvements over time.
+
+We also have the need to execute our e2e tests across this published list of browsers. Our browsers and browser version matrix is found inside of our `./playwright-*.config.js`, but mostly follows in order of bleeding edge to stable:
+
+`playwright-chromium channel:beta` - A beta version of Chromium from official chromium channels. As close to the bleeding edge as we can get.
+`playwright-chromium` - A stable version of Chromium from the official chromium channels. This is always at least 1 version ahead of desktop chrome.
+`playwright-chrome` - The stable channel of Chrome from the official chrome channels. This is always 2 versions behind chromium.
+
 - Mobile
+We have the Mission Need to support iPad. To run our iPad suite, please see our `playwright-*.config.js` with the 'iPad' project.
+
+- Skipping or executing tests based on browser, os, and/os browser version
+We recommend skipping based on browser with the following snippet:
+```js
+test('Can adjust image brightness/contrast by dragging the sliders', async ({ page, browserName }) => {
+  // eslint-disable-next-line playwright/no-skipped-test
+  test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+```
+
+Executing Tests based on OS
+```js
+const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+```
+
+Skipping based on browser version (Rarely used): https://github.com/microsoft/playwright/discussions/17318
 
 ## Test Design, Best Practices, and Tips & Tricks
 
