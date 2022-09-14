@@ -70,80 +70,85 @@ The bulk of our e2e coverage lies in "functional" test coverage which verifies t
 Visual Testing is an essential part of our e2e strategy as it ensures that the application _appears_ correctly to a user while it compliments the functional e2e suite. It would be impractical to make thousands of assertions functional assertions on the look and feel of the application. Visual testing is interested in getting the DOM into a specified state and then comparing that it has not changed against a baseline.
 
 For a better understanding of the visual issues which affect Open MCT, please see our bug tracker with the `label:visual` filter applied [here](https://github.com/nasa/openmct/issues?q=label%3Abug%3Avisual+)
-To read about how to write a good visual test, please see [How to write a great Visual Test](#how-to-write-a-great-visual-test). 
+To read about how to write a good visual test, please see [How to write a great Visual Test](#how-to-write-a-great-visual-test).
 
 `npm run test:e2e:visual` will run all of the visual tests against a local instance of Open MCT. If no `PERCY_TOKEN` API key is found in the terminal or command line environment variables, no visual comparisons will be made.
 
 #### Percy.io
+
 To make this possible, we're leveraging a 3rd party service, [Percy](https://percy.io/). This service maintains a copy of all changes, users, scm-metadata, and baselines to verify that the application looks and feels the same _unless approved by a Open MCT developer_. To request a Percy API token, please reach out to the Open MCT Dev team on GitHub. For more information, please see the official [Percy documentation](https://docs.percy.io/docs/visual-testing-basics)
 
 ### (Advanced) Snapshot Testing
 
 Snapshot testing is very similar to visual testing but allows us to be more precise in detecting change without relying on a 3rd party service. Unfortuantely, this precision requires advanced test setup and teardown and so we're using this pattern as a last resort.
 
-To give an example, if a *single* visual test assertion for an Overlay plot is run through multiple DOM rendering engines at various viewports to see how the Plot looks. If that same test were run as a snapshot test, it could only be executed against a single browser, on a single platform (ubuntu docker container).
+To give an example, if a _single_ visual test assertion for an Overlay plot is run through multiple DOM rendering engines at various viewports to see how the Plot looks. If that same test were run as a snapshot test, it could only be executed against a single browser, on a single platform (ubuntu docker container).
 
 Read more about [Playwright Snapshots](https://playwright.dev/docs/test-snapshots)
 
-Open MCT's implementation
--Our Snapshot tests receive a @snapshot tag.
--Snapshots need to be executed within the official playwright container to ensure we're using the exact rendering platform in CI and locally
+#### Open MCT's implementation
 
-```
+- Our Snapshot tests receive a `@snapshot` tag.
+- Snapshots need to be executed within the official Playwright container to ensure we're using the exact rendering platform in CI and locally.
+
+```sh
 docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:[GET THIS VERSION FROM OUR CIRCLECI CONFIG FILE]-focal /bin/bash
 npm install
 npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot
 ```
 
-(WIP) Updating Snapshots
-When the @snapshot tests fail, they will need to be evaluated to see if the failure is an acceptable change or 
+### (WIP) Updating Snapshots
+
+When the `@snapshot` tests fail, they will need to be evaluated to see if the failure is an acceptable change or
 
 ## Performance Testing
 
 The open source performance tests function mostly as a contract for the locator logic, functionality, and assumptions will work in our downstream, closed source test suites.
 
-They're found in the `/e2e/tests/performance` repo and are to be executed with the following npm script:
+They're found under `./e2e/tests/performance` and are to be executed with the following npm script:
 
-```npm run test:perf```
+`npm run test:perf`
 
-These tests are expected to become blocking and gating with assertions as we extend the capabilities of playwright.
+These tests are expected to become blocking and gating with assertions as we extend the capabilities of Playwright.
 
 ## Test Architecture and CI
 
 ### Architecture (TODO)
 
-
-
 ### File Structure
 
 Our file structure follows the type of type of testing being excercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
 
- - `./helper` - contains helper functions or scripts which are leveraged directly within the testsuites. i.e. non-default plugin scripts injected into DOM
- - `./test-data` - contains test data which is leveraged or generated in the functional, performance, or visual test suites. i.e. localStorage data
- - `./tests/functional` - the bulk of the tests are contained within this folder to verify the functionality of open mct
- - `./tests/functional/example/` - tests which specifically verify the example plugins
- - `./tests/functional/plugins/` - tests which loosely test each plugin. This folder is the most likely to change. Note: some @snapshot tests are still contained within this structure
- - `./tests/framework/` - tests which verify that our testframework functionality and assumptions will continue to work based on further refactoring or playwright version changes
- - `./tests/performance/` - performance tests
- - `./tests/visual/` - Visual tests
- - `./appActions.js` - Contains common fixtures which can be leveraged by testcase authors to quickly move through the application when writing new tests.
- - `./baseFixture.js` - Contains base fixtures which only extend default `@playwright/test` functionality. The goal is to remove these fixtures as native Playwright APIs improve.
+- `./helper` - contains helper functions or scripts which are leveraged directly within the testsuites. i.e. non-default plugin scripts injected into DOM
+- `./test-data` - contains test data which is leveraged or generated in the functional, performance, or visual test suites. i.e. localStorage data
+- `./tests/functional` - the bulk of the tests are contained within this folder to verify the functionality of open mct
+- `./tests/functional/example/` - tests which specifically verify the example plugins
+- `./tests/functional/plugins/` - tests which loosely test each plugin. This folder is the most likely to change. Note: some @snapshot tests are still contained within this structure
+- `./tests/framework/` - tests which verify that our testframework functionality and assumptions will continue to work based on further refactoring or playwright version changes
+- `./tests/performance/` - performance tests
+- `./tests/visual/` - Visual tests
+- `./appActions.js` - Contains common fixtures which can be leveraged by testcase authors to quickly move through the application when writing new tests.
+- `./baseFixture.js` - Contains base fixtures which only extend default `@playwright/test` functionality. The goal is to remove these fixtures as native Playwright APIs improve.
 
-Our functional tests end in `*.e2e.spec.js`, visual tests in `*.visual.spec.js` and performance tests in `*.perf.spec.js`. 
+Our functional tests end in `*.e2e.spec.js`, visual tests in `*.visual.spec.js` and performance tests in `*.perf.spec.js`.
 
 ### Configuration
 
 Where possible, we try to run Open MCT without modification or configuration change so that the Open MCT doesn't fail exclusively in "test mode" or in "production mode".
 
 Open MCT is leveraging the [config file](https://playwright.dev/docs/test-configuration) pattern to describe the capabilities of Open MCT e2e _where_ it's run
+
 - `./playwright-ci.config.js` - Used when running in CI or to debug CI issues locally
 - `./playwright-local.config.js` - Used when running locally
 - `./playwright-performance.config.js` - Used when running performance tests in CI or locally
 - `./playwright-visual.config.js` - Used to run the visual tests in CI or locally
+
 #### Test Tags
 
-Test tags are a great way of organizing tests outside of a file structure. To learn more see the official documentation [here](https://playwright.dev/docs/test-annotations#tag-tests)
+Test tags are a great way of organizing tests outside of a file structure. To learn more see the official documentation [here](https://playwright.dev/docs/test-annotations#tag-tests).
+
 Current list of test tags:
+
 - `@ipad` - Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no Create button).
 - `@gds` - Denotes a GDS Test Case used in the VIPER Mission.
 - `@addInit` - Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of app.js.
@@ -154,34 +159,42 @@ Current list of test tags:
 
 ### Continuous Integration
 
-The cheapest time to catch a bug is Pre-merge. Unfortuantely, this is the most expensive time to run all of the tests since each Merge event can consistent of hundreds of commits. For this reason, we're selective in _what_ we run as much as _when_ we run it.
+The cheapest time to catch a bug is pre-merge. Unfortuantely, this is the most expensive time to run all of the tests since each merge event can consist of hundreds of commits. For this reason, we're selective in _what we run_ as much as _when we run it_.
 
-We leverage CircleCI to run tests against each commit and inject the Test Reports which are generated by playwright so that they team can keep track of flaky and [historical Test Trends](https://app.circleci.com/insights/github/nasa/openmct/workflows/overall-circleci-commit-status/tests?branch=master&reporting-window=last-30-days)
+We leverage CircleCI to run tests against each commit and inject the Test Reports which are generated by Playwright so that they team can keep track of flaky and [historical test trends](https://app.circleci.com/insights/github/nasa/openmct/workflows/overall-circleci-commit-status/tests?branch=master&reporting-window=last-30-days)
 
 We leverage Github Actions / Workflows to execute tests as it gives us the ability to run against multiple operating systems with greater control over git event triggers (i.e. Run on a PR Comment event).
 
 Our CI environment consists of 3 main modes of operation:
 
 #### 1. Per-Commit Testing
+
 CircleCI
+
 - Stable e2e tests against ubuntu and chrome
 - Performance tests against ubuntu and chrome
 - e2e tests are linted
 
 #### 2. Per-Merge Testing
+
 Github Actions / Workflow
+
 - Full suite against all browsers/projects. Triggered with Github Label Event 'pr:e2e'
 - Visual Tests. Triggered with Github Label Event 'pr:visual'
 
 #### 3. Scheduled / Batch Testing
+
 Nightly Testing in Circle CI
+
 - Full e2e suite against ubuntu and chrome
 - Performance tests against ubuntu and chrome
 
 Github Actions / Workflow
+
 - Visual Test baseline generation.
 
 #### Parallelism and Fast Feedback
+
 In order to provide fast feedback in the Per-Commit context, we try to keep total test feedback at 5 minutes or less. That is to say, A developer should have a pass/fail result in under 5 minutes.
 
 Playwright has native support for semi-intelligent sharding. Read about it [here](https://playwright.dev/docs/test-parallel#shard-tests-between-multiple-machines).
@@ -193,6 +206,7 @@ In addition to the Parallelization of Test Runners (Sharding), we're also runnin
 So for every commit, Playwright is effectively running 4 x 2 concurrent browsercontexts to keep the overall runtime to a miminum.
 
 At the same time, we don't want to waste CI resources on parallel runs, so we've configured each shard to fail after 5 test failures. Test failure logs are recorded and stored to allow fast triage.
+
 #### Test Promotion
 
 In order to maintain fast and reliable feedback, tests go through a promotion process. All new test cases or test suites must be labeled with the `@unstable` annotation. The Open MCT dev team runs these unstable tests in our private repos to ensure they work downstream and are reliable.
@@ -200,24 +214,66 @@ In order to maintain fast and reliable feedback, tests go through a promotion pr
 To run the stable tests, use the ```npm run test:e2e:stable``` command. To run the new and flaky tests, use the ```npm run test:e2e:unstable``` command.
 
 A testcase and testsuite are to be unmarked as @unstable when:
+
 1. They run as part of "full" run 5 times without failure.
 2. They've been by a Open MCT Developer 5 times in the closed source repo without failure.
 
 ### Cross-browser and Cross-operating system
 
-- Where is it tested
-- What's supported
-- Mobile
+#### **What's supported:**
+
+We are leveraging the `browserslist` project to declare our supported list of browsers.
+
+#### **Where it's tested:**
+
+We lint on `browserslist` to ensure that we're not implementing deprecated browser APIs and are aware of browser API improvements over time.
+
+We also have the need to execute our e2e tests across this published list of browsers. Our browsers and browser version matrix is found inside of our `./playwright-*.config.js`, but mostly follows in order of bleeding edge to stable:
+
+- `playwright-chromium channel:beta`
+  - A beta version of Chromium from official chromium channels. As close to the bleeding edge as we can get.
+- `playwright-chromium`
+  - A stable version of Chromium from the official chromium channels. This is always at least 1 version ahead of desktop chrome.
+- `playwright-chrome`
+  - The stable channel of Chrome from the official chrome channels. This is always 2 versions behind chromium.
+
+#### **Mobile**
+
+We have the Mission-need to support iPad. To run our iPad suite, please see our `playwright-*.config.js` with the 'iPad' project.
+
+#### **Skipping or executing tests based on browser, os, and/os browser version:**
+
+Conditionally skipping tests based on browser (**RECOMMENDED**):
+
+```js
+test('Can adjust image brightness/contrast by dragging the sliders', async ({ page, browserName }) => {
+  // eslint-disable-next-line playwright/no-skipped-test
+  test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+
+  // ...
+```
+
+Conditionally skipping tests based on OS:
+
+```js
+test('Can adjust image brightness/contrast by dragging the sliders', async ({ page }) => {
+  // eslint-disable-next-line playwright/no-skipped-test
+  test.skip(process.platform === 'darwin', 'This test needs to be updated to work with MacOS');
+
+  // ...
+```
+
+Skipping based on browser version (Rarely used): <https://github.com/microsoft/playwright/discussions/17318>
 
 ## Test Design, Best Practices, and Tips & Tricks
 
 ### Test Design (TODO)
 
 - How to make tests robust to function in other contexts (VISTA, VIPER, etc.)
-  - Leverage the use of appActions.js like getOrCreateDomainObject
+  - Leverage the use of `appActions.js` methods such as `createDomainObjectWithDefaults()`
 - How to make tests faster and more resilient
   - When possible, navigate directly by URL
-  - Leverage ```await page.goto('/', { waitUntil: 'networkidle' });```
+  - Leverage `await page.goto('./', { waitUntil: 'networkidle' });`
   - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
 ### How to write a great test (TODO)
@@ -240,6 +296,7 @@ There are instances where multiple browser pages will need to be opened to verif
 Test Reporting is done through official Playwright reporters and the CI Systems which execute them.
 
 We leverage the following official Playwright reporters:
+
 - HTML
 - junit
 - github annotations
@@ -249,6 +306,7 @@ We leverage the following official Playwright reporters:
 When running the tests locally with the `npm run test:local` command, the html report will open automatically on failure. Inside this HTML report will be a complete summary of the finished tests. If the tests failed, you'll see embedded links to screenshot failure, execution logs, and the Tracefile.
 
 When looking at the reports run in CI, you'll leverage this same HTML Report which is hosted either in CircleCI or Github Actions as a build artifact.
+
 ### e2e Code Coverage
 
 Code coverage is collected during test execution using our custom [baseFixture](./baseFixtures.js). The raw coverage files are stored in a `.nyc_report` directory to be converted into a lcov file with the following [nyc](https://github.com/istanbuljs/nyc) command:
@@ -257,13 +315,14 @@ Code coverage is collected during test execution using our custom [baseFixture](
 
 At this point, the nyc linecov report can be published to [codecov.io](https://about.codecov.io/) with the following command:
 
-```npm run cov:e2e:stable:publish``` for the stable suite running in ubuntu. 
-or 
+```npm run cov:e2e:stable:publish``` for the stable suite running in ubuntu.
+or
 ```npm run cov:e2e:full:publish``` for the full suite running against all available platforms.
 
 Codecov.io will combine each of the above commands with [Codecov.io Flags](https://docs.codecov.com/docs/flags). Effectively, this allows us to combine multiple reports which are run at various stages of our CI Pipeline or run as part of a parallel process.
 
 This e2e coverage is combined with our unit test report to give a comprehensive (if flawed) view of line coverage.
+
 ## Other
 
 ### About e2e testing
@@ -316,6 +375,6 @@ A single e2e test in Open MCT is extended to run:
 
 - Why is my test failing on CI and not locally?
 - How can I view the failing tests on CI?
-- Tests won't start because 'Error: http://localhost:8080/# is already used...'
+- Tests won't start because 'Error: <http://localhost:8080/># is already used...'
 This error will appear when running the tests locally. Sometimes, the webserver is left in an orphaned state and needs to be cleaned up. To clear up the orphaned webserver, execute the following from your Terminal:
 ```lsof -n -i4TCP:8080 | awk '{print$2}' | tail -1 | xargs kill -9```
