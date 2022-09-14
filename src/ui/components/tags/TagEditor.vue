@@ -130,6 +130,8 @@ export default {
                     });
 
                     this.deleteAnnotationListeners[annotationKeyString] = deleteAnnotationListener;
+                } else {
+                    console.debug(`🍇 Annotation change listener has already been added`);
                 }
             });
         },
