@@ -49,7 +49,7 @@ export default class PollQuestionIndicator extends AbstractStatusIndicator {
     }
 
     createIndicator() {
-        const pollQuestionIndicator = this.openmct.indicators.simpleIndicator('poll-question-indicator');
+        const pollQuestionIndicator = this.openmct.indicators.simpleIndicator();
 
         pollQuestionIndicator.text("Poll Question");
         pollQuestionIndicator.description("Set the current poll question");

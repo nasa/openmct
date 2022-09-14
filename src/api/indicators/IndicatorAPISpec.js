@@ -22,8 +22,6 @@
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import SimpleIndicator from './SimpleIndicator';
 
-const NOTIFICATIONS_INDICATOR_KEY = 'notifications-indicator';
-
 describe("The Indicator API", () => {
     let openmct;
 
@@ -41,7 +39,6 @@ describe("The Indicator API", () => {
         const textNode = document.createTextNode(label);
         element.appendChild(textNode);
         const testIndicator = {
-            key: className,
             element,
             priority
         };
@@ -49,22 +46,12 @@ describe("The Indicator API", () => {
         return testIndicator;
     }
 
-    it("installs the notifications indicator by default", () => {
-        let indicators = openmct.indicators.getIndicatorObjectsByPriority();
-        const notificationIndicator = indicators.find(indicator => indicator.key === NOTIFICATIONS_INDICATOR_KEY);
-
-        expect(notificationIndicator.key).toEqual(NOTIFICATIONS_INDICATOR_KEY);
-    });
-
     it("can register an indicator", () => {
-        let indicators = openmct.indicators.getIndicatorObjectsByPriority();
-        const defaultIndicatorsLength = indicators.length;
         const testIndicator = generateIndicator('test-indicator', 'This is a test indicator', 2);
-
         openmct.indicators.add(testIndicator);
-        indicators = openmct.indicators.getIndicatorObjectsByPriority();
-
-        expect(indicators.length).toBe(defaultIndicatorsLength + 1);
+        expect(openmct.indicators.indicatorObjects).toBeDefined();
+        // notifier indicator is installed by default
+        expect(openmct.indicators.indicatorObjects.length).toBe(2);
     });
 
     it("can order indicators based on priority", () => {
@@ -80,32 +67,10 @@ describe("The Indicator API", () => {
         const testIndicator4 = generateIndicator('test-indicator-4', 'This is yet another test indicator', openmct.priority.HIGH);
         openmct.indicators.add(testIndicator4);
 
-        let indicators = openmct.indicators.getIndicatorObjectsByPriority();
-
-        expect(indicators.length).toBe(5);
-        expect(indicators[2].priority).toBe(openmct.priority.DEFAULT);
-    });
-
-    it("can change priority of an installed indicator", () => {
-        const testIndicator1 = generateIndicator('test-indicator-1', 'This is a test indicator', openmct.priority.LOW);
-        openmct.indicators.add(testIndicator1);
-
-        const testIndicator2 = generateIndicator('test-indicator-2', 'This is another test indicator', openmct.priority.DEFAULT);
-        openmct.indicators.add(testIndicator2);
-
-        const testIndicator3 = generateIndicator('test-indicator-3', 'This is yet another test indicator', openmct.priority.LOW);
-        openmct.indicators.add(testIndicator3);
-
-        const testIndicator4 = generateIndicator('test-indicator-4', 'This is yet another test indicator', openmct.priority.HIGH);
-        openmct.indicators.add(testIndicator4);
-
-        let indicators = openmct.indicators.getIndicatorObjectsByPriority();
-
-        expect(indicators[0].key).toEqual('test-indicator-4');
-        openmct.indicators.setPriority('test-indicator-2', openmct.priority.HIGH + 1);
-        indicators = openmct.indicators.getIndicatorObjectsByPriority();
-
-        expect(indicators[0].key).toEqual('test-indicator-2');
+        expect(openmct.indicators.indicatorObjects.length).toBe(5);
+        const indicatorObjectsByPriority = openmct.indicators.getIndicatorObjectsByPriority();
+        expect(indicatorObjectsByPriority.length).toBe(5);
+        expect(indicatorObjectsByPriority[2].priority).toBe(openmct.priority.DEFAULT);
     });
 
     it("the simple indicator can be added", () => {

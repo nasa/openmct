@@ -23,7 +23,7 @@ export default function PerformanceIndicator() {
     return function install(openmct) {
         let frames = 0;
         let lastCalculated = performance.now();
-        const indicator = openmct.indicators.simpleIndicator('performance-indicator');
+        const indicator = openmct.indicators.simpleIndicator();
 
         indicator.text('~ fps');
         indicator.statusClass('s-status-info');
