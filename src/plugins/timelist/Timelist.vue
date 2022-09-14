@@ -404,6 +404,7 @@ export default {
                 if (!activity.key) {
                     activity.key = uuid();
                 }
+                
                 activity.duration = activity.start - this.timestamp;
 
                 return activity;
