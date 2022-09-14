@@ -74,7 +74,7 @@ export default {
         return {
             addedTags: [],
             userAddingTag: false,
-            deleteAnnotationListeners: []
+            deleteAnnotationListeners: {}
         };
     },
     computed: {
@@ -90,6 +90,7 @@ export default {
     watch: {
         annotations: {
             handler() {
+                console.log('🍇 notebook annotations changed');
                 this.annotationsChanged();
             },
             deep: true
@@ -99,8 +100,8 @@ export default {
         this.annotationsChanged();
     },
     destroyed() {
-        this.deleteAnnotationListeners.forEach(deleteAnnotationListener => {
-            deleteAnnotationListener();
+        Object.keys(this.deleteAnnotationListeners).forEach(annotationKeyString => {
+            this.deleteAnnotationListeners[annotationKeyString]();
         });
         this.deleteAnnotationListeners = [];
     },
@@ -113,17 +114,23 @@ export default {
         },
         addAnnotationListeners(annotations) {
             annotations.forEach(annotation => {
-                const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', (changedAnnotation) => {
-                    const matchingAnnotation = this.annotations.find((possibleMatchingAnnotation) => {
-                        return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, changedAnnotation.identifier);
+                const annotationKeyString = this.openmct.objects.makeKeyString(annotation.identifier);
+                if (!(this.deleteAnnotationListeners[annotationKeyString])) {
+                    console.debug(`🍇 Adding annotation change listener`);
+                    const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', (changedAnnotation) => {
+                        const matchingAnnotation = this.annotations.find((possibleMatchingAnnotation) => {
+                            return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, changedAnnotation.identifier);
+                        });
+                        if (matchingAnnotation) {
+                            console.debug(`🍇 Annotation has changed`);
+                            matchingAnnotation._deleted = changedAnnotation._deleted;
+                            this.userAddingTag = false;
+                            this.tagsChanged();
+                        }
                     });
-                    if (matchingAnnotation) {
-                        matchingAnnotation._deleted = changedAnnotation._deleted;
-                        this.userAddingTag = false;
-                        this.tagsChanged();
-                    }
-                });
-                this.deleteAnnotationListeners.push(deleteAnnotationListener);
+
+                    this.deleteAnnotationListeners[annotationKeyString] = deleteAnnotationListener;
+                }
             });
         },
         tagsChanged() {
@@ -138,13 +145,17 @@ export default {
                 return array.indexOf(tag) === index;
             });
 
-            if (tagsFromAnnotations.length < this.addedTags.length) {
+            if (tagsFromAnnotations.length !== this.addedTags.length) {
                 this.addedTags = this.addedTags.slice(0, tagsFromAnnotations.length);
             }
 
             for (let index = 0; index < tagsFromAnnotations.length; index += 1) {
                 this.$set(this.addedTags, index, tagsFromAnnotations[index]);
             }
+
+            console.debug(`🍇annotations: `, this.annotations);
+            console.debug(`🍇Added Tags: `, this.addedTags);
+            console.trace();
         },
         addTag() {
             const newTagValue = {

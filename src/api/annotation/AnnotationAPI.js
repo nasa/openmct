@@ -206,6 +206,10 @@ export default class AnnotationAPI extends EventEmitter {
     }
 
     deleteAnnotations(annotations) {
+        if (!annotations) {
+            return;
+        }
+
         annotations.forEach(annotation => {
             if (!annotation._deleted) {
                 this.openmct.objects.mutate(annotation, '_deleted', true);

@@ -151,7 +151,7 @@
                     :key="entry.id"
                     :entry="entry"
                     :domain-object="domainObject"
-                    :notebook-annotations="notebookAnnotations"
+                    :notebook-annotations="notebookAnnotations[entry.id]"
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
@@ -225,7 +225,7 @@ export default {
             showNav: false,
             sidebarCoversEntries: false,
             filteredAndSortedEntries: [],
-            notebookAnnotations: []
+            notebookAnnotations: {}
         };
     },
     computed: {
@@ -320,13 +320,6 @@ export default {
         });
     },
     methods: {
-        annotationsForEntry(entryId) {
-            const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
-            return this.notebookAnnotations.filter((annotation) => {
-                return (annotation.targets[domainObjectKeyString]?.entryId === entryId);
-            });
-        },
         changeSectionPage(newParams, oldParams, changedParams) {
             if (isNotebookViewType(newParams.view)) {
                 return;
@@ -358,14 +351,22 @@ export default {
 
             const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const foundAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
+            console.debug(`Loading ${foundAnnotations.length} annotations`);
+            foundAnnotations.forEach((foundAnnotation) => {
+                const targetId = Object.keys(foundAnnotation.targets)[0];
+                const entryId = foundAnnotation.targets[targetId].entryId;
+                if (!this.notebookAnnotations[entryId]) {
+                    this.$set(this.notebookAnnotations, entryId, []);
+                }
 
-            if (foundAnnotations.length < this.notebookAnnotations.length) {
-                this.notebookAnnotations = this.notebookAnnotations.slice(0, foundAnnotations.length);
-            }
-
-            for (let index = 0; index < foundAnnotations.length; index += 1) {
-                this.$set(this.notebookAnnotations, index, foundAnnotations[index]);
-            }
+                const annotationExtant = this.notebookAnnotations[entryId].some((existingAnnotation) => {
+                    return this.openmct.objects.areIdsEqual(existingAnnotation.identifier, foundAnnotation.identifier);
+                });
+                if (!annotationExtant) {
+                    const annotationArray = this.notebookAnnotations[entryId];
+                    annotationArray.push(foundAnnotation);
+                }
+            });
         },
         filterAndSortEntries() {
             const filterTime = Date.now();
@@ -381,6 +382,7 @@ export default {
                 : [...filteredPageEntriesByTime].reverse();
 
             if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
+                console.debug(`🍉 new annotation detected`);
                 this.loadAnnotations();
             }
         },
@@ -507,7 +509,7 @@ export default {
             });
         },
         removeAnnotations(entryId) {
-            this.openmct.annotation.deleteAnnotations(this.annotationsForEntry(entryId));
+            this.openmct.annotation.deleteAnnotations(this.notebookAnnotations[entryId]);
         },
         checkEntryPos(entry) {
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
