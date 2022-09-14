@@ -110,7 +110,7 @@ export default {
     },
     mounted() {
         this.isEditing = this.openmct.editor.isEditing();
-        this.timestamp = this.openmct.time.clock()?.currentValue;
+        this.timestamp = this.openmct.time.clock()?.currentValue || this.openmct.time.bounds()?.start;
         this.openmct.time.on('clock', this.setViewFromClock);
 
         this.getPlanDataAndSetConfig(this.domainObject);
@@ -184,13 +184,14 @@ export default {
                 this.showAll = true;
                 this.listActivities();
             } else {
+
                 this.filterValue = configuration.filter;
                 this.setSort();
                 this.setViewBounds();
                 this.listActivities();
             }
         },
-        updateTimestamp(bounds, isTick) {
+        updateTimestamp(_bounds, isTick) {
             if (isTick === true) {
                 this.timestamp = this.openmct.time.clock().currentValue();
             }
@@ -202,7 +203,7 @@ export default {
                 this.hideAll = false;
                 this.showAll = true;
                 // clear invokes listActivities
-                this.clearPreviousActivities();
+                this.clearPreviousActivities(this.openmct.time.bounds()?.start);
             } else {
                 this.setSort();
                 this.setViewBounds();
@@ -403,8 +404,7 @@ export default {
                 if (!activity.key) {
                     activity.key = uuid();
                 }
-
-                activity.duration = this.timestamp && activity.start ? activity.start - this.timestamp : undefined;
+                activity.duration = activity.start - this.timestamp;
 
                 return activity;
             });
