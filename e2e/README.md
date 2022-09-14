@@ -270,10 +270,10 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
 ### Test Design (TODO)
 
 - How to make tests robust to function in other contexts (VISTA, VIPER, etc.)
-  - Leverage the use of appActions.js like getOrCreateDomainObject
+  - Leverage the use of `appActions.js` methods such as `createDomainObjectWithDefaults()`
 - How to make tests faster and more resilient
   - When possible, navigate directly by URL
-  - Leverage ```await page.goto('/', { waitUntil: 'networkidle' });```
+  - Leverage `await page.goto('./', { waitUntil: 'networkidle' });`
   - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
 ### How to write a great test (TODO)
