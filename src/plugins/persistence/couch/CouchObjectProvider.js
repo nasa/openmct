@@ -71,7 +71,7 @@ class CouchObjectProvider {
     }
 
     onSharedWorkerMessageError(event) {
-        console.log('Error', event);
+        console.error('Error', event);
     }
 
     isSynchronizedObject(object) {

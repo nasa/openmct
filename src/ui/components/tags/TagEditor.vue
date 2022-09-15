@@ -118,7 +118,6 @@ export default {
                 return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, changedAnnotation.identifier);
             });
             if (matchingAnnotation) {
-                console.debug(`🍇 Annotation has changed`);
                 matchingAnnotation._deleted = changedAnnotation._deleted;
                 this.userAddingTag = false;
                 this.tagsChanged();
@@ -128,7 +127,6 @@ export default {
             annotations.forEach(annotation => {
                 const annotationKeyString = this.openmct.objects.makeKeyString(annotation.identifier);
                 if (!(this.deleteAnnotationListeners[annotationKeyString])) {
-                    console.debug(`🍇 Adding annotation change listener`);
                     const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', this.annotationDeletionListener);
                     this.deleteAnnotationListeners[annotationKeyString] = deleteAnnotationListener;
                 }
@@ -153,8 +151,6 @@ export default {
             for (let index = 0; index < tagsFromAnnotations.length; index += 1) {
                 this.$set(this.addedTags, index, tagsFromAnnotations[index]);
             }
-
-            console.debug(`🍇Added Tags: `, this.addedTags);
         },
         addTag() {
             const newTagValue = {

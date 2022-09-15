@@ -263,7 +263,6 @@ class InMemorySearchProvider {
     }
 
     onAnnotationCreation(annotationObject) {
-        console.debug(`🍍 annotation created now`);
         const objectProvider = this.openmct.objects.getProvider(annotationObject.identifier);
         if (objectProvider === undefined || objectProvider.search === undefined) {
             const provider = this;

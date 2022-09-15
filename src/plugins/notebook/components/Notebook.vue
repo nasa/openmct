@@ -351,7 +351,6 @@ export default {
 
             const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const foundAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
-            console.debug(`Loading ${foundAnnotations.length} annotations`);
             foundAnnotations.forEach((foundAnnotation) => {
                 const targetId = Object.keys(foundAnnotation.targets)[0];
                 const entryId = foundAnnotation.targets[targetId].entryId;
@@ -382,7 +381,6 @@ export default {
                 : [...filteredPageEntriesByTime].reverse();
 
             if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
-                console.debug(`🍉 new annotation detected`);
                 this.loadAnnotations();
             }
         },
