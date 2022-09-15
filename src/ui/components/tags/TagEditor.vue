@@ -90,7 +90,6 @@ export default {
     watch: {
         annotations: {
             handler() {
-                console.log('🍇 notebook annotations changed');
                 this.annotationsChanged();
             },
             deep: true
