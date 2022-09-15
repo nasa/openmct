@@ -15,12 +15,12 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 * [ ] Changes address original issue?
 * [ ] Tests included and/or updated with changes?
 * [ ] Command line build passes?
-* [ ] Has this been smoke tested?
 * [ ] Testing instructions included in associated issue OR is this a dependency/testcase change?
 
 ### Reviewer Checklist
 
 * [ ] Changes appear to address issue?
+* [ ] Has this been smoke tested?
 * [ ] Changes appear not to be breaking changes?
 * [ ] Appropriate unit tests included?
 * [ ] Code style and in-line documentation are appropriate?
