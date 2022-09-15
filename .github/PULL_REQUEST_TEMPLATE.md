@@ -13,9 +13,9 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 ### Author Checklist
 
 * [ ] Changes address original issue?
-* [ ] Has this been smoke tested?
 * [ ] Tests included and/or updated with changes?
 * [ ] Command line build passes?
+* [ ] Has this been smoke tested?
 * [ ] Testing instructions included in associated issue OR is this a dependency/testcase change?
 
 ### Reviewer Checklist
