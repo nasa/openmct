@@ -133,8 +133,8 @@ export default class AnnotationAPI extends EventEmitter {
 
         const success = await this.openmct.objects.save(createdObject);
         if (success) {
-            this.#updateAnnotationModified(domainObject);
             this.emit('annotationCreated', createdObject);
+            this.#updateAnnotationModified(domainObject);
 
             return createdObject;
         } else {

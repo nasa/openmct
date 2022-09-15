@@ -97,6 +97,7 @@ export default {
         }
     },
     mounted() {
+        this.annotationDeletionListener = this.annotationDeletionListener.bind(this);
         this.annotationsChanged();
     },
     destroyed() {
@@ -112,26 +113,24 @@ export default {
                 this.tagsChanged();
             }
         },
+        annotationDeletionListener(changedAnnotation) {
+            const matchingAnnotation = this.annotations.find((possibleMatchingAnnotation) => {
+                return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, changedAnnotation.identifier);
+            });
+            if (matchingAnnotation) {
+                console.debug(`🍇 Annotation has changed`);
+                matchingAnnotation._deleted = changedAnnotation._deleted;
+                this.userAddingTag = false;
+                this.tagsChanged();
+            }
+        },
         addAnnotationListeners(annotations) {
             annotations.forEach(annotation => {
                 const annotationKeyString = this.openmct.objects.makeKeyString(annotation.identifier);
                 if (!(this.deleteAnnotationListeners[annotationKeyString])) {
                     console.debug(`🍇 Adding annotation change listener`);
-                    const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', (changedAnnotation) => {
-                        const matchingAnnotation = this.annotations.find((possibleMatchingAnnotation) => {
-                            return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, changedAnnotation.identifier);
-                        });
-                        if (matchingAnnotation) {
-                            console.debug(`🍇 Annotation has changed`);
-                            matchingAnnotation._deleted = changedAnnotation._deleted;
-                            this.userAddingTag = false;
-                            this.tagsChanged();
-                        }
-                    });
-
+                    const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', this.annotationDeletionListener);
                     this.deleteAnnotationListeners[annotationKeyString] = deleteAnnotationListener;
-                } else {
-                    console.debug(`🍇 Annotation change listener has already been added`);
                 }
             });
         },

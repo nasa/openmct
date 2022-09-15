@@ -42,7 +42,6 @@ class InMemorySearchProvider {
         this.openmct = openmct;
         this.indexedIds = {};
         this.indexedCompositions = {};
-        this.indexedTags = {};
         this.idsToIndex = [];
         this.pendingIndex = {};
         this.pendingRequests = 0;
@@ -264,6 +263,7 @@ class InMemorySearchProvider {
     }
 
     onAnnotationCreation(annotationObject) {
+        console.debug(`🍍 annotation created now`);
         const objectProvider = this.openmct.objects.getProvider(annotationObject.identifier);
         if (objectProvider === undefined || objectProvider.search === undefined) {
             const provider = this;
@@ -275,13 +275,6 @@ class InMemorySearchProvider {
         const provider = this;
 
         domainObject.name = name;
-        provider.index(domainObject);
-    }
-
-    onTagMutation(domainObject, newTags) {
-        domainObject.tags = newTags;
-        const provider = this;
-
         provider.index(domainObject);
     }
 
@@ -338,14 +331,6 @@ class InMemorySearchProvider {
                 composition.on('add', this.onCompositionAdded);
                 composition.on('remove', this.onCompositionRemoved);
                 this.indexedCompositions[keyString] = composition;
-            }
-
-            if (domainObject.type === 'annotation') {
-                this.indexedTags[keyString] = this.openmct.objects.observe(
-                    domainObject,
-                    'tags',
-                    this.onTagMutation.bind(this, domainObject)
-                );
             }
         }
 
