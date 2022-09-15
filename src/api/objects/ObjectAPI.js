@@ -527,6 +527,7 @@ export default class ObjectAPI {
                 && provider.observe !== undefined
                 && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
                 let unobserve = provider.observe(identifier, (updatedModel) => {
+                    // modified can sometimes be undefined, so make it 0 in this case
                     const mutableObjectModification = mutableObject.modified ? mutableObject.modified : 0;
                     if (updatedModel.persisted > mutableObjectModification) {
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
@@ -675,6 +676,7 @@ export default class ObjectAPI {
     }
 
     #hasAlreadyBeenPersisted(domainObject) {
+        // modified can sometimes be undefined, so make it 0 in this case
         const modified = domainObject.modified ? domainObject.modified : 0;
         const result = domainObject.persisted !== undefined
             && domainObject.persisted >= modified;

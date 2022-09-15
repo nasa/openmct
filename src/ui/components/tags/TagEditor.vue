@@ -155,9 +155,7 @@ export default {
                 this.$set(this.addedTags, index, tagsFromAnnotations[index]);
             }
 
-            console.debug(`🍇annotations: `, this.annotations);
             console.debug(`🍇Added Tags: `, this.addedTags);
-            console.trace();
         },
         addTag() {
             const newTagValue = {

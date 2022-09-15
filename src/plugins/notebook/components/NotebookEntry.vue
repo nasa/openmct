@@ -87,7 +87,7 @@
                 :annotations="notebookAnnotations"
                 :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
                 :target-specific-details="{entryId: entry.id}"
-                @tags-updated="tagsUpdated"
+                @tags-updated="timestampAndUpdate"
             />
 
             <div class="c-snapshots c-ne__embeds">
@@ -345,9 +345,6 @@ export default {
             this.entry.modified = Date.now();
 
             this.$emit('updateEntry', this.entry);
-        },
-        async tagsUpdated() {
-            await this.timestampAndUpdate();
         },
         editingEntry() {
             this.$emit('editingEntry');
