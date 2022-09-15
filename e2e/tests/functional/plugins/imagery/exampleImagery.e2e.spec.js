@@ -160,7 +160,7 @@ test.describe('Example Imagery Object', () => {
         await page.locator('.c-mode-button').click();
 
         // Click local clock
-        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+        await page.locator('[data-testid="conductor-modeOption-local-clock"]').click();
         await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
         // Zoom in via button
@@ -412,7 +412,7 @@ async function performImageryViewOperationsAndAssert(page) {
     await page.locator('.c-mode-button').click();
 
     // Select local clock mode
-    await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+    await page.locator('[data-testid=conductor-modeOption-local-clock]').click();
 
     // Zoom in on next image
     await mouseZoomOnImageAndAssert(page, 2);

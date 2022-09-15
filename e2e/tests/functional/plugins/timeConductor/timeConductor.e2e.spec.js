@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../baseFixtures');
-const { setFixedTimeMode, setRealTimeMode, setStartOffset, setEndOffset } = require('../../../../appActions');
+const { setFixedTimeMode, setLocalClockMode, setStartOffset, setEndOffset } = require('../../../../appActions');
 
 test.describe('Time conductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
@@ -85,7 +85,7 @@ test.describe('Time conductor input fields real-time mode', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Switch to real-time mode
-        await setRealTimeMode(page);
+        await setLocalClockMode(page);
 
         // Set start time offset
         await setStartOffset(page, startOffset);
@@ -122,7 +122,7 @@ test.describe('Time conductor input fields real-time mode', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Switch to real-time mode
-        await setRealTimeMode(page);
+        await setLocalClockMode(page);
 
         // Set start time offset
         await setStartOffset(page, startOffset);
@@ -134,7 +134,7 @@ test.describe('Time conductor input fields real-time mode', () => {
         await setFixedTimeMode(page);
 
         // Switch back to real-time mode
-        await setRealTimeMode(page);
+        await setLocalClockMode(page);
 
         // Verify updated start time offset persists after mode switch
         await expect(page.locator('data-testid=conductor-start-offset-button')).toContainText('00:30:23');

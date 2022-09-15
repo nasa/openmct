@@ -228,18 +228,14 @@ async function _isInEditMode(page, identifier) {
 /**
  * Set the time conductor mode to either fixed timespan or realtime mode.
  * @param {import('@playwright/test').Page} page
- * @param {boolean} [isFixedTimespan=true] true for fixed timespan mode, false for realtime mode; default is true
+ * @param {'fixed'|'local-clock'|'remote-clock'} [clockType='fixed'] the clock type to set the time conductor to. default: 'fixed'
  */
-async function setTimeConductorMode(page, isFixedTimespan = true) {
+async function setTimeConductorMode(page, clockType = 'fixed') {
     // Click 'mode' button
     await page.locator('.c-mode-button').click();
 
     // Switch time conductor mode
-    if (isFixedTimespan) {
-        await page.locator('data-testid=conductor-modeOption-fixed').click();
-    } else {
-        await page.locator('data-testid=conductor-modeOption-realtime').click();
-    }
+    await page.locator(`data-testid=conductor-modeOption-${clockType}`).click();
 }
 
 /**
@@ -247,15 +243,23 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
  * @param {import('@playwright/test').Page} page
  */
 async function setFixedTimeMode(page) {
-    await setTimeConductorMode(page, true);
+    await setTimeConductorMode(page);
 }
 
 /**
- * Set the time conductor to realtime mode
+ * Set the time conductor to local clock mode
  * @param {import('@playwright/test').Page} page
  */
-async function setRealTimeMode(page) {
-    await setTimeConductorMode(page, false);
+async function setLocalClockMode(page) {
+    await setTimeConductorMode(page, 'local-clock');
+}
+
+/**
+ * Set the time conductor to remote clock mode
+ * @param {import('@playwright/test').Page} page
+ */
+async function setRemoteClockMode(page) {
+    await setTimeConductorMode(page, 'remote-clock');
 }
 
 /**
@@ -318,7 +322,8 @@ module.exports = {
     getHashUrlToDomainObject,
     getFocusedObjectUuid,
     setFixedTimeMode,
-    setRealTimeMode,
+    setLocalClockMode,
+    setRemoteClockMode,
     setStartOffset,
     setEndOffset
 };

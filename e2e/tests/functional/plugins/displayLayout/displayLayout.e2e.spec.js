@@ -21,13 +21,13 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setLocalClockMode } = require('../../../../appActions');
 
 test.describe('Testing Display Layout @unstable', () => {
     let sineWaveObject;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        await setRealTimeMode(page);
+        await setLocalClockMode(page);
 
         // Create Sine Wave Generator
         sineWaveObject = await createDomainObjectWithDefaults(page, {
