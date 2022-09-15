@@ -22,10 +22,19 @@
 
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
+const { setRemoteClockMode } = require('../../../../appActions');
 const { test, expect } = require('../../../../baseFixtures');
+// const path = require('path');
 
 test.describe('Remote Clock', () => {
-    // eslint-disable-next-line require-await
+    // test.use({ storageState: path.join(__dirname, '../../../../test-data/RemoteClockTestData_storage.json')});
+    // eslint-disable-next-line no-undef
+    test.beforeEach(async ({ page }) => {
+        // eslint-disable-next-line no-undef
+        // await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitRemoteClock.js') });
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
+
     test.fixme('blocks historical requests until first tick is received', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
@@ -33,7 +42,11 @@ test.describe('Remote Clock', () => {
         });
         // addInitScript to with remote clock
         // Switch time conductor mode to 'remote clock'
+        await setRemoteClockMode(page);
         // Navigate to telemetry
+        await page.click('role=treeitem[name=/Remote Clock Ticker/]');
+        await page.reload();
+
         // Verify that the plot renders historical data within the correct bounds
         // Refresh the page
         // Verify again that the plot renders historical data within the correct bounds
