@@ -87,6 +87,7 @@
                         :highlights="highlights"
                         :show-limit-line-labels="showLimitLineLabels"
                         @plotReinitializeCanvas="initCanvas"
+                        @chartLoaded="initialize"
                     />
                 </div>
 
@@ -359,11 +360,6 @@ export default {
         this.setTimeContext();
 
         this.loaded = true;
-
-        //We're referencing the canvas elements from the mct-chart in the initialize method.
-        // So we need $nextTick to ensure the component is fully mounted before we can initialize stuff.
-        this.$nextTick(this.initialize);
-
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
