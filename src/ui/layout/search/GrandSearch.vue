@@ -95,6 +95,11 @@ export default {
         },
         getPathsForObjects(objectsNeedingPaths) {
             return Promise.all(objectsNeedingPaths.map(async (domainObject) => {
+                if (!domainObject) {
+                    // user interrupted search, return back
+                    return null;
+                }
+
                 const keyStringForObject = this.openmct.objects.makeKeyString(domainObject.identifier);
                 const originalPathObjects = await this.openmct.objects.getOriginalPath(keyStringForObject);
 
@@ -127,11 +132,16 @@ export default {
                 this.searchLoading = false;
                 this.showSearchResults();
             } catch (error) {
-                console.error(`😞 Error searching`, error);
                 this.searchLoading = false;
 
                 if (this.abortSearchController) {
                     delete this.abortSearchController;
+                }
+
+                // Is this coming from the AbortController?
+                // If so, we can swallow the error. If not, 🤮 it to console
+                if (error.name !== 'AbortError') {
+                    console.error(`😞 Error searching`, error);
                 }
             }
         },
