@@ -1184,7 +1184,9 @@ export default {
                 this.removeStatusListener();
             }
 
-            this.plotContainerResizeObserver.disconnect();
+            if (this.plotContainerResizeObserver) {
+                this.plotContainerResizeObserver.disconnect();
+            }
 
             this.stopFollowingTimeContext();
             this.openmct.objectViews.off('clearData', this.clearData);
