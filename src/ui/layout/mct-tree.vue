@@ -41,6 +41,8 @@
     <div
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
+        role="tree"
+        aria-expanded="true"
     >
         <div>
 
@@ -467,7 +469,7 @@ export default {
             }
         },
         scrollEndEvent() {
-            if (!this.$refs.srcrollable) {
+            if (!this.$refs.scrollable) {
                 return;
             }
 
@@ -576,14 +578,17 @@ export default {
             };
         },
         addTreeItemObserver(domainObject, parentObjectPath) {
-            if (this.observers[domainObject.identifier.key]) {
-                this.observers[domainObject.identifier.key]();
+            const objectPath = [domainObject].concat(parentObjectPath);
+            const navigationPath = this.buildNavigationPath(objectPath);
+
+            if (this.observers[navigationPath]) {
+                this.observers[navigationPath]();
             }
 
-            this.observers[domainObject.identifier.key] = this.openmct.objects.observe(
+            this.observers[navigationPath] = this.openmct.objects.observe(
                 domainObject,
                 'name',
-                this.updateTreeItems.bind(this, parentObjectPath)
+                this.sortTreeItems.bind(this, parentObjectPath)
             );
         },
         async updateTreeItems(parentObjectPath) {
@@ -609,6 +614,44 @@ export default {
                     this.openTreeItem(item);
                 }
             }
+        },
+        sortTreeItems(parentObjectPath) {
+            const navigationPath = this.buildNavigationPath(parentObjectPath);
+            const parentItem = this.getTreeItemByPath(navigationPath);
+
+            // If the parent is not sortable, skip sorting
+            if (!this.isSortable(parentObjectPath)) {
+                return;
+            }
+
+            // Sort the renamed object and its siblings (direct descendants of the parent)
+            const directDescendants = this.getChildrenInTreeFor(parentItem, false);
+            directDescendants.sort(this.sortNameAscending);
+
+            // Take a copy of the sorted descendants array
+            const sortedTreeItems = directDescendants.slice();
+
+            directDescendants.forEach(descendant => {
+                const parent = this.getTreeItemByPath(descendant.navigationPath);
+
+                // If descendant is not open, skip
+                if (!this.isTreeItemOpen(parent)) {
+                    return;
+                }
+
+                // If descendant is open but has no children, skip
+                const children = this.getChildrenInTreeFor(parent, true);
+                if (children.length === 0) {
+                    return;
+                }
+
+                // Splice in the children of the descendant
+                const parentIndex = sortedTreeItems.map(item => item.navigationPath).indexOf(parent.navigationPath);
+                sortedTreeItems.splice(parentIndex + 1, 0, ...children);
+            });
+
+            // Splice in all of the sorted descendants
+            this.treeItems.splice(this.treeItems.indexOf(parentItem) + 1, sortedTreeItems.length, ...sortedTreeItems);
         },
         buildNavigationPath(objectPath) {
             return '/browse/' + [...objectPath].reverse()

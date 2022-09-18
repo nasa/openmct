@@ -4,6 +4,7 @@
 */ 
 {
     "compilerOptions": {
+        "baseUrl": "./",
         "allowJs": true,
         "checkJs": false,
         "strict": true,
@@ -11,10 +12,14 @@
         "noImplicitOverride": true,
         "module": "esnext",
         "moduleResolution": "node",
-
+        "outDir": "dist",
         "paths": {
             // matches the alias in webpack config, so that types for those imports are visible.
             "@/*": ["src/*"]
         }
-    }
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }
