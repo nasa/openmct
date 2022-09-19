@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const path = require('path');
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
@@ -29,7 +28,7 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
 // percysnapshot()
 
 test.describe('Visual - Notebook', () => {
-    test.only('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
+    test.only('Accepts dropped objects as embeds', async ({ page, theme, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
@@ -47,7 +46,7 @@ test.describe('Visual - Notebook', () => {
         await expandTreePaneItemByName(page, myItemsFolderName);
 
         await page.goto(notebook.url);
-        await page.dragAndDrop('role=treeitem[name=/Overlay Plot/]', '.c-object-view');
+        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
 
         await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
 
