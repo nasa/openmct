@@ -18,6 +18,8 @@ updates:
         #Lots of noise in these type patch releases.
       - dependency-name: "@babel/eslint-parser"
         update-types: ["version-update:semver-patch"]
+      - dependency-name: "eslint-plugin-vue"
+        update-types: ["version-update:semver-patch"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

@@ -187,6 +187,7 @@ class CouchObjectProvider {
         let fetchOptions = {
             method,
             body,
+            priority: 'high',
             signal
         };
 
