@@ -27,6 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
+
 test.describe('Notebook Network Request Inspection @couchdb', () => {
     let testNotebook;
     test.beforeEach(async ({ page }) => {
@@ -45,10 +46,10 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('.c-notebook__toggle-nav-button').click();
 
         // Collect all request events to count and assert after notebook action
-        const requests = [];
-        page.on('request', (rq) => requests.push(rq));
+        let requests = [];
+        page.on('request', (request) => requests.push(request));
 
-        const [notebookUrlRequest, allDocsRequest] = await Promise.all([
+        let [notebookUrlRequest, allDocsRequest] = await Promise.all([
             // Waits for the next request with the specified url
             page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
             page.waitForRequest('**/openmct/_all_docs?include_docs=true'),
@@ -64,5 +65,119 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         expect(notebookUrlRequest.postDataJSON().metadata.name).toBe('TestNotebook');
         expect(notebookUrlRequest.postDataJSON().model.persisted).toBeGreaterThanOrEqual(notebookUrlRequest.postDataJSON().model.modified);
         expect(allDocsRequest.postDataJSON().keys).toContain(testNotebook.uuid);
+
+        // Add an entry
+        requests = [];
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page.locator('[aria-label="Notebook Entry Input"]').click();
+        await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
+        await page.waitForLoadState('networkidle');
+        expect(requests.length).toBeLessThanOrEqual(2);
+
+        // Add some tags
+        requests = [];
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
+        await page.waitForSelector('.c-tag__label:has-text("Driving")');
+        page.waitForLoadState('networkidle');
+        expect(requests.length).toBeLessThanOrEqual(12);
+
+        requests = [];
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
+        await page.waitForSelector('.c-tag__label:has-text("Drilling")');
+        page.waitForLoadState('networkidle');
+        expect(requests.length).toBeLessThanOrEqual(12);
+
+        requests = [];
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
+        await page.waitForSelector('.c-tag__label:has-text("Science")');
+        page.waitForLoadState('networkidle');
+        expect(requests.length).toBeLessThanOrEqual(12);
+
+        // Delete all the tags
+        requests = [];
+        await page.hover('.c-tag__label:has-text("Driving")');
+        await page.locator('.c-tag__label:has-text("Driving") ~ .c-completed-tag-deletion').click();
+        await page.waitForSelector('.c-tag__label:has-text("Driving")', {state: 'hidden'});
+        await page.hover('.c-tag__label:has-text("Drilling")');
+        await page.locator('.c-tag__label:has-text("Drilling") ~ .c-completed-tag-deletion').click();
+        await page.waitForSelector('.c-tag__label:has-text("Drilling")', {state: 'hidden'});
+        page.hover('.c-tag__label:has-text("Science")');
+        await page.locator('.c-tag__label:has-text("Science") ~ .c-completed-tag-deletion').click();
+        await page.waitForSelector('.c-tag__label:has-text("Science")', {state: 'hidden'});
+        page.waitForLoadState('networkidle');
+        expect(requests.length).toBeLessThanOrEqual(10);
+
+        // Add two more pages
+        await page.click('text=Page Add >> button');
+        await page.click('text=Page Add >> button');
+
+        // Add three entries
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page.locator('[aria-label="Notebook Entry Input"]').click();
+        await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
+
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').fill(`Second Entry`);
+
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').fill(`Third Entry`);
+
+        // Add three tags
+        await page.hover(`button:has-text("Add Tag") >> nth=2`);
+        await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
+        await page.waitForSelector('.c-tag__label:has-text("Science")');
+
+        await page.hover(`button:has-text("Add Tag") >> nth=2`);
+        await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
+        await page.waitForSelector('.c-tag__label:has-text("Drilling")');
+
+        await page.hover(`button:has-text("Add Tag") >> nth=2`);
+        await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
+        await page.waitForSelector('.c-tag__label:has-text("Driving")');
+        page.waitForLoadState('networkidle');
+
+        // Add a fourth entry
+        requests = [];
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').fill(`Fourth Entry`);
+        page.waitForLoadState('networkidle');
+
+        expect(requests.length).toBeLessThanOrEqual(5);
+
+        // Add a fifth entry
+        requests = [];
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').fill(`Fifth Entry`);
+        page.waitForLoadState('networkidle');
+
+        expect(requests.length).toBeLessThanOrEqual(5);
+
+        // Add a sixth entry
+        requests = [];
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').click();
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').fill(`Sixth Entry`);
+        page.waitForLoadState('networkidle');
+
+        expect(requests.length).toBeLessThanOrEqual(5);
     });
 });
