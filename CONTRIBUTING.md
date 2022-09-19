@@ -173,7 +173,7 @@ The following guidelines are provided for anyone contributing source code to the
 1. Avoid deep nesting (especially of functions), except where necessary
    (e.g. due to closure scope).
 1. End with a single new-line character.
-1. Always use ES6 `Class`es and inheritence rather than the pre-ES6 prototypal 
+1. Always use ES6 `Class`es and inheritance rather than the pre-ES6 prototypal 
    pattern.
 1. Within a given function's scope, do not mix declarations and imperative
    code, and  present these in the following order:
