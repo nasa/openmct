@@ -24,11 +24,8 @@ const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
-// Drop Overlay Plot into Notebook
-// percysnapshot()
-
 test.describe('Visual - Notebook', () => {
-    test.only('Accepts dropped objects as embeds', async ({ page, theme, openmctConfig }) => {
+    test('Accepts dropped objects as embeds', async ({ page, theme, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
