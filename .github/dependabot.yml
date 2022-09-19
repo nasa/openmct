@@ -13,7 +13,11 @@ updates:
       - "pr:daveit"
       - "pr:platform"
     ignore:
-      - dependency-name: "@playwright/test" #we source the container instead of the dependency in CI
+        #We have to source the container which is not detected by Dependabot
+      - dependency-name: "@playwright/test"
+        #Lots of noise in these type patch releases.
+      - dependency-name: "@babel/eslint-parser"
+        update-types: ["version-update:semver-patch"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

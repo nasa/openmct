@@ -115,6 +115,7 @@ export default {
         this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
         this.listenTo(this.config.xAxis, 'change', this.updateLimitsAndDraw);
         this.config.series.forEach(this.onSeriesAdd, this);
+        this.$emit('chartLoaded');
     },
     beforeDestroy() {
         this.destroy();
