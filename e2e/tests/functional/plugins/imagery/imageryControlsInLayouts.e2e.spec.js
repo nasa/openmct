@@ -34,7 +34,7 @@ const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
-test.describe('Example Imagery Object', () => {
+test.describe('Imagery View Controls', () => {
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -167,14 +167,27 @@ test.describe('Example Imagery Object', () => {
         await zoomIntoImageryByButton(page);
         await expect(pausePlayButton).not.toHaveClass(/is-paused/);
     });
+});
 
+test.describe('Imagery View Attributes', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create a default 'Example Imagery' object
+        await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
+
+        // Verify that the created object is focused
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await page.locator(backgroundImageSelector).hover({trial: true});
+    });
     test('Uses low fetch priority', async ({ page }) => {
         const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
         await expect(priority).toBe('low');
     });
 });
 
-test.describe('Example Imagery in Display Layout', () => {
+test.describe('Imagery in Display Layout', () => {
     let displayLayout;
     test.beforeEach(async ({ page }) => {
         // Go to baseURL
@@ -208,10 +221,7 @@ test.describe('Example Imagery in Display Layout', () => {
     });
 
     test('Imagery View operations @unstable', async ({ page }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/5265'
-        });
+        test.info().annotations.push({type: 'issue', description: 'https://github.com/nasa/openmct/issues/5265'});
 
         // Edit mode
         await page.click('button[title="Edit"]');
@@ -260,9 +270,14 @@ test.describe('Example Imagery in Display Layout', () => {
         expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
         await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
     });
+
+    test('Uses low fetch priority', async ({ page }) => {
+        const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
+        await expect(priority).toBe('low');
+    });
 });
 
-test.describe('Example Imagery in Flexible layout', () => {
+test.describe('Imagery in Flexible layout', () => {
     let flexibleLayout;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -302,9 +317,14 @@ test.describe('Example Imagery in Flexible layout', () => {
 
         await performImageryViewOperationsAndAssert(page);
     });
+
+    test('Uses low fetch priority', async ({ page }) => {
+        const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
+        await expect(priority).toBe('low');
+    });
 });
 
-test.describe('Example Imagery in Tabs View', () => {
+test.describe('Imagery in Tabs View', () => {
     let tabsView;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -338,9 +358,13 @@ test.describe('Example Imagery in Tabs View', () => {
     test('Imagery View operations @unstable', async ({ page }) => {
         await performImageryViewOperationsAndAssert(page);
     });
+    test('Uses low fetch priority', async ({ page }) => {
+        const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
+        await expect(priority).toBe('low');
+    });
 });
 
-test.describe('Example Imagery in Time Strip', () => {
+test.describe('Imagery in Time Strip', () => {
     let timeStripObject;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -373,6 +397,11 @@ test.describe('Example Imagery in Time Strip', () => {
         const viewLargeImgSrc = await viewLargeImg.getAttribute('src');
         expect(viewLargeImgSrc).toBeTruthy();
         expect(viewLargeImgSrc).toEqual(hoveredImgSrc);
+    });
+
+    test('Uses low fetch priority', async ({ page }) => {
+        const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
+        await expect(priority).toBe('low');
     });
 });
 

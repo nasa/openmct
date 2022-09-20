@@ -23,12 +23,9 @@
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 
-test.describe('Telemetry Table', () => {
+test.describe('Telemetry Table Interaction', () => {
     test('unpauses and filters data when paused by button and user changes bounds', async ({ page }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/5113'
-        });
+        test.info().annotations.push({type: 'issue', description: 'https://github.com/nasa/openmct/issues/5113'});
 
         await page.goto('./', { waitUntil: 'networkidle' });
 
@@ -71,5 +68,11 @@ test.describe('Telemetry Table', () => {
         const latestMilliseconds = Date.parse(latestTelemetryDate);
         const endBoundMilliseconds = Date.parse(endDate);
         expect(latestMilliseconds).toBeLessThanOrEqual(endBoundMilliseconds);
+    });
+});
+
+test.describe('Telemetry Type', () => {
+    test.fixme('Imagery Telemetry Table Data is correct @gds', async ({ page }) => {
+        //Telemetry Metadata is displayed in a table format
     });
 });

@@ -2,7 +2,8 @@
 module.exports = {
     "extends": ["plugin:playwright/playwright-test"],
     "rules": {
-        "playwright/max-nested-describe": ["error", { "max": 1 }]
+        "playwright/max-nested-describe": ["error", { "max": 1 }],
+        "object-property-newline": "off"
     },
     "overrides": [
         {
