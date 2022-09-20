@@ -74,7 +74,7 @@ test.describe('Restricted Notebook', () => {
 
 });
 
-test.describe.only('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
+test.describe('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
     let notebook;
     test.beforeEach(async ({ page }) => {
         notebook = await startAndAddRestrictedNotebookObject(page);
