@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const path = require('path');
-
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 
 /**
