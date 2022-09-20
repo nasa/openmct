@@ -355,7 +355,7 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    save(domainObject) {
+    async save(domainObject) {
         let provider = this.getProvider(domainObject.identifier);
         let savedResolve;
         let savedReject;
@@ -373,7 +373,7 @@ export default class ObjectAPI {
                     savedReject = reject;
                 });
                 domainObject.persisted = persistedTime;
-                domainObject.createdBy = this.currentUsername;
+                domainObject.createdBy = await this.#getCurrentUsername();
                 const newObjectPromise = provider.create(domainObject);
                 if (newObjectPromise) {
                     newObjectPromise.then(response => {
@@ -387,7 +387,7 @@ export default class ObjectAPI {
                 }
             } else {
                 domainObject.persisted = persistedTime;
-                domainObject.modifiedBy = this.currentUsername;
+                domainObject.modifiedBy = await this.#getCurrentUsername();
                 this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
             }
