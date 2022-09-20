@@ -109,6 +109,12 @@ describe('the plugin', () => {
             expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
         });
 
+        it('prioritizes couch requests above other requests', async () => {
+            await openmct.objects.get(mockDomainObject.identifier);
+            const fetchOptions = fetch.calls.mostRecent().args[1];
+            expect(fetchOptions.priority).toEqual('high');
+        });
+
         it('creates an object and starts shared worker', async () => {
             const result = await openmct.objects.save(mockDomainObject);
             expect(provider.create).toHaveBeenCalled();

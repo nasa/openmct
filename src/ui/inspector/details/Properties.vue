@@ -98,6 +98,7 @@ export default {
             const timestampLabel = this.domainObject.modified ? 'Modified' : 'Created';
             const timestamp = this.domainObject.modified ? this.domainObject.modified : this.domainObject.created;
             const notes = this.domainObject.notes;
+            const version = this.domainObject.version;
 
             const details = [
                 {
@@ -136,6 +137,13 @@ export default {
                         value: formattedTimestamp
                     }
                 );
+            }
+
+            if (version) {
+                details.push({
+                    name: 'Version',
+                    value: version
+                });
             }
 
             return [...details, ...this.typeProperties];

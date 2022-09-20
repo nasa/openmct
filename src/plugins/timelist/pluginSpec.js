@@ -376,7 +376,7 @@ describe('the plugin', function () {
 
             return Vue.nextTick(() => {
                 const items = element.querySelectorAll(LIST_ITEM_CLASS);
-                expect(items.length).toEqual(1);
+                expect(items.length).toEqual(2);
             });
         });
     });
