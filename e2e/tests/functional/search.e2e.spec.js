@@ -111,7 +111,7 @@ test.describe("Search Tests @unstable", () => {
         expect(await searchResults.count()).toBe(0);
 
         // Verify proper message appears
-        await expect(page.locator('text=No matching results.')).toBeVisible();
+        await expect(page.locator('text=No results found')).toBeVisible();
     });
 
     test('Validate single object in search result @couchdb', async ({ page }) => {
