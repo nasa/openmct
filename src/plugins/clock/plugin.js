@@ -32,7 +32,7 @@ export default function ClockPlugin(options) {
         const CLOCK_INDICATOR_FORMAT = 'YYYY/MM/DD HH:mm:ss';
         openmct.types.addType('clock', {
             name: 'Clock',
-            description: 'A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.',
+            description: 'A digital clock that uses system time and supports a variety of display formats and timezones.',
             creatable: true,
             cssClass: 'icon-clock',
             initialize: function (domainObject) {
