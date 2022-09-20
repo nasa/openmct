@@ -50,7 +50,7 @@ test.describe('Clock Generator CRUD Operations', () => {
         await page.locator('.icon-arrow-down').click();
 
         // Verify clicking on the autocomplete arrow collapses the dropdown
-        await expect(page.locator(".c-input--autocomplete__options")).not.toBeVisible();
+        await expect(page.locator(".c-input--autocomplete__options")).toBeHidden();
 
         // Click timezone input to open dropdown
         await page.locator('.c-input--autocomplete__input').click();
@@ -60,7 +60,7 @@ test.describe('Clock Generator CRUD Operations', () => {
         // Verify clicking outside the autocomplete dropdown collapses it
         await page.locator('text=Timezone').click();
         // Verify clicking on the autocomplete arrow collapses the dropdown
-        await expect(page.locator(".c-input--autocomplete__options")).not.toBeVisible();
+        await expect(page.locator(".c-input--autocomplete__options")).toBeHidden();
 
     });
 });

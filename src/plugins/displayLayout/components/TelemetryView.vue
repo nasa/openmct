@@ -232,16 +232,18 @@ export default {
             this.removeSelectable();
         }
 
-        this.telemetryCollection.off('add', this.setLatestValues);
-        this.telemetryCollection.off('clear', this.refreshData);
+        if (this.telemetryCollection) {
+            this.telemetryCollection.off('add', this.setLatestValues);
+            this.telemetryCollection.off('clear', this.refreshData);
 
-        this.telemetryCollection.destroy();
+            this.telemetryCollection.destroy();
+        }
 
         if (this.mutablePromise) {
             this.mutablePromise.then(() => {
                 this.openmct.objects.destroyMutable(this.domainObject);
             });
-        } else if (this.domainObject.isMutable) {
+        } else if (this?.domainObject?.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
