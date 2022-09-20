@@ -504,7 +504,6 @@ export default {
             }
         },
         async dropOnEntry(event) {
-            console.log('drop on entry');
             event.preventDefault();
             event.stopImmediatePropagation();
 
@@ -531,7 +530,7 @@ export default {
                 openmct: this.openmct
             };
             const embed = await createNewEmbed(snapshotMeta);
-            console.log('embed', embed);
+
             this.newEntry(embed);
         },
         focusOnEntryId() {
