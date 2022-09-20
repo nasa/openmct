@@ -23,11 +23,11 @@
 const { test, expect } = require('../../../../pluginFixtures');
 const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
 const path = require('path');
+const nbUtils = require('../../../../helper/notebookUtils');
 
 const TEST_TEXT = 'Testing text for entries.';
 const TEST_TEXT_NAME = 'Test Page';
 const CUSTOM_NAME = 'CUSTOM_NAME';
-const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 
 test.describe('Restricted Notebook', () => {
     let notebook;
@@ -66,7 +66,7 @@ test.describe('Restricted Notebook', () => {
 
     test('Can be locked if at least one page has one entry @addInit', async ({ page }) => {
 
-        await enterTextEntry(page);
+        await nbUtils.enterTextEntry(page, TEST_TEXT);
 
         const commitButton = page.locator('button:has-text("Commit Entries")');
         expect(await commitButton.count()).toEqual(1);
@@ -78,7 +78,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     let notebook;
     test.beforeEach(async ({ page }) => {
         notebook = await startAndAddRestrictedNotebookObject(page);
-        await enterTextEntry(page);
+        await nbUtils.enterTextEntry(page, TEST_TEXT);
         await lockPage(page);
 
         // open sidebar
@@ -121,7 +121,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         expect.soft(newPageCount).toEqual(1);
 
         // enter test text
-        await enterTextEntry(page);
+        await nbUtils.enterTextEntry(page, TEST_TEXT);
 
         // expect new page to be lockable
         const commitButton = page.locator('BUTTON:HAS-TEXT("COMMIT ENTRIES")');
@@ -148,7 +148,7 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
     test.beforeEach(async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
         await startAndAddRestrictedNotebookObject(page);
-        await dragAndDropEmbed(page, myItemsFolderName);
+        await nbUtils.dragAndDropEmbed(page, myItemsFolderName);
     });
 
     test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {
@@ -179,42 +179,6 @@ async function startAndAddRestrictedNotebookObject(page) {
     await page.goto('./', { waitUntil: 'networkidle' });
 
     return createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function enterTextEntry(page) {
-    // Click .c-notebook__drag-area
-    await page.locator(NOTEBOOK_DROP_AREA).click();
-
-    // enter text
-    await page.locator('div.c-ne__text').click();
-    await page.locator('div.c-ne__text').fill(TEST_TEXT);
-    await page.locator('div.c-ne__text').press('Enter');
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function dragAndDropEmbed(page, myItemsFolderName) {
-    // Click button:has-text("Create")
-    await page.locator('button:has-text("Create")').click();
-    // Click li:has-text("Sine Wave Generator")
-    await page.locator('li:has-text("Sine Wave Generator")').click();
-    // Click form[name="mctForm"] >> text=My Items
-    await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
-    // Click text=OK
-    await page.locator('text=OK').click();
-    // Click text=Open MCT My Items >> span >> nth=3
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-    // Click text=Unnamed CUSTOM_NAME
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('text=Unnamed CUSTOM_NAME').click()
-    ]);
-
-    await page.dragAndDrop('text=UNNAMED SINE WAVE GENERATOR', NOTEBOOK_DROP_AREA);
 }
 
 /**
