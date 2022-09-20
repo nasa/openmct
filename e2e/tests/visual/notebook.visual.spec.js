@@ -49,14 +49,3 @@ test.describe('Visual - Notebook', () => {
 
     });
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} name
- */
-async function expandTreePaneItemByName(page, name) {
-    const treePane = page.locator('#tree-pane');
-    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
-    const expandTriangle = treeItem.locator('.c-disclosure-triangle');
-    await expandTriangle.click();
-}
