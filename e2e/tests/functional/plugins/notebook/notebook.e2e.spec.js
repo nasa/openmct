@@ -210,7 +210,7 @@ test.describe('Notebook search tests', () => {
 
 test.describe('Notebook entry tests', () => {
     test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
-    test('When an object is dropped into a notebook, a new entry is created and it should be focused', async ({ page }) => {
+    test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({ page }) => {
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
         // Create Notebook
@@ -235,7 +235,7 @@ test.describe('Notebook entry tests', () => {
         await expect(embed).toHaveClass(/icon-plot-overlay/);
         expect(embedName).toBe('Dropped Overlay Plot');
     });
-    test('When an object is dropped into a notebooks existing entry, it should be focused', async ({ page }) => {
+    test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({ page }) => {
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
         // Create Notebook
