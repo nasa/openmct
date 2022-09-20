@@ -74,11 +74,11 @@ test.describe('Restricted Notebook', () => {
 
 });
 
-test.describe('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
+test.describe.only('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
     let notebook;
     test.beforeEach(async ({ page }) => {
         notebook = await startAndAddRestrictedNotebookObject(page);
-        await nbUtils.enterTextEntry(page);
+        await nbUtils.enterTextEntry(page, TEST_TEXT);
         await lockPage(page);
 
         // open sidebar
@@ -121,7 +121,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         expect.soft(newPageCount).toEqual(1);
 
         // enter test text
-        await nbUtils.enterTextEntry(page);
+        await nbUtils.enterTextEntry(page, TEST_TEXT);
 
         // expect new page to be lockable
         const commitButton = page.locator('BUTTON:HAS-TEXT("COMMIT ENTRIES")');
