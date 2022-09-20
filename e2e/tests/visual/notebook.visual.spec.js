@@ -22,7 +22,7 @@
 
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
-const { createDomainObjectWithDefaults } = require('../../appActions');
+const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe('Visual - Notebook', () => {
     test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {

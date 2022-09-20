@@ -256,7 +256,7 @@ test.describe('Notebook entry tests', () => {
         await nbUtils.enterTextEntry(page, 'Entry to drop into');
         await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', 'text=Entry to drop into');
 
-        const existingEntry = page.locator('.c-ne__content', { has: page.locator('text="Entry to drop into"') })
+        const existingEntry = page.locator('.c-ne__content', { has: page.locator('text="Entry to drop into"') });
         const embed = existingEntry.locator('.c-ne__embed__link');
         const embedName = await embed.textContent();
 
