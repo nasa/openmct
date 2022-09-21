@@ -175,8 +175,9 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').fill(`Sixth Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(requests.length).toBeLessThanOrEqual(5);
+        expect(requests.length).toBeLessThanOrEqual(6);
     });
 });
