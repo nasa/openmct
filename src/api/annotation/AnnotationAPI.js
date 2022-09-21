@@ -281,18 +281,19 @@ export default class AnnotationAPI extends EventEmitter {
     }
 
     #combineSameTargets(results) {
-        return results.reduce((accumulator, currentAnnotation) => {
-            const existingAnnotation = accumulator.find((annotationToFind) => {
+        const combinedResults = [];
+        results.forEach(currentAnnotation => {
+            const existingAnnotation = combinedResults.find((annotationToFind) => {
                 return _.isEqual(currentAnnotation.targets, annotationToFind.targets);
             });
             if (!existingAnnotation) {
-                accumulator = [...accumulator, currentAnnotation];
+                combinedResults.push(currentAnnotation);
             } else {
-                existingAnnotation.tags = [...currentAnnotation.tags, ...existingAnnotation.tags];
+                existingAnnotation.tags.push(currentAnnotation.tags);
             }
+        });
 
-            return accumulator;
-        }, []);
+        return combinedResults;
     }
 
     /**
