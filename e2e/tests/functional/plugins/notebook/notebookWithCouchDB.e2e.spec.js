@@ -27,6 +27,14 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
+// Try to reduce indeterminism of browser requests by only returning fetch requests.
+// Filter out preflight CORS, fetching stylesheets, page icons, etc. that can occur during tests
+function filterNonFetchRequests(requests) {
+    return requests.filter(request => {
+        return (request.resourceType() === 'fetch');
+    });
+}
+
 test.describe('Notebook Network Request Inspection @couchdb', () => {
     let testNotebook;
     test.beforeEach(async ({ page }) => {
@@ -58,6 +66,9 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
             page.waitForLoadState('networkidle')
         ]);
         // Assert that only two requests are made
+        // Network Requests are:
+        // 1) The actual POST to create the page
+        // 2) The shared worker event from 👆 request
         expect(requests.length).toBe(2);
 
         // Assert on request object
@@ -66,6 +77,9 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         expect(allDocsRequest.postDataJSON().keys).toContain(testNotebook.uuid);
 
         // Add an entry
+        // Network Requests are:
+        // 1) The actual POST to create the entry
+        // 2) The shared worker event from 👆 POST request
         requests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
@@ -74,6 +88,19 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         expect(requests.length).toBeLessThanOrEqual(2);
 
         // Add some tags
+        // Network Requests are for each tag creation are:
+        // 1) Getting the original path of the parent object
+        // 2) Getting the original path of the grandparent object (recursive call)
+        // 3) Creating the annotation/tag object
+        // 4) The shared worker event from 👆 POST request
+        // 5) Mutate notebook domain object's annotationModified property
+        // 6) The shared worker event from 👆 POST request
+        // 7) Notebooks fetching new annotations due to annotationModified changed
+        // 8) The update of the notebook domain's object's modified property
+        // 9) The shared worker event from 👆 POST request
+        // 10) Entry is timestamped
+        // 11) The shared worker event from 👆 POST request
+
         requests = [];
         await page.hover(`button:has-text("Add Tag")`);
         await page.locator(`button:has-text("Add Tag")`).click();
@@ -81,7 +108,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
         await page.waitForSelector('.c-tag__label:has-text("Driving")');
         page.waitForLoadState('networkidle');
-        expect(requests.length).toBeLessThanOrEqual(12);
+        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(11);
 
         requests = [];
         await page.hover(`button:has-text("Add Tag")`);
@@ -90,7 +117,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
         await page.waitForSelector('.c-tag__label:has-text("Drilling")');
         page.waitForLoadState('networkidle');
-        expect(requests.length).toBeLessThanOrEqual(12);
+        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(11);
 
         requests = [];
         await page.hover(`button:has-text("Add Tag")`);
@@ -99,9 +126,15 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
         await page.waitForSelector('.c-tag__label:has-text("Science")');
         page.waitForLoadState('networkidle');
-        expect(requests.length).toBeLessThanOrEqual(12);
+        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(11);
 
         // Delete all the tags
+        // Network requests are:
+        // 1) Send POST to mutate _delete property to true on annotation with tag
+        // 2) The shared worker event from 👆 POST request
+        // 3) Timestamp update on entry
+        // 4) The shared worker event from 👆 POST request
+        // This happens for 3 tags so 12 requests
         requests = [];
         await page.hover('.c-tag__label:has-text("Driving")');
         await page.locator('.c-tag__label:has-text("Driving") ~ .c-completed-tag-deletion').click();
@@ -113,7 +146,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('.c-tag__label:has-text("Science") ~ .c-completed-tag-deletion').click();
         await page.waitForSelector('.c-tag__label:has-text("Science")', {state: 'hidden'});
         page.waitForLoadState('networkidle');
-        expect(requests.length).toBeLessThanOrEqual(10);
+        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(12);
 
         // Add two more pages
         await page.click('text=Page Add >> button');
@@ -153,24 +186,40 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         page.waitForLoadState('networkidle');
 
         // Add a fourth entry
+        // Network requests are:
+        // 1) Send POST to add new entry
+        // 2) The shared worker event from 👆 POST request
+        // 3) Timestamp update on entry
+        // 4) The shared worker event from 👆 POST request
         requests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').fill(`Fourth Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(requests.length).toBeLessThanOrEqual(5);
+        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(4);
 
         // Add a fifth entry
+        // Network requests are:
+        // 1) Send POST to add new entry
+        // 2) The shared worker event from 👆 POST request
+        // 3) Timestamp update on entry
+        // 4) The shared worker event from 👆 POST request
         requests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').fill(`Fifth Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(requests.length).toBeLessThanOrEqual(5);
+        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(4);
 
         // Add a sixth entry
+        // 1) Send POST to add new entry
+        // 2) The shared worker event from 👆 POST request
+        // 3) Timestamp update on entry
+        // 4) The shared worker event from 👆 POST request
         requests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').click();
@@ -178,6 +227,6 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(requests.length).toBeLessThanOrEqual(6);
+        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(4);
     });
 });
