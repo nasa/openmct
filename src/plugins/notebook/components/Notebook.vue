@@ -347,7 +347,7 @@ export default {
                 return;
             }
 
-            this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ? this.domainObject.annotationLastCreated : 0;
+            this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
 
             const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const foundAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
