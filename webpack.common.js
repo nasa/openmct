@@ -140,16 +140,7 @@ const config = {
             }
         ]
     },
-    stats: 'errors-warnings',
-    devServer: {
-        static: {
-            directory: path.join(__dirname, '/dist/'),
-            publicPath: '/dist'
-        },
-        client: {
-            progress: true
-        }
-    }
+    stats: 'errors-warnings'
 };
 
 // eslint-disable-next-line no-undef

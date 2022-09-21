@@ -27,5 +27,14 @@ module.exports = merge(common, {
             __OPENMCT_ROOT_RELATIVE__: '"dist/"'
         })
     ],
-    devtool: 'eval-source-map'
+    devtool: 'eval-source-map',
+    devServer: {
+        static: {
+            directory: path.join(__dirname, '/dist/'),
+            publicPath: '/dist'
+        },
+        client: {
+            progress: true
+        }
+    }
 });
