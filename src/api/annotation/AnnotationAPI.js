@@ -289,7 +289,7 @@ export default class AnnotationAPI extends EventEmitter {
             if (!existingAnnotation) {
                 combinedResults.push(currentAnnotation);
             } else {
-                existingAnnotation.tags.push(currentAnnotation.tags);
+                existingAnnotation.tags.push(...currentAnnotation.tags);
             }
         });
 
