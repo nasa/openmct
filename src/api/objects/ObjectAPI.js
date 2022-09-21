@@ -677,7 +677,7 @@ export default class ObjectAPI {
 
     #hasAlreadyBeenPersisted(domainObject) {
         // modified can sometimes be undefined, so make it 0 in this case
-        const modified = domainObject.modified ? domainObject.modified : 0;
+        const modified = domainObject.modified ?? 0;
         const result = domainObject.persisted !== undefined
             && domainObject.persisted >= modified;
 
