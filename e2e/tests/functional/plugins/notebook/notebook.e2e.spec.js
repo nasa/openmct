@@ -27,7 +27,8 @@ This test suite is dedicated to tests which verify the basic operations surround
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
 const { test, expect } = require('../../../../baseFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../../../appActions');
+const nbUtils = require('../../../../helper/notebookUtils');
 
 test.describe('Notebook CRUD Operations', () => {
     test.fixme('Can create a Notebook Object', async ({ page }) => {
@@ -209,13 +210,58 @@ test.describe('Notebook search tests', () => {
 
 test.describe('Notebook entry tests', () => {
     test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
-    test.fixme('When a telemetry object is dropped into a notebook, a new entry is created and it should be focused', async ({ page }) => {
-        // Drag and drop any telmetry object on 'drop object'
-        // new entry gets created with telemtry object
+    test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({ page }) => {
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Embed Test Notebook"
+        });
+        // Create Overlay Plot
+        await createDomainObjectWithDefaults(page, {
+            type: 'Overlay Plot',
+            name: "Dropped Overlay Plot"
+        });
+
+        await expandTreePaneItemByName(page, 'My Items');
+
+        await page.goto(notebook.url);
+        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
+
+        const embed = page.locator('.c-ne__embed__link');
+        const embedName = await embed.textContent();
+
+        await expect(embed).toHaveClass(/icon-plot-overlay/);
+        expect(embedName).toBe('Dropped Overlay Plot');
     });
-    test.fixme('When a telemetry object is dropped into a notebooks existing entry, it should be focused', async ({ page }) => {
-        // Drag and drop any telemetry object onto existing entry
-        // Entry updated with object and snapshot
+    test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({ page }) => {
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Embed Test Notebook"
+        });
+        // Create Overlay Plot
+        await createDomainObjectWithDefaults(page, {
+            type: 'Overlay Plot',
+            name: "Dropped Overlay Plot"
+        });
+
+        await expandTreePaneItemByName(page, 'My Items');
+
+        await page.goto(notebook.url);
+
+        await nbUtils.enterTextEntry(page, 'Entry to drop into');
+        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', 'text=Entry to drop into');
+
+        const existingEntry = page.locator('.c-ne__content', { has: page.locator('text="Entry to drop into"') });
+        const embed = existingEntry.locator('.c-ne__embed__link');
+        const embedName = await embed.textContent();
+
+        await expect(embed).toHaveClass(/icon-plot-overlay/);
+        expect(embedName).toBe('Dropped Overlay Plot');
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
     test.fixme('previous and new entries can be deleted', async ({ page }) => {});

@@ -36,7 +36,7 @@ export default function TelemetryTableViewProvider(openmct) {
     return {
         key: 'table',
         name: 'Telemetry Table',
-        cssClass: 'icon-tabular-realtime',
+        cssClass: 'icon-tabular-scrolling',
         canView(domainObject) {
             return domainObject.type === 'table'
                 || hasTelemetry(domainObject);

@@ -530,7 +530,7 @@ export default {
                 this.openmct.editor.cancel();
             }
         },
-        dropOnEntry(event) {
+        async dropOnEntry(event) {
             event.preventDefault();
             event.stopImmediatePropagation();
 
@@ -556,7 +556,8 @@ export default {
                 objectPath,
                 openmct: this.openmct
             };
-            const embed = createNewEmbed(snapshotMeta);
+            const embed = await createNewEmbed(snapshotMeta);
+
             this.newEntry(embed);
         },
         focusOnEntryId() {
