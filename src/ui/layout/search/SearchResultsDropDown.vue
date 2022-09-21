@@ -58,16 +58,17 @@
             </div>
             <div
                 v-if="searchLoading"
-            > <progress-bar
-                :model="{progressText: 'Searching...',
-                         progressPerc: undefined
-                }"
-            />
+                class="c-gsearch__result-pane-msg"
+            >
+                <div class="hint">Searching...</div>
+                <progress-bar :model="{ progressPerc: undefined }" />
             </div>
             <div
                 v-if="!searchLoading && (!annotationResults || !annotationResults.length) &&
                     (!objectResults || !objectResults.length)"
-            >No matching results.
+                class="c-gsearch__result-pane-msg"
+            >
+                <div class="hint">No results found</div>
             </div>
         </div>
     </div>
