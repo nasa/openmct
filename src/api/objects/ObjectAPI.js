@@ -64,6 +64,15 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  *           to load domain objects
  * @memberof module:openmct
  */
+
+/**
+    * @readonly
+    * @enum {String} SEARCH_TYPES
+    * @property {String} OBJECTS Search for objects
+    * @property {String} ANNOTATIONS Search for annotations
+    * @property {String} TAGS Search for tags
+*/
+
 /**
  * Utilities for loading, saving, and manipulating domain objects.
  * @interface ObjectAPI

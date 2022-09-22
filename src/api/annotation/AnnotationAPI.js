@@ -51,6 +51,12 @@ const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
  * @property {String} backgroundColor eg. "#cc0000"
  * @property {String} foregroundColor eg. "#ffffff"
  */
+
+/**
+ * Utilities for loading, saving, and manipulating annotations and tags.
+ * @interface AnnotationAPI
+ * @memberof module:openmct
+ */
 export default class AnnotationAPI extends EventEmitter {
     constructor(openmct) {
         super();
@@ -146,14 +152,28 @@ export default class AnnotationAPI extends EventEmitter {
         this.openmct.objects.mutate(domainObject, this.ANNOTATION_LAST_CREATED, Date.now());
     }
 
+    /**
+    * @method defineTag
+    * @param {String} key a unique identifier for the tag
+    * @param {Tag} tagsDefinition the definition of the tag to add
+    */
     defineTag(tagKey, tagsDefinition) {
         this.availableTags[tagKey] = tagsDefinition;
     }
 
+    /**
+    * @method isAnnotation
+    * @param {module:openmct.DomainObject} domainObject the domainObject in question
+    * @returns {Boolean} Returns true if the domain object is an annotation
+    */
     isAnnotation(domainObject) {
         return domainObject && (domainObject.type === ANNOTATION_TYPE);
     }
 
+    /**
+    * @method getAvailableTags
+    * @returns {Tag[]} Returns an array of the available tags that have been loaded
+    */
     getAvailableTags() {
         if (this.availableTags) {
             const rearrangedToArray = Object.keys(this.availableTags).map(tagKey => {
@@ -169,12 +189,25 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
-    async getAnnotations(query, searchType) {
-        const searchResults = (await Promise.all(this.openmct.objects.search(query, null, searchType))).flat();
+    /**
+    * @method getAnnotations
+    * @param {String} query - The keystring of the domain object to search for annotations for
+    * @returns {module:openmct.DomainObject[]} Returns an array of domain objects that match the search query
+    */
+    async getAnnotations(query) {
+        const searchResults = (await Promise.all(this.openmct.objects.search(query, null, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS))).flat();
 
         return searchResults;
     }
 
+    /**
+    * @method addSingleAnnotationTag
+    * @param {module:openmct.DomainObject=} existingAnnotation - An optional annotation to add the tag to. If not specified, we will create an annotation.
+    * @param {module:openmct.DomainObject} targetDomainObject - The domain object the annotation will point to.
+    * @param {Object=} targetSpecificDetails - Optional object to add to the target object. E.g., for notebooks this would be an entryID
+    * @param {AnnotationType} annotationType - The type of annotation this is for.
+    * @returns {module:openmct.DomainObject[]} Returns the annotation that was either created or passed as an existingAnnotation
+    */
     async addSingleAnnotationTag(existingAnnotation, targetDomainObject, targetSpecificDetails, annotationType, tag) {
         if (!existingAnnotation) {
             const targets = {};
@@ -205,9 +238,13 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
+    /**
+    * @method deleteAnnotations
+    * @param {module:openmct.DomainObject[]} existingAnnotation - An array of annotations to delete (set _deleted to true)
+    */
     deleteAnnotations(annotations) {
         if (!annotations) {
-            return;
+            throw new Error('Asked to delete null annotations! 🙅‍♂️');
         }
 
         annotations.forEach(annotation => {
@@ -217,6 +254,10 @@ export default class AnnotationAPI extends EventEmitter {
         });
     }
 
+    /**
+    * @method deleteAnnotations
+    * @param {module:openmct.DomainObject} existingAnnotation - An annotations to undelete (set _deleted to false)
+    */
     unDeleteAnnotation(annotation) {
         if (annotation && annotation._deleted) {
             this.openmct.objects.mutate(annotation, '_deleted', false);

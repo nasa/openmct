@@ -350,7 +350,7 @@ export default {
             this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
 
             const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const foundAnnotations = await this.openmct.annotation.getAnnotations(query, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
+            const foundAnnotations = await this.openmct.annotation.getAnnotations(query);
             foundAnnotations.forEach((foundAnnotation) => {
                 const targetId = Object.keys(foundAnnotation.targets)[0];
                 const entryId = foundAnnotation.targets[targetId].entryId;
