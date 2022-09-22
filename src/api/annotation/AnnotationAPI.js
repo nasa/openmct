@@ -259,9 +259,11 @@ export default class AnnotationAPI extends EventEmitter {
     * @param {module:openmct.DomainObject} existingAnnotation - An annotations to undelete (set _deleted to false)
     */
     unDeleteAnnotation(annotation) {
-        if (annotation && annotation._deleted) {
-            this.openmct.objects.mutate(annotation, '_deleted', false);
+        if (!annotation) {
+            throw new Error('Asked to undelete null annotation! 🙅‍♂️');
         }
+
+        this.openmct.objects.mutate(annotation, '_deleted', false);
     }
 
     #getMatchingTags(query) {
