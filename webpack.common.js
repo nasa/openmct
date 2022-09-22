@@ -1,5 +1,13 @@
-/* global __dirname */
+/* global __dirname module */
 
+/*
+This is the OpenMCT common webpack file. It is imported by the other three webpack configurations:
+ - webpack.prod.js - the production configuration for OpenMCT (default)
+ - webpack.dev.js - the development configuration for OpenMCT
+ - webpack.coverage.js - imports webpack.dev.js and adds code coverag
+There are separate npm scripts to use these configurations, though simply running `npm install`
+will use the default production configuration.
+*/
 const path = require('path');
 const packageDefinition = require('./package.json');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -143,5 +151,4 @@ const config = {
     stats: 'errors-warnings'
 };
 
-// eslint-disable-next-line no-undef
 module.exports = config;
