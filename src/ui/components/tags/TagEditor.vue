@@ -96,7 +96,6 @@ export default {
         }
     },
     mounted() {
-        this.annotationDeletionListener = this.annotationDeletionListener.bind(this);
         this.annotationsChanged();
     },
     destroyed() {
