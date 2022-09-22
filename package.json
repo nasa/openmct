@@ -74,6 +74,7 @@
     "clean": "rm -rf ./dist ./node_modules ./package-lock.json",
     "clean-test-lint": "npm run clean; npm install; npm run test; npm run lint",
     "start": "npx webpack serve --config ./webpack.dev.js",
+    "start:coverage": "npx webpack serve --config ./webpack.coverage.js",
     "lint": "eslint example src e2e --ext .js,.vue openmct.js --max-warnings=0",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
     "build:prod": "cross-env webpack --config webpack.prod.js",

@@ -11,7 +11,7 @@ const config = {
     timeout: 60 * 1000,
     workers: 1, //Only run in serial with 1 worker
     webServer: {
-        command: 'cross-env NODE_ENV=test npm run start',
+        command: 'cross-env NODE_ENV=test npm run start:coverage',
         url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: !CI
