@@ -25,7 +25,7 @@
     draggable="true"
     @dragstart="emitDragStartEvent"
     @dragenter="onDragenter"
-    @dragover="onDragover"
+    @dragover.prevent
     @dragleave="onDragleave"
     @drop="emitDropEvent"
 >
@@ -88,9 +88,6 @@ export default {
         };
     },
     methods: {
-        onDragover(event) {
-            event.preventDefault();
-        },
         emitDropEvent(event) {
             this.$emit('drop-custom', this.index);
             this.hover = false;

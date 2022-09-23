@@ -32,7 +32,7 @@
         class="c-elements-pool__elements"
     >
         <ul
-            v-if="elements.length > 0"
+            v-if="elements && elements.length > 0 && !isPlotElement(parentObject)"
             id="inspector-elements-tree"
             class="c-tree c-elements-pool__tree"
         >
@@ -51,6 +51,25 @@
                 @drop="moveToIndex(elements.length)"
             ></li>
         </ul>
+        <ul
+            v-else-if="parentObject && isPlotElement(parentObject)"
+            id="inspector-elements-tree"
+            class="c-tree c-elements-pool__tree"
+        >
+            <element-item-group
+                :parent-object="parentObject"
+                :elements="elements"
+                label="Y-Axis 1"
+            />
+            <element-item-group
+                :parent-object="parentObject"
+                label="Y-Axis 2"
+            />
+            <element-item-group
+                :parent-object="parentObject"
+                label="Y-Axis 3"
+            />
+        </ul>
         <div v-if="elements.length === 0">
             No contained elements
         </div>
@@ -62,11 +81,13 @@
 import _ from 'lodash';
 import Search from '../components/search.vue';
 import ElementItem from './ElementItem.vue';
+import ElementItemGroup from './ElementItemGroup.vue';
 
 export default {
     components: {
-        'Search': Search,
-        'ElementItem': ElementItem
+        Search,
+        ElementItem,
+        ElementItemGroup
     },
     inject: ['openmct'],
     data() {
@@ -168,6 +189,9 @@ export default {
         moveFrom(index) {
             this.allowDrop = true;
             this.moveFromIndex = index;
+        },
+        isPlotElement(mutableDomainObject) {
+            return mutableDomainObject.type.includes('plot');
         }
     }
 };
