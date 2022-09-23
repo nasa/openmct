@@ -27,6 +27,8 @@ import XAxisModel from "./XAxisModel";
 import YAxisModel from "./YAxisModel";
 import LegendModel from "./LegendModel";
 
+const MAX_Y_AXES = 3;
+
 /**
  * PlotConfiguration model stores the configuration of a plot and some
  * limited state.  The indiidual parts of the plot configuration model
@@ -59,14 +61,36 @@ export default class PlotConfigurationModel extends Model {
             model: options.model.yAxis,
             plot: this,
             openmct: options.openmct,
-            id: 1
+            id: options.model.yAxis.id || 1
         });
-        this.yAxis2 = new YAxisModel({
-            model: options.model?.yAxis2,
-            plot: this,
-            openmct: options.openmct,
-            id: 2
-        });
+        //Add any axes in addition to the yAxis above
+        const max_additional_axes = Math.min(options.max_y_axes || 1, MAX_Y_AXES) - 1;
+        this.additionalYAxes = [];
+        if (Array.isArray(options.model.additionalYAxes)) {
+            options.model.additionalYAxes.forEach((yAxis) => {
+                if (this.additionalYAxes.length >= max_additional_axes) {
+                    return;
+                }
+
+                this.additionalYAxes.push(new YAxisModel({
+                    model: yAxis,
+                    plot: this,
+                    openmct: options.openmct,
+                    id: yAxis.id || this.additionalYAxes.length + 2
+                }));
+            });
+        }
+
+        // If the config doesn't have info about all additional axes, we add them
+        for (let axesCount = this.additionalYAxes.length; axesCount < max_additional_axes; axesCount++) {
+            this.additionalYAxes.push(new YAxisModel({
+                plot: this,
+                openmct: options.openmct,
+                id: axesCount + 2
+            }));
+        }
+        // end add additional axes
+
         this.legend = new LegendModel({
             model: options.model.legend,
             plot: this,
@@ -88,7 +112,9 @@ export default class PlotConfigurationModel extends Model {
         }
 
         this.yAxis.listenToSeriesCollection(this.series);
-        this.yAxis2.listenToSeriesCollection(this.series);
+        this.additionalYAxes.forEach(yAxis => {
+            yAxis.listenToSeriesCollection(this.series);
+        });
         this.legend.listenToSeriesCollection(this.series);
 
         this.listenTo(this, 'destroy', this.onDestroy, this);

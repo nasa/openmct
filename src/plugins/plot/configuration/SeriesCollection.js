@@ -100,8 +100,7 @@ export default class SeriesCollection extends Collection {
             collection: this,
             persistedConfig: this.plot
                 .getPersistedSeriesConfig(domainObject.identifier),
-            filters: filters,
-            yAxisId: this.models.length + 1
+            filters: filters
         }));
     }
     removeTelemetryObject(identifier) {

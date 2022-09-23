@@ -135,6 +135,7 @@ export default class YAxisModel extends Model {
         }
     }
     resetStats() {
+        //TODO: do we need the series id here?
         this.unset('stats');
         this.getSeriesForYAxis(this.seriesCollection).forEach(series => {
             if (series.has('stats')) {
@@ -148,6 +149,18 @@ export default class YAxisModel extends Model {
 
             return seriesYAxisId === this.id;
         });
+    }
+
+    getYAxisForId(id) {
+        const plotModel = this.plot.get('domainObject');
+        let yAxis;
+        if (this.id === 1) {
+            yAxis = plotModel.configuration?.yAxis;
+        } else {
+            yAxis = plotModel.configuration?.additionalYAxes.find(additionalYAxis => additionalYAxis.id === id);
+        }
+
+        return yAxis;
     }
     /**
      * @param {import('./PlotSeries').default} series
@@ -272,13 +285,13 @@ export default class YAxisModel extends Model {
      * @param {import('./SeriesCollection').default} seriesCollection
      */
     updateFromSeries(seriesCollection) {
-        const plotModel = this.plot.get('domainObject');
         const seriesForThisYAxis = this.getSeriesForYAxis(seriesCollection);
         if (!seriesForThisYAxis.length) {
             return;
         }
 
-        const label = this.id === 1 ? plotModel.configuration?.yAxis?.label : plotModel.configuration?.yAxis2?.label;
+        const yAxis = this.getYAxisForId(this.id);
+        const label = yAxis?.label;
         const sampleSeries = seriesForThisYAxis[0];
         if (!sampleSeries || !sampleSeries.metadata) {
             if (!label) {
@@ -352,7 +365,7 @@ export default class YAxisModel extends Model {
             autoscale: true,
             logMode: options.model?.logMode ?? false,
             autoscalePadding: 0.1,
-            id: options?.id
+            id: options.id
 
             // 'range' is not specified here, it is undefined at first. When the
             // user turns off autoscale, the current 'displayRange' is used for
