@@ -311,6 +311,13 @@ export default {
             this.unobserveEntries();
         }
 
+        Object.keys(this.notebookAnnotations).forEach(entryID => {
+            const notebookAnnotationsForEntry = this.notebookAnnotations[entryID];
+            notebookAnnotationsForEntry.forEach(notebookAnnotation => {
+                this.openmct.objects.destroyMutable(notebookAnnotation);
+            });
+        });
+
         window.removeEventListener('orientationchange', this.formatSidebar);
         window.removeEventListener('hashchange', this.setSectionAndPageFromUrl);
     },
@@ -363,7 +370,8 @@ export default {
                 });
                 if (!annotationExtant) {
                     const annotationArray = this.notebookAnnotations[entryId];
-                    annotationArray.push(foundAnnotation);
+                    const mutableAnnotation = this.openmct.objects.toMutable(foundAnnotation);
+                    annotationArray.push(mutableAnnotation);
                 }
             });
         },

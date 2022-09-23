@@ -73,8 +73,7 @@ export default {
     data() {
         return {
             addedTags: [],
-            userAddingTag: false,
-            deleteAnnotationListeners: {}
+            userAddingTag: false
         };
     },
     computed: {
@@ -98,15 +97,8 @@ export default {
     mounted() {
         this.annotationsChanged();
     },
-    destroyed() {
-        Object.keys(this.deleteAnnotationListeners).forEach(annotationKeyString => {
-            this.deleteAnnotationListeners[annotationKeyString]();
-        });
-        this.deleteAnnotationListeners = [];
-    },
     methods: {
         annotationsChanged() {
-            this.addAnnotationListeners(this.annotations);
             if (this.annotations && this.annotations.length) {
                 this.tagsChanged();
             }
@@ -120,15 +112,6 @@ export default {
                 this.userAddingTag = false;
                 this.tagsChanged();
             }
-        },
-        addAnnotationListeners(annotations) {
-            annotations.forEach(annotation => {
-                const annotationKeyString = this.openmct.objects.makeKeyString(annotation.identifier);
-                if (!(this.deleteAnnotationListeners[annotationKeyString])) {
-                    const deleteAnnotationListener = this.openmct.objects.observe(annotation, '*', this.annotationDeletionListener);
-                    this.deleteAnnotationListeners[annotationKeyString] = deleteAnnotationListener;
-                }
-            });
         },
         tagsChanged() {
             // gather tags from annotations
@@ -177,9 +160,6 @@ export default {
                 this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
 
             this.userAddingTag = false;
-            if (!existingAnnotation) {
-                this.addAnnotationListeners([createdAnnotation]);
-            }
 
             this.$emit('tags-updated', createdAnnotation);
         }
