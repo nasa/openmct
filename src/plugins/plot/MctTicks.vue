@@ -103,6 +103,12 @@ export default {
                 return 6;
             }
         },
+        index: {
+            type: Number,
+            default() {
+                return 1;
+            }
+        },
         position: {
             required: true,
             type: String,
@@ -145,7 +151,13 @@ export default {
                 throw new Error('config is missing');
             }
 
-            return config[this.axisType];
+            if (this.axisType === 'yAxis' && this.index === 1) {
+                return config.yAxis;
+            } else if (this.axisType === 'yAxis' && this.index === 2) {
+                return config.yAxis2;
+            } else {
+                return config[this.axisType];
+            }
         },
         /**
        * Determine whether ticks should be regenerated for a given range.

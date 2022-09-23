@@ -54,6 +54,7 @@
     <mct-ticks
         :axis-type="'yAxis'"
         class="gl-plot-ticks"
+        :index="index"
         :position="'top'"
         @plotTickWidth="onTickWidthChange"
     />
@@ -80,6 +81,12 @@ export default {
             type: Boolean,
             default() {
                 return true;
+            }
+        },
+        index: {
+            type: Number,
+            default() {
+                return 1;
             }
         },
         seriesModel: {
@@ -116,7 +123,11 @@ export default {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let config = configStore.get(configId);
             if (config) {
-                return config.yAxis;
+                if (this.index === 1) {
+                    return config.yAxis;
+                } else {
+                    return config.yAxis2;
+                }
             }
         },
         setUpYAxisOptions() {

@@ -116,7 +116,8 @@ export default class PlotSeries extends Model {
             markerShape: 'point',
             markerSize: 2.0,
             alarmMarkers: true,
-            limitLines: false
+            limitLines: false,
+            yAxisId: options.yAxisId
         };
     }
 

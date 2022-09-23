@@ -58,7 +58,14 @@ export default class PlotConfigurationModel extends Model {
         this.yAxis = new YAxisModel({
             model: options.model.yAxis,
             plot: this,
-            openmct: options.openmct
+            openmct: options.openmct,
+            id: 1
+        });
+        this.yAxis2 = new YAxisModel({
+            model: options.model?.yAxis2,
+            plot: this,
+            openmct: options.openmct,
+            id: 2
         });
         this.legend = new LegendModel({
             model: options.model.legend,
@@ -81,6 +88,7 @@ export default class PlotConfigurationModel extends Model {
         }
 
         this.yAxis.listenToSeriesCollection(this.series);
+        this.yAxis2.listenToSeriesCollection(this.series);
         this.legend.listenToSeriesCollection(this.series);
 
         this.listenTo(this, 'destroy', this.onDestroy, this);

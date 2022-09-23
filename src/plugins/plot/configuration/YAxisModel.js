@@ -136,10 +136,17 @@ export default class YAxisModel extends Model {
     }
     resetStats() {
         this.unset('stats');
-        this.seriesCollection.forEach(series => {
+        this.getSeriesForYAxis(this.seriesCollection).forEach(series => {
             if (series.has('stats')) {
                 this.updateStats(series.get('stats'));
             }
+        });
+    }
+    getSeriesForYAxis(seriesCollection) {
+        return seriesCollection.filter(series => {
+            const seriesYAxisId = series.get('yAxisId') || 1;
+
+            return seriesYAxisId === this.id;
         });
     }
     /**
@@ -147,6 +154,10 @@ export default class YAxisModel extends Model {
      */
     trackSeries(series) {
         this.listenTo(series, 'change:stats', seriesStats => {
+            if (series.get('yAxisId') !== this.id) {
+                return;
+            }
+
             if (!seriesStats) {
                 this.resetStats();
             } else {
@@ -154,6 +165,10 @@ export default class YAxisModel extends Model {
             }
         });
         this.listenTo(series, 'change:yKey', () => {
+            if (series.get('yAxisId') !== this.id) {
+                return;
+            }
+
             this.updateFromSeries(this.seriesCollection);
         });
     }
@@ -258,8 +273,13 @@ export default class YAxisModel extends Model {
      */
     updateFromSeries(seriesCollection) {
         const plotModel = this.plot.get('domainObject');
-        const label = plotModel.configuration?.yAxis?.label;
-        const sampleSeries = seriesCollection.first();
+        const seriesForThisYAxis = this.getSeriesForYAxis(seriesCollection);
+        if (!seriesForThisYAxis.length) {
+            return;
+        }
+
+        const label = this.id === 1 ? plotModel.configuration?.yAxis?.label : plotModel.configuration?.yAxis2?.label;
+        const sampleSeries = seriesForThisYAxis[0];
         if (!sampleSeries || !sampleSeries.metadata) {
             if (!label) {
                 this.unset('label');
@@ -280,7 +300,7 @@ export default class YAxisModel extends Model {
 
         this.set('values', yMetadata.values);
         if (!label) {
-            const labelName = seriesCollection
+            const labelName = seriesForThisYAxis
                 .map(s => (s.metadata ? s.metadata.value(s.get('yKey')).name : ''))
                 .reduce((a, b) => {
                     if (a === undefined) {
@@ -300,7 +320,7 @@ export default class YAxisModel extends Model {
                 return;
             }
 
-            const labelUnits = seriesCollection
+            const labelUnits = seriesForThisYAxis
                 .map(s => (s.metadata ? s.metadata.value(s.get('yKey')).units : ''))
                 .reduce((a, b) => {
                     if (a === undefined) {
@@ -331,7 +351,8 @@ export default class YAxisModel extends Model {
             frozen: false,
             autoscale: true,
             logMode: options.model?.logMode ?? false,
-            autoscalePadding: 0.1
+            autoscalePadding: 0.1,
+            id: options?.id
 
             // 'range' is not specified here, it is undefined at first. When the
             // user turns off autoscale, the current 'displayRange' is used for

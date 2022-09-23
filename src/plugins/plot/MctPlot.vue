@@ -39,9 +39,23 @@
             :tick-width="tickWidth"
             :single-series="seriesModels.length === 1"
             :has-same-range-value="hasSameRangeValue"
+            :index="1"
             :series-model="seriesModels[0]"
             :style="{
                 left: (plotWidth - tickWidth) + 'px'
+            }"
+            @yKeyChanged="setYAxisKey"
+            @tickWidthChanged="onTickWidthChange"
+        />
+        <y-axis
+            v-if="seriesModels.length > 0"
+            :tick-width="tickWidth"
+            :single-series="seriesModels.length === 1"
+            :has-same-range-value="hasSameRangeValue"
+            :index="2"
+            :series-model="seriesModels[1]"
+            :style="{
+                left: (plotWidth - tickWidth - 20) + 'px'
             }"
             @yKeyChanged="setYAxisKey"
             @tickWidthChanged="onTickWidthChange"
