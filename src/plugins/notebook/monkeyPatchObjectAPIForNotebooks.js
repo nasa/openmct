@@ -10,7 +10,7 @@ export default function (openmct) {
         }
 
         const isNewMutable = !domainObject.isMutable;
-        const localMutable = openmct.objects._toMutable(domainObject);
+        const localMutable = openmct.objects.toMutable(domainObject);
         let result;
 
         try {

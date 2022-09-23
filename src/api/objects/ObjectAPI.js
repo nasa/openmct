@@ -196,7 +196,6 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-
     get(identifier, abortSignal) {
         let keystring = this.makeKeyString(identifier);
 
@@ -231,7 +230,7 @@ export default class ObjectAPI {
             if (result.isMutable) {
                 result.$refresh(result);
             } else {
-                let mutableDomainObject = this._toMutable(result);
+                let mutableDomainObject = this.toMutable(result);
                 mutableDomainObject.$refresh(result);
             }
 
@@ -308,7 +307,7 @@ export default class ObjectAPI {
         }
 
         return this.get(identifier).then((object) => {
-            return this._toMutable(object);
+            return this.toMutable(object);
         });
     }
 
@@ -498,7 +497,7 @@ export default class ObjectAPI {
         } else {
             //Creating a temporary mutable domain object allows other mutable instances of the
             //object to be kept in sync.
-            let mutableDomainObject = this._toMutable(domainObject);
+            let mutableDomainObject = this.toMutable(domainObject);
 
             //Mutate original object
             MutableDomainObject.mutateObject(domainObject, path, value);
@@ -518,15 +517,19 @@ export default class ObjectAPI {
     }
 
     /**
-     * @private
+     * Create a mutable domain object from an existing domain object
+     * @param {module:openmct.DomainObject} domainObject the object to make mutable
+     * @returns {MutableDomainObject} a mutable domain object that will automatically sync
+     * @method toMutable
+     * @memberof module:openmct.ObjectAPI#
      */
-    _toMutable(object) {
+    toMutable(domainObject) {
         let mutableObject;
 
-        if (object.isMutable) {
-            mutableObject = object;
+        if (domainObject.isMutable) {
+            mutableObject = domainObject;
         } else {
-            mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
+            mutableObject = MutableDomainObject.createMutable(domainObject, this.eventEmitter);
 
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
@@ -534,7 +537,7 @@ export default class ObjectAPI {
 
             if (provider !== undefined
                 && provider.observe !== undefined
-                && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
+                && this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
                 let unobserve = provider.observe(identifier, (updatedModel) => {
                     // modified can sometimes be undefined, so make it 0 in this case
                     const mutableObjectModification = mutableObject.modified ?? Number.MIN_SAFE_INTEGER;
@@ -592,7 +595,7 @@ export default class ObjectAPI {
         if (domainObject.isMutable) {
             return domainObject.$observe(path, callback);
         } else {
-            let mutable = this._toMutable(domainObject);
+            let mutable = this.toMutable(domainObject);
             mutable.$observe(path, callback);
 
             return () => mutable.$destroy();
