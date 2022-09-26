@@ -93,10 +93,10 @@ export default {
             const UNKNOWN_USER = 'Unknown';
             const title = this.domainObject.name;
             const typeName = this.type ? this.type.definition.name : `Unknown: ${this.domainObject.type}`;
+            const createdTimestamp = this.domainObject.created;
             const createdBy = this.domainObject.createdBy ? this.domainObject.createdBy : UNKNOWN_USER;
             const modifiedBy = this.domainObject.modifiedBy ? this.domainObject.modifiedBy : UNKNOWN_USER;
-            const timestampLabel = this.domainObject.modified ? 'Modified' : 'Created';
-            const timestamp = this.domainObject.modified ? this.domainObject.modified : this.domainObject.created;
+            const modifiedTimestamp = this.domainObject.modified ? this.domainObject.modified : this.domainObject.created;
             const notes = this.domainObject.notes;
             const version = this.domainObject.version;
 
@@ -126,15 +126,28 @@ export default {
                 });
             }
 
-            if (timestamp !== undefined) {
-                const formattedTimestamp = Moment.utc(timestamp)
+            if (createdTimestamp !== undefined) {
+                const formattedCreatedTimestamp = Moment.utc(createdTimestamp)
                     .format('YYYY-MM-DD[\n]HH:mm:ss')
                     + ' UTC';
 
                 details.push(
                     {
-                        name: timestampLabel,
-                        value: formattedTimestamp
+                        name: 'Created',
+                        value: formattedCreatedTimestamp
+                    }
+                );
+            }
+
+            if (modifiedTimestamp !== undefined) {
+                const formattedModifiedTimestamp = Moment.utc(modifiedTimestamp)
+                    .format('YYYY-MM-DD[\n]HH:mm:ss')
+                    + ' UTC';
+
+                details.push(
+                    {
+                        name: 'Modified',
+                        value: formattedModifiedTimestamp
                     }
                 );
             }

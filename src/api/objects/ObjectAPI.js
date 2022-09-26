@@ -373,6 +373,7 @@ export default class ObjectAPI {
                     savedReject = reject;
                 });
                 domainObject.persisted = persistedTime;
+                domainObject.created = persistedTime;
                 domainObject.createdBy = await this.#getCurrentUsername();
                 const newObjectPromise = provider.create(domainObject);
                 if (newObjectPromise) {
