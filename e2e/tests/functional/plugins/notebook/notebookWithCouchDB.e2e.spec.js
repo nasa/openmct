@@ -53,7 +53,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
             page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
             page.waitForRequest('**/openmct/_all_docs?include_docs=true'),
             // Triggers the request
-            page.click('text=Page Add >> button'),
+            page.click('[aria-label="Add Page"]'),
             // Ensures that there are no other network requests
             page.waitForLoadState('networkidle')
         ]);
@@ -98,7 +98,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
-        await page.waitForSelector('.c-tag__label:has-text("Driving")');
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")');
         page.waitForLoadState('networkidle');
         expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
 
@@ -107,7 +107,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
-        await page.waitForSelector('.c-tag__label:has-text("Drilling")');
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")');
         page.waitForLoadState('networkidle');
         expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
 
@@ -116,7 +116,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
-        await page.waitForSelector('.c-tag__label:has-text("Science")');
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Science")');
         page.waitForLoadState('networkidle');
         expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
 
@@ -128,21 +128,21 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         // 4) The shared worker event from 👆 POST request
         // This happens for 3 tags so 12 requests
         addingNotebookElementsRequests = [];
-        await page.hover('.c-tag__label:has-text("Driving")');
-        await page.locator('.c-tag__label:has-text("Driving") ~ .c-completed-tag-deletion').click();
-        await page.waitForSelector('.c-tag__label:has-text("Driving")', {state: 'hidden'});
-        await page.hover('.c-tag__label:has-text("Drilling")');
-        await page.locator('.c-tag__label:has-text("Drilling") ~ .c-completed-tag-deletion').click();
-        await page.waitForSelector('.c-tag__label:has-text("Drilling")', {state: 'hidden'});
-        page.hover('.c-tag__label:has-text("Science")');
-        await page.locator('.c-tag__label:has-text("Science") ~ .c-completed-tag-deletion').click();
-        await page.waitForSelector('.c-tag__label:has-text("Science")', {state: 'hidden'});
+        await page.hover('[aria-label="Tag"]:has-text("Driving")');
+        await page.locator('[aria-label="Tag"]:has-text("Driving") ~ .c-completed-tag-deletion').click();
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")', {state: 'hidden'});
+        await page.hover('[aria-label="Tag"]:has-text("Drilling")');
+        await page.locator('[aria-label="Tag"]:has-text("Drilling") ~ .c-completed-tag-deletion').click();
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")', {state: 'hidden'});
+        page.hover('[aria-label="Tag"]:has-text("Science")');
+        await page.locator('[aria-label="Tag"]:has-text("Science") ~ .c-completed-tag-deletion').click();
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Science")', {state: 'hidden'});
         page.waitForLoadState('networkidle');
         expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(12);
 
         // Add two more pages
-        await page.click('text=Page Add >> button');
-        await page.click('text=Page Add >> button');
+        await page.click('[aria-label="Add Page"]');
+        await page.click('[aria-label="Add Page"]');
 
         // Add three entries
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
@@ -162,19 +162,19 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
-        await page.waitForSelector('.c-tag__label:has-text("Science")');
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Science")');
 
         await page.hover(`button:has-text("Add Tag") >> nth=2`);
         await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
-        await page.waitForSelector('.c-tag__label:has-text("Drilling")');
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")');
 
         await page.hover(`button:has-text("Add Tag") >> nth=2`);
         await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
-        await page.waitForSelector('.c-tag__label:has-text("Driving")');
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")');
         page.waitForLoadState('networkidle');
 
         // Add a fourth entry

@@ -123,8 +123,8 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await createNotebookEntryAndTags(page);
         await page.locator('[aria-label="Notebook Entries"]').click();
         // Delete Driving
-        await page.hover('.c-tag__label:has-text("Driving")');
-        await page.locator('.c-tag__label:has-text("Driving") ~ .c-completed-tag-deletion').click();
+        await page.hover('[aria-label="Tag"]:has-text("Driving")');
+        await page.locator('[aria-label="Tag"]:has-text("Driving") ~ .c-completed-tag-deletion').click();
 
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Notebook Entry"]')).not.toContainText("Driving");
