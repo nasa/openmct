@@ -80,8 +80,10 @@
 
 <script>
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
+import eventHelpers from "@/plugins/plot/lib/eventHelpers";
 
 export default {
+    inject: ['openmct', 'domainObject'],
     props: {
         seriesObject: {
             type: Object,
@@ -140,7 +142,17 @@ export default {
         }
     },
     mounted() {
+        eventHelpers.extend(this);
+        this.listenTo(this.seriesObject, 'change:color', (newColor) => {
+            this.updateColor(newColor);
+        }, this);
+        this.listenTo(this.seriesObject, 'change:name', () => {
+            this.updateName();
+        }, this);
         this.initialize();
+    },
+    beforeDestroy() {
+        this.stopListening();
     },
     methods: {
         initialize(highlightedObject) {
@@ -169,6 +181,12 @@ export default {
                 this.formattedMinY = '';
                 this.formattedMaxY = '';
             }
+        },
+        updateColor(newColor) {
+            this.colorAsHexString = newColor.asHexString();
+        },
+        updateName(newName) {
+            this.nameWithUnit = this.seriesObject.nameWithUnit();
         },
         toggleHover(hover) {
             this.hover = hover;

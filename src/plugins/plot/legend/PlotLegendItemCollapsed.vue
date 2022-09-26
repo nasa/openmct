@@ -41,7 +41,7 @@
         <span class="plot-series-name">{{ nameWithUnit }}</span>
     </div>
     <div
-        v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none' && valueToShowWhenCollapsed !== 'units')"
+        v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none' && valueToShowWhenCollapsed !== 'unit')"
         class="plot-series-value hover-value-enabled"
         :class="[{ 'cursor-hover': notNearest }, valueToDisplayWhenCollapsedClass, mctLimitStateClass]"
     >
@@ -54,8 +54,10 @@
 <script>
 
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
+import eventHelpers from "../lib/eventHelpers";
 
 export default {
+    inject: ['openmct', 'domainObject'],
     props: {
         valueToShowWhenCollapsed: {
             type: String,
@@ -103,7 +105,17 @@ export default {
         }
     },
     mounted() {
+        eventHelpers.extend(this);
+        this.listenTo(this.seriesObject, 'change:color', (newColor) => {
+            this.updateColor(newColor);
+        }, this);
+        this.listenTo(this.seriesObject, 'change:name', () => {
+            this.updateName();
+        }, this);
         this.initialize();
+    },
+    beforeDestroy() {
+        this.stopListening();
     },
     methods: {
         initialize(highlightedObject) {
@@ -129,6 +141,12 @@ export default {
             } else {
                 this.formattedYValueFromStats = '';
             }
+        },
+        updateColor(newColor) {
+            this.colorAsHexString = newColor.asHexString();
+        },
+        updateName() {
+            this.nameWithUnit = this.seriesObject.nameWithUnit();
         },
         toggleHover(hover) {
             this.hover = hover;

@@ -281,6 +281,10 @@ export default {
                 return false;
             }
 
+            if (!this.isEditing) {
+                return false;
+            }
+
             let containerId = event.dataTransfer.getData('containerid');
             let container = this.containers.filter((c) => c.id === containerId)[0];
             let containerPos = this.containers.indexOf(container);

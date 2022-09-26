@@ -20,59 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function () {
+import utils from './utils';
+
+export default function (staticFaults = false) {
     return function install(openmct) {
         openmct.install(openmct.plugins.FaultManagement());
 
+        const faultsData = utils.randomFaults(staticFaults);
+
         openmct.faults.addProvider({
             request(domainObject, options) {
-                const faults = JSON.parse(localStorage.getItem('faults'));
-
-                return Promise.resolve(faults.alarms);
+                return Promise.resolve(faultsData);
             },
             subscribe(domainObject, callback) {
-                const faultsData = JSON.parse(localStorage.getItem('faults')).alarms;
-
-                function getRandomIndex(start, end) {
-                    return Math.floor(start + (Math.random() * (end - start + 1)));
-                }
-
-                let id = setInterval(() => {
-                    const index = getRandomIndex(0, faultsData.length - 1);
-                    const randomFaultData = faultsData[index];
-                    const randomFault = randomFaultData.fault;
-                    randomFault.currentValueInfo.value = Math.random();
-                    callback({
-                        fault: randomFault,
-                        type: 'alarms'
-                    });
-                }, 300);
-
-                return () => {
-                    clearInterval(id);
-                };
+                return () => {};
             },
             supportsRequest(domainObject) {
-                const faults = localStorage.getItem('faults');
-
-                return faults && domainObject.type === 'faultManagement';
+                return domainObject.type === 'faultManagement';
             },
             supportsSubscribe(domainObject) {
-                const faults = localStorage.getItem('faults');
-
-                return faults && domainObject.type === 'faultManagement';
+                return domainObject.type === 'faultManagement';
             },
             acknowledgeFault(fault, { comment = '' }) {
-                console.log('acknowledgeFault', fault);
-                console.log('comment', comment);
+                utils.acknowledgeFault(fault);
 
                 return Promise.resolve({
                     success: true
                 });
             },
-            shelveFault(fault, shelveData) {
-                console.log('shelveFault', fault);
-                console.log('shelveData', shelveData);
+            shelveFault(fault, duration) {
+                utils.shelveFault(fault, duration);
 
                 return Promise.resolve({
                     success: true

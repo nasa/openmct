@@ -5,7 +5,6 @@
     :class="{
         'c-selector': isSelectorTree
     }"
-    :style="treeHeight"
 >
     <div
         ref="search"
@@ -41,30 +40,30 @@
     <div
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
+        role="tree"
+        aria-expanded="true"
     >
-        <div>
 
-            <div
-                ref="dummyItem"
-                class="c-tree__item-h"
-                style="left: -1000px; position: absolute; visibility: hidden"
-            >
-                <div class="c-tree__item">
-                    <span class="c-tree__item__view-control c-nav__up is-enabled"></span>
-                    <a
-                        class="c-tree__item__label c-object-label"
-                        draggable="true"
-                        href="#"
-                    >
-                        <div class="c-tree__item__type-icon c-object-label__type-icon icon-folder">
-                            <span title="Open MCT"></span>
-                        </div>
-                        <div class="c-tree__item__name c-object-label__name">
-                            Open MCT
-                        </div>
-                    </a>
-                    <span class="c-tree__item__view-control c-nav__down"></span>
-                </div>
+        <div
+            ref="dummyItem"
+            class="c-tree__item-h"
+            style="left: -1000px; position: absolute; visibility: hidden"
+        >
+            <div class="c-tree__item">
+                <span class="c-tree__item__view-control c-nav__up is-enabled"></span>
+                <a
+                    class="c-tree__item__label c-object-label"
+                    draggable="true"
+                    href="#"
+                >
+                    <div class="c-tree__item__type-icon c-object-label__type-icon icon-folder">
+                        <span title="Open MCT"></span>
+                    </div>
+                    <div class="c-tree__item__name c-object-label__name">
+                        Open MCT
+                    </div>
+                </a>
+                <span class="c-tree__item__view-control c-nav__down"></span>
             </div>
         </div>
 
@@ -211,7 +210,7 @@ export default {
             if (!this.isSelectorTree) {
                 return {};
             } else {
-                return { height: this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
+                return { 'min-height': this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
             }
         }
     },
@@ -467,7 +466,7 @@ export default {
             }
         },
         scrollEndEvent() {
-            if (!this.$refs.srcrollable) {
+            if (!this.$refs.scrollable) {
                 return;
             }
 
@@ -576,14 +575,17 @@ export default {
             };
         },
         addTreeItemObserver(domainObject, parentObjectPath) {
-            if (this.observers[domainObject.identifier.key]) {
-                this.observers[domainObject.identifier.key]();
+            const objectPath = [domainObject].concat(parentObjectPath);
+            const navigationPath = this.buildNavigationPath(objectPath);
+
+            if (this.observers[navigationPath]) {
+                this.observers[navigationPath]();
             }
 
-            this.observers[domainObject.identifier.key] = this.openmct.objects.observe(
+            this.observers[navigationPath] = this.openmct.objects.observe(
                 domainObject,
                 'name',
-                this.updateTreeItems.bind(this, parentObjectPath)
+                this.sortTreeItems.bind(this, parentObjectPath)
             );
         },
         async updateTreeItems(parentObjectPath) {
@@ -609,6 +611,44 @@ export default {
                     this.openTreeItem(item);
                 }
             }
+        },
+        sortTreeItems(parentObjectPath) {
+            const navigationPath = this.buildNavigationPath(parentObjectPath);
+            const parentItem = this.getTreeItemByPath(navigationPath);
+
+            // If the parent is not sortable, skip sorting
+            if (!this.isSortable(parentObjectPath)) {
+                return;
+            }
+
+            // Sort the renamed object and its siblings (direct descendants of the parent)
+            const directDescendants = this.getChildrenInTreeFor(parentItem, false);
+            directDescendants.sort(this.sortNameAscending);
+
+            // Take a copy of the sorted descendants array
+            const sortedTreeItems = directDescendants.slice();
+
+            directDescendants.forEach(descendant => {
+                const parent = this.getTreeItemByPath(descendant.navigationPath);
+
+                // If descendant is not open, skip
+                if (!this.isTreeItemOpen(parent)) {
+                    return;
+                }
+
+                // If descendant is open but has no children, skip
+                const children = this.getChildrenInTreeFor(parent, true);
+                if (children.length === 0) {
+                    return;
+                }
+
+                // Splice in the children of the descendant
+                const parentIndex = sortedTreeItems.map(item => item.navigationPath).indexOf(parent.navigationPath);
+                sortedTreeItems.splice(parentIndex + 1, 0, ...children);
+            });
+
+            // Splice in all of the sorted descendants
+            this.treeItems.splice(this.treeItems.indexOf(parentItem) + 1, sortedTreeItems.length, ...sortedTreeItems);
         },
         buildNavigationPath(objectPath) {
             return '/browse/' + [...objectPath].reverse()

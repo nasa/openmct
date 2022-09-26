@@ -6,7 +6,8 @@ const cssClasses = {
     large: 'l-overlay-large',
     small: 'l-overlay-small',
     fit: 'l-overlay-fit',
-    fullscreen: 'l-overlay-fullscreen'
+    fullscreen: 'l-overlay-fullscreen',
+    dialog: 'l-overlay-dialog'
 };
 
 class Overlay extends EventEmitter {

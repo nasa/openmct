@@ -23,6 +23,7 @@
 import {createOpenMct, resetApplicationState} from "utils/testing";
 import PlanPlugin from "../plan/plugin";
 import Vue from 'vue';
+import Properties from "@/ui/inspector/details/Properties.vue";
 
 describe('the plugin', function () {
     let planDefinition;
@@ -210,6 +211,65 @@ describe('the plugin', function () {
                 expect(statusEl).toBeDefined();
                 done();
             });
+        });
+    });
+
+    describe('the plan version', () => {
+        let component;
+        let componentObject;
+        let testPlanObject = {
+            name: 'Plan',
+            type: 'plan',
+            identifier: {
+                key: 'test-plan',
+                namespace: ''
+            },
+            version: 'v1'
+        };
+
+        beforeEach(() => {
+            openmct.selection.select([{
+                element: element,
+                context: {
+                    item: testPlanObject
+                }
+            }, {
+                element: openmct.layout.$refs.browseObject.$el,
+                context: {
+                    item: testPlanObject,
+                    supportsMultiSelect: false
+                }
+            }], false);
+
+            return Vue.nextTick().then(() => {
+                let viewContainer = document.createElement('div');
+                child.append(viewContainer);
+                component = new Vue({
+                    el: viewContainer,
+                    components: {
+                        Properties
+                    },
+                    provide: {
+                        openmct: openmct
+                    },
+                    template: '<properties/>'
+                });
+            });
+        });
+
+        afterEach(() => {
+            component.$destroy();
+        });
+
+        it('provides an inspector view with the version information if available', () => {
+            componentObject = component.$root.$children[0];
+            const propertiesEls = componentObject.$el.querySelectorAll('.c-inspect-properties__row');
+            expect(propertiesEls.length).toEqual(4);
+            const found = Array.from(propertiesEls).some((propertyEl) => {
+                return (propertyEl.children[0].innerHTML.trim() === 'Version'
+                    && propertyEl.children[1].innerHTML.trim() === 'v1');
+            });
+            expect(found).toBeTrue();
         });
     });
 });

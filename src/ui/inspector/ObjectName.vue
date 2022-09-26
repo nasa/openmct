@@ -63,6 +63,7 @@ export default {
         return {
             domainObject: {},
             activity: undefined,
+            layoutItem: undefined,
             keyString: undefined,
             multiSelect: false,
             itemsSelected: 0,
@@ -79,6 +80,12 @@ export default {
         typeCssClass() {
             if (this.activity) {
                 return 'icon-activity';
+            }
+
+            if (!this.domainObject && this.layoutItem) {
+                const layoutItemType = this.openmct.types.get(this.layoutItem.type);
+
+                return layoutItemType.definition.cssClass;
             }
 
             if (this.type.definition.cssClass === undefined) {
@@ -132,6 +139,8 @@ export default {
                     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
                     this.status = this.openmct.status.get(this.keyString);
                     this.statusUnsubscribe = this.openmct.status.observe(this.keyString, this.updateStatus);
+                } else if (selection[0][0].context.layoutItem) {
+                    this.layoutItem = selection[0][0].context.layoutItem;
                 }
             }
         },

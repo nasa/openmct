@@ -36,7 +36,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'networkidle' });
 
-    createDomainObjectWithDefaults(page, 'Notebook');
+    createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Click text=To start a new entry, click here or drag and drop any object
@@ -56,19 +56,23 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
     await createNotebookAndEntry(page, iterations);
 
     for (let iteration = 0; iteration < iterations; iteration++) {
-        // Click text=To start a new entry, click here or drag and drop any object
+        // Hover and click "Add Tag" button
+        // Hover is needed here to "slow down" the actions while running in headless mode
+        await page.hover(`button:has-text("Add Tag") >> nth = ${iteration}`);
         await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
 
-        // Click [placeholder="Type to select tag"]
+        // Click inside the tag search input
         await page.locator('[placeholder="Type to select tag"]').click();
-        // Click text=Driving
+        // Select the "Driving" tag
         await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
 
-        // Click button:has-text("Add Tag")
+        // Hover and click "Add Tag" button
+        // Hover is needed here to "slow down" the actions while running in headless mode
+        await page.hover(`button:has-text("Add Tag") >> nth = ${iteration}`);
         await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
-        // Click [placeholder="Type to select tag"]
+        // Click inside the tag search input
         await page.locator('[placeholder="Type to select tag"]').click();
-        // Click text=Science
+        // Select the "Science" tag
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
     }
 }
@@ -122,15 +126,16 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
-        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
-        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
+        await expect(page.locator('[aria-label="Search Result"]')).toBeHidden();
+        await expect(page.locator('[aria-label="Search Result"]')).toBeHidden();
     });
 
     test('Can delete tags', async ({ page }) => {
         await createNotebookEntryAndTags(page);
         await page.locator('[aria-label="Notebook Entries"]').click();
         // Delete Driving
-        await page.locator('text=Science Driving Add Tag >> button').nth(1).click();
+        await page.hover('.c-tag__label:has-text("Driving")');
+        await page.locator('.c-tag__label:has-text("Driving") ~ .c-completed-tag-deletion').click();
 
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Notebook Entry"]')).not.toContainText("Driving");
@@ -139,11 +144,28 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
     });
+
+    test('Can delete objects with tags and neither return in search', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
+        // Delete Notebook
+        await page.locator('button[title="More options"]').click();
+        await page.locator('li[title="Remove this object from its containing object."]').click();
+        await page.locator('button:has-text("OK")').click();
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Fill [aria-label="OpenMCT Search"] input[type="search"]
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
+        await expect(page.locator('text=No results found')).toBeVisible();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sci');
+        await expect(page.locator('text=No results found')).toBeVisible();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('dri');
+        await expect(page.locator('text=No results found')).toBeVisible();
+    });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        await createDomainObjectWithDefaults(page, 'Clock');
+        await createDomainObjectWithDefaults(page, { type: 'Clock' });
 
         const ITERATIONS = 4;
         await createNotebookEntryAndTags(page, ITERATIONS);
