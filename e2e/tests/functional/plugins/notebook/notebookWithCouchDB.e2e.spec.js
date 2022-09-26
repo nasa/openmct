@@ -27,14 +27,6 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-// Try to reduce indeterminism of browser requests by only returning fetch requests.
-// Filter out preflight CORS, fetching stylesheets, page icons, etc. that can occur during tests
-function filterNonFetchRequests(requests) {
-    return requests.filter(request => {
-        return (request.resourceType() === 'fetch');
-    });
-}
-
 test.describe('Notebook Network Request Inspection @couchdb', () => {
     let testNotebook;
     test.beforeEach(async ({ page }) => {
@@ -230,3 +222,11 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(4);
     });
 });
+
+// Try to reduce indeterminism of browser requests by only returning fetch requests.
+// Filter out preflight CORS, fetching stylesheets, page icons, etc. that can occur during tests
+function filterNonFetchRequests(requests) {
+    return requests.filter(request => {
+        return (request.resourceType() === 'fetch');
+    });
+}

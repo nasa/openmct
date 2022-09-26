@@ -81,10 +81,8 @@ test.describe('Tagging in Notebooks @addInit', () => {
     test('Can load tags', async ({ page }) => {
 
         await createNotebookAndEntry(page);
-        // Click text=To start a new entry, click here or drag and drop any object
         await page.locator('button:has-text("Add Tag")').click();
 
-        // Click [placeholder="Type to select tag"]
         await page.locator('[placeholder="Type to select tag"]').click();
 
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Science");
@@ -97,9 +95,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Driving");
 
-        // Click button:has-text("Add Tag")
         await page.locator('button:has-text("Add Tag")').click();
-        // Click [placeholder="Type to select tag"]
         await page.locator('[placeholder="Type to select tag"]').click();
 
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Science");
@@ -108,23 +104,17 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Can search for tags', async ({ page }) => {
         await createNotebookEntryAndTags(page);
-        // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
 
-        // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
         await expect(page.locator('[aria-label="Search Result"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
 
-        // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
         await expect(page.locator('[aria-label="Search Result"]')).toBeHidden();
     });
@@ -139,7 +129,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Notebook Entry"]')).not.toContainText("Driving");
 
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
     });
@@ -152,7 +141,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await page.locator('button:has-text("OK")').click();
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
         await expect(page.locator('text=No results found')).toBeVisible();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sci');
