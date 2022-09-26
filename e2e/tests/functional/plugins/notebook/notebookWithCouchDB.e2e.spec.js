@@ -45,8 +45,8 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('.c-notebook__toggle-nav-button').click();
 
         // Collect all request events to count and assert after notebook action
-        let requests = [];
-        page.on('request', (request) => requests.push(request));
+        let addingNotebookElementsRequests = [];
+        page.on('request', (request) => addingNotebookElementsRequests.push(request));
 
         let [notebookUrlRequest, allDocsRequest] = await Promise.all([
             // Waits for the next request with the specified url
@@ -61,7 +61,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         // Network Requests are:
         // 1) The actual POST to create the page
         // 2) The shared worker event from 👆 request
-        expect(requests.length).toBe(2);
+        expect(addingNotebookElementsRequests.length).toBe(2);
 
         // Assert on request object
         expect(notebookUrlRequest.postDataJSON().metadata.name).toBe('TestNotebook');
@@ -72,12 +72,12 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         // Network Requests are:
         // 1) The actual POST to create the entry
         // 2) The shared worker event from 👆 POST request
-        requests = [];
+        addingNotebookElementsRequests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
         await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
         await page.waitForLoadState('networkidle');
-        expect(requests.length).toBeLessThanOrEqual(2);
+        expect(addingNotebookElementsRequests.length).toBeLessThanOrEqual(2);
 
         // Add some tags
         // Network Requests are for each tag creation are:
@@ -93,32 +93,32 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         // 10) Entry is timestamped
         // 11) The shared worker event from 👆 POST request
 
-        requests = [];
+        addingNotebookElementsRequests = [];
         await page.hover(`button:has-text("Add Tag")`);
         await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
         await page.waitForSelector('.c-tag__label:has-text("Driving")');
         page.waitForLoadState('networkidle');
-        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(11);
+        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
 
-        requests = [];
+        addingNotebookElementsRequests = [];
         await page.hover(`button:has-text("Add Tag")`);
         await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
         await page.waitForSelector('.c-tag__label:has-text("Drilling")');
         page.waitForLoadState('networkidle');
-        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(11);
+        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
 
-        requests = [];
+        addingNotebookElementsRequests = [];
         await page.hover(`button:has-text("Add Tag")`);
         await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
         await page.waitForSelector('.c-tag__label:has-text("Science")');
         page.waitForLoadState('networkidle');
-        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(11);
+        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
 
         // Delete all the tags
         // Network requests are:
@@ -127,7 +127,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
         // This happens for 3 tags so 12 requests
-        requests = [];
+        addingNotebookElementsRequests = [];
         await page.hover('.c-tag__label:has-text("Driving")');
         await page.locator('.c-tag__label:has-text("Driving") ~ .c-completed-tag-deletion').click();
         await page.waitForSelector('.c-tag__label:has-text("Driving")', {state: 'hidden'});
@@ -138,7 +138,7 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         await page.locator('.c-tag__label:has-text("Science") ~ .c-completed-tag-deletion').click();
         await page.waitForSelector('.c-tag__label:has-text("Science")', {state: 'hidden'});
         page.waitForLoadState('networkidle');
-        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(12);
+        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(12);
 
         // Add two more pages
         await page.click('text=Page Add >> button');
@@ -183,14 +183,14 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         // 2) The shared worker event from 👆 POST request
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
-        requests = [];
+        addingNotebookElementsRequests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').fill(`Fourth Entry`);
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(4);
+        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(4);
 
         // Add a fifth entry
         // Network requests are:
@@ -198,28 +198,28 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         // 2) The shared worker event from 👆 POST request
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
-        requests = [];
+        addingNotebookElementsRequests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').fill(`Fifth Entry`);
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(4);
+        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(4);
 
         // Add a sixth entry
         // 1) Send POST to add new entry
         // 2) The shared worker event from 👆 POST request
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
-        requests = [];
+        addingNotebookElementsRequests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').fill(`Sixth Entry`);
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(filterNonFetchRequests(requests).length).toBeLessThanOrEqual(4);
+        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(4);
     });
 });
 
