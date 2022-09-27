@@ -12,6 +12,8 @@ const CI = process.env.CI === 'true';
 
 config.devtool = CI ? false : undefined;
 
+config.devServer.hot = false;
+
 config.module.rules.push({
     test: /\.js$/,
     exclude: /(Spec\.js$)|(node_modules)/,
