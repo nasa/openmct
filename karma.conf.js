@@ -24,11 +24,14 @@
 
 module.exports = (config) => {
     let webpackConfig;
+    let browsers;
 
     if (process.env.NODE_ENV === 'debug') {
         webpackConfig = require('./webpack.dev.js');
+        browsers = 'ChromeDebugging'
     } else {
         webpackConfig = require('./webpack.coverage.js');
+        browsers = 'ChromeHeadless';
     }
 
     delete webpackConfig.output;
@@ -56,7 +59,7 @@ module.exports = (config) => {
         ],
         port: 9876,
         reporters: ['spec', 'junit', 'coverage-istanbul'],
-        browsers: [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'],
+        browsers,
         client: {
             jasmine: {
                 random: false,
