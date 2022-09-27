@@ -12,14 +12,15 @@
             <a
                 class="c-ne__embed__link"
                 :class="embed.cssClass"
-                @click="changeLocation"
+                @click="navigateToItemInTime"
             >{{ embed.name }}</a>
-            <PopupMenu :popup-menu-items="popupMenuItems" />
+            <button
+                class="c-ne__embed__actions c-icon-button icon-3-dots"
+                title="More options"
+                @click.prevent.stop="showMenuItems($event)"
+            ></button>
         </div>
-        <div
-            v-if="embed.snapshot"
-            class="c-ne__embed__time"
-        >
+        <div class="c-ne__embed__time">
             {{ createdOn }}
         </div>
     </div>
@@ -32,17 +33,14 @@ import PreviewAction from '../../../ui/preview/PreviewAction';
 import RemoveDialog from '../utils/removeDialog';
 import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
+import objectPathToUrl from '@/tools/url';
 
 import { updateNotebookImageDomainObject } from '../utils/notebook-image';
 import ImageExporter from '../../../exporters/ImageExporter';
 
-import PopupMenu from './PopupMenu.vue';
 import Vue from 'vue';
 
 export default {
-    components: {
-        PopupMenu
-    },
     inject: ['openmct', 'snapshotContainer'],
     props: {
         embed: {
@@ -72,7 +70,8 @@ export default {
     },
     data() {
         return {
-            popupMenuItems: []
+            menuActions: [],
+            objectPath: []
         };
     },
     computed: {
@@ -88,37 +87,87 @@ export default {
     watch: {
         isLocked(value) {
             if (value === true) {
-                let index = this.popupMenuItems.findIndex((item) => item.id === 'removeEmbed');
+                let index = this.menuActions.findIndex((item) => item.id === 'removeEmbed');
 
-                this.$delete(this.popupMenuItems, index);
+                this.$delete(this.menuActions, index);
             }
         }
     },
-    mounted() {
-        this.addPopupMenuItems();
+    async mounted() {
+        await this.setEmbedObjectPath();
+        this.addmenuActions();
         this.imageExporter = new ImageExporter(this.openmct);
     },
     methods: {
-        addPopupMenuItems() {
-            const removeEmbed = {
-                id: 'removeEmbed',
-                cssClass: 'icon-trash',
-                name: this.removeActionString,
-                callback: this.getRemoveDialog.bind(this)
-            };
-            const preview = {
-                id: 'preview',
-                cssClass: 'icon-eye-open',
-                name: 'Preview',
-                callback: this.previewEmbed.bind(this)
+        showMenuItems(event) {
+            const x = event.x;
+            const y = event.y;
+
+            const menuOptions = {
+                menuClass: 'c-ne__embed__actions-menu'
+                // placement: this.openmct.menus.menuPlacement.TOP_RIGHT
             };
 
-            this.popupMenuItems = [preview];
+            this.openmct.menus.showSuperMenu(x, y, this.menuActions, menuOptions);
+        },
+        addmenuActions() {
+            if (this.embed.snapshot) {
+                const viewSnapshot = {
+                    id: 'viewSnapshot',
+                    cssClass: 'icon-camera',
+                    name: 'View Snapshot',
+                    description: 'description',
+                    onItemClicked: () => this.openSnapshot()
+                };
 
-            if (!this.isLocked) {
-                this.popupMenuItems.unshift(removeEmbed);
+                this.menuActions = [viewSnapshot];
             }
 
+            const navigateToItem = {
+                id: 'navigateToItem',
+                cssClass: this.embed.cssClass,
+                name: 'Navigate to Item',
+                description: 'description',
+                onItemClicked: () => this.navigateToItem()
+            };
+
+            const navigateToItemInTime = {
+                id: 'navigateToItemInTime',
+                cssClass: 'icon-telemetry',
+                name: 'Navigate to Item in Time',
+                description: 'description',
+                onItemClicked: () => this.navigateToItemInTime()
+            };
+
+            const quickView = {
+                id: 'quickView',
+                cssClass: 'icon-eye-open',
+                name: 'Quick View',
+                description: 'description',
+                onItemClicked: () => this.previewEmbed()
+            };
+
+            this.menuActions = this.menuActions.concat([quickView, navigateToItem, navigateToItemInTime]);
+
+            if (!this.isLocked) {
+                const removeEmbed = {
+                    id: 'removeEmbed',
+                    cssClass: 'icon-trash',
+                    name: this.removeActionString,
+                    description: 'description',
+                    onItemClicked: this.getRemoveDialog.bind(this)
+                };
+
+                this.menuActions.push(removeEmbed);
+            }
+
+        },
+        async setEmbedObjectPath() {
+            this.objectPath = await this.openmct.objects.getOriginalPath(this.embed.domainObject.identifier);
+
+            if (this.objectPath[this.objectPath.length -1].type === 'root') {
+                this.objectPath.pop();
+            }
         },
         annotateSnapshot() {
             const annotateVue = new Vue({
@@ -179,7 +228,11 @@ export default {
                     painterroInstance.show(object.configuration.fullSizeImageURL);
                 });
         },
-        changeLocation() {
+        navigateToItem() {
+            const url = objectPathToUrl(this.openmct, this.objectPath);
+            this.openmct.router.navigate(url);
+        },
+        navigateToItemInTime() {
             const hash = this.embed.historicLink;
 
             const bounds = this.openmct.time.bounds();
