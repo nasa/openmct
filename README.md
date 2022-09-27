@@ -30,7 +30,7 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
 Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
-Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/). For a deep dive, please see our [build documentation](./docs/src/guide/build.md)
+Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
 
 ## Documentation
 

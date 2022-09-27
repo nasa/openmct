@@ -83,6 +83,7 @@ module.exports = (config) => {
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
+            skipFilesWithNoCoverage: true,
             dir: "coverage/unit", //Sets coverage file to be consumed by codecov.io
             reports: ['lcovonly']
         },

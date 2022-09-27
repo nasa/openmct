@@ -87,8 +87,6 @@ directory, which can be copied out to another location as needed. The contents
 of this folder will include a minified javascript file named `openmct.js` as 
 well as assets such as html, css, and images necessary for the UI.
 
-For a deeper dive into the specifics of building Open MCT, please see our [Build Guide Docs](./docs/src/guide/build.md)
-
 ## Starting an Open MCT application
 
 To start a minimally functional Open MCT application, it is necessary to 
