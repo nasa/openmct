@@ -103,10 +103,10 @@ export default {
                 return 6;
             }
         },
-        index: {
+        axisId: {
             type: Number,
             default() {
-                return 1;
+                return undefined;
             }
         },
         position: {
@@ -151,10 +151,12 @@ export default {
                 throw new Error('config is missing');
             }
 
-            if (this.axisType === 'yAxis' && this.index === 1) {
-                return config.yAxis;
-            } else if (this.axisType === 'yAxis' && this.index === 2) {
-                return config.yAxis2;
+            if (this.axisType === 'yAxis') {
+                if (!this.axisId || this.axisId === config.yAxis.id) {
+                    return config.yAxis;
+                } else {
+                    return config.additionalYAxes.find(axis => axis.id === this.axisId);
+                }
             } else {
                 return config[this.axisType];
             }
