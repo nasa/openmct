@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 import SubobjectView from './SubobjectView.vue';
 import TelemetryView from './TelemetryView.vue';
 import BoxView from './BoxView.vue';
@@ -517,7 +517,19 @@ export default {
         initializeItems() {
             this.telemetryViewMap = {};
             this.objectViewMap = {};
-            this.layoutItems.forEach(this.trackItem);
+
+            let removedItems = [];
+            this.layoutItems.forEach((item) => {
+                if (item.identifier) {
+                    if (this.containsObject(item.identifier)) {
+                        this.trackItem(item);
+                    } else {
+                        removedItems.push(this.openmct.objects.makeKeyString(item.identifier));
+                    }
+                }
+            });
+
+            removedItems.forEach(this.removeFromConfiguration);
         },
         isItemAlreadyTracked(child) {
             let found = false;

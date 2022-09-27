@@ -22,6 +22,7 @@
             ref="startOffset"
             class="c-button c-conductor__delta-button"
             title="Set the time offset after now"
+            data-testid="conductor-start-offset-button"
             @click.prevent.stop="showTimePopupStart"
         >
             {{ offsets.start }}
@@ -61,6 +62,7 @@
             ref="endOffset"
             class="c-button c-conductor__delta-button"
             title="Set the time offset preceding now"
+            data-testid="conductor-end-offset-button"
             @click.prevent.stop="showTimePopupEnd"
         >
             {{ offsets.end }}
@@ -86,6 +88,12 @@ export default {
             type: String,
             default() {
                 return undefined;
+            }
+        },
+        objectPath: {
+            type: Array,
+            default() {
+                return [];
             }
         },
         inputBounds: {
@@ -160,7 +168,7 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTime();
-            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
+            this.timeContext = this.openmct.time.getContextForView(this.keyString ? this.objectPath : []);
             this.followTime();
         },
         handleNewBounds(bounds) {

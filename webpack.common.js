@@ -7,12 +7,19 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const {VueLoaderPlugin} = require('vue-loader');
-const gitRevision = require('child_process')
-    .execSync('git rev-parse HEAD')
-    .toString().trim();
-const gitBranch = require('child_process')
-    .execSync('git rev-parse --abbrev-ref HEAD')
-    .toString().trim();
+let gitRevision = 'error-retrieving-revision';
+let gitBranch = 'error-retrieving-branch';
+
+try {
+    gitRevision = require('child_process')
+        .execSync('git rev-parse HEAD')
+        .toString().trim();
+    gitBranch = require('child_process')
+        .execSync('git rev-parse --abbrev-ref HEAD')
+        .toString().trim();
+} catch (err) {
+    console.warn(err);
+}
 
 /** @type {import('webpack').Configuration} */
 const config = {
@@ -23,12 +30,12 @@ const config = {
         inMemorySearchWorker: './src/api/objects/InMemorySearchWorker.js',
         espressoTheme: './src/plugins/themes/espresso-theme.scss',
         snowTheme: './src/plugins/themes/snow-theme.scss',
-        maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'
     },
     output: {
-        globalObject: "this",
+        globalObject: 'this',
         filename: '[name].js',
-        library: '[name]',
+        path: path.resolve(__dirname, 'dist'),
+        library: 'openmct',
         libraryTarget: 'umd',
         publicPath: '',
         hashFunction: 'xxhash64',
@@ -72,6 +79,10 @@ const config = {
                     transform: function (content) {
                         return content.toString().replace(/dist\//g, '');
                     }
+                },
+                {
+                    from: 'src/plugins/imagery/layers',
+                    to: 'imagery'
                 }
             ]
         }),
@@ -89,8 +100,13 @@ const config = {
                     {
                         loader: 'css-loader'
                     },
-                    'resolve-url-loader',
-                    'sass-loader'
+                    {
+                        loader: 'resolve-url-loader'
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: {sourceMap: true }
+                    }
                 ]
             },
             {
@@ -100,13 +116,6 @@ const config = {
             {
                 test: /\.html$/,
                 type: 'asset/source'
-            },
-            {
-                test: /zepto/,
-                use: [
-                    "imports-loader?this=>window",
-                    "exports-loader?Zepto"
-                ]
             },
             {
                 test: /\.(jpg|jpeg|png|svg)$/,

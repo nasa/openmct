@@ -1,7 +1,7 @@
 <template>
 <button
     class="c-popup-menu-button c-disclosure-button"
-    title="popup menu"
+    title="Open context menu"
     @click="showMenuItems"
 >
 </button>
@@ -65,6 +65,10 @@ export default {
             return;
         },
         showMenuItems($event) {
+            if (this.menuItems) {
+                this.hideMenuItems();
+            }
+
             const menuItems = new Vue({
                 components: {
                     MenuItems

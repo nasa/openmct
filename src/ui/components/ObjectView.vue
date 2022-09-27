@@ -6,6 +6,7 @@
     >
         <independent-time-conductor
             :domain-object="domainObject"
+            :object-path="path"
             @stateChanged="updateIndependentTimeState"
             @updated="saveTimeOptions"
         />
@@ -28,6 +29,7 @@ const SupportedViewTypes = [
     'plot-stacked',
     'plot-overlay',
     'bar-graph.view',
+    'scatter-plot.view',
     'time-strip.view'
 ];
 export default {
@@ -66,6 +68,9 @@ export default {
         };
     },
     computed: {
+        path() {
+            return this.domainObject && (this.currentObjectPath || this.objectPath);
+        },
         objectFontStyle() {
             return this.domainObject && this.domainObject.configuration && this.domainObject.configuration.fontStyle;
         },

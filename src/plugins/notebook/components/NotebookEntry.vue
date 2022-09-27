@@ -22,18 +22,24 @@
 
 <template>
 <div
-    class="c-notebook__entry c-ne has-local-controls"
+    class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    aria-label="Notebook Entry"
+    :class="{ 'locked': isLocked }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
 >
     <div class="c-ne__time-and-content">
-        <div class="c-ne__time">
-            <template v-if="entry.createdBy">
-                <span class="c-icon icon-person">{{ entry.createdBy }}</span>
-            </template>
-            <span>{{ createdOnDate }}</span>
-            <span>{{ createdOnTime }}</span>
+        <div class="c-ne__time-and-creator">
+            <span class="c-ne__created-date">{{ createdOnDate }}</span>
+            <span class="c-ne__created-time">{{ createdOnTime }}</span>
+
+            <span
+                v-if="entry.createdBy"
+                class="c-ne__creator"
+            >
+                <span class="icon-person"></span> {{ entry.createdBy }}
+            </span>
         </div>
         <div class="c-ne__content">
             <template v-if="readOnly && result">
@@ -49,12 +55,13 @@
                     />
                 </div>
             </template>
-            <template v-else>
+            <template v-else-if="!isLocked">
                 <div
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
+                    aria-label="Notebook Entry Input"
                     tabindex="0"
-                    contenteditable
+                    contenteditable="true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
@@ -63,11 +70,33 @@
                 >
                 </div>
             </template>
+
+            <template v-else>
+                <div
+                    :id="entry.id"
+                    class="c-ne__text"
+                    contenteditable="false"
+                    tabindex="0"
+                    v-text="entry.text"
+                >
+                </div>
+            </template>
+
+            <TagEditor
+                :domain-object="domainObject"
+                :annotation-query="annotationQuery"
+                :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
+                :annotation-search-type="openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS"
+                :target-specific-details="{entryId: entry.id}"
+                @tags-updated="timestampAndUpdate"
+            />
+
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed
                     v-for="embed in entry.embeds"
                     :key="embed.id"
                     :embed="embed"
+                    :is-locked="isLocked"
                     @removeEmbed="removeEmbed"
                     @updateEmbed="updateEmbed"
                 />
@@ -75,7 +104,7 @@
         </div>
     </div>
     <div
-        v-if="!readOnly"
+        v-if="!readOnly && !isLocked"
         class="c-ne__local-controls--hidden"
     >
         <button
@@ -111,16 +140,20 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
+import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
 import Moment from 'moment';
 
+const UNKNOWN_USER = 'Unknown';
+
 export default {
     components: {
         NotebookEmbed,
-        TextHighlight
+        TextHighlight,
+        TagEditor
     },
     inject: ['openmct', 'snapshotContainer'],
     props: {
@@ -159,11 +192,26 @@ export default {
             default() {
                 return true;
             }
+        },
+        isLocked: {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     computed: {
         createdOnDate() {
             return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
+        },
+        annotationQuery() {
+            const targetKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return {
+                targetKeyString,
+                entryId: this.entry.id,
+                modified: this.entry.modified
+            };
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
@@ -208,15 +256,21 @@ export default {
                 this.openmct.editor.cancel();
             }
         },
-        changeCursor() {
+        changeCursor(event) {
             event.preventDefault();
-            event.dataTransfer.dropEffect = "copy";
+
+            if (!this.isLocked) {
+                event.dataTransfer.dropEffect = 'copy';
+            } else {
+                event.dataTransfer.dropEffect = 'none';
+                event.dataTransfer.effectAllowed = 'none';
+            }
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
         async dropOnEntry($event) {
-            event.stopImmediatePropagation();
+            $event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
@@ -233,7 +287,7 @@ export default {
                 await this.addNewEmbed(objectPath);
             }
 
-            this.$emit('updateEntry', this.entry);
+            this.timestampAndUpdate();
         },
         findPositionInArray(array, id) {
             let position = -1;
@@ -271,7 +325,7 @@ export default {
             // TODO: remove notebook snapshot object using object remove API
             this.entry.embeds.splice(embedPosition, 1);
 
-            this.$emit('updateEntry', this.entry);
+            this.timestampAndUpdate();
         },
         updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
@@ -283,6 +337,17 @@ export default {
                 return found;
             });
 
+            this.timestampAndUpdate();
+        },
+        async timestampAndUpdate() {
+            const user = await this.openmct.user.getCurrentUser();
+
+            if (user === undefined) {
+                this.entry.modifiedBy = UNKNOWN_USER;
+            }
+
+            this.entry.modified = Date.now();
+
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
@@ -292,7 +357,7 @@ export default {
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;
-                this.$emit('updateEntry', this.entry);
+                this.timestampAndUpdate();
             } else {
                 this.$emit('cancelEdit');
             }

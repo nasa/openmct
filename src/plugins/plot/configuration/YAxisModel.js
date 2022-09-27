@@ -260,7 +260,7 @@ export default class YAxisModel extends Model {
         const plotModel = this.plot.get('domainObject');
         const label = plotModel.configuration?.yAxis?.label;
         const sampleSeries = seriesCollection.first();
-        if (!sampleSeries) {
+        if (!sampleSeries || !sampleSeries.metadata) {
             if (!label) {
                 this.unset('label');
             }

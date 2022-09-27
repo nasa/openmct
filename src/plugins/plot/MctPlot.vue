@@ -26,6 +26,7 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend
+        v-if="!isNestedWithinAStackedPlot"
         :cursor-locked="!!lockHighlightPoint"
         :series="seriesModels"
         :highlights="highlights"
@@ -86,6 +87,7 @@
                         :highlights="highlights"
                         :show-limit-line-labels="showLimitLineLabels"
                         @plotReinitializeCanvas="initCanvas"
+                        @chartLoaded="initialize"
                     />
                 </div>
 
@@ -154,6 +156,22 @@
                         >
                         </button>
                     </div>
+                    <div class="c-button-set c-button-set--strip-h">
+                        <button
+                            class="c-button icon-crosshair"
+                            :class="{ 'is-active': cursorGuide }"
+                            title="Toggle cursor guides"
+                            @click="toggleCursorGuide"
+                        >
+                        </button>
+                        <button
+                            class="c-button"
+                            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
+                            title="Toggle grid lines"
+                            @click="toggleGridLines"
+                        >
+                        </button>
+                    </div>
                 </div>
 
                 <!--Cursor guides-->
@@ -213,22 +231,34 @@ export default {
                 };
             }
         },
-        gridLines: {
+        initGridLines: {
             type: Boolean,
             default() {
                 return true;
             }
         },
-        cursorGuide: {
+        initCursorGuide: {
             type: Boolean,
             default() {
-                return true;
+                return false;
             }
         },
         plotTickWidth: {
             type: Number,
             default() {
                 return 0;
+            }
+        },
+        limitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        colorPalette: {
+            type: Object,
+            default() {
+                return undefined;
             }
         }
     },
@@ -250,19 +280,30 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: undefined,
+            showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
-            hasSameRangeValue: true
+            hasSameRangeValue: true,
+            cursorGuide: this.initCursorGuide,
+            gridLines: this.initGridLines
         };
     },
     computed: {
+        isNestedWithinAStackedPlot() {
+            const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
+
+            return !isNavigatedObject && this.path.find((pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked');
+        },
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         plotLegendPositionClass() {
-            return `plot-legend-${this.config.legend.get('position')}`;
+            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
         },
         plotLegendExpandedStateClass() {
+            if (this.isNestedWithinAStackedPlot) {
+                return '';
+            }
+
             if (this.config.legend.get('expanded')) {
                 return 'plot-legend-expanded';
             } else {
@@ -271,6 +312,20 @@ export default {
         },
         plotWidth() {
             return this.plotTickWidth || this.tickWidth;
+        }
+    },
+    watch: {
+        limitLineLabels: {
+            handler(limitLineLabels) {
+                this.legendHoverChanged(limitLineLabels);
+            },
+            deep: true
+        },
+        initGridLines(newGridLines) {
+            this.gridLines = newGridLines;
+        },
+        initCursorGuide(newCursorGuide) {
+            this.cursorGuide = newCursorGuide;
         }
     },
     mounted() {
@@ -283,6 +338,11 @@ export default {
 
         this.config = this.getConfig();
         this.legend = this.config.legend;
+
+        if (this.isNestedWithinAStackedPlot) {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.$emit('configLoaded', configId);
+        }
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -300,11 +360,6 @@ export default {
         this.setTimeContext();
 
         this.loaded = true;
-
-        //We're referencing the canvas elements from the mct-chart in the initialize method.
-        // So we need $nextTick to ensure the component is fully mounted before we can initialize stuff.
-        this.$nextTick(this.initialize);
-
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
@@ -349,6 +404,7 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
+                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -424,7 +480,7 @@ export default {
                     end: range.max,
                     domain: this.config.xAxis.get('key')
                 })
-                    .then(this.stopLoading());
+                    .then(this.stopLoading.bind(this));
                 if (purge) {
                     plotSeries.purgeRecordsOutsideRange(range);
                 }
@@ -732,6 +788,8 @@ export default {
                         };
                     });
             }
+
+            this.$emit('highlights', this.highlights);
         },
 
         untrackMousePosition() {
@@ -766,6 +824,7 @@ export default {
 
             if (this.isMouseClick()) {
                 this.lockHighlightPoint = !this.lockHighlightPoint;
+                this.$emit('lockHighlightPoint', this.lockHighlightPoint);
             }
 
             if (this.pan) {
@@ -1130,6 +1189,14 @@ export default {
         },
         legendHoverChanged(data) {
             this.showLimitLineLabels = data;
+        },
+        toggleCursorGuide() {
+            this.cursorGuide = !this.cursorGuide;
+            this.$emit('cursorGuide', this.cursorGuide);
+        },
+        toggleGridLines() {
+            this.gridLines = !this.gridLines;
+            this.$emit('gridLines', this.gridLines);
         }
     }
 };
