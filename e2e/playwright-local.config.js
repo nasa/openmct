@@ -12,9 +12,6 @@ const config = {
     testIgnore: '**/*.perf.spec.js',
     timeout: 30 * 1000,
     webServer: {
-        env: {
-            NODE_ENV: 'test'
-        },
         command: 'npm run start:coverage',
         url: 'http://localhost:8080/#',
         timeout: 120 * 1000,
