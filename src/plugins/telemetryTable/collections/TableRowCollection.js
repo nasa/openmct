@@ -87,7 +87,7 @@ define(
 
             filterRows(rows) {
 
-                if(Object.keys(this.columnFilters).length > 0){
+                if (Object.keys(this.columnFilters).length > 0) {
                     return rows.filter(this.matchesFilters, this);
                 }
 
