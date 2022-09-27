@@ -82,7 +82,7 @@
     "build:watch": "webpack --config webpack.dev.js --watch",
     "info": "npx envinfo --system --browsers --npmPackages --binaries --languages --markdown",
     "test": "karma start",
-    "test:debug": "NODE_ENV=debug karma start --no-single-run",
+    "test:debug": "KARMA_DEBUG=true karma start",
     "test:e2e": "npx playwright test",
     "test:e2e:couchdb": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @couchdb",
     "test:e2e:stable": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep-invert \"@unstable|@couchdb\"",

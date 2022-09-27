@@ -25,13 +25,16 @@
 module.exports = (config) => {
     let webpackConfig;
     let browsers;
+    let singleRun;
 
-    if (process.env.NODE_ENV === 'debug') {
+    if (process.env.KARMA_DEBUG) {
         webpackConfig = require('./webpack.dev.js');
         browsers = ['ChromeDebugging'];
+        singleRun = false;
     } else {
         webpackConfig = require('./webpack.coverage.js');
         browsers = ['ChromeHeadless'];
+        singleRun = true;
     }
 
     delete webpackConfig.output;
@@ -104,7 +107,7 @@ module.exports = (config) => {
             stats: 'errors-warnings'
         },
         concurrency: 1,
-        singleRun: true,
+        singleRun,
         browserNoActivityTimeout: 400000
     });
 };
