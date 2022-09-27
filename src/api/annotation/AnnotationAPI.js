@@ -52,12 +52,11 @@ const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
  * @property {String} foregroundColor eg. "#ffffff"
  */
 
-/**
- * Utilities for loading, saving, and manipulating annotations and tags.
- * @interface AnnotationAPI
- * @memberof module:openmct
- */
 export default class AnnotationAPI extends EventEmitter {
+
+    /**
+     * @param {OpenMCT} openmct
+     */
     constructor(openmct) {
         super();
         this.openmct = openmct;
@@ -163,7 +162,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method isAnnotation
-    * @param {module:openmct.DomainObject} domainObject the domainObject in question
+    * @param {import('../objects/ObjectAPI').DomainObject} domainObject domainObject the domainObject in question
     * @returns {Boolean} Returns true if the domain object is an annotation
     */
     isAnnotation(domainObject) {
@@ -192,7 +191,7 @@ export default class AnnotationAPI extends EventEmitter {
     /**
     * @method getAnnotations
     * @param {String} query - The keystring of the domain object to search for annotations for
-    * @returns {module:openmct.DomainObject[]} Returns an array of domain objects that match the search query
+    * @returns {import('../objects/ObjectAPI').DomainObject[]} Returns an array of domain objects that match the search query
     */
     async getAnnotations(query) {
         const searchResults = (await Promise.all(this.openmct.objects.search(query, null, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS))).flat();
@@ -202,11 +201,11 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method addSingleAnnotationTag
-    * @param {module:openmct.DomainObject=} existingAnnotation - An optional annotation to add the tag to. If not specified, we will create an annotation.
-    * @param {module:openmct.DomainObject} targetDomainObject - The domain object the annotation will point to.
+    * @param {import('../objects/ObjectAPI').DomainObject=} existingAnnotation - An optional annotation to add the tag to. If not specified, we will create an annotation.
+    * @param {import('../objects/ObjectAPI').DomainObject} targetDomainObject - The domain object the annotation will point to.
     * @param {Object=} targetSpecificDetails - Optional object to add to the target object. E.g., for notebooks this would be an entryID
     * @param {AnnotationType} annotationType - The type of annotation this is for.
-    * @returns {module:openmct.DomainObject[]} Returns the annotation that was either created or passed as an existingAnnotation
+    * @returns {import('../objects/ObjectAPI').DomainObject[]} Returns the annotation that was either created or passed as an existingAnnotation
     */
     async addSingleAnnotationTag(existingAnnotation, targetDomainObject, targetSpecificDetails, annotationType, tag) {
         if (!existingAnnotation) {
@@ -240,7 +239,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method deleteAnnotations
-    * @param {module:openmct.DomainObject[]} existingAnnotation - An array of annotations to delete (set _deleted to true)
+    * @param {import('../objects/ObjectAPI').DomainObject[]} existingAnnotation - An array of annotations to delete (set _deleted to true)
     */
     deleteAnnotations(annotations) {
         if (!annotations) {
@@ -256,7 +255,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method deleteAnnotations
-    * @param {module:openmct.DomainObject} existingAnnotation - An annotations to undelete (set _deleted to false)
+    * @param {import('../objects/ObjectAPI').DomainObject} existingAnnotation - An annotations to undelete (set _deleted to false)
     */
     unDeleteAnnotation(annotation) {
         if (!annotation) {
