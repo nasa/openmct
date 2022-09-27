@@ -4,7 +4,7 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig<{ theme: string }>} */
 const config = {
-    retries: 1, // visual tests should never retry due to snapshot comparison errors. Leaving as a shim
+    retries: 1, // Visual tests should never retry due to snapshot comparison errors. Leaving as a shim
     testDir: 'tests/visual',
     testMatch: '**/*.visual.spec.js', // only run visual tests
     timeout: 60 * 1000,
@@ -31,7 +31,7 @@ const config = {
             }
         },
         {
-            name: 'chrome-snow-theme',
+            name: 'chrome-snow-theme', //Runs the same visual tests but with snow-theme enabled
             use: {
                 browserName: 'chromium',
                 theme: 'snow'
