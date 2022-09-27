@@ -331,6 +331,7 @@ export default class ObjectAPI {
     }
 
     isPersistable(idOrKeyString) {
+        console.log('isPersistable');
         let identifier = utils.parseKeyString(idOrKeyString);
         let provider = this.getProvider(identifier);
 
@@ -356,6 +357,7 @@ export default class ObjectAPI {
      *          has been saved, or be rejected if it cannot be saved
      */
     async save(domainObject) {
+        console.log('save');
         let provider = this.getProvider(domainObject.identifier);
         let savedResolve;
         let savedReject;
@@ -503,6 +505,7 @@ export default class ObjectAPI {
      * @memberof module:openmct.ObjectAPI#
      */
     mutate(domainObject, path, value) {
+        console.log('mutate');
         if (!this.supportsMutation(domainObject.identifier)) {
             throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
         }
