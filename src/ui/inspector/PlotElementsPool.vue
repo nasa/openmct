@@ -32,25 +32,45 @@
         class="c-elements-pool__elements"
     >
         <ul
-            v-if="elements && elements.length > 0"
+            v-if="elements.length > 0"
             id="inspector-elements-tree"
             class="c-tree c-elements-pool__tree"
         >
-            <element-item
-                v-for="(element, index) in elements"
-                :key="element.identifier.key"
-                :index="index"
-                :element-object="element"
+            <element-item-group
                 :parent-object="parentObject"
-                :allow-drop="allowDrop"
-                @dragstart-custom="moveFrom(index)"
-                @drop-custom="moveTo(index)"
+                :elements="elements"
+                label="Y Axis 1"
+                @drop-group="drop($event)"
+            >
+                <element-item
+                    v-for="(element, index) in elements"
+                    :key="element.identifier.key"
+                    :index="index"
+                    :element-object="element"
+                    :parent-object="parentObject"
+                    :allow-drop="allowDrop"
+                    @dragstart-custom="moveFrom(index)"
+                    @drop-custom="moveTo(index)"
+                />
+            </element-item-group>
+            <element-item-group
+                :parent-object="parentObject"
+                label="Y Axis 2"
+                @drop-group="drop($event)"
+            />
+            <element-item-group
+                :parent-object="parentObject"
+                label="Y Axis 3"
+                @drop-group="drop($event)"
             />
             <li
                 class="js-last-place"
                 @drop="moveToIndex(elements.length)"
             ></li>
         </ul>
+        <div v-if="elements.length === 0">
+            No contained elements
+        </div>
     </div>
 </div>
 </template>
@@ -59,10 +79,13 @@
 import _ from 'lodash';
 import Search from '../components/search.vue';
 import ElementItem from './ElementItem.vue';
+import ElementItemGroup from './ElementItemGroup.vue';
+import configStore from "../../plugins/plot/configuration/ConfigStore";
 
 export default {
     components: {
         Search,
+        ElementItemGroup,
         ElementItem
     },
     inject: ['openmct'],
@@ -78,7 +101,7 @@ export default {
         };
     },
     mounted() {
-        let selection = this.openmct.selection.get();
+        const selection = this.openmct.selection.get();
         if (selection && selection.length > 0) {
             this.showSelection(selection);
         }
@@ -107,6 +130,7 @@ export default {
             this.selection = selection;
             this.elements = [];
             this.elementsCache = {};
+            this.yAxisSeriesCache = {};
             this.listeners = [];
             this.parentObject = selection && selection[0] && selection[0][0].context.item;
 
@@ -116,6 +140,9 @@ export default {
 
             if (this.parentObject) {
                 this.composition = this.openmct.composition.get(this.parentObject);
+                const configId = this.openmct.objects.makeKeyString(this.parentObject.identifier);
+                let config = configStore.get(configId);
+                console.log('config', config);
 
                 if (this.composition) {
                     this.composition.load();
@@ -156,15 +183,28 @@ export default {
                     && element.name.toLowerCase().search(this.currentSearch) !== -1;
             });
         },
-        moveTo(moveToIndex) {
-            if (this.allowDrop) {
-                this.composition.reorder(this.moveFromIndex, moveToIndex);
-                this.allowDrop = false;
-            }
-        },
         moveFrom(index) {
-            this.allowDrop = true;
-            this.moveFromIndex = index;
+            console.log('moveFrom ', index);
+        },
+        moveTo(index) {
+            console.log('moveTo ', index);
+        },
+        drop(event) {
+            console.log('drop in group', event);
+            // const {
+            //     moveFromIndex,
+            //     moveToIndex,
+            //     moveFromGroup,
+            //     moveToGroup
+            // } = dropOptions;
+
+            // if (moveFromGroup === moveToGroup) {
+            //     // this.moveWithinGroup(moveFromIndex, moveToIndex);
+            //     console.log('move within group');
+            // } else {
+            //     // this.moveBetweenGroups(moveFromIndex, moveToIndex, moveFromGroup, moveToGroup);
+            //     console.log('move between groups');
+            // }
         }
     }
 };

@@ -21,21 +21,18 @@
  *****************************************************************************/
 
 <template>
-<div
-    @dragenter.stop="onDragEnter"
-    @dragleave.stop="onDragLeave"
-    @dragover.prevent="onDragover"
-    @dragstart="onDragStart"
-    @drop="drop"
->
-    <ul>
+<div>
+    <ul
+        @dragover.prevent
+        @drop="emitDrop"
+    >
         <div
             class="c-tree__item c-elements-pool__group"
             :class="{
                 'hover': hover
             }"
         >
-            <!-- <span class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"></span> -->
+            <span class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"></span>
             <div
                 class="c-tree__item__type-icon c-object-label__type-icon"
             >
@@ -47,38 +44,16 @@
                 {{ label }}
             </div>
         </div>
-        <element-item
-            v-for="(element, index) in elements"
-            :key="element.identifier.key"
-            :index="index"
-            :element-object="element"
-            :parent-object="parentObject"
-            :allow-drop="allowDrop"
-            @dragstart-custom="moveFrom(index)"
-            @drop-custom="moveTo(index)"
-        />
-        <li
-            class="js-last-place"
-            @drop="moveToIndex(elements.length)"
-        ></li>
+        <slot></slot>
     </ul>
 </div>
 </template>
 
 <script>
-import ElementItem from "./ElementItem.vue";
 export default {
     components: {
-        ElementItem
     },
     props: {
-        elements: {
-            type: Array,
-            required: false,
-            default: () => {
-                return [];
-            }
-        },
         parentObject: {
             type: Object,
             required: true,
@@ -101,50 +76,8 @@ export default {
         };
     },
     methods: {
-        onDragEnter(event) {
-            // console.log('onDragEnter');
-            if (this.allowDrop) {
-                this.hover = true;
-                this.dragElement = event.target.parentElement;
-            }
-        },
-        onDragLeave(event) {
-            if (event.target.parentElement === this.dragElement) {
-                // console.log('onDragLeave');
-                this.hover = false;
-                delete this.dragElement;
-            }
-        },
-        moveTo(moveToIndex) {
-            if (this.allowDrop) {
-                console.log('moveToIndex', moveToIndex);
-                // this.composition.reorder(this.moveFromIndex, moveToIndex);
-                this.allowDrop = false;
-            }
-        },
-        moveFrom(index) {
-            console.log('moveFromIndex', index);
-            this.allowDrop = true;
-            this.moveFromIndex = index;
-        },
-        drop(event) {
-            if (this.allowDrop) {
-                console.log('we droppin boys', event.dataTransfer.getData('element'));
-                this.hover = false;
-                if (event.currentTarget !== event.target) {
-                    this.elements.push(JSON.parse(event.dataTransfer.getData('element')));
-                } else {
-                    this.elements.splice(this.moveFromIndex, 1);
-                }
-
-            }
-        },
-        onDragStart(event) {
-            event.dataTransfer.clearData();
-            event.dataTransfer.setData('element', JSON.stringify(this.elements[this.moveFromIndex]));
-        },
-        onDragover(event) {
-            event.dataTransfer.dropEffect = 'move';
+        emitDrop(event) {
+            this.$emit('drop-group', this.label);
         }
     }
 };
