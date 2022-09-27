@@ -1,12 +1,39 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div
     class="c-gsearch-result c-gsearch-result--annotation"
+    aria-label="Search Result"
+    role="presentation"
 >
     <div
         class="c-gsearch-result__type-icon"
         :class="resultTypeIcon"
     ></div>
-    <div class="c-gsearch-result__body">
+    <div
+        class="c-gsearch-result__body"
+        aria-label="Annotation Search Result"
+    >
         <div
             class="c-gsearch-result__title"
             @click="clickedResult"
@@ -14,7 +41,11 @@
             {{ getResultName }}
         </div>
 
-        <ObjectPath ref="location" />
+        <ObjectPath
+            :domain-object="domainObject"
+            :read-only="false"
+            :show-object-itself="true"
+        />
 
         <div class="c-gsearch-result__tags">
             <div
@@ -94,18 +125,15 @@ export default {
             return this.result.fullTagModels[0].foregroundColor;
         }
     },
-    mounted() {
-        const selectionObject = {
-            context: {
-                item: this.domainObject
-            }
-        };
-        this.$refs.location.updateSelection([[selectionObject]]);
-    },
     methods: {
         clickedResult() {
             const objectPath = this.domainObject.originalPath;
-            const resultUrl = objectPathToUrl(this.openmct, objectPath);
+            let resultUrl = objectPathToUrl(this.openmct, objectPath);
+            // get rid of ROOT if extant
+            if (resultUrl.includes('/ROOT')) {
+                resultUrl = resultUrl.split('/ROOT').join('');
+            }
+
             this.openmct.router.navigate(resultUrl);
         },
         isSearchMatched(tag) {

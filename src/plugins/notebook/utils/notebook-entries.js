@@ -1,5 +1,5 @@
 import objectLink from '../../../ui/mixins/object-link';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 async function getUsername(openmct) {
     let username = '';
@@ -142,7 +142,7 @@ export async function addNotebookEntry(openmct, domainObject, notebookStorage, e
     return id;
 }
 
-export async function getNotebookEntries(openmct, domainObject, selectedSection, selectedPage) {
+export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage || !domainObject.configuration) {
         return;
     }
@@ -161,30 +161,16 @@ export async function getNotebookEntries(openmct, domainObject, selectedSection,
     }
 
     const specificEntries = entries[selectedSection.id][selectedPage.id];
-    const specificEntriesWithAnnotations = await Promise.all(Object.keys(specificEntries).map(async entryKey => {
-        const entry = specificEntries[entryKey];
-        let annotation;
-        try {
-            annotation = await openmct.annotation.getNotebookAnnotation(entry.id, domainObject);
-        } catch (error) {
-            console.error(`Error loading notebook`, error);
-        }
 
-        return {
-            ...entry,
-            annotation: annotation
-        };
-    }));
-
-    return specificEntriesWithAnnotations;
+    return specificEntries;
 }
 
-export async function getEntryPosById(openmct, entryId, domainObject, selectedSection, selectedPage) {
+export function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage) {
         return;
     }
 
-    const entries = await getNotebookEntries(openmct, domainObject, selectedSection, selectedPage);
+    const entries = getNotebookEntries(domainObject, selectedSection, selectedPage);
     let foundId = -1;
     entries.forEach((element, index) => {
         if (element.id === entryId) {

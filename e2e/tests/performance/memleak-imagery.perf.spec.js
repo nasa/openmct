@@ -36,10 +36,11 @@ const { test, expect } = require('@playwright/test');
 
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 
+// eslint-disable-next-line playwright/no-skipped-test
 test.describe.skip('Memory Performance tests', () => {
     test.beforeEach(async ({ page, browser }, testInfo) => {
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click a:has-text("My Items")
         await page.locator('a:has-text("My Items")').click({
@@ -58,14 +59,14 @@ test.describe.skip('Memory Performance tests', () => {
         await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
     });
 
-    test.skip('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
+    test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
 
-        await page.goto('/', {waitUntil: 'networkidle'});
+        await page.goto('./', {waitUntil: 'networkidle'});
 
         // To to Search Available after Launch
-        await page.locator('input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         // Fill Search input
-        await page.locator('input[type="search"]').fill('Performance Display Layout');
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Performance Display Layout');
         //Search Result Appears and is clicked
         await Promise.all([
             page.waitForNavigation(),

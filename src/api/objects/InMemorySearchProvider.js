@@ -39,9 +39,7 @@ class InMemorySearchProvider {
          * If max results is not specified in query, use this as default.
          */
         this.DEFAULT_MAX_RESULTS = 100;
-
         this.openmct = openmct;
-
         this.indexedIds = {};
         this.indexedCompositions = {};
         this.indexedTags = {};
@@ -65,6 +63,8 @@ class InMemorySearchProvider {
         this.localSearchForTags = this.localSearchForTags.bind(this);
         this.localSearchForNotebookAnnotations = this.localSearchForNotebookAnnotations.bind(this);
         this.onAnnotationCreation = this.onAnnotationCreation.bind(this);
+        this.onCompositionAdded = this.onCompositionAdded.bind(this);
+        this.onCompositionRemoved = this.onCompositionRemoved.bind(this);
         this.onerror = this.onWorkerError.bind(this);
         this.startIndexing = this.startIndexing.bind(this);
 
@@ -77,9 +77,11 @@ class InMemorySearchProvider {
                 this.worker.port.close();
             }
 
-            if (this.stopListeningToAnnotationCreation) {
-                this.stopListeningToAnnotationCreation();
-            }
+            Object.keys(this.indexedCompositions).forEach(keyString => {
+                const composition = this.indexedCompositions[keyString];
+                composition.off('add', this.onCompositionAdded);
+                composition.off('remove', this.onCompositionRemoved);
+            });
 
             this.destroyObservers(this.indexedIds);
             this.destroyObservers(this.indexedCompositions);
@@ -88,18 +90,22 @@ class InMemorySearchProvider {
 
     startIndexing() {
         const rootObject = this.openmct.objects.rootProvider.rootObject;
+
+        this.searchTypes = this.openmct.objects.SEARCH_TYPES;
+
+        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.NOTEBOOK_ANNOTATIONS, this.searchTypes.TAGS];
+
         this.scheduleForIndexing(rootObject.identifier);
 
         this.indexAnnotations();
 
         if (typeof SharedWorker !== 'undefined') {
-        // if (false) {
             this.worker = this.startSharedWorker();
         } else {
             // we must be on iOS
         }
 
-        this.stopListeningToAnnotationCreation = this.openmct.annotation.on('annotationCreated', this.onAnnotationCreation);
+        this.openmct.annotation.on('annotationCreated', this.onAnnotationCreation);
 
     }
 
@@ -132,45 +138,42 @@ class InMemorySearchProvider {
         return intermediateResponse;
     }
 
-    search(input, queryType, localQueryFallBack, maxResults) {
-        if (!maxResults) {
-            maxResults = this.DEFAULT_MAX_RESULTS;
-        }
-
+    search(query, searchType) {
         const queryId = uuid();
         const pendingQuery = this.getIntermediateResponse();
         this.pendingQueries[queryId] = pendingQuery;
+        const searchOptions = {
+            queryId,
+            searchType,
+            query,
+            maxResults: this.DEFAULT_MAX_RESULTS
+        };
 
         if (this.worker) {
-            this.dispatchSearch(queryId, queryType, input, maxResults);
+            this.#dispatchSearchToWorker(searchOptions);
         } else {
-            localQueryFallBack(queryId, input, maxResults);
+            this.#localQueryFallBack(searchOptions);
         }
 
         return pendingQuery.promise;
     }
 
-    /**
-     * Query the search provider for results.
-     *
-     * @param {String} input the string to search by.
-     * @param {Number} maxResults max number of results to return.
-     * @returns {Promise} a promise for a modelResults object.
-     */
-    searchForObjects(input, maxResults) {
-        return this.search(input, 'searchForObjects', this.localSearchForObjects, maxResults);
+    #localQueryFallBack({queryId, searchType, query, maxResults}) {
+        if (searchType === this.searchTypes.OBJECTS) {
+            return this.localSearchForObjects(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.ANNOTATIONS) {
+            return this.localSearchForAnnotations(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.NOTEBOOK_ANNOTATIONS) {
+            return this.localSearchForNotebookAnnotations(queryId, query, maxResults);
+        } else if (searchType === this.searchTypes.TAGS) {
+            return this.localSearchForTags(queryId, query, maxResults);
+        } else {
+            throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+        }
     }
 
-    searchForAnnotations(input, maxResults) {
-        return this.search(input, 'searchForAnnotations', this.localSearchForAnnotations, maxResults);
-    }
-
-    searchForTags(input, maxResults) {
-        return this.search(input, 'searchForTags', this.localSearchForTags, maxResults);
-    }
-
-    searchForNotebookAnnotations(input, maxResults) {
-        return this.search(input, 'searchForNotebookAnnotations', this.localSearchForNotebookAnnotations, maxResults);
+    supportsSearchType(searchType) {
+        return this.supportedSearchTypes.includes(searchType);
     }
 
     /**
@@ -178,7 +181,6 @@ class InMemorySearchProvider {
      * @private
      */
     async onWorkerMessage(event) {
-        console.debug('⚙️ Received worker message ⚙️', event);
         const pendingQuery = this.pendingQueries[event.data.queryId];
         const modelResults = {
             total: event.data.total
@@ -230,7 +232,8 @@ class InMemorySearchProvider {
 
     /**
      * Schedule an id to be indexed at a later date.  If there are less
-     * pending requests then allowed, will kick off an indexing request.
+     * pending requests than the maximum allowed, this will kick off an indexing request.
+     * This is done only when indexing first begins and we need to index a lot of objects.
      *
      * @private
      * @param {identifier} id to be indexed.
@@ -264,10 +267,11 @@ class InMemorySearchProvider {
     }
 
     onAnnotationCreation(annotationObject) {
-        const provider = this;
-        console.debug(`🍋 annotation created 🍋`, annotationObject);
-
-        provider.index(annotationObject);
+        const objectProvider = this.openmct.objects.getProvider(annotationObject.identifier);
+        if (objectProvider === undefined || objectProvider.search === undefined) {
+            const provider = this;
+            provider.index(annotationObject);
+        }
     }
 
     onNameMutation(domainObject, name) {
@@ -278,25 +282,40 @@ class InMemorySearchProvider {
     }
 
     onTagMutation(domainObject, newTags) {
-        console.debug(`🍉 Tag mutation `, domainObject);
-        domainObject.oldTags = domainObject.tags;
         domainObject.tags = newTags;
         const provider = this;
 
         provider.index(domainObject);
     }
 
-    onCompositionMutation(domainObject, composition) {
+    onCompositionAdded(newDomainObjectToIndex) {
         const provider = this;
-        const indexedComposition = domainObject.composition;
-        const identifiersToIndex = composition
-            .filter(identifier => !indexedComposition
-                .some(indexedIdentifier => this.openmct.objects
-                    .areIdsEqual([identifier, indexedIdentifier])));
+        // The object comes in as a mutable domain object, which has functions,
+        // which the index function cannot handle as it will eventually be serialized
+        // using structuredClone. Thus we're using JSON.parse/JSON.stringify to discard
+        // those functions.
+        const nonMutableDomainObject = JSON.parse(JSON.stringify(newDomainObjectToIndex));
 
-        identifiersToIndex.forEach(identifier => {
-            this.openmct.objects.get(identifier).then(objectToIndex => provider.index(objectToIndex));
-        });
+        const objectProvider = this.openmct.objects.getProvider(nonMutableDomainObject.identifier);
+        if (objectProvider === undefined || objectProvider.search === undefined) {
+            provider.index(nonMutableDomainObject);
+        }
+    }
+
+    onCompositionRemoved(domainObjectToRemoveIdentifier) {
+        const keyString = this.openmct.objects.makeKeyString(domainObjectToRemoveIdentifier);
+        if (this.indexedIds[keyString]) {
+            // we store the unobserve function in the indexedId map
+            this.indexedIds[keyString]();
+            delete this.indexedIds[keyString];
+        }
+
+        const composition = this.indexedCompositions[keyString];
+        if (composition) {
+            composition.off('add', this.onCompositionAdded);
+            composition.off('remove', this.onCompositionRemoved);
+            delete this.indexedCompositions[keyString];
+        }
     }
 
     /**
@@ -310,6 +329,7 @@ class InMemorySearchProvider {
     async index(domainObject) {
         const provider = this;
         const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+        const composition = this.openmct.composition.get(domainObject);
 
         if (!this.indexedIds[keyString]) {
             this.indexedIds[keyString] = this.openmct.objects.observe(
@@ -317,11 +337,12 @@ class InMemorySearchProvider {
                 'name',
                 this.onNameMutation.bind(this, domainObject)
             );
-            this.indexedCompositions[keyString] = this.openmct.objects.observe(
-                domainObject,
-                'composition',
-                this.onCompositionMutation.bind(this, domainObject)
-            );
+            if (composition) {
+                composition.on('add', this.onCompositionAdded);
+                composition.on('remove', this.onCompositionRemoved);
+                this.indexedCompositions[keyString] = composition;
+            }
+
             if (domainObject.type === 'annotation') {
                 this.indexedTags[keyString] = this.openmct.objects.observe(
                     domainObject,
@@ -342,8 +363,6 @@ class InMemorySearchProvider {
                 this.localIndexItem(keyString, domainObject);
             }
         }
-
-        const composition = this.openmct.composition.get(domainObject);
 
         if (composition !== undefined) {
             const children = await composition.load();
@@ -387,10 +406,10 @@ class InMemorySearchProvider {
      * @private
      * @returns {String} a unique query Id for the query.
      */
-    dispatchSearch(queryId, searchType, searchInput, maxResults) {
+    #dispatchSearchToWorker({queryId, searchType, query, maxResults}) {
         const message = {
-            request: searchType,
-            input: searchInput,
+            request: searchType.toString(),
+            input: query,
             maxResults,
             queryId
         };
@@ -413,20 +432,16 @@ class InMemorySearchProvider {
             }
 
         });
-        // remove old tags
-        if (model.oldTags) {
-            model.oldTags.forEach(tagIDToRemove => {
-                const existsInNewModel = model.tags.includes(tagIDToRemove);
-                if (!existsInNewModel && this.localIndexedAnnotationsByTag[tagIDToRemove]) {
-                    this.localIndexedAnnotationsByTag[tagIDToRemove] = this.localIndexedAnnotationsByTag[tagIDToRemove].
-                        filter(annotationToRemove => {
-                            const shouldKeep = annotationToRemove.keyString !== keyString;
+        const tagsToRemoveFromIndex = Object.keys(this.localIndexedAnnotationsByTag).filter(indexedTag => {
+            return !(model.tags.includes(indexedTag));
+        });
+        tagsToRemoveFromIndex.forEach(tagToRemoveFromIndex => {
+            this.localIndexedAnnotationsByTag[tagToRemoveFromIndex] = this.localIndexedAnnotationsByTag[tagToRemoveFromIndex].filter(indexedAnnotation => {
+                const shouldKeep = indexedAnnotation.keyString !== keyString;
 
-                            return shouldKeep;
-                        });
-                }
+                return shouldKeep;
             });
-        }
+        });
     }
 
     localIndexAnnotation(objectToIndex, model) {
@@ -458,7 +473,7 @@ class InMemorySearchProvider {
             keyString
         };
         if (model && (model.type === 'annotation')) {
-            if (model.targets && model.targets) {
+            if (model.targets) {
                 this.localIndexAnnotation(objectToIndex, model);
             }
 
@@ -546,7 +561,10 @@ class InMemorySearchProvider {
                 const matchingAnnotations = this.localIndexedAnnotationsByTag[matchingTag];
                 if (matchingAnnotations) {
                     matchingAnnotations.forEach(matchingAnnotation => {
-                        if (!results.includes(matchingAnnotation)) {
+                        const existsInResults = results.some(indexedObject => {
+                            return matchingAnnotation.keyString === indexedObject.keyString;
+                        });
+                        if (!existsInResults) {
                             results.push(matchingAnnotation);
                         }
                     });

@@ -39,7 +39,7 @@ export default class SeriesCollection extends Collection {
         this.modelClass = PlotSeries;
         this.plot = options.plot;
         this.openmct = options.openmct;
-        this.palette = new ColorPalette();
+        this.palette = options.palette || new ColorPalette();
         this.listenTo(this, 'add', this.onSeriesAdd, this);
         this.listenTo(this, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);

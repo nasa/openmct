@@ -2,25 +2,27 @@
 // playwright.config.js
 // @ts-check
 
+const CI = process.env.CI === 'true';
+
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 0,
+    retries: 1, //Only for debugging purposes because trace is enabled only on first retry
     testDir: 'tests/performance/',
-    timeout: 30 * 1000,
+    timeout: 60 * 1000,
     workers: 1, //Only run in serial with 1 worker
     webServer: {
-        command: 'npm run start',
-        port: 8080,
+        command: 'cross-env NODE_ENV=test npm run start',
+        url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
-        reuseExistingServer: !process.env.CI
+        reuseExistingServer: !CI
     },
     use: {
         browserName: "chromium",
         baseURL: 'http://localhost:8080/',
-        headless: Boolean(process.env.CI), //Only if running locally
+        headless: CI, //Only if running locally
         ignoreHTTPSErrors: true,
         screenshot: 'off',
-        trace: 'off',
+        trace: 'on-first-retry',
         video: 'off'
     },
     projects: [

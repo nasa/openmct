@@ -30,6 +30,26 @@
 class CouchSearchProvider {
     constructor(couchObjectProvider) {
         this.couchObjectProvider = couchObjectProvider;
+        this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
+        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.NOTEBOOK_ANNOTATIONS, this.searchTypes.TAGS];
+    }
+
+    supportsSearchType(searchType) {
+        return this.supportedSearchTypes.includes(searchType);
+    }
+
+    search(query, abortSignal, searchType) {
+        if (searchType === this.searchTypes.OBJECTS) {
+            return this.searchForObjects(query, abortSignal);
+        } else if (searchType === this.searchTypes.ANNOTATIONS) {
+            return this.searchForAnnotations(query, abortSignal);
+        } else if (searchType === this.searchTypes.NOTEBOOK_ANNOTATIONS) {
+            return this.searchForNotebookAnnotations(query, abortSignal);
+        } else if (searchType === this.searchTypes.TAGS) {
+            return this.searchForTags(query, abortSignal);
+        } else {
+            throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+        }
     }
 
     searchForObjects(query, abortSignal) {
@@ -82,7 +102,7 @@ class CouchSearchProvider {
                     },
                     {
                         "model.annotationType": {
-                            "$eq": "notebook"
+                            "$eq": "NOTEBOOK"
                         }
                     },
                     {

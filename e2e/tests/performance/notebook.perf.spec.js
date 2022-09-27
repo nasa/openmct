@@ -38,7 +38,7 @@ const notebookFilePath = 'e2e/test-data/PerformanceNotebook.json';
 test.describe('Performance tests', () => {
     test.beforeEach(async ({ page, browser }, testInfo) => {
         // Go to baseURL
-        await page.goto('/', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Click a:has-text("My Items")
         await page.locator('a:has-text("My Items")').click({
@@ -95,13 +95,13 @@ test.describe('Performance tests', () => {
         // https://chromedevtools.github.io/devtools-protocol/tot/Performance/#method-getMetrics
         await client.send('Performance.enable');
         // Go to baseURL
-        await page.goto('/');
+        await page.goto('./');
 
         // To to Search Available after Launch
-        await page.locator('input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.evaluate(() => window.performance.mark("search-available"));
         // Fill Search input
-        await page.locator('input[type="search"]').fill('Performance Notebook');
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Performance Notebook');
         await page.evaluate(() => window.performance.mark("search-entered"));
         //Search Result Appears and is clicked
         await Promise.all([

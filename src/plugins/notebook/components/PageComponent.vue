@@ -1,23 +1,42 @@
 <template>
 <div
     class="c-list__item js-list__item"
-    :class="[{ 'is-selected': isSelected, 'is-notebook-default' : (defaultPageId === page.id) }]"
+    :class="[{
+        'is-selected': isSelected,
+        'is-notebook-default' : (defaultPageId === page.id),
+        'icon-lock' : page.isLocked
+    }]"
     :data-id="page.id"
     @click="selectPage"
 >
-    <span
-        class="c-list__item__name js-list__item__name"
-        :data-id="page.id"
-        @keydown.enter="updateName"
-        @blur="updateName"
-    >{{ page.name.length ? page.name : `Unnamed ${pageTitle}` }}</span>
-    <PopupMenu :popup-menu-items="popupMenuItems" />
+    <template v-if="!page.isLocked">
+        <div
+            class="c-list__item__name js-list__item__name"
+            :class="[{ 'c-input-inline': isSelected }]"
+            :data-id="page.id"
+            :contenteditable="isSelected"
+            @keydown.escape="updateName"
+            @keydown.enter="updateName"
+            @blur="updateName"
+        >{{ pageName }}</div>
+        <PopupMenu
+            :popup-menu-items="popupMenuItems"
+        />
+    </template>
+    <template v-else>
+        <div
+            class="c-list__item__name js-list__item__name"
+            :data-id="page.id"
+            :contenteditable="false"
+        >{{ pageName }}</div>
+    </template>
 </div>
 </template>
 
 <script>
-import PopupMenu from './PopupMenu.vue';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
 import RemoveDialog from '../utils/removeDialog';
+import PopupMenu from './PopupMenu.vue';
 
 export default {
     components: {
@@ -55,16 +74,13 @@ export default {
     computed: {
         isSelected() {
             return this.selectedPageId === this.page.id;
-        }
-    },
-    watch: {
-        page(newPage) {
-            this.toggleContentEditable(newPage);
+        },
+        pageName() {
+            return this.page.name.length ? this.page.name : `Unnamed ${this.pageTitle}`;
         }
     },
     mounted() {
         this.addPopupMenuItems();
-        this.toggleContentEditable();
     },
     methods: {
         addPopupMenuItems() {
@@ -94,43 +110,39 @@ export default {
             removeDialog.show();
         },
         selectPage(event) {
-            const target = event.target;
-            const page = target.closest('.js-list__item');
-            const input = page.querySelector('.js-list__item__name');
+            const { target: { dataset: { id } } } = event;
 
-            if (page.className.indexOf('is-selected') > -1) {
-                input.contentEditable = true;
-                input.classList.add('c-input-inline');
-
-                return;
-            }
-
-            const id = target.dataset.id;
-            if (!id) {
+            if (this.isSelected || !id) {
                 return;
             }
 
             this.$emit('selectPage', id);
         },
-        toggleContentEditable(page = this.page) {
-            const pageTitle = this.$el.querySelector('span');
-            pageTitle.contentEditable = page.isSelected;
+        renamePage(target) {
+            if (!target) {
+                return;
+            }
+
+            target.textContent = target.textContent ? target.textContent.trim() : `Unnamed ${this.pageTitle}`;
+
+            if (this.page.name === target.textContent) {
+                return;
+            }
+
+            this.$emit('renamePage', Object.assign(this.page, { name: target.textContent }));
         },
         updateName(event) {
-            const target = event.target;
-            const name = target.textContent.toString();
-            target.contentEditable = false;
-            target.classList.remove('c-input-inline');
+            const { target, keyCode, type } = event;
 
-            if (this.page.name === name) {
-                return;
+            if (keyCode === KEY_ESCAPE) {
+                target.textContent = this.page.name;
+            } else if (keyCode === KEY_ENTER || type === 'blur') {
+                this.renamePage(target);
             }
 
-            if (name === '') {
-                return;
-            }
+            target.scrollLeft = '0';
 
-            this.$emit('renamePage', Object.assign(this.page, { name }));
+            target.blur();
         }
     }
 };

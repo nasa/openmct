@@ -33,6 +33,7 @@
             :read-only="true"
             :selected-page="result.page"
             :selected-section="result.section"
+            :is-locked="result.page.isLocked"
             @editingEntry="editingEntry"
             @cancelEdit="cancelEdit"
             @changeSectionPage="changeSectionPage"

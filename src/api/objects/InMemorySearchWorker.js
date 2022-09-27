@@ -37,13 +37,13 @@
             const requestType = event.data.request;
             if (requestType === 'index') {
                 indexItem(event.data.keyString, event.data.model);
-            } else if (requestType === 'searchForObjects') {
+            } else if (requestType === 'OBJECTS') {
                 port.postMessage(searchForObjects(event.data));
-            } else if (requestType === 'searchForAnnotations') {
+            } else if (requestType === 'ANNOTATIONS') {
                 port.postMessage(searchForAnnotations(event.data));
-            } else if (requestType === 'searchForTags') {
+            } else if (requestType === 'TAGS') {
                 port.postMessage(searchForTags(event.data));
-            } else if (requestType === 'searchForNotebookAnnotations') {
+            } else if (requestType === 'NOTEBOOK_ANNOTATIONS') {
                 port.postMessage(searchForNotebookAnnotations(event.data));
             } else {
                 throw new Error(`Unknown request ${event.data.request}`);
@@ -94,19 +94,16 @@
 
         });
         // remove old tags
-        if (model.oldTags) {
-            model.oldTags.forEach(tagIDToRemove => {
-                const existsInNewModel = model.tags.includes(tagIDToRemove);
-                if (!existsInNewModel && indexedAnnotationsByTag[tagIDToRemove]) {
-                    indexedAnnotationsByTag[tagIDToRemove] = indexedAnnotationsByTag[tagIDToRemove].
-                        filter(annotationToRemove => {
-                            const shouldKeep = annotationToRemove.keyString !== keyString;
+        const tagsToRemoveFromIndex = Object.keys(indexedAnnotationsByTag).filter(indexedTag => {
+            return !(model.tags.includes(indexedTag));
+        });
+        tagsToRemoveFromIndex.forEach(tagToRemoveFromIndex => {
+            indexedAnnotationsByTag[tagToRemoveFromIndex] = indexedAnnotationsByTag[tagToRemoveFromIndex].filter(indexedAnnotation => {
+                const shouldKeep = indexedAnnotation.keyString !== keyString;
 
-                            return shouldKeep;
-                        });
-                }
+                return shouldKeep;
             });
-        }
+        });
     }
 
     function indexItem(keyString, model) {
@@ -116,7 +113,7 @@
             keyString
         };
         if (model && (model.type === 'annotation')) {
-            if (model.targets && model.targets) {
+            if (model.targets) {
                 indexAnnotation(objectToIndex, model);
             }
 
@@ -190,7 +187,10 @@
                 const matchingAnnotations = indexedAnnotationsByTag[matchingTag];
                 if (matchingAnnotations) {
                     matchingAnnotations.forEach(matchingAnnotation => {
-                        if (!results.includes(matchingAnnotation)) {
+                        const existsInResults = results.some(indexedObject => {
+                            return matchingAnnotation.keyString === indexedObject.keyString;
+                        });
+                        if (!existsInResults) {
                             results.push(matchingAnnotation);
                         }
                     });

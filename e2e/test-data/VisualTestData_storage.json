@@ -1,0 +1,22 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:8080",
+      "localStorage": [
+        {
+          "name": "tcHistory",
+          "value": "{\"utc\":[{\"start\":1658617611983,\"end\":1658619411983}]}"
+        },
+        {
+          "name": "mct",
+          "value": "{\"mine\":{\"identifier\":{\"key\":\"mine\",\"namespace\":\"\"},\"name\":\"My Items\",\"type\":\"folder\",\"composition\":[{\"key\":\"7fa5749b-8969-494c-9d85-c272516d333c\",\"namespace\":\"\"}],\"location\":\"ROOT\",\"persisted\":1658619412848,\"modified\":1658619412848},\"7fa5749b-8969-494c-9d85-c272516d333c\":{\"identifier\":{\"key\":\"7fa5749b-8969-494c-9d85-c272516d333c\",\"namespace\":\"\"},\"name\":\"Unnamed Overlay Plot\",\"type\":\"telemetry.plot.overlay\",\"composition\":[{\"key\":\"67cbb9fc-af46-4148-b9e5-aea11179ae4b\",\"namespace\":\"\"}],\"configuration\":{\"series\":[{\"identifier\":{\"key\":\"67cbb9fc-af46-4148-b9e5-aea11179ae4b\",\"namespace\":\"\"}}]},\"modified\":1658619413566,\"location\":\"mine\",\"persisted\":1658619413567},\"67cbb9fc-af46-4148-b9e5-aea11179ae4b\":{\"name\":\"Unnamed Sine Wave Generator\",\"type\":\"generator\",\"identifier\":{\"key\":\"67cbb9fc-af46-4148-b9e5-aea11179ae4b\",\"namespace\":\"\"},\"telemetry\":{\"period\":10,\"amplitude\":1,\"offset\":0,\"dataRateInHz\":1,\"phase\":0,\"randomness\":0,\"loadDelay\":\"5000\"},\"modified\":1658619413552,\"location\":\"7fa5749b-8969-494c-9d85-c272516d333c\",\"persisted\":1658619413552}}"
+        },
+        {
+          "name": "mct-tree-expanded",
+          "value": "[\"/browse/mine\"]"
+        }
+      ]
+    }
+  ]
+}
