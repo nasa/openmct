@@ -28,10 +28,10 @@ module.exports = (config) => {
 
     if (process.env.NODE_ENV === 'debug') {
         webpackConfig = require('./webpack.dev.js');
-        browsers = 'ChromeDebugging'
+        browsers = ['ChromeDebugging'];
     } else {
         webpackConfig = require('./webpack.coverage.js');
-        browsers = 'ChromeHeadless';
+        browsers = ['ChromeHeadless'];
     }
 
     delete webpackConfig.output;
