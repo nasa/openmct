@@ -404,6 +404,20 @@ describe("the plugin", function () {
             expect(options[1].value).toBe("Another attribute");
         });
 
+        it("Updates the Y-axis label when changed", () => {
+            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+            const config = configStore.get(configId);
+            const yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y")[0].__vue__;
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe('some-key');
+            });
+            yAxisElement.$emit('yKeyChanged', 'test-key');
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                console.log(plotSeries.model.yKey);
+                expect(plotSeries.model.yKey).toBe('test-key');
+            });
+        });
+
         it('hides the pause and play controls', () => {
             let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
             let playEl = element.querySelectorAll(".c-button-set .icon-arrow-right");
