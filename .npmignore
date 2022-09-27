@@ -19,6 +19,9 @@
 # TODO move test utils into test/ folders
 /src/utils/testing.js
 
+# Include e2e suite for openmct-e2e-testing-as-a-dependency
+!/e2e/
+
 # Also include these special top-level files.
 !copyright-notice.js
 !copyright-notice.html
