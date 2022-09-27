@@ -95,7 +95,7 @@ export default {
     },
     async mounted() {
         await this.setEmbedObjectPath();
-        this.addmenuActions();
+        this.addMenuActions();
         this.imageExporter = new ImageExporter(this.openmct);
     },
     methods: {
@@ -110,7 +110,7 @@ export default {
 
             this.openmct.menus.showSuperMenu(x, y, this.menuActions, menuOptions);
         },
-        addmenuActions() {
+        addMenuActions() {
             if (this.embed.snapshot) {
                 const viewSnapshot = {
                     id: 'viewSnapshot',
