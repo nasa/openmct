@@ -66,7 +66,7 @@ describe('the plugin', () => {
 
         return new Promise(resolve => {
             requestAnimationFrame(function loop() {
-                if (++frames > 200) {
+                if (++frames > 20) {
                     resolve();
                 } else {
                     requestAnimationFrame(loop);
