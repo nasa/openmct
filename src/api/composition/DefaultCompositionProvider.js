@@ -20,30 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash',
-    'objectUtils'
-], function (
-    _,
-    objectUtils
-) {
-    /**
-     * A CompositionProvider provides the underlying implementation of
-     * composition-related behavior for certain types of domain object.
-     *
-     * By default, a composition provider will not support composition
-     * modification.  You can add support for mutation of composition by
-     * defining `add` and/or `remove` methods.
-     *
-     * If the composition of an object can change over time-- perhaps via
-     * server updates or mutation via the add/remove methods, then one must
-     * trigger events as necessary.
-     *
-     * @interface CompositionProvider
-     * @memberof module:openmct
-     */
+import _ from 'lodash';
+import objectUtils from "../objects/object-utils";
+/**
+ * A CompositionProvider provides the underlying implementation of
+ * composition-related behavior for certain types of domain object.
+ *
+ * By default, a composition provider will not support composition
+ * modification.  You can add support for mutation of composition by
+ * defining `add` and/or `remove` methods.
+ *
+ * If the composition of an object can change over time-- perhaps via
+ * server updates or mutation via the add/remove methods, then one must
+ * trigger events as necessary.
+ *
+ * @interface CompositionProvider
+ * @memberof module:openmct
+ */
 
-    function DefaultCompositionProvider(publicAPI, compositionAPI) {
+export default class DefaultCompositionProvider {
+    constructor(publicAPI, compositionAPI) {
         this.publicAPI = publicAPI;
         this.listeningTo = {};
         this.onMutation = this.onMutation.bind(this);
@@ -54,22 +50,6 @@ define([
         compositionAPI.addPolicy(this.cannotContainItself);
         compositionAPI.addPolicy(this.supportsComposition);
     }
-
-    /**
-     * @private
-     */
-    DefaultCompositionProvider.prototype.cannotContainItself = function (parent, child) {
-        return !(parent.identifier.namespace === child.identifier.namespace
-            && parent.identifier.key === child.identifier.key);
-    };
-
-    /**
-     * @private
-     */
-    DefaultCompositionProvider.prototype.supportsComposition = function (parent, child) {
-        return this.publicAPI.composition.supportsComposition(parent);
-    };
-
     /**
      * Check if this provider should be used to load composition for a
      * particular domain object.
@@ -80,10 +60,9 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method appliesTo
      */
-    DefaultCompositionProvider.prototype.appliesTo = function (domainObject) {
+    appliesTo(domainObject) {
         return Boolean(domainObject.composition);
-    };
-
+    }
     /**
      * Load any domain objects contained in the composition of this domain
      * object.
@@ -94,10 +73,9 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method load
      */
-    DefaultCompositionProvider.prototype.load = function (domainObject) {
+    load(domainObject) {
         return Promise.all(domainObject.composition);
-    };
-
+    }
     /**
      * Attach listeners for changes to the composition of a given domain object.
      * Supports `add` and `remove` events.
@@ -107,12 +85,10 @@ define([
      * @param Function callback callback to invoke when event is triggered.
      * @param [context] context to use when invoking callback.
      */
-    DefaultCompositionProvider.prototype.on = function (
-        domainObject,
+    on(domainObject,
         event,
         callback,
-        context
-    ) {
+        context) {
         this.establishTopicListener();
 
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
@@ -131,8 +107,7 @@ define([
             callback: callback,
             context: context
         });
-    };
-
+    }
     /**
      * Remove a listener that was previously added for a given domain object.
      * event name, callback, and context must be the same as when the listener
@@ -143,12 +118,10 @@ define([
      * @param Function callback callback to remove.
      * @param [context] context of callback to remove.
      */
-    DefaultCompositionProvider.prototype.off = function (
-        domainObject,
+    off(domainObject,
         event,
         callback,
-        context
-    ) {
+        context) {
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
         const objectListeners = this.listeningTo[keyString];
 
@@ -160,8 +133,7 @@ define([
         if (!objectListeners.add.length && !objectListeners.remove.length && !objectListeners.reorder.length) {
             delete this.listeningTo[keyString];
         }
-    };
-
+    }
     /**
      * Remove a domain object from another domain object's composition.
      *
@@ -174,15 +146,14 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method remove
      */
-    DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
+    remove(domainObject, childId) {
         let composition = domainObject.composition.filter(function (child) {
             return !(childId.namespace === child.namespace
-                && childId.key === child.key);
+                    && childId.key === child.key);
         });
 
         this.publicAPI.objects.mutate(domainObject, 'composition', composition);
-    };
-
+    }
     /**
      * Add a domain object to another domain object's composition.
      *
@@ -195,22 +166,21 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method add
      */
-    DefaultCompositionProvider.prototype.add = function (parent, childId) {
+    add(parent, childId) {
         if (!this.includes(parent, childId)) {
             parent.composition.push(childId);
             this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
         }
-    };
+    }
 
     /**
      * @private
      */
-    DefaultCompositionProvider.prototype.includes = function (parent, childId) {
-        return parent.composition.some(composee =>
-            this.publicAPI.objects.areIdsEqual(composee, childId));
-    };
+    includes(parent, childId) {
+        return parent.composition.some(composee => this.publicAPI.objects.areIdsEqual(composee, childId));
+    }
 
-    DefaultCompositionProvider.prototype.reorder = function (domainObject, oldIndex, newIndex) {
+    reorder(domainObject, oldIndex, newIndex) {
         let newComposition = domainObject.composition.slice();
         let removeId = oldIndex > newIndex ? oldIndex + 1 : oldIndex;
         let insertPosition = oldIndex < newIndex ? newIndex + 1 : newIndex;
@@ -257,7 +227,7 @@ define([
                 listener.callback(reorderPlan);
             }
         }
-    };
+    }
 
     /**
      * Listens on general mutation topic, using injector to fetch to avoid
@@ -265,7 +235,7 @@ define([
      *
      * @private
      */
-    DefaultCompositionProvider.prototype.establishTopicListener = function () {
+    establishTopicListener() {
         if (this.topicListener) {
             return;
         }
@@ -274,7 +244,22 @@ define([
         this.topicListener = () => {
             this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation);
         };
-    };
+    }
+
+    /**
+     * @private
+     */
+    cannotContainItself(parent, child) {
+        return !(parent.identifier.namespace === child.identifier.namespace
+            && parent.identifier.key === child.identifier.key);
+    }
+
+    /**
+     * @private
+     */
+    supportsComposition(parent, child) {
+        return this.publicAPI.composition.supportsComposition(parent);
+    }
 
     /**
      * Handles mutation events.  If there are active listeners for the mutated
@@ -282,7 +267,7 @@ define([
      *
      * @private
      */
-    DefaultCompositionProvider.prototype.onMutation = function (oldDomainObject) {
+    onMutation(oldDomainObject) {
         const id = objectUtils.makeKeyString(oldDomainObject.identifier);
         const listeners = this.listeningTo[id];
 
@@ -315,8 +300,5 @@ define([
         removed.forEach(function (removedChild) {
             listeners.remove.forEach(notify(removedChild));
         });
-
-    };
-
-    return DefaultCompositionProvider;
-});
+    }
+}
