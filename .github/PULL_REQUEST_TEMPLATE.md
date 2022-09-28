@@ -23,7 +23,7 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 * [ ] Changes appear to address issue?
 * [ ] Reviewer has tested changes by following the provided instructions?
 * [ ] Changes appear not to be breaking changes?
-* [ ] Appropriate tests included?
+* [ ] Appropriate automated tests included?
 * [ ] Code style and in-line documentation are appropriate?
 * [ ] Has associated issue been labelled unverified? (only applicable if this PR closes the issue)
 * [ ] Has associated issue been labelled bug? (only applicable if this PR is for a bug fix)
