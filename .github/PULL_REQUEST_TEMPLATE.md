@@ -21,10 +21,9 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 ### Reviewer Checklist
 
 * [ ] Changes appear to address issue?
-* [ ] Has this been smoke tested?
+* [ ] Have you tested this?
 * [ ] Changes appear not to be breaking changes?
-* [ ] Appropriate unit tests included?
+* [ ] Appropriate tests included?
 * [ ] Code style and in-line documentation are appropriate?
-* [ ] Commit messages meet standards?
 * [ ] Has associated issue been labelled unverified? (only applicable if this PR closes the issue)
 * [ ] Has associated issue been labelled bug? (only applicable if this PR is for a bug fix)
