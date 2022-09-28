@@ -46,7 +46,7 @@ define([
                 'get'
             ]);
             publicAPI.$injector.get.and.returnValue(topicService);
-            compositionAPI = new CompositionAPI(publicAPI);
+            compositionAPI = new CompositionAPI.default(publicAPI);
         });
 
         it('returns falsy if an object does not support composition', function () {

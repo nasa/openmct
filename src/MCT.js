@@ -125,7 +125,7 @@ define([
              * @memberof module:openmct.MCT#
              * @name composition
              */
-            ['composition', () => new api.CompositionAPI(this)],
+            ['composition', () => new api.CompositionAPI.default(this)],
 
             /**
              * Registry for views of domain objects which should appear in the
