@@ -449,8 +449,10 @@ export default {
             this.stopListening(plotSeries);
         },
         async loadAnnotations() {
-            const rawAnnotations = await this.openmct.annotation.get(this.domainObject);
-            this.annotations = this.findAnnotationPoints(rawAnnotations);
+            const rawAnnotations = await this.openmct.annotation.getAnnotation(this.domainObject, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
+            if (rawAnnotations) {
+                this.annotations = this.findAnnotationPoints(rawAnnotations);
+            }
         },
         loadSeriesData(series) {
             //this check ensures that duplicate requests don't happen on load
@@ -911,8 +913,14 @@ export default {
                 }
             });
             if (Object.keys(targets).length) {
-                await this.openmct.annotation.create('Unnamed Plot Annotation', this.domainObject,
-                    this.openmct.annotation.PLOT_SPATIAL, [], 'No Description', targets);
+                await this.openmct.annotation.create({
+                    name: 'Unnamed Plot Annotation',
+                    domainObject: this.domainObject,
+                    annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                    tags: [],
+                    contentText: 'No Description',
+                    targets
+                });
             }
 
         },
