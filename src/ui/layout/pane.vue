@@ -23,7 +23,7 @@
         >{{ label }}</span>
         <slot name="controls"></slot>
         <button
-            v-if="collapsable"
+            v-if="isCollapsable"
             class="l-pane__collapse-button c-icon-button"
             @click="toggleCollapse"
         ></button>
@@ -69,8 +69,8 @@ export default {
         };
     },
     computed: {
-        collapsable() {
-            return this.hideParam && this.hideParam.length;
+        isCollapsable() {
+            return this.hideParam && this.hideParam.length > 0;
         }
     },
     beforeMount() {
@@ -80,7 +80,7 @@ export default {
     async mounted() {
         await this.$nextTick();
         // Hide tree and/or inspector pane if specified in URL
-        if (this.collapsable) {
+        if (this.isCollapsable) {
             this.handleHideUrl();
         }
     },
@@ -145,7 +145,7 @@ export default {
         updatePosition: function (event) {
             let size = this.getNewSize(event);
             let intSize = parseInt(size.substr(0, size.length - 2), 10);
-            if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
+            if (intSize < COLLAPSE_THRESHOLD_PX && this.isCollapsable === true) {
                 this.dragCollapse = true;
                 this.end();
                 this.toggleCollapse();
