@@ -7,6 +7,9 @@
         "baseUrl": "./",
         "allowJs": true,
         "checkJs": false,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "declarationMap": true,
         "strict": true,
         "esModuleInterop": true,
         "noImplicitOverride": true,
@@ -18,6 +21,9 @@
             "@/*": ["src/*"]
         }
     },
+    "include": [
+        "src/api/composition/*.js"
+    ],
     "exclude": [
         "node_modules",
         "dist"
