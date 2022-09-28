@@ -38,10 +38,12 @@ module.exports = (config) => {
     }
 
     delete webpackConfig.output;
+    // karma doesn't support webpack entry
+    delete webpackConfig.entry;
 
     config.set({
         basePath: '',
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine', 'webpack'],
         files: [
             'indexTest.js',
             // included means: should the files be included in the browser using <script> tag?
