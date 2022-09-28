@@ -1,5 +1,5 @@
 # Testing
-Open MCT Testing is iterating and improving at a rapid pace. This document is designed to capture and index existing testing documentation and house documentation which no obvious place.
+Open MCT Testing is iterating and improving at a rapid pace. This document serves to capture and index existing testing documentation and house documentation which no other obvious location as our testing evolves.
 
 ## General Testing Process
 Documentation located [here](./docs/src/process/testing/plan.md)
@@ -26,13 +26,25 @@ Unit testing is essential part of our test strategy and compliments our e2e test
 * [Example of an automated test spec for an object view plugin](https://github.com/nasa/openmct/blob/master/src/plugins/telemetryTable/pluginSpec.js)
 * [Example of an automated test spec for API](https://github.com/nasa/openmct/blob/master/src/api/time/TimeAPISpec.js)
 
+#### Unit Testing Execution
+
+The unit tests can be executed in one of two ways:
+`npm run test` which runs the entire suite against headless chrome
+`npm run test:debug` for debugging the tests in realtime in an active chrome session.
+
 ## e2e, performance, and visual testing
 Documentation located [here](./e2e/README.md)
 
 ## Code Coverage
+
 * 100% statement coverage is achievable and desirable.
 
 Codecov.io will combine each of the above commands with [Codecov.io Flags](https://docs.codecov.com/docs/flags). Effectively, this allows us to combine multiple reports which are run at various stages of our CI Pipeline or run as part of a parallel process.
 
 This e2e coverage is combined with our unit test report to give a comprehensive (if flawed) view of line coverage.
 
+### Limitations in our code coverage reporting
+
+Our code coverage implementation has two known limitations:
+- [Variability and accuracy](https://github.com/nasa/openmct/issues/5811)
+- []

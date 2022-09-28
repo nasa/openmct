@@ -22,7 +22,7 @@ flags:
     carryforward: true    
 
 comment:
-  layout: "reach,diff,flags,files,footer"
+  layout: "diff,flags,files,footer"
   behavior: default
   require_changes: false
   show_carryforward_flags: true
