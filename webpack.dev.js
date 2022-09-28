@@ -41,7 +41,8 @@ module.exports = merge(common, {
             publicPath: '/dist'
         },
         client: {
-            progress: true
+            progress: true,
+            overlay: true
         }
     }
 });
