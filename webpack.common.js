@@ -148,7 +148,13 @@ const config = {
             }
         ]
     },
-    stats: 'errors-warnings'
+    stats: 'errors-warnings',
+    performance: {
+        // We should eventually consider chunking to decrease
+        // these values
+        maxEntrypointSize: 25000000,
+        maxAssetSize: 25000000
+    }
 };
 
 module.exports = config;
