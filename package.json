@@ -108,9 +108,6 @@
   "engines": {
     "node": ">=14.19.1"
   },
-  "overrides": {
-    "core-js": "3.21.1"
-  },
   "browserslist": [
     "Firefox ESR",
     "not IE 11",
