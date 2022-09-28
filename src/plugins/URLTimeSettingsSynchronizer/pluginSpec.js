@@ -121,10 +121,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    /*
-     * This test relies on previous test results, and thus has a race condition
-     */
-    xit("reset hash", (done) => {
+    it("reset hash", (done) => {
         window.location.hash = oldHash;
         resolveFunction = () => {
             expect(window.location.hash).toBe(oldHash);
