@@ -116,7 +116,7 @@ export default {
                     id: 'viewSnapshot',
                     cssClass: 'icon-camera',
                     name: 'View Snapshot',
-                    description: 'description',
+                    description: 'View the snapshot image taken in the form of a jpeg.',
                     onItemClicked: () => this.openSnapshot()
                 };
 
@@ -127,7 +127,7 @@ export default {
                 id: 'navigateToItem',
                 cssClass: this.embed.cssClass,
                 name: 'Navigate to Item',
-                description: 'description',
+                description: 'Navigate to the item with the default time settings.',
                 onItemClicked: () => this.navigateToItem()
             };
 
@@ -135,7 +135,7 @@ export default {
                 id: 'navigateToItemInTime',
                 cssClass: 'icon-telemetry',
                 name: 'Navigate to Item in Time',
-                description: 'description',
+                description: 'Navigate to the item with the given time context',
                 onItemClicked: () => this.navigateToItemInTime()
             };
 
@@ -143,7 +143,7 @@ export default {
                 id: 'quickView',
                 cssClass: 'icon-eye-open',
                 name: 'Quick View',
-                description: 'description',
+                description: 'Full screen overlay view of the item.',
                 onItemClicked: () => this.previewEmbed()
             };
 
@@ -154,7 +154,7 @@ export default {
                     id: 'removeEmbed',
                     cssClass: 'icon-trash',
                     name: this.removeActionString,
-                    description: 'description',
+                    description: 'Permanently delete this embed from this Notebook entry.',
                     onItemClicked: this.getRemoveDialog.bind(this)
                 };
 

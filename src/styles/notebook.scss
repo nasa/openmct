@@ -452,6 +452,20 @@
     &__snap-thumb {
         @include snapThumb();
     }
+    &__actions-menu {
+        max-height: 80vh;
+        max-width: 500px;
+        min-height: 100px;
+        z-index: 70;
+        [class*="__icon"] {
+            filter: $colorKeyFilter;
+            margin: 0%;
+        }
+        [class*="__item-description"] {
+            min-width: 200px;            
+        }
+    }
+
 }
 
 /****************************** SNAPSHOTTING */
