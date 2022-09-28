@@ -21,7 +21,7 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 ### Reviewer Checklist
 
 * [ ] Changes appear to address issue?
-* [ ] Have you tested this?
+* [ ] Reviewer has tested changes by following the provided instructions?
 * [ ] Changes appear not to be breaking changes?
 * [ ] Appropriate tests included?
 * [ ] Code style and in-line documentation are appropriate?
