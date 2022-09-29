@@ -157,7 +157,9 @@ export default class YAxisModel extends Model {
         if (this.id === 1) {
             yAxis = plotModel.configuration?.yAxis;
         } else {
-            yAxis = plotModel.configuration?.additionalYAxes.find(additionalYAxis => additionalYAxis.id === id);
+            if (plotModel.configuration?.additionalYAxes) {
+                yAxis = plotModel.configuration.additionalYAxes.find(additionalYAxis => additionalYAxis.id === id);
+            }
         }
 
         return yAxis;
