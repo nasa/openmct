@@ -152,6 +152,19 @@ describe("The Annotation API", () => {
             }).not.toThrow();
             expect(annotationObject._deleted).toBeTrue();
         });
+        it("can add/delete/add a tag", async () => {
+            let annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            expect(annotationObject).toBeDefined();
+            expect(annotationObject.type).toEqual('annotation');
+            expect(annotationObject.tags).toContain('aWonderfulTag');
+            openmct.annotation.deleteAnnotations([annotationObject]);
+            expect(annotationObject._deleted).toBeTrue();
+            annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            expect(annotationObject).toBeDefined();
+            expect(annotationObject.type).toEqual('annotation');
+            expect(annotationObject.tags).toContain('aWonderfulTag');
+            expect(annotationObject._deleted).toBeFalse();
+        });
     });
 
     describe("Search", () => {
