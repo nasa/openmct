@@ -391,7 +391,7 @@
 /****************************** EMBEDS */
 @mixin snapThumb() {
     // LEGACY: TODO: refactor when .snap-thumb in New Entry dialog is refactored
-    $d: 30px;
+    $d: 40px;
     border: 1px solid $colorInteriorBorder;
     cursor: pointer;
     width: $d;
@@ -409,21 +409,20 @@
     // LEGACY,
     @include snapThumb();
 }
-
+.c-ne__embeds{
+    background: $colorBodyBg;
+    max-height: 10vh;
+}
 .c-ne__embed {
     @include discreteItemInnerElem();
     display: inline-flex;
     flex: 0 0 auto;
     padding: $interiorMargin;
-
-    [class*="__"] + [class*="__"] {
-        margin-left: $interiorMargin;
-    }
-
+    
     &__info {
         display: flex;
         flex-direction: column;
-
+        margin-left: $interiorMargin;
         a {
             color: $colorKey;
         }
@@ -439,7 +438,7 @@
     &__link {
         &:before {
             display: block;
-            font-size: 0.85em;
+            font-size: 1em;
             margin-right: $interiorMarginSm;
         }
     }
@@ -453,8 +452,8 @@
         @include snapThumb();
     }
     &__actions-menu {
-        max-height: 80vh;
-        max-width: 500px;
+        width: 55vh;
+        max-width: 500px; 
         min-height: 100px;
         z-index: 70;
         [class*="__icon"] {
@@ -462,7 +461,7 @@
             margin: 0%;
         }
         [class*="__item-description"] {
-            min-width: 200px;            
+            min-width: 200px;         
         }
     }
 

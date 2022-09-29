@@ -104,8 +104,8 @@ export default {
             const y = event.y;
 
             const menuOptions = {
-                menuClass: 'c-ne__embed__actions-menu'
-                // placement: this.openmct.menus.menuPlacement.TOP_RIGHT
+                menuClass: 'c-ne__embed__actions-menu',
+                placement: this.openmct.menus.menuPlacement.TOP_RIGHT
             };
 
             this.openmct.menus.showSuperMenu(x, y, this.menuActions, menuOptions);
@@ -135,7 +135,7 @@ export default {
                 id: 'navigateToItemInTime',
                 cssClass: 'icon-telemetry',
                 name: 'Navigate to Item in Time',
-                description: 'Navigate to the item with the given time context',
+                description: 'Navigate to the item with the given time context.',
                 onItemClicked: () => this.navigateToItemInTime()
             };
 
