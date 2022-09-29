@@ -409,16 +409,20 @@
     // LEGACY,
     @include snapThumb();
 }
-.c-ne__embeds{
+.c-ne__embeds-wrapper{
     background: $colorBodyBg;
     max-height: 10vh;
+    padding-left: $interiorMarginLg;
+    padding-top: $interiorMarginLg;
+    display: flex;
 }
+
 .c-ne__embed {
     @include discreteItemInnerElem();
     display: inline-flex;
     flex: 0 0 auto;
     padding: $interiorMargin;
-    
+
     &__info {
         display: flex;
         flex-direction: column;

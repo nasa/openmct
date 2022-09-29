@@ -91,7 +91,7 @@
                 @tags-updated="timestampAndUpdate"
             />
 
-            <div class="c-snapshots c-ne__embeds">
+            <div class="c-snapshots c-ne__embeds-wrapper">
                 <NotebookEmbed
                     v-for="embed in entry.embeds"
                     :key="embed.id"
