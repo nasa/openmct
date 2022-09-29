@@ -42,7 +42,7 @@
                 :id="yAxisId"
                 :tick-width="tickWidth"
                 :style="{
-                    left: (plotWidth - tickWidth) + 'px'
+                    left: additionalYAxesIds.length ? (plotWidth - tickWidth + 40) + 'px' : (plotWidth - tickWidth) + 'px'
                 }"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
@@ -53,7 +53,8 @@
                 :key="`yAxis-${index}`"
                 :tick-width="tickWidth"
                 :style="{
-                    left: (plotWidth - tickWidth - 20) + 'px'
+                    left: additionalYAxesIds.length ? (plotWidth - tickWidth - 3) + 'px' : (plotWidth - tickWidth) + 'px',
+                    'border-right': '1px solid'
                 }"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
@@ -62,7 +63,7 @@
         <div
             class="gl-plot-wrapper-display-area-and-x-axis"
             :style="{
-                left: (plotWidth + 20) + 'px'
+                left: additionalYAxesIds.length ? (plotWidth + 60) + 'px' : (plotWidth + 20) + 'px'
             }"
         >
 
@@ -423,7 +424,7 @@ export default {
                     domainObject: this.domainObject,
                     openmct: this.openmct,
                     palette: this.colorPalette,
-                    max_y_axes: 2,
+                    max_y_axes: this.options.max_y_axes,
                     callback: (data) => {
                         this.data = data;
                     }
