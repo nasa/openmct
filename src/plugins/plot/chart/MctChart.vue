@@ -114,7 +114,12 @@ export default {
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.config.yAxis, 'change:key', this.clearOffset, this);
         this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
-        this.listenTo(this.config.yAxis2, 'change', this.updateLimitsAndDraw);
+        if (this.config.additionalYAxes.length) {
+            this.config.additionalYAxes.forEach(yAxis => {
+                this.listenTo(yAxis, 'change', this.updateLimitsAndDraw);
+            });
+        }
+
         this.listenTo(this.config.xAxis, 'change', this.updateLimitsAndDraw);
         this.config.series.forEach(this.onSeriesAdd, this);
         this.$emit('chartLoaded');
@@ -501,7 +506,7 @@ export default {
         },
         updateViewport(id) {
             const xRange = this.config.xAxis.get('displayRange');
-            const yRange = id === 1 ? this.config.yAxis.get('displayRange') : this.config.yAxis2.get('displayRange');
+            const yRange = id === 1 ? this.config.yAxis.get('displayRange') : this.config.additionalYAxes[id - 2].get('displayRange');
 
             if (!xRange || !yRange) {
                 return;

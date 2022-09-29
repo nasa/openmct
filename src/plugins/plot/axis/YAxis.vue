@@ -98,7 +98,7 @@ export default {
     },
     computed: {
         canShowYAxisLabel() {
-            return this.singleSeries || this.hasSameRangeValue === true;
+            return this.singleSeries === true || this.hasSameRangeValue === true;
         }
     },
     mounted() {
@@ -135,19 +135,21 @@ export default {
             }
         },
         addSeries(series, index) {
-            const yAxisId = this.series.get('yAxisId');
-            const seriesIndex = this.seriesModels.find(model => this.openmct.objects.areIdsEqual(model.identifier, series.identifier));
+            const yAxisId = series.get('yAxisId');
+            const seriesIndex = this.seriesModels.findIndex(model => this.openmct.objects.areIdsEqual(model.get('identifier'), series.get('identifier')));
 
             if (yAxisId === this.id && seriesIndex < 0) {
                 this.seriesModels.push(series);
                 this.checkRangeValueAndSingleSeries();
+                this.setUpYAxisOptions();
             }
         },
         removeSeries(plotSeries) {
-            const seriesIndex = this.seriesModels.find(model => this.openmct.objects.areIdsEqual(model.identifier, plotSeries.identifier));
+            const seriesIndex = this.seriesModels.findIndex(model => this.openmct.objects.areIdsEqual(model.get('identifier'), plotSeries.get('identifier')));
             if (seriesIndex > -1) {
                 this.seriesModels.splice(seriesIndex, 1);
                 this.checkRangeValueAndSingleSeries();
+                this.setUpYAxisOptions();
             }
         },
         checkRangeValueAndSingleSeries() {
@@ -158,6 +160,10 @@ export default {
         },
         setUpYAxisOptions() {
             this.yKeyOptions = [];
+            if (!this.seriesModels.length) {
+                return;
+            }
+
             const seriesModel = this.seriesModels[0];
             if (seriesModel.metadata) {
                 this.yKeyOptions = seriesModel.metadata

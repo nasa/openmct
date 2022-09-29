@@ -34,7 +34,10 @@
         @legendHoverChanged="legendHoverChanged"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <div v-if="seriesModels.length">
+        <div
+            v-if="seriesModels.length"
+            class="u-contents"
+        >
             <y-axis
                 :id="yAxisId"
                 :tick-width="tickWidth"
@@ -420,6 +423,7 @@ export default {
                     domainObject: this.domainObject,
                     openmct: this.openmct,
                     palette: this.colorPalette,
+                    max_y_axes: 2,
                     callback: (data) => {
                         this.data = data;
                     }
