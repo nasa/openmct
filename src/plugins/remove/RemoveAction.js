@@ -34,8 +34,8 @@ export default class RemoveAction {
     invoke(objectPath) {
         let object = objectPath[0];
         let parent = objectPath[1];
-        this.showConfirmDialog(object).then(async () => {
-            await this.removeFromComposition(parent, object);
+        this.showConfirmDialog(object).then(() => {
+            this.removeFromComposition(parent, object);
             if (this.inNavigationPath(object)) {
                 this.navigateTo(objectPath.slice(1));
             }
@@ -81,7 +81,7 @@ export default class RemoveAction {
         this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
-    async removeFromComposition(parent, child) {
+    removeFromComposition(parent, child) {
         let composition = parent.composition.filter(id =>
             !this.openmct.objects.areIdsEqual(id, child.identifier)
         );
@@ -93,7 +93,7 @@ export default class RemoveAction {
         }
 
         if (!this.isAlias(child, parent)) {
-            await this.openmct.objects.mutate(child, 'location', null);
+            this.openmct.objects.mutate(child, 'location', null);
         }
     }
 
