@@ -93,7 +93,7 @@ define(['lodash'], function (_) {
                     'table': {
                         value: 'table',
                         name: 'Table',
-                        class: 'icon-tabular-realtime'
+                        class: 'icon-tabular-scrolling'
                     }
                 };
                 const APPLICABLE_VIEWS = {

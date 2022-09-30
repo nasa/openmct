@@ -155,11 +155,11 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
-        await expect(page.locator('text=No matching results.')).toBeVisible();
+        await expect(page.locator('text=No results found')).toBeVisible();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sci');
-        await expect(page.locator('text=No matching results.')).toBeVisible();
+        await expect(page.locator('text=No results found')).toBeVisible();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('dri');
-        await expect(page.locator('text=No matching results.')).toBeVisible();
+        await expect(page.locator('text=No results found')).toBeVisible();
     });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL

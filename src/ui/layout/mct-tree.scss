@@ -287,8 +287,10 @@
 
 .c-selector {
     &.c-tree-and-search {
-        border: 1px solid $colorFormLines;
-        border-radius: $controlCr;
-        padding: $interiorMargin;
+        background: rgba($colorFormLines, 0.1);
+        border-radius: $basicCr;
+        padding: 2px;
+        height: 100%;
+        min-height: 150px;
     }
 }
