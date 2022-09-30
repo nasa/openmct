@@ -20,18 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    return {
-        name: 'Telemetry Table',
-        description: 'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
-        creatable: true,
-        cssClass: 'icon-tabular-scrolling',
-        initialize(domainObject) {
-            domainObject.composition = [];
-            domainObject.configuration = {
-                columnWidths: {},
-                hiddenColumns: {}
-            };
-        }
-    };
+const { test } = require('../../pluginFixtures');
+const percySnapshot = require('@percy/playwright');
+const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
+
+test.describe('Visual - Notebook', () => {
+    test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Embed Test Notebook"
+        });
+        // Create Overlay Plot
+        await createDomainObjectWithDefaults(page, {
+            type: 'Overlay Plot',
+            name: "Dropped Overlay Plot"
+        });
+
+        await expandTreePaneItemByName(page, myItemsFolderName);
+
+        await page.goto(notebook.url);
+        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
+
+        await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
+
+    });
 });

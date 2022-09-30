@@ -27,7 +27,7 @@ export default function () {
         openmct.types.addType('hyperlink', {
             name: 'Hyperlink',
             key: 'hyperlink',
-            description: 'A hyperlink to redirect to a different link',
+            description: 'A text element or button that links to any URL including Open MCT views.',
             creatable: true,
             cssClass: 'icon-chain-links',
             initialize: function (domainObject) {

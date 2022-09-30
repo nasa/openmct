@@ -392,6 +392,8 @@
 
     &__nav-to-parent-button {
         // This is an icon-button
+        margin-right: $interiorMargin;
+
         .is-editing & {
             display: none;
         }
@@ -412,7 +414,6 @@
 
     &__object-name--w {
         @include headerFont(1.5em);
-        margin-left: $interiorMarginLg;
         min-width: 0;
 
         .is-status__indicator {
