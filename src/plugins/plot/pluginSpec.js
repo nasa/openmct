@@ -36,7 +36,6 @@ describe("the plugin", function () {
     let telemetryPromiseResolve;
     let mockObjectPath;
     let telemetrylimitProvider;
-    let telemetryRequestCount = 0;
 
     beforeEach((done) => {
         mockObjectPath = [
@@ -90,7 +89,6 @@ describe("the plugin", function () {
         });
 
         spyOn(openmct.telemetry, 'request').and.callFake(() => {
-            telemetryRequestCount = telemetryRequestCount + 1;
             telemetryPromiseResolve(testTelemetry);
 
             return telemetryPromise;
@@ -162,7 +160,7 @@ describe("the plugin", function () {
     afterEach((done) => {
         openmct.time.timeSystem('utc', {
             start: 0,
-            end: 1
+            end: 2
         });
 
         configStore.deleteAll();
@@ -551,7 +549,6 @@ describe("the plugin", function () {
         let resizePromise;
 
         beforeEach(() => {
-            telemetryRequestCount = 0;
             testTelemetryObject = {
                 identifier: {
                     namespace: "",
@@ -588,6 +585,7 @@ describe("the plugin", function () {
             applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
             plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
             plotView = plotViewProvider.view(testTelemetryObject, []);
+
             plotView.show(child, true);
 
             resizePromise = new Promise((resolve) => {
@@ -596,12 +594,15 @@ describe("the plugin", function () {
 
             const handlePlotResize = _.debounce(() => {
                 resizePromiseResolve(true);
-            }, 500);
+            }, 600);
 
             plotContainerResizeObserver = new ResizeObserver(handlePlotResize);
             plotContainerResizeObserver.observe(plotView.getComponent().$children[0].$children[1].$parent.$refs.plotWrapper);
 
-            return Vue.nextTick();
+            return Vue.nextTick(() => {
+                plotView.getComponent().$children[0].$children[1].stopFollowingTimeContext();
+                spyOn(plotView.getComponent().$children[0].$children[1], 'loadSeriesData').and.callThrough();
+            });
         });
 
         afterEach(() => {
@@ -610,27 +611,17 @@ describe("the plugin", function () {
         });
 
         it("requests historical data when over the threshold", (done) => {
-            const countBefore = telemetryRequestCount;
-            expect(countBefore).toEqual(1);
             element.style.width = '680px';
             resizePromise.then(() => {
-                //There will be 2 new requests for telemetry here
-                // the first is made when time bounds is updated (in the afterEach)
-                // and the 2nd is made by the resize handler code
-                expect(telemetryRequestCount - countBefore).toEqual(2);
+                expect(plotView.getComponent().$children[0].$children[1].loadSeriesData).toHaveBeenCalledTimes(1);
                 done();
             });
         });
 
         it("does not request historical data when under the threshold", (done) => {
-            const countBefore = telemetryRequestCount;
-            expect(countBefore).toEqual(1);
             element.style.width = '644px';
             resizePromise.then(() => {
-                //There will be 1 new requests for telemetry here
-                // the first is made when time bounds is updated (in the afterEach)
-                // and the 2nd is made by the resize handler code
-                expect(telemetryRequestCount - countBefore).toEqual(1);
+                expect(plotView.getComponent().$children[0].$children[1].loadSeriesData).not.toHaveBeenCalled();
                 done();
             });
         });
