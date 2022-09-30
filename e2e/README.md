@@ -151,7 +151,7 @@ Current list of test tags:
 
 - `@ipad` - Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no Create button).
 - `@gds` - Denotes a GDS Test Case used in the VIPER Mission.
-- `@addInit` - Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of app.js.
+- `@addInit` - Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.
 - `@localStorage` - Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).
 - `@snapshot` - Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.
 - `@unstable` - A new test or test which is known to be flaky.

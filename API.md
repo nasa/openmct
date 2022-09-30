@@ -57,7 +57,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Building Applications With Open MCT
+# Developing Applications With Open MCT
 
 ## Scope and purpose of this document
 
@@ -72,8 +72,7 @@ MCT, as well as addressing some common developer use cases.
 ## Building From Source 
 
 The latest version of Open MCT is available from [our GitHub repository](https://github.com/nasa/openmct). 
-If you have `git`, and `node` installed, you can build Open MCT with the
-commands 
+If you have `git`, and `node` installed, you can build Open MCT with the commands 
 
 ```bash
 git clone https://github.com/nasa/openmct.git
@@ -86,7 +85,7 @@ build a minified version that can be included in your application. The output
 of the build process is placed in a `dist` folder under the openmct source 
 directory, which can be copied out to another location as needed. The contents 
 of this folder will include a minified javascript file named `openmct.js` as 
-well as assets such as html, css, and images necessary for the UI. 
+well as assets such as html, css, and images necessary for the UI.
 
 ## Starting an Open MCT application
 

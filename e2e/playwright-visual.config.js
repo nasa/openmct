@@ -4,13 +4,13 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig<{ theme: string }>} */
 const config = {
-    retries: 1, // visual tests should never retry due to snapshot comparison errors. Leaving as a shim
+    retries: 0, // Visual tests should never retry due to snapshot comparison errors. Leaving as a shim
     testDir: 'tests/visual',
     testMatch: '**/*.visual.spec.js', // only run visual tests
     timeout: 60 * 1000,
     workers: 1, //Lower stress on Circle CI Agent for Visual tests https://github.com/percy/cli/discussions/1067
     webServer: {
-        command: 'cross-env NODE_ENV=test npm run start',
+        command: 'npm run start:coverage',
         url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
@@ -31,7 +31,7 @@ const config = {
             }
         },
         {
-            name: 'chrome-snow-theme',
+            name: 'chrome-snow-theme', //Runs the same visual tests but with snow-theme enabled
             use: {
                 browserName: 'chromium',
                 theme: 'snow'
