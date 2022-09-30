@@ -177,7 +177,7 @@ export default class FormsAPI {
         onChange
     } = {}) {
         if (element === undefined) {
-            return;
+            throw Error('Required element parameter not provided');
         }
 
         const changes = {};

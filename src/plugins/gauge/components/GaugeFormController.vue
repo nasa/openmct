@@ -112,9 +112,6 @@ export default {
 
         return {
             isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
-            // isDisplayMinMax: this.model.value.isDisplayMinMax,
-            // isDisplayCurVal: this.model.value.isDisplayCurVal,
-            // isDisplayUnits: this.model.value.isDisplayUnits,
             limitHigh: this.model.value.limitHigh,
             limitLow: this.model.value.limitLow,
             max: this.model.value.max,
