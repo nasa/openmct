@@ -22,8 +22,6 @@
 
 import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
-import Transaction from "@/api/objects/Transaction";
-import _ from "lodash";
 
 export default class EditPropertiesAction extends PropertiesAction {
     constructor(openmct) {
