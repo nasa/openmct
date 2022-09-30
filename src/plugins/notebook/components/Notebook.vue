@@ -151,6 +151,7 @@
                     :key="entry.id"
                     :entry="entry"
                     :domain-object="domainObject"
+                    :notebook-annotations="notebookAnnotations[entry.id]"
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
@@ -219,10 +220,12 @@ export default {
             isRestricted: this.domainObject.type === RESTRICTED_NOTEBOOK_TYPE,
             search: '',
             searchResults: [],
+            lastLocalAnnotationCreation: 0,
             showTime: this.domainObject.configuration.showTime || 0,
             showNav: false,
             sidebarCoversEntries: false,
-            filteredAndSortedEntries: []
+            filteredAndSortedEntries: [],
+            notebookAnnotations: {}
         };
     },
     computed: {
@@ -289,7 +292,8 @@ export default {
         this.getSearchResults = debounce(this.getSearchResults, 500);
         this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
     },
-    mounted() {
+    async mounted() {
+        await this.loadAnnotations();
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
@@ -306,6 +310,13 @@ export default {
         if (this.unobserveEntries) {
             this.unobserveEntries();
         }
+
+        Object.keys(this.notebookAnnotations).forEach(entryID => {
+            const notebookAnnotationsForEntry = this.notebookAnnotations[entryID];
+            notebookAnnotationsForEntry.forEach(notebookAnnotation => {
+                this.openmct.objects.destroyMutable(notebookAnnotation);
+            });
+        });
 
         window.removeEventListener('orientationchange', this.formatSidebar);
         window.removeEventListener('hashchange', this.setSectionAndPageFromUrl);
@@ -338,6 +349,32 @@ export default {
                 }
             });
         },
+        async loadAnnotations() {
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                return;
+            }
+
+            this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
+
+            const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const foundAnnotations = await this.openmct.annotation.getAnnotations(query);
+            foundAnnotations.forEach((foundAnnotation) => {
+                const targetId = Object.keys(foundAnnotation.targets)[0];
+                const entryId = foundAnnotation.targets[targetId].entryId;
+                if (!this.notebookAnnotations[entryId]) {
+                    this.$set(this.notebookAnnotations, entryId, []);
+                }
+
+                const annotationExtant = this.notebookAnnotations[entryId].some((existingAnnotation) => {
+                    return this.openmct.objects.areIdsEqual(existingAnnotation.identifier, foundAnnotation.identifier);
+                });
+                if (!annotationExtant) {
+                    const annotationArray = this.notebookAnnotations[entryId];
+                    const mutableAnnotation = this.openmct.objects.toMutable(foundAnnotation);
+                    annotationArray.push(mutableAnnotation);
+                }
+            });
+        },
         filterAndSortEntries() {
             const filterTime = Date.now();
             const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
@@ -350,6 +387,10 @@ export default {
             this.filteredAndSortedEntries = this.defaultSort === 'oldest'
                 ? filteredPageEntriesByTime
                 : [...filteredPageEntriesByTime].reverse();
+
+            if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
+                this.loadAnnotations();
+            }
         },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
@@ -473,14 +514,8 @@ export default {
                 ]
             });
         },
-        async removeAnnotations(entryId) {
-            const targetKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const query = {
-                targetKeyString,
-                entryId
-            };
-            const existingAnnotation = await this.openmct.annotation.getAnnotation(query, this.openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
-            this.openmct.annotation.removeAnnotationTags(existingAnnotation);
+        removeAnnotations(entryId) {
+            this.openmct.annotation.deleteAnnotations(this.notebookAnnotations[entryId]);
         },
         checkEntryPos(entry) {
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);

@@ -37,7 +37,10 @@
             class="c-tag"
             :style="{ background: selectedBackgroundColor, color: selectedForegroundColor }"
         >
-            <div class="c-tag__label">{{ selectedTagLabel }} </div>
+            <div
+                class="c-tag__label"
+                aria-label="Tag"
+            >{{ selectedTagLabel }} </div>
             <button
                 class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle"
                 @click="removeTag"
