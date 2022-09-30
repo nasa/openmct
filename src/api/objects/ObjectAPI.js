@@ -96,7 +96,7 @@ export default class ObjectAPI {
         this.cache = {};
         this.interceptorRegistry = new InterceptorRegistry();
 
-        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan', 'annotation'];
+        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
 
         this.errors = {
             Conflict: ConflictError
@@ -354,7 +354,7 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    save(domainObject) {
+    async save(domainObject) {
         let provider = this.getProvider(domainObject.identifier);
         let savedResolve;
         let savedReject;
@@ -372,6 +372,8 @@ export default class ObjectAPI {
                     savedReject = reject;
                 });
                 domainObject.persisted = persistedTime;
+                domainObject.created = persistedTime;
+                domainObject.createdBy = await this.#getCurrentUsername();
                 const newObjectPromise = provider.create(domainObject);
                 if (newObjectPromise) {
                     newObjectPromise.then(response => {
@@ -385,6 +387,7 @@ export default class ObjectAPI {
                 }
             } else {
                 domainObject.persisted = persistedTime;
+                domainObject.modifiedBy = await this.#getCurrentUsername();
                 this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
             }
@@ -397,6 +400,17 @@ export default class ObjectAPI {
 
             throw error;
         });
+    }
+
+    async #getCurrentUsername() {
+        const user = await this.openmct.user.getCurrentUser();
+        let username;
+
+        if (user !== undefined) {
+            username = user.getName();
+        }
+
+        return username;
     }
 
     /**
