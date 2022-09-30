@@ -122,7 +122,7 @@
                         <button
                             class="c-button icon-reset"
                             title="Reset pan/zoom"
-                            @click="clear()"
+                            @click="resumeRealtimeData()"
                         >
                         </button>
                     </div>
@@ -141,7 +141,7 @@
                             v-if="isFrozen"
                             class="c-button icon-arrow-right pause-play is-paused"
                             title="Resume displaying real-time data"
-                            @click="play()"
+                            @click="resumeRealtimeData()"
                         >
                         </button>
                     </div>
@@ -212,6 +212,8 @@ import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
 import _ from "lodash";
+
+const OFFSET_THRESHOLD = 10;
 
 export default {
     components: {
@@ -329,6 +331,8 @@ export default {
         }
     },
     mounted() {
+        this.offsetWidth = 0;
+
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         eventHelpers.extend(this);
@@ -576,9 +580,8 @@ export default {
             };
             this.config.xAxis.set('range', newRange);
             if (!isTick) {
-                this.skipReloadOnInteraction = true;
-                this.clear();
-                this.skipReloadOnInteraction = false;
+                this.clearPanZoomHistory();
+                this.synchronizeIfBoundsMatch();
                 this.loadMoreData(newRange, true);
             } else {
                 // If we're not panning or zooming (time conductor and plot x-axis times are not out of sync)
@@ -601,16 +604,20 @@ export default {
 
         /**
        * Handle end of user viewport change: load more data for current display
-       * bounds, and mark view as synchronized if bounds match configured bounds.
+       * bounds, and mark view as synchronized if necessary.
        */
         userViewportChangeEnd() {
+            this.synchronizeIfBoundsMatch();
+            const xDisplayRange = this.config.xAxis.get('displayRange');
+            this.loadMoreData(xDisplayRange);
+        },
+
+        /**
+       * mark view as synchronized if bounds match configured bounds.
+       */
+        synchronizeIfBoundsMatch() {
             const xDisplayRange = this.config.xAxis.get('displayRange');
             const xRange = this.config.xAxis.get('range');
-
-            if (!this.skipReloadOnInteraction) {
-                this.loadMoreData(xDisplayRange);
-            }
-
             this.synchronized(xRange.min === xDisplayRange.min
             && xRange.max === xDisplayRange.max);
         },
@@ -839,7 +846,8 @@ export default {
             // needs to follow endMarquee so that plotHistory is pruned
             const isAction = Boolean(this.plotHistory.length);
             if (!isAction && !this.isFrozenOnMouseDown) {
-                return this.play();
+                this.clearPanZoomHistory();
+                this.synchronizeIfBoundsMatch();
             }
         },
 
@@ -1076,18 +1084,22 @@ export default {
             this.setStatus();
         },
 
-        clear() {
+        resumeRealtimeData() {
+            this.clearPanZoomHistory();
+            this.userViewportChangeEnd();
+        },
+
+        clearPanZoomHistory() {
             this.config.yAxis.set('frozen', false);
             this.config.xAxis.set('frozen', false);
             this.setStatus();
             this.plotHistory = [];
-            this.userViewportChangeEnd();
         },
 
         back() {
             const previousAxisRanges = this.plotHistory.pop();
             if (this.plotHistory.length === 0) {
-                this.clear();
+                this.resumeRealtimeData();
 
                 return;
             }
@@ -1103,10 +1115,6 @@ export default {
 
         pause() {
             this.freeze();
-        },
-
-        play() {
-            this.clear();
         },
 
         showSynchronizeDialog() {
@@ -1172,7 +1180,9 @@ export default {
                 this.removeStatusListener();
             }
 
-            this.plotContainerResizeObserver.disconnect();
+            if (this.plotContainerResizeObserver) {
+                this.plotContainerResizeObserver.disconnect();
+            }
 
             this.stopFollowingTimeContext();
             this.openmct.objectViews.off('clearData', this.clearData);
@@ -1181,9 +1191,12 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
+            const newOffsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+            //we ignore when width gets smaller
+            const offsetChange = newOffsetWidth - this.offsetWidth;
             if (this.$parent.$refs.plotWrapper
-                && (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth)) {
-                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+                && offsetChange > OFFSET_THRESHOLD) {
+                this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
         },
