@@ -81,28 +81,28 @@ describe("The Object API", () => {
                 objectAPI.save(mockDomainObject);
                 expect(mockDomainObject.created).not.toBeUndefined();
             });
-            it("Calls 'create' on provider if object is new", () => {
-                objectAPI.save(mockDomainObject);
+            it("Calls 'create' on provider if object is new", async () => {
+                await objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).toHaveBeenCalled();
                 expect(mockProvider.update).not.toHaveBeenCalled();
             });
-            it("Calls 'update' on provider if object is not new", () => {
+            it("Calls 'update' on provider if object is not new", async () => {
                 mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
                 mockDomainObject.modified = Date.now();
 
-                objectAPI.save(mockDomainObject);
+                await objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).toHaveBeenCalled();
             });
-            it("Sets the current user for 'createdBy' on new objects", () => {
-                objectAPI.save(mockDomainObject);
+            it("Sets the current user for 'createdBy' on new objects", async () => {
+                await objectAPI.save(mockDomainObject);
                 expect(mockDomainObject.createdBy).toBe(USERNAME);
             });
-            it("Sets the current user for 'modifedBy' on existing objects", () => {
+            it("Sets the current user for 'modifedBy' on existing objects", async () => {
                 mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
                 mockDomainObject.modified = Date.now();
 
-                objectAPI.save(mockDomainObject);
+                await objectAPI.save(mockDomainObject);
                 expect(mockDomainObject.modifiedBy).toBe(USERNAME);
             });
 
