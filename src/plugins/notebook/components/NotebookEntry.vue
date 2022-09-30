@@ -91,9 +91,14 @@
                 @tags-updated="timestampAndUpdate"
             />
 
-            <div class="c-snapshots c-ne__embeds-wrapper">
+            <div
+                ref="embedsWrapper"
+                class="c-snapshots c-ne__embeds-wrapper"
+                :class="{ scrollClass: enableEmbedsWrapperScroll }"
+            >
                 <NotebookEmbed
                     v-for="embed in entry.embeds"
+                    ref="embeds"
                     :key="embed.id"
                     :embed="embed"
                     :is-locked="isLocked"
@@ -144,6 +149,8 @@ import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
+
+import _ from 'lodash';
 
 import Moment from 'moment';
 
@@ -200,6 +207,11 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            enableEmbedsWrapperScroll: false
+        };
+    },
     computed: {
         createdOnDate() {
             return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
@@ -236,7 +248,20 @@ export default {
         }
     },
     mounted() {
+        this.manageEmbedLayout = _.debounce(this.manageEmbedLayout, 400);
+
+        if (this.$refs.embedsWrapper) {
+            this.embedsWrapperResizeObserver = new ResizeObserver(this.manageEmbedLayout);
+            this.embedsWrapperResizeObserver.observe(this.$refs.embedsWrapper);
+        }
+
+        this.manageEmbedLayout();
         this.dropOnEntry = this.dropOnEntry.bind(this);
+    },
+    beforeDestroy() {
+        if (this.embedsWrapperResizeObserver) {
+            this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
+        }
     },
     methods: {
         async addNewEmbed(objectPath) {
@@ -249,6 +274,8 @@ export default {
             };
             const newEmbed = await createNewEmbed(snapshotMeta);
             this.entry.embeds.push(newEmbed);
+
+            this.manageEmbedLayout();
         },
         cancelEditMode(event) {
             const isEditing = this.openmct.editor.isEditing();
@@ -268,6 +295,17 @@ export default {
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
+        },
+        manageEmbedLayout() {
+            if (this.$refs.embeds) {
+                const embedsWrapperLength = this.$refs.embedsWrapper.clientWidth;
+                const embedsTotalWidth = this.$refs.embeds.reduce((total, embed) => {
+                    return embed.$el.clientWidth + total;
+                }, 0);
+
+                this.enableEmbedsWrapperScroll = embedsTotalWidth > embedsWrapperLength;
+            }
+
         },
         async dropOnEntry($event) {
             $event.stopImmediatePropagation();
@@ -326,6 +364,8 @@ export default {
             this.entry.embeds.splice(embedPosition, 1);
 
             this.timestampAndUpdate();
+
+            this.manageEmbedLayout();
         },
         updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
