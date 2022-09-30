@@ -144,10 +144,11 @@ export default {
             this.initializeHistoryIfNoHistory();
         },
         getHistoryMenuItems() {
+            const descriptionDateFormat = 'YYYY-MM-DD HH:mm:ss.SSS';
             const history = this.historyForCurrentTimeSystem.map(timespan => {
                 let name;
-                let startTime = this.formatTime(timespan.start);
-                let description = `${startTime} - ${this.formatTime(timespan.end)}`;
+                const startTime = this.formatTime(timespan.start);
+                const description = `${this.formatTime(timespan.start, descriptionDateFormat)} - ${this.formatTime(timespan.end, descriptionDateFormat)}`;
 
                 if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
                     name = `${startTime} ${millisecondsToDHMS(timespan.end - timespan.start)}`;
@@ -253,7 +254,7 @@ export default {
 
             return maxRecordsLength;
         },
-        formatTime(time) {
+        formatTime(time, utcDateFormat) {
             let format = this.timeSystem.timeFormat;
             let isNegativeOffset = false;
 
@@ -274,7 +275,8 @@ export default {
             let formattedDate;
 
             if (formatter instanceof UTCTimeFormat) {
-                formattedDate = formatter.format(time, formatter.DATE_FORMATS.PRECISION_SECONDS);
+                const formatString = formatter.isValidFormatString(utcDateFormat) ? utcDateFormat : formatter.DATE_FORMATS.PRECISION_SECONDS;
+                formattedDate = formatter.format(time, formatString);
             } else {
                 formattedDate = formatter.format(time);
             }
