@@ -24,6 +24,7 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
+import Vue from 'vue';
 
 import { debounce } from 'lodash';
 
@@ -101,10 +102,15 @@ describe('EditPropertiesAction plugin', () => {
             composition: []
         };
 
-        const deBouncedFormChange = debounce(handleFormPropertyChange, 500);
-        openmct.forms.on('formPropertiesChanged', deBouncedFormChange);
+        editPropertiesAction.invoke([domainObject])
+            .then(() => {
+                done();
+            })
+            .catch(() => {
+                done();
+            });
 
-        function handleFormPropertyChange(data) {
+        Vue.nextTick(() => {
             const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             expect(title.value).toEqual(domainObject.name);
@@ -118,17 +124,7 @@ describe('EditPropertiesAction plugin', () => {
 
             const clickEvent = createMouseEvent('click');
             buttons[1].dispatchEvent(clickEvent);
-
-            openmct.forms.off('formPropertiesChanged', deBouncedFormChange);
-        }
-
-        editPropertiesAction.invoke([domainObject])
-            .then(() => {
-                done();
-            })
-            .catch(() => {
-                done();
-            });
+        });
     });
 
     it('edit properties action saves changes', (done) => {
@@ -151,7 +147,6 @@ describe('EditPropertiesAction plugin', () => {
         function callback(newObject) {
             expect(newObject.name).not.toEqual(oldName);
             expect(newObject.name).toEqual(newName);
-            expect(openmct.editor.isEditing()).toBeFalse();
 
             unObserve();
             done();
@@ -160,12 +155,9 @@ describe('EditPropertiesAction plugin', () => {
         const deBouncedCallback = debounce(callback, 300);
         unObserve = openmct.objects.observe(domainObject, '*', deBouncedCallback);
 
-        let changed = false;
-        const deBouncedFormChange = debounce(handleFormPropertyChange, 500);
-        openmct.forms.on('formPropertiesChanged', deBouncedFormChange);
+        editPropertiesAction.invoke([domainObject]);
 
-        function handleFormPropertyChange(data) {
-            expect(openmct.editor.isEditing()).toBeTrue();
+        Vue.nextTick(() => {
             const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             const notes = form.querySelector('textArea');
@@ -174,27 +166,18 @@ describe('EditPropertiesAction plugin', () => {
             expect(buttons[0].textContent.trim()).toEqual('OK');
             expect(buttons[1].textContent.trim()).toEqual('Cancel');
 
-            if (!changed) {
-                expect(title.value).toEqual(domainObject.name);
-                expect(notes.value).toEqual(domainObject.notes);
+            expect(title.value).toEqual(domainObject.name);
+            expect(notes.value).toEqual(domainObject.notes);
 
-                // change input field value and dispatch event for it
-                title.focus();
-                title.value = newName;
-                title.dispatchEvent(new Event('input'));
-                title.blur();
+            // change input field value and dispatch event for it
+            title.focus();
+            title.value = newName;
+            title.dispatchEvent(new Event('input'));
+            title.blur();
 
-                changed = true;
-            } else {
-                // click ok to save form changes
-                const clickEvent = createMouseEvent('click');
-                buttons[0].dispatchEvent(clickEvent);
-
-                openmct.forms.off('formPropertiesChanged', deBouncedFormChange);
-            }
-        }
-
-        editPropertiesAction.invoke([domainObject]);
+            const clickEvent = createMouseEvent('click');
+            buttons[0].dispatchEvent(clickEvent);
+        });
     });
 
     it('edit properties action discards changes', (done) => {
@@ -215,13 +198,10 @@ describe('EditPropertiesAction plugin', () => {
         editPropertiesAction.invoke([domainObject])
             .then(() => {
                 expect(domainObject.name).toEqual(name);
-                expect(openmct.editor.isEditing()).toBeFalse();
                 done();
             })
             .catch(() => {
                 expect(domainObject.name).toEqual(name);
-                expect(openmct.editor.isEditing()).toBeFalse();
-
                 done();
             });
 
