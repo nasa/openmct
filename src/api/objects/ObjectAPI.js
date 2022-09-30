@@ -64,6 +64,15 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  *           to load domain objects
  * @memberof module:openmct
  */
+
+/**
+    * @readonly
+    * @enum {String} SEARCH_TYPES
+    * @property {String} OBJECTS Search for objects
+    * @property {String} ANNOTATIONS Search for annotations
+    * @property {String} TAGS Search for tags
+*/
+
 /**
  * Utilities for loading, saving, and manipulating domain objects.
  * @interface ObjectAPI
@@ -76,7 +85,6 @@ export default class ObjectAPI {
         this.SEARCH_TYPES = Object.freeze({
             OBJECTS: 'OBJECTS',
             ANNOTATIONS: 'ANNOTATIONS',
-            NOTEBOOK_ANNOTATIONS: 'NOTEBOOK_ANNOTATIONS',
             TAGS: 'TAGS'
         });
         this.eventEmitter = new EventEmitter();
@@ -188,7 +196,6 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-
     get(identifier, abortSignal) {
         let keystring = this.makeKeyString(identifier);
 
@@ -223,7 +230,7 @@ export default class ObjectAPI {
             if (result.isMutable) {
                 result.$refresh(result);
             } else {
-                let mutableDomainObject = this._toMutable(result);
+                let mutableDomainObject = this.toMutable(result);
                 mutableDomainObject.$refresh(result);
             }
 
@@ -300,7 +307,7 @@ export default class ObjectAPI {
         }
 
         return this.get(identifier).then((object) => {
-            return this._toMutable(object);
+            return this.toMutable(object);
         });
     }
 
@@ -490,7 +497,7 @@ export default class ObjectAPI {
         } else {
             //Creating a temporary mutable domain object allows other mutable instances of the
             //object to be kept in sync.
-            let mutableDomainObject = this._toMutable(domainObject);
+            let mutableDomainObject = this.toMutable(domainObject);
 
             //Mutate original object
             MutableDomainObject.mutateObject(domainObject, path, value);
@@ -510,15 +517,19 @@ export default class ObjectAPI {
     }
 
     /**
-     * @private
+     * Create a mutable domain object from an existing domain object
+     * @param {module:openmct.DomainObject} domainObject the object to make mutable
+     * @returns {MutableDomainObject} a mutable domain object that will automatically sync
+     * @method toMutable
+     * @memberof module:openmct.ObjectAPI#
      */
-    _toMutable(object) {
+    toMutable(domainObject) {
         let mutableObject;
 
-        if (object.isMutable) {
-            mutableObject = object;
+        if (domainObject.isMutable) {
+            mutableObject = domainObject;
         } else {
-            mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
+            mutableObject = MutableDomainObject.createMutable(domainObject, this.eventEmitter);
 
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
@@ -526,9 +537,11 @@ export default class ObjectAPI {
 
             if (provider !== undefined
                 && provider.observe !== undefined
-                && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
+                && this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
                 let unobserve = provider.observe(identifier, (updatedModel) => {
-                    if (updatedModel.persisted > mutableObject.modified) {
+                    // modified can sometimes be undefined, so make it 0 in this case
+                    const mutableObjectModification = mutableObject.modified ?? Number.MIN_SAFE_INTEGER;
+                    if (updatedModel.persisted > mutableObjectModification) {
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                         //in rapid succession and intermediate persistence states are returned by the observe function.
                         updatedModel = this.applyGetInterceptors(identifier, updatedModel);
@@ -582,7 +595,7 @@ export default class ObjectAPI {
         if (domainObject.isMutable) {
             return domainObject.$observe(path, callback);
         } else {
-            let mutable = this._toMutable(domainObject);
+            let mutable = this.toMutable(domainObject);
             mutable.$observe(path, callback);
 
             return () => mutable.$destroy();
@@ -675,8 +688,10 @@ export default class ObjectAPI {
     }
 
     #hasAlreadyBeenPersisted(domainObject) {
+        // modified can sometimes be undefined, so make it 0 in this case
+        const modified = domainObject.modified ?? Number.MIN_SAFE_INTEGER;
         const result = domainObject.persisted !== undefined
-            && domainObject.persisted >= domainObject.modified;
+            && domainObject.persisted >= modified;
 
         return result;
     }

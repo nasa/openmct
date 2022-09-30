@@ -25,6 +25,7 @@ import CopyToClipboardAction from './actions/CopyToClipboardAction';
 import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
+import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
 
 import objectUtils from 'objectUtils';
 
@@ -125,6 +126,11 @@ export default function DisplayLayoutPlugin(options) {
                 return true;
             }
         });
+
+        for (const [type, definition] of Object.entries(DisplayLayoutDrawingObjectTypes)) {
+            openmct.types.addType(type, definition);
+        }
+
         DisplayLayoutPlugin._installed = true;
     };
 }

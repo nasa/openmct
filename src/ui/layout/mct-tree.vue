@@ -5,7 +5,6 @@
     :class="{
         'c-selector': isSelectorTree
     }"
-    :style="treeHeight"
 >
     <div
         ref="search"
@@ -44,29 +43,27 @@
         role="tree"
         aria-expanded="true"
     >
-        <div>
 
-            <div
-                ref="dummyItem"
-                class="c-tree__item-h"
-                style="left: -1000px; position: absolute; visibility: hidden"
-            >
-                <div class="c-tree__item">
-                    <span class="c-tree__item__view-control c-nav__up is-enabled"></span>
-                    <a
-                        class="c-tree__item__label c-object-label"
-                        draggable="true"
-                        href="#"
-                    >
-                        <div class="c-tree__item__type-icon c-object-label__type-icon icon-folder">
-                            <span title="Open MCT"></span>
-                        </div>
-                        <div class="c-tree__item__name c-object-label__name">
-                            Open MCT
-                        </div>
-                    </a>
-                    <span class="c-tree__item__view-control c-nav__down"></span>
-                </div>
+        <div
+            ref="dummyItem"
+            class="c-tree__item-h"
+            style="left: -1000px; position: absolute; visibility: hidden"
+        >
+            <div class="c-tree__item">
+                <span class="c-tree__item__view-control c-nav__up is-enabled"></span>
+                <a
+                    class="c-tree__item__label c-object-label"
+                    draggable="true"
+                    href="#"
+                >
+                    <div class="c-tree__item__type-icon c-object-label__type-icon icon-folder">
+                        <span title="Open MCT"></span>
+                    </div>
+                    <div class="c-tree__item__name c-object-label__name">
+                        Open MCT
+                    </div>
+                </a>
+                <span class="c-tree__item__view-control c-nav__down"></span>
             </div>
         </div>
 
@@ -213,7 +210,7 @@ export default {
             if (!this.isSelectorTree) {
                 return {};
             } else {
-                return { height: this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
+                return { 'min-height': this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
             }
         }
     },

@@ -23,14 +23,32 @@
 /*global module,process*/
 
 module.exports = (config) => {
-    const webpackConfig = require('./webpack.coverage.js');
+    let webpackConfig;
+    let browsers;
+    let singleRun;
+
+    if (process.env.KARMA_DEBUG) {
+        webpackConfig = require('./webpack.dev.js');
+        browsers = ['ChromeDebugging'];
+        singleRun = false;
+    } else {
+        webpackConfig = require('./webpack.coverage.js');
+        browsers = ['ChromeHeadless'];
+        singleRun = true;
+    }
+
     delete webpackConfig.output;
+    // karma doesn't support webpack entry
+    delete webpackConfig.entry;
 
     config.set({
         basePath: '',
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine', 'webpack'],
         files: [
             'indexTest.js',
+            // included means: should the files be included in the browser using <script> tag?
+            // We don't want them as a <script> because the shared worker source
+            // needs loaded remotely by the shared worker process.
             {
                 pattern: 'dist/couchDBChangesFeed.js*',
                 included: false
@@ -46,7 +64,7 @@ module.exports = (config) => {
         ],
         port: 9876,
         reporters: ['spec', 'junit', 'coverage-istanbul'],
-        browsers: [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'],
+        browsers,
         client: {
             jasmine: {
                 random: false,
@@ -70,6 +88,7 @@ module.exports = (config) => {
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
+            skipFilesWithNoCoverage: true,
             dir: "coverage/unit", //Sets coverage file to be consumed by codecov.io
             reports: ['lcovonly']
         },
@@ -90,7 +109,7 @@ module.exports = (config) => {
             stats: 'errors-warnings'
         },
         concurrency: 1,
-        singleRun: true,
+        singleRun,
         browserNoActivityTimeout: 400000
     });
 };

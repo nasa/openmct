@@ -74,14 +74,15 @@
                         transition-delay: $moveBarOutDelay;
                         @include userSelectNone();
                         background: $editFrameMovebarColorBg;
-                        box-shadow: rgba(black, 0.2) 0 1px;
+                        box-shadow: rgba(black, 0.3) 0 2px;
                         bottom: auto;
                         display: block;
                         height: 0; // Height is set on hover below
-                        opacity: 0.8;
+                        opacity: 0.9;
                         max-height: 100%;
                         overflow: hidden;
                         text-align: center;
+                        z-index: 10;
 
                         &:before {
                             // Grippy
@@ -104,7 +105,6 @@
                     > .c-so-view.has-complex-content {
                         transition: $transIn;
                         transition-delay: 0s;
-                        padding-top: $editFrameMovebarH + $interiorMarginSm;
 
                         > .c-so-view__local-controls {
                             transform: translateY($editFrameMovebarH);
