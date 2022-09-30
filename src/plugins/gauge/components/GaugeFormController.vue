@@ -112,44 +112,26 @@ export default {
 
         return {
             isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
-            isDisplayMinMax: this.model.value.isDisplayMinMax,
-            isDisplayCurVal: this.model.value.isDisplayCurVal,
-            isDisplayUnits: this.model.value.isDisplayUnits,
+            // isDisplayMinMax: this.model.value.isDisplayMinMax,
+            // isDisplayCurVal: this.model.value.isDisplayCurVal,
+            // isDisplayUnits: this.model.value.isDisplayUnits,
             limitHigh: this.model.value.limitHigh,
             limitLow: this.model.value.limitLow,
             max: this.model.value.max,
             min: this.model.value.min
         };
     },
-    mounted() {
-        this.openmct.forms.on('formPropertiesChanged', this.onFormPropertyChange);
-    },
-    beforeDestroy() {
-        this.openmct.forms.off('formPropertiesChanged', this.onFormPropertyChange);
-    },
     methods: {
-        onFormPropertyChange(data) {
-            this.changes = data?.configuration?.gaugeController || {};
-        },
         onChange(event) {
-            const data = {
-                model: this.model,
-                value: {
-                    gaugeType: this.changes.gaugeType || this.model.value.gaugeType,
-                    isDisplayMinMax: this.changes.isDisplayMinMax === undefined ? this.isDisplayMinMax : this.changes.isDisplayMinMax,
-                    isDisplayCurVal: this.changes.isDisplayCurVal === undefined ? this.isDisplayCurVal : this.changes.isDisplayCurVal,
-                    isDisplayUnits: this.changes.isDisplayUnits === undefined ? this.isDisplayUnits : this.changes.isDisplayUnits,
-                    isUseTelemetryLimits: this.isUseTelemetryLimits,
-                    limitLow: this.limitLow,
-                    limitHigh: this.limitHigh,
-                    max: this.max,
-                    min: this.min,
-                    precision: this.changes.precision === undefined ? this.model.value.precision : this.changes.precision
-                }
+            let data = {
+                model: {}
             };
 
             if (event) {
                 const target = event.target;
+                const property = target.dataset.fieldName;
+                data.model.property = Array.from(this.model.property).concat([property]);
+                data.value = this[property];
                 const targetIndicator = target.parentElement.querySelector('.req-indicator');
                 if (targetIndicator.classList.contains('req')) {
                     targetIndicator.classList.add('visited');
@@ -172,13 +154,13 @@ export default {
         },
         toggleUseTelemetryLimits() {
             this.isUseTelemetryLimits = !this.isUseTelemetryLimits;
-
-            this.onChange();
-        },
-        toggleMinMax() {
-            this.isDisplayMinMax = !this.isDisplayMinMax;
-
-            this.onChange();
+            const data = {
+                model: {
+                    property: Array.from(this.model.property).concat(['isUseTelemetryLimits'])
+                },
+                value: this.isUseTelemetryLimits
+            };
+            this.$emit('onChange', data);
         }
     }
 };
