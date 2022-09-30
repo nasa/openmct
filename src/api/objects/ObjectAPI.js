@@ -88,15 +88,7 @@ export default class ObjectAPI {
         this.cache = {};
         this.interceptorRegistry = new InterceptorRegistry();
 
-        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan', 'annotation'];
-
-        this.currentUsername = undefined;
-
-        this.openmct.on('start', () => {
-            this.#getCurrentUsername().then((username) => {
-                this.currentUsername = username;
-            });
-        });
+        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
 
         this.errors = {
             Conflict: ConflictError
@@ -331,7 +323,6 @@ export default class ObjectAPI {
     }
 
     isPersistable(idOrKeyString) {
-        console.log('isPersistable');
         let identifier = utils.parseKeyString(idOrKeyString);
         let provider = this.getProvider(identifier);
 
@@ -357,7 +348,6 @@ export default class ObjectAPI {
      *          has been saved, or be rejected if it cannot be saved
      */
     async save(domainObject) {
-        console.log('save');
         let provider = this.getProvider(domainObject.identifier);
         let savedResolve;
         let savedReject;
@@ -407,7 +397,7 @@ export default class ObjectAPI {
 
     async #getCurrentUsername() {
         const user = await this.openmct.user.getCurrentUser();
-        let username = 'Unknown';
+        let username;
 
         if (user !== undefined) {
             username = user.getName();
@@ -505,7 +495,6 @@ export default class ObjectAPI {
      * @memberof module:openmct.ObjectAPI#
      */
     mutate(domainObject, path, value) {
-        console.log('mutate');
         if (!this.supportsMutation(domainObject.identifier)) {
             throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
         }
