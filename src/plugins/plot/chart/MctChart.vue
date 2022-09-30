@@ -506,7 +506,14 @@ export default {
         },
         updateViewport(id) {
             const xRange = this.config.xAxis.get('displayRange');
-            const yRange = id === 1 ? this.config.yAxis.get('displayRange') : this.config.additionalYAxes[id - 2].get('displayRange');
+            let yRange;
+            if (id === 1) {
+                yRange = this.config.yAxis.get('displayRange');
+            } else {
+                if (this.config.additionalYAxes.length) {
+                    yRange = this.config.additionalYAxes[id - 2].get('displayRange');
+                }
+            }
 
             if (!xRange || !yRange) {
                 return;
