@@ -320,7 +320,7 @@ describe("The Object API", () => {
             beforeEach(function () {
                 // Duplicate object to guarantee we are not sharing object instance, which would invalidate test
                 testObjectDuplicate = JSON.parse(JSON.stringify(testObject));
-                mutableSecondInstance = objectAPI._toMutable(testObjectDuplicate);
+                mutableSecondInstance = objectAPI.toMutable(testObjectDuplicate);
             });
 
             afterEach(() => {

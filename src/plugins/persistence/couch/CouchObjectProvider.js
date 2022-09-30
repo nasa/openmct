@@ -23,7 +23,7 @@
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
 import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from "./CouchStatusIndicator";
-import { isNotebookType } from '../../notebook/notebook-constants.js';
+import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
 const ID = "_id";
@@ -71,7 +71,7 @@ class CouchObjectProvider {
     }
 
     onSharedWorkerMessageError(event) {
-        console.log('Error', event);
+        console.error('Error', event);
     }
 
     isSynchronizedObject(object) {
@@ -290,7 +290,7 @@ class CouchObjectProvider {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
 
-            if (isNotebookType(object) || object.type === 'annotation') {
+            if (isNotebookOrAnnotationType(object)) {
                 //Temporary measure until object sync is supported for all object types
                 //Always update notebook revision number because we have realtime sync, so always assume it's the latest.
                 this.objectQueue[key].updateRevision(response[REV]);
