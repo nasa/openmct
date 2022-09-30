@@ -8,27 +8,13 @@ describe("The Object API", () => {
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
     const TEST_KEY = "test-key";
-    const USERNAME = 'Joan Q Public';
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     beforeEach((done) => {
         typeRegistry = jasmine.createSpyObj('typeRegistry', [
             'get'
         ]);
-        const userProvider = {
-            isLoggedIn() {
-                return true;
-            },
-            getCurrentUser() {
-                return Promise.resolve({
-                    getName() {
-                        return USERNAME;
-                    }
-                });
-            }
-        };
         openmct = createOpenMct();
-        openmct.user.setProvider(userProvider);
         objectAPI = openmct.objects;
 
         openmct.editor = {};
@@ -77,33 +63,18 @@ describe("The Object API", () => {
                 mockProvider.update.and.returnValue(Promise.resolve(true));
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
             });
-            it("Adds a 'created' timestamp to new objects", () => {
+            it("Calls 'create' on provider if object is new", () => {
                 objectAPI.save(mockDomainObject);
-                expect(mockDomainObject.created).not.toBeUndefined();
-            });
-            it("Calls 'create' on provider if object is new", async () => {
-                await objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).toHaveBeenCalled();
                 expect(mockProvider.update).not.toHaveBeenCalled();
             });
-            it("Calls 'update' on provider if object is not new", async () => {
+            it("Calls 'update' on provider if object is not new", () => {
                 mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
                 mockDomainObject.modified = Date.now();
 
-                await objectAPI.save(mockDomainObject);
+                objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).toHaveBeenCalled();
-            });
-            it("Sets the current user for 'createdBy' on new objects", async () => {
-                await objectAPI.save(mockDomainObject);
-                expect(mockDomainObject.createdBy).toBe(USERNAME);
-            });
-            it("Sets the current user for 'modifedBy' on existing objects", async () => {
-                mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
-                mockDomainObject.modified = Date.now();
-
-                await objectAPI.save(mockDomainObject);
-                expect(mockDomainObject.modifiedBy).toBe(USERNAME);
             });
 
             it("Does not persist if the object is unchanged", () => {
