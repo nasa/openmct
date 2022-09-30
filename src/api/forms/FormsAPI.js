@@ -171,14 +171,10 @@ export default class FormsAPI {
      * @param {Object} options
      *      @property {HTMLElement} element Parent Element to render a Form
      *      @property {function} onChange a callback function when any changes detected
-     *      @property {function} onSave a callback function when form is submitted
-     *      @property {function} onCancel a callback function when form is cancelled
      */
     showCustomForm(formStructure, {
         element,
-        onChange,
-        onCancel,
-        onSave
+        onChange
     } = {}) {
         if (element === undefined) {
             return;
