@@ -501,7 +501,7 @@ export default class ObjectAPI {
      * @method mutate
      * @memberof module:openmct.ObjectAPI#
      */
-    async mutate(domainObject, path, value) {
+    mutate(domainObject, path, value) {
         if (!this.supportsMutation(domainObject.identifier)) {
             throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
         }
@@ -526,7 +526,7 @@ export default class ObjectAPI {
         if (this.isTransactionActive()) {
             this.transaction.add(domainObject);
         } else {
-            await this.save(domainObject);
+            this.save(domainObject);
         }
     }
 
