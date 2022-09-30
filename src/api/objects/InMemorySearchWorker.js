@@ -43,8 +43,6 @@
                 port.postMessage(searchForAnnotations(event.data));
             } else if (requestType === 'TAGS') {
                 port.postMessage(searchForTags(event.data));
-            } else if (requestType === 'NOTEBOOK_ANNOTATIONS') {
-                port.postMessage(searchForNotebookAnnotations(event.data));
             } else {
                 throw new Error(`Unknown request ${event.data.request}`);
             }
@@ -195,35 +193,6 @@
                         }
                     });
                 }
-            });
-        }
-
-        message.total = results.length;
-        message.results = results
-            .slice(0, data.maxResults);
-
-        return message;
-    }
-
-    function searchForNotebookAnnotations(data) {
-        let results = [];
-        const message = {
-            request: 'searchForNotebookAnnotations',
-            results: {},
-            total: 0,
-            queryId: data.queryId
-        };
-
-        const matchingAnnotations = indexedAnnotationsByDomainObject[data.input.targetKeyString];
-        if (matchingAnnotations) {
-            results = matchingAnnotations.filter(matchingAnnotation => {
-                if (!matchingAnnotation.targets) {
-                    return false;
-                }
-
-                const target = matchingAnnotation.targets[data.input.targetKeyString];
-
-                return (target && target.entryId && (target.entryId === data.input.entryId));
             });
         }
 

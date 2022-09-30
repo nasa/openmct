@@ -19,7 +19,7 @@ module.exports = merge(common, {
         // See: https://webpack.js.org/configuration/watch/#watchoptions-exclude
         ignored: [
             '**/{node_modules,dist,docs,e2e}', // All files in node_modules, dist, docs, e2e,
-            '**/{*.yml,Procfile,webpack*.js,babel*.js,package*.json,tsconfig.json,jsdoc.json}', // Config files
+            '**/{*.yml,Procfile,webpack*.js,babel*.js,package*.json,tsconfig.json}', // Config files
             '**/*.{sh,md,png,ttf,woff,svg}', // Non source files
             '**/.*' // dotfiles and dotfolders
         ]
