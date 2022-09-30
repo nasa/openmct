@@ -27,6 +27,11 @@
     font-weight: bold;
 }
 
+.scrollClass{
+    background: $colorBodyBg;
+    box-shadow: inset 0 5px 5px rgb(0 0 0 / 20%);
+
+}
 .c-notebook {
     $headerFontSize: 1.3em;
     display: flex;
@@ -410,8 +415,7 @@
     @include snapThumb();
 }
 .c-ne__embeds-wrapper{
-    background: $colorBodyBg;
-    max-height: 10vh;
+    max-height: 11vh;
     padding-left: $interiorMarginLg;
     padding-top: $interiorMarginLg;
     display: flex;
