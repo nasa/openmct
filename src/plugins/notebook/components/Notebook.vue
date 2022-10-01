@@ -515,7 +515,9 @@ export default {
             });
         },
         removeAnnotations(entryId) {
-            this.openmct.annotation.deleteAnnotations(this.notebookAnnotations[entryId]);
+            if (this.notebookAnnotations[entryId]) {
+                this.openmct.annotation.deleteAnnotations(this.notebookAnnotations[entryId]);
+            }
         },
         checkEntryPos(entry) {
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
