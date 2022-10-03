@@ -134,6 +134,11 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
 
     test('Can delete entries without tags', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5823'
+        });
+
         await createNotebookEntryAndTags(page);
 
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
