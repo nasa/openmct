@@ -30,6 +30,8 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
 Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
+Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
+
 ## Documentation
 
 Documentation is available on the [Open MCT website](https://nasa.github.io/openmct/documentation/).
@@ -43,11 +45,9 @@ our documentation.
 We want Open MCT to be as easy to use, install, run, and develop for as
 possible, and your feedback will help us get there! Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
 
-## Building Applications With Open MCT
+## Developing Applications With Open MCT
 
-Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
-
-See our documentation for a guide on [building Applications with Open MCT](https://github.com/nasa/openmct/blob/master/API.md#starting-an-open-mct-application).
+For more on developing with Open MCT, see our documentation for a guide on [Developing Applications with Open MCT](./API.md#starting-an-open-mct-application).
 
 ## Compatibility
 
@@ -64,7 +64,7 @@ that is intended to be added or removed as a single unit.
 As well as providing an extension mechanism, most of the core Open MCT codebase is also 
 written as plugins.
 
-For information on writing plugins, please see [our API documentation](https://github.com/nasa/openmct/blob/master/API.md#plugins).
+For information on writing plugins, please see [our API documentation](./API.md#plugins).
 
 ## Tests
 

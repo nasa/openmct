@@ -103,6 +103,17 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 }
 
 /**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} name
+ */
+async function expandTreePaneItemByName(page, name) {
+    const treePane = page.locator('#tree-pane');
+    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
+    const expandTriangle = treeItem.locator('.c-disclosure-triangle');
+    await expandTriangle.click();
+}
+
+/**
  * Create a Plan object from JSON with the provided options.
  * @param {import('@playwright/test').Page} page
  * @param {*} options
@@ -313,6 +324,7 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    expandTreePaneItemByName,
     createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,

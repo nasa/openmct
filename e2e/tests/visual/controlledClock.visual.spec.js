@@ -22,7 +22,7 @@
 
 /*
 Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct's app.js started by `npm run start` within the
+are only meant to run against openmct started by `npm start` within the
 `./e2e/playwright-visual.config.js` file.
 
 */
