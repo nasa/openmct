@@ -19,28 +19,47 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 import _ from 'lodash';
 import objectUtils from "../objects/object-utils";
-/**
- * A CompositionProvider provides the underlying implementation of
- * composition-related behavior for certain types of domain object.
- *
- * By default, a composition provider will not support composition
- * modification.  You can add support for mutation of composition by
- * defining `add` and/or `remove` methods.
- *
- * If the composition of an object can change over time-- perhaps via
- * server updates or mutation via the add/remove methods, then one must
- * trigger events as necessary.
- *
- * @interface CompositionProvider
- * @memberof module:openmct
- */
 
-export default class DefaultCompositionProvider {
+/**
+   * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+   */
+
+/**
+   * @typedef {import('../objects/ObjectAPI').Identifier} Identifier
+   */
+
+/**
+   * @typedef {import('./CompositionAPI').default} CompositionAPI
+   */
+
+/**
+   * A CompositionProvider provides the underlying implementation of
+   * composition-related behavior for certain types of domain object.
+   *
+   * By default, a composition provider will not support composition
+   * modification.  You can add support for mutation of composition by
+   * defining `add` and/or `remove` methods.
+   *
+   * If the composition of an object can change over time-- perhaps via
+   * server updates or mutation via the add/remove methods, then one must
+   * trigger events as necessary.
+   *
+   * @class CompositionProvider
+   * @memberof module:openmct
+   */
+export default class CompositionProvider {
+    /**
+       * @constructor
+       * @param {MCT} publicAPI
+       * @param {CompositionAPI} compositionAPI
+       */
     constructor(publicAPI, compositionAPI) {
+        /** @type {MCT} */
         this.publicAPI = publicAPI;
+
+        /** @type {Object.<string, DomainObject>} */
         this.listeningTo = {};
         this.onMutation = this.onMutation.bind(this);
 
@@ -51,40 +70,39 @@ export default class DefaultCompositionProvider {
         compositionAPI.addPolicy(this.supportsComposition);
     }
     /**
-     * Check if this provider should be used to load composition for a
-     * particular domain object.
-     * @param {module:openmct.DomainObject} domainObject the domain object
-     *        to check
-     * @returns {boolean} true if this provider can provide
-     *          composition for a given domain object
-     * @memberof module:openmct.CompositionProvider#
-     * @method appliesTo
-     */
+       * Check if this provider should be used to load composition for a
+       * particular domain object.
+       * @method appliesTo
+       * @param {DomainObject} domainObject the domain object
+       *        to check
+       * @returns {boolean} true if this provider can provide composition for a given domain object
+       * @memberof module:openmct.CompositionProvider#
+       */
     appliesTo(domainObject) {
         return Boolean(domainObject.composition);
     }
     /**
-     * Load any domain objects contained in the composition of this domain
-     * object.
-     * @param {module:openmct.DomainObject} domainObject the domain object
-     *        for which to load composition
-     * @returns {Promise.<Array.<module:openmct.Identifier>>} a promise for
-     *          the Identifiers in this composition
-     * @memberof module:openmct.CompositionProvider#
-     * @method load
-     */
+       * Load any domain objects contained in the composition of this domain
+       * object.
+       * @param {DomainObject} domainObject the domain object
+       *        for which to load composition
+       * @returns {Promise<Array<Identifier>>} a promise for
+       *          the Identifiers in this composition
+       * @memberof module:openmct.CompositionProvider#
+       * @method load
+       */
     load(domainObject) {
         return Promise.all(domainObject.composition);
     }
     /**
-     * Attach listeners for changes to the composition of a given domain object.
-     * Supports `add` and `remove` events.
-     *
-     * @param {module:openmct.DomainObject} domainObject to listen to
-     * @param String event the event to bind to, either `add` or `remove`.
-     * @param Function callback callback to invoke when event is triggered.
-     * @param [context] context to use when invoking callback.
-     */
+       * Attach listeners for changes to the composition of a given domain object.
+       * Supports `add` and `remove` events.
+       *
+       * @param {module:openmct.DomainObject} domainObject to listen to
+       * @param String event the event to bind to, either `add` or `remove`.
+       * @param Function callback callback to invoke when event is triggered.
+       * @param [context] context to use when invoking callback.
+       */
     on(domainObject,
         event,
         callback,
@@ -109,15 +127,15 @@ export default class DefaultCompositionProvider {
         });
     }
     /**
-     * Remove a listener that was previously added for a given domain object.
-     * event name, callback, and context must be the same as when the listener
-     * was originally attached.
-     *
-     * @param {module:openmct.DomainObject} domainObject to remove listener for
-     * @param String event event to stop listening to: `add` or `remove`.
-     * @param Function callback callback to remove.
-     * @param [context] context of callback to remove.
-     */
+       * Remove a listener that was previously added for a given domain object.
+       * event name, callback, and context must be the same as when the listener
+       * was originally attached.
+       *
+       * @param {module:openmct.DomainObject} domainObject to remove listener for
+       * @param String event event to stop listening to: `add` or `remove`.
+       * @param Function callback callback to remove.
+       * @param [context] context of callback to remove.
+       */
     off(domainObject,
         event,
         callback,
@@ -135,37 +153,37 @@ export default class DefaultCompositionProvider {
         }
     }
     /**
-     * Remove a domain object from another domain object's composition.
-     *
-     * This method is optional; if not present, adding to a domain object's
-     * composition using this provider will be disallowed.
-     *
-     * @param {module:openmct.DomainObject} domainObject the domain object
-     *        which should have its composition modified
-     * @param {module:openmct.DomainObject} child the domain object to remove
-     * @memberof module:openmct.CompositionProvider#
-     * @method remove
-     */
+       * Remove a domain object from another domain object's composition.
+       *
+       * This method is optional; if not present, adding to a domain object's
+       * composition using this provider will be disallowed.
+       *
+       * @param {module:openmct.DomainObject} domainObject the domain object
+       *        which should have its composition modified
+       * @param {module:openmct.DomainObject} child the domain object to remove
+       * @memberof module:openmct.CompositionProvider#
+       * @method remove
+       */
     remove(domainObject, childId) {
         let composition = domainObject.composition.filter(function (child) {
             return !(childId.namespace === child.namespace
-                    && childId.key === child.key);
+                      && childId.key === child.key);
         });
 
         this.publicAPI.objects.mutate(domainObject, 'composition', composition);
     }
     /**
-     * Add a domain object to another domain object's composition.
-     *
-     * This method is optional; if not present, adding to a domain object's
-     * composition using this provider will be disallowed.
-     *
-     * @param {module:openmct.DomainObject} domainObject the domain object
-     *        which should have its composition modified
-     * @param {module:openmct.DomainObject} child the domain object to add
-     * @memberof module:openmct.CompositionProvider#
-     * @method add
-     */
+       * Add a domain object to another domain object's composition.
+       *
+       * This method is optional; if not present, adding to a domain object's
+       * composition using this provider will be disallowed.
+       *
+       * @param {module:openmct.DomainObject} domainObject the domain object
+       *        which should have its composition modified
+       * @param {module:openmct.DomainObject} child the domain object to add
+       * @memberof module:openmct.CompositionProvider#
+       * @method add
+       */
     add(parent, childId) {
         if (!this.includes(parent, childId)) {
             parent.composition.push(childId);
@@ -174,8 +192,8 @@ export default class DefaultCompositionProvider {
     }
 
     /**
-     * @private
-     */
+       * @private
+       */
     includes(parent, childId) {
         return parent.composition.some(composee => this.publicAPI.objects.areIdsEqual(composee, childId));
     }
@@ -230,11 +248,11 @@ export default class DefaultCompositionProvider {
     }
 
     /**
-     * Listens on general mutation topic, using injector to fetch to avoid
-     * circular dependencies.
-     *
-     * @private
-     */
+       * Listens on general mutation topic, using injector to fetch to avoid
+       * circular dependencies.
+       *
+       * @private
+       */
     establishTopicListener() {
         if (this.topicListener) {
             return;
@@ -247,26 +265,26 @@ export default class DefaultCompositionProvider {
     }
 
     /**
-     * @private
-     */
+       * @private
+       */
     cannotContainItself(parent, child) {
         return !(parent.identifier.namespace === child.identifier.namespace
-            && parent.identifier.key === child.identifier.key);
+              && parent.identifier.key === child.identifier.key);
     }
 
     /**
-     * @private
-     */
+       * @private
+       */
     supportsComposition(parent, child) {
         return this.publicAPI.composition.supportsComposition(parent);
     }
 
     /**
-     * Handles mutation events.  If there are active listeners for the mutated
-     * object, detects changes to composition and triggers necessary events.
-     *
-     * @private
-     */
+       * Handles mutation events.  If there are active listeners for the mutated
+       * object, detects changes to composition and triggers necessary events.
+       *
+       * @private
+       */
     onMutation(oldDomainObject) {
         const id = objectUtils.makeKeyString(oldDomainObject.identifier);
         const listeners = this.listeningTo[id];
