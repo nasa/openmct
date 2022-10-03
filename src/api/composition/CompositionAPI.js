@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import DefaultCompositionProvider from './DefaultCompositionProvider';
+import CompositionProvider from './CompositionProvider';
 import CompositionCollection from './CompositionCollection';
 
 /**
@@ -34,7 +34,7 @@ export default class CompositionAPI {
     constructor(publicAPI) {
         this.registry = [];
         this.policies = [];
-        this.addProvider(new DefaultCompositionProvider(publicAPI, this));
+        this.addProvider(new CompositionProvider(publicAPI, this));
         this.publicAPI = publicAPI;
     }
     /**
