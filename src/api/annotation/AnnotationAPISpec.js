@@ -94,6 +94,7 @@ describe("The Annotation API", () => {
         openmct.startHeadless();
     });
     afterEach(async () => {
+        openmct.objects.providers = {};
         await resetApplicationState(openmct);
     });
     it("is defined", () => {
