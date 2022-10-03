@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* eslint-disable no-undef */
 
 define([
     'EventEmitter',
@@ -79,15 +80,30 @@ define([
      */
 
     /**
+     * @typedef {object} BuildInfo
+     * @property {string} version the version of Open MCT
+     * @property {string} buildDate the date of this build
+     * @property {string} revision the git revision of this build
+     * @property {string} branch the git branch of this build
+     */
+
+    /**
+     * @typedef {object} MCT
+     * @property {BuildInfo} buildInfo
+     */
+
+    /**
      * The Open MCT application. This may be configured by installing plugins
      * or registering extensions before the application is started.
-     * @class MCT
-     * @memberof module:openmct
+     * @constructor
      * @augments {EventEmitter}
+     * @memberof module:openmct
+     * @this {MCT}
      */
     function MCT() {
         EventEmitter.call(this);
-        /* eslint-disable no-undef */
+        /** @type {BuildInfo} */
+
         this.buildInfo = {
             version: __OPENMCT_VERSION__,
             buildDate: __OPENMCT_BUILD_DATE__,

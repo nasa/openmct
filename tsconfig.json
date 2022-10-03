@@ -23,7 +23,7 @@
         }
     },
     "include": [
-        "src/api/composition/*.js"
+      "src/api/**/*.js"  
     ],
     "exclude": [
         "node_modules",
