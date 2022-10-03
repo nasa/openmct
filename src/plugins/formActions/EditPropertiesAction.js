@@ -71,10 +71,6 @@ export default class EditPropertiesAction extends PropertiesAction {
             });
             const transaction = this.openmct.objects.getActiveTransaction();
 
-            if (!transaction) {
-                return;
-            }
-
             return transaction.commit()
                 .catch(error => {
                     throw error;

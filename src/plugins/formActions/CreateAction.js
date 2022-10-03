@@ -94,6 +94,12 @@ export default class CreateAction extends PropertiesAction {
     /**
      * @private
      */
+    _onCancel() {
+        //do Nothing
+    }
+    /**
+     * @private
+     */
     async _navigateAndEdit(domainObject, parentDomainObjectpath) {
         let objectPath;
         let self = this;
@@ -148,6 +154,7 @@ export default class CreateAction extends PropertiesAction {
         formStructure.title = 'Create a New ' + definition.name;
 
         this.openmct.forms.showForm(formStructure)
-            .then(this._onSave.bind(this));
+            .then(this._onSave.bind(this))
+            .catch(this._onCancel.bind(this));
     }
 }

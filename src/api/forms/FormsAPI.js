@@ -98,67 +98,37 @@ export default class FormsAPI {
     showForm(formStructure, {
         onChange
     } = {}) {
-        const changes = {};
         let overlay;
-        let formCancel;
-        let formSave;
 
         const self = this;
 
-        const promise = new Promise((resolve, reject) => {
-            formSave = onFormAction(resolve);
-            formCancel = onFormAction(reject);
-        });
-
-        const vm = new Vue({
-            components: { FormProperties },
-            provide: {
-                openmct: self.openmct
-            },
-            data() {
-                return {
-                    formStructure,
-                    onChange: onFormPropertyChange,
-                    onCancel: formCancel,
-                    onSave: formSave
-                };
-            },
-            template: '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
-        }).$mount();
+        const overlayEl = document.createElement('div');
+        overlayEl.classList.add('u-contents');
 
         overlay = self.openmct.overlays.overlay({
-            element: vm.$el,
-            size: 'dialog',
-            onDestroy: () => vm.$destroy()
+            element: overlayEl,
+            size: 'dialog'
         });
 
-        function onFormPropertyChange(data) {
-            if (onChange) {
-                onChange(data);
-            }
+        let formSave;
+        let formCancel;
+        const promise = new Promise((resolve, reject) => {
+            formSave = resolve;
+            formCancel = reject;
+        });
 
-            if (data.model) {
-                const property = data.model.property;
-                let key = data.model.key;
-
-                if (property && property.length) {
-                    key = property.join('.');
-                }
-
-                _.set(changes, key, data.value);
-            }
-        }
-
-        //The promise is never resolved/rejected when a user dismisses an overlay by pressing escape or using the [x] button
-        function onFormAction(callback) {
-            return () => {
-                overlay.dismiss();
-
-                if (callback) {
-                    callback(changes);
-                }
-            };
-        }
+        this.showCustomForm(formStructure, {
+            element: overlayEl,
+            onChange
+        })
+        .then((response) => {
+            overlay.dismiss();
+            formSave(response);
+        })
+        .catch((response) => {
+            overlay.dismiss();
+            formCancel(response);
+        });
 
         return promise;
     }
@@ -179,12 +149,12 @@ export default class FormsAPI {
         if (element === undefined) {
             throw Error('Required element parameter not provided');
         }
+        const self = this;
 
         const changes = {};
         let formSave;
         let formCancel;
 
-        //Either a promise OR call the passed in onSave and onCancel but not both
         const promise = new Promise((resolve, reject) => {
             formSave = onFormAction(resolve);
             formCancel = onFormAction(reject);
@@ -229,6 +199,7 @@ export default class FormsAPI {
         function onFormAction(callback) {
             return () => {
                 formElement.remove();
+                vm.$destroy();
 
                 if (callback) {
                     callback(changes);
