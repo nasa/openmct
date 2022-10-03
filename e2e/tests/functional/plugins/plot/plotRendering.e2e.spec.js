@@ -21,35 +21,34 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to testing our use of the playwright framework as it
-relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions made in our dev environment
-(`npm start` and ./e2e/webpack-dev-middleware.js)
+* This test suite is dedicated to testing the rendering and interaction of plots.
+*
 */
 
-const { test } = require('../../baseFixtures.js');
+const { test, expect } = require('../../../../baseFixtures');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-test.describe('baseFixtures tests', () => {
-    test('Verify that tests fail if console.error is thrown', async ({ page }) => {
-        test.fail();
-        //Go to baseURL
+test.describe('Plot Integrity Testing @unstable', () => {
+    let sineWaveGeneratorObject;
+
+    test.beforeEach(async ({ page }) => {
+        //Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
-
-        //Verify that ../fixtures.js detects console log errors
-        await Promise.all([
-            page.evaluate(() => console.error('This should result in a failure')),
-            page.waitForEvent('console') // always wait for the event to happen while triggering it!
-        ]);
-
+        sineWaveGeneratorObject = await createDomainObjectWithDefaults(page, { type: 'Sine Wave Generator' });
     });
-    test('Verify that tests pass if console.warn is thrown', async ({ page }) => {
-        //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
 
-        //Verify that ../fixtures.js detects console log errors
-        await Promise.all([
-            page.evaluate(() => console.warn('This should result in a pass')),
-            page.waitForEvent('console') // always wait for the event to happen while triggering it!
-        ]);
-
+    test('Plots do not re-request data when a plot is clicked', async ({ page }) => {
+        //Navigate to Sine Wave Generator
+        await page.goto(sineWaveGeneratorObject.url);
+        //Capture the number of plots points and store as const name numberOfPlotPoints
+        //Click on the plot canvas
+        await page.locator('canvas').nth(1).click();
+        //No request was made to get historical data
+        const createMineFolderRequests = [];
+        page.on('request', req => {
+            // eslint-disable-next-line playwright/no-conditional-in-test
+            createMineFolderRequests.push(req);
+        });
+        expect(createMineFolderRequests.length).toEqual(0);
     });
 });
