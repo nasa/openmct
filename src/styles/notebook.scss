@@ -27,9 +27,11 @@
     font-weight: bold;
 }
 
-.scrollClass{
+.scrollContainer{
+    // Class for overflow embeds (possibly for text entry overflow in future)
     background: $colorBodyBg;
     box-shadow: inset 0 5px 5px rgb(0 0 0 / 20%);
+    overflow-y: scroll;
 
 }
 .c-notebook {
@@ -462,11 +464,12 @@
     &__actions-menu {
         width: 55vh;
         max-width: 500px; 
-        min-height: 100px;
+        height: 120px;
         z-index: 70;
         [class*="__icon"] {
             filter: $colorKeyFilter;
             margin: 0%;
+            height: 4vh;
         }
         [class*="__item-description"] {
             min-width: 200px;         

@@ -94,7 +94,7 @@
             <div
                 ref="embedsWrapper"
                 class="c-snapshots c-ne__embeds-wrapper"
-                :class="{scrollClass: enableEmbedsWrapperScroll }"
+                :class="{scrollContainer: enableEmbedsWrapperScroll }"
             >
                 <NotebookEmbed
                     v-for="embed in entry.embeds"
