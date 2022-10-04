@@ -37,6 +37,7 @@ import CompositionCollection from './CompositionCollection';
 export default class CompositionAPI {
     /**
      * @param {MCT} publicAPI
+     * @this {CompositionAPI}
      */
     constructor(publicAPI) {
         /** @type {CompositionProvider[]} */
