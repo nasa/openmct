@@ -24,6 +24,10 @@ import CompositionProvider from './CompositionProvider';
 import CompositionCollection from './CompositionCollection';
 
 /**
+ * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ */
+
+/**
  * An interface for interacting with the composition of domain objects.
  * The composition of a domain object is the list of other domain objects
  * it "contains" (for instance, that should be displayed beneath it
@@ -31,10 +35,16 @@ import CompositionCollection from './CompositionCollection';
  * @constructor
  */
 export default class CompositionAPI {
+    /**
+     * @param {MCT} publicAPI
+     */
     constructor(publicAPI) {
+        /** @type {CompositionProvider[]} */
         this.registry = [];
+        /** @type {CompositionPolicy[]} */
         this.policies = [];
         this.addProvider(new CompositionProvider(publicAPI, this));
+        /** @type {MCT} */
         this.publicAPI = publicAPI;
     }
     /**
@@ -44,7 +54,7 @@ export default class CompositionAPI {
      * behavior for certain domain objects.
      *
      * @method addProvider
-     * @param {module:openmct.CompositionProvider} provider the provider to add
+     * @param {CompositionProvider} provider the provider to add
      * @memberof module:openmct.CompositionAPI#
      */
     addProvider(provider) {
@@ -54,7 +64,8 @@ export default class CompositionAPI {
      * Retrieve the composition (if any) of this domain object.
      *
      * @method get
-     * @returns {module:openmct.CompositionCollection}
+     * @param {DomainObject} domainObject
+     * @returns {CompositionCollection}
      * @memberof module:openmct.CompositionAPI#
      */
     get(domainObject) {
@@ -77,19 +88,19 @@ export default class CompositionAPI {
      * generally be written to return true in the default case.
      *
      * @callback CompositionPolicy
-     * @memberof module:openmct.CompositionAPI~
-     * @param {module:openmct.DomainObject} containingObject the object which
+     * @param {DomainObject} containingObject the object which
      *        would act as a container
-     * @param {module:openmct.DomainObject} containedObject the object which
+     * @param {DomainObject} containedObject the object which
      *        would be contained
      * @returns {boolean} false if this composition should be disallowed
+     * @memberof module:openmct.CompositionAPI~
      */
     /**
      * Add a composition policy. Composition policies may disallow domain
      * objects from containing other domain objects.
      *
      * @method addPolicy
-     * @param {module:openmct.CompositionAPI~CompositionPolicy} policy
+     * @param {CompositionPolicy} policy
      *        the policy to add
      * @memberof module:openmct.CompositionAPI#
      */
@@ -102,12 +113,12 @@ export default class CompositionAPI {
      *
      * @private
      * @method checkPolicy
-     * @param {module:openmct.DomainObject} containingObject the object which
+     * @param {DomainObject} container the object which
      *        would act as a container
-     * @param {module:openmct.DomainObject} containedObject the object which
+     * @param {DomainObject} containee the object which
      *        would be contained
      * @returns {boolean} false if this composition should be disallowed
-     * @param {module:openmct.CompositionAPI~CompositionPolicy} policy
+     * @param {CompositionPolicy} policy
      *        the policy to add
      * @memberof module:openmct.CompositionAPI#
      */
@@ -116,6 +127,13 @@ export default class CompositionAPI {
             return policy(container, containee);
         });
     }
+
+    /**
+     * Check whether or not a domainObject supports composition
+     *
+     * @param {DomainObject} domainObject
+     * @returns {boolean} true if the domainObject supports composition
+     */
     supportsComposition(domainObject) {
         return this.get(domainObject) !== undefined;
     }
