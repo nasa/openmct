@@ -96,7 +96,6 @@ export default class Collection extends Model {
     }
 
     remove(model) {
-        console.log('remove', model);
         const index = this.indexOf(model);
 
         if (index === -1) {
