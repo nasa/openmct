@@ -46,8 +46,8 @@ module.exports = merge(common, {
         },
         watchFiles: ['**/*.css'],
         static: {
-            directory: path.join(__dirname, '/dist/'),
-            publicPath: '/dist/',
+            directory: path.join(__dirname, '/dist'),
+            publicPath: '/dist',
             watch: false
         },
         client: {
