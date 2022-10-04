@@ -21,6 +21,22 @@
  *****************************************************************************/
 
 /**
+ * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ */
+
+/**
+ * @typedef {import('./CompositionAPI').default} CompositionAPI
+ */
+
+/**
+ * @typedef {object} ListenerMap
+ * @property {Array.<any>} add
+ * @property {Array.<any>} remove
+ * @property {Array.<any>} load
+ * @property {Array.<any>} reorder
+ */
+
+/**
  * A CompositionCollection represents the list of domain objects contained
  * by another domain object. It provides methods for loading this
  * list asynchronously, modifying this list, and listening for changes to
@@ -34,20 +50,27 @@
  *  myViewComposition.load(); // will trigger `add` for all loaded objects.
  *  ```
  *
- * @interface CompositionCollection
- * @param {module:openmct.DomainObject} domainObject the domain object
- *        whose composition will be contained
- * @param {module:openmct.CompositionProvider} provider the provider
- *        to use to retrieve other domain objects
- * @param {module:openmct.CompositionAPI} api the composition API, for
- *        policy checks
+ * @class
  * @memberof module:openmct
  */
 export default class CompositionCollection {
+    /**
+     * @constructor
+     * @param {DomainObject} domainObject the domain object
+     *        whose composition will be contained
+     * @param {import('./CompositionProvider').default} provider the provider
+     *        to use to retrieve other domain objects
+     * @param {MCT} publicAPI the composition API, for
+     *        policy checks
+     */
     constructor(domainObject, provider, publicAPI) {
+        /** @type {DomainObject} */
         this.domainObject = domainObject;
+        /** @type {import('./CompositionProvider').default} */
         this.provider = provider;
+        /** @type {MCT} */
         this.publicAPI = publicAPI;
+        /** @type {ListenerMap} */
         this.listeners = {
             add: [],
             remove: [],
@@ -72,9 +95,9 @@ export default class CompositionCollection {
      * Listen for changes to this composition.  Supports 'add', 'remove', and
      * 'load' events.
      *
-     * @param event event to listen for, either 'add', 'remove' or 'load'.
-     * @param callback to trigger when event occurs.
-     * @param [context] context to use when invoking callback, optional.
+     * @param {string} event event to listen for, either 'add', 'remove' or 'load'.
+     * @param {(...args: any[]) => void} callback to trigger when event occurs.
+     * @param {any} [context] to use when invoking callback, optional.
      */
     on(event, callback, context) {
         if (!this.listeners[event]) {
@@ -119,9 +142,9 @@ export default class CompositionCollection {
      * Remove a listener.  Must be called with same exact parameters as
      * `off`.
      *
-     * @param event
-     * @param callback
-     * @param [context]
+     * @param {string} event
+     * @param {(...args: any[]) => void} callback
+     * @param {any} [context]
      */
     off(event, callback, context) {
         if (!this.listeners[event]) {
@@ -174,11 +197,10 @@ export default class CompositionCollection {
      * A call to [load]{@link module:openmct.CompositionCollection#load}
      * must have resolved before using this method.
      *
-     * @param {module:openmct.DomainObject} child the domain object to add
+     * @param {DomainObject} child the domain object to add
      * @param {boolean} skipMutate true if the underlying provider should
      *        not be updated
      * @memberof module:openmct.CompositionCollection#
-     * @name add
      */
     add(child, skipMutate) {
         if (!skipMutate) {
@@ -201,7 +223,8 @@ export default class CompositionCollection {
     /**
      * Load the domain objects in this composition.
      *
-     * @returns {Promise.<Array.<module:openmct.DomainObject>>} a promise for
+     * @param {any} abortSignal
+     * @returns {Promise.<Array.<DomainObject>>} a promise for
      *          the domain objects in this composition
      * @memberof {module:openmct.CompositionCollection#}
      * @name load
@@ -230,7 +253,7 @@ export default class CompositionCollection {
      * A call to [load]{@link module:openmct.CompositionCollection#load}
      * must have resolved before using this method.
      *
-     * @param {module:openmct.DomainObject} child the domain object to remove
+     * @param {DomainObject} child the domain object to remove
      * @param {boolean} skipMutate true if the underlying provider should
      *        not be updated
      * @memberof module:openmct.CompositionCollection#
@@ -267,7 +290,8 @@ export default class CompositionCollection {
     }
     /**
      * Handle reorder from provider.
-     * @private
+     *
+     * @param {object} reorderMap
      */
     onProviderReorder(reorderMap) {
         this.emit('reorder', reorderMap);
@@ -280,7 +304,9 @@ export default class CompositionCollection {
     }
     /**
      * Emit events.
-     * @private
+     *
+     * @param {string} event
+     * @param {...args.<any>} payload
      */
     emit(event, ...payload) {
         this.listeners[event].forEach(function (l) {
@@ -291,6 +317,10 @@ export default class CompositionCollection {
             }
         });
     }
+
+    /**
+     * Destroy all mutables.
+     */
     cleanUpMutables() {
         Object.values(this.mutables).forEach(mutable => {
             this.publicAPI.objects.destroyMutable(mutable);
