@@ -96,14 +96,15 @@ export default class Collection extends Model {
     }
 
     remove(model) {
+        console.log('remove', model);
         const index = this.indexOf(model);
 
         if (index === -1) {
             throw new Error('model not found in collection.');
         }
 
-        this.emit('remove', model, index);
         this.models.splice(index, 1);
+        this.emit('remove', model, index);
     }
 
     destroy(model) {
