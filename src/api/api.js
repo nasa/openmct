@@ -37,7 +37,49 @@ define([
     './types/TypeRegistry',
     './user/UserAPI',
     './annotation/AnnotationAPI'
-], function (
+],
+
+/**
+ * @typedef {object} MCT
+ * @property {*} ActionsAPI
+ * @property {import('./composition/CompositionAPI').default} CompositionAPI
+ * @property {*} EditorAPI
+ * @property {*} FaultManagementAPI
+ * @property {*} FormsAPI
+ * @property {*} IndicatorAPI
+ * @property {*} MenuAPI
+ * @property {*} NotificationAPI
+ * @property {*} ObjectAPI
+ * @property {*} PriorityAPI
+ * @property {*} StatusAPI
+ * @property {*} TelemetryAPI
+ * @property {*} TimeAPI
+ * @property {*} TypeRegistry
+ * @property {*} UserAPI
+ * @property {*} AnnotationAPI
+ */
+
+/**
+ *
+ * @param {*} ActionsAPI
+ * @param {import('./composition/CompositionAPI').default} CompositionAPI
+ * @param {*} EditorAPI
+ * @param {*} FaultManagementAPI
+ * @param {*} FormsAPI
+ * @param {*} IndicatorAPI
+ * @param {*} MenuAPI
+ * @param {*} NotificationAPI
+ * @param {*} ObjectAPI
+ * @param {*} PriorityAPI
+ * @param {*} StatusAPI
+ * @param {*} TelemetryAPI
+ * @param {*} TimeAPI
+ * @param {*} TypeRegistry
+ * @param {*} UserAPI
+ * @param {*} AnnotationAPI
+ * @returns {MCT}
+ */
+function (
     ActionsAPI,
     CompositionAPI,
     EditorAPI,
