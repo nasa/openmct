@@ -30,15 +30,26 @@
     @drop.prevent="dropOnEntry"
 >
     <div class="c-ne__time-and-content">
-        <div class="c-ne__time-and-creator">
+        <div class="c-ne__time-and-creator-and-delete">
             <span class="c-ne__created-date">{{ createdOnDate }}</span>
             <span class="c-ne__created-time">{{ createdOnTime }}</span>
-
             <span
                 v-if="entry.createdBy"
                 class="c-ne__creator"
             >
                 <span class="icon-person"></span> {{ entry.createdBy }}
+            </span>
+            <span
+                v-if="!readOnly && !isLocked"
+                class="c-ne__local-controls--hidden"
+            >
+                <button
+                    class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
+                    title="Delete this entry"
+                    tabindex="-1"
+                    @click="deleteEntry"
+                >
+                </button>
             </span>
         </div>
         <div class="c-ne__content">
@@ -89,35 +100,25 @@
                 :target-specific-details="{entryId: entry.id}"
                 @tags-updated="timestampAndUpdate"
             />
-
             <div
-                ref="embedsWrapper"
-                class="c-snapshots c-ne__embeds-wrapper"
                 :class="{scrollContainer: enableEmbedsWrapperScroll }"
             >
-                <NotebookEmbed
-                    v-for="embed in entry.embeds"
-                    ref="embeds"
-                    :key="embed.id"
-                    :embed="embed"
-                    :is-locked="isLocked"
-                    @removeEmbed="removeEmbed"
-                    @updateEmbed="updateEmbed"
-                />
+                <div
+                    ref="embedsWrapper"
+                    class="c-snapshots c-ne__embeds-wrapper"
+                >
+                    <NotebookEmbed
+                        v-for="embed in entry.embeds"
+                        ref="embeds"
+                        :key="embed.id"
+                        :embed="embed"
+                        :is-locked="isLocked"
+                        @removeEmbed="removeEmbed"
+                        @updateEmbed="updateEmbed"
+                    />
+                </div>
             </div>
         </div>
-    </div>
-    <div
-        v-if="!readOnly && !isLocked"
-        class="c-ne__local-controls--hidden"
-    >
-        <button
-            class="c-icon-button c-icon-button--major icon-trash"
-            title="Delete this entry"
-            tabindex="-1"
-            @click="deleteEntry"
-        >
-        </button>
     </div>
     <div
         v-if="readOnly"
