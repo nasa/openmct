@@ -85,8 +85,6 @@ describe('Application router utility functions', () => {
     it('The doPathChange function triggers aborting all requests when doing a path change', () => {
         const abortSpy = spyOn(openmct.telemetry, 'abortAllRequests');
         openmct.router.doPathChange('newPath', 'oldPath');
-        // need to flush due to debounce
-        openmct.router.setHash.flush();
         expect(abortSpy).toHaveBeenCalledTimes(1);
     });
 });
