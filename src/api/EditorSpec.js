@@ -71,7 +71,7 @@ describe('The Editor API', () => {
             });
 
         openmct.editor.edit();
-        await openmct.editor.save().catch(() => {console.log('here');});
+        await openmct.editor.save().catch(() => {});
 
         expect(
             openmct.objects.endTransaction
