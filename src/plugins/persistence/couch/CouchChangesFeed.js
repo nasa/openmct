@@ -3,6 +3,7 @@
     let connected = false;
     let couchEventSource;
     let changesFeedUrl;
+    let keepAliveTimer;
     const controller = new AbortController();
 
     self.onconnect = function (e) {
@@ -37,7 +38,7 @@
                 }
 
                 changesFeedUrl = event.data.url;
-                self.listenForChanges(changesFeedUrl);
+                self.listenForChanges();
             }
         };
 
@@ -47,11 +48,6 @@
     self.onerror = function (error) {
         self.updateCouchStateIndicator();
         console.error('🚨 Error on CouchDB feed 🚨', error);
-
-        if (error.target.readyState === EventSource.CLOSED) {
-            connected = false;
-            self.listenForChanges(changesFeedUrl);
-        }
     };
 
     self.onopen = function () {
@@ -70,17 +66,24 @@
         });
     };
 
-    self.listenForChanges = function (url) {
-        console.debug('⇿ Opening CouchDB change feed connection ⇿');
+    self.listenForChanges = function () {
+        if (keepAliveTimer) {
+            clearTimeout(keepAliveTimer);
+        }
 
-        couchEventSource = new EventSource(url);
-        couchEventSource.onerror = self.onerror;
-        couchEventSource.onopen = self.onopen;
+        keepAliveTimer = setTimeout(self.listenForChanges, 20 * 1000);
 
-        // start listening for events
-        couchEventSource.addEventListener('message', self.onCouchMessage);
-        connected = true;
-        console.debug('⇿ Opened connection ⇿');
+        if (!couchEventSource || couchEventSource.readyState === EventSource.CLOSED) {
+            console.debug('⇿ Opening CouchDB change feed connection ⇿');
+            couchEventSource = new EventSource(changesFeedUrl);
+            couchEventSource.onerror = self.onerror;
+            couchEventSource.onopen = self.onopen;
+
+            // start listening for events
+            couchEventSource.addEventListener('message', self.onCouchMessage);
+            connected = true;
+            console.debug('⇿ Opened connection ⇿');
+        }
     };
 
     self.updateCouchStateIndicator = function () {
