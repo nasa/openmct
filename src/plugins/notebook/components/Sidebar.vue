@@ -6,6 +6,7 @@
                 <span class="c-sidebar__header-label">{{ sectionTitle }}</span>
                 <button
                     class="c-icon-button c-icon-button--major icon-plus"
+                    aria-label="Add Section"
                     @click="addSection"
                 >
                     <span class="c-list-button__label">Add</span>
@@ -33,6 +34,7 @@
 
                 <button
                     class="c-icon-button c-icon-button--major icon-plus"
+                    aria-label="Add Page"
                     @click="addPage"
                 >
                     <span class="c-icon-button__label">Add</span>

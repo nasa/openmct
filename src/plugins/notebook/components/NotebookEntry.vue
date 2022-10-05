@@ -84,9 +84,8 @@
 
             <TagEditor
                 :domain-object="domainObject"
-                :annotation-query="annotationQuery"
+                :annotations="notebookAnnotations"
                 :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
-                :annotation-search-type="openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS"
                 :target-specific-details="{entryId: entry.id}"
                 @tags-updated="timestampAndUpdate"
             />
@@ -163,6 +162,12 @@ export default {
                 return {};
             }
         },
+        notebookAnnotations: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         entry: {
             type: Object,
             default() {
@@ -203,15 +208,6 @@ export default {
     computed: {
         createdOnDate() {
             return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
-        },
-        annotationQuery() {
-            const targetKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
-            return {
-                targetKeyString,
-                entryId: this.entry.id,
-                modified: this.entry.modified
-            };
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
