@@ -165,7 +165,7 @@ export default {
         async setEmbedObjectPath() {
             this.objectPath = await this.openmct.objects.getOriginalPath(this.embed.domainObject.identifier);
 
-            if (this.objectPath[this.objectPath.length -1].type === 'root') {
+            if (this.objectPath[this.objectPath.length - 1].type === 'root') {
                 this.objectPath.pop();
             }
         },
