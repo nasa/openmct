@@ -314,6 +314,7 @@
     &__time-and-content {
         display: block;
         flex: 1 1 auto;
+        overflow: auto;
 
         > * + * {
             margin-top: $interiorMarginSm;
@@ -331,7 +332,7 @@
     }
 
     &__content {
-        display: inline-flex;
+        display: flex;
         flex-direction: column;
         flex: 1 1 auto;
         margin-right: $interiorMarginSm;
