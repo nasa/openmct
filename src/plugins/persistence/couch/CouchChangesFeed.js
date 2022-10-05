@@ -2,6 +2,7 @@
     const connections = [];
     let connected = false;
     let couchEventSource;
+    let changesFeedUrl;
     const controller = new AbortController();
 
     self.onconnect = function (e) {
@@ -35,7 +36,8 @@
                     return;
                 }
 
-                self.listenForChanges(event.data.url);
+                changesFeedUrl = event.data.url;
+                self.listenForChanges(changesFeedUrl);
             }
         };
 
@@ -45,6 +47,11 @@
     self.onerror = function (error) {
         self.updateCouchStateIndicator();
         console.error('🚨 Error on CouchDB feed 🚨', error);
+
+        if (error.target.readyState === EventSource.CLOSED) {
+            connected = false;
+            self.listenForChanges(changesFeedUrl);
+        }
     };
 
     self.onopen = function () {
