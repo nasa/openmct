@@ -346,6 +346,10 @@ export default class AnnotationAPI extends EventEmitter {
     */
     async searchForTags(query, abortController) {
         const matchingTagKeys = this.#getMatchingTags(query);
+        if (!matchingTagKeys.length) {
+            return [];
+        }
+
         const searchResults = (await Promise.all(this.openmct.objects.search(matchingTagKeys, abortController, this.openmct.objects.SEARCH_TYPES.TAGS))).flat();
         const filteredDeletedResults = searchResults.filter((result) => {
             return !(result._deleted);
