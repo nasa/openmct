@@ -29,6 +29,10 @@
  */
 
 /**
+ * @typedef {import('../../../openmct').PublicAPI} PublicAPI
+ */
+
+/**
  * @typedef {object} ListenerMap
  * @property {Array.<any>} add
  * @property {Array.<any>} remove
@@ -60,7 +64,7 @@ export default class CompositionCollection {
      *        whose composition will be contained
      * @param {import('./CompositionProvider').default} provider the provider
      *        to use to retrieve other domain objects
-     * @param {MCT} publicAPI the composition API, for
+     * @param {PublicAPI} publicAPI the composition API, for
      *        policy checks
      */
     constructor(domainObject, provider, publicAPI) {
@@ -68,7 +72,7 @@ export default class CompositionCollection {
         this.domainObject = domainObject;
         /** @type {import('./CompositionProvider').default} */
         this.provider = provider;
-        /** @type {MCT} */
+        /** @type {PublicAPI} */
         this.publicAPI = publicAPI;
         /** @type {ListenerMap} */
         this.listeners = {

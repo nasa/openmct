@@ -40,27 +40,6 @@ define([
 ],
 
 /**
- * @typedef {object} MCT
- * @property {*} ActionsAPI
- * @property {import('./composition/CompositionAPI').default} CompositionAPI
- * @property {*} EditorAPI
- * @property {*} FaultManagementAPI
- * @property {*} FormsAPI
- * @property {*} IndicatorAPI
- * @property {*} MenuAPI
- * @property {*} NotificationAPI
- * @property {*} ObjectAPI
- * @property {*} PriorityAPI
- * @property {*} StatusAPI
- * @property {*} TelemetryAPI
- * @property {*} TimeAPI
- * @property {*} TypeRegistry
- * @property {*} UserAPI
- * @property {*} AnnotationAPI
- */
-
-/**
- *
  * @param {*} ActionsAPI
  * @param {import('./composition/CompositionAPI').default} CompositionAPI
  * @param {*} EditorAPI
@@ -77,7 +56,7 @@ define([
  * @param {*} TypeRegistry
  * @param {*} UserAPI
  * @param {*} AnnotationAPI
- * @returns {MCT}
+ * @returns {import('../../openmct').PublicAPI}
  */
 function (
     ActionsAPI,

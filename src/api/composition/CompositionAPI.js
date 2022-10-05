@@ -28,6 +28,10 @@ import CompositionCollection from './CompositionCollection';
  */
 
 /**
+ * @typedef {import('../../../openmct').PublicAPI} PublicAPI
+ */
+
+/**
  * An interface for interacting with the composition of domain objects.
  * The composition of a domain object is the list of other domain objects
  * it "contains" (for instance, that should be displayed beneath it
@@ -36,7 +40,7 @@ import CompositionCollection from './CompositionCollection';
  */
 export default class CompositionAPI {
     /**
-     * @param {MCT} publicAPI
+     * @param {PublicAPI} publicAPI
      */
     constructor(publicAPI) {
         /** @type {CompositionProvider[]} */
@@ -44,7 +48,7 @@ export default class CompositionAPI {
         /** @type {CompositionPolicy[]} */
         this.policies = [];
         this.addProvider(new CompositionProvider(publicAPI, this));
-        /** @type {MCT} */
+        /** @type {PublicAPI} */
         this.publicAPI = publicAPI;
     }
     /**

@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module*/
-
 const matcher = /\/openmct.js$/;
 if (document.currentScript) {
     let src = document.currentScript.src;
@@ -30,8 +28,37 @@ if (document.currentScript) {
     }
 }
 
+/**
+ * @typedef {object} PublicAPI
+ * @property {*} selection
+ * @property {*} time
+ * @property {import('./src/api/composition/CompositionAPI').default} composition
+ * @property {*} objectViews
+ * @property {*} inspectorViews
+ * @property {*} propertyEditors
+ * @property {*} toolbars
+ * @property {*} types
+ * @property {*} objects
+ * @property {*} telemetry
+ * @property {*} indicators
+ * @property {*} user
+ * @property {*} notifications
+ * @property {*} editor
+ * @property {*} overlays
+ * @property {*} menus
+ * @property {*} actions
+ * @property {*} status
+ * @property {*} priority
+ * @property {*} router
+ * @property {*} faults
+ * @property {*} forms
+ * @property {*} branding
+ * @property {*} annotation
+ */
+
 const MCT = require('./src/MCT');
 
+/** @type {PublicAPI} */
 const openmct = new MCT();
 
-module.exports = openmct;
+export default openmct;

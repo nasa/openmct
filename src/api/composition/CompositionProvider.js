@@ -35,6 +35,10 @@ import objectUtils from "../objects/object-utils";
  */
 
 /**
+ * @typedef {import('../../../openmct').PublicAPI} PublicAPI
+ */
+
+/**
  * A CompositionProvider provides the underlying implementation of
  * composition-related behavior for certain types of domain object.
  *
@@ -50,11 +54,11 @@ import objectUtils from "../objects/object-utils";
  */
 export default class CompositionProvider {
     /**
-     * @param {MCT} publicAPI
+     * @param {PublicAPI} publicAPI
      * @param {CompositionAPI} compositionAPI
      */
     constructor(publicAPI, compositionAPI) {
-        /** @type {MCT} */
+        /** @type {PublicAPI} */
         this.publicAPI = publicAPI;
         /** @type {Object.<string, DomainObject>} */
         this.listeningTo = {};
