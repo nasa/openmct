@@ -20,17 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global module*/
-const matcher = /\/openmct.js$/;
-if (document.currentScript) {
-    let src = document.currentScript.src;
-    if (src && matcher.test(src)) {
-        // eslint-disable-next-line no-undef
-        __webpack_public_path__ = src.replace(matcher, '') + '/';
-    }
-}
 
 /**
- * @typedef {object} PublicAPI
+ * @typedef {object} BuildInfo
+ * @property {string} version
+ * @property {string} buildDate
+ * @property {string} revision
+ * @property {string} branch
+ */
+
+/**
+ * @typedef {object} OpenMCT
+ * @property {BuildInfo} buildInfo
  * @property {*} selection
  * @property {*} time
  * @property {import('./src/api/composition/CompositionAPI').default} composition
@@ -55,11 +56,27 @@ if (document.currentScript) {
  * @property {*} forms
  * @property {*} branding
  * @property {*} annotation
+ * @property {{(OpenMCTPlugin) => void}} install
+ * @property {{() => string}} getAssetPath
+ * @property {{(HTMLElement, boolean) => void}} start
+ * @property {{() => void}} startHeadless
+ * @property {{() => void}} destroy
+ * @property {OpenMCTPlugin[]} plugins
+ * @property {OpenMCTComponent[]} components
  */
+
+const matcher = /\/openmct.js$/;
+if (document.currentScript) {
+    let src = document.currentScript.src;
+    if (src && matcher.test(src)) {
+        // eslint-disable-next-line no-undef
+        __webpack_public_path__ = src.replace(matcher, '') + '/';
+    }
+}
 
 const MCT = require('./src/MCT');
 
-/** @type {PublicAPI} */
+/** @type {OpenMCT} */
 const openmct = new MCT();
 
 module.exports = openmct;

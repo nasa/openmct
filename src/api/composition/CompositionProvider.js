@@ -35,7 +35,7 @@ import objectUtils from "../objects/object-utils";
  */
 
 /**
- * @typedef {import('../../../openmct').PublicAPI} PublicAPI
+ * @typedef {import('../../../openmct').OpenMCT} OpenMCT
  */
 
 /**
@@ -54,11 +54,11 @@ import objectUtils from "../objects/object-utils";
  */
 export default class CompositionProvider {
     /**
-     * @param {PublicAPI} publicAPI
+     * @param {OpenMCT} publicAPI
      * @param {CompositionAPI} compositionAPI
      */
     constructor(publicAPI, compositionAPI) {
-        /** @type {PublicAPI} */
+        /** @type {OpenMCT} */
         this.publicAPI = publicAPI;
         /** @type {Object.<string, DomainObject>} */
         this.listeningTo = {};

@@ -56,7 +56,7 @@ define([
  * @param {*} TypeRegistry
  * @param {*} UserAPI
  * @param {*} AnnotationAPI
- * @returns {import('../../openmct').PublicAPI}
+ * @returns {import('../../openmct').OpenMCT}
  */
 function (
     ActionsAPI,

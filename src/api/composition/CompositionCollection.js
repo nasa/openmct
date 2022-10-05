@@ -29,7 +29,7 @@
  */
 
 /**
- * @typedef {import('../../../openmct').PublicAPI} PublicAPI
+ * @typedef {import('../../../openmct').OpenMCT} OpenMCT
  */
 
 /**
@@ -64,7 +64,7 @@ export default class CompositionCollection {
      *        whose composition will be contained
      * @param {import('./CompositionProvider').default} provider the provider
      *        to use to retrieve other domain objects
-     * @param {PublicAPI} publicAPI the composition API, for
+     * @param {OpenMCT} publicAPI the composition API, for
      *        policy checks
      */
     constructor(domainObject, provider, publicAPI) {
@@ -72,7 +72,7 @@ export default class CompositionCollection {
         this.domainObject = domainObject;
         /** @type {import('./CompositionProvider').default} */
         this.provider = provider;
-        /** @type {PublicAPI} */
+        /** @type {OpenMCT} */
         this.publicAPI = publicAPI;
         /** @type {ListenerMap} */
         this.listeners = {

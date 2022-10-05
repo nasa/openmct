@@ -28,7 +28,7 @@ import CompositionCollection from './CompositionCollection';
  */
 
 /**
- * @typedef {import('../../../openmct').PublicAPI} PublicAPI
+ * @typedef {import('../../../openmct').OpenMCT} OpenMCT
  */
 
 /**
@@ -40,7 +40,7 @@ import CompositionCollection from './CompositionCollection';
  */
 export default class CompositionAPI {
     /**
-     * @param {PublicAPI} publicAPI
+     * @param {OpenMCT} publicAPI
      */
     constructor(publicAPI) {
         /** @type {CompositionProvider[]} */
@@ -48,7 +48,7 @@ export default class CompositionAPI {
         /** @type {CompositionPolicy[]} */
         this.policies = [];
         this.addProvider(new CompositionProvider(publicAPI, this));
-        /** @type {PublicAPI} */
+        /** @type {OpenMCT} */
         this.publicAPI = publicAPI;
     }
     /**
