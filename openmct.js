@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global module*/
 const matcher = /\/openmct.js$/;
 if (document.currentScript) {
     let src = document.currentScript.src;
@@ -61,4 +62,4 @@ const MCT = require('./src/MCT');
 /** @type {PublicAPI} */
 const openmct = new MCT();
 
-export default openmct;
+module.exports = openmct;
