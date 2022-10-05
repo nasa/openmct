@@ -121,14 +121,14 @@ export default class FormsAPI {
             element: overlayEl,
             onChange
         })
-        .then((response) => {
-            overlay.dismiss();
-            formSave(response);
-        })
-        .catch((response) => {
-            overlay.dismiss();
-            formCancel(response);
-        });
+            .then((response) => {
+                overlay.dismiss();
+                formSave(response);
+            })
+            .catch((response) => {
+                overlay.dismiss();
+                formCancel(response);
+            });
 
         return promise;
     }
@@ -149,6 +149,7 @@ export default class FormsAPI {
         if (element === undefined) {
             throw Error('Required element parameter not provided');
         }
+
         const self = this;
 
         const changes = {};
