@@ -232,7 +232,7 @@ describe("GrandSearch", () => {
     it("should render an object search result if new object added", async () => {
         const composition = openmct.composition.get(mockFolderObject);
         composition.add(mockNewObject);
-        // after adding, need to wait for folder to be indexed
+        // after adding, need to wait a beat for the folder to be indexed
         await Vue.nextTick();
         await grandSearchComponent.$children[0].searchEverything('apple');
         await Vue.nextTick();
