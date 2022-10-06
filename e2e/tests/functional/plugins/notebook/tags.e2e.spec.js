@@ -116,7 +116,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
-        await expect(page.locator('[aria-label="Search Result"]')).toBeHidden();
+        await expect(page.locator('text=No results found')).toBeVisible();
     });
 
     test('Can delete tags', async ({ page }) => {
