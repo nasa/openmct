@@ -62,10 +62,10 @@ export default class CompositionProvider {
         this.publicAPI = publicAPI;
         /** @type {Object.<string, DomainObject>} */
         this.listeningTo = {};
-        this.onMutation = this.onMutation.bind(this);
+        this.onMutation = this.#onMutation.bind(this);
 
-        this.cannotContainItself = this.cannotContainItself.bind(this);
-        this.supportsComposition = this.supportsComposition.bind(this);
+        this.cannotContainItself = this.#cannotContainItself.bind(this);
+        this.supportsComposition = this.#supportsComposition.bind(this);
 
         compositionAPI.addPolicy(this.cannotContainItself);
         compositionAPI.addPolicy(this.supportsComposition);
@@ -282,7 +282,7 @@ export default class CompositionProvider {
      * @param {DomainObject} child
      * @returns {boolean}
      */
-    cannotContainItself(parent, child) {
+    #cannotContainItself(parent, child) {
         return !(parent.identifier.namespace === child.identifier.namespace
               && parent.identifier.key === child.identifier.key);
     }
@@ -292,7 +292,7 @@ export default class CompositionProvider {
      * @param {DomainObject} parent
      * @returns {boolean}
      */
-    supportsComposition(parent, _child) {
+    #supportsComposition(parent, _child) {
         return this.publicAPI.composition.supportsComposition(parent);
     }
 
@@ -303,7 +303,7 @@ export default class CompositionProvider {
      * @private
      * @param {DomainObject} oldDomainObject
      */
-    onMutation(oldDomainObject) {
+    #onMutation(oldDomainObject) {
         const id = objectUtils.makeKeyString(oldDomainObject.identifier);
         const listeners = this.listeningTo[id];
 
