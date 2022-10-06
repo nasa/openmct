@@ -1,6 +1,0 @@
-extraction:
-  javascript:
-    index:
-      exclude:
-        # Ignore app.js, should never be used in production
-        - app.js
