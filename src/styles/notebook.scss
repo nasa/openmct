@@ -29,6 +29,7 @@
 
 .scrollContainer{
     // Class for overflow embeds (possibly for text entry overflow in future)
+    margin-top: $interiorMargin;
     background: $scrollContainer;
     box-shadow: inset 0 3px 4px rgb(0 0 0 / 40%);
     border-radius: $controlCr;
@@ -335,6 +336,7 @@
         flex-direction: column;
         flex: 1 1 auto;
         margin-right: $interiorMarginSm;
+        margin-top: $interiorMargin;
 
         > [class*="__"] + [class*="__"] {
             margin-top: $interiorMarginSm;
@@ -358,7 +360,8 @@
         @include inlineInput;
         padding-left: $p;
         padding-right: $p;
-
+        overflow: unset;
+        margin-bottom: $interiorMargin;
         @include hover {
             &:not(:focus, .locked) {
                 background: rgba($colorBodyFg, 0.1);
