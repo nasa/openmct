@@ -27,7 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-test.describe('Notebook Network Request Inspection @couchdb', () => {
+test.describe('Notebook Tests with CouchDB @couchdb', () => {
     let testNotebook;
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
@@ -223,6 +223,10 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
     });
 
     test('Search tests', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/akhenry/openmct-yamcs/issues/69'
+        });
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
         await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
