@@ -3,6 +3,7 @@
     let connected = false;
     let couchEventSource;
     let changesFeedUrl;
+    const keepAliveTime = 20 * 1000;
     let keepAliveTimer;
     const controller = new AbortController();
 
@@ -71,7 +72,11 @@
             clearTimeout(keepAliveTimer);
         }
 
-        keepAliveTimer = setTimeout(self.listenForChanges, 20 * 1000);
+        /**
+         * Once the connection has been opened, poll every 20 seconds to see if the EventSource has closed unexpectedly.
+         * If it has, attempt to reconnect.
+         */
+        keepAliveTimer = setTimeout(self.listenForChanges, keepAliveTime);
 
         if (!couchEventSource || couchEventSource.readyState === EventSource.CLOSED) {
             console.debug('⇿ Opening CouchDB change feed connection ⇿');
