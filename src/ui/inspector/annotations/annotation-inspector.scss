@@ -1,0 +1,14 @@
+.c-annotation__list {
+    display: flex;
+    flex-direction: column;
+}
+
+.c-annotation__row {
+    background-color: #535353;
+    margin: 5px;
+}
+
+.c-annotation__text_area {
+    resize: vertical;
+}
+
