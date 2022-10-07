@@ -99,7 +99,7 @@ define([
             * Tracks current selection state of the application.
             * @private
             */
-            ['selection', () => new Selection(this)],
+            ['selection', () => new Selection.default(this)],
 
             /**
              * MCT's time conductor, which may be used to synchronize view contents
