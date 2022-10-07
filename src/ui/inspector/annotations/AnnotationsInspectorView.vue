@@ -128,7 +128,8 @@ export default {
             this.selection = selection;
             const domainObject = this.getDomainObject();
             if (domainObject) {
-                let totalAnnotations = await this.openmct.annotation.getAnnotation(this.domainObject, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS);
+                const domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+                let totalAnnotations = await this.openmct.annotation.getAnnotations(domainObjectKeyString);
                 if (!totalAnnotations) {
                     this.annotations = [];
 

@@ -48,13 +48,6 @@
                     v-if="!multiSelect"
                     class="c-inspect-properties c-inspect-properties--location"
                 >
-                    <div
-                        class="c-inspect-properties__header"
-                        title="The location of this object"
-                    >
-                        Original Location
-                    </div>
-                    <ObjectPath class="c-inspect-properties__value" />
                 </div>
                 <inspector-views />
             </pane>
