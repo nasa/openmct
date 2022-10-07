@@ -199,7 +199,7 @@ define([
             if (this.returnMutables && this.publicAPI.objects.supportsMutation(child.identifier)) {
                 let keyString = this.publicAPI.objects.makeKeyString(child.identifier);
 
-                child = this.publicAPI.objects._toMutable(child);
+                child = this.publicAPI.objects.toMutable(child);
                 this.mutables[keyString] = child;
             }
 

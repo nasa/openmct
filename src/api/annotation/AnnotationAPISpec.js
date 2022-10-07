@@ -126,34 +126,44 @@ describe("The Annotation API", () => {
 
     describe("Tagging", () => {
         it("can create a tag", async () => {
-            const annotationObject = await openmct.annotation.addAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
             expect(annotationObject.tags).toContain('aWonderfulTag');
         });
         it("can delete a tag", async () => {
-            const originalAnnotationObject = await openmct.annotation.addAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
-            const annotationObject = await openmct.annotation.addAnnotationTag(originalAnnotationObject, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'anotherTagToRemove');
+            const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
             expect(annotationObject).toBeDefined();
-            openmct.annotation.removeAnnotationTag(annotationObject, 'anotherTagToRemove');
-            expect(annotationObject.tags).toEqual(['aWonderfulTag']);
-            openmct.annotation.removeAnnotationTag(annotationObject, 'aWonderfulTag');
-            expect(annotationObject.tags).toEqual([]);
+            openmct.annotation.deleteAnnotations([annotationObject]);
+            expect(annotationObject._deleted).toBeTrue();
         });
         it("throws an error if deleting non-existent tag", async () => {
-            const annotationObject = await openmct.annotation.addAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
             expect(annotationObject).toBeDefined();
             expect(() => {
                 openmct.annotation.removeAnnotationTag(annotationObject, 'ThisTagShouldNotExist');
             }).toThrow();
         });
         it("can remove all tags", async () => {
-            const annotationObject = await openmct.annotation.addAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
             expect(annotationObject).toBeDefined();
             expect(() => {
-                openmct.annotation.removeAnnotationTags(annotationObject);
+                openmct.annotation.deleteAnnotations([annotationObject]);
             }).not.toThrow();
-            expect(annotationObject.tags).toEqual([]);
+            expect(annotationObject._deleted).toBeTrue();
+        });
+        it("can add/delete/add a tag", async () => {
+            let annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            expect(annotationObject).toBeDefined();
+            expect(annotationObject.type).toEqual('annotation');
+            expect(annotationObject.tags).toContain('aWonderfulTag');
+            openmct.annotation.deleteAnnotations([annotationObject]);
+            expect(annotationObject._deleted).toBeTrue();
+            annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            expect(annotationObject).toBeDefined();
+            expect(annotationObject.type).toEqual('annotation');
+            expect(annotationObject.tags).toContain('aWonderfulTag');
+            expect(annotationObject._deleted).toBeFalse();
         });
     });
 
@@ -174,17 +184,6 @@ describe("The Annotation API", () => {
             const results = await openmct.annotation.searchForTags('S');
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
-        });
-        it("can get notebook annotations", async () => {
-            const targetKeyString = openmct.objects.makeKeyString(mockDomainObject.identifier);
-            const query = {
-                targetKeyString,
-                entryId: 'fooBarEntry'
-            };
-
-            const results = await openmct.annotation.getAnnotation(query, openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
-            expect(results).toBeDefined();
-            expect(results.tags.length).toEqual(2);
         });
     });
 });

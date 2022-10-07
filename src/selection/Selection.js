@@ -244,7 +244,7 @@ define(
 
             if (context.item && context.item.isMutable !== true) {
                 removeMutable = true;
-                context.item = this.openmct.objects._toMutable(context.item);
+                context.item = this.openmct.objects.toMutable(context.item);
             }
 
             if (select) {
