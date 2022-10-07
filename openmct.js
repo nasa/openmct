@@ -67,7 +67,7 @@ if (document.currentScript) {
  * @property {import('./src/api/annotation/AnnotationAPI').default} annotation
  * @property {{(OpenMCTPlugin) => void}} install
  * @property {{() => string}} getAssetPath
- * @property {{(HTMLElement, boolean) => void}} start
+ * @property {{(domElement: HTMLElement, isHeadlessMode: boolean) => void}} start
  * @property {{() => void}} startHeadless
  * @property {{() => void}} destroy
  * @property {OpenMCTPlugin[]} plugins
