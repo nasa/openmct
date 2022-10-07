@@ -42,29 +42,29 @@ if (document.currentScript) {
  * @typedef {object} OpenMCT
  * @property {BuildInfo} buildInfo
  * @property {*} selection
- * @property {*} time
+ * @property {import('./src/api/time/TimeAPI').default} time
  * @property {import('./src/api/composition/CompositionAPI').default} composition
  * @property {*} objectViews
  * @property {*} inspectorViews
  * @property {*} propertyEditors
  * @property {*} toolbars
  * @property {*} types
- * @property {*} objects
- * @property {*} telemetry
- * @property {*} indicators
- * @property {*} user
- * @property {*} notifications
- * @property {*} editor
- * @property {*} overlays
- * @property {*} menus
- * @property {*} actions
- * @property {*} status
+ * @property {import('./src/api/objects/ObjectAPI').default} objects
+ * @property {import('./src/api/telemetry/TelemetryAPI').default} telemetry
+ * @property {import('./src/api/indicators/IndicatorAPI').default} indicators
+ * @property {import('./src/api/user/UserAPI').default} user
+ * @property {import('./src/api/notifications/NotificationAPI').default} notifications
+ * @property {import('./src/api/Editor').default} editor
+ * @property {import('./src/api/overlays/OverlayAPI')} overlays
+ * @property {import('./src/api/menu/MenuAPI').default} menus
+ * @property {import('./src/api/actions/ActionsAPI').default} actions
+ * @property {import('./src/api/status/StatusAPI').default} status
  * @property {*} priority
- * @property {*} router
- * @property {*} faults
- * @property {*} forms
- * @property {*} branding
- * @property {*} annotation
+ * @property {import('./src/ui/router/ApplicationRouter')} router
+ * @property {import('./src/api/faultmanagement/FaultManagementAPI').default} faults
+ * @property {import('./src/api/forms/FormsAPI').default} forms
+ * @property {import('./src/api/Branding').default} branding
+ * @property {import('./src/api/annotation/AnnotationAPI').default} annotation
  * @property {{(OpenMCTPlugin) => void}} install
  * @property {{() => string}} getAssetPath
  * @property {{(HTMLElement, boolean) => void}} start
