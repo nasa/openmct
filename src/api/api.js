@@ -39,25 +39,6 @@ define([
     './annotation/AnnotationAPI'
 ],
 
-/**
- * @param {*} ActionsAPI
- * @param {import('./composition/CompositionAPI').default} CompositionAPI
- * @param {*} EditorAPI
- * @param {*} FaultManagementAPI
- * @param {*} FormsAPI
- * @param {*} IndicatorAPI
- * @param {*} MenuAPI
- * @param {*} NotificationAPI
- * @param {*} ObjectAPI
- * @param {*} PriorityAPI
- * @param {*} StatusAPI
- * @param {*} TelemetryAPI
- * @param {*} TimeAPI
- * @param {*} TypeRegistry
- * @param {*} UserAPI
- * @param {*} AnnotationAPI
- * @returns {import('../../openmct').OpenMCT}
- */
 function (
     ActionsAPI,
     CompositionAPI,
