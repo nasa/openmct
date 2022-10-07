@@ -93,6 +93,9 @@ export default function PlotViewProvider(openmct) {
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
+                },
+                getComponent() {
+                    return component;
                 }
             };
         }

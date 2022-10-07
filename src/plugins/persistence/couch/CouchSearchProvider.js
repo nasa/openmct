@@ -31,7 +31,7 @@ class CouchSearchProvider {
     constructor(couchObjectProvider) {
         this.couchObjectProvider = couchObjectProvider;
         this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
-        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.NOTEBOOK_ANNOTATIONS, this.searchTypes.TAGS];
+        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.TAGS];
     }
 
     supportsSearchType(searchType) {
@@ -43,8 +43,6 @@ class CouchSearchProvider {
             return this.searchForObjects(query, abortSignal);
         } else if (searchType === this.searchTypes.ANNOTATIONS) {
             return this.searchForAnnotations(query, abortSignal);
-        } else if (searchType === this.searchTypes.NOTEBOOK_ANNOTATIONS) {
-            return this.searchForNotebookAnnotations(query, abortSignal);
         } else if (searchType === this.searchTypes.TAGS) {
             return this.searchForTags(query, abortSignal);
         } else {
@@ -91,38 +89,6 @@ class CouchSearchProvider {
         return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
     }
 
-    searchForNotebookAnnotations({targetKeyString, entryId}, abortSignal) {
-        const filter = {
-            "selector": {
-                "$and": [
-                    {
-                        "model.type": {
-                            "$eq": "annotation"
-                        }
-                    },
-                    {
-                        "model.annotationType": {
-                            "$eq": "NOTEBOOK"
-                        }
-                    },
-                    {
-                        "model": {
-                            "targets": {
-                            }
-                        }
-                    }
-                ]
-            }
-        };
-        filter.selector.$and[2].model.targets[targetKeyString] = {
-            "entryId": {
-                "$eq": entryId
-            }
-        };
-
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
-    }
-
     searchForTags(tagsArray, abortSignal) {
         const filter = {
             "selector": {
@@ -130,7 +96,8 @@ class CouchSearchProvider {
                     {
                         "model.tags": {
                             "$elemMatch": {
-                                "$eq": `${tagsArray[0]}`
+                                "$or": [
+                                ]
                             }
                         }
                     },
@@ -142,6 +109,11 @@ class CouchSearchProvider {
                 ]
             }
         };
+        tagsArray.forEach(tag => {
+            filter.selector.$and[0]["model.tags"].$elemMatch.$or.push({
+                "$eq": `${tag}`
+            });
+        });
 
         return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
     }
