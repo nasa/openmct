@@ -442,7 +442,8 @@ export default {
             });
         },
 
-        removeSeries(plotSeries) {
+        removeSeries(plotSeries, index) {
+            this.seriesModels.splice(index, 1);
             this.checkSameRangeValue();
             this.stopListening(plotSeries);
         },
