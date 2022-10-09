@@ -54,6 +54,10 @@
   }
 }
 
+.c-tag-btn__label {
+  overflow: visible!important;
+}
+
 /******************************* HOVERS */
 .has-tag-applier {
   // Apply this class to all components that should trigger tag removal btn on hover

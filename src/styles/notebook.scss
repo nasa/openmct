@@ -31,7 +31,7 @@
     // Class for overflow embeds (possibly for text entry overflow in future)
     margin-top: $interiorMargin;
     background: $scrollContainer;
-    box-shadow: inset 0 3px 4px rgb(0 0 0 / 40%);
+    box-shadow: $shdwInputFoc;
     border-radius: $controlCr;
 
 }
@@ -307,6 +307,16 @@
     &__input {
         padding: $p;
     }
+    &__time-and-creator-and-delete{
+        display: flex;
+        align-items: center;
+
+        > * + *{
+            float: right;
+            margin-left: auto;
+        }
+
+    }
 
     &__creator [class*='icon'] {
         font-size: 0.95em;
@@ -315,7 +325,7 @@
     &__time-and-content {
         display: block;
         flex: 1 1 auto;
-        overflow: auto;
+        overflow: visible;
 
         > * + * {
             margin-top: $interiorMarginSm;
@@ -456,6 +466,7 @@
     }
 
     &__link {
+        flex: 1 1 auto;
         &:before {
             display: block;
             font-size: 1em;

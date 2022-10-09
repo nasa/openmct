@@ -127,15 +127,15 @@ export default {
                 id: 'navigateToItem',
                 cssClass: this.embed.cssClass,
                 name: 'Navigate to Item',
-                description: 'Navigate to the item with the default time settings.',
+                description: 'Navigate to the item with the current time settings.',
                 onItemClicked: () => this.navigateToItem()
             };
 
             const navigateToItemInTime = {
                 id: 'navigateToItemInTime',
-                cssClass: 'icon-telemetry',
+                cssClass: this.embed.cssClass,
                 name: 'Navigate to Item in Time',
-                description: 'Navigate to the item with the given time context.',
+                description: 'Navigate to the item in its time frame when captured.',
                 onItemClicked: () => this.navigateToItemInTime()
             };
 

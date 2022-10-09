@@ -37,7 +37,7 @@
         title="Add new tag"
         @click="addTag"
     >
-        <div class="c-icon-button__label">Add Tag</div>
+        <div class="c-icon-button__label c-tag-btn__label">Add Tag</div>
     </button>
 </div>
 </template>

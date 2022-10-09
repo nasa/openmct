@@ -31,14 +31,16 @@
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time-and-creator-and-delete">
-            <span class="c-ne__created-date">{{ createdOnDate }}</span>
-            <span class="c-ne__created-time">{{ createdOnTime }}</span>
-            <span
-                v-if="entry.createdBy"
-                class="c-ne__creator"
-            >
-                <span class="icon-person"></span> {{ entry.createdBy }}
-            </span>
+            <div class="c-ne__time-and-creator">
+                <span class="c-ne__created-date">{{ createdOnDate }}</span>
+                <span class="c-ne__created-time">{{ createdOnTime }}</span>
+                <span
+                    v-if="entry.createdBy"
+                    class="c-ne__creator"
+                >
+                    <span class="icon-person"></span> {{ entry.createdBy }}
+                </span>
+            </div>
             <span
                 v-if="!readOnly && !isLocked"
                 class="c-ne__local-controls--hidden"
