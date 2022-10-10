@@ -135,7 +135,7 @@ documented in the [Included Plugins](#included-plugins) section.
 
 ## Types
 
-The Open MCT library provides its own TypeScript declaration files which can be
+The Open MCT library includes its own TypeScript declaration files which can be
 used to provide code hints and typechecking in your own Open MCT application.
 
 Open MCT's type declarations are generated via `tsc` from JSDoc-style comment
