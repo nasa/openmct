@@ -133,6 +133,39 @@ do anything with the application initially. Any of these plugins can, in
 principle, be replaced with a custom plugin. The included plugins are 
 documented in the [Included Plugins](#included-plugins) section.  
 
+## Types
+
+The Open MCT library provides its own TypeScript declaration files which can be
+used to provide code hints and typechecking in your own Open MCT application.
+
+Open MCT's type declarations are generated via `tsc` from JSDoc-style comment
+blocks. For more information on this, [check out TypeScript's documentation](https://www.typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html).
+
+### Using Types
+
+In order to use Open MCT's provided types in your own application, create a
+`jsconfig.js` at the root of your project with this minimal configuration:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+      "target": "es6",
+      "checkJs": true,
+      "moduleResolution": "node",
+      "paths": {
+        "openmct": ["node_modules/openmct/dist/openmct.d.ts"]
+      }
+  }
+}
+```
+
+Then, simply import and use `openmct` in your application:
+
+```js
+import openmct from "openmct";
+```
+
 ## Plugins
 
 ### Defining and Installing a New Plugin
