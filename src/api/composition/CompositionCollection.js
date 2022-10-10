@@ -55,7 +55,6 @@
  *  ```
  *
  * @class
- * @memberof module:openmct
  */
 export default class CompositionCollection {
     /**
@@ -204,7 +203,6 @@ export default class CompositionCollection {
      * @param {DomainObject} child the domain object to add
      * @param {boolean} skipMutate true if the underlying provider should
      *        not be updated
-     * @memberof module:openmct.CompositionCollection#
      */
     add(child, skipMutate) {
         if (!skipMutate) {
@@ -251,7 +249,6 @@ export default class CompositionCollection {
      * @param {DomainObject} child the domain object to remove
      * @param {boolean} skipMutate true if the underlying provider should
      *        not be updated
-     * @memberof module:openmct.CompositionCollection#
      * @name remove
      */
     remove(child, skipMutate) {
@@ -277,7 +274,6 @@ export default class CompositionCollection {
      *
      * @param {number} oldIndex
      * @param {number} newIndex
-     * @memberof module:openmct.CompositionCollection#
      * @name remove
      */
     reorder(oldIndex, newIndex, _skipMutate) {

@@ -50,7 +50,6 @@ import objectUtils from "../objects/object-utils";
  * server updates or mutation via the add/remove methods, then one must
  * trigger events as necessary.
  *
- * @memberof module:openmct
  */
 export default class CompositionProvider {
     /**
@@ -77,7 +76,6 @@ export default class CompositionProvider {
      * @param {DomainObject} domainObject the domain object
      *        to check
      * @returns {boolean} true if this provider can provide composition for a given domain object
-     * @memberof module:openmct.CompositionProvider#
      */
     appliesTo(domainObject) {
         return Boolean(domainObject.composition);
@@ -89,7 +87,6 @@ export default class CompositionProvider {
      *        for which to load composition
      * @returns {Promise<Array<Identifier>>} a promise for
      *          the Identifiers in this composition
-     * @memberof module:openmct.CompositionProvider#
      * @method load
      */
     load(domainObject) {
@@ -162,7 +159,6 @@ export default class CompositionProvider {
      * This method is optional; if not present, adding to a domain object's
      * composition using this provider will be disallowed.
      *
-     * @memberof module:openmct.CompositionProvider#
      * @param {DomainObject} domainObject the domain object
      *        which should have its composition modified
      * @param {DomainObject} childId the domain object to remove
@@ -185,7 +181,6 @@ export default class CompositionProvider {
      * @param {DomainObject} domainObject the domain object
      *        which should have its composition modified
      * @param {DomainObject} childId the domain object to add
-     * @memberof module:openmct.CompositionProvider#
      * @method add
      */
     add(parent, childId) {

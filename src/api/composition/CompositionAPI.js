@@ -59,7 +59,6 @@ export default class CompositionAPI {
      *
      * @method addProvider
      * @param {CompositionProvider} provider the provider to add
-     * @memberof module:openmct.CompositionAPI#
      */
     addProvider(provider) {
         this.registry.unshift(provider);
@@ -70,7 +69,6 @@ export default class CompositionAPI {
      * @method get
      * @param {DomainObject} domainObject
      * @returns {CompositionCollection}
-     * @memberof module:openmct.CompositionAPI#
      */
     get(domainObject) {
         const provider = this.registry.find(p => {
@@ -97,7 +95,6 @@ export default class CompositionAPI {
      * @param {DomainObject} containedObject the object which
      *        would be contained
      * @returns {boolean} false if this composition should be disallowed
-     * @memberof module:openmct.CompositionAPI~
      */
     /**
      * Add a composition policy. Composition policies may disallow domain
@@ -106,7 +103,6 @@ export default class CompositionAPI {
      * @method addPolicy
      * @param {CompositionPolicy} policy
      *        the policy to add
-     * @memberof module:openmct.CompositionAPI#
      */
     addPolicy(policy) {
         this.policies.push(policy);
@@ -124,7 +120,6 @@ export default class CompositionAPI {
      * @returns {boolean} false if this composition should be disallowed
      * @param {CompositionPolicy} policy
      *        the policy to add
-     * @memberof module:openmct.CompositionAPI#
      */
     checkPolicy(container, containee) {
         return this.policies.every(function (policy) {
