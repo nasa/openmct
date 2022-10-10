@@ -65,7 +65,7 @@ if (document.currentScript) {
  * @property {import('./src/api/forms/FormsAPI').default} forms
  * @property {import('./src/api/Branding').default} branding
  * @property {import('./src/api/annotation/AnnotationAPI').default} annotation
- * @property {{(OpenMCTPlugin) => void}} install
+ * @property {{(plugin: OpenMCTPlugin) => void}} install
  * @property {{() => string}} getAssetPath
  * @property {{(domElement: HTMLElement, isHeadlessMode: boolean) => void}} start
  * @property {{() => void}} startHeadless
