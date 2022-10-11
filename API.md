@@ -2,10 +2,13 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [Building Applications With Open MCT](#building-applications-with-open-mct)
+- [Building Applications With Open MCT](#developing-applications-with-open-mct)
   - [Scope and purpose of this document](#scope-and-purpose-of-this-document)
   - [Building From Source](#building-from-source)
   - [Starting an Open MCT application](#starting-an-open-mct-application)
+  - [Types](#types)
+    - [Using Types](#using-types)
+    - [Limitations](#limitations)
   - [Plugins](#plugins)
     - [Defining and Installing a New Plugin](#defining-and-installing-a-new-plugin)
   - [Domain Objects and Identifiers](#domain-objects-and-identifiers)
@@ -165,6 +168,15 @@ Then, simply import and use `openmct` in your application:
 ```js
 import openmct from "openmct";
 ```
+
+### Limitations
+
+The effort to add types for Open MCT's public API is ongoing, and the provided
+type declarations may be incomplete.
+
+If you would like to contribute types to Open MCT, please check out
+[TypeScript's documentation](https://www.typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html) on generating type declarations from JSDoc-style comment blocks.
+Then read through our [contributing guide](https://github.com/nasa/openmct/blob/f7cf3f72c2efd46da7ce5719c5e52c8806d166f0/CONTRIBUTING.md) and open a PR!
 
 ## Plugins
 
