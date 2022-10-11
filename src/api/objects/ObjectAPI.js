@@ -388,8 +388,8 @@ export default class ObjectAPI {
             } else {
                 domainObject.persisted = persistedTime;
                 domainObject.modifiedBy = await this.#getCurrentUsername();
-                this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
+                this.mutate(domainObject, 'persisted', persistedTime);
             }
         }
 
@@ -523,10 +523,14 @@ export default class ObjectAPI {
             this.destroyMutable(mutableDomainObject);
         }
 
-        if (this.isTransactionActive()) {
-            this.transaction.add(domainObject);
-        } else {
-            this.save(domainObject);
+        // we don't need to save if persisted is being mutated,
+        // this is only done in save (after being saved) and will cause multiple saves to fire
+        if (path !== 'persisted') {
+            if (this.isTransactionActive()) {
+                this.transaction.add(domainObject);
+            } else {
+                this.save(domainObject);
+            }
         }
     }
 
