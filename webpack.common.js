@@ -153,8 +153,8 @@ const config = {
     performance: {
         // We should eventually consider chunking to decrease
         // these values
-        maxEntrypointSize: 25000000,
-        maxAssetSize: 25000000
+        maxEntrypointSize: 26000000,
+        maxAssetSize: 26000000
     }
 };
 
