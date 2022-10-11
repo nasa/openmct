@@ -57,7 +57,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Building Applications With Open MCT
+# Developing Applications With Open MCT
 
 ## Scope and purpose of this document
 
@@ -72,8 +72,7 @@ MCT, as well as addressing some common developer use cases.
 ## Building From Source 
 
 The latest version of Open MCT is available from [our GitHub repository](https://github.com/nasa/openmct). 
-If you have `git`, and `node` installed, you can build Open MCT with the
-commands 
+If you have `git`, and `node` installed, you can build Open MCT with the commands 
 
 ```bash
 git clone https://github.com/nasa/openmct.git
@@ -86,7 +85,7 @@ build a minified version that can be included in your application. The output
 of the build process is placed in a `dist` folder under the openmct source 
 directory, which can be copied out to another location as needed. The contents 
 of this folder will include a minified javascript file named `openmct.js` as 
-well as assets such as html, css, and images necessary for the UI. 
+well as assets such as html, css, and images necessary for the UI.
 
 ## Starting an Open MCT application
 
@@ -390,7 +389,7 @@ A telemetry object is a domain object with a telemetry property.  To take an exa
             {
                 "key": "value",
                 "name": "Value",
-                "units": "kilograms",
+                "unit": "kilograms",
                 "format": "float",
                 "min": 0,
                 "max": 100,
@@ -425,7 +424,7 @@ attribute      | type   | flags    | notes
 `name`         | string | optional | a human readable label for this field.  If omitted, defaults to `key`.
 `source`       | string | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
 `format`       | string | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format.  
-`units`        | string | optional | the units of this value, e.g. `km`, `seconds`, `parsecs`
+`unit`        | string | optional | the unit of this value, e.g. `km`, `seconds`, `parsecs`
 `min`          | number | optional | the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.
 `max`          | number | optional | the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.
 `enumerations` | array  | optional | for objects where `format` is `"enum"`, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a `value` property that is the numerical value of the enumeration, and a `string` property that is the text value of the enumeration.  ex: `{"value": 0, "string": "OFF"}`.  If you use an enumerations array, `min` and `max` will be set automatically for you.

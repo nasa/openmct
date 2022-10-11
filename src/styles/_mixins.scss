@@ -228,12 +228,12 @@
 
 @mixin grippy($c: rgba(black, 0.5), $dir: 'x') {
     $deg: 90deg;
-    $bgSize: 2px 100%;
+    $bgSize: 3px 100%;
 
     @if $dir != 'x' {
         // Grippy texture runs 'vertically'
         $deg: 0deg;
-        $bgSize: 100% 2px;
+        $bgSize: 100% 3px;
     }
 
     background: linear-gradient($deg,

@@ -63,10 +63,9 @@ export default class Editor extends EventEmitter {
             .then(() => {
                 this.editing = false;
                 this.emit('isEditing', false);
+                this.openmct.objects.endTransaction();
             }).catch(error => {
                 throw error;
-            }).finally(() => {
-                this.openmct.objects.endTransaction();
             });
     }
 

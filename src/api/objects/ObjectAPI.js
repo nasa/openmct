@@ -34,11 +34,11 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  * Uniquely identifies a domain object.
  *
  * @typedef Identifier
- * @memberof module:openmct.ObjectAPI~
  * @property {string} namespace the namespace to/from which this domain
  *           object should be loaded/stored.
  * @property {string} key a unique identifier for the domain object
  *           within that namespace
+ * @memberof module:openmct.ObjectAPI~
  */
 
 /**
@@ -64,6 +64,15 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  *           to load domain objects
  * @memberof module:openmct
  */
+
+/**
+    * @readonly
+    * @enum {String} SEARCH_TYPES
+    * @property {String} OBJECTS Search for objects
+    * @property {String} ANNOTATIONS Search for annotations
+    * @property {String} TAGS Search for tags
+*/
+
 /**
  * Utilities for loading, saving, and manipulating domain objects.
  * @interface ObjectAPI
@@ -76,7 +85,6 @@ export default class ObjectAPI {
         this.SEARCH_TYPES = Object.freeze({
             OBJECTS: 'OBJECTS',
             ANNOTATIONS: 'ANNOTATIONS',
-            NOTEBOOK_ANNOTATIONS: 'NOTEBOOK_ANNOTATIONS',
             TAGS: 'TAGS'
         });
         this.eventEmitter = new EventEmitter();
@@ -188,7 +196,6 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-
     get(identifier, abortSignal) {
         let keystring = this.makeKeyString(identifier);
 
@@ -223,22 +230,17 @@ export default class ObjectAPI {
             if (result.isMutable) {
                 result.$refresh(result);
             } else {
-                let mutableDomainObject = this._toMutable(result);
+                let mutableDomainObject = this.toMutable(result);
                 mutableDomainObject.$refresh(result);
             }
 
             return result;
         }).catch((result) => {
             console.warn(`Failed to retrieve ${keystring}:`, result);
-            this.openmct.notifications.error(`Failed to retrieve object ${keystring}`);
 
             delete this.cache[keystring];
 
-            if (!result) {
-                //no result means resource either doesn't exist or is missing
-                //otherwise it's an error, and we shouldn't apply interceptors
-                result = this.applyGetInterceptors(identifier);
-            }
+            result = this.applyGetInterceptors(identifier);
 
             return result;
         });
@@ -305,7 +307,7 @@ export default class ObjectAPI {
         }
 
         return this.get(identifier).then((object) => {
-            return this._toMutable(object);
+            return this.toMutable(object);
         });
     }
 
@@ -495,7 +497,7 @@ export default class ObjectAPI {
         } else {
             //Creating a temporary mutable domain object allows other mutable instances of the
             //object to be kept in sync.
-            let mutableDomainObject = this._toMutable(domainObject);
+            let mutableDomainObject = this.toMutable(domainObject);
 
             //Mutate original object
             MutableDomainObject.mutateObject(domainObject, path, value);
@@ -515,15 +517,19 @@ export default class ObjectAPI {
     }
 
     /**
-     * @private
+     * Create a mutable domain object from an existing domain object
+     * @param {module:openmct.DomainObject} domainObject the object to make mutable
+     * @returns {MutableDomainObject} a mutable domain object that will automatically sync
+     * @method toMutable
+     * @memberof module:openmct.ObjectAPI#
      */
-    _toMutable(object) {
+    toMutable(domainObject) {
         let mutableObject;
 
-        if (object.isMutable) {
-            mutableObject = object;
+        if (domainObject.isMutable) {
+            mutableObject = domainObject;
         } else {
-            mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
+            mutableObject = MutableDomainObject.createMutable(domainObject, this.eventEmitter);
 
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
@@ -531,9 +537,11 @@ export default class ObjectAPI {
 
             if (provider !== undefined
                 && provider.observe !== undefined
-                && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
+                && this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
                 let unobserve = provider.observe(identifier, (updatedModel) => {
-                    if (updatedModel.persisted > mutableObject.modified) {
+                    // modified can sometimes be undefined, so make it 0 in this case
+                    const mutableObjectModification = mutableObject.modified ?? Number.MIN_SAFE_INTEGER;
+                    if (updatedModel.persisted > mutableObjectModification) {
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                         //in rapid succession and intermediate persistence states are returned by the observe function.
                         updatedModel = this.applyGetInterceptors(identifier, updatedModel);
@@ -587,7 +595,7 @@ export default class ObjectAPI {
         if (domainObject.isMutable) {
             return domainObject.$observe(path, callback);
         } else {
-            let mutable = this._toMutable(domainObject);
+            let mutable = this.toMutable(domainObject);
             mutable.$observe(path, callback);
 
             return () => mutable.$destroy();
@@ -615,25 +623,58 @@ export default class ObjectAPI {
      * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
      */
     areIdsEqual(...identifiers) {
+        const firstIdentifier = utils.parseKeyString(identifiers[0]);
+
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
-                return identifier === identifiers[0]
-                    || (identifier.namespace === identifiers[0].namespace
-                        && identifier.key === identifiers[0].key);
+                return identifier === firstIdentifier
+                    || (identifier.namespace === firstIdentifier.namespace
+                        && identifier.key === firstIdentifier.key);
             });
     }
 
-    getOriginalPath(identifier, path = []) {
-        return this.get(identifier).then((domainObject) => {
-            path.push(domainObject);
-            let location = domainObject.location;
+    /**
+     * Given an original path check if the path is reachable via root
+     * @param {Array<Object>} originalPath an array of path objects to check
+     * @returns {boolean} whether the domain object is reachable
+     */
+    isReachable(originalPath) {
+        if (originalPath && originalPath.length) {
+            return (originalPath[originalPath.length - 1].type === 'root');
+        }
 
-            if (location) {
-                return this.getOriginalPath(utils.parseKeyString(location), path);
-            } else {
-                return path;
-            }
+        return false;
+    }
+
+    #pathContainsDomainObject(keyStringToCheck, path) {
+        if (!keyStringToCheck) {
+            return false;
+        }
+
+        return path.some(pathElement => {
+            const identifierToCheck = utils.parseKeyString(keyStringToCheck);
+
+            return this.areIdsEqual(identifierToCheck, pathElement.identifier);
         });
+    }
+
+    /**
+     * Given an identifier, constructs the original path by walking up its parents
+     * @param {module:openmct.ObjectAPI~Identifier} identifier
+     * @param {Array<module:openmct.DomainObject>} path an array of path objects
+     * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
+     */
+    async getOriginalPath(identifier, path = []) {
+        const domainObject = await this.get(identifier);
+        path.push(domainObject);
+        const { location } = domainObject;
+        if (location && (!this.#pathContainsDomainObject(location, path))) {
+            // if we have a location, and we don't already have this in our constructed path,
+            // then keep walking up the path
+            return this.getOriginalPath(utils.parseKeyString(location), path);
+        } else {
+            return path;
+        }
     }
 
     isObjectPathToALink(domainObject, objectPath) {
@@ -647,8 +688,10 @@ export default class ObjectAPI {
     }
 
     #hasAlreadyBeenPersisted(domainObject) {
+        // modified can sometimes be undefined, so make it 0 in this case
+        const modified = domainObject.modified ?? Number.MIN_SAFE_INTEGER;
         const result = domainObject.persisted !== undefined
-            && domainObject.persisted >= domainObject.modified;
+            && domainObject.persisted >= modified;
 
         return result;
     }

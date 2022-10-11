@@ -57,8 +57,9 @@ describe('the plugin', () => {
 
     it('calculates an fps value', async () => {
         await loopForABit();
-        // eslint-disable-next-line
-        expect(parseInt(performanceIndicator.text().split(' fps')[0])).toBeGreaterThan(0);
+        // eslint-disable-next-line radix
+        const fps = parseInt(performanceIndicator.text().split(' fps')[0]);
+        expect(fps).toBeGreaterThan(0);
     });
 
     function loopForABit() {
@@ -66,7 +67,7 @@ describe('the plugin', () => {
 
         return new Promise(resolve => {
             requestAnimationFrame(function loop() {
-                if (++frames === 240) {
+                if (++frames > 90) {
                     resolve();
                 } else {
                     requestAnimationFrame(loop);

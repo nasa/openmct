@@ -33,7 +33,8 @@
         class="c-tree__item c-elements-pool__item"
         :class="{
             'is-context-clicked': contextClickActive,
-            'hover': hover
+            'hover': hover,
+            'is-alias': isAlias
         }"
     >
         <span
@@ -55,6 +56,7 @@ export default {
     components: {
         ObjectLabel
     },
+    inject: ['openmct'],
     props: {
         index: {
             type: Number,
@@ -82,9 +84,12 @@ export default {
         }
     },
     data() {
+        const isAlias = this.elementObject.location !== this.openmct.objects.makeKeyString(this.parentObject.identifier);
+
         return {
             contextClickActive: false,
-            hover: false
+            hover: false,
+            isAlias
         };
     },
     methods: {

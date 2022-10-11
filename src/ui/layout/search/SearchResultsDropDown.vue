@@ -22,8 +22,6 @@
 
 <template>
 <div
-    v-if="(annotationResults && annotationResults.length) ||
-        (objectResults && objectResults.length)"
     class="c-gsearch__dropdown"
 >
     <div
@@ -58,25 +56,41 @@
                     @click.native="selectedResult"
                 />
             </div>
+            <div
+                v-if="searchLoading"
+                class="c-gsearch__result-pane-msg"
+            >
+                <div class="hint">Searching...</div>
+                <progress-bar :model="{ progressPerc: undefined }" />
+            </div>
+            <div
+                v-if="!searchLoading && (!annotationResults || !annotationResults.length) &&
+                    (!objectResults || !objectResults.length)"
+                class="c-gsearch__result-pane-msg"
+            >
+                <div class="hint">No results found</div>
+            </div>
         </div>
     </div>
-</div>
-</template>
+</div></template>
 
 <script>
 import AnnotationSearchResult from './AnnotationSearchResult.vue';
 import ObjectSearchResult from './ObjectSearchResult.vue';
+import ProgressBar from '@/ui/components/ProgressBar.vue';
 
 export default {
     name: 'SearchResultsDropDown',
     components: {
         AnnotationSearchResult,
-        ObjectSearchResult
+        ObjectSearchResult,
+        ProgressBar
     },
     inject: ['openmct'],
     data() {
         return {
             resultsShown: false,
+            searchLoading: false,
             annotationResults: [],
             objectResults: [],
             previewVisible: false
@@ -91,12 +105,18 @@ export default {
         previewChanged(changedPreviewState) {
             this.previewVisible = changedPreviewState;
         },
-        showResults(passedAnnotationResults, passedObjectResults) {
-            if ((passedAnnotationResults && passedAnnotationResults.length)
-                || (passedObjectResults && passedObjectResults.length)) {
+        showSearchStarted() {
+            this.searchLoading = true;
+            this.resultsShown = true;
+            this.annotationResults = [];
+            this.objectResults = [];
+        },
+        showResults({searchLoading, searchValue, annotationSearchResults, objectSearchResults}) {
+            this.searchLoading = searchLoading;
+            this.annotationResults = annotationSearchResults;
+            this.objectResults = objectSearchResults;
+            if (searchValue?.length) {
                 this.resultsShown = true;
-                this.annotationResults = passedAnnotationResults;
-                this.objectResults = passedObjectResults;
             } else {
                 this.resultsShown = false;
             }
