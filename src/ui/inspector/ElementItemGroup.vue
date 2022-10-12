@@ -21,17 +21,19 @@
  *****************************************************************************/
 
 <template>
-<div>
-    <ul
-        @dragover.prevent
-        @drop="emitDrop"
-    >
-        <div
-            class="c-tree__item c-elements-pool__group"
-            :class="{
-                'hover': hover
-            }"
-        >
+<div
+    class="c-elements-pool__group"
+    :class="{
+        'hover': hover
+    }"
+    :allow-drop="allowDrop"
+    @dragover.prevent
+    @dragenter="onDragEnter"
+    @dragleave.stop="onDragLeave"
+    @drop="emitDrop"
+>
+    <ul>
+        <div>
             <span class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"></span>
             <div
                 class="c-tree__item__type-icon c-object-label__type-icon"
@@ -67,17 +69,32 @@ export default {
             default: () => {
                 return '';
             }
+        },
+        allowDrop: {
+            type: Boolean
+        }
+    },
+    calculated: {
+        hover() {
+            return this.dragCounter > 0;
         }
     },
     data() {
         return {
-            allowDrop: true,
-            hover: false
+            hover: false,
+            dragCounter: 0
         };
     },
     methods: {
         emitDrop(event) {
-            this.$emit('drop-group', this.label);
+            this.dragCounter = 0;
+            this.$emit('drop-group', event);
+        },
+        onDragEnter(event) {
+            this.dragCounter++;
+        },
+        onDragLeave(event) {
+            this.dragCounter--;
         }
     }
 };
