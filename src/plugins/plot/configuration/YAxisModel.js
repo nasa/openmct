@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import { antisymlog, symlog } from '../mathUtils';
+import { v4 as uuid } from "uuid";
 import Model from './Model';
 
 /**
@@ -50,6 +51,7 @@ export default class YAxisModel extends Model {
      * @param {import('./Model').ModelOptions<YAxisModelType, YAxisModelOptions>} options
      */
     initialize(options) {
+        this.id = uuid();
         this.plot = options.plot;
         this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
         this.listenTo(this, 'change:autoscale', this.toggleAutoscale, this);
