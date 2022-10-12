@@ -215,12 +215,11 @@ export default {
                     && element.name.toLowerCase().search(this.currentSearch) !== -1;
             });
         },
-        moveFrom(options, groupIndex) {
+        moveFrom(index, groupIndex) {
             this.allowDrop = true;
-            console.log('moveFrom ', options.index);
-            this.moveFromIndex = options.index;
+            console.log('moveFrom ', index);
+            this.moveFromIndex = index;
             this.moveFromGroup = groupIndex;
-            console.log(options.event.dataTransfer.getData("text"));
         },
         moveTo(index) {
             if (this.allowDrop) {
