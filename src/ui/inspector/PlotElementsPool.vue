@@ -259,6 +259,8 @@ export default {
         },
         mutateYAxisId(domainObject, yAxisId) {
             const index = this.parentObject.configuration.series.findIndex(series => series.identifier.key === domainObject.identifier.key);
+            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+            this.elementsCache[keyString].yAxisId = yAxisId;
             this.openmct.objects.mutate(
                 this.parentObject,
                 `configuration.series[${index}].yAxisId`,
