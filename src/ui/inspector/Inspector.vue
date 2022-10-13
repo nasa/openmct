@@ -160,7 +160,6 @@ export default {
 
                 this.hasComposition = Boolean(parentObject && this.openmct.composition.get(parentObject));
                 this.isOverlayPlot = selection[0][0].context.item.type === 'telemetry.plot.overlay';
-                console.log('isOverlayPlot', this.isOverlayPlot);
             }
         },
         refreshTabs(selection) {
