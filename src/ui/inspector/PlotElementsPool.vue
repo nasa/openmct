@@ -204,11 +204,7 @@ export default {
             const index = this.parentObject.configuration.series.findIndex(
                 series => series.identifier.key === element.identifier.key
             );
-            let yAxisId = this.parentObject.configuration.series[index].yAxisId;
-            if (yAxisId === undefined) {
-                yAxisId = 1;
-            }
-
+            const yAxisId = this.parentObject.configuration.series[index].yAxisId ?? Y_AXIS_1;
             const keyString = this.openmct.objects.makeKeyString(element.identifier);
             this.elementsCache[keyString] =
             JSON.parse(JSON.stringify(element));
