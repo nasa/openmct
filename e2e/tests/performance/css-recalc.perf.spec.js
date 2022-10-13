@@ -26,19 +26,13 @@
 
 const uuid = require('uuid');
 
-const { test, expect, getMetrics } = require('@playwright/test');
+const { test, expect } = require('@playwright/test');
+const { getMetrics } = require('../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 const CSS_RECALC_COUNT_METRIC = 'RecalcStyleCount';
 
 test.describe('Compare css recalculation count to check for unnecessary DOM repaints', () => {
-    let client;
-    test.beforeEach(async ({ page }) => {
-        client = await page.context().newCDPSession(page);
-
-        return client.send('Performance.enable');
-    });
-
     test.only('Inspector', async ({ page, browser }) => {
         test.info().annotations.push({
             type: 'issue',
@@ -49,7 +43,7 @@ test.describe('Compare css recalculation count to check for unnecessary DOM repa
 
         console.log({ objectName });
 
-        const recalcCountBefore = await metrics(client, CSS_RECALC_COUNT_METRIC);
+        const recalcCountBefore = await getMetrics(page, CSS_RECALC_COUNT_METRIC);
         await page.goto('./', { waitUntil: 'networkidle' });
 
         await page.waitForTimeout(3*1000);
@@ -58,7 +52,7 @@ test.describe('Compare css recalculation count to check for unnecessary DOM repa
         await page.locator('.c-conductor__controls button.c-mode-button').click();
         await page.locator('.icon-clock >> text=Local Clock').click();
 
-        const recalcCountAfter = await metrics(client, CSS_RECALC_COUNT_METRIC);
+        const recalcCountAfter = await getMetrics(page, CSS_RECALC_COUNT_METRIC);
         console.table({
             cssRecalcBaseline,
             recalcCountBefore,

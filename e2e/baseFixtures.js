@@ -65,17 +65,23 @@ function waitForAnimations(locator) {
 }
 
 /**
-* Open the given `domainObject`'s context menu from the object tree.
-* Expands the 'My Items' folder if it is not already expanded.
-* @param {object} client cdpSession client
-* @param {string} metricName the name of the metric to be extracted
+* Return a performance metric from the chrome cdp session.
+* Note: Chrome-only
+* @param {object} page page to attach cdpClient
+* @param {String} metricName the name of the metric to be extracted
+* @return {Object}
 * @see {@link https://github.com/microsoft/playwright/issues/18071 Github RFE}
 */
-async function getMetrics(client, propertyName) {
+async function getMetrics(page) {
+    let client;
+    client = await page.context().newCDPSession(page);
+    await client.send('Performance.enable');
     const perfMetricObject = await client.send('Performance.getMetrics');
-    const extractedMetric = perfMetricObject?.metrics.find(({ name }) => name === propertyName);
+    const extractedMetric = perfMetricObject?.metrics;
 
-    return extractedMetric?.value;
+    const mappedObject = extractedMetric.reduce((acc,[key,value]) => {} , {};
+
+    return extractedMetric;
 }
 
 /**
