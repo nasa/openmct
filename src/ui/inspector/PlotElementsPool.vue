@@ -42,7 +42,7 @@
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 1"
-                @drop-group="drop($event, 0)"
+                @drop-group="drop($event, 1)"
             >
                 <element-item
                     v-for="(element, elementIndex) in axis1"
@@ -51,15 +51,19 @@
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, 0)"
-                    @drop-custom="moveTo(elementIndex)"
+                    @dragstart-custom="moveFrom($event, 1)"
+                    @drop-custom="moveTo(elementIndex, 0)"
                 />
+                <li
+                    class="js-last-place"
+                    @drop="moveTo(axis1.length)"
+                ></li>
             </element-item-group>
             <element-item-group
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 2"
-                @drop-group="drop($event, 1)"
+                @drop-group="drop($event, 2)"
             >
                 <element-item
                     v-for="(element, elementIndex) in axis2"
@@ -68,15 +72,19 @@
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, 1)"
+                    @dragstart-custom="moveFrom($event, 2)"
                     @drop-custom="moveTo(elementIndex)"
                 />
+                <li
+                    class="js-last-place"
+                    @drop="moveTo(axis2.length)"
+                ></li>
             </element-item-group>
             <element-item-group
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 3"
-                @drop-group="drop($event, 2)"
+                @drop-group="drop($event, 3)"
             >
                 <element-item
                     v-for="(element, elementIndex) in axis3"
@@ -85,14 +93,14 @@
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, 2)"
+                    @dragstart-custom="moveFrom($event, 3)"
                     @drop-custom="moveTo(elementIndex)"
                 />
+                <li
+                    class="js-last-place"
+                    @drop="moveTo(axis3.length)"
+                ></li>
             </element-item-group>
-            <li
-                class="js-last-place"
-                @drop="moveToIndex(axis1.length)"
-            ></li>
         </ul>
         <div
             v-if="axis1.length === 0
@@ -111,6 +119,10 @@ import Search from '../components/search.vue';
 import ElementItem from './ElementItem.vue';
 import ElementItemGroup from './ElementItemGroup.vue';
 import configStore from "../../plugins/plot/configuration/ConfigStore";
+
+const Y_AXIS_1 = 1;
+const Y_AXIS_2 = 2;
+const Y_AXIS_3 = 3;
 
 export default {
     components: {
@@ -193,13 +205,23 @@ export default {
             }
         },
         addElement(element) {
+            const index = this.parentObject.configuration.series.findIndex(
+                series => series.identifier.key === element.identifier.key
+            );
+            let yAxisId = this.parentObject.configuration.series[index].yAxisId;
+            if (yAxisId === undefined) {
+                yAxisId = 1;
+                this.mutateYAxisId(element, yAxisId);
+            }
+
             const keyString = this.openmct.objects.makeKeyString(element.identifier);
             this.elementsCache[keyString] =
                 JSON.parse(JSON.stringify(element));
+            this.elementsCache[keyString].yAxisId = yAxisId;
             this.applySearch(this.currentSearch);
         },
         reorderElements() {
-            // this.applySearch(this.currentSearch);
+            this.applySearch(this.currentSearch);
         },
         removeElement(identifier) {
             const keyString = this.openmct.objects.makeKeyString(identifier);
@@ -208,11 +230,17 @@ export default {
         },
         applySearch(input) {
             this.currentSearch = input;
-            this.axis1 = this.parentObject.composition.map((id) =>
+            this.axis1 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_1);
+            this.axis2 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_2);
+            this.axis3 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_3);
+        },
+        filterForSearchAndAxis(input, axis) {
+            return this.parentObject.composition.map((id) =>
                 this.elementsCache[this.openmct.objects.makeKeyString(id)]
             ).filter((element) => {
                 return element !== undefined
-                    && element.name.toLowerCase().search(this.currentSearch) !== -1;
+                    && element.name.toLowerCase().search(input) !== -1
+                    && element.yAxisId === axis;
             });
         },
         moveFrom(index, groupIndex) {
@@ -222,41 +250,52 @@ export default {
             this.moveFromGroup = groupIndex;
         },
         moveTo(index) {
+            console.log('moveTo ', index);
+            this.moveToIndex = index;
             if (this.allowDrop) {
-                console.log('moveTo ', index);
                 this.composition.reorder(this.moveFromIndex, index);
                 this.allowDrop = false;
             }
         },
+        mutateYAxisId(domainObject, yAxisId) {
+            const index = this.parentObject.configuration.series.findIndex(series => series.identifier.key === domainObject.identifier.key);
+            this.openmct.objects.mutate(
+                this.parentObject,
+                `configuration.series[${index}].yAxisId`,
+                yAxisId
+            );
+        },
         drop(event, axisNumber) {
+            if (this.moveFromGroup === axisNumber) {
+                return;
+            }
+
             const domainObject = JSON.parse(event.dataTransfer.getData('openmct/composable-domain-object'));
+            this.mutateYAxisId(domainObject, axisNumber);
+
             switch (this.moveFromGroup) {
-            case 0:
+            case Y_AXIS_1:
                 this.axis1.splice(this.moveFromIndex, 1);
                 break;
-            case 1:
+            case Y_AXIS_2:
                 this.axis2.splice(this.moveFromIndex, 1);
                 break;
-            case 2:
+            case Y_AXIS_3:
                 this.axis3.splice(this.moveFromIndex, 1);
                 break;
             }
 
             switch (axisNumber) {
-            case 0:
-                this.axis1.splice(0, 0, domainObject);
+            case Y_AXIS_1:
+                this.axis1.splice(this.moveToIndex, 0, domainObject);
                 break;
-            case 1:
-                this.axis2.splice(0, 0, domainObject);
+            case Y_AXIS_2:
+                this.axis2.splice(this.moveToIndex, 0, domainObject);
                 break;
-            case 2:
-                this.axis3.splice(0, 0, domainObject);
+            case Y_AXIS_3:
+                this.axis3.splice(this.moveToIndex, 0, domainObject);
                 break;
             }
-
-            console.log('this.axis1', this.axis1);
-            console.log('this.axis2', this.axis2);
-            console.log('this.axis3', this.axis3);
         }
     }
 };
