@@ -32,9 +32,9 @@
         class="c-elements-pool__elements"
     >
         <ul
-            v-if="axis1.length > 0
-                || axis2.length > 0
-                || axis3.length > 0"
+            v-if="yAxis1.length > 0
+                || yAxis2.length > 0
+                || yAxis3.length > 0"
             id="inspector-elements-tree"
             class="c-tree c-elements-pool__tree"
         >
@@ -45,7 +45,7 @@
                 @drop-group="drop($event, 1)"
             >
                 <element-item
-                    v-for="(element, index) in axis1"
+                    v-for="(element, index) in yAxis1"
                     :key="element.identifier.key"
                     :index="index"
                     :element-object="element"
@@ -56,7 +56,7 @@
                 />
                 <li
                     class="js-last-place"
-                    @drop="moveTo(axis1.length)"
+                    @drop="moveTo(yAxis1.length)"
                 ></li>
             </element-item-group>
             <element-item-group
@@ -66,7 +66,7 @@
                 @drop-group="drop($event, 2)"
             >
                 <element-item
-                    v-for="(element, index) in axis2"
+                    v-for="(element, index) in yAxis2"
                     :key="element.identifier.key"
                     :index="index"
                     :element-object="element"
@@ -77,7 +77,7 @@
                 />
                 <li
                     class="js-last-place"
-                    @drop="moveTo(axis2.length)"
+                    @drop="moveTo(yAxis2.length)"
                 ></li>
             </element-item-group>
             <element-item-group
@@ -87,7 +87,7 @@
                 @drop-group="drop($event, 3)"
             >
                 <element-item
-                    v-for="(element, index) in axis3"
+                    v-for="(element, index) in yAxis3"
                     :key="element.identifier.key"
                     :index="index"
                     :element-object="element"
@@ -98,14 +98,14 @@
                 />
                 <li
                     class="js-last-place"
-                    @drop="moveTo(axis3.length)"
+                    @drop="moveTo(yAxis3.length)"
                 ></li>
             </element-item-group>
         </ul>
         <div
-            v-if="axis1.length === 0
-                && axis2.length === 0
-                && axis3.length === 0"
+            v-if="yAxis1.length === 0
+                && yAxis2.length === 0
+                && yAxis3.length === 0"
         >
             No contained elements
         </div>
@@ -132,9 +132,9 @@ export default {
     inject: ['openmct'],
     data() {
         return {
-            axis1: [],
-            axis2: [],
-            axis3: [],
+            yAxis1: [],
+            yAxis2: [],
+            yAxis3: [],
             isEditing: this.openmct.editor.isEditing(),
             parentObject: undefined,
             currentSearch: '',
@@ -171,9 +171,7 @@ export default {
             }
 
             this.selection = selection;
-            this.elements = [];
             this.elementsCache = {};
-            this.yAxisSeriesCache = {};
             this.listeners = [];
             this.parentObject = selection && selection[0] && selection[0][0].context.item;
 
@@ -201,14 +199,19 @@ export default {
             }
         },
         addElement(element) {
+            // Get the index of the corresponding element in the series list
             const index = this.parentObject.configuration.series.findIndex(
                 series => series.identifier.key === element.identifier.key
             );
             const yAxisId = this.parentObject.configuration.series[index].yAxisId ?? Y_AXIS_1;
             const keyString = this.openmct.objects.makeKeyString(element.identifier);
+
+            // Store the element in the cache and set its yAxisId
             this.elementsCache[keyString] =
             JSON.parse(JSON.stringify(element));
             this.elementsCache[keyString].yAxisId = yAxisId;
+
+            // Mutate the YAxisId on the domainObject itself
             this.mutateYAxisId(element, yAxisId);
             this.applySearch(this.currentSearch);
         },
@@ -222,23 +225,23 @@ export default {
         },
         applySearch(input) {
             this.currentSearch = input;
-            this.axis1 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_1);
-            this.axis2 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_2);
-            this.axis3 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_3);
+            this.yAxis1 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_1);
+            this.yAxis2 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_2);
+            this.yAxis3 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_3);
         },
-        filterForSearchAndAxis(input, axis) {
+        filterForSearchAndAxis(input, yAxisId) {
             return this.parentObject.composition.map((id) =>
                 this.elementsCache[this.openmct.objects.makeKeyString(id)]
             ).filter((element) => {
                 return element !== undefined
                     && element.name.toLowerCase().search(input) !== -1
-                    && element.yAxisId === axis;
+                    && element.yAxisId === yAxisId;
             });
         },
-        moveFrom(index, groupIndex) {
+        moveFrom(elementIndex, groupIndex) {
             this.allowDrop = true;
-            this.moveFromIndex = index;
-            this.moveFromGroup = groupIndex;
+            this.moveFromIndex = elementIndex;
+            this.moveFromYAxisId = groupIndex;
         },
         moveTo(index) {
             this.moveToIndex = index;
@@ -248,7 +251,9 @@ export default {
             }
         },
         mutateYAxisId(domainObject, yAxisId) {
-            const index = this.parentObject.configuration.series.findIndex(series => series.identifier.key === domainObject.identifier.key);
+            const index = this.parentObject.configuration.series.findIndex(
+                series => series.identifier.key === domainObject.identifier.key
+            );
             const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.elementsCache[keyString].yAxisId = yAxisId;
             this.openmct.objects.mutate(
@@ -258,34 +263,35 @@ export default {
             );
         },
         drop(event, axisNumber) {
-            if (this.moveFromGroup === axisNumber) {
+            // If it's a drop from within the same YAxis, composition reorder will handle it
+            if (this.moveFromYAxisId === axisNumber) {
                 return;
             }
 
             const domainObject = JSON.parse(event.dataTransfer.getData('openmct/composable-domain-object'));
             this.mutateYAxisId(domainObject, axisNumber);
 
-            switch (this.moveFromGroup) {
+            switch (this.moveFromYAxisId) {
             case Y_AXIS_1:
-                this.axis1.splice(this.moveFromIndex, 1);
+                this.yAxis1.splice(this.moveFromIndex, 1);
                 break;
             case Y_AXIS_2:
-                this.axis2.splice(this.moveFromIndex, 1);
+                this.yAxis2.splice(this.moveFromIndex, 1);
                 break;
             case Y_AXIS_3:
-                this.axis3.splice(this.moveFromIndex, 1);
+                this.yAxis3.splice(this.moveFromIndex, 1);
                 break;
             }
 
             switch (axisNumber) {
             case Y_AXIS_1:
-                this.axis1.splice(this.moveToIndex, 0, domainObject);
+                this.yAxis1.splice(this.moveToIndex, 0, domainObject);
                 break;
             case Y_AXIS_2:
-                this.axis2.splice(this.moveToIndex, 0, domainObject);
+                this.yAxis2.splice(this.moveToIndex, 0, domainObject);
                 break;
             case Y_AXIS_3:
-                this.axis3.splice(this.moveToIndex, 0, domainObject);
+                this.yAxis3.splice(this.moveToIndex, 0, domainObject);
                 break;
             }
         }
