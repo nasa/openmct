@@ -118,7 +118,6 @@ import _ from 'lodash';
 import Search from '../components/search.vue';
 import ElementItem from './ElementItem.vue';
 import ElementItemGroup from './ElementItemGroup.vue';
-import configStore from "../../plugins/plot/configuration/ConfigStore";
 
 const Y_AXIS_1 = 1;
 const Y_AXIS_2 = 2;
