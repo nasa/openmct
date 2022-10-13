@@ -45,14 +45,14 @@
                 @drop-group="drop($event, 1)"
             >
                 <element-item
-                    v-for="(element, elementIndex) in axis1"
+                    v-for="(element, index) in axis1"
                     :key="element.identifier.key"
-                    :index="elementIndex"
+                    :index="index"
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
                     @dragstart-custom="moveFrom($event, 1)"
-                    @drop-custom="moveTo(elementIndex, 0)"
+                    @drop-custom="moveTo(index)"
                 />
                 <li
                     class="js-last-place"
@@ -66,14 +66,14 @@
                 @drop-group="drop($event, 2)"
             >
                 <element-item
-                    v-for="(element, elementIndex) in axis2"
+                    v-for="(element, index) in axis2"
                     :key="element.identifier.key"
-                    :index="elementIndex"
+                    :index="index"
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
                     @dragstart-custom="moveFrom($event, 2)"
-                    @drop-custom="moveTo(elementIndex)"
+                    @drop-custom="moveTo(index)"
                 />
                 <li
                     class="js-last-place"
@@ -87,14 +87,14 @@
                 @drop-group="drop($event, 3)"
             >
                 <element-item
-                    v-for="(element, elementIndex) in axis3"
+                    v-for="(element, index) in axis3"
                     :key="element.identifier.key"
-                    :index="elementIndex"
+                    :index="index"
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
                     @dragstart-custom="moveFrom($event, 3)"
-                    @drop-custom="moveTo(elementIndex)"
+                    @drop-custom="moveTo(index)"
                 />
                 <li
                     class="js-last-place"
@@ -184,9 +184,6 @@ export default {
 
             if (this.parentObject) {
                 this.composition = this.openmct.composition.get(this.parentObject);
-                const configId = this.openmct.objects.makeKeyString(this.parentObject.identifier);
-                let config = configStore.get(configId);
-                console.log('config', config);
 
                 if (this.composition) {
                     this.composition.load();
@@ -245,12 +242,10 @@ export default {
         },
         moveFrom(index, groupIndex) {
             this.allowDrop = true;
-            console.log('moveFrom ', index);
             this.moveFromIndex = index;
             this.moveFromGroup = groupIndex;
         },
         moveTo(index) {
-            console.log('moveTo ', index);
             this.moveToIndex = index;
             if (this.allowDrop) {
                 this.composition.reorder(this.moveFromIndex, index);
