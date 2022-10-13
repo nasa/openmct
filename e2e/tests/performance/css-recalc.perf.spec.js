@@ -42,17 +42,14 @@ test.describe('Compare css recalculation count to check for unnecessary DOM repa
         const objectName = await createDomainObjectWithDefaults(page, 'Folder');
 
         console.log({ objectName });
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountBefore } = await getMetrics(page);        
 
-        const recalcCountBefore = await getMetrics(page, CSS_RECALC_COUNT_METRIC);
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./?tc.mode=local', { waitUntil: 'networkidle' });
 
         await page.waitForTimeout(3*1000);
 
-        // open the time conductor drop down
-        await page.locator('.c-conductor__controls button.c-mode-button').click();
-        await page.locator('.icon-clock >> text=Local Clock').click();
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountAfter } = await getMetrics(page);
 
-        const recalcCountAfter = await getMetrics(page, CSS_RECALC_COUNT_METRIC);
         console.table({
             cssRecalcBaseline,
             recalcCountBefore,

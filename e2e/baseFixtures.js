@@ -78,10 +78,13 @@ async function getMetrics(page) {
     await client.send('Performance.enable');
     const perfMetricObject = await client.send('Performance.getMetrics');
     const extractedMetric = perfMetricObject?.metrics;
+    const metricObject = extractedMetric.reduce((acc, {name, value}) => {
+        acc[name] = value;
 
-    const mappedObject = extractedMetric.reduce((acc,[key,value]) => {} , {};
+        return acc;
+    }, {});
 
-    return extractedMetric;
+    return metricObject;
 }
 
 /**
