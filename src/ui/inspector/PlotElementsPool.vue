@@ -207,13 +207,13 @@ export default {
             let yAxisId = this.parentObject.configuration.series[index].yAxisId;
             if (yAxisId === undefined) {
                 yAxisId = 1;
-                this.mutateYAxisId(element, yAxisId);
             }
 
             const keyString = this.openmct.objects.makeKeyString(element.identifier);
             this.elementsCache[keyString] =
-                JSON.parse(JSON.stringify(element));
+            JSON.parse(JSON.stringify(element));
             this.elementsCache[keyString].yAxisId = yAxisId;
+            this.mutateYAxisId(element, yAxisId);
             this.applySearch(this.currentSearch);
         },
         reorderElements() {
