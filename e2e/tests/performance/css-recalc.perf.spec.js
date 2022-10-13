@@ -19,25 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/**
+ * This is a test suite to assert that we're not regressing in terms of performance in our css rendering pipeline. The general
+ * approach is to get the application into an important state where we can run a new test against a known baseline.
+ */
+
 const uuid = require('uuid');
 
-const { test, expect } = require('@playwright/test');
+const { test, expect, getMetrics } = require('@playwright/test');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 const CSS_RECALC_COUNT_METRIC = 'RecalcStyleCount';
-
-/**
-* Open the given `domainObject`'s context menu from the object tree.
-* Expands the 'My Items' folder if it is not already expanded.
-* @param {object} client cdpSession client
-* @param {string} metricName the name of the metric to be extracted
-*/
-async function extractMetric(client, propertyName) {
-    const perfMetricObject = await client.send('Performance.getMetrics');
-    const extractedMetric = perfMetricObject?.metrics.find(({ name }) => name === propertyName);
-
-    return extractedMetric?.value;
-}
 
 test.describe('Compare css recalculation count to check for unnecessary DOM repaints', () => {
     let client;
@@ -47,28 +39,32 @@ test.describe('Compare css recalculation count to check for unnecessary DOM repa
         return client.send('Performance.enable');
     });
 
-    test('Inspector', async ({ page, browser }) => {
+    test.only('Inspector', async ({ page, browser }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5247'
         });
-        const objectName = await createDomainObjectWithDefaults(page, 'Example Imagery');
+        const cssRecalcBaseline = 94;
+        const objectName = await createDomainObjectWithDefaults(page, 'Folder');
 
         console.log({ objectName });
 
-        const recalcCountBefore = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
-        await page.goto('./');
+        const recalcCountBefore = await metrics(client, CSS_RECALC_COUNT_METRIC);
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        await page.waitForTimeout(3*1000);
 
         // open the time conductor drop down
         await page.locator('.c-conductor__controls button.c-mode-button').click();
         await page.locator('.icon-clock >> text=Local Clock').click();
 
-        const recalcCountAfter = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        const recalcCountAfter = await metrics(client, CSS_RECALC_COUNT_METRIC);
         console.table({
+            cssRecalcBaseline,
             recalcCountBefore,
             recalcCountAfter
         });
-        expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
+        expect(recalcCountAfter).toBeLessThan(cssRecalcBaseline);
     });
 
     test('Clicking create button', async ({ page, browser }) => {
@@ -104,7 +100,7 @@ test.describe('Compare css recalculation count to check for unnecessary DOM repa
             createDomainObjectWithDefaults(page, 'Folder', 'Folder'.concat(' ', uuid.v4())),
             // createDomainObjectWithDefaults(page, 'Folder', 'Folder'.concat(' ', uuid.v4()))
         ]);
-        console.log({objectNames})
+        console.log({objectNames});
         await Promise.all(objectNames.map(x => page.locator(`.c-tree__item a:has-text("${x}")`)));
     });
     test.fixme('Plot', async ({ page, browser }) => {

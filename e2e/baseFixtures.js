@@ -65,6 +65,20 @@ function waitForAnimations(locator) {
 }
 
 /**
+* Open the given `domainObject`'s context menu from the object tree.
+* Expands the 'My Items' folder if it is not already expanded.
+* @param {object} client cdpSession client
+* @param {string} metricName the name of the metric to be extracted
+* @see {@link https://github.com/microsoft/playwright/issues/18071 Github RFE}
+*/
+async function getMetrics(client, propertyName) {
+    const perfMetricObject = await client.send('Performance.getMetrics');
+    const extractedMetric = perfMetricObject?.metrics.find(({ name }) => name === propertyName);
+
+    return extractedMetric?.value;
+}
+
+/**
  * This is part of our codecoverage shim.
  * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Example Project}
  * @constant {string}
@@ -172,3 +186,4 @@ exports.test = base.test.extend({
 });
 exports.expect = expect;
 exports.waitForAnimations = waitForAnimations;
+exports.getMetrics = getMetrics;
