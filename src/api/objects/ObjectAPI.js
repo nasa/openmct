@@ -198,19 +198,19 @@ export default class ObjectAPI {
      */
     get(identifier, abortSignal) {
         let keystring = this.makeKeyString(identifier);
-
+        if (keystring === 'f00cdc51-2701-4c5c-a164-8d415da6277c') console.log('getting parent in object api')
         if (this.cache[keystring] !== undefined) {
             return this.cache[keystring];
         }
 
         identifier = utils.parseKeyString(identifier);
-        let dirtyObject;
-        if (this.isTransactionActive()) {
-            dirtyObject = this.transaction.getDirtyObject(identifier);
-        }
 
-        if (dirtyObject) {
-            return Promise.resolve(dirtyObject);
+        if (this.isTransactionActive()) {
+            let dirtyObject = this.transaction.getDirtyObject(identifier);
+
+            if (dirtyObject) {
+                return Promise.resolve(dirtyObject);
+            }
         }
 
         const provider = this.getProvider(identifier);
@@ -305,7 +305,7 @@ export default class ObjectAPI {
         if (!this.supportsMutation(identifier)) {
             throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
         }
-
+        if (identifier.key === 'f00cdc51-2701-4c5c-a164-8d415da6277c') console.log('get mutable for parent')
         return this.get(identifier).then((object) => {
             return this.toMutable(object);
         });
@@ -355,9 +355,8 @@ export default class ObjectAPI {
      *          has been saved, or be rejected if it cannot be saved
      */
     async save(domainObject) {
+        if (domainObject.identifier.key === 'f00cdc51-2701-4c5c-a164-8d415da6277c') console.log('saving parent in object api')
         let provider = this.getProvider(domainObject.identifier);
-        let savedResolve;
-        let savedReject;
         let result;
 
         if (!this.isPersistable(domainObject.identifier)) {
@@ -366,15 +365,23 @@ export default class ObjectAPI {
             result = Promise.resolve(true);
         } else {
             const persistedTime = Date.now();
+            const username = await this.#getCurrentUsername();
+            let savedResolve;
+            let savedReject;
+
+            result = new Promise((resolve, reject) => {
+                savedResolve = resolve;
+                savedReject = reject;
+            });
+
             if (domainObject.persisted === undefined) {
-                result = new Promise((resolve, reject) => {
-                    savedResolve = resolve;
-                    savedReject = reject;
-                });
                 domainObject.persisted = persistedTime;
                 domainObject.created = persistedTime;
-                domainObject.createdBy = await this.#getCurrentUsername();
+                domainObject.createdBy = username;
+                domainObject.modifiedBy = username;
+
                 const newObjectPromise = provider.create(domainObject);
+
                 if (newObjectPromise) {
                     newObjectPromise.then(response => {
                         this.mutate(domainObject, 'persisted', persistedTime);
@@ -387,9 +394,20 @@ export default class ObjectAPI {
                 }
             } else {
                 domainObject.persisted = persistedTime;
-                domainObject.modifiedBy = await this.#getCurrentUsername();
-                result = provider.update(domainObject);
-                this.mutate(domainObject, 'persisted', persistedTime);
+                domainObject.modifiedBy = username;
+
+                const updatedObjectPromise = provider.update(domainObject);
+
+                if (updatedObjectPromise) {
+                    updatedObjectPromise.then(response => {
+                        this.mutate(domainObject, 'persisted', persistedTime);
+                        savedResolve(response);
+                    }).catch((error) => {
+                        savedReject(error);
+                    });
+                } else {
+                    result = Promise.reject(`[ObjectAPI][save] Object provider returned ${updatedObjectPromise} when update object.`);
+                }
             }
         }
 
@@ -505,7 +523,10 @@ export default class ObjectAPI {
         if (!this.supportsMutation(domainObject.identifier)) {
             throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
         }
-
+        if (domainObject.identifier.key === 'f00cdc51-2701-4c5c-a164-8d415da6277c') {
+            console.log('mutating parent', path, 'to ', value);
+            console.log('parent is mutable?', domainObject.isMutable);
+        }
         if (domainObject.isMutable) {
             domainObject.$set(path, value);
         } else {

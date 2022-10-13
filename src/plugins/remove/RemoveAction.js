@@ -31,15 +31,21 @@ export default class RemoveAction {
         this.openmct = openmct;
     }
 
-    invoke(objectPath) {
+    async invoke(objectPath) {
         let object = objectPath[0];
         let parent = objectPath[1];
-        this.showConfirmDialog(object).then(() => {
-            this.removeFromComposition(parent, object);
-            if (this.inNavigationPath(object)) {
-                this.navigateTo(objectPath.slice(1));
-            }
-        }).catch(() => {});
+
+        try {
+            await this.showConfirmDialog(object);
+        } catch (error) {
+            return; // form canceled
+        }
+
+        this.removeFromComposition(parent, object);
+
+        if (this.inNavigationPath(object)) {
+            this.navigateTo(objectPath.slice(1));
+        }
     }
 
     showConfirmDialog(object) {
@@ -82,18 +88,16 @@ export default class RemoveAction {
     }
 
     removeFromComposition(parent, child) {
-        let composition = parent.composition.filter(id =>
-            !this.openmct.objects.areIdsEqual(id, child.identifier)
-        );
-
-        this.openmct.objects.mutate(parent, 'composition', composition);
-
-        if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
-            this.openmct.editor.save();
-        }
+        console.log('remove', child, parent);
+        const composition = this.openmct.composition.get(parent);
+        composition.remove(child);
 
         if (!this.isAlias(child, parent)) {
             this.openmct.objects.mutate(child, 'location', null);
+        }
+
+        if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
+            this.openmct.editor.save();
         }
     }
 
