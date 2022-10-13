@@ -18,7 +18,7 @@ Activity properties include:
     "name": "Event 1 with a really long name",
     "start": 1665323197000,
     "end": 1665344921000,
-    "type": "TEST-GROUP",
+    "type": "TEST_GROUP",
     "color": "orange",
     "textColor": "white"
     }],
