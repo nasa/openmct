@@ -42,7 +42,7 @@
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 1"
-                @drop-group="drop($event, 1)"
+                @drop-group="drop($event, Y_AXIS_1)"
             >
                 <element-item
                     v-for="(element, index) in yAxis1"
@@ -51,8 +51,8 @@
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, 1)"
-                    @drop-custom="moveTo(index)"
+                    @dragstart-custom="moveFrom($event, Y_AXIS_1)"
+                    @drop-custom="moveTo(index, Y_AXIS_1)"
                 />
                 <li
                     class="js-last-place"
@@ -63,7 +63,7 @@
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 2"
-                @drop-group="drop($event, 2)"
+                @drop-group="drop($event, Y_AXIS_2)"
             >
                 <element-item
                     v-for="(element, index) in yAxis2"
@@ -72,8 +72,8 @@
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, 2)"
-                    @drop-custom="moveTo(index)"
+                    @dragstart-custom="moveFrom($event, Y_AXIS_2)"
+                    @drop-custom="moveTo(index, Y_AXIS_2)"
                 />
                 <li
                     class="js-last-place"
@@ -84,7 +84,7 @@
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 3"
-                @drop-group="drop($event, 3)"
+                @drop-group="drop($event, Y_AXIS_3)"
             >
                 <element-item
                     v-for="(element, index) in yAxis3"
@@ -93,8 +93,8 @@
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, 3)"
-                    @drop-custom="moveTo(index)"
+                    @dragstart-custom="moveFrom($event, Y_AXIS_3)"
+                    @drop-custom="moveTo(index, Y_AXIS_3)"
                 />
                 <li
                     class="js-last-place"
@@ -142,6 +142,11 @@ export default {
             contextClickTracker: {},
             allowDrop: false
         };
+    },
+    created() {
+        this.Y_AXIS_1 = Y_AXIS_1;
+        this.Y_AXIS_2 = Y_AXIS_2;
+        this.Y_AXIS_3 = Y_AXIS_3;
     },
     mounted() {
         const selection = this.openmct.selection.get();
