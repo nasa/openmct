@@ -45,18 +45,15 @@
 
     // Has-complex-content objects
     .c-so-view.has-complex-content {
-        transition: $transOut;
-        transition-delay: $moveBarOutDelay;
+        @include transition($prop: transform, $dur: $transOutTime, $delay: $moveBarOutDelay);
 
         > .c-so-view__local-controls {
-            transition: transform 250ms ease-in-out;
-            transition-delay: $moveBarOutDelay;
+            @include transition($prop: transform, $dur: 250ms, $delay: $moveBarOutDelay);
         }
 
         + .c-frame__move-bar {
             display: none;
         }
-
     }
 
     .l-layout {
@@ -65,13 +62,11 @@
             > .l-layout__frame {
                 > .c-so-view.has-complex-content {
                     > .c-so-view__local-controls {
-                        transition: transform $transOutTime ease-in-out;
-                        transition-delay: $moveBarOutDelay;
+                        @include transition($prop: transform, $dur: $transOutTime, $delay: $moveBarOutDelay);
                     }
 
                     + .c-frame__move-bar {
-                        transition: $transOut;
-                        transition-delay: $moveBarOutDelay;
+                        @include transition($prop: height, $delay: $moveBarOutDelay);
                         @include userSelectNone();
                         background: $editFrameMovebarColorBg;
                         box-shadow: rgba(black, 0.3) 0 2px;
@@ -103,18 +98,17 @@
 
                 &:hover {
                     > .c-so-view.has-complex-content {
-                        transition: $transIn;
+                        transition: $transInTransform;
                         transition-delay: 0s;
 
                         > .c-so-view__local-controls {
                             transform: translateY($editFrameMovebarH);
-                            transition: transform $transInTime ease-in-out;
+                            @include transition(height, $transOutTime);
                             transition-delay: 0s;
                         }
 
                         + .c-frame__move-bar {
-                            transition: $transIn;
-                            transition-delay: 0s;
+                            @include transition(height);
                             height: $editFrameMovebarH;
                         }
                     }

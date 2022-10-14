@@ -20,8 +20,7 @@
             }
 
             &__name {
-                //filter: $objectLabelNameFilter; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
-                color: deeppink !important;
+                color: $objectLabelNameColorFg;
             }
         }
     }

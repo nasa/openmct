@@ -86,7 +86,7 @@
     *[s-selected-parent] {
         > .l-layout {
             // When main shell layout is the parent
-            @include displayMarquee(deeppink);
+            @include displayMarquee(deeppink); // TEMP
         }
         > * > * > * {
             // When a sub-layout is the parent

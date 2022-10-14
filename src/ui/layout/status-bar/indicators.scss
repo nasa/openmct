@@ -43,8 +43,8 @@
     .s-button,
     .c-button {
         // Make <a> in label look like buttons
-        transition: $transIn;
-        background: transparent;
+        @include transition(background-color);
+        background-color: transparent;
         border: 1px solid rgba($colorIndicatorMenuFg, 0.5);
         border-radius: $controlCr;
         box-sizing: border-box;
@@ -53,8 +53,8 @@
         height: auto;
         line-height: normal;
         padding: 0 2px;
-        &:hover {
-            background: rgba($colorIndicatorMenuFg, 0.1);
+        @include hover {
+            background-color: rgba($colorIndicatorMenuFg, 0.1);
             border-color: rgba($colorIndicatorMenuFg, 0.75);
             color: $colorIndicatorMenuFgHov;
         }

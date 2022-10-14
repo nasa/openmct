@@ -76,13 +76,6 @@
     }
 
     .c-list__item {
-        @include hover() {
-            [class*="__menu-indicator"] {
-                opacity: 0.7;
-                transition: $transIn;
-            }
-        }
-
         > * + * {
             margin-left: $interiorMargin;
         }
@@ -92,10 +85,10 @@
         }
 
         &__menu-indicator {
+            // Not sure this is being used
             flex: 0 0 auto;
             font-size: 0.8em;
             opacity: 0;
-            transition: $transOut;
         }
     }
 }

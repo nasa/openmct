@@ -68,7 +68,7 @@
                 &:hover,
                 &:active {
                     cursor: col-resize;
-                    filter: $timeConductorAxisHoverFilter; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
+                    //filter: $timeConductorAxisHoverFilter; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
                 }
             }
         }

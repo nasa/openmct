@@ -35,7 +35,7 @@
         min-height: 0;
         max-height: 15%;
         overflow: hidden;
-        transition: $transIn;
+        @include transition(min-height);
 
         &.is-expanded {
             min-height: 100px;
@@ -429,7 +429,7 @@
 
 /************************** DRAWER */
 .c-drawer {
-    /* New sliding overlay or push element to contain things
+    /* Sliding overlay or push element to contain things
     * Designed for mobile and compact desktop scenarios
     * Variations:
     * --overlays: position absolute, overlays neighboring elements
@@ -438,7 +438,8 @@
     * &.is-expanded: applied when expanded.
      */
 
-    transition: $transOut;
+    $transProps: width, min-width, height, min-height;
+
     min-height: 0;
     min-width: 0;
     overflow: hidden;
@@ -451,11 +452,12 @@
     }
 
     &.c-drawer--align-left {
+        @include transition($prop: $transProps, $dur: $transOutTime);
         height: 100%;
     }
 
     &.c-drawer--align-top {
-        // Need anything here?
+        @include transition($prop: $transProps, $dur: $transOutTime);
     }
 
     &.c-drawer--overlays {

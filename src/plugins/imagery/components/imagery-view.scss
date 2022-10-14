@@ -509,9 +509,4 @@
         display: block;
         align-self: flex-end;
     }
-
-    &:hover div.c-imagery-tsv__image-wrapper {
-        // TODO CH: convert to theme constants
-        filter: brightness(0.5) contrast(0.7); // FILTER REMOVAL
-    }
 }

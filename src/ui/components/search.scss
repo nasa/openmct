@@ -31,7 +31,7 @@
         overflow: hidden;
         padding: 1px 0;
         transform-origin: left;
-        transition: $transOut;
+        @include transition($prop: min-width, $dur: $transOutTime);
         width: 0;
 
         &.is-active {

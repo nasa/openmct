@@ -60,7 +60,7 @@
         margin-right: 0;
         min-width: 0;
         overflow: hidden;
-        transition: $transOut;
+        @include transition($prop: width, $dur: $transOutTime);
         width: 0;
 
         .c-icon-button:before { font-size: 1em; }
@@ -78,7 +78,7 @@
 
     &:hover {
         .c-timer__controls {
-            transition: $transOut; // On purpose: want this to take a bit longer
+            @include transition($prop: width, $dur: $transOutTime); // On purpose: want this to take a bit longer
             margin-right: $interiorMargin;
             width: $ctrlW * 2;
         }
@@ -168,7 +168,6 @@
 .widget-rules-wrapper,
 .widget-rule-content,
 .w-widget-test-data-content {
-    transition: $transIn;
     min-height: 0;
     height: 0;
     opacity: 0;
@@ -430,7 +429,6 @@
 
     &:hover {
         .l-autoflow-header .s-button.change-column-width {
-            transition: $transIn;
             opacity: 1;
         }
     }
@@ -444,7 +442,7 @@
             overflow: hidden;
         }
         .s-button.change-column-width {
-            transition: $transOut;
+            @include transition($prop: opacity, $dur: $transOutTime);
             opacity: 0;
         }
         .l-filter {
@@ -737,7 +735,7 @@ body.desktop {
             &:hover {
                 &:after {
                     background-color: $colorSplitterHover !important;
-                    transiiton: background-color, 150ms;
+                    @include transition($prop: background-color, $dur: 150ms);
                 }
             }
         }
