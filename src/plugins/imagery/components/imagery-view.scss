@@ -485,7 +485,6 @@
         &:hover {
             z-index: 2;
 
-            //filter: brightness(1) contrast(1) !important; // FILTER REMOVAL
             [class*='__image-handle'] {
                 background-color: $colorBodyFg;
             }

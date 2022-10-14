@@ -404,10 +404,6 @@
         flex: 0 1 auto;
     }
 
-    .c-object-label__name {
-        //filter: $objectLabelNameFilter; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
-    }
-
     .c-object-label__type-icon {
         opacity: $objectLabelTypeIconOpacity;
     }

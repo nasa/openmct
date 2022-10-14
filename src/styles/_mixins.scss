@@ -618,11 +618,6 @@
         border-color: $colorFg;
     }
 
-    @include hover {
-        //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
-        color: deeppink !important;
-    }
-
     &--up, &--prev {
         &:before {
             transform: translate(-30%, -50%) rotate(135deg);

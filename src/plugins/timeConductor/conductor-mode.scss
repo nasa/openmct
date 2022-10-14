@@ -5,7 +5,7 @@
     z-index: 70;
 
     [class*="__icon"] {
-        filter: $colorKeyFilter; // FILTER REMOVAL
+        filter: $colorKeyFilter;
     }
 
     [class*="__item-description"] {

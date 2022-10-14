@@ -548,7 +548,6 @@ select {
     }
 
     @include hover() {
-        //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
         box-shadow: $shdwBtnHov;
     }
 

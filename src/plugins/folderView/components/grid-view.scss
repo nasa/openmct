@@ -43,7 +43,7 @@
     padding: $interiorMarginLg;
 
     &__type-icon {
-        filter: $colorKeyFilter; // FILTER REMOVAL
+        filter: $colorKeyFilter;
         flex: 0 0 $gridItemMobile;
         font-size: floor(math.div($gridItemMobile, 2));
         margin-right: $interiorMarginLg;

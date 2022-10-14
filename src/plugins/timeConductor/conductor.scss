@@ -68,7 +68,6 @@
                 &:hover,
                 &:active {
                     cursor: col-resize;
-                    //filter: $timeConductorAxisHoverFilter; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
                 }
             }
         }
@@ -269,7 +268,6 @@
     grid-column-gap: 3px;
     grid-row-gap: 4px;
     align-items: start;
-    //filter: $filterMenu; // FILTER REMOVAL
     box-shadow: $shdwMenu;
     padding: $interiorMargin;
     position: absolute;
