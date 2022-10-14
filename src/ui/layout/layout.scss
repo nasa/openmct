@@ -65,8 +65,7 @@
     }
 
     &__pane-tree,
-    &__pane-inspector,
-    &__pane-main {
+    &__pane-inspector {
         .l-pane__contents {
             display: flex;
             flex-flow: column nowrap;
@@ -74,8 +73,7 @@
         }
     }
 
-    &__pane-tree,
-    &__pane-main {
+    &__pane-tree {
         .l-pane__contents {
             > * {
                 flex: 0 0 auto;
@@ -89,6 +87,31 @@
 
     &__pane-main {
         .l-pane__header { display: none; }
+
+        .l-pane__contents {
+            // Using `position: absolute` due to flex having repaint issues with the Time Conductor, #5247
+            > * {
+                // .l-shell__main-view-browse-bar, .l-shell__main-container, .l-shell__time-conductor
+                position: absolute;
+                left: 0; right: 0;
+                height: auto; width: auto;
+            }
+
+            .l-shell__main-container {
+                top: $shellMainBrowseBarH + $interiorMarginLg;
+                bottom: $shellTimeConductorH + $interiorMargin;
+            }
+
+            @include phonePortrait() {
+                .l-shell__main-container {
+                    bottom: $shellTimeConductorMobileH + $interiorMargin;
+                }
+            }
+
+            .l-shell__time-conductor {
+                bottom: 0;
+            }
+        }
     }
 
     body.mobile & {
