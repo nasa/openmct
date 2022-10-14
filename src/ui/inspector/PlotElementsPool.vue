@@ -268,7 +268,15 @@ export default {
                 return;
             }
 
-            const domainObject = JSON.parse(event.dataTransfer.getData('openmct/composable-domain-object'));
+            // FIXME: If the user starts the drag by clicking outside of the <object-label/> element,
+            // domain object information will not be set on the dataTransfer data. To prevent errors,
+            // we simply short-circuit here if the data is not set.
+            const serializedDomainObject = event.dataTransfer.getData('openmct/composable-domain-object');
+            if (!serializedDomainObject) {
+                return;
+            }
+
+            const domainObject = JSON.parse(serializedDomainObject);
             this.mutateYAxisId(domainObject, axisNumber);
 
             switch (this.moveFromYAxisId) {
