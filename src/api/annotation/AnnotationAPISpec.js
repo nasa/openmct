@@ -185,5 +185,10 @@ describe("The Annotation API", () => {
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
         });
+        it("returns no tags for empty search", async () => {
+            const results = await openmct.annotation.searchForTags('q');
+            expect(results).toBeDefined();
+            expect(results.length).toEqual(0);
+        });
     });
 });
