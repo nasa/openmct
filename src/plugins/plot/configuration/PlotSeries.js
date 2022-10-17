@@ -443,7 +443,7 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValueInvalid(val) {
-        return Number.isNaN(val) || val === undefined || val === Infinity;
+        return Number.isNaN(val) || [undefined, Infinity, -Infinity].includes(val);
     }
 
     /**
