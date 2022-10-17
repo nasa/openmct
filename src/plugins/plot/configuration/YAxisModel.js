@@ -106,11 +106,8 @@ export default class YAxisModel extends Model {
         }
     }
     updateStats(seriesStats) {
+        console.log(seriesStats.maxValue);
         if (!this.has('stats')) {
-            if (seriesStats.maxValue === Infinity) {
-                seriesStats.maxValue = null;
-            }
-
             this.set('stats', {
                 min: seriesStats.minValue,
                 max: seriesStats.maxValue
@@ -126,7 +123,7 @@ export default class YAxisModel extends Model {
             stats.min = seriesStats.minValue;
         }
 
-        if (seriesStats.maxValue !== Infinity && stats.max < seriesStats.maxValue) {
+        if (stats.max < seriesStats.maxValue) {
             changed = true;
             stats.max = seriesStats.maxValue;
         }
@@ -142,6 +139,7 @@ export default class YAxisModel extends Model {
         this.unset('stats');
         this.seriesCollection.forEach(series => {
             if (series.has('stats')) {
+                debugger;
                 this.updateStats(series.get('stats'));
             }
         });
