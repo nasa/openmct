@@ -106,7 +106,6 @@ export default class YAxisModel extends Model {
         }
     }
     updateStats(seriesStats) {
-        console.log(seriesStats.maxValue);
         if (!this.has('stats')) {
             this.set('stats', {
                 min: seriesStats.minValue,
@@ -139,7 +138,6 @@ export default class YAxisModel extends Model {
         this.unset('stats');
         this.seriesCollection.forEach(series => {
             if (series.has('stats')) {
-                debugger;
                 this.updateStats(series.get('stats'));
             }
         });
