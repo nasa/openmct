@@ -282,7 +282,7 @@ export default {
             const domainObject = JSON.parse(serializedDomainObject);
             this.mutateYAxisId(domainObject, moveToYAxisId);
 
-            let moveFromIndex = this.moveFromIndex;
+            const moveFromIndex = this.moveFromIndex;
             this.moveToIndex = moveToIndex;
 
             this.moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId);
@@ -316,33 +316,40 @@ export default {
             const domainObject = JSON.parse(serializedDomainObject);
             this.mutateYAxisId(domainObject, moveToYAxisId);
 
-            let moveFromIndex = this.moveFromIndex;
-            let moveToIndex = this.moveToIndex ?? 0;
+            const moveFromIndex = this.moveFromIndex;
+            const moveToIndex = this.moveToIndex ?? 0;
 
             this.moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId);
         },
         moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId) {
-            if (this.allowDrop) {
-                if (this.moveFromYAxisId === Y_AXIS_2) {
-                    moveFromIndex = moveFromIndex + this.yAxis1.length;
-                } else if (this.moveFromYAxisId === Y_AXIS_3) {
-                    moveFromIndex = moveFromIndex + this.yAxis1.length + this.yAxis2.length;
-                }
-
-                if (moveToYAxisId === Y_AXIS_2) {
-                    moveToIndex = moveToIndex + this.yAxis1.length;
-                } else if (moveToYAxisId === Y_AXIS_3) {
-                    moveToIndex = moveToIndex + this.yAxis1.length + this.yAxis2.length;
-                }
-
-                if (moveToIndex === this.yAxis1.length + this.yAxis2.length + this.yAxis3.length) {
-                    moveToIndex--;
-                }
-
-                this.composition.reorder(moveFromIndex, moveToIndex);
-                this.moveToIndex = undefined;
-                this.allowDrop = false;
+            if (!this.allowDrop) {
+                return;
             }
+
+            // Calculate the index of the element in the composition array
+            // based on the moveFrom / moveTo indexes and the YAxisId
+            if (this.moveFromYAxisId === Y_AXIS_2) {
+                moveFromIndex = moveFromIndex + this.yAxis1.length;
+            } else if (this.moveFromYAxisId === Y_AXIS_3) {
+                moveFromIndex = moveFromIndex + this.yAxis1.length + this.yAxis2.length;
+            }
+
+            if (moveToYAxisId === Y_AXIS_2) {
+                moveToIndex = moveToIndex + this.yAxis1.length;
+            } else if (moveToYAxisId === Y_AXIS_3) {
+                moveToIndex = moveToIndex + this.yAxis1.length + this.yAxis2.length;
+            }
+
+            if (moveToIndex === this.yAxis1.length + this.yAxis2.length + this.yAxis3.length) {
+                moveToIndex--;
+            }
+
+            // Reorder the composition array according to the calculated indexes
+            this.composition.reorder(moveFromIndex, moveToIndex);
+
+            // Unset moveToIndex since we already used it
+            this.moveToIndex = undefined;
+            this.allowDrop = false;
         }
     }
 };
