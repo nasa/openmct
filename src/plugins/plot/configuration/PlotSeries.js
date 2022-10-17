@@ -361,7 +361,11 @@ export default class PlotSeries extends Model {
         const value = this.getYVal(point);
         let stats = this.get('stats');
         let changed = false;
-        if (!stats && ![Infinity, -Infinity].includes(value)) {
+        if (!stats) {
+            if ([Infinity, -Infinity].includes(value)) {
+                return;
+            }
+
             stats = {
                 minValue: value,
                 minPoint: point,
