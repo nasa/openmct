@@ -44,6 +44,10 @@
                 label="Y Axis 1"
                 @drop-group="drop($event, Y_AXIS_1)"
             >
+                <li
+                    class="js-first-place"
+                    @drop="moveTo($event, 0, Y_AXIS_1)"
+                ></li>
                 <element-item
                     v-for="(element, index) in yAxis1"
                     :key="element.identifier.key"
@@ -52,11 +56,12 @@
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
                     @dragstart-custom="moveFrom($event, Y_AXIS_1)"
-                    @drop-custom="moveTo(index, Y_AXIS_1)"
+                    @drop-custom="moveTo($event, index, Y_AXIS_1)"
                 />
                 <li
+                    v-if="yAxis1.length > 0"
                     class="js-last-place"
-                    @drop="moveTo(yAxis1.length)"
+                    @drop="moveTo($event, yAxis1.length, Y_AXIS_1)"
                 ></li>
             </element-item-group>
             <element-item-group
@@ -65,6 +70,10 @@
                 label="Y Axis 2"
                 @drop-group="drop($event, Y_AXIS_2)"
             >
+                <li
+                    class="js-first-place"
+                    @drop="moveTo($event, 0, Y_AXIS_2)"
+                ></li>
                 <element-item
                     v-for="(element, index) in yAxis2"
                     :key="element.identifier.key"
@@ -73,11 +82,12 @@
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
                     @dragstart-custom="moveFrom($event, Y_AXIS_2)"
-                    @drop-custom="moveTo(index, Y_AXIS_2)"
+                    @drop-custom="moveTo($event, index, Y_AXIS_2)"
                 />
                 <li
+                    v-if="yAxis2.length > 0"
                     class="js-last-place"
-                    @drop="moveTo(yAxis2.length)"
+                    @drop="moveTo($event, yAxis2.length, Y_AXIS_2)"
                 ></li>
             </element-item-group>
             <element-item-group
@@ -86,6 +96,10 @@
                 label="Y Axis 3"
                 @drop-group="drop($event, Y_AXIS_3)"
             >
+                <li
+                    class="js-first-place"
+                    @drop="moveTo($event, 0, Y_AXIS_3)"
+                ></li>
                 <element-item
                     v-for="(element, index) in yAxis3"
                     :key="element.identifier.key"
@@ -94,11 +108,12 @@
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
                     @dragstart-custom="moveFrom($event, Y_AXIS_3)"
-                    @drop-custom="moveTo(index, Y_AXIS_3)"
+                    @drop-custom="moveTo($event, index, Y_AXIS_3)"
                 />
                 <li
+                    v-if="yAxis3.length > 0"
                     class="js-last-place"
-                    @drop="moveTo(yAxis3.length)"
+                    @drop="moveTo($event, yAxis3.length, Y_AXIS_3)"
                 ></li>
             </element-item-group>
         </ul>
@@ -208,16 +223,23 @@ export default {
             const index = this.parentObject.configuration.series.findIndex(
                 series => series.identifier.key === element.identifier.key
             );
-            const yAxisId = this.parentObject.configuration.series[index].yAxisId ?? Y_AXIS_1;
+            let yAxisId = this.parentObject.configuration.series[index].yAxisId;
+            if (yAxisId === undefined) {
+                yAxisId = Y_AXIS_1;
+                this.composition.reorder(index, this.yAxis1.length);
+            }
+
             const keyString = this.openmct.objects.makeKeyString(element.identifier);
 
             // Store the element in the cache and set its yAxisId
             this.elementsCache[keyString] =
             JSON.parse(JSON.stringify(element));
-            this.elementsCache[keyString].yAxisId = yAxisId;
+            if (this.elementsCache[keyString].yAxisId !== yAxisId) {
+                this.elementsCache[keyString].yAxisId = yAxisId;
+                // Mutate the YAxisId on the domainObject itself
+                this.mutateYAxisId(element, yAxisId);
+            }
 
-            // Mutate the YAxisId on the domainObject itself
-            this.mutateYAxisId(element, yAxisId);
             this.applySearch(this.currentSearch);
         },
         reorderElements() {
@@ -248,12 +270,22 @@ export default {
             this.moveFromIndex = elementIndex;
             this.moveFromYAxisId = groupIndex;
         },
-        moveTo(index) {
-            this.moveToIndex = index;
-            if (this.allowDrop) {
-                this.composition.reorder(this.moveFromIndex, index);
-                this.allowDrop = false;
+        moveTo(event, moveToIndex, moveToYAxisId) {
+            // FIXME: If the user starts the drag by clicking outside of the <object-label/> element,
+            // domain object information will not be set on the dataTransfer data. To prevent errors,
+            // we simply short-circuit here if the data is not set.
+            const serializedDomainObject = event.dataTransfer.getData('openmct/composable-domain-object');
+            if (!serializedDomainObject) {
+                return;
             }
+
+            const domainObject = JSON.parse(serializedDomainObject);
+            this.mutateYAxisId(domainObject, moveToYAxisId);
+
+            let moveFromIndex = this.moveFromIndex;
+            this.moveToIndex = moveToIndex;
+
+            this.moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId);
         },
         mutateYAxisId(domainObject, yAxisId) {
             const index = this.parentObject.configuration.series.findIndex(
@@ -267,9 +299,9 @@ export default {
                 yAxisId
             );
         },
-        drop(event, axisNumber) {
+        drop(event, moveToYAxisId) {
             // If it's a drop from within the same YAxis, composition reorder will handle it
-            if (this.moveFromYAxisId === axisNumber) {
+            if (this.moveFromYAxisId === moveToYAxisId) {
                 return;
             }
 
@@ -282,30 +314,34 @@ export default {
             }
 
             const domainObject = JSON.parse(serializedDomainObject);
-            this.mutateYAxisId(domainObject, axisNumber);
+            this.mutateYAxisId(domainObject, moveToYAxisId);
 
-            switch (this.moveFromYAxisId) {
-            case Y_AXIS_1:
-                this.yAxis1.splice(this.moveFromIndex, 1);
-                break;
-            case Y_AXIS_2:
-                this.yAxis2.splice(this.moveFromIndex, 1);
-                break;
-            case Y_AXIS_3:
-                this.yAxis3.splice(this.moveFromIndex, 1);
-                break;
-            }
+            let moveFromIndex = this.moveFromIndex;
+            let moveToIndex = this.moveToIndex ?? 0;
 
-            switch (axisNumber) {
-            case Y_AXIS_1:
-                this.yAxis1.splice(this.moveToIndex, 0, domainObject);
-                break;
-            case Y_AXIS_2:
-                this.yAxis2.splice(this.moveToIndex, 0, domainObject);
-                break;
-            case Y_AXIS_3:
-                this.yAxis3.splice(this.moveToIndex, 0, domainObject);
-                break;
+            this.moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId);
+        },
+        moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId) {
+            if (this.allowDrop) {
+                if (this.moveFromYAxisId === Y_AXIS_2) {
+                    moveFromIndex = moveFromIndex + this.yAxis1.length;
+                } else if (this.moveFromYAxisId === Y_AXIS_3) {
+                    moveFromIndex = moveFromIndex + this.yAxis1.length + this.yAxis2.length;
+                }
+
+                if (moveToYAxisId === Y_AXIS_2) {
+                    moveToIndex = moveToIndex + this.yAxis1.length;
+                } else if (moveToYAxisId === Y_AXIS_3) {
+                    moveToIndex = moveToIndex + this.yAxis1.length + this.yAxis2.length;
+                }
+
+                if (moveToIndex === this.yAxis1.length + this.yAxis2.length + this.yAxis3.length) {
+                    moveToIndex--;
+                }
+
+                this.composition.reorder(moveFromIndex, moveToIndex);
+                this.moveToIndex = undefined;
+                this.allowDrop = false;
             }
         }
     }

@@ -89,7 +89,7 @@ export default {
     },
     methods: {
         emitDropEvent(event) {
-            this.$emit('drop-custom', this.index);
+            this.$emit('drop-custom', event);
             this.hover = false;
         },
         emitDragStartEvent(event) {
