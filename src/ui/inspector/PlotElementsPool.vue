@@ -42,7 +42,7 @@
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 1"
-                @drop-group="drop($event, Y_AXIS_1)"
+                @drop-group="moveTo($event, 0, Y_AXIS_1)"
             >
                 <li
                     class="js-first-place"
@@ -68,7 +68,7 @@
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 2"
-                @drop-group="drop($event, Y_AXIS_2)"
+                @drop-group="moveTo($event, 0, Y_AXIS_2)"
             >
                 <li
                     class="js-first-place"
@@ -94,7 +94,7 @@
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 label="Y Axis 3"
-                @drop-group="drop($event, Y_AXIS_3)"
+                @drop-group="moveTo($event, 0, Y_AXIS_3)"
             >
                 <li
                     class="js-first-place"
@@ -299,28 +299,6 @@ export default {
                 yAxisId
             );
         },
-        drop(event, moveToYAxisId) {
-            // If it's a drop from within the same YAxis, composition reorder will handle it
-            if (this.moveFromYAxisId === moveToYAxisId) {
-                return;
-            }
-
-            // FIXME: If the user starts the drag by clicking outside of the <object-label/> element,
-            // domain object information will not be set on the dataTransfer data. To prevent errors,
-            // we simply short-circuit here if the data is not set.
-            const serializedDomainObject = event.dataTransfer.getData('openmct/composable-domain-object');
-            if (!serializedDomainObject) {
-                return;
-            }
-
-            const domainObject = JSON.parse(serializedDomainObject);
-            this.mutateYAxisId(domainObject, moveToYAxisId);
-
-            const moveFromIndex = this.moveFromIndex;
-            const moveToIndex = this.moveToIndex ?? 0;
-
-            this.moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId);
-        },
         moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId) {
             if (!this.allowDrop) {
                 return;
@@ -340,15 +318,14 @@ export default {
                 moveToIndex = moveToIndex + this.yAxis1.length + this.yAxis2.length;
             }
 
-            if (moveToIndex === this.yAxis1.length + this.yAxis2.length + this.yAxis3.length) {
+            // Adjust the index if we're moving from one bucket to another
+            if (this.moveFromYAxisId !== moveToYAxisId && moveToIndex > 0) {
                 moveToIndex--;
             }
 
             // Reorder the composition array according to the calculated indexes
             this.composition.reorder(moveFromIndex, moveToIndex);
 
-            // Unset moveToIndex since we already used it
-            this.moveToIndex = undefined;
             this.allowDrop = false;
         }
     }
