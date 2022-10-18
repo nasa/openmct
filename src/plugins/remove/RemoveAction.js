@@ -41,7 +41,7 @@ export default class RemoveAction {
             return; // form canceled
         }
 
-        this.removeFromComposition(parent, object);
+        await this.removeFromComposition(parent, object);
 
         if (this.inNavigationPath(object)) {
             this.navigateTo(objectPath.slice(1));
@@ -87,8 +87,9 @@ export default class RemoveAction {
         this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
-    removeFromComposition(parent, child) {
-        console.log('remove', child, parent);
+    async removeFromComposition(parent, child) {
+        this.startTransaction();
+
         const composition = this.openmct.composition.get(parent);
         composition.remove(child);
 
@@ -99,6 +100,8 @@ export default class RemoveAction {
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
+
+        await this.saveTransaction();
     }
 
     isAlias(child, parent) {
@@ -135,5 +138,30 @@ export default class RemoveAction {
         return parentType
             && parentType.definition.creatable
             && Array.isArray(parent.composition);
+    }
+
+    activeTransaction() {
+        return this.openmct.objects.getActiveTransaction();
+    }
+
+    startTransaction() {
+        if (!this.openmct.editor.isEditing()) {
+            this.openmct.objects.startTransaction();
+        }
+    }
+
+    saveTransaction() {
+        const transaction = this.activeTransaction();
+
+        if (!transaction || this.openmct.editor.isEditing()) {
+            return;
+        }
+
+        return transaction.commit()
+            .catch(error => {
+                throw error;
+            }).finally(() => {
+                this.openmct.objects.endTransaction();
+            });
     }
 }
