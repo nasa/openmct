@@ -82,11 +82,8 @@ export default class RemoveAction {
     }
 
     removeFromComposition(parent, child) {
-        let composition = parent.composition.filter(id =>
-            !this.openmct.objects.areIdsEqual(id, child.identifier)
-        );
-
-        this.openmct.objects.mutate(parent, 'composition', composition);
+        const composition = this.openmct.composition.get(parent);
+        composition.remove(child);
 
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
