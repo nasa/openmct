@@ -56,4 +56,61 @@ test.describe('Overlay Plot', () => {
 
         expect(color).toBe('rgb(255, 166, 61)');
     });
+    test('The elements pool supports dragging series into multiple y-axis buckets', async ({ page }) => {
+        await page.goto('/', { waitUntil: 'networkidle' });
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
+            type: "Overlay Plot"
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: 'swg a',
+            parent: overlayPlot.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: 'swg b',
+            parent: overlayPlot.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: 'swg c',
+            parent: overlayPlot.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: 'swg d',
+            parent: overlayPlot.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: 'swg e',
+            parent: overlayPlot.uuid
+        });
+
+        await page.goto(overlayPlot.url);
+        await page.click('button[title="Edit"]');
+
+        // Expand the elements pool vertically
+        await page.locator('.l-pane__handle').nth(2).hover({ trial: true });
+        await page.mouse.down();
+        await page.mouse.move(0, 100);
+        await page.mouse.up();
+
+        await page.locator('#inspector-elements-tree >> text=swg a').dragTo(page.locator('[aria-label="Element Item Group"]').nth(1));
+        await page.locator('#inspector-elements-tree >> text=swg c').dragTo(page.locator('[aria-label="Element Item Group"]').nth(1));
+        await page.locator('#inspector-elements-tree >> text=swg e').dragTo(page.locator('[aria-label="Element Item Group"]').nth(1));
+        await page.locator('#inspector-elements-tree >> text=swg b').dragTo(page.locator('[aria-label="Element Item Group"]').nth(2));
+        const elementsTree = await page.locator('#inspector-elements-tree').allInnerTexts();
+        expect(elementsTree.join('').split('\n')).toEqual([
+            "Y Axis 1",
+            "swg d",
+            "Y Axis 2",
+            "swg e",
+            "swg c",
+            "swg a",
+            "Y Axis 3",
+            "swg b"
+        ]);
+    });
 });
