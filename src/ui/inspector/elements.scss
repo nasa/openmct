@@ -8,6 +8,15 @@
         margin-top: $interiorMargin;
     }
 
+    &__item {
+        &.is-alias {
+            // Object is an alias to an original.
+            [class*='__type-icon'] {
+                @include isAlias();
+            }
+        }
+    }
+
     &__search {
         flex: 0 0 auto;
     }

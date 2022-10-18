@@ -36,9 +36,19 @@ module.exports = merge(common, {
     ],
     devtool: 'eval-source-map',
     devServer: {
+        devMiddleware: {
+            writeToDisk: (filePathString) => {
+                const filePath = path.parse(filePathString);
+                const shouldWrite = !(filePath.base.includes('hot-update'));
+
+                return shouldWrite;
+            }
+        },
+        watchFiles: ['**/*.css'],
         static: {
-            directory: path.join(__dirname, '/dist/'),
-            publicPath: '/dist'
+            directory: path.join(__dirname, '/dist'),
+            publicPath: '/dist',
+            watch: false
         },
         client: {
             progress: true,
