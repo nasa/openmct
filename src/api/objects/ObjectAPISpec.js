@@ -77,8 +77,8 @@ describe("The Object API", () => {
                 mockProvider.update.and.returnValue(Promise.resolve(true));
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
             });
-            it("Adds a 'created' timestamp to new objects", () => {
-                objectAPI.save(mockDomainObject);
+            it("Adds a 'created' timestamp to new objects", async () => {
+                await objectAPI.save(mockDomainObject);
                 expect(mockDomainObject.created).not.toBeUndefined();
             });
             it("Calls 'create' on provider if object is new", async () => {
