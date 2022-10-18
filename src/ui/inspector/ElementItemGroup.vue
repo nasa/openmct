@@ -42,7 +42,10 @@
                     class="is-status__indicator"
                 ></span>
             </div>
-            <div class="c-tree__item__name c-object-label__name">
+            <div
+                class="c-tree__item__name c-object-label__name"
+                aria-label="Element Item Group"
+            >
                 {{ label }}
             </div>
         </div>
