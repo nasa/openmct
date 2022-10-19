@@ -27,6 +27,7 @@
         :class="model.cssClass"
     >
         <ToggleSwitch
+            :id="'gaugeToggle'"
             :checked="isUseTelemetryLimits"
             label="Use telemetry limits for minimum and maximum ranges"
             @change="toggleUseTelemetryLimits"
@@ -39,7 +40,7 @@
             <div class="c-form__row">
                 <span class="req-indicator req">
                 </span>
-                <label>Range minimum value</label>
+                <label>Minimum value</label>
                 <input
                     ref="min"
                     v-model.number="min"
@@ -52,7 +53,7 @@
             <div class="c-form__row">
                 <span class="req-indicator">
                 </span>
-                <label>Range low limit</label>
+                <label>Low limit</label>
                 <input
                     ref="limitLow"
                     v-model.number="limitLow"
@@ -63,26 +64,26 @@
             </div>
 
             <div class="c-form__row">
-                <span class="req-indicator req">
+                <span class="req-indicator">
                 </span>
-                <label>Range maximum value</label>
+                <label>High limit</label>
                 <input
-                    ref="max"
-                    v-model.number="max"
-                    data-field-name="max"
+                    ref="limitHigh"
+                    v-model.number="limitHigh"
+                    data-field-name="limitHigh"
                     type="number"
                     @input="onChange"
                 >
             </div>
 
             <div class="c-form__row">
-                <span class="req-indicator">
+                <span class="req-indicator req">
                 </span>
-                <label>Range high limit</label>
+                <label>Maximum value</label>
                 <input
-                    ref="limitHigh"
-                    v-model.number="limitHigh"
-                    data-field-name="limitHigh"
+                    ref="max"
+                    v-model.number="max"
+                    data-field-name="max"
                     type="number"
                     @input="onChange"
                 >
@@ -110,6 +111,7 @@ export default {
             isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
             isDisplayMinMax: this.model.value.isDisplayMinMax,
             isDisplayCurVal: this.model.value.isDisplayCurVal,
+            isDisplayUnits: this.model.value.isDisplayUnits,
             limitHigh: this.model.value.limitHigh,
             limitLow: this.model.value.limitLow,
             max: this.model.value.max,
@@ -124,6 +126,7 @@ export default {
                     gaugeType: this.model.value.gaugeType,
                     isDisplayMinMax: this.isDisplayMinMax,
                     isDisplayCurVal: this.isDisplayCurVal,
+                    isDisplayUnits: this.isDisplayUnits,
                     isUseTelemetryLimits: this.isUseTelemetryLimits,
                     limitLow: this.limitLow,
                     limitHigh: this.limitHigh,

@@ -426,6 +426,8 @@
 
     &__nav-to-parent-button {
         // This is an icon-button
+        margin-right: $interiorMargin;
+
         .is-editing & {
             display: none;
         }

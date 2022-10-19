@@ -26,7 +26,7 @@ import {
 } from '../../src/utils/testing';
 import ExampleUserProvider from './ExampleUserProvider';
 
-xdescribe("The Example User Plugin", () => {
+describe("The Example User Plugin", () => {
     let openmct;
 
     beforeEach(() => {
@@ -47,9 +47,4 @@ xdescribe("The Example User Plugin", () => {
         });
         openmct.install(openmct.plugins.example.ExampleUser());
     });
-
-    // The rest of the functionality of the ExampleUser Plugin is
-    // tested in both the UserAPISpec.js and in the UserIndicatorPlugin spec.
-    // If that changes, those tests can be moved here.
-
 });

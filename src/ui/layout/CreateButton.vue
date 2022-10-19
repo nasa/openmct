@@ -19,32 +19,18 @@ import objectUtils from 'objectUtils';
 export default {
     inject: ['openmct'],
     data: function () {
-        let items = [];
-
-        this.openmct.types.listKeys().forEach(key => {
-            let menuItem = this.openmct.types.get(key).definition;
-
-            if (menuItem.creatable) {
-                let menuItemTemplate = {
-                    cssClass: menuItem.cssClass,
-                    name: menuItem.name,
-                    description: menuItem.description,
-                    onItemClicked: () => this.create(key)
-                };
-
-                items.push(menuItemTemplate);
-            }
-        });
 
         return {
-            items: items,
+            menuItems: {},
             selectedMenuItem: {},
             opened: false
         };
     },
     computed: {
         sortedItems() {
-            return this.items.slice().sort((a, b) => {
+            let items = this.getItems();
+
+            return items.sort((a, b) => {
                 if (a.name < b.name) {
                     return -1;
                 } else if (a.name > b.name) {
@@ -56,6 +42,26 @@ export default {
         }
     },
     methods: {
+        getItems() {
+            let keys = this.openmct.types.listKeys();
+
+            keys.forEach(key => {
+                if (!this.menuItems[key]) {
+                    let typeDef = this.openmct.types.get(key).definition;
+
+                    if (typeDef.creatable) {
+                        this.menuItems[key] = {
+                            cssClass: typeDef.cssClass,
+                            name: typeDef.name,
+                            description: typeDef.description,
+                            onItemClicked: () => this.create(key)
+                        };
+                    }
+                }
+            });
+
+            return Object.values(this.menuItems);
+        },
         showCreateMenu() {
             const elementBoundingClientRect = this.$refs.createButton.getBoundingClientRect();
             const x = elementBoundingClientRect.x;

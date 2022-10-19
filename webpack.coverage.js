@@ -1,40 +1,30 @@
-// This file extends the webpack.dev.js config to add istanbul coverage
-// instrumentation using babel-plugin-istanbul (see babel.coverage.js)
+/* global module */
+
+/*
+This file extends the webpack.dev.js config to add babel istanbul coverage.
+OpenMCT Continuous Integration servers use this configuration to add code coverage
+information to pull requests.
+*/
 
 const config = require('./webpack.dev');
+// eslint-disable-next-line no-undef
+const CI = process.env.CI === 'true';
 
-const path = require('path');
+config.devtool = CI ? false : undefined;
 
-config.devtool = false;
-
-const vueLoaderRule = config.module.rules.find(r => r.use === 'vue-loader');
-
-vueLoaderRule.use = {
-    loader: 'vue-loader'
-    // Attempt to use Babel with babel-plugin-istanbul
-
-    // TODO The purpose of this was to try to add coverage to JS expressions
-    // inside `<template>` markup, but it seems to add only coverage inside
-    // `<script>` tags.
-    // Issue: https://github.com/nasa/openmct/issues/4973
-    //
-    // options: {
-    //     compiler: require('vue-template-babel-compiler'),
-    //     compilerOptions: {
-    //         babelOptions: require('./babel.coverage')
-    //     }
-    // }
-};
+config.devServer.hot = false;
 
 config.module.rules.push({
     test: /\.js$/,
-    // test: /(\.js$)|(\?vue&type=template)/,
-    // exclude: /node_modules(?!.*\.vue)/,
     exclude: /(Spec\.js$)|(node_modules)/,
     use: {
         loader: 'babel-loader',
         options: {
-            configFile: path.resolve(process.cwd(), 'babel.coverage.js')
+            retainLines: true,
+            // eslint-disable-next-line no-undef
+            plugins: [['babel-plugin-istanbul', {
+                extension: ['.js', '.vue']
+            }]]
         }
     }
 });

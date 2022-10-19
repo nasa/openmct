@@ -11,6 +11,7 @@
         margin-bottom: $interiorMarginSm;
         overflow: hidden;
         padding: 3px;
+        @include smallerControlButtons; // Make button in frame headers a bit smaller
 
         .c-object-label {
             &__type-icon {
@@ -42,11 +43,11 @@
             flex: 0 0 auto;
         }
 
-        .is-in-small-container &,
-        .c-fl-frame & {
+        .--width-less-than-220 &,
+        .--width-less-than-600 & {
             [class*="__label"] {
                 // button labels
-                display: none;
+                display: none !important;
 
             }
         }
@@ -131,8 +132,6 @@
         }
     }
 
-    @include smallerControlButtons;
-
     &.has-complex-content {
         > .c-so-view__view-large { display: block; }
     }
@@ -140,6 +139,10 @@
     &.is-status--missing {
         border: $borderMissing;
     }
+
+    // Leave for debugging
+    //&.--width-less-than-600 { background: rgba(orange, 0.2) !important; }
+    //&.--width-less-than-220 { background: rgba(red, 0.2) !important; }
 }
 
 .l-angular-ov-wrapper {
@@ -148,3 +151,5 @@
     display: block;
     height: 100%;
 }
+
+

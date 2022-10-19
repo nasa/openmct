@@ -26,6 +26,7 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend
+        v-if="!isNestedWithinAStackedPlot"
         :cursor-locked="!!lockHighlightPoint"
         :series="seriesModels"
         :highlights="highlights"
@@ -86,6 +87,7 @@
                         :highlights="highlights"
                         :show-limit-line-labels="showLimitLineLabels"
                         @plotReinitializeCanvas="initCanvas"
+                        @chartLoaded="initialize"
                     />
                 </div>
 
@@ -120,7 +122,7 @@
                         <button
                             class="c-button icon-reset"
                             title="Reset pan/zoom"
-                            @click="clear()"
+                            @click="resumeRealtimeData()"
                         >
                         </button>
                     </div>
@@ -139,7 +141,7 @@
                             v-if="isFrozen"
                             class="c-button icon-arrow-right pause-play is-paused"
                             title="Resume displaying real-time data"
-                            @click="play()"
+                            @click="resumeRealtimeData()"
                         >
                         </button>
                     </div>
@@ -151,6 +153,22 @@
                             class="c-button icon-clock"
                             title="Synchronize Time Conductor"
                             @click="showSynchronizeDialog()"
+                        >
+                        </button>
+                    </div>
+                    <div class="c-button-set c-button-set--strip-h">
+                        <button
+                            class="c-button icon-crosshair"
+                            :class="{ 'is-active': cursorGuide }"
+                            title="Toggle cursor guides"
+                            @click="toggleCursorGuide"
+                        >
+                        </button>
+                        <button
+                            class="c-button"
+                            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
+                            title="Toggle grid lines"
+                            @click="toggleGridLines"
                         >
                         </button>
                     </div>
@@ -195,6 +213,8 @@ import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
 import _ from "lodash";
 
+const OFFSET_THRESHOLD = 10;
+
 export default {
     components: {
         XAxis,
@@ -213,22 +233,34 @@ export default {
                 };
             }
         },
-        gridLines: {
+        initGridLines: {
             type: Boolean,
             default() {
                 return true;
             }
         },
-        cursorGuide: {
+        initCursorGuide: {
             type: Boolean,
             default() {
-                return true;
+                return false;
             }
         },
         plotTickWidth: {
             type: Number,
             default() {
                 return 0;
+            }
+        },
+        limitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        colorPalette: {
+            type: Object,
+            default() {
+                return undefined;
             }
         }
     },
@@ -250,19 +282,30 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: undefined,
+            showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
-            hasSameRangeValue: true
+            hasSameRangeValue: true,
+            cursorGuide: this.initCursorGuide,
+            gridLines: this.initGridLines
         };
     },
     computed: {
+        isNestedWithinAStackedPlot() {
+            const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
+
+            return !isNavigatedObject && this.path.find((pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked');
+        },
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         plotLegendPositionClass() {
-            return `plot-legend-${this.config.legend.get('position')}`;
+            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
         },
         plotLegendExpandedStateClass() {
+            if (this.isNestedWithinAStackedPlot) {
+                return '';
+            }
+
             if (this.config.legend.get('expanded')) {
                 return 'plot-legend-expanded';
             } else {
@@ -273,7 +316,23 @@ export default {
             return this.plotTickWidth || this.tickWidth;
         }
     },
+    watch: {
+        limitLineLabels: {
+            handler(limitLineLabels) {
+                this.legendHoverChanged(limitLineLabels);
+            },
+            deep: true
+        },
+        initGridLines(newGridLines) {
+            this.gridLines = newGridLines;
+        },
+        initCursorGuide(newCursorGuide) {
+            this.cursorGuide = newCursorGuide;
+        }
+    },
     mounted() {
+        this.offsetWidth = 0;
+
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         eventHelpers.extend(this);
@@ -283,6 +342,11 @@ export default {
 
         this.config = this.getConfig();
         this.legend = this.config.legend;
+
+        if (this.isNestedWithinAStackedPlot) {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.$emit('configLoaded', configId);
+        }
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -300,11 +364,6 @@ export default {
         this.setTimeContext();
 
         this.loaded = true;
-
-        //We're referencing the canvas elements from the mct-chart in the initialize method.
-        // So we need $nextTick to ensure the component is fully mounted before we can initialize stuff.
-        this.$nextTick(this.initialize);
-
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
@@ -349,6 +408,7 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
+                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -382,7 +442,8 @@ export default {
             });
         },
 
-        removeSeries(plotSeries) {
+        removeSeries(plotSeries, index) {
+            this.seriesModels.splice(index, 1);
             this.checkSameRangeValue();
             this.stopListening(plotSeries);
         },
@@ -424,7 +485,7 @@ export default {
                     end: range.max,
                     domain: this.config.xAxis.get('key')
                 })
-                    .then(this.stopLoading());
+                    .then(this.stopLoading.bind(this));
                 if (purge) {
                     plotSeries.purgeRecordsOutsideRange(range);
                 }
@@ -520,9 +581,8 @@ export default {
             };
             this.config.xAxis.set('range', newRange);
             if (!isTick) {
-                this.skipReloadOnInteraction = true;
-                this.clear();
-                this.skipReloadOnInteraction = false;
+                this.clearPanZoomHistory();
+                this.synchronizeIfBoundsMatch();
                 this.loadMoreData(newRange, true);
             } else {
                 // If we're not panning or zooming (time conductor and plot x-axis times are not out of sync)
@@ -545,16 +605,20 @@ export default {
 
         /**
        * Handle end of user viewport change: load more data for current display
-       * bounds, and mark view as synchronized if bounds match configured bounds.
+       * bounds, and mark view as synchronized if necessary.
        */
         userViewportChangeEnd() {
+            this.synchronizeIfBoundsMatch();
+            const xDisplayRange = this.config.xAxis.get('displayRange');
+            this.loadMoreData(xDisplayRange);
+        },
+
+        /**
+       * mark view as synchronized if bounds match configured bounds.
+       */
+        synchronizeIfBoundsMatch() {
             const xDisplayRange = this.config.xAxis.get('displayRange');
             const xRange = this.config.xAxis.get('range');
-
-            if (!this.skipReloadOnInteraction) {
-                this.loadMoreData(xDisplayRange);
-            }
-
             this.synchronized(xRange.min === xDisplayRange.min
             && xRange.max === xDisplayRange.max);
         },
@@ -732,6 +796,8 @@ export default {
                         };
                     });
             }
+
+            this.$emit('highlights', this.highlights);
         },
 
         untrackMousePosition() {
@@ -766,6 +832,7 @@ export default {
 
             if (this.isMouseClick()) {
                 this.lockHighlightPoint = !this.lockHighlightPoint;
+                this.$emit('lockHighlightPoint', this.lockHighlightPoint);
             }
 
             if (this.pan) {
@@ -780,7 +847,8 @@ export default {
             // needs to follow endMarquee so that plotHistory is pruned
             const isAction = Boolean(this.plotHistory.length);
             if (!isAction && !this.isFrozenOnMouseDown) {
-                return this.play();
+                this.clearPanZoomHistory();
+                this.synchronizeIfBoundsMatch();
             }
         },
 
@@ -1017,18 +1085,22 @@ export default {
             this.setStatus();
         },
 
-        clear() {
+        resumeRealtimeData() {
+            this.clearPanZoomHistory();
+            this.userViewportChangeEnd();
+        },
+
+        clearPanZoomHistory() {
             this.config.yAxis.set('frozen', false);
             this.config.xAxis.set('frozen', false);
             this.setStatus();
             this.plotHistory = [];
-            this.userViewportChangeEnd();
         },
 
         back() {
             const previousAxisRanges = this.plotHistory.pop();
             if (this.plotHistory.length === 0) {
-                this.clear();
+                this.resumeRealtimeData();
 
                 return;
             }
@@ -1044,10 +1116,6 @@ export default {
 
         pause() {
             this.freeze();
-        },
-
-        play() {
-            this.clear();
         },
 
         showSynchronizeDialog() {
@@ -1113,7 +1181,9 @@ export default {
                 this.removeStatusListener();
             }
 
-            this.plotContainerResizeObserver.disconnect();
+            if (this.plotContainerResizeObserver) {
+                this.plotContainerResizeObserver.disconnect();
+            }
 
             this.stopFollowingTimeContext();
             this.openmct.objectViews.off('clearData', this.clearData);
@@ -1122,14 +1192,25 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
+            const newOffsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+            //we ignore when width gets smaller
+            const offsetChange = newOffsetWidth - this.offsetWidth;
             if (this.$parent.$refs.plotWrapper
-                && (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth)) {
-                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+                && offsetChange > OFFSET_THRESHOLD) {
+                this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
         },
         legendHoverChanged(data) {
             this.showLimitLineLabels = data;
+        },
+        toggleCursorGuide() {
+            this.cursorGuide = !this.cursorGuide;
+            this.$emit('cursorGuide', this.cursorGuide);
+        },
+        toggleGridLines() {
+            this.gridLines = !this.gridLines;
+            this.$emit('gridLines', this.gridLines);
         }
     }
 };

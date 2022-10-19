@@ -1,3 +1,9 @@
+/* global __dirname module */
+
+/*
+This configuration should be used for production installs.
+It is the default webpack configuration.
+*/
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common');
 
@@ -16,5 +22,5 @@ module.exports = merge(common, {
             __OPENMCT_ROOT_RELATIVE__: '""'
         })
     ],
-    devtool: 'source-map'
+    devtool: 'eval-source-map'
 });

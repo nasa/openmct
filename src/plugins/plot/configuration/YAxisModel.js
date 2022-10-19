@@ -215,6 +215,10 @@ export default class YAxisModel extends Model {
 
             const _range = this.get('displayRange');
 
+            if (!_range) {
+                return;
+            }
+
             if (this.get('logMode')) {
                 _range.min = antisymlog(_range.min, 10);
                 _range.max = antisymlog(_range.max, 10);
@@ -256,7 +260,7 @@ export default class YAxisModel extends Model {
         const plotModel = this.plot.get('domainObject');
         const label = plotModel.configuration?.yAxis?.label;
         const sampleSeries = seriesCollection.first();
-        if (!sampleSeries) {
+        if (!sampleSeries || !sampleSeries.metadata) {
             if (!label) {
                 this.unset('label');
             }

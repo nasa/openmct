@@ -80,12 +80,22 @@ export default function PlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<plot :options="options"></plot>'
+                        template: '<plot ref="plotComponent" :options="options"></plot>'
                     });
+                },
+                getViewContext() {
+                    if (!component) {
+                        return {};
+                    }
+
+                    return component.$refs.plotComponent.getViewContext();
                 },
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
+                },
+                getComponent() {
+                    return component;
                 }
             };
         }

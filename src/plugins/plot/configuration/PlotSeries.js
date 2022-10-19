@@ -126,9 +126,14 @@ export default class PlotSeries extends Model {
      */
     destroy() {
         super.destroy();
+        this.openmct.time.off('bounds', this.updateLimits);
 
         if (this.unsubscribe) {
             this.unsubscribe();
+        }
+
+        if (this.removeMutationListener) {
+            this.removeMutationListener();
         }
     }
 
@@ -157,6 +162,11 @@ export default class PlotSeries extends Model {
 
         });
         this.openmct.time.on('bounds', this.updateLimits);
+        this.removeMutationListener = this.openmct.objects.observe(
+            this.domainObject,
+            'name',
+            this.updateName.bind(this)
+        );
     }
 
     /**
@@ -224,6 +234,12 @@ export default class PlotSeries extends Model {
                 console.warn('Error fetching data', error);
             });
         /* eslint-enable you-dont-need-lodash-underscore/concat */
+    }
+
+    updateName(name) {
+        if (name !== this.get('name')) {
+            this.set('name', name);
+        }
     }
     /**
      * Update x formatter on x change.

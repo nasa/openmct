@@ -7,6 +7,7 @@ describe("The Object API", () => {
     let openmct = {};
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
+    const TEST_KEY = "test-key";
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     beforeEach((done) => {
@@ -22,7 +23,7 @@ describe("The Object API", () => {
         mockDomainObject = {
             identifier: {
                 namespace: TEST_NAMESPACE,
-                key: "test-key"
+                key: TEST_KEY
             },
             name: "test object",
             type: "test-type"
@@ -84,6 +85,31 @@ describe("The Object API", () => {
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).not.toHaveBeenCalled();
             });
+
+            describe("Shows a notification on persistence conflict", () => {
+                beforeEach(() => {
+                    openmct.notifications.error = jasmine.createSpy('error');
+                });
+
+                it("on create", () => {
+                    mockProvider.create.and.returnValue(Promise.reject(new openmct.objects.errors.Conflict("Test Conflict error")));
+
+                    return objectAPI.save(mockDomainObject).catch(() => {
+                        expect(openmct.notifications.error).toHaveBeenCalledWith(`Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`);
+                    });
+
+                });
+
+                it("on update", () => {
+                    mockProvider.update.and.returnValue(Promise.reject(new openmct.objects.errors.Conflict("Test Conflict error")));
+                    mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
+                    mockDomainObject.modified = Date.now();
+
+                    return objectAPI.save(mockDomainObject).catch(() => {
+                        expect(openmct.notifications.error).toHaveBeenCalledWith(`Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`);
+                    });
+                });
+            });
         });
     });
 
@@ -138,19 +164,31 @@ describe("The Object API", () => {
             });
 
             it("Caches multiple requests for the same object", () => {
+                const promises = [];
                 expect(mockProvider.get.calls.count()).toBe(0);
-                objectAPI.get(mockDomainObject.identifier);
+                promises.push(objectAPI.get(mockDomainObject.identifier));
                 expect(mockProvider.get.calls.count()).toBe(1);
-                objectAPI.get(mockDomainObject.identifier);
+                promises.push(objectAPI.get(mockDomainObject.identifier));
                 expect(mockProvider.get.calls.count()).toBe(1);
+
+                return Promise.all(promises);
             });
 
             it("applies any applicable interceptors", () => {
                 expect(mockDomainObject.changed).toBeUndefined();
-                objectAPI.get(mockDomainObject.identifier).then((object) => {
+
+                return objectAPI.get(mockDomainObject.identifier).then((object) => {
                     expect(object.changed).toBeTrue();
                     expect(object.alsoChanged).toBeTrue();
                     expect(object.shouldNotBeChanged).toBeUndefined();
+                });
+            });
+
+            it("displays a notification in the event of an error", () => {
+                mockProvider.get.and.returnValue(Promise.reject());
+
+                return objectAPI.get(mockDomainObject.identifier).catch(() => {
+                    expect(openmct.notifications.error).toHaveBeenCalledWith(`Failed to retrieve object ${TEST_NAMESPACE}:${TEST_KEY}`);
                 });
             });
         });
@@ -168,7 +206,7 @@ describe("The Object API", () => {
             testObject = {
                 identifier: {
                     namespace: TEST_NAMESPACE,
-                    key: 'test-key'
+                    key: TEST_KEY
                 },
                 name: 'test object',
                 type: 'notebook',
@@ -195,6 +233,8 @@ describe("The Object API", () => {
                 "observeObjectChanges"
             ]);
             mockProvider.get.and.returnValue(Promise.resolve(testObject));
+            mockProvider.create.and.returnValue(Promise.resolve(true));
+            mockProvider.update.and.returnValue(Promise.resolve(true));
             mockProvider.observeObjectChanges.and.callFake(() => {
                 callbacks[0](updatedTestObject);
                 callbacks.splice(0, 1);
@@ -280,7 +320,7 @@ describe("The Object API", () => {
             beforeEach(function () {
                 // Duplicate object to guarantee we are not sharing object instance, which would invalidate test
                 testObjectDuplicate = JSON.parse(JSON.stringify(testObject));
-                mutableSecondInstance = objectAPI._toMutable(testObjectDuplicate);
+                mutableSecondInstance = objectAPI.toMutable(testObjectDuplicate);
             });
 
             afterEach(() => {
@@ -334,6 +374,73 @@ describe("The Object API", () => {
                     listeners.forEach(listener => listener());
                 });
             });
+        });
+    });
+
+    describe("getOriginalPath", () => {
+        let mockGrandParentObject;
+        let mockParentObject;
+        let mockChildObject;
+
+        beforeEach(() => {
+            const mockObjectProvider = jasmine.createSpyObj("mock object provider", [
+                "create",
+                "update",
+                "get"
+            ]);
+
+            mockGrandParentObject = {
+                type: 'folder',
+                name: 'Grand Parent Folder',
+                location: 'fooNameSpace:child',
+                identifier: {
+                    key: 'grandParent',
+                    namespace: 'fooNameSpace'
+                }
+            };
+            mockParentObject = {
+                type: 'folder',
+                name: 'Parent Folder',
+                location: 'fooNameSpace:grandParent',
+                identifier: {
+                    key: 'parent',
+                    namespace: 'fooNameSpace'
+                }
+            };
+            mockChildObject = {
+                type: 'folder',
+                name: 'Child Folder',
+                location: 'fooNameSpace:parent',
+                identifier: {
+                    key: 'child',
+                    namespace: 'fooNameSpace'
+                }
+            };
+
+            // eslint-disable-next-line require-await
+            mockObjectProvider.get = async (identifier) => {
+                if (identifier.key === mockGrandParentObject.identifier.key) {
+                    return mockGrandParentObject;
+                } else if (identifier.key === mockParentObject.identifier.key) {
+                    return mockParentObject;
+                } else if (identifier.key === mockChildObject.identifier.key) {
+                    return mockChildObject;
+                } else {
+                    return null;
+                }
+            };
+
+            openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
+
+            mockObjectProvider.create.and.returnValue(Promise.resolve(true));
+            mockObjectProvider.update.and.returnValue(Promise.resolve(true));
+
+            openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
+        });
+
+        it('can construct paths even with cycles', async () => {
+            const objectPath = await objectAPI.getOriginalPath(mockChildObject.identifier);
+            expect(objectPath.length).toEqual(3);
         });
     });
 
