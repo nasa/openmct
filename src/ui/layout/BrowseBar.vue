@@ -60,7 +60,7 @@
 
             <button
                 v-if="isViewEditable & !isEditing"
-                :title="lockedOrUnlockedTitle"
+                title="Click to toggle edit capability"
                 :class="{
                     'c-button icon-lock': domainObject.locked,
                     'c-icon-button icon-unlocked': !domainObject.locked
@@ -216,13 +216,6 @@ export default {
             }
 
             return false;
-        },
-        lockedOrUnlockedTitle() {
-            if (this.domainObject.locked) {
-                return 'Locked for editing - click to unlock.';
-            } else {
-                return 'Unlocked for editing - click to lock.';
-            }
         }
     },
     watch: {
