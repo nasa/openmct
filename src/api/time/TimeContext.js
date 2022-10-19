@@ -362,6 +362,19 @@ class TimeContext extends EventEmitter {
         this.boundsVal = newBounds;
         this.emit('bounds', this.boundsVal, true);
     }
+
+    /**
+     * Checks if this time context is in real-time mode or not.
+     * @returns {boolean} true if this context is in real-time mode, false if not
+     * @private
+    */
+    isRealtime() {
+        if (this.activeClock) {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 export default TimeContext;

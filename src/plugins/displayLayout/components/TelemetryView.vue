@@ -281,13 +281,15 @@ export default {
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
             const valueMetadata = this.metadata ? this.metadata.value(this.item.value) : {};
             this.customStringformatter = this.openmct.telemetry.customStringFormatter(valueMetadata, this.item.format);
 
             this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
                 size: 1,
-                strategy: 'latest'
+                strategy: 'latest',
+                timeContext: this.timeContext
             });
             this.telemetryCollection.on('add', this.setLatestValues);
             this.telemetryCollection.on('clear', this.refreshData);

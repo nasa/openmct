@@ -113,6 +113,7 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
         this.limitEvaluator = this.openmct
             .telemetry
@@ -134,7 +135,8 @@ export default {
 
         this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
             size: 1,
-            strategy: 'latest'
+            strategy: 'latest',
+            timeContext: this.timeContext
         });
         this.telemetryCollection.on('add', this.setLatestValues);
         this.telemetryCollection.on('clear', this.resetValues);

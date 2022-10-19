@@ -73,7 +73,7 @@ export default class TelemetryAPI {
      * @returns {boolean} true if the object is a telemetry object.
      */
     isTelemetryObject(domainObject) {
-        return Boolean(this.findMetadataProvider(domainObject));
+        return Boolean(this.#findMetadataProvider(domainObject));
     }
 
     /**
@@ -87,7 +87,7 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     canProvideTelemetry(domainObject) {
-        return Boolean(this.findSubscriptionProvider(domainObject))
+        return Boolean(this.#findSubscriptionProvider(domainObject))
                 || Boolean(this.findRequestProvider(domainObject));
     }
 
@@ -120,7 +120,7 @@ export default class TelemetryAPI {
     /**
      * @private
      */
-    findSubscriptionProvider() {
+    #findSubscriptionProvider() {
         const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsSubscribe.apply(provider, args);
@@ -131,8 +131,9 @@ export default class TelemetryAPI {
 
     /**
      * @private
+     * Though also used by TelemetryCollection
      */
-    findRequestProvider(domainObject) {
+    findRequestProvider() {
         const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsRequest.apply(provider, args);
@@ -144,7 +145,7 @@ export default class TelemetryAPI {
     /**
      * @private
      */
-    findMetadataProvider(domainObject) {
+    #findMetadataProvider(domainObject) {
         return this.metadataProviders.filter(function (p) {
             return p.supportsMetadata(domainObject);
         })[0];
@@ -153,7 +154,7 @@ export default class TelemetryAPI {
     /**
      * @private
      */
-    findLimitEvaluator(domainObject) {
+    #findLimitEvaluator(domainObject) {
         return this.limitProviders.filter(function (p) {
             return p.supportsLimits(domainObject);
         })[0];
@@ -161,6 +162,7 @@ export default class TelemetryAPI {
 
     /**
      * @private
+     * Though used in TelemetryCollection as well
      */
     standardizeRequestOptions(options) {
         if (!Object.prototype.hasOwnProperty.call(options, 'start')) {
@@ -173,6 +175,10 @@ export default class TelemetryAPI {
 
         if (!Object.prototype.hasOwnProperty.call(options, 'domain')) {
             options.domain = this.openmct.time.timeSystem().key;
+        }
+
+        if (!Object.prototype.hasOwnProperty.call(options, 'timeContext')) {
+            options.timeContext = this.openmct.time;
         }
     }
 
@@ -241,7 +247,7 @@ export default class TelemetryAPI {
     /**
      * Request historical telemetry for a domain object.
      * The `options` argument allows you to specify filters
-     * (start, end, etc.), sort order, and strategies for retrieving
+     * (start, end, etc.), sort order, time context, and strategies for retrieving
      * telemetry (aggregation, latest available, etc.).
      *
      * @method request
@@ -273,7 +279,7 @@ export default class TelemetryAPI {
         if (!provider) {
             this.requestAbortControllers.delete(abortController);
 
-            return this.handleMissingRequestProvider(domainObject);
+            return this.#handleMissingRequestProvider(domainObject);
         }
 
         arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
@@ -306,7 +312,7 @@ export default class TelemetryAPI {
      *          the subscription
      */
     subscribe(domainObject, callback, options) {
-        const provider = this.findSubscriptionProvider(domainObject);
+        const provider = this.#findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
             this.subscribeCache = {};
@@ -353,7 +359,7 @@ export default class TelemetryAPI {
      */
     getMetadata(domainObject) {
         if (!this.metadataCache.has(domainObject)) {
-            const metadataProvider = this.findMetadataProvider(domainObject);
+            const metadataProvider = this.#findMetadataProvider(domainObject);
             if (!metadataProvider) {
                 return;
             }
@@ -374,7 +380,7 @@ export default class TelemetryAPI {
      * telemetry objects and match the requested hints.
      *
      */
-    commonValuesForHints(metadatas, hints) {
+    #commonValuesForHints(metadatas, hints) {
         const options = metadatas.map(function (metadata) {
             const values = metadata.valuesForHints(hints);
 
@@ -450,7 +456,7 @@ export default class TelemetryAPI {
      *
      * @returns Promise
      */
-    handleMissingRequestProvider(domainObject) {
+    #handleMissingRequestProvider(domainObject) {
         this.noRequestProviderForAllObjects = this.requestProviders.every(requestProvider => {
             const supportsRequest = requestProvider.supportsRequest.apply(requestProvider, arguments);
             const hasRequestProvider = Object.prototype.hasOwnProperty.call(requestProvider, 'request') && typeof requestProvider.request === 'function';
@@ -540,7 +546,7 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     getLimitEvaluator(domainObject) {
-        const provider = this.findLimitEvaluator(domainObject);
+        const provider = this.#findLimitEvaluator(domainObject);
         if (!provider) {
             return {
                 evaluate: function () {}
@@ -578,7 +584,7 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     getLimits(domainObject) {
-        const provider = this.findLimitEvaluator(domainObject);
+        const provider = this.#findLimitEvaluator(domainObject);
         if (!provider || !provider.getLimits) {
             return {
                 limits: function () {
