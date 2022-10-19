@@ -39,7 +39,7 @@ export default function UserIndicatorPlugin() {
         openmct.indicators.add({
             key: 'user-indicator',
             element: userIndicator.$mount().$el,
-            priority: openmct.priority.HIGH
+            priority: -2
         });
     }
 
