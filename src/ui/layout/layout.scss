@@ -79,10 +79,6 @@
         .l-pane__contents {
             > * {
                 flex: 0 0 auto;
-
-                + * {
-                    //margin-top: $interiorMargin;
-                }
             }
         }
     }
@@ -245,10 +241,6 @@
         height: 100%; // Chrome 73 overflow bug fix
         overflow: auto;
 
-        > * + * {
-            // margin-top: $interiorMargin;
-        }
-
         > .c-object-view {
             flex: 1 1 auto;
             overflow: auto;
@@ -374,11 +366,7 @@
     }
 
     .l-shell__main-container {
-        //$m: 3px;
-        //box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
         border-color: $editUIBaseColor;
-        //margin-left: $m;
-        //margin-right: $m;
 
         &[s-selected] {
             // Provide a clearer selection context articulation for the main edit area
@@ -436,14 +424,8 @@
         flex: 0 0 auto;
     }
 
-    &__nav-to-parent-button,
-    &__disclosure-button {
-        //flex: 0 0 auto;
-    }
-
     &__nav-to-parent-button {
         // This is an icon-button
-        margin-right: $interiorMarginLg;
         .is-editing & {
             display: none;
         }
@@ -458,13 +440,8 @@
         filter: $objectLabelNameFilter;
     }
 
-    //.c-object-label__type-icon {
-    //    opacity: $objectLabelTypeIconOpacity;
-    //}
-
     &__object-name--w {
         @include headerFont(1.5em);
-        //margin-left: $interiorMarginLg;
         min-width: 0;
 
         .is-status__indicator {
@@ -478,10 +455,12 @@
     }
 
     &__edit-label {
+        @include ellipsize();
+        flex: 0 1 auto;
+        margin: 0 $interiorMarginSm;
+        color: $editUIColorEditLabelFg;
         display: none !important;
-        font-size: 0.7em;
         text-transform: uppercase;
-        opacity: 0.5;
 
         .is-editing & { display: block !important; }
     }
