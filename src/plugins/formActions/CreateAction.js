@@ -107,7 +107,7 @@ export default class CreateAction extends PropertiesAction {
         }
 
         const url = '#/browse/' + objectPath
-            .map(object => object && this.openmct.objects.makeKeyString(object.identifier.key))
+            .map(object => object && this.openmct.objects.makeKeyString(object.identifier))
             .reverse()
             .join('/');
 
