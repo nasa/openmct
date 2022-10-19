@@ -66,10 +66,11 @@ export default class CreateAction extends PropertiesAction {
         });
 
         const parentDomainObject = parentDomainObjectPath[0];
+        const namespace = parentDomainObject.identifier.namespace || parentDomainObject.key || '';
 
         this.domainObject.modified = Date.now();
         this.domainObject.location = this.openmct.objects.makeKeyString(parentDomainObject.identifier);
-        this.domainObject.identifier.namespace = parentDomainObject.identifier.namespace;
+        this.domainObject.identifier.namespace = namespace;
 
         // Show saving progress dialog
         let dialog = this.openmct.overlays.progressDialog({
@@ -107,7 +108,7 @@ export default class CreateAction extends PropertiesAction {
         }
 
         const url = '#/browse/' + objectPath
-            .map(object => object && this.openmct.objects.makeKeyString(object.identifier.key))
+            .map(object => object && this.openmct.objects.makeKeyString(object.identifier))
             .reverse()
             .join('/');
 
