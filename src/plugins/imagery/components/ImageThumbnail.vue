@@ -41,6 +41,7 @@
             class="c-thumb__image"
             :src="image.url"
             fetchpriority="low"
+            @load="imageLoadCompleted"
         >
     </a>
     <div
@@ -81,14 +82,21 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            imgWidth: 0,
+            imgHeight: 0
+        };
+    },
     computed: {
         viewableAreaStyle() {
-            if (!this.viewableArea || !this.$refs.img) {
+            if (!this.viewableArea || !this.imgWidth || !this.imgHeight) {
                 return null;
             }
 
-            const { width: imgWidth, height: imgHeight } = this.$refs.img;
             const { widthRatio, heightRatio, xOffsetRatio, yOffsetRatio } = this.viewableArea;
+            const imgWidth = this.imgWidth;
+            const imgHeight = this.imgHeight;
 
             let translateX = imgWidth * xOffsetRatio;
             let translateY = imgHeight * yOffsetRatio;
@@ -126,6 +134,17 @@ export default {
                 'width': `${width}px`,
                 'height': `${height}px`
             };
+        }
+    },
+    methods: {
+        imageLoadCompleted() {
+            if (!this.$refs.img) {
+                return;
+            }
+
+            const { width: imgWidth, height: imgHeight } = this.$refs.img;
+            this.imgWidth = imgWidth;
+            this.imgHeight = imgHeight;
         }
     }
 };

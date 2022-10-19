@@ -1111,8 +1111,6 @@ export default {
                 this.imageViewportWidth = this.imageContainerWidth;
                 this.imageViewportHeight = this.imageContainerHeight;
             }
-
-            console.log(this.imageViewportWidth, this.imageViewportHeight);
         },
         handleThumbWindowResizeStart() {
             if (!this.autoScroll) {
