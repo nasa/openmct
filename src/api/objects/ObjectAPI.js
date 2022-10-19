@@ -359,6 +359,7 @@ export default class ObjectAPI {
         let savedResolve;
         let savedReject;
         let result;
+        let lastPersisted;
 
         if (!this.isPersistable(domainObject.identifier)) {
             result = Promise.reject('Object provider does not support saving');
@@ -384,6 +385,7 @@ export default class ObjectAPI {
                     result = Promise.reject(`[ObjectAPI][save] Object provider returned ${newObjectPromise} when creating new object.`);
                 }
             } else {
+                lastPersisted = domainObject.persisted;
                 domainObject.persisted = persistedTime;
                 this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
@@ -394,6 +396,9 @@ export default class ObjectAPI {
             if (error instanceof this.errors.Conflict) {
                 this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
             }
+
+            // revert domainObject.persisted to before failed update
+            this.mutate(domainObject, 'persisted', lastPersisted);
 
             throw error;
         });
