@@ -27,7 +27,6 @@ import TelemetryMetadataManager from './TelemetryMetadataManager';
 import TelemetryValueFormatter from './TelemetryValueFormatter';
 import DefaultMetadataProvider from './DefaultMetadataProvider';
 import objectUtils from 'objectUtils';
-import _ from 'lodash';
 
 export default class TelemetryAPI {
 
