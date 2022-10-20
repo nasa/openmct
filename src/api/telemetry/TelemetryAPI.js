@@ -378,33 +378,6 @@ export default class TelemetryAPI {
     }
 
     /**
-     * Return an array of valueMetadatas that are common to all supplied
-     * telemetry objects and match the requested hints.
-     *
-     */
-    #commonValuesForHints(metadatas, hints) {
-        const options = metadatas.map(function (metadata) {
-            const values = metadata.valuesForHints(hints);
-
-            return _.keyBy(values, 'key');
-        }).reduce(function (a, b) {
-            const results = {};
-            Object.keys(a).forEach(function (key) {
-                if (Object.prototype.hasOwnProperty.call(b, key)) {
-                    results[key] = a[key];
-                }
-            });
-
-            return results;
-        });
-        const sortKeys = hints.map(function (h) {
-            return 'hints.' + h;
-        });
-
-        return _.sortBy(options, sortKeys);
-    }
-
-    /**
      * Get a value formatter for a given valueMetadata.
      *
      * @returns {TelemetryValueFormatter}
