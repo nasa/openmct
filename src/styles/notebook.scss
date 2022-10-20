@@ -27,14 +27,6 @@
     font-weight: bold;
 }
 
-.scrollContainer{
-    // Class for overflow embeds (possibly for text entry overflow in future)
-    margin-top: $interiorMargin;
-    background: $scrollContainer;
-    box-shadow: $shdwInputFoc;
-    border-radius: $controlCr;
-
-}
 .c-notebook {
     $headerFontSize: 1.3em;
     display: flex;
@@ -307,6 +299,10 @@
     &__input {
         padding: $p;
     }
+
+    &__input{
+        word-break: break-word;
+    }
     &__time-and-creator-and-delete{
         display: flex;
         align-items: center;
@@ -481,6 +477,9 @@
 
     &__snap-thumb {
         @include snapThumb();
+    }
+    &__actions{
+        margin: $interiorMarginSm;
     }
     &__actions-menu {
         width: 55vh;

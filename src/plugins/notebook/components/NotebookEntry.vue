@@ -103,7 +103,7 @@
                 @tags-updated="timestampAndUpdate"
             />
             <div
-                :class="{scrollContainer: enableEmbedsWrapperScroll }"
+                :class="{c__scrollContainer: enableEmbedsWrapperScroll }"
             >
                 <div
                     ref="embedsWrapper"

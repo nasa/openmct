@@ -461,6 +461,14 @@ input[type=number].c-input-number--no-spinners {
     }
 }
 
+.c__scrollContainer{
+    @include nice-input();
+    margin-top: $interiorMargin;
+    background: $scrollContainer;
+    border-radius: $controlCr;
+    overflow: auto;
+}
+
 // SELECTS
 select {
     @include appearanceNone();
