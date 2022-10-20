@@ -72,10 +72,7 @@ function waitForAnimations(locator) {
 * @return {Object}
 * @see {@link https://github.com/microsoft/playwright/issues/18071 Github RFE}
 */
-async function getMetrics(page) {
-    let client;
-    client = await page.context().newCDPSession(page);
-    await client.send('Performance.enable');
+async function getMetrics(client) {
     const perfMetricObject = await client.send('Performance.getMetrics');
     const extractedMetric = perfMetricObject?.metrics;
     const metricObject = extractedMetric.reduce((acc, {name, value}) => {

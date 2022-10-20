@@ -31,24 +31,59 @@ const { getMetrics } = require('../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 const CSS_RECALC_COUNT_METRIC = 'RecalcStyleCount';
+const CSS_RECALC_STYLE_DURATION = 'RecalcStyleDuration';
+const CSS_RECALC_LAYOUT_COUNT = 'LayoutCount';
 
 test.describe('Compare css recalculation count to check for unnecessary DOM repaints', () => {
-    test.only('Inspector', async ({ page, browser }) => {
+    let client;
+
+    test.beforeEach(async ({ page }) => {
+        client = await page.context().newCDPSession(page);
+        await client.send('Performance.enable');
+    });
+    
+    test.afterEach(async ({ page }) => {
+        client.detach();
+        client = undefined;
+    });
+
+    test.only('Navigate to nothing', async ({ page, browser}) => {
+
+        await page.goto('./');
+        await page.goto("./?tc.mode=local&tc.timeSystem=utc&tc.startBound=1666303575413&tc.endBound=1666304490413", { waitUntil: "networkidle" });
+
+        await page.waitForSelector('.c-create-button');
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountBefore, [CSS_RECALC_LAYOUT_COUNT]: recalcLayoutCountBefore } = await getMetrics(client);
+        await page.waitForTimeout(5 * 1000);
+            // await page.locator('.c-create-button').click();
+
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountAfter, [CSS_RECALC_LAYOUT_COUNT]: recalcLayoutCountAfter } = await getMetrics(client);
+        console.table({
+            recalcLayoutCountBefore,
+            recalcLayoutCountAfter
+        });
+
+
+    });
+
+    test('Inspector', async ({ page, browser }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5247'
         });
+
+
         const cssRecalcBaseline = 94;
         const objectName = await createDomainObjectWithDefaults(page, 'Folder');
 
         console.log({ objectName });
-        const { [CSS_RECALC_COUNT_METRIC]: recalcCountBefore } = await getMetrics(page);        
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountBefore } = await getMetrics(client);        
 
         await page.goto('./?tc.mode=local', { waitUntil: 'networkidle' });
 
         await page.waitForTimeout(3*1000);
 
-        const { [CSS_RECALC_COUNT_METRIC]: recalcCountAfter } = await getMetrics(page);
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountAfter } = await getMetrics(client);
 
         console.table({
             cssRecalcBaseline,
@@ -59,31 +94,37 @@ test.describe('Compare css recalculation count to check for unnecessary DOM repa
     });
 
     test('Clicking create button', async ({ page, browser }) => {
+        const cssRecalcBaseline = 35;
+
         await page.goto('./');
-        const recalcCountBefore = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountBefore } = await getMetrics(client);        
         await page.locator('.c-create-button').click();
-        const recalcCountAfter = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountAfter } = await getMetrics(client);
         console.table({
+            cssRecalcBaseline,
             recalcCountBefore,
             recalcCountAfter
         });
-        expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
+        expect(recalcCountAfter).toBeLessThan(cssRecalcBaseline);
     });
 
     test('Searching', async ({ page, browser }) => {
+        const cssRecalcBaseline = 20;
         const objectName = await createDomainObjectWithDefaults(page, 'Example Imagery', 'Example Imagery'.concat(' ', uuid.v4()));
         await page.goto('./');
 
         const searchInput = page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]');
         await searchInput.hover();
-        const recalcCountBefore = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountBefore } = await getMetrics(client);
         await searchInput.fill(objectName);
-        const recalcCountAfter = await extractMetric(client, CSS_RECALC_COUNT_METRIC);
+        const { [CSS_RECALC_COUNT_METRIC]: recalcCountAfter } = await getMetrics(client);
         console.table({
+            cssRecalcBaseline,
             recalcCountBefore,
-            recalcCountAfter
+            recalcCountAfter,
+            diff: recalcCountAfter - recalcCountBefore
         });
-        expect(recalcCountAfter).toBeGreaterThan(recalcCountBefore);
+        expect(recalcCountAfter).toBeLessThan(cssRecalcBaseline);
     });
     test.fixme('MCT Tree', async ({ page, browser }) => {
         await page.goto('./#/browse/mine?hideTree=false');
