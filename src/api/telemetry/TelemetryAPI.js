@@ -261,7 +261,7 @@ export default class TelemetryAPI {
      */
     async request(domainObject) {
         if (this.noRequestProviderForAllObjects) {
-            return Promise.resolve([]);
+            return [];
         }
 
         if (arguments.length === 1) {
@@ -283,18 +283,20 @@ export default class TelemetryAPI {
         }
 
         arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
+        try {
+            const telemetry = await provider.request(...arguments);
 
-        return provider.request.apply(provider, arguments)
-            .catch((rejected) => {
-                if (rejected.name !== 'AbortError') {
-                    this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-                    console.error(rejected);
-                }
+            return telemetry;
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+                console.error(error);
+            }
 
-                return Promise.reject(rejected);
-            }).finally(() => {
-                this.requestAbortControllers.delete(abortController);
-            });
+            throw new Error(error);
+        } finally {
+            this.requestAbortControllers.delete(abortController);
+        }
     }
 
     /**

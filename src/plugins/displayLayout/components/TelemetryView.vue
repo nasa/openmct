@@ -282,9 +282,7 @@ export default {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
-            // [] should be replaced with this.objectPath
-            // when LADTables support indepdendent time conductors
-            this.timeContext = this.openmct.time.getContextForView([]);
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
             const valueMetadata = this.metadata ? this.metadata.value(this.item.value) : {};
             this.customStringformatter = this.openmct.telemetry.customStringFormatter(valueMetadata, this.item.format);

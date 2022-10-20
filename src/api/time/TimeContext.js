@@ -369,7 +369,7 @@ class TimeContext extends EventEmitter {
      * @private
     */
     isRealtime() {
-        if (this.activeClock) {
+        if (this.clock()) {
             return true;
         }
 
