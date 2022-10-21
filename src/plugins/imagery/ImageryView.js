@@ -45,6 +45,31 @@ export default class ImageryView {
         });
     }
 
+    getViewContext() {
+        if (!this.component) {
+            return {};
+        }
+
+        return this.component.$refs.ImageryContainer;
+    }
+
+    pause(previousPausedState) {
+        if (previousPausedState) {
+            return;
+        }
+
+        const imageContext = this.getViewContext();
+        imageContext.thumbnailClicked(imageContext.imageHistory.length - 1);
+    }
+    unpause(previousPausedState) {
+        if (previousPausedState) {
+            return;
+        }
+
+        const imageContext = this.getViewContext();
+        imageContext.paused(false);
+    }
+
     destroy() {
         this.component.$destroy();
         this.component = undefined;
