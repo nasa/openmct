@@ -366,9 +366,8 @@ class TimeContext extends EventEmitter {
     /**
      * Checks if this time context is in real-time mode or not.
      * @returns {boolean} true if this context is in real-time mode, false if not
-     * @private
     */
-    isRealtime() {
+    isRealTime() {
         if (this.clock()) {
             return true;
         }
