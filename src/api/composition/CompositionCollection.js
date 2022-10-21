@@ -230,7 +230,7 @@ export default class CompositionCollection {
     /**
      * Load the domain objects in this composition.
      *
-     * @param {any} abortSignal
+     * @param {AbortSignal} abortSignal
      * @returns {Promise.<Array.<DomainObject>>} a promise for
      *          the domain objects in this composition
      * @memberof {module:openmct.CompositionCollection#}
