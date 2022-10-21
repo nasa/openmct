@@ -420,6 +420,8 @@ export default class ObjectAPI {
 
     /**
      * After entering into edit mode, creates a new instance of Transaction to keep track of changes in Objects
+     *
+     * @returns {Transaction} a new Transaction that was just created
      */
     startTransaction() {
         if (this.isTransactionActive()) {
