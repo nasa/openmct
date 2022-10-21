@@ -102,7 +102,7 @@ export default class CompositionProvider {
         event,
         callback,
         context) {
-        this.establishTopicListener();
+        this.#establishTopicListener();
 
         /** @type {string} */
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
@@ -257,7 +257,7 @@ export default class CompositionProvider {
      * circular dependencies.
      * @private
      */
-    establishTopicListener() {
+    #establishTopicListener() {
         if (this.topicListener) {
             return;
         }
