@@ -137,7 +137,7 @@ export default class CompositionProvider {
         callback,
         context) {
 
-        /** @type {Identifier} */
+        /** @type {string} */
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
         const objectListeners = this.#listeningTo[keyString];
 
