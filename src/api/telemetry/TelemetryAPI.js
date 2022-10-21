@@ -129,8 +129,8 @@ export default class TelemetryAPI {
     }
 
     /**
-     * @private
-     * Though also used by TelemetryCollection
+     * Returns a telemetry request provider that supports
+     * a given domain object and options.
      */
     findRequestProvider() {
         const args = Array.prototype.slice.apply(arguments);
