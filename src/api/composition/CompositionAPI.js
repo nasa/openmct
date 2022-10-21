@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CompositionProvider from './CompositionProvider';
+import CompositionProvider from './DefaultCompositionProvider';
 import CompositionCollection from './CompositionCollection';
 
 /**
