@@ -63,11 +63,8 @@ export default class CompositionProvider {
         this.listeningTo = {};
         this.onMutation = this.#onMutation.bind(this);
 
-        this.cannotContainItself = this.#cannotContainItself.bind(this);
-        this.supportsComposition = this.#supportsComposition.bind(this);
-
-        compositionAPI.addPolicy(this.cannotContainItself);
-        compositionAPI.addPolicy(this.supportsComposition);
+        compositionAPI.addPolicy(this.#cannotContainItself.bind(this));
+        compositionAPI.addPolicy(this.#supportsComposition.bind(this));
     }
     /**
      * Check if this provider should be used to load composition for a
