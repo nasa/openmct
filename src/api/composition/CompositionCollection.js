@@ -55,7 +55,7 @@
  *  ```
  */
 export default class CompositionCollection {
-    #domainObject;
+    domainObject;
     #provider;
     #publicAPI;
     #listeners;
@@ -70,7 +70,7 @@ export default class CompositionCollection {
      *        policy checks
      */
     constructor(domainObject, provider, publicAPI) {
-        this.#domainObject = domainObject;
+        this.domainObject = domainObject;
         /** @type {import('./CompositionProvider').default} */
         this.#provider = provider;
         /** @type {OpenMCT} */
@@ -86,9 +86,9 @@ export default class CompositionCollection {
         this.onProviderRemove = this.#onProviderRemove.bind(this);
         this.#mutables = {};
 
-        if (this.#domainObject.isMutable) {
+        if (this.domainObject.isMutable) {
             this.returnMutables = true;
-            let unobserve = this.#domainObject.$on('$_destroy', () => {
+            let unobserve = this.domainObject.$on('$_destroy', () => {
                 Object.values(this.#mutables).forEach(mutable => {
                     this.#publicAPI.objects.destroyMutable(mutable);
                 });
@@ -112,7 +112,7 @@ export default class CompositionCollection {
         if (this.#provider.on && this.#provider.off) {
             if (event === 'add') {
                 this.#provider.on(
-                    this.#domainObject,
+                    this.domainObject,
                     'add',
                     this.onProviderAdd,
                     this
@@ -121,7 +121,7 @@ export default class CompositionCollection {
 
             if (event === 'remove') {
                 this.#provider.on(
-                    this.#domainObject,
+                    this.domainObject,
                     'remove',
                     this.onProviderRemove,
                     this
@@ -130,7 +130,7 @@ export default class CompositionCollection {
 
             if (event === 'reorder') {
                 this.#provider.on(
-                    this.#domainObject,
+                    this.domainObject,
                     'reorder',
                     this.#onProviderReorder,
                     this
@@ -173,21 +173,21 @@ export default class CompositionCollection {
             if (this.#provider.off && this.#provider.on) {
                 if (event === 'add') {
                     this.#provider.off(
-                        this.#domainObject,
+                        this.domainObject,
                         'add',
                         this.onProviderAdd,
                         this
                     );
                 } else if (event === 'remove') {
                     this.#provider.off(
-                        this.#domainObject,
+                        this.domainObject,
                         'remove',
                         this.onProviderRemove,
                         this
                     );
                 } else if (event === 'reorder') {
                     this.#provider.off(
-                        this.#domainObject,
+                        this.domainObject,
                         'reorder',
                         this.#onProviderReorder,
                         this
@@ -211,11 +211,11 @@ export default class CompositionCollection {
      */
     add(child, skipMutate) {
         if (!skipMutate) {
-            if (!this.#publicAPI.composition.checkPolicy(this.#domainObject, child)) {
-                throw `Object of type ${child.type} cannot be added to object of type ${this.#domainObject.type}`;
+            if (!this.#publicAPI.composition.checkPolicy(this.domainObject, child)) {
+                throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
             }
 
-            this.#provider.add(this.#domainObject, child.identifier);
+            this.#provider.add(this.domainObject, child.identifier);
         } else {
             if (this.returnMutables && this.#publicAPI.objects.supportsMutation(child.identifier)) {
                 let keyString = this.#publicAPI.objects.makeKeyString(child.identifier);
@@ -238,7 +238,7 @@ export default class CompositionCollection {
      */
     async load(abortSignal) {
         this.#cleanUpMutables();
-        const children = await this.#provider.load(this.#domainObject);
+        const children = await this.#provider.load(this.domainObject);
         const childObjects = await Promise.all(children.map((c) => this.#publicAPI.objects.get(c, abortSignal)));
         childObjects.forEach(c => this.add(c, true));
         this.#emit('load');
@@ -261,7 +261,7 @@ export default class CompositionCollection {
      */
     remove(child, skipMutate) {
         if (!skipMutate) {
-            this.#provider.remove(this.#domainObject, child.identifier);
+            this.#provider.remove(this.domainObject, child.identifier);
         } else {
             if (this.returnMutables) {
                 let keyString = this.#publicAPI.objects.makeKeyString(child);
@@ -285,7 +285,7 @@ export default class CompositionCollection {
      * @name remove
      */
     reorder(oldIndex, newIndex, _skipMutate) {
-        this.#provider.reorder(this.#domainObject, oldIndex, newIndex);
+        this.#provider.reorder(this.domainObject, oldIndex, newIndex);
     }
     /**
      * Destroy mutationListener
