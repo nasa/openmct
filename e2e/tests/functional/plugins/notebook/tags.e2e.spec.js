@@ -39,7 +39,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
     createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
-        // Click text=To start a new entry, click here or drag and drop any object
+        // Create an entry
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = ${iteration}`;
         await page.locator(entryLocator).click();
@@ -116,7 +116,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
-        await expect(page.locator('[aria-label="Search Result"]')).toBeHidden();
+        await expect(page.locator('text=No results found')).toBeVisible();
     });
 
     test('Can delete tags', async ({ page }) => {
@@ -131,6 +131,27 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
+    });
+
+    test('Can delete entries without tags', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5823'
+        });
+
+        await createNotebookEntryAndTags(page);
+
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 1`;
+        await page.locator(entryLocator).click();
+        await page.locator(entryLocator).fill(`An entry without tags`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').press('Enter');
+
+        await page.hover('[aria-label="Notebook Entry Input"] >> nth=1');
+        await page.locator('button[title="Delete this entry"]').last().click();
+        await expect(page.locator('text=This action will permanently delete this entry. Do you wish to continue?')).toBeVisible();
+        await page.locator('button:has-text("Ok")').click();
+        await expect(page.locator('text=This action will permanently delete this entry. Do you wish to continue?')).toBeHidden();
     });
 
     test('Can delete objects with tags and neither return in search', async ({ page }) => {

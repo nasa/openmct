@@ -90,6 +90,10 @@ class CouchSearchProvider {
     }
 
     searchForTags(tagsArray, abortSignal) {
+        if (!tagsArray || !tagsArray.length) {
+            return [];
+        }
+
         const filter = {
             "selector": {
                 "$and": [

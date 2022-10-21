@@ -27,7 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-test.describe('Notebook Network Request Inspection @couchdb', () => {
+test.describe('Notebook Tests with CouchDB @couchdb', () => {
     let testNotebook;
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
@@ -220,6 +220,45 @@ test.describe('Notebook Network Request Inspection @couchdb', () => {
         page.waitForLoadState('networkidle');
 
         expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(4);
+    });
+
+    test('Search tests', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/akhenry/openmct-yamcs/issues/69'
+        });
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page.locator('[aria-label="Notebook Entry Input"]').click();
+        await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
+
+        // Add three tags
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Science")');
+
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")');
+
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+        await page.locator('[placeholder="Type to select tag"]').click();
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
+        await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")');
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
+        await expect(page.locator('[aria-label="Search Result"]').first()).toContainText("Science");
+        await expect(page.locator('[aria-label="Search Result"]').first()).not.toContainText("Driving");
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
+        await expect(page.locator('text=No results found')).toBeVisible();
     });
 });
 
