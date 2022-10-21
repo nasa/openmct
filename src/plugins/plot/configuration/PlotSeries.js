@@ -151,16 +151,6 @@ export default class PlotSeries extends Model {
         this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
         this.limitDefinition = this.openmct.telemetry.limitDefinition(options.domainObject);
         this.limits = [];
-        this.limitDefinition.limits().then(response => {
-            this.limits = [];
-
-            if (response) {
-                this.limits = response;
-            }
-
-            this.emit('limits', this);
-
-        });
         this.openmct.time.on('bounds', this.updateLimits);
         this.removeMutationListener = this.openmct.objects.observe(
             this.domainObject,
@@ -176,15 +166,6 @@ export default class PlotSeries extends Model {
         this.emit('limitBounds', bounds);
     }
 
-    locateOldObject(oldStyleParent) {
-        return oldStyleParent.useCapability('composition')
-            .then(function (children) {
-                this.oldObject = children
-                    .filter(function (child) {
-                        return child.getId() === this.keyString;
-                    }, this)[0];
-            }.bind(this));
-    }
     /**
      * Fetch historical data and establish a realtime subscription.  Returns
      * a promise that is resolved when all connections have been successfully
@@ -192,7 +173,7 @@ export default class PlotSeries extends Model {
      *
      * @returns {Promise}
      */
-    fetch(options) {
+    async fetch(options) {
         let strategy;
 
         if (this.model.interpolate !== 'none') {
@@ -217,23 +198,19 @@ export default class PlotSeries extends Model {
                 );
         }
 
-        /* eslint-disable you-dont-need-lodash-underscore/concat */
-        return this.openmct
-            .telemetry
-            .request(this.domainObject, options)
-            .then((points) => {
-                const data = this.getSeriesData();
-                const newPoints = _(data)
-                    .concat(points)
-                    .sortBy(this.getXVal)
-                    .uniq(true, point => [this.getXVal(point), this.getYVal(point)].join())
-                    .value();
-                this.reset(newPoints);
-            })
-            .catch((error) => {
-                console.warn('Error fetching data', error);
-            });
-        /* eslint-enable you-dont-need-lodash-underscore/concat */
+        try {
+            const points = await this.openmct.telemetry.request(this.domainObject, options);
+            const data = this.getSeriesData();
+            // eslint-disable-next-line you-dont-need-lodash-underscore/concat
+            const newPoints = _(data)
+                .concat(points)
+                .sortBy(this.getXVal)
+                .uniq(true, point => [this.getXVal(point), this.getYVal(point)].join())
+                .value();
+            this.reset(newPoints);
+        } catch (error) {
+            console.warn('Error fetching data', error);
+        }
     }
 
     updateName(name) {
@@ -334,16 +311,19 @@ export default class PlotSeries extends Model {
      * Override this to implement plot series loading functionality.  Must return
      * a promise that is resolved when loading is completed.
      *
-     * @private
      * @returns {Promise}
      */
-    load(options) {
-        return this.fetch(options)
-            .then(function (res) {
-                this.emit('load');
+    async load(options) {
+        await this.fetch(options);
+        this.emit('load');
+        const limitsResponse = await this.limitDefinition.limits();
+        this.limits = [];
+        if (limitsResponse) {
+            this.limits = limitsResponse;
+        }
 
-                return res;
-            }.bind(this));
+        this.emit('limits', this);
+        this.emit('change:limitLines', this);
     }
 
     /**
