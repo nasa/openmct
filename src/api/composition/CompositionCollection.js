@@ -200,9 +200,12 @@ export default class CompositionCollection {
      * A call to [load]{@link module:openmct.CompositionCollection#load}
      * must have resolved before using this method.
      *
+     * **TODO:** Remove `skipMutate` parameter.
+     *
      * @param {DomainObject} child the domain object to add
-     * @param {boolean} skipMutate true if the underlying provider should
-     *        not be updated
+     * @param {boolean} skipMutate
+     * **Intended for internal use ONLY.**
+     * true if the underlying provider should not be updated.
      */
     add(child, skipMutate) {
         if (!skipMutate) {
@@ -246,9 +249,12 @@ export default class CompositionCollection {
      * A call to [load]{@link module:openmct.CompositionCollection#load}
      * must have resolved before using this method.
      *
+     * **TODO:** Remove `skipMutate` parameter.
+     *
      * @param {DomainObject} child the domain object to remove
-     * @param {boolean} skipMutate true if the underlying provider should
-     *        not be updated
+     * @param {boolean} skipMutate
+     * **Intended for internal use ONLY.**
+     * true if the underlying provider should not be updated.
      * @name remove
      */
     remove(child, skipMutate) {
