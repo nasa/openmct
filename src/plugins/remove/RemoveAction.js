@@ -19,8 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 export default class RemoveAction {
+    #transaction;
+
     constructor(openmct) {
+
         this.name = 'Remove';
         this.key = 'remove';
         this.description = 'Remove this object from its containing object.';
@@ -29,6 +33,8 @@ export default class RemoveAction {
         this.priority = 1;
 
         this.openmct = openmct;
+
+        this.removeFromComposition = this.removeFromComposition.bind(this); // for access to private transaction variable
     }
 
     async invoke(objectPath) {
@@ -38,7 +44,7 @@ export default class RemoveAction {
         try {
             await this.showConfirmDialog(object);
         } catch (error) {
-            return; // form canceled
+            return; // form canceled, exit invoke
         }
 
         await this.removeFromComposition(parent, object);
@@ -140,24 +146,18 @@ export default class RemoveAction {
             && Array.isArray(parent.composition);
     }
 
-    activeTransaction() {
-        return this.openmct.objects.getActiveTransaction();
-    }
-
     startTransaction() {
-        if (!this.openmct.editor.isEditing()) {
-            this.openmct.objects.startTransaction();
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.#transaction = this.openmct.objects.startTransaction();
         }
     }
 
     saveTransaction() {
-        const transaction = this.activeTransaction();
-
-        if (!transaction || this.openmct.editor.isEditing()) {
+        if (!this.#transaction) {
             return;
         }
 
-        return transaction.commit()
+        return this.#transaction.commit()
             .catch(error => {
                 throw error;
             }).finally(() => {
