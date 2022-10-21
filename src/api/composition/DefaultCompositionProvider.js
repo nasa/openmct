@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
 import objectUtils from "../objects/object-utils";
+import CompositionProvider from './CompositionProvider';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
@@ -49,27 +49,13 @@ import objectUtils from "../objects/object-utils";
  * If the composition of an object can change over time-- perhaps via
  * server updates or mutation via the add/remove methods, then one must
  * trigger events as necessary.
- *
+ * @extends CompositionProvider
  */
-export default class CompositionProvider {
-    #publicAPI;
-    #listeningTo;
-
-    /**
-     * @param {OpenMCT} publicAPI
-     * @param {CompositionAPI} compositionAPI
-     */
-    constructor(publicAPI, compositionAPI) {
-        this.#publicAPI = publicAPI;
-        this.#listeningTo = {};
-
-        compositionAPI.addPolicy(this.#cannotContainItself.bind(this));
-        compositionAPI.addPolicy(this.#supportsComposition.bind(this));
-    }
+export default class DefaultCompositionProvider extends CompositionProvider {
     /**
      * Check if this provider should be used to load composition for a
      * particular domain object.
-     * @method appliesTo
+     * @override
      * @param {DomainObject} domainObject the domain object
      *        to check
      * @returns {boolean} true if this provider can provide composition for a given domain object
@@ -80,11 +66,11 @@ export default class CompositionProvider {
     /**
      * Load any domain objects contained in the composition of this domain
      * object.
+     * @override
      * @param {DomainObject} domainObject the domain object
      *        for which to load composition
-     * @returns {Promise<Array<Identifier>>} a promise for
+     * @returns {Promise<Identifier[]>} a promise for
      *          the Identifiers in this composition
-     * @method load
      */
     load(domainObject) {
         return Promise.all(domainObject.composition);
@@ -93,6 +79,7 @@ export default class CompositionProvider {
      * Attach listeners for changes to the composition of a given domain object.
      * Supports `add` and `remove` events.
      *
+     * @override
      * @param {DomainObject} domainObject to listen to
      * @param {string} event the event to bind to, either `add` or `remove`.
      * @param {Function} callback callback to invoke when event is triggered.
@@ -102,14 +89,14 @@ export default class CompositionProvider {
         event,
         callback,
         context) {
-        this.#establishTopicListener();
+        this.establishTopicListener();
 
         /** @type {string} */
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
-        let objectListeners = this.#listeningTo[keyString];
+        let objectListeners = this.listeningTo[keyString];
 
         if (!objectListeners) {
-            objectListeners = this.#listeningTo[keyString] = {
+            objectListeners = this.listeningTo[keyString] = {
                 add: [],
                 remove: [],
                 reorder: [],
@@ -127,6 +114,7 @@ export default class CompositionProvider {
      * event name, callback, and context must be the same as when the listener
      * was originally attached.
      *
+     * @override
      * @param {DomainObject} domainObject to remove listener for
      * @param {string} event event to stop listening to: `add` or `remove`.
      * @param {Function} callback callback to remove.
@@ -139,7 +127,7 @@ export default class CompositionProvider {
 
         /** @type {string} */
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
-        const objectListeners = this.#listeningTo[keyString];
+        const objectListeners = this.listeningTo[keyString];
 
         const index = objectListeners[event].findIndex(l => {
             return l.callback === callback && l.context === context;
@@ -147,7 +135,7 @@ export default class CompositionProvider {
 
         objectListeners[event].splice(index, 1);
         if (!objectListeners.add.length && !objectListeners.remove.length && !objectListeners.reorder.length) {
-            delete this.#listeningTo[keyString];
+            delete this.listeningTo[keyString];
         }
     }
     /**
@@ -156,9 +144,10 @@ export default class CompositionProvider {
      * This method is optional; if not present, adding to a domain object's
      * composition using this provider will be disallowed.
      *
+     * @override
      * @param {DomainObject} domainObject the domain object
      *        which should have its composition modified
-     * @param {DomainObject} childId the domain object to remove
+     * @param {Identifier} childId the domain object to remove
      * @method remove
      */
     remove(domainObject, childId) {
@@ -167,7 +156,7 @@ export default class CompositionProvider {
                       && childId.key === child.key);
         });
 
-        this.#publicAPI.objects.mutate(domainObject, 'composition', composition);
+        this.publicAPI.objects.mutate(domainObject, 'composition', composition);
     }
     /**
      * Add a domain object to another domain object's composition.
@@ -175,28 +164,31 @@ export default class CompositionProvider {
      * This method is optional; if not present, adding to a domain object's
      * composition using this provider will be disallowed.
      *
-     * @param {DomainObject} domainObject the domain object
+     * @override
+     * @param {DomainObject} parent the domain object
      *        which should have its composition modified
-     * @param {DomainObject} childId the domain object to add
+     * @param {Identifier} childId the domain object to add
      * @method add
      */
     add(parent, childId) {
         if (!this.includes(parent, childId)) {
             parent.composition.push(childId);
-            this.#publicAPI.objects.mutate(parent, 'composition', parent.composition);
+            this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
         }
     }
 
     /**
+     * @override
      * @param {DomainObject} parent
      * @param {Identifier} childId
      * @returns {boolean}
      */
     includes(parent, childId) {
-        return parent.composition.some(composee => this.#publicAPI.objects.areIdsEqual(composee, childId));
+        return parent.composition.some(composee => this.publicAPI.objects.areIdsEqual(composee, childId));
     }
 
     /**
+     * @override
      * @param {DomainObject} domainObject
      * @param {number} oldIndex
      * @param {number} newIndex
@@ -231,11 +223,11 @@ export default class CompositionProvider {
             }
         }
 
-        this.#publicAPI.objects.mutate(domainObject, 'composition', newComposition);
+        this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
         /** @type {string} */
         let id = objectUtils.makeKeyString(domainObject.identifier);
-        const listeners = this.#listeningTo[id];
+        const listeners = this.listeningTo[id];
 
         if (!listeners) {
             return;
@@ -250,83 +242,5 @@ export default class CompositionProvider {
                 listener.callback(reorderPlan);
             }
         }
-    }
-
-    /**
-     * Listens on general mutation topic, using injector to fetch to avoid
-     * circular dependencies.
-     * @private
-     */
-    #establishTopicListener() {
-        if (this.topicListener) {
-            return;
-        }
-
-        this.#publicAPI.objects.eventEmitter.on('mutation', this.#onMutation.bind(this));
-        this.topicListener = () => {
-            this.#publicAPI.objects.eventEmitter.off('mutation', this.#onMutation.bind(this));
-        };
-    }
-
-    /**
-     * @private
-     * @param {DomainObject} parent
-     * @param {DomainObject} child
-     * @returns {boolean}
-     */
-    #cannotContainItself(parent, child) {
-        return !(parent.identifier.namespace === child.identifier.namespace
-              && parent.identifier.key === child.identifier.key);
-    }
-
-    /**
-     * @private
-     * @param {DomainObject} parent
-     * @returns {boolean}
-     */
-    #supportsComposition(parent, _child) {
-        return this.#publicAPI.composition.supportsComposition(parent);
-    }
-
-    /**
-     * Handles mutation events.  If there are active listeners for the mutated
-     * object, detects changes to composition and triggers necessary events.
-     *
-     * @private
-     * @param {DomainObject} oldDomainObject
-     */
-    #onMutation(oldDomainObject) {
-        const id = objectUtils.makeKeyString(oldDomainObject.identifier);
-        const listeners = this.#listeningTo[id];
-
-        if (!listeners) {
-            return;
-        }
-
-        const oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        const newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
-
-        const added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
-        const removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
-
-        function notify(value) {
-            return function (listener) {
-                if (listener.context) {
-                    listener.callback.call(listener.context, value);
-                } else {
-                    listener.callback(value);
-                }
-            };
-        }
-
-        listeners.composition = newComposition.map(objectUtils.parseKeyString);
-
-        added.forEach(function (addedChild) {
-            listeners.add.forEach(notify(addedChild));
-        });
-
-        removed.forEach(function (removedChild) {
-            listeners.remove.forEach(notify(removedChild));
-        });
     }
 }

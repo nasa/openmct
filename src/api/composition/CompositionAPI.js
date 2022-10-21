@@ -20,8 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CompositionProvider from './DefaultCompositionProvider';
+import DefaultCompositionProvider from './DefaultCompositionProvider';
 import CompositionCollection from './CompositionCollection';
+
+/**
+ * @typedef {import('./CompositionProvider').default} CompositionProvider
+ */
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
@@ -47,7 +51,7 @@ export default class CompositionAPI {
         this.registry = [];
         /** @type {CompositionPolicy[]} */
         this.policies = [];
-        this.addProvider(new CompositionProvider(publicAPI, this));
+        this.addProvider(new DefaultCompositionProvider(publicAPI, this));
         /** @type {OpenMCT} */
         this.publicAPI = publicAPI;
     }
