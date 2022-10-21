@@ -52,16 +52,16 @@ import objectUtils from "../objects/object-utils";
  *
  */
 export default class CompositionProvider {
+    #publicAPI;
+    #listeningTo;
+
     /**
      * @param {OpenMCT} publicAPI
      * @param {CompositionAPI} compositionAPI
      */
     constructor(publicAPI, compositionAPI) {
-        /** @type {OpenMCT} */
-        this.publicAPI = publicAPI;
-        /** @type {Object.<string, DomainObject>} */
-        this.listeningTo = {};
-        this.onMutation = this.#onMutation.bind(this);
+        this.#publicAPI = publicAPI;
+        this.#listeningTo = {};
 
         compositionAPI.addPolicy(this.#cannotContainItself.bind(this));
         compositionAPI.addPolicy(this.#supportsComposition.bind(this));
@@ -104,12 +104,12 @@ export default class CompositionProvider {
         context) {
         this.establishTopicListener();
 
-        /** @type {import('../objects/ObjectAPI').Identifier} */
+        /** @type {string} */
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
-        let objectListeners = this.listeningTo[keyString];
+        let objectListeners = this.#listeningTo[keyString];
 
         if (!objectListeners) {
-            objectListeners = this.listeningTo[keyString] = {
+            objectListeners = this.#listeningTo[keyString] = {
                 add: [],
                 remove: [],
                 reorder: [],
@@ -139,7 +139,7 @@ export default class CompositionProvider {
 
         /** @type {Identifier} */
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
-        const objectListeners = this.listeningTo[keyString];
+        const objectListeners = this.#listeningTo[keyString];
 
         const index = objectListeners[event].findIndex(l => {
             return l.callback === callback && l.context === context;
@@ -147,7 +147,7 @@ export default class CompositionProvider {
 
         objectListeners[event].splice(index, 1);
         if (!objectListeners.add.length && !objectListeners.remove.length && !objectListeners.reorder.length) {
-            delete this.listeningTo[keyString];
+            delete this.#listeningTo[keyString];
         }
     }
     /**
@@ -167,7 +167,7 @@ export default class CompositionProvider {
                       && childId.key === child.key);
         });
 
-        this.publicAPI.objects.mutate(domainObject, 'composition', composition);
+        this.#publicAPI.objects.mutate(domainObject, 'composition', composition);
     }
     /**
      * Add a domain object to another domain object's composition.
@@ -183,7 +183,7 @@ export default class CompositionProvider {
     add(parent, childId) {
         if (!this.includes(parent, childId)) {
             parent.composition.push(childId);
-            this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
+            this.#publicAPI.objects.mutate(parent, 'composition', parent.composition);
         }
     }
 
@@ -193,7 +193,7 @@ export default class CompositionProvider {
      * @returns {boolean}
      */
     includes(parent, childId) {
-        return parent.composition.some(composee => this.publicAPI.objects.areIdsEqual(composee, childId));
+        return parent.composition.some(composee => this.#publicAPI.objects.areIdsEqual(composee, childId));
     }
 
     /**
@@ -231,11 +231,11 @@ export default class CompositionProvider {
             }
         }
 
-        this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
+        this.#publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
         /** @type {string} */
         let id = objectUtils.makeKeyString(domainObject.identifier);
-        const listeners = this.listeningTo[id];
+        const listeners = this.#listeningTo[id];
 
         if (!listeners) {
             return;
@@ -262,9 +262,9 @@ export default class CompositionProvider {
             return;
         }
 
-        this.publicAPI.objects.eventEmitter.on('mutation', this.onMutation);
+        this.#publicAPI.objects.eventEmitter.on('mutation', this.#onMutation.bind(this));
         this.topicListener = () => {
-            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation);
+            this.#publicAPI.objects.eventEmitter.off('mutation', this.#onMutation.bind(this));
         };
     }
 
@@ -285,7 +285,7 @@ export default class CompositionProvider {
      * @returns {boolean}
      */
     #supportsComposition(parent, _child) {
-        return this.publicAPI.composition.supportsComposition(parent);
+        return this.#publicAPI.composition.supportsComposition(parent);
     }
 
     /**
@@ -297,7 +297,7 @@ export default class CompositionProvider {
      */
     #onMutation(oldDomainObject) {
         const id = objectUtils.makeKeyString(oldDomainObject.identifier);
-        const listeners = this.listeningTo[id];
+        const listeners = this.#listeningTo[id];
 
         if (!listeners) {
             return;
