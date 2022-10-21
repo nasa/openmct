@@ -1,0 +1,46 @@
+name: Cut Release Branch
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        type: choice
+        description: Release type (major/minor/patch)
+        default: patch
+        options:
+          - major
+          - minor
+          - patch
+        required: true
+jobs:
+  cut-release:
+    name: Create release branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master for ${{ github.event.inputs.release-type }} release
+        uses: actions/checkout@v3
+        with:
+          ref: master
+      - name: Create release branch and generate PR body
+        id: create-release
+        env:
+          RELEASE_TYPE: ${{ github.event.inputs.release-type }}
+        run: |
+          current_version=$(jq -r .version package.json)
+          npm version $RELEASE_TYPE --git-tag-version false
+          new_version=$(jq -r .version package.json)
+          git reset --hard
+          branch_name="release/${new_version}"
+
+          echo "Current version is $current_version"
+          echo "New version is $new_version"
+          echo "New branch name is $branch_name"
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git checkout -b "$branch_name"
+
+          npm version $RELEASE_TYPE --git-tag-version false
+
+          git commit -a -m "Bump version to ${new_version}"
+          git push --set-upstream origin "$branch_name"
