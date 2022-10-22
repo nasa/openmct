@@ -225,15 +225,14 @@ async function getHashUrlToDomainObject(page, uuid) {
 }
 
 /**
- * Utilizes the OpenMCT API to detect if the given object has an active transaction (is in Edit mode).
+ * Utilizes the OpenMCT API to detect if the UI is in Edit mode.
  * @private
  * @param {import('@playwright/test').Page} page
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier
- * @return {Promise<boolean>} true if the object has an active transaction, false otherwise
+ * @return {Promise<boolean>} true if the Open MCT is in Edit Mode
  */
 async function _isInEditMode(page, identifier) {
     // eslint-disable-next-line no-return-await
-    return await page.evaluate((objectIdentifier) => window.openmct.objects.isTransactionActive(objectIdentifier), identifier);
+    return await page.evaluate(() => window.openmct.editor.isEditing());
 }
 
 /**
