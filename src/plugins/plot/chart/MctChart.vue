@@ -382,7 +382,7 @@ export default {
         makeLimitLines(series) {
             this.clearLimitLines(series);
 
-            if (!series.get('limitLines')) {
+            if (!series || !series.get('limitLines')) {
                 return;
             }
 
