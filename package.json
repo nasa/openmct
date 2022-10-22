@@ -57,6 +57,7 @@
     "sass-loader": "13.0.2",
     "sinon": "14.0.0",
     "style-loader": "^3.3.1",
+    "typescript": "4.8.4",
     "uuid": "9.0.0",
     "vue": "2.6.14",
     "vue-eslint-parser": "9.1.0",
@@ -96,7 +97,7 @@
     "cov:e2e:full:publish": "codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e-full",
     "cov:e2e:stable:publish": "codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e-stable",
     "cov:unit:publish": "codecov --disable=gcov -f ./coverage/unit/lcov.info -F unit",
-    "prepare": "npm run build:prod"
+    "prepare": "npm run build:prod && npx tsc"
   },
   "repository": {
     "type": "git",

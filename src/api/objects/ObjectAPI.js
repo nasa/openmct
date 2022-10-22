@@ -33,7 +33,7 @@ import InMemorySearchProvider from './InMemorySearchProvider';
 /**
  * Uniquely identifies a domain object.
  *
- * @typedef Identifier
+ * @typedef {object} Identifier
  * @property {string} namespace the namespace to/from which this domain
  *           object should be loaded/stored.
  * @property {string} key a unique identifier for the domain object
@@ -50,8 +50,8 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  * A few common properties are defined for domain objects. Beyond these,
  * individual types of domain objects may add more as they see fit.
  *
- * @typedef DomainObject
- * @property {module:openmct.ObjectAPI~Identifier} identifier a key/namespace pair which
+ * @typedef {object} DomainObject
+ * @property {Identifier} identifier a key/namespace pair which
  *           uniquely identifies this domain object
  * @property {string} type the type of domain object
  * @property {string} name the human-readable name for this domain object
@@ -59,19 +59,19 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  *           object
  * @property {number} [modified] the time, in milliseconds since the UNIX
  *           epoch, at which this domain object was last modified
- * @property {module:openmct.ObjectAPI~Identifier[]} [composition] if
+ * @property {Identifier[]} [composition] if
  *           present, this will be used by the default composition provider
  *           to load domain objects
- * @memberof module:openmct
+ * @memberof module:openmct.ObjectAPI~
  */
 
 /**
-    * @readonly
-    * @enum {String} SEARCH_TYPES
-    * @property {String} OBJECTS Search for objects
-    * @property {String} ANNOTATIONS Search for annotations
-    * @property {String} TAGS Search for tags
-*/
+  * @readonly
+  * @enum {string} SEARCH_TYPES
+  * @property {string} OBJECTS Search for objects
+  * @property {string} ANNOTATIONS Search for annotations
+  * @property {string} TAGS Search for tags
+  */
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
