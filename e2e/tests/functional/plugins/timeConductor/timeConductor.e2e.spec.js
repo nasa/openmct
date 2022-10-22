@@ -148,9 +148,39 @@ test.describe('Time conductor input fields real-time mode', () => {
         expect(page.url()).toContain(`endDelta=${endDelta}`);
     });
 
-    test.fixme('time conductor history in fixed time mode will track changing start and end times', async ({ page }) => {
-        // change start time, verify it's tracked in history
-        // change end time, verify it's tracked in history
+    test('time conductor history in fixed time mode will track changing start and end times', async ({ page }) => {
+        // Navigate to Open MCT in Fixed Time Mode, UTC Time System
+        await page.goto('./#/browse/mine?view=grid&tc.mode=fixed&tc.timeSystem=utc', { waitUntil: 'networkidle' });
+
+        // Change start time
+        const year = new Date().getFullYear();
+
+        let startDate = 'xxxx-01-01 01:00:00.000Z';
+        startDate = year + startDate.substring(4);
+
+        const startTimeLocator = page.locator(`input[type='text']`).first();
+
+        await startTimeLocator.click();
+        await startTimeLocator.fill(startDate.toString());
+
+        // Verify that the start time is tracked in time conductor history
+        const historyLocator = page.locator(`[aria-label='Time Conductor History']`);
+        await historyLocator.click();
+
+        let lastTimeframe = page.locator(`[class='icon-history']`).first();
+        await expect(lastTimeframe).toContainText(`${year}-01-01 01:00:00`);
+
+        // Change end time
+        let endDate = 'xxxx-01-02 01:00:00.000Z';
+        endDate = year + endDate.substring(4);
+
+        const endTimeLocator = page.locator(`input[type='text']`).nth(1);
+        await endTimeLocator.click();
+        await endTimeLocator.fill(endDate.toString());
+
+        // Verify that the end time is tracked in time conductor history
+        await historyLocator.click();
+        await expect(lastTimeframe).toHaveAttribute('title', `${year}-01-01 01:00:00.000 - ${year}-01-02 01:00:00.000`);
     });
 
     test.fixme('time conductor history in realtime mode will track changing start and end times', async ({ page }) => {
