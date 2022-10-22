@@ -26,7 +26,7 @@ jobs:
           RELEASE_TYPE: ${{ github.event.inputs.release-type }}
         run: |
           current_version=$(jq -r .version package.json)
-          npm version $RELEASE_TYPE --git-tag-version false
+          npm version $RELEASE_TYPE --no-git-tag-version
           new_version=$(jq -r .version package.json)
           git reset --hard
           branch_name="release/${new_version}"
@@ -40,7 +40,7 @@ jobs:
 
           git checkout -b "$branch_name"
 
-          npm version $RELEASE_TYPE --git-tag-version false
+          npm version $RELEASE_TYPE --no-git-tag-version
 
           git commit -a -m "Bump version to ${new_version}"
           git push --set-upstream origin "$branch_name"
