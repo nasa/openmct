@@ -83,6 +83,8 @@ export default class PlotSeries extends Model {
         // Model.apply(this, arguments);
         this.onXKeyChange(this.get('xKey'));
         this.onYKeyChange(this.get('yKey'));
+
+        this.unPlottableValues = [undefined, Infinity, -Infinity];
     }
 
     /**
@@ -443,7 +445,7 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValueInvalid(val) {
-        return Number.isNaN(val) || [undefined, Infinity, -Infinity].includes(val);
+        return Number.isNaN(val) || this.unPlottableValues.includes(val);
     }
 
     /**
