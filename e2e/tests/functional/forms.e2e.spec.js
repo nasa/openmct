@@ -25,6 +25,8 @@ This test suite is dedicated to tests which verify form functionality in isolati
 */
 
 const { test, expect } = require('../../baseFixtures');
+const { createDomainObjectWithDefaults } = require('../../appActions');
+const { v4: uuid } = require('uuid');
 const path = require('path');
 
 const TEST_FOLDER = 'test folder';
@@ -88,6 +90,37 @@ test.describe('Persistence operations @addInit', () => {
 
         const okButton = page.locator('button:has-text("OK")');
         await expect(okButton).toBeDisabled();
+    });
+});
+
+test.describe('Persistence operations @couchdb', () => {
+    test('Editing object properties should generate a single persistence operation', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5616'
+        });
+
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        const clock = await createDomainObjectWithDefaults(page, {
+            name: `clock-${uuid()}`,
+            type: 'Clock'
+        });
+
+        let putRequestCount = 0;
+        page.on('request', req => {
+            if (req.method() === 'PUT' && req.url().endsWith(clock.uuid)) {
+                putRequestCount += 1;
+            }
+        });
+
+        await page.click('button[title="More options"]');
+        await page.click('li[title="Edit properties of this object."]');
+        await page.locator('select[name="mctControl"]').nth(1).selectOption({ value: 'clock24' });
+
+        await page.click('button[aria-label="Save"]');
+
+        expect(putRequestCount).toEqual(1);
     });
 });
 
