@@ -229,6 +229,25 @@ describe("The Time API", function () {
             expect(api.clock()).toBeUndefined();
         });
 
+        it('Provides a default time context', () => {
+            const timeContext = api.getContextForView([]);
+            expect(timeContext).not.toBe(null);
+        });
+
+        it("Without a clock, is in fixed time mode", () => {
+            const timeContext = api.getContextForView([]);
+            expect(timeContext.isRealTime()).toBe(false);
+        });
+
+        it("Provided a clock, is in real-time mode", () => {
+            const timeContext = api.getContextForView([]);
+            timeContext.clock('mts', {
+                start: 0,
+                end: 1
+            });
+            expect(timeContext.isRealTime()).toBe(true);
+        });
+
     });
 
     it("on tick, observes offsets, and indicates tick in bounds callback", function () {
