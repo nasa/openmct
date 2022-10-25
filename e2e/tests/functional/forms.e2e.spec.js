@@ -120,7 +120,10 @@ test.describe('Persistence operations @couchdb', () => {
 
         await page.click('button[aria-label="Save"]');
 
-        expect(putRequestCount).toEqual(1);
+        await expect.poll(() => putRequestCount, {
+            message: 'Verify a single PUT request was made to persist the object',
+            timeout: 1000
+        }).toEqual(1);
     });
 });
 
