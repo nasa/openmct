@@ -215,10 +215,8 @@ export default {
             activities.forEach(activity => activity.remove());
         },
         setDimensions() {
-            const planHolder = this.$refs.plan;
             this.width = this.getClientWidth();
-
-            this.height = Math.round(planHolder.getBoundingClientRect().height);
+            this.height = this.getClientHeight();
         },
         setScale(timeSystem) {
             if (!this.width) {
