@@ -103,11 +103,13 @@ test.describe('Persistence operations @couchdb', () => {
 
         await page.goto('./', { waitUntil: 'networkidle' });
 
+        // Create a new 'Clock' object with default settings
         const clock = await createDomainObjectWithDefaults(page, {
             name: `clock-${uuid()}`,
             type: 'Clock'
         });
 
+        // Count all persistence operations (PUT requests) for this specific object
         let putRequestCount = 0;
         page.on('request', req => {
             if (req.method() === 'PUT' && req.url().endsWith(clock.uuid)) {
@@ -115,10 +117,12 @@ test.describe('Persistence operations @couchdb', () => {
             }
         });
 
+        // Open the edit form for the clock object
         await page.click('button[title="More options"]');
         await page.click('li[title="Edit properties of this object."]');
-        await page.locator('select[name="mctControl"]').nth(1).selectOption({ value: 'clock24' });
 
+        // Modify the display format from default 12hr -> 24hr and click 'Save'
+        await page.locator('select[name="mctControl"]').nth(1).selectOption({ value: 'clock24' });
         await page.click('button[aria-label="Save"]');
 
         await expect.poll(() => putRequestCount, {
