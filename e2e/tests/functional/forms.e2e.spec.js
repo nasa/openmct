@@ -94,6 +94,7 @@ test.describe('Persistence operations @addInit', () => {
 });
 
 test.describe('Persistence operations @couchdb', () => {
+    test.use({ failOnConsoleError: false });
     test('Editing object properties should generate a single persistence operation', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
