@@ -149,8 +149,9 @@ export default {
                 this.setDimensions();
                 this.updateViewBounds();
             }
+
             if (clientHeight !== this.height) {
-              this.setDimensions();
+                this.setDimensions();
             }
         },
         getClientWidth() {
@@ -167,25 +168,25 @@ export default {
             return clientWidth - 200;
         },
         getClientHeight() {
-          let clientHeight = this.$refs.plan.clientHeight;
+            let clientHeight = this.$refs.plan.clientHeight;
 
-          if (!clientHeight) {
+            if (!clientHeight) {
             //this is a hack - need a better way to find the parent of this component
-            let parent = this.openmct.layout.$refs.browseObject.$el;
-            if (parent) {
-              clientHeight = parent.getBoundingClientRect().height;
+                let parent = this.openmct.layout.$refs.browseObject.$el;
+                if (parent) {
+                    clientHeight = parent.getBoundingClientRect().height;
+                }
             }
-          }
 
-          return clientHeight;
+            return clientHeight;
         },
         getPlanData(domainObject) {
             this.planData = getValidatedData(domainObject);
         },
         updateBounds(clock) {
-          if (clock === undefined) {
-            this.viewBounds = Object.create(this.timeContext.bounds());
-          }
+            if (clock === undefined) {
+                this.viewBounds = Object.create(this.timeContext.bounds());
+            }
         },
         updateViewBounds(bounds) {
             if (bounds) {

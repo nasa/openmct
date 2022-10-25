@@ -136,23 +136,23 @@ export default {
             });
         },
         updateContentHeight() {
-          const clientHeight = this.getClientHeight();
-          if (this.height !== clientHeight) {
-            this.height = clientHeight;
-          }
+            const clientHeight = this.getClientHeight();
+            if (this.height !== clientHeight) {
+                this.height = clientHeight;
+            }
         },
         getClientHeight() {
-          let clientHeight = this.$refs.contentHolder.getBoundingClientRect().height;
+            let clientHeight = this.$refs.contentHolder.getBoundingClientRect().height;
 
-          if (!clientHeight) {
+            if (!clientHeight) {
             //this is a hack - need a better way to find the parent of this component
-            let parent = this.openmct.layout.$refs.browseObject.$el;
-            if (parent) {
-              clientHeight = parent.getBoundingClientRect().height;
+                let parent = this.openmct.layout.$refs.browseObject.$el;
+                if (parent) {
+                    clientHeight = parent.getBoundingClientRect().height;
+                }
             }
-          }
 
-          return clientHeight;
+            return clientHeight;
         },
         getTimeSystems() {
             const timeSystems = this.openmct.time.getAllTimeSystems();
