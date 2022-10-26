@@ -24,7 +24,6 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
-import Vue from 'vue';
 
 import { debounce } from 'lodash';
 
@@ -102,15 +101,10 @@ describe('EditPropertiesAction plugin', () => {
             composition: []
         };
 
-        editPropertiesAction.invoke([domainObject])
-            .then(() => {
-                done();
-            })
-            .catch(() => {
-                done();
-            });
+        const deBouncedFormChange = debounce(handleFormPropertyChange, 500);
+        openmct.forms.on('onFormPropertyChange', deBouncedFormChange);
 
-        Vue.nextTick(() => {
+        function handleFormPropertyChange(data) {
             const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             expect(title.value).toEqual(domainObject.name);
@@ -124,7 +118,17 @@ describe('EditPropertiesAction plugin', () => {
 
             const clickEvent = createMouseEvent('click');
             buttons[1].dispatchEvent(clickEvent);
-        });
+
+            openmct.forms.off('onFormPropertyChange', deBouncedFormChange);
+        }
+
+        editPropertiesAction.invoke([domainObject])
+            .then(() => {
+                done();
+            })
+            .catch(() => {
+                done();
+            });
     });
 
     it('edit properties action saves changes', (done) => {
@@ -155,9 +159,11 @@ describe('EditPropertiesAction plugin', () => {
         const deBouncedCallback = debounce(callback, 300);
         unObserve = openmct.objects.observe(domainObject, '*', deBouncedCallback);
 
-        editPropertiesAction.invoke([domainObject]);
+        let changed = false;
+        const deBouncedFormChange = debounce(handleFormPropertyChange, 500);
+        openmct.forms.on('onFormPropertyChange', deBouncedFormChange);
 
-        Vue.nextTick(() => {
+        function handleFormPropertyChange(data) {
             const form = document.querySelector('.js-form');
             const title = form.querySelector('input');
             const notes = form.querySelector('textArea');
@@ -166,18 +172,27 @@ describe('EditPropertiesAction plugin', () => {
             expect(buttons[0].textContent.trim()).toEqual('OK');
             expect(buttons[1].textContent.trim()).toEqual('Cancel');
 
-            expect(title.value).toEqual(domainObject.name);
-            expect(notes.value).toEqual(domainObject.notes);
+            if (!changed) {
+                expect(title.value).toEqual(domainObject.name);
+                expect(notes.value).toEqual(domainObject.notes);
 
-            // change input field value and dispatch event for it
-            title.focus();
-            title.value = newName;
-            title.dispatchEvent(new Event('input'));
-            title.blur();
+                // change input field value and dispatch event for it
+                title.focus();
+                title.value = newName;
+                title.dispatchEvent(new Event('input'));
+                title.blur();
 
-            const clickEvent = createMouseEvent('click');
-            buttons[0].dispatchEvent(clickEvent);
-        });
+                changed = true;
+            } else {
+                // click ok to save form changes
+                const clickEvent = createMouseEvent('click');
+                buttons[0].dispatchEvent(clickEvent);
+
+                openmct.forms.off('onFormPropertyChange', deBouncedFormChange);
+            }
+        }
+
+        editPropertiesAction.invoke([domainObject]);
     });
 
     it('edit properties action discards changes', (done) => {
@@ -202,6 +217,7 @@ describe('EditPropertiesAction plugin', () => {
             })
             .catch(() => {
                 expect(domainObject.name).toEqual(name);
+
                 done();
             });
 

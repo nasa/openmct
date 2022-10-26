@@ -133,7 +133,7 @@ describe('The Forms API', () => {
         });
 
         it('when container element is provided', (done) => {
-            openmct.forms.showCustomForm(formStructure, { element }).catch(() => {
+            openmct.forms.showForm(formStructure, { element }).catch(() => {
                 done();
             });
             const titleElement = element.querySelector('.c-overlay__dialog-title');

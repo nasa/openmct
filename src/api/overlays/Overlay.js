@@ -17,7 +17,6 @@ class Overlay extends EventEmitter {
         dismissable = true,
         element,
         onDestroy,
-        onDismiss,
         size
     } = {}) {
         super();
@@ -33,7 +32,7 @@ class Overlay extends EventEmitter {
                 OverlayComponent: OverlayComponent
             },
             provide: {
-                dismiss: this.notifyAndDismiss.bind(this),
+                dismiss: this.dismiss.bind(this),
                 element,
                 buttons,
                 dismissable: this.dismissable
@@ -44,22 +43,12 @@ class Overlay extends EventEmitter {
         if (onDestroy) {
             this.once('destroy', onDestroy);
         }
-
-        if (onDismiss) {
-            this.once('dismiss', onDismiss);
-        }
     }
 
     dismiss() {
         this.emit('destroy');
         document.body.removeChild(this.container);
         this.component.$destroy();
-    }
-
-    //Ensures that any callers are notified that the overlay is dismissed
-    notifyAndDismiss() {
-        this.emit('dismiss');
-        this.dismiss();
     }
 
     /**

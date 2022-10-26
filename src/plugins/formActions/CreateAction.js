@@ -24,7 +24,6 @@ import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
 
 import { v4 as uuid } from 'uuid';
-import _ from 'lodash';
 
 export default class CreateAction extends PropertiesAction {
     constructor(openmct, type, parentDomainObject) {
@@ -51,15 +50,19 @@ export default class CreateAction extends PropertiesAction {
                 return;
             }
 
-            const existingValue = this.domainObject[key];
-            if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
-                value = {
-                    ...existingValue,
-                    ...value
-                };
-            }
+            const properties = key.split('.');
+            let object = this.domainObject;
+            const propertiesLength = properties.length;
+            properties.forEach((property, index) => {
+                const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
+                if (isComplexProperty && object[property] !== null) {
+                    object = object[property];
+                } else {
+                    object[property] = value;
+                }
+            });
 
-            _.set(this.domainObject, key, value);
+            object = value;
         });
 
         const parentDomainObject = parentDomainObjectPath[0];
@@ -91,12 +94,6 @@ export default class CreateAction extends PropertiesAction {
         dialog.dismiss();
     }
 
-    /**
-     * @private
-     */
-    _onCancel() {
-        //do Nothing
-    }
     /**
      * @private
      */
@@ -154,7 +151,6 @@ export default class CreateAction extends PropertiesAction {
         formStructure.title = 'Create a New ' + definition.name;
 
         this.openmct.forms.showForm(formStructure)
-            .then(this._onSave.bind(this))
-            .catch(this._onCancel.bind(this));
+            .then(this._onSave.bind(this));
     }
 }
