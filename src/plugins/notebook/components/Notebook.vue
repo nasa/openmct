@@ -895,19 +895,17 @@ export default {
             }
         },
         saveTransaction() {
-            if (this.transaction === undefined) {
-                return;
+            if (this.transaction !== undefined) {
+                this.transaction.commit()
+                    .catch(error => {
+                        throw error;
+                    }).finally(() => {
+                        this.openmct.objects.endTransaction();
+                    });
             }
-
-            return this.transaction.commit()
-                .catch(error => {
-                    throw error;
-                }).finally(() => {
-                    this.openmct.objects.endTransaction();
-                });
         },
         cancelTransaction() {
-            if (this.transaction) {
+            if (this.transaction !== undefined) {
                 this.transaction.cancel()
                     .catch(error => {
                         throw error;
