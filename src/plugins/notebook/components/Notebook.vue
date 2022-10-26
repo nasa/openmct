@@ -889,22 +889,17 @@ export default {
             this.syncUrlWithPageAndSection();
             this.filterAndSortEntries();
         },
-        activeTransaction() {
-            return this.openmct.objects.getActiveTransaction();
-        },
         startTransaction() {
-            if (!this.openmct.editor.isEditing()) {
-                this.openmct.objects.startTransaction();
+            if (!this.openmct.objects.isTransactionActive()) {
+                this.transaction = this.openmct.objects.startTransaction();
             }
         },
         saveTransaction() {
-            const transaction = this.activeTransaction();
-
-            if (!transaction || this.openmct.editor.isEditing()) {
+            if (this.transaction === undefined) {
                 return;
             }
 
-            return transaction.commit()
+            return this.transaction.commit()
                 .catch(error => {
                     throw error;
                 }).finally(() => {
@@ -912,9 +907,8 @@ export default {
                 });
         },
         cancelTransaction() {
-            if (!this.openmct.editor.isEditing()) {
-                const transaction = this.activeTransaction();
-                transaction.cancel()
+            if (this.transaction) {
+                this.transaction.cancel()
                     .catch(error => {
                         throw error;
                     }).finally(() => {
