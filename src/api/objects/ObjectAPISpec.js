@@ -94,6 +94,35 @@ describe("The Object API", () => {
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).toHaveBeenCalled();
             });
+            describe("the persisted timestamp for existing objects", () => {
+                let persistedTimestamp;
+                beforeEach(() => {
+                    persistedTimestamp = Date.now() - FIFTEEN_MINUTES;
+                    mockDomainObject.persisted = persistedTimestamp;
+                    mockDomainObject.modified = Date.now();
+                });
+
+                it("is updated", async () => {
+                    await objectAPI.save(mockDomainObject);
+                    expect(mockDomainObject.persisted).toBeDefined();
+                    expect(mockDomainObject.persisted > persistedTimestamp).toBe(true);
+                });
+                it("is >= modified timestamp", async () => {
+                    await objectAPI.save(mockDomainObject);
+                    expect(mockDomainObject.persisted >= mockDomainObject.modified).toBe(true);
+                });
+            });
+            describe("the persisted timestamp for new objects", () => {
+                it("is updated", async () => {
+                    await objectAPI.save(mockDomainObject);
+                    expect(mockDomainObject.persisted).toBeDefined();
+                });
+                it("is >= modified timestamp", async () => {
+                    await objectAPI.save(mockDomainObject);
+                    expect(mockDomainObject.persisted >= mockDomainObject.modified).toBe(true);
+                });
+            });
+
             it("Sets the current user for 'createdBy' on new objects", async () => {
                 await objectAPI.save(mockDomainObject);
                 expect(mockDomainObject.createdBy).toBe(USERNAME);
