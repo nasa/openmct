@@ -26,7 +26,7 @@
         v-model="selected"
         required="model.required"
         name="mctControl"
-        :aria-label="model.label || model.name"
+        :aria-label="model.ariaLabel || model.name"
         @change="onChange($event)"
     >
         <option
