@@ -889,32 +889,24 @@ export default {
             this.syncUrlWithPageAndSection();
             this.filterAndSortEntries();
         },
-        activeTransaction() {
-            return this.openmct.objects.getActiveTransaction();
-        },
         startTransaction() {
-            if (!this.openmct.editor.isEditing()) {
-                this.openmct.objects.startTransaction();
+            if (!this.openmct.objects.isTransactionActive()) {
+                this.transaction = this.openmct.objects.startTransaction();
             }
         },
         saveTransaction() {
-            const transaction = this.activeTransaction();
-
-            if (!transaction || this.openmct.editor.isEditing()) {
-                return;
+            if (this.transaction !== undefined) {
+                this.transaction.commit()
+                    .catch(error => {
+                        throw error;
+                    }).finally(() => {
+                        this.openmct.objects.endTransaction();
+                    });
             }
-
-            return transaction.commit()
-                .catch(error => {
-                    throw error;
-                }).finally(() => {
-                    this.openmct.objects.endTransaction();
-                });
         },
         cancelTransaction() {
-            if (!this.openmct.editor.isEditing()) {
-                const transaction = this.activeTransaction();
-                transaction.cancel()
+            if (this.transaction !== undefined) {
+                this.transaction.cancel()
                     .catch(error => {
                         throw error;
                     }).finally(() => {
