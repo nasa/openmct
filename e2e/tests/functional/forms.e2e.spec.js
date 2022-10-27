@@ -122,7 +122,7 @@ test.describe('Persistence operations @couchdb', () => {
         await page.click('li[title="Edit properties of this object."]');
 
         // Modify the display format from default 12hr -> 24hr and click 'Save'
-        await page.locator('select[name="mctControl"]').nth(1).selectOption({ value: 'clock24' });
+        await page.locator('select[aria-label="12 or 24 hour clock"]').selectOption({ value: 'clock24' });
         await page.click('button[aria-label="Save"]');
 
         await expect.poll(() => putRequestCount, {
