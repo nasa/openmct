@@ -68,6 +68,7 @@ export default function ClockPlugin(options) {
                     ]
                 },
                 {
+                    label: "12 or 24 hour clock",
                     control: 'select',
                     options: [
                         {
