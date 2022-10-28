@@ -207,6 +207,58 @@ test.describe('Example Imagery in Display Layout', () => {
         await page.goto(displayLayout.url);
     });
 
+    test('View Large action pauses imagery when in realtime and returns to realtime', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/3647'
+        });
+
+        // Click time conductor mode button
+        await page.locator('.c-mode-button').click();
+
+        // set realtime mode
+        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+
+        // pause/play button
+        const pausePlayButton = await page.locator('.c-button.pause-play');
+
+        await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
+
+        // Open context menu and click view large menu item
+        await page.locator('button[title="View menu items"]').click();
+        await page.locator('li[title="View Large"]').click();
+        await expect(pausePlayButton).toHaveClass(/is-paused/);
+
+        await page.locator('[aria-label="Close"]').click();
+        await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
+    });
+
+    test('View Large action leaves keeps realtime mode paused', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/3647'
+        });
+
+        // Click time conductor mode button
+        await page.locator('.c-mode-button').click();
+
+        // set realtime mode
+        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+
+        // pause/play button
+        const pausePlayButton = await page.locator('.c-button.pause-play');
+        await pausePlayButton.click();
+        await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
+
+        // Open context menu and click view large menu item
+        await page.locator('button[title="View menu items"]').click();
+        await page.locator('li[title="View Large"]').click();
+        await expect(pausePlayButton).toHaveClass(/is-paused/);
+
+        await page.locator('[aria-label="Close"]').click();
+        await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
+    });
+
     test('Imagery View operations @unstable', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
