@@ -41,6 +41,10 @@ test.describe('User Docs tests',
                 page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
             ]);
             await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
-            expect(page2.waitForURL('**/Open_MCT_Users_Guide.pdf')).toBeTruthy();
+            try {
+                expect(page2.waitForURL('**/Open_MCT_Users_Guide.pdf')).toBeTruthy();
+            } finally {
+                await page2.close();
+            }
         });
     });
