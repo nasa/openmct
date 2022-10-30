@@ -42,6 +42,5 @@ test.describe('User Docs tests',
             ]);
             await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
             expect(page2.waitForURL('**/Open_MCT_Users_Guide.pdf')).toBeTruthy();
-            await page2.close();
         });
     });
