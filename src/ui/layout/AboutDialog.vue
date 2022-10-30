@@ -23,6 +23,12 @@
                 <p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
                 <p>Open MCT includes source code licensed under additional open source licenses. See the Open Source Licenses file included with this distribution or <a @click="showLicenses">click here for third party licensing information</a>.</p>
             </div>
+            <h2>User guide</h2>
+            <div class="l-description s-description">
+                <p>The Open MCT User's Guide provides comprehensive documentation on using Open MCT, covering all aspects of viewing and using data, navigating the application and composing and customizing views.</p>
+                <p>It is recommended reading for both those using Open MCT and developing for it, as it covers important conceptual models and stylistic concepts inherit in our approach.</p>
+                <p><a @click="openUserGuide">Click here for the Open MCT User's Guide in PDF format.</a></p>
+            </div>
             <h2>Version Information</h2>
             <ul class="t-info l-info s-info">
                 <li>Version: {{ buildInfo.version || 'Unknown' }}</li>
@@ -46,6 +52,9 @@ export default {
     methods: {
         showLicenses() {
             window.open('#/licenses');
+        },
+        openUserGuide() {
+            window.open('https://nasa.github.io/openmct/static/files/Open_MCT_Users_Guide.pdf');
         }
     }
 };
