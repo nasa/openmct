@@ -19,8 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 export default class RemoveAction {
+    #transaction;
+
     constructor(openmct) {
+
         this.name = 'Remove';
         this.key = 'remove';
         this.description = 'Remove this object from its containing object.';
@@ -29,17 +33,25 @@ export default class RemoveAction {
         this.priority = 1;
 
         this.openmct = openmct;
+
+        this.removeFromComposition = this.removeFromComposition.bind(this); // for access to private transaction variable
     }
 
-    invoke(objectPath) {
+    async invoke(objectPath) {
         let object = objectPath[0];
         let parent = objectPath[1];
-        this.showConfirmDialog(object).then(() => {
-            this.removeFromComposition(parent, object);
-            if (this.inNavigationPath(object)) {
-                this.navigateTo(objectPath.slice(1));
-            }
-        }).catch(() => {});
+
+        try {
+            await this.showConfirmDialog(object);
+        } catch (error) {
+            return; // form canceled, exit invoke
+        }
+
+        await this.removeFromComposition(parent, object);
+
+        if (this.inNavigationPath(object)) {
+            this.navigateTo(objectPath.slice(1));
+        }
     }
 
     showConfirmDialog(object) {
@@ -81,20 +93,21 @@ export default class RemoveAction {
         this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
-    removeFromComposition(parent, child) {
-        let composition = parent.composition.filter(id =>
-            !this.openmct.objects.areIdsEqual(id, child.identifier)
-        );
+    async removeFromComposition(parent, child) {
+        this.startTransaction();
 
-        this.openmct.objects.mutate(parent, 'composition', composition);
+        const composition = this.openmct.composition.get(parent);
+        composition.remove(child);
+
+        if (!this.isAlias(child, parent)) {
+            this.openmct.objects.mutate(child, 'location', null);
+        }
 
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
-        if (!this.isAlias(child, parent)) {
-            this.openmct.objects.mutate(child, 'location', null);
-        }
+        await this.saveTransaction();
     }
 
     isAlias(child, parent) {
@@ -131,5 +144,24 @@ export default class RemoveAction {
         return parentType
             && parentType.definition.creatable
             && Array.isArray(parent.composition);
+    }
+
+    startTransaction() {
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.#transaction = this.openmct.objects.startTransaction();
+        }
+    }
+
+    saveTransaction() {
+        if (!this.#transaction) {
+            return;
+        }
+
+        return this.#transaction.commit()
+            .catch(error => {
+                throw error;
+            }).finally(() => {
+                this.openmct.objects.endTransaction();
+            });
     }
 }
