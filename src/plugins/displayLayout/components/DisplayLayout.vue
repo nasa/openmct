@@ -504,15 +504,11 @@ export default {
             }
 
             if (!telemetryViewCount && !objectViewCount) {
-                this.removeFromComposition(keyString);
+                this.removeFromComposition(item);
             }
         },
-        removeFromComposition(keyString) {
-            let composition = this.domainObject.composition ? this.domainObject.composition : [];
-            composition = composition.filter(identifier => {
-                return this.openmct.objects.makeKeyString(identifier) !== keyString;
-            });
-            this.mutate("composition", composition);
+        removeFromComposition(item) {
+            this.composition.remove(item);
         },
         initializeItems() {
             this.telemetryViewMap = {};
