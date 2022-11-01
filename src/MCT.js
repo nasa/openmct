@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* eslint-disable no-undef */
 define([
     'EventEmitter',
     './api/api',
@@ -81,13 +81,11 @@ define([
     /**
      * The Open MCT application. This may be configured by installing plugins
      * or registering extensions before the application is started.
-     * @class MCT
+     * @constructor
      * @memberof module:openmct
-     * @augments {EventEmitter}
      */
     function MCT() {
         EventEmitter.call(this);
-        /* eslint-disable no-undef */
         this.buildInfo = {
             version: __OPENMCT_VERSION__,
             buildDate: __OPENMCT_BUILD_DATE__,
@@ -101,7 +99,7 @@ define([
             * Tracks current selection state of the application.
             * @private
             */
-            ['selection', () => new Selection(this)],
+            ['selection', () => new Selection.default(this)],
 
             /**
              * MCT's time conductor, which may be used to synchronize view contents
@@ -125,7 +123,7 @@ define([
              * @memberof module:openmct.MCT#
              * @name composition
              */
-            ['composition', () => new api.CompositionAPI(this)],
+            ['composition', () => new api.CompositionAPI.default(this)],
 
             /**
              * Registry for views of domain objects which should appear in the
