@@ -30,6 +30,12 @@
     padding: $interiorMarginLg $interiorMarginLg * 2;
 }
 
+.c-condition-widget__label {
+    padding: $interiorMargin;
+    text-align: center;
+    white-space: normal;
+}
+
 a.c-condition-widget {
     // Widget is conditionally made into a <a> when URL property has been defined
     cursor: pointer !important;
