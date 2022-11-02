@@ -123,7 +123,7 @@ test.describe('Display Layout', () => {
 
         expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
-    test('items in a display layout can be removed with object tree context menu when viewing another item @unstable', async ({ page }) => {
+    test('items in a display layout can be removed with object tree context menu when viewing another item', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/3117'
