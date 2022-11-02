@@ -245,6 +245,9 @@ export default {
             });
             this.gridDimensions = [wMax * this.gridSize[0], hMax * this.gridSize[1]];
         },
+        clearSelection() {
+            this.$el.click();
+        },
         watchDisplayResize() {
             const resizeObserver = new ResizeObserver(() => this.updateGrid());
 
@@ -478,7 +481,7 @@ export default {
             });
             _.pullAt(this.layoutItems, indices);
             this.mutate("configuration.items", this.layoutItems);
-            this.$el.click();
+            this.clearSelection();
         },
         untrackItem(item) {
             if (!item.identifier) {
@@ -589,7 +592,7 @@ export default {
                 }
             });
             this.mutate("configuration.items", layoutItems);
-            this.$el.click();
+            this.clearSelection();
         },
         orderItem(position, selectedItems) {
             let delta = ORDERS[position];
@@ -772,7 +775,7 @@ export default {
             this.$nextTick(() => {
                 this.openmct.objects.mutate(this.domainObject, "configuration.items", this.layoutItems);
                 this.openmct.objects.mutate(this.domainObject, "configuration.objectStyles", objectStyles);
-                this.$el.click(); //clear selection;
+                this.clearSelection();
 
                 newDomainObjectsArray.forEach(domainObject => {
                     this.composition.add(domainObject);
