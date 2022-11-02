@@ -124,6 +124,10 @@ test.describe('Testing Display Layout @unstable', () => {
         expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
     test('items in a display layout can be removed with object tree context menu when viewing another item', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/3117'
+        });
         // Create a Display Layout
         await createDomainObjectWithDefaults(page, {
             type: 'Display Layout',
@@ -145,7 +149,7 @@ test.describe('Testing Display Layout @unstable', () => {
         await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
 
         // Click the original Sine Wave Generator to navigate away from the Display Layout
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Sine Wave Generator")').click();
+        await page.locator('.c-tree__item .c-tree__item__name:text("Test Sine Wave Generator")').nth(0).click();
 
         // Bring up context menu and remove
         await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').click({ button: 'right' });
