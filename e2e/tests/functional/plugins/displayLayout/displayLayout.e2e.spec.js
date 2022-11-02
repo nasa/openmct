@@ -23,7 +23,7 @@
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
 
-test.describe('Testing Display Layout @unstable', () => {
+test.describe('Display Layout', () => {
     let sineWaveObject;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -123,7 +123,7 @@ test.describe('Testing Display Layout @unstable', () => {
 
         expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
-    test('items in a display layout can be removed with object tree context menu when viewing another item', async ({ page }) => {
+    test('items in a display layout can be removed with object tree context menu when viewing another item @unstable', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/3117'
