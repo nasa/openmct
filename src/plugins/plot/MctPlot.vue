@@ -454,12 +454,14 @@ export default {
             this.stopListening(plotSeries);
         },
         async loadAnnotations() {
-            if (this.domainObject) {
-                const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                const rawAnnotations = await this.openmct.annotation.getAnnotations(domainObjectKeyString);
-                if (rawAnnotations) {
-                    this.annotations = this.findAnnotationPoints(rawAnnotations);
-                }
+            const rawAnnotationsForPlot = [];
+            await Promise.all(this.seriesModels.map(async (seriesModel) => {
+                const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.keyString);
+                rawAnnotationsForPlot.push(...seriesAnnotations);
+            }));
+            if (rawAnnotationsForPlot) {
+                console.debug(`🥕 Found ${rawAnnotationsForPlot.length} annotations for this plot`);
+                this.annotations = this.findAnnotationPoints(rawAnnotationsForPlot);
             }
         },
         loadSeriesData(series) {
