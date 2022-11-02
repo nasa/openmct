@@ -121,7 +121,7 @@ test.describe('Display Layout', () => {
 
         // delete
 
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+        expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
     test('items in a display layout can be removed with object tree context menu when viewing another item @unstable', async ({ page }) => {
         test.info().annotations.push({
@@ -129,7 +129,7 @@ test.describe('Display Layout', () => {
             description: 'https://github.com/nasa/openmct/issues/3117'
         });
         // Create a Display Layout
-        await createDomainObjectWithDefaults(page, {
+        const displayLayout = await createDomainObjectWithDefaults(page, {
             type: 'Display Layout',
             name: "Test Display Layout"
         });
@@ -148,8 +148,8 @@ test.describe('Display Layout', () => {
         // Expand the Display Layout so we can remove the sine wave generator
         await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
 
-        // Click the original Sine Wave Generator to navigate away from the Display Layout
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Sine Wave Generator")').nth(0).click();
+        // Go to the original Sine Wave Generator to navigate away from the Display Layout
+        await page.goto(sineWaveObject.url);
 
         // Bring up context menu and remove
         await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').click({ button: 'right' });
@@ -157,9 +157,9 @@ test.describe('Display Layout', () => {
         await page.locator('text=OK').click();
 
         // navigate back to the display layout to confirm it has been removed
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Display Layout")').click();
+        await page.goto(displayLayout.url);
 
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+        expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
 });
 
