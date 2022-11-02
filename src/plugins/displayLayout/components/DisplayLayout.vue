@@ -525,7 +525,10 @@ export default {
                 }
             });
 
+            this.startTransaction();
             removedItems.forEach(this.removeFromConfiguration);
+
+            return this.endTransaction();
         },
         isItemAlreadyTracked(child) {
             let found = false;
@@ -862,6 +865,24 @@ export default {
 
             this.removeItem(selection);
             this.initSelectIndex = this.layoutItems.length - 1; //restore selection
+        },
+        startTransaction() {
+            if (!this.openmct.objects.isTransactionActive()) {
+                this.transaction = this.openmct.objects.startTransaction();
+            }
+        },
+        endTransaction() {
+            if (!this.transaction) {
+                return;
+            }
+
+            return this.transaction.commit()
+                .catch(error => {
+                    throw error;
+                }).finally(() => {
+                    this.openmct.objects.endTransaction();
+                    this.transaction = null;
+                });
         },
         toggleGrid() {
             this.showGrid = !this.showGrid;
