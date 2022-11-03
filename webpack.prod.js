@@ -1,3 +1,9 @@
+/* global __dirname module */
+
+/*
+This configuration should be used for production installs.
+It is the default webpack configuration.
+*/
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common');
 

@@ -129,11 +129,13 @@ export default {
 
             this.timeContext.on("timeSystem", this.setScaleAndPlotActivities);
             this.timeContext.on("bounds", this.updateViewBounds);
+            this.timeContext.on("clock", this.updateBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.setScaleAndPlotActivities);
                 this.timeContext.off("bounds", this.updateViewBounds);
+                this.timeContext.off("clock", this.updateBounds);
             }
         },
         observeForChanges(mutatedObject) {
@@ -142,9 +144,14 @@ export default {
         },
         resize() {
             let clientWidth = this.getClientWidth();
+            let clientHeight = this.getClientHeight();
             if (clientWidth !== this.width) {
                 this.setDimensions();
                 this.updateViewBounds();
+            }
+
+            if (clientHeight !== this.height) {
+                this.setDimensions();
             }
         },
         getClientWidth() {
@@ -160,8 +167,26 @@ export default {
 
             return clientWidth - 200;
         },
+        getClientHeight() {
+            let clientHeight = this.$refs.plan.clientHeight;
+
+            if (!clientHeight) {
+            //this is a hack - need a better way to find the parent of this component
+                let parent = this.openmct.layout.$refs.browseObject.$el;
+                if (parent) {
+                    clientHeight = parent.getBoundingClientRect().height;
+                }
+            }
+
+            return clientHeight;
+        },
         getPlanData(domainObject) {
             this.planData = getValidatedData(domainObject);
+        },
+        updateBounds(clock) {
+            if (clock === undefined) {
+                this.viewBounds = Object.create(this.timeContext.bounds());
+            }
         },
         updateViewBounds(bounds) {
             if (bounds) {
@@ -191,10 +216,8 @@ export default {
             activities.forEach(activity => activity.remove());
         },
         setDimensions() {
-            const planHolder = this.$refs.plan;
             this.width = this.getClientWidth();
-
-            this.height = Math.round(planHolder.getBoundingClientRect().height);
+            this.height = this.getClientHeight();
         },
         setScale(timeSystem) {
             if (!this.width) {

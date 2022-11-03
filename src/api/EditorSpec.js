@@ -19,30 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import PerformancePlugin from './plugin.js';
-import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe('the plugin', () => {
+import {
+    createOpenMct, resetApplicationState
+} from '../utils/testing';
+
+describe('The Editor API', () => {
     let openmct;
-    let element;
-    let child;
 
-    let performanceIndicator;
-
-    beforeEach(done => {
+    beforeEach((done) => {
         openmct = createOpenMct();
-
-        element = document.createElement('div');
-        child = document.createElement('div');
-        element.appendChild(child);
-
-        openmct.install(new PerformancePlugin());
-
         openmct.on('start', done);
 
-        performanceIndicator = openmct.indicators.indicatorObjects.find(indicator => {
-            return indicator.text && indicator.text() === '~ fps';
-        });
+        spyOn(openmct.objects, 'endTransaction');
 
         openmct.startHeadless();
     });
@@ -51,28 +40,41 @@ describe('the plugin', () => {
         return resetApplicationState(openmct);
     });
 
-    it('installs the performance indicator', () => {
-        expect(performanceIndicator).toBeDefined();
+    it('opens a transaction on edit', () => {
+        expect(
+            openmct.objects.isTransactionActive()
+        ).toBeFalse();
+        openmct.editor.edit();
+        expect(
+            openmct.objects.isTransactionActive()
+        ).toBeTrue();
     });
 
-    it('calculates an fps value', async () => {
-        await loopForABit();
-        // eslint-disable-next-line radix
-        const fps = parseInt(performanceIndicator.text().split(' fps')[0]);
-        expect(fps).toBeGreaterThan(0);
-    });
-
-    function loopForABit() {
-        let frames = 0;
-
-        return new Promise(resolve => {
-            requestAnimationFrame(function loop() {
-                if (++frames > 90) {
-                    resolve();
-                } else {
-                    requestAnimationFrame(loop);
-                }
+    it('closes an open transaction on successful save', async () => {
+        spyOn(openmct.objects, 'getActiveTransaction')
+            .and.returnValue({
+                commit: () => Promise.resolve(true)
             });
-        });
-    }
+
+        openmct.editor.edit();
+        await openmct.editor.save();
+
+        expect(
+            openmct.objects.endTransaction
+        ).toHaveBeenCalled();
+    });
+
+    it('does not close an open transaction on failed save', async () => {
+        spyOn(openmct.objects, 'getActiveTransaction')
+            .and.returnValue({
+                commit: () => Promise.reject()
+            });
+
+        openmct.editor.edit();
+        await openmct.editor.save().catch(() => {});
+
+        expect(
+            openmct.objects.endTransaction
+        ).not.toHaveBeenCalled();
+    });
 });

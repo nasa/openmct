@@ -2,6 +2,9 @@
     const connections = [];
     let connected = false;
     let couchEventSource;
+    let changesFeedUrl;
+    const keepAliveTime = 20 * 1000;
+    let keepAliveTimer;
     const controller = new AbortController();
 
     self.onconnect = function (e) {
@@ -35,7 +38,8 @@
                     return;
                 }
 
-                self.listenForChanges(event.data.url);
+                changesFeedUrl = event.data.url;
+                self.listenForChanges();
             }
         };
 
@@ -63,17 +67,28 @@
         });
     };
 
-    self.listenForChanges = function (url) {
-        console.debug('⇿ Opening CouchDB change feed connection ⇿');
+    self.listenForChanges = function () {
+        if (keepAliveTimer) {
+            clearTimeout(keepAliveTimer);
+        }
 
-        couchEventSource = new EventSource(url);
-        couchEventSource.onerror = self.onerror;
-        couchEventSource.onopen = self.onopen;
+        /**
+         * Once the connection has been opened, poll every 20 seconds to see if the EventSource has closed unexpectedly.
+         * If it has, attempt to reconnect.
+         */
+        keepAliveTimer = setTimeout(self.listenForChanges, keepAliveTime);
 
-        // start listening for events
-        couchEventSource.addEventListener('message', self.onCouchMessage);
-        connected = true;
-        console.debug('⇿ Opened connection ⇿');
+        if (!couchEventSource || couchEventSource.readyState === EventSource.CLOSED) {
+            console.debug('⇿ Opening CouchDB change feed connection ⇿');
+            couchEventSource = new EventSource(changesFeedUrl);
+            couchEventSource.onerror = self.onerror;
+            couchEventSource.onopen = self.onopen;
+
+            // start listening for events
+            couchEventSource.addEventListener('message', self.onCouchMessage);
+            connected = true;
+            console.debug('⇿ Opened connection ⇿');
+        }
     };
 
     self.updateCouchStateIndicator = function () {
