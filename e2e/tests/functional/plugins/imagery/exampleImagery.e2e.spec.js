@@ -40,10 +40,10 @@ test.describe('Example Imagery Object', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create a default 'Example Imagery' object
-        await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
+        const exampleImagery = await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
 
         // Verify that the created object is focused
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
         await page.locator(backgroundImageSelector).hover({trial: true});
     });
 

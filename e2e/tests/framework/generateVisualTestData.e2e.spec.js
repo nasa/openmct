@@ -58,7 +58,7 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     // focus the overlay plot
     await page.goto(overlayPlot.url);
 
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Overlay Plot');
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
     //Save localStorage for future test execution
     await context.storageState({ path: './e2e/test-data/VisualTestData_storage.json' });
 });
