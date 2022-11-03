@@ -6,11 +6,11 @@ const webpack = require('webpack');
 
 module.exports = merge(common, {
     mode: 'production',
-    resolve: {
-        alias: {
-            "vue": path.join(__dirname, "node_modules/vue/dist/vue.min.js")
-        }
-    },
+    // resolve: {
+        // alias: {
+            // "vue": path.join(__dirname, "node_modules/vue/dist/vue.min.js")
+        // }
+    // },
     plugins: [
         new webpack.DefinePlugin({
             __OPENMCT_ROOT_RELATIVE__: '""'

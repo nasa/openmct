@@ -256,7 +256,7 @@ export default {
                             isNested: true
                         };
                     },
-                    template: `<swim-lane :is-nested="isNested" :hide-label="true"><template slot="object"><div class="c-imagery-tsv-container"></div></template></swim-lane>`
+                    template: `<swim-lane :is-nested="isNested" :hide-label="true"><slot name="object"><div class="c-imagery-tsv-container"></div></slot></swim-lane>`
                 });
 
                 this.$refs.imageryHolder.appendChild(component.$mount().$el);

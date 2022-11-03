@@ -128,7 +128,7 @@ export function simulateKeyEvent(opts) {
 }
 
 function clearBuiltinSpy(funcDefinition) {
-    funcDefinition.object[funcDefinition.functionName] = funcDefinition.nativeFunction;
+    funcDefinition.object[funcDefinition.functionName] = funcDefinitionFunction;
 }
 
 export function getLatestTelemetry(telemetry = [], opts = {}) {

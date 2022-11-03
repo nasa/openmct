@@ -27,7 +27,7 @@
 >
     <template v-if="viewBounds && !options.compact">
         <swim-lane>
-            <template slot="label">{{ timeSystem.name }}</template>
+            <slot name="label">{{ timeSystem.name }}</slot>
             <timeline-axis
                 slot="object"
                 :bounds="viewBounds"
@@ -395,7 +395,7 @@ export default {
                         width: svgWidth
                     };
                 },
-                template: `<swim-lane :is-nested="isNested" :status="status"><template slot="label">{{heading}}</template><template slot="object"><svg :height="height" :width="width"></svg></template></swim-lane>`
+                template: `<swim-lane :is-nested="isNested" :status="status"><slot name="label">{{heading}}</template><template slot="object"><svg :height="height" :width="width"></svg></slot></swim-lane>`
             });
 
             this.$refs.planHolder.appendChild(component.$mount().$el);

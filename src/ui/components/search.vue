@@ -5,10 +5,10 @@
 >
     <input
         class="c-search__input"
+        v-bind="$attrs"
         aria-label="Search Input"
         tabindex="10000"
         type="search"
-        v-bind="$attrs"
         :value="value"
         v-on="inputListeners"
     >
