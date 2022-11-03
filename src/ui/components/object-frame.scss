@@ -14,6 +14,8 @@
 
         .c-object-label {
             font-size: 1.05em;
+            min-width: 20%;
+
             &__type-icon {
                 opacity: $objectLabelTypeIconOpacity;
             }
@@ -36,7 +38,8 @@
     /*************************** FRAME CONTROLS */
     &__frame-controls {
         display: flex;
-        flex: 0 0 auto;
+        flex: 0 1 auto;
+        overflow: hidden;
 
         &__btns,
         &__more {

@@ -1,63 +1,144 @@
 <template>
-<form
-    ref="fixedDeltaInput"
-    class="c-compact-tc__bounds"
-    @click.prevent.stop="showTimePopupStart"
+<div
+    class="c-tc-input-popup"
+    :class="{'c-tc-input-popup--bottom' : bottom === true}"
+    @keydown.enter.prevent
+    @keyup.enter.prevent="submit"
+    @keydown.esc.prevent
+    @keyup.esc.prevent="hide"
+    @click.stop
 >
-    <time-popup-fixed
-        v-if="showTCInputStart"
-        class="c-tc-input-popup--fixed-mode"
-        :bottom="keyString !== undefined"
-        :type="'start'"
-        :offset="formattedBounds.start"
-        :mode="'fixed'"
-        @focus.native="$event.target.select()"
-        @hide="hideAllTimePopups"
-        @update="setBoundsFromView"
-    />
-    <div class="c-compact-tc__bounds__value">{{ formattedBounds.start }}</div>
-    <div class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"></div>
-    <div class="c-compact-tc__bounds__value">{{ formattedBounds.end }}</div>
-</form>
+    <div class="c-tc-input-popup__options c-tc-input-popup__options--fixed">
+        <button class="c-button c-button--menu icon-clock">
+            <span class="c-button__label">Local Clock</span>
+        </button>
+
+        <button class="c-button c-button--menu">
+            <span class="c-button__label">UTC</span>
+        </button>
+
+        <button class="c-button c-button--menu icon-history">
+            <span class="c-button__label">History</span>
+        </button>
+    </div>
+    <!-- PASTED FROM ConductorInputsFixed -->
+    <form
+        ref="fixedDeltaInput"
+        class="c-tc-input-popup__input-grid"
+    >
+        <div class="pr-time-label"><em>Start</em> Date</div>
+        <div class="pr-time-label">Time Z</div>
+        <div class="pr-time-label"></div>
+        <div class="pr-time-label"><em>End</em> Date</div>
+        <div class="pr-time-label">Time Z</div>
+        <div class="pr-time-label"></div>
+
+        <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+            <input
+                ref="startDate"
+                v-model="formattedBounds.start"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                @change="validateAllBounds('startDate'); submitForm()"
+            >
+            <date-picker
+                v-if="isUTCBased"
+                class="c-ctrl-wrapper--menus-left"
+                :bottom="keyString !== undefined"
+                :default-date-time="formattedBounds.start"
+                :formatter="timeFormatter"
+                @date-selected="startDateSelected"
+            />
+        </div>
+
+        <div class="pr-time-input pr-time-input--time">
+            <input
+                ref="startTime"
+                v-model="formattedBounds.start"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+            >
+        </div>
+
+        <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
+
+        <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+            <input
+                ref="startDate"
+                v-model="formattedBounds.end"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+                @change="validateAllBounds('startDate'); submitForm()"
+            >
+            <date-picker
+                v-if="isUTCBased"
+                class="c-ctrl-wrapper--menus-left"
+                :bottom="keyString !== undefined"
+                :default-date-time="formattedBounds.start"
+                :formatter="timeFormatter"
+                @date-selected="startDateSelected"
+            />
+        </div>
+
+        <div class="pr-time-input pr-time-input--time">
+            <input
+                ref="startTime"
+                v-model="formattedBounds.end"
+                class="c-input--datetime"
+                type="text"
+                autocorrect="off"
+                spellcheck="false"
+            >
+        </div>
+
+        <div class="pr-time-input pr-time-input--buttons">
+            <button
+                class="c-button c-button--major icon-check"
+                :disabled="false"
+                @click.prevent="submit"
+            ></button>
+            <button
+                class="c-button icon-x"
+                @click.prevent="hide"
+            ></button>
+        </div>
+    </form>
+</div>
 </template>
 
 <script>
-import TimePopupFixed from "./timePopupFixed.vue";
-import DatePicker from "./DatePicker.vue";
 import _ from "lodash";
-
-const DEFAULT_DURATION_FORMATTER = 'duration';
+import DatePicker from "./DatePicker.vue";
 
 export default {
     components: {
-        DatePicker,
-        TimePopupFixed
+        DatePicker
     },
     inject: ['openmct'],
     props: {
-        keyString: {
+        bottom: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
+        type: {
             type: String,
-            default() {
-                return undefined;
-            }
+            required: true
         },
-        inputBounds: {
-            type: Object,
-            default() {
-                return undefined;
-            }
+        offset: {
+            type: String,
+            required: true
         },
-        readOnly: {
-            type: Boolean,
-            default() {
-                return false;
-            }
-        },
-        compact: {
-            type: Boolean,
-            default() {
-                return false;
-            }
+        mode: {
+            type: String,
+            required: true
         }
     },
     data() {
@@ -67,8 +148,8 @@ export default {
         let bounds = this.bounds || this.openmct.time.bounds();
 
         return {
-            showTCInputStart: false,
-            showTCInputEnd: false,
+            showTCInputStart: true,
+            showTCInputEnd: true,
             durationFormatter,
             timeFormatter,
             bounds: {
@@ -127,8 +208,8 @@ export default {
             [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
         },
         clearValidationForInput(input) {
-            // input.setCustomValidity(''); CH TEMP
-            // input.title = ''; CH TEMP
+            input.setCustomValidity('');
+            input.title = '';
         },
         setBounds(bounds) {
             this.bounds = bounds;
@@ -167,8 +248,8 @@ export default {
             }
         },
         submitForm() {
-        // Allow Vue model to catch up to user input.
-        // Submitting form will cause validation messages to display (but only if triggered by button click)
+            // Allow Vue model to catch up to user input.
+            // Submitting form will cause validation messages to display (but only if triggered by button click)
             this.$nextTick(() => this.setBoundsFromView());
         },
         validateAllBounds(ref) {
@@ -216,7 +297,7 @@ export default {
                 const formattedDate = input === this.$refs.startDate
                     ? this.formattedBounds.start
                     : this.formattedBounds.end
-          ;
+                ;
 
                 if (!this.timeFormatter.validate(formattedDate)) {
                     validationResult = {

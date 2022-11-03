@@ -17,7 +17,7 @@
         }
     }
 
-    &__time-bounds {
+/*    &__time-bounds {
         display: grid;
         grid-column-gap: $interiorMargin;
         grid-row-gap: $interiorMargin;
@@ -44,7 +44,7 @@
         grid-area: tc-end;
         display: flex;
         justify-content: flex-end;
-    }
+    }*/
 
     &__ticks {
         flex: 1 1 auto;
@@ -131,7 +131,7 @@
         }
     }
 
-    body.phone.portrait & {
+ /*   body.phone.portrait & {
         .c-conductor__time-bounds {
             grid-row-gap: $interiorMargin;
             grid-template-rows: auto auto;
@@ -182,21 +182,20 @@
                 justify-content: flex-end;
             }
         }
-    }
+    }*/
 }
 
 .c-conductor-holder--compact {
-    min-height: 22px;
+    //min-height: 22px;
+    flex: 0 1 auto;
+    overflow: hidden;
 
     .c-conductor {
         &__inputs,
         &__time-bounds {
             display: flex;
-
-            .c-toggle-switch {
-                // Used in independent Time Conductor
-                flex: 0 0 auto;
-            }
+            flex: 0 1 auto;
+            overflow: hidden;
         }
 
         &__inputs {
@@ -226,11 +225,6 @@
         margin-right: $interiorMarginSm;
     }
 
-    .c-direction-indicator {
-        // Holds realtime-mode + and - symbols
-        font-size: 0.7em;
-    }
-
     input:invalid {
         background: rgba($colorFormInvalid, 0.5);
     }
@@ -238,25 +232,25 @@
 
 .is-realtime-mode {
     .c-conductor__delta-button {
-        @include themedButton($colorTimeBg);
-        color: $colorTimeFg;
+        //@include themedButton($colorTimeRealtimeBg);
+        color: $colorTimeRealtimeFg;
     }
 
     .c-conductor-input {
         &:before {
-            color: $colorTime;
+            color: $colorTimeRealtimeFgSubtle;
         }
     }
 
     .c-conductor__end-fixed {
         // Displays last RT update
-        color: $colorTime;
+        color: $colorTimeRealtimeFgSubtle;
 
         input {
             // Remove input look
             background: none;
             box-shadow: none;
-            color: $colorTime;
+            color: $colorTimeRealtimeFgSubtle;
             pointer-events: none;
 
             &[disabled] {
@@ -266,94 +260,199 @@
     }
 }
 
-[class^='pr-tc-input-menu'] {
-    // Uses ^= here to target both start and end menus
-    background: $colorBodyBg;
-    border-radius: $controlCr;
-    display: grid;
-    grid-template-columns: 1fr 1fr 2fr;
-    grid-column-gap: 3px;
-    grid-row-gap: 4px;
-    align-items: start;
-    filter: $filterMenu;
-    box-shadow: $shdwMenu;
-    padding: $interiorMargin;
-    position: absolute;
-    left: 8px;
-    bottom: 24px;
-    z-index: 99;
-
-    &[class*='--bottom'] {
-        bottom: auto;
-        top: 24px;
-    }
-}
-
-.l-shell__time-conductor .pr-tc-input-menu--end {
+.l-shell__time-conductor .c-tc-input-popup--end {
     left: auto;
     right: 0;
 }
 
-[class^='pr-time'] {
-    &[class*='label'] {
+.pr-time-label {
+    font-size: 0.9em;
+    text-transform: uppercase;
+
+    &:before {
         font-size: 0.8em;
-        opacity: 0.6;
-        text-transform: uppercase;
+        margin-right: $interiorMarginSm;
+    }
+}
+
+.pr-time-input {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+
+    > * + * {
+        margin-left: $interiorMarginSm;
     }
 
-    &[class*='controls'] {
-        display: flex;
-        align-items: center;
-        white-space: nowrap;
+    input {
+        height: 22px;
+        line-height: 1em;
+        font-size: 1.25em;
+    }
 
-        input {
-            height: 22px;
-            line-height: 22px;
-            margin-right: $interiorMarginSm;
-            font-size: 1.25em;
-            width: 42px;
+    &--date input {
+        width: 120px;
+    }
+
+    &--time input {
+        width: 70px;
+    }
+
+    &--buttons {
+        > * + * {
+            margin-left: $interiorMargin;
         }
+    }
+
+    &__start-end-sep {
+        height: 100%;
+    }
+
+    &--input-and-button {
+        @include wrappedInput();
     }
 }
 
 /*********************************************** COMPACT TIME CONDUCTOR */
+.c-compact-tc,
+.c-tc-input-popup {
+    [class*='start-end-sep'] {
+        opacity: 0.5;
+    }
+}
+
 .c-compact-tc {
     border-radius: $controlCr;
     display: flex;
     flex-direction: row;
+    flex: 0 1 auto;
+    overflow: hidden;
     align-items: center;
-    padding: 1px $interiorMarginSm;
+    padding: 2px $interiorMarginSm;
 
     > * + * {
         margin-left: $interiorMargin;
     }
 
-    &__bounds--read-only,
-    &__bounds--inputs {
+    &__bounds,
+    &__bounds__value {
         display: flex;
         align-items: center;
 
         > * + * {
             margin-left: $interiorMargin;
         }
+    }
 
-        &--read-only {
+    &__bounds {
+        cursor: pointer;
+        flex: 0 1 auto;
+        overflow: hidden;
 
-        }
-
-        &--inputs {
-
+        > * + * {
+            flex: 0 0 auto;
         }
     }
 
-    .is-fixed-mode &,
-    &.is-fixed-mode.is-expanded {
-        background: pullForward($colorBodyBg, 10%); // TODO: convert to theme constant
+    &__bounds__value {
+        @include ellipsize();
+        color: $colorTimeRealtimeFg;
+        flex: 0 1 auto;
+
+        &:before {
+            font-size: 0.85em;
+            margin-right: $interiorMarginSm;
+        }
     }
 
-    .is-realtime-mode &,
-    &.is-realtime-mode {
-        background: rgba($colorTimeBg, 0.3);
+    &__current-update {
+        @include ellipsize();
+        flex: 0 1 auto;
+    }
+
+    .c-direction-indicator {
+        // Holds realtime-mode + and - symbols
+        font-size: 0.7em;
+    }
+
+    .c-toggle-switch,
+    .c-clock-symbol {
+        // Used in independent Time Conductor
+        flex: 0 0 auto;
+    }
+
+    .c-so-view & {
+        // Time Conductor in a Layout frame
+        .c-clock-symbol {
+            $h: 14px;
+            height: $h;
+            width: $h;
+        }
+
+        [class*='button'] {
+            $p: 0px;
+            padding: $p $p + 1;
+        }
+    }
+}
+
+.is-fixed-mode.is-expanded {
+    &.c-compact-tc,
+    .c-tc-input-popup {
+        background: $colorTimeFixedBg;
+        color: $colorTimeFixedFgSubtle;
+
+        em,
+        .pr-time-label:before {
+            color: $colorTimeFixedFg;
+        }
+
+        &__bounds__valuelue {
+            color: $colorTimeFixedFg;
+        }
+
+        &__time-value {
+            color: $colorTimeFixedFg;
+        }
+
+        [class*='c-button'] {
+            background: $colorTimeFixedBtnBg;
+            color: $colorTimeFixedBtnFg;
+
+            [class*='label'] {
+                color: $colorTimeRealtimeFg;
+            }
+        }
+    }
+}
+
+.is-realtime-mode.is-expanded {
+    &.c-compact-tc,
+    .c-tc-input-popup {
+        background: rgba($colorTimeRealtimeBg, 1);
+        color: $colorTimeRealtimeFgSubtle;
+
+        em,
+        .pr-time-label:before {
+            color: $colorTimeRealtimeFg;
+        }
+
+        &__bounds__valuelue {
+            color: $colorTimeRealtimeFg;
+        }
+
+        &__time-value {
+            color: $colorTimeRealtimeFg;
+        }
+
+        [class*='c-button'] {
+            background: $colorTimeRealtimeBtnBg;
+            color: $colorTimeRealtimeBtnFg;
+
+            [class*='label'] {
+                color: $colorTimeRealtimeFg;
+            }
+        }
     }
 }
 
@@ -361,5 +460,51 @@
     &.l-shell__time-conductor {
         // Main view
         min-height: 24px;
+    }
+}
+
+/*********************************************** INPUTS POPUP DIALOG */
+.c-tc-input-popup {
+    @include menuOuter();
+    padding: $interiorMarginLg;
+    position: absolute;
+    width: min-content;
+    left: 8px;
+    bottom: 24px;
+
+    > * + * {
+        margin-top: $interiorMarginLg;
+    }
+
+    &[class*='--bottom'] {
+        bottom: auto;
+        top: 24px;
+    }
+
+    &__options {
+        display: flex;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
+
+    &--fixed-mode {
+        .c-tc-input-popup__input-grid {
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+        }
+    }
+
+    &--realtime-mode {
+        .c-tc-input-popup__input-grid {
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+        }
+    }
+
+    &__input-grid {
+        display: grid;
+        grid-column-gap: 3px;
+        grid-row-gap: $interiorMargin;
+        align-items: start;
     }
 }
