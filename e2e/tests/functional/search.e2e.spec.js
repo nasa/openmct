@@ -31,7 +31,7 @@ test.describe('Grand Search', () => {
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
-        const createdObjects = await createObjectsForSearch(page, myItemsFolderName);
+        const createdObjects = await createObjectsForSearch(page);
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
