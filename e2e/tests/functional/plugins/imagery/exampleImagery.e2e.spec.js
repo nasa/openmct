@@ -275,7 +275,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('li[role="menuitem"]:has-text("Example Imagery")');
 
         // Clear and set Image load delay to minimum value
         await page.locator('input[type="number"]').fill('');
@@ -317,7 +317,7 @@ test.describe('Example Imagery in Tabs View', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('li[role="menuitem"]:has-text("Example Imagery")');
 
         // Clear and set Image load delay to minimum value
         await page.locator('input[type="number"]').fill('');
