@@ -56,7 +56,7 @@ test.describe('Restricted Notebook', () => {
         // Click 'OK' on confirmation window and wait for save banner to appear
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=OK').click(),
+            page.locator('button:has-text("OK")').click(),
             page.waitForSelector('.c-message-banner__message')
         ]);
 
@@ -134,7 +134,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         // Click text=Ok
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=Ok').click()
+            page.locator('button:has-text("OK")').click()
         ]);
 
         // deleted page, should no longer exist

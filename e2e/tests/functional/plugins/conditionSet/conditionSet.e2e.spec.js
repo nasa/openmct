@@ -165,7 +165,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         // Click text=Remove
         await page.locator('text=Remove').click();
-        await page.locator('text=OK').click();
+        await page.locator('button:has-text("OK")').click();
 
         //Expect Unnamed Condition Set to be removed in Main View
         const numberOfConditionSetsAtEnd = await page.locator('a:has-text("Unnamed Condition Set Condition Set")').count();

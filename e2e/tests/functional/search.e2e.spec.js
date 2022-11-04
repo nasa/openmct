@@ -185,7 +185,7 @@ async function createFolderObject(page, folderName) {
     await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folderName);
 
     // Create folder object
-    await page.locator('text=OK').click();
+    await page.locator('button:has-text("OK")').click();
 }
 
 async function waitForSearchCompletion(page) {

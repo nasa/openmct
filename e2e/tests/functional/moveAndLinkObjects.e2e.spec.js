@@ -81,7 +81,7 @@ test.describe('Move & link item tests', () => {
         await page.locator('li.icon-move').click();
         await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
 
-        await page.locator('text=OK').click();
+        await page.locator('button:has-text("OK")').click();
 
         // Expect that Child Folder is in My Items, the root folder
         expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=Child Folder)`)).toBeTruthy();
@@ -99,7 +99,7 @@ test.describe('Move & link item tests', () => {
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(telemetryTable);
 
-        await page.locator('text=OK').click();
+        await page.locator('button:has-text("OK")').click();
 
         // Finish editing and save Telemetry Table
         await page.locator('.c-button--menu.c-button--major.icon-save').click();
@@ -120,7 +120,7 @@ test.describe('Move & link item tests', () => {
 
         // Continue test regardless of assertion and create it in My Items
         await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
-        await page.locator('text=OK').click();
+        await page.locator('button:has-text("OK")').click();
 
         // Open My Items
         await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
@@ -196,7 +196,7 @@ test.describe('Move & link item tests', () => {
         await page.locator('li.icon-link').click();
         await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
 
-        await page.locator('text=OK').click();
+        await page.locator('button:has-text("OK")').click();
 
         // Expect that Child Folder is in My Items, the root folder
         expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=Child Folder)`)).toBeTruthy();

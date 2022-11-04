@@ -50,7 +50,7 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
 
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
