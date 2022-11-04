@@ -163,8 +163,8 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         // Click hamburger button
         await page.locator('[title="More options"]').click();
 
-        // Click text=Remove
-        await page.locator('text=Remove').click();
+        // Click 'Remove' and press OK
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
         await page.locator('button:has-text("OK")').click();
 
         //Expect Unnamed Condition Set to be removed in Main View

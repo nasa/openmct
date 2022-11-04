@@ -51,7 +51,7 @@ test.describe('Restricted Notebook', () => {
         expect.soft(await restrictedNotebookTreeObject.count()).toEqual(1);
 
         // Click Remove Text
-        await page.locator('text=Remove').click();
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
 
         // Click 'OK' on confirmation window and wait for save banner to appear
         await Promise.all([
