@@ -22,6 +22,7 @@
 
 import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
+
 export default class EditPropertiesAction extends PropertiesAction {
     constructor(openmct) {
         super(openmct);
@@ -52,24 +53,31 @@ export default class EditPropertiesAction extends PropertiesAction {
      * @private
      */
     _onSave(changes) {
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.openmct.objects.startTransaction();
+        }
+
         try {
             Object.entries(changes).forEach(([key, value]) => {
-                const properties = key.split('.');
-                let object = this.domainObject;
-                const propertiesLength = properties.length;
-                properties.forEach((property, index) => {
-                    const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
-                    if (isComplexProperty && object[property] !== null) {
-                        object = object[property];
-                    } else {
-                        object[property] = value;
-                    }
+                const existingValue = this.domainObject[key];
+                if (!(Array.isArray(existingValue)) && (typeof existingValue === 'object')) {
+                    value = {
+                        ...existingValue,
+                        ...value
+                    };
+                }
+
+                this.openmct.objects.mutate(this.domainObject, key, value);
+            });
+            const transaction = this.openmct.objects.getActiveTransaction();
+
+            return transaction.commit()
+                .catch(error => {
+                    throw error;
+                }).finally(() => {
+                    this.openmct.objects.endTransaction();
                 });
 
-                object = value;
-                this.openmct.objects.mutate(this.domainObject, key, value);
-                this.openmct.notifications.info('Save successful');
-            });
         } catch (error) {
             this.openmct.notifications.error('Error saving objects');
             console.error(error);
