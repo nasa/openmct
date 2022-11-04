@@ -43,7 +43,7 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     await page.locator('button:has-text("Create")').click();
 
     // add sine wave generator with defaults
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
     //Add a 5000 ms Delay
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');

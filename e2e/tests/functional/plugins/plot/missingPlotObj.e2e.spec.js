@@ -88,7 +88,7 @@ async function makeStackedPlot(page, myItemsFolderName) {
 
     // create stacked plot
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Stacked Plot")').click();
+    await page.locator('li[role="menuitem"]:has-text("Stacked Plot")').click();
 
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
@@ -146,7 +146,7 @@ async function saveStackedPlot(page) {
 async function createSineWaveGenerator(page) {
     //Create sine wave generator
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),

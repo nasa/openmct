@@ -110,7 +110,7 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
     await page.locator('button:has-text("Create")').click();
 
     // add overlay plot with defaults
-    await page.locator('li:has-text("Overlay Plot")').click();
+    await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=OK').click(),
@@ -129,7 +129,7 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
     await page.locator('button:has-text("Create")').click();
 
     // add sine wave generator with defaults
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=OK').click(),

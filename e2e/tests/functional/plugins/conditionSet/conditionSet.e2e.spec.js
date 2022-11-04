@@ -40,7 +40,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
         await page.click('button:has-text("Create")');
 
-        await page.locator('li:has-text("Condition Set")').click();
+        await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
 
         await Promise.all([
             page.waitForNavigation(),

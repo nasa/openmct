@@ -95,7 +95,7 @@ test.describe('Move & link item tests', () => {
         // Create Telemetry Table
         let telemetryTable = 'Test Telemetry Table';
         await page.locator('button:has-text("Create")').click();
-        await page.locator('li:has-text("Telemetry Table")').click();
+        await page.locator('li[role="menuitem"]:has-text("Telemetry Table")').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(telemetryTable);
 
@@ -108,7 +108,7 @@ test.describe('Move & link item tests', () => {
         // Create New Folder Basic Domain Object
         let folder = 'Test Folder';
         await page.locator('button:has-text("Create")').click();
-        await page.locator('li:has-text("Folder")').click();
+        await page.locator('li[role="menuitem"]:has-text("Folder")').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').click();
         await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folder);
 
