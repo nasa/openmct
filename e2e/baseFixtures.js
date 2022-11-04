@@ -138,10 +138,18 @@ exports.test = base.test.extend({
      * Extends the base page class to enable console log error detection.
      * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
      */
-    page: async ({ page, failOnConsoleError }, use) => {
+    page: async ({ page, failOnConsoleError }, use, testInfo) => {
         // Capture any console errors during test execution
         const messages = [];
         page.on('console', (msg) => messages.push(msg));
+
+        // Attach info about the currently running test and its project.
+        // This will be used by appActions to fill in the created
+        // domain object's notes.
+        page.testNotes = [
+            `${testInfo.titlePath.join('\n')}`,
+            `${testInfo.project.name}`
+        ].join('\n');
 
         await use(page);
 
