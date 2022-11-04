@@ -31,7 +31,7 @@ test.describe('Grand Search', () => {
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
-        await createObjectsForSearch(page, myItemsFolderName);
+        const createdObjects = await createObjectsForSearch(page, myItemsFolderName);
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
@@ -77,7 +77,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('.is-object-type-clock')).toBeVisible();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Disp');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText('Unnamed Display Layout');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(createdObjects.displayLayout.name);
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toContainText('Folder');
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Clock C');
@@ -236,6 +236,9 @@ async function createObjectsForSearch(page) {
     const displayLayout = await createDomainObjectWithDefaults(page, {
         type: 'Display Layout'
     });
+
+    // Go back into edit mode for the display layout
+    await page.locator('button[title="Edit"]').click();
 
     return {
         redFolder,
