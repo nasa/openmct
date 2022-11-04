@@ -9,7 +9,7 @@
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.25.2",
     "@types/jasmine": "4.3.0",
-    "@types/lodash": "4.14.186",
+    "@types/lodash": "4.14.188",
     "babel-loader": "9.0.0",
     "babel-plugin-istanbul": "6.1.1",
     "codecov": "3.8.3",
