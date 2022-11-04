@@ -44,7 +44,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         await Promise.all([
             page.waitForNavigation(),
-            page.click('text=OK')
+            page.click('button:has-text("OK")')
         ]);
 
         //Save localStorage for future test execution

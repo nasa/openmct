@@ -197,7 +197,7 @@ test.describe('Example Imagery in Display Layout', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
@@ -284,7 +284,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
@@ -326,7 +326,7 @@ test.describe('Example Imagery in Tabs View', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
