@@ -26,7 +26,6 @@ This test suite is dedicated to tests which verify form functionality in isolati
 
 const { test, expect } = require('../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
-const { v4: uuid } = require('uuid');
 const path = require('path');
 
 const TEST_FOLDER = 'test folder';
@@ -105,7 +104,6 @@ test.describe('Persistence operations @couchdb', () => {
 
         // Create a new 'Clock' object with default settings
         const clock = await createDomainObjectWithDefaults(page, {
-            name: `clock-${uuid()}`,
             type: 'Clock'
         });
 
