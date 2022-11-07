@@ -199,14 +199,10 @@ export default {
         setViewFromClock(newClock) {
             this.filterValue = this.domainObject.configuration.filter;
             this.isRealTime = newClock !== undefined;
-            if (this.isRealTime) {
-                // clear invokes listActivities
-                this.clearPreviousActivities(this.openmct.time.bounds()?.start);
-            } else {
-                this.setSort();
-                this.setViewBounds();
-                this.listActivities();
-            }
+
+            this.setSort();
+            this.setViewBounds();
+            this.listActivities();
         },
         addItem(domainObject) {
             this.planObjects = [domainObject];
