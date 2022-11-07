@@ -30,6 +30,7 @@ jobs:
       - run: npm install
       - run: |
           echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
-          npm publish --access=public --tag unstable
+          npm whoami
+          npm publish --access=public --tag unstable openmct
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
