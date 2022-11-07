@@ -198,10 +198,8 @@ export default {
         },
         setViewFromClock(newClock) {
             this.filterValue = this.domainObject.configuration.filter;
-            const isFixedTime = newClock === undefined;
-            if (isFixedTime) {
-                this.hideAll = false;
-                this.showAll = true;
+            this.isRealTime = newClock !== undefined;
+            if (this.isRealTime) {
                 // clear invokes listActivities
                 this.clearPreviousActivities(this.openmct.time.bounds()?.start);
             } else {
@@ -340,7 +338,12 @@ export default {
             groups.forEach((key) => {
                 activities = activities.concat(this.planData[key]);
             });
-            activities = activities.filter(this.filterActivities);
+
+            if (this.isRealTime) {
+                // avoid filtering activities when in fixed time
+                activities = activities.filter(this.filterActivities);
+            }
+
             activities = this.applyStyles(activities);
             this.setScrollTop();
             // sort by start time
