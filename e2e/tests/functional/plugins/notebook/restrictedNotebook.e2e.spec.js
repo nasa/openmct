@@ -36,27 +36,27 @@ test.describe('Restricted Notebook', () => {
     });
 
     test('Can be renamed @addInit', async ({ page }) => {
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed ${CUSTOM_NAME}`);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(`${notebook.name}`);
     });
 
-    test('Can be deleted if there are no locked pages @addInit', async ({ page, openmctConfig }) => {
+    test('Can be deleted if there are no locked pages @addInit', async ({ page }) => {
         await openObjectTreeContextMenu(page, notebook.url);
 
         const menuOptions = page.locator('.c-menu ul');
         await expect.soft(menuOptions).toContainText('Remove');
 
-        const restrictedNotebookTreeObject = page.locator(`a:has-text("Unnamed ${CUSTOM_NAME}")`);
+        const restrictedNotebookTreeObject = page.locator(`a:has-text("${notebook.name}")`);
 
         // notebook tree object exists
         expect.soft(await restrictedNotebookTreeObject.count()).toEqual(1);
 
         // Click Remove Text
-        await page.locator('text=Remove').click();
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
 
         // Click 'OK' on confirmation window and wait for save banner to appear
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=OK').click(),
+            page.locator('button:has-text("OK")').click(),
             page.waitForSelector('.c-message-banner__message')
         ]);
 
@@ -134,7 +134,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         // Click text=Ok
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=Ok').click()
+            page.locator('button:has-text("OK")').click()
         ]);
 
         // deleted page, should no longer exist
@@ -145,10 +145,9 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
 test.describe('Restricted Notebook with a page locked and with an embed @addInit', () => {
 
-    test.beforeEach(async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-        await startAndAddRestrictedNotebookObject(page);
-        await nbUtils.dragAndDropEmbed(page, myItemsFolderName);
+    test.beforeEach(async ({ page }) => {
+        const notebook = await startAndAddRestrictedNotebookObject(page);
+        await nbUtils.dragAndDropEmbed(page, notebook);
     });
 
     test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {

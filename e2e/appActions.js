@@ -46,6 +46,7 @@
  */
 
 const Buffer = require('buffer').Buffer;
+const genUuid = require('uuid').v4;
 
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
@@ -56,6 +57,10 @@ const Buffer = require('buffer').Buffer;
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+    if (!name) {
+        name = `${type}:${genUuid()}`;
+    }
+
     const parentUrl = await getHashUrlToDomainObject(page, parent);
 
     // Navigate to the parent object. This is necessary to create the object
@@ -70,11 +75,14 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     await page.click(`li:text("${type}")`);
 
     // Modify the name input field of the domain object to accept 'name'
-    if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
-        await nameInput.fill(name);
-    }
+    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+    await nameInput.fill("");
+    await nameInput.fill(name);
+
+    // Fill the "Notes" section with information about the
+    // currently running test and its project.
+    const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+    await notesInput.fill(page.testNotes);
 
     // Click OK button and wait for Navigate event
     await Promise.all([
@@ -96,8 +104,8 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     }
 
     return {
-        name: name || `Unnamed ${type}`,
-        uuid: uuid,
+        name,
+        uuid,
         url: objectUrl
     };
 }

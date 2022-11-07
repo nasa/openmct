@@ -43,7 +43,7 @@ test.describe('Form Validation Behavior', () => {
         await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
 
         //Required Field Form Validation
-        await expect(page.locator('text=OK')).toBeDisabled();
+        await expect(page.locator('button:has-text("OK")')).toBeDisabled();
         await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/invalid/);
 
         //Correct Form Validation for missing title and trigger validation with 'Tab'
@@ -52,13 +52,13 @@ test.describe('Form Validation Behavior', () => {
         await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
 
         //Required Field Form Validation is corrected
-        await expect(page.locator('text=OK')).toBeEnabled();
+        await expect(page.locator('button:has-text("OK")')).toBeEnabled();
         await expect(page.locator('.c-form-row__state-indicator').first()).not.toHaveClass(/invalid/);
 
         //Finish Creating Domain Object
         await Promise.all([
             page.waitForNavigation(),
-            page.click('text=OK')
+            page.click('button:has-text("OK")')
         ]);
 
         //Verify that the Domain Object has been created with the corrected title property

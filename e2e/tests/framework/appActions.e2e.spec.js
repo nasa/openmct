@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../baseFixtures.js');
+const { test, expect } = require('../../pluginFixtures.js');
 const { createDomainObjectWithDefaults } = require('../../appActions.js');
 
 test.describe('AppActions', () => {
@@ -50,11 +50,11 @@ test.describe('AppActions', () => {
             });
 
             await page.goto(timer1.url, { waitUntil: 'networkidle' });
-            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Timer Foo');
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer1.name);
             await page.goto(timer2.url, { waitUntil: 'networkidle' });
-            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Timer Bar');
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer2.name);
             await page.goto(timer3.url, { waitUntil: 'networkidle' });
-            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Timer Baz');
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer3.name);
         });
 
         await test.step('Create multiple nested objects in a row', async () => {
@@ -74,11 +74,11 @@ test.describe('AppActions', () => {
                 parent: folder2.uuid
             });
             await page.goto(folder1.url, { waitUntil: 'networkidle' });
-            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Folder Foo');
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder1.name);
             await page.goto(folder2.url, { waitUntil: 'networkidle' });
-            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Folder Bar');
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder2.name);
             await page.goto(folder3.url, { waitUntil: 'networkidle' });
-            await expect(page.locator('.l-browse-bar__object-name')).toHaveText('Folder Baz');
+            await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder3.name);
 
             expect(folder1.url).toBe(`${e2eFolder.url}/${folder1.uuid}`);
             expect(folder2.url).toBe(`${e2eFolder.url}/${folder1.uuid}/${folder2.uuid}`);

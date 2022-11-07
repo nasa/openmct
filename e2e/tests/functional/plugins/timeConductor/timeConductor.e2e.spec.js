@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
 const { setFixedTimeMode, setRealTimeMode, setStartOffset, setEndOffset } = require('../../../../appActions');
 
 test.describe('Time conductor operations', () => {
