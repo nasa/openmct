@@ -25,7 +25,7 @@
 *
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Plot Integrity Testing @unstable', () => {
