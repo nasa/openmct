@@ -45,7 +45,7 @@
 */
 
 // Structure: Some standard Imports. Please update the required pathing.
-const { test, expect } = require('../../baseFixtures');
+const { test, expect } = require('../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 /**

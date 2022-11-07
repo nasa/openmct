@@ -143,14 +143,6 @@ exports.test = base.test.extend({
         const messages = [];
         page.on('console', (msg) => messages.push(msg));
 
-        // Attach info about the currently running test and its project.
-        // This will be used by appActions to fill in the created
-        // domain object's notes.
-        page.testNotes = [
-            `${testInfo.titlePath.join('\n')}`,
-            `${testInfo.project.name}`
-        ].join('\n');
-
         await use(page);
 
         // Assert against console errors during teardown

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../baseFixtures.js');
+const { test, expect } = require('../../pluginFixtures.js');
 const { createDomainObjectWithDefaults } = require('../../appActions.js');
 
 test.describe('AppActions', () => {
