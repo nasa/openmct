@@ -53,7 +53,7 @@ test.describe('Performance tests', () => {
         await page.setInputFiles('#fileElem', filePath);
 
         // Click text=OK
-        await page.locator('text=OK').click();
+        await page.locator('button:has-text("OK")').click();
 
         await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
 

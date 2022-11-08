@@ -27,6 +27,7 @@
         :class="model.cssClass"
     >
         <textarea
+            :id="`${model.key}-textarea`"
             v-model="field"
             type="text"
             :size="model.size"
