@@ -110,17 +110,12 @@ export default {
     },
     mounted() {
         this.stopListeningToChanges = this.openmct.selection.on('change', this.updateSelection);
-        this.stopListeningToAnnotationCreation = this.openmct.annotation.on('annotationCreated', this.annotationCreated);
         this.updateSelection(this.openmct.selection.get());
     },
     beforeDestroy() {
         this.openmct.selection.off('change', this.updateSelection);
         if (this.stopListeningToChanges) {
             this.stopListeningToChanges();
-        }
-
-        if (this.stopListeningToAnnotationCreation) {
-            this.stopListeningToAnnotationCreation();
         }
     },
     methods: {
@@ -149,9 +144,6 @@ export default {
             } else {
                 this.annotations = [];
             }
-        },
-        annotationCreated(annotationObject) {
-            this.updateSelection(this.openmct.selection.get());
         },
         getDomainObject() {
             if (this.selection && this.selection[0] && this.selection[0][0] && this.selection[0][0].context) {

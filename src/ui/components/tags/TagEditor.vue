@@ -57,17 +57,20 @@ export default {
         },
         annotationType: {
             type: String,
-            required: true
+            required: false,
+            default: null
         },
         targetSpecificDetails: {
             type: Object,
-            required: true
+            required: false,
+            default: null
         },
         domainObject: {
             type: Object,
             default() {
                 return null;
-            }
+            },
+            required: true
         }
     },
     data() {
