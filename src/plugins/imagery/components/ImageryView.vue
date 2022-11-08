@@ -219,6 +219,8 @@ const ZOOM_SCALE_DEFAULT = 1;
 const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
 const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
+const LAYOUT_NAMES = new Set(['Display Layout', 'Flexible Layout']);
+
 export default {
     name: 'ImageryView',
     components: {
@@ -388,6 +390,13 @@ export default {
 
             return disabled;
         },
+        isComposedInLayout() {
+            const parent = this.currentView?.objectPath[1];
+            const parentType = parent && this.openmct.types.get(parent.type);
+            const parentTypeName = parentType?.definition.name;
+
+            return LAYOUT_NAMES.has(parentTypeName);
+        },
         focusedImage() {
             return this.imageHistory[this.focusedImageIndex];
         },
@@ -548,10 +557,10 @@ export default {
 
                 if (!this.isPaused) {
                     this.setFocusedImage(imageIndex);
-                    this.scrollToRight();
-                } else {
-                    this.scrollToFocused();
                 }
+
+                this.scrollHandler();
+
             },
             deep: true
         },
@@ -562,7 +571,7 @@ export default {
             this.getImageNaturalDimensions();
         },
         bounds() {
-            this.scrollToFocused();
+            this.scrollHandler();
         },
         isFixed(newValue) {
             const isRealTime = !newValue;
@@ -853,7 +862,7 @@ export default {
             }
         },
         scrollToRight(type) {
-            if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
+            if (type !== 'reset' && ((this.isPaused && !this.isComposedInLayout) || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
 
@@ -865,6 +874,17 @@ export default {
             this.$nextTick(() => {
                 this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
             });
+        },
+        scrollHandler() {
+            // have some awareness if in a layout
+            console.log('scroll handler is in composed layout', this.isComposedInLayout);
+
+            if (this.isComposedInLayout || !this.isPaused) {
+                this.scrollToRight();
+            } else {
+                this.scrollToFocused();
+            }
+
         },
         matchIndexOfPreviousImage(previous, imageHistory) {
             // match logic uses a composite of url and time to account
@@ -1064,7 +1084,7 @@ export default {
 
             this.setSizedImageDimensions();
             this.calculateViewHeight();
-            this.scrollToFocused();
+            this.scrollHandler();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
@@ -1104,7 +1124,6 @@ export default {
         },
         wheelZoom(e) {
             e.preventDefault();
-
             this.$refs.imageControls.wheelZoom(e);
         },
         startPan(e) {
