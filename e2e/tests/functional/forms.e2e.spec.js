@@ -25,6 +25,7 @@ This test suite is dedicated to tests which verify form functionality in isolati
 */
 
 const { test, expect } = require('../../baseFixtures');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 const path = require('path');
 
 const TEST_FOLDER = 'test folder';
@@ -88,6 +89,44 @@ test.describe('Persistence operations @addInit', () => {
 
         const okButton = page.locator('button:has-text("OK")');
         await expect(okButton).toBeDisabled();
+    });
+});
+
+test.describe('Persistence operations @couchdb', () => {
+    test.use({ failOnConsoleError: false });
+    test('Editing object properties should generate a single persistence operation', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5616'
+        });
+
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create a new 'Clock' object with default settings
+        const clock = await createDomainObjectWithDefaults(page, {
+            type: 'Clock'
+        });
+
+        // Count all persistence operations (PUT requests) for this specific object
+        let putRequestCount = 0;
+        page.on('request', req => {
+            if (req.method() === 'PUT' && req.url().endsWith(clock.uuid)) {
+                putRequestCount += 1;
+            }
+        });
+
+        // Open the edit form for the clock object
+        await page.click('button[title="More options"]');
+        await page.click('li[title="Edit properties of this object."]');
+
+        // Modify the display format from default 12hr -> 24hr and click 'Save'
+        await page.locator('select[aria-label="12 or 24 hour clock"]').selectOption({ value: 'clock24' });
+        await page.click('button[aria-label="Save"]');
+
+        await expect.poll(() => putRequestCount, {
+            message: 'Verify a single PUT request was made to persist the object',
+            timeout: 1000
+        }).toEqual(1);
     });
 });
 
