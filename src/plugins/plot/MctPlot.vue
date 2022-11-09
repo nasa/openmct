@@ -460,7 +460,6 @@ export default {
                 rawAnnotationsForPlot.push(...seriesAnnotations);
             }));
             if (rawAnnotationsForPlot) {
-                console.debug(`🥕 Found ${rawAnnotationsForPlot.length} annotations for this plot`);
                 this.annotations = this.findAnnotationPoints(rawAnnotationsForPlot);
             }
         },
@@ -940,7 +939,6 @@ export default {
         },
         findAnnotationPoints(rawAnnotations) {
             const annotationsByPoints = [];
-            console.log(`Finding annotations points`);
             rawAnnotations.forEach(rawAnnotation => {
                 if (rawAnnotation.targets) {
                     const targetValues = Object.values(rawAnnotation.targets);
@@ -971,11 +969,8 @@ export default {
                             return seriesModel.getYVal(point);
                         }
                     );
-                    console.debug(`Bounding box (${JSON.stringify(boundingBox)})`);
-                    console.debug(`Searching through ${seriesData.length} items`);
                     const searchResults = [];
                     const rangeResults = kdTree.range(boundingBox.minX, boundingBox.minY, boundingBox.maxX, boundingBox.maxY);
-                    console.debug(`Found ${rangeResults.length} items`);
                     rangeResults.forEach(id => {
                         const seriesDatum = seriesData[id];
                         if (seriesDatum) {
@@ -989,15 +984,12 @@ export default {
                     if (searchResults.length) {
                         seriesKDTrees.push(searchResults);
                     }
-                } else {
-                    console.debug(`🍊 No series data, skipping`);
                 }
             });
 
             return seriesKDTrees;
         },
         async endAnnotationMarquee() {
-            console.debug(`🍊 marquee annotation fired`);
             const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
             const minY = Math.min(this.marquee.start.y, this.marquee.end.y);
             const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);

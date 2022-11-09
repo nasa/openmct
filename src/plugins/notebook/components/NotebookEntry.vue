@@ -28,6 +28,7 @@
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
+    @click="selectEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time-and-creator">
@@ -357,6 +358,21 @@ export default {
             } else {
                 this.$emit('cancelEdit');
             }
+        },
+        selectEntry(event, entryKey) {
+            this.openmct.selection.select([{
+                element: event.currentTarget,
+                context: {
+                    type: 'notebook-entry',
+                    entryKey
+                }
+            }, {
+                element: this.openmct.layout.$refs.browseObject.$el,
+                context: {
+                    item: this.domainObject
+                }
+            }], false);
+            event.stopPropagation();
         }
     }
 };

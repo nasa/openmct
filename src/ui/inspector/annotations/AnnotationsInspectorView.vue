@@ -31,7 +31,7 @@
     >
         <TagEditor
             :domain-object="getDomainObject()"
-            :annotation="annotations[0]"
+            :annotations="annotations"
             :entry="null"
         />
     </ul>
