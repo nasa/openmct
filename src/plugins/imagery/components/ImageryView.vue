@@ -25,7 +25,7 @@
     tabindex="0"
     class="c-imagery"
     @keyup="arrowUpHandler"
-    @keydown="arrowDownHandler"
+    @keydown.prevent="arrowDownHandler"
     @mouseover="focusElement"
 >
     <div
@@ -635,7 +635,7 @@ export default {
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         this.loadVisibleLayers();
         // // set after render so initial scroll event is skipped
-        setTimeout(this.setScrollBehavior, 3 * 1000)
+        setTimeout(this.setScrollBehavior, 3 * 1000);
     },
     beforeDestroy() {
         this.persistVisibleLayers();
@@ -870,14 +870,18 @@ export default {
                 return;
             }
 
-            // separate scrollTo function had to be implemented since scrollIntoView caused undesirable behavior in layouts and could not simply be scoped to the parent element
+            // separate scrollTo function had to be implemented since scrollIntoView
+            // caused undesirable behavior in layouts
+            // and could not simply be scoped to the parent element
             if (this.isComposedInLayout) {
                 await Vue.nextTick();
                 const wrapperWidth = this.$refs.thumbsWrapper.clientWidth || 0;
-                this.$refs.thumbsWrapper.scrollLeft = domThumb.offsetLeft - (wrapperWidth - domThumb.clientWidth) / 2;
+                this.$refs.thumbsWrapper.scrollLeft = (
+                    domThumb.offsetLeft - (wrapperWidth - domThumb.clientWidth) / 2);
 
                 return;
             }
+
             domThumb.scrollIntoView({
                 behavior: 'smooth',
                 block: 'center',
@@ -1124,7 +1128,6 @@ export default {
             }
         },
         handleThumbWindowResizeStart() {
-            console.log('handleThumbWindow Resize')
             if (!this.autoScroll) {
                 return;
             }
@@ -1134,7 +1137,6 @@ export default {
             this.handleThumbWindowResizeEnded();
         },
         handleThumbWindowResizeEnded() {
-            console.log('handle thumb resize')
             this.scrollHandler();
 
             this.calculateViewHeight();
