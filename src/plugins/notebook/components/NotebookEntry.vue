@@ -367,6 +367,7 @@ export default {
             }
         },
         selectEntry(event, entry) {
+            // need to add "target specific details" to the selection event
             this.openmct.selection.select(
                 [
                     {
@@ -379,7 +380,7 @@ export default {
                         element: event.currentTarget,
                         context: {
                             type: 'notebook-entry',
-                            entry
+                            targetSpecificDetails: entry.id
                         }
                     }
                 ],

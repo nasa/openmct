@@ -125,6 +125,7 @@ export default {
         async updateSelection(selection) {
             this.selection = selection;
             const domainObject = this.getDomainObject();
+            const targetSpecificDetails = this.getTargetSpecificDetails();
             if (domainObject) {
                 const domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
                 let totalAnnotations = await this.openmct.annotation.getAnnotations(domainObjectKeyString);
@@ -134,7 +135,11 @@ export default {
                     return;
                 }
 
-                const sortedAnnotations = totalAnnotations.sort((annotationA, annotationB) => {
+                const targetFilteredAnnotations = totalAnnotations.filter(annotation => {
+                    return annotation.target === targetSpecificDetails;
+                });
+
+                const sortedAnnotations = targetFilteredAnnotations.sort((annotationA, annotationB) => {
                     return annotationB.modified - annotationA.modified;
                 });
                 if (sortedAnnotations.length < this.annotations.length) {
@@ -149,11 +154,10 @@ export default {
             }
         },
         getDomainObject() {
-            if (this.selection && this.selection[0] && this.selection[0][0] && this.selection[0][0].context) {
-                return this.selection[0][0].context.item;
-            }
-
-            return null;
+            return this?.selection?.[0]?.[0]?.context?.item;
+        },
+        getTargetSpecificDetails() {
+            return this?.selection?.[0]?.[0]?.context?.targetSpecificDetails;
         }
     }
 };
