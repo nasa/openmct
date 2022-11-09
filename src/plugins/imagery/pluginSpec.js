@@ -481,17 +481,15 @@ describe("The Imagery View Layouts", () => {
                 });
             });
         });
-        it ('scrollToRight is called when clicking on auto scroll button', (done) => {
-            Vue.nextTick(() => {
-                // use spyon to spy the scroll function
-                spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollToRight');
-                imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
-                Vue.nextTick(() => {
-                    parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
-                    expect(imageryView._getInstance().$refs.ImageryContainer.scrollToRight).toHaveBeenCalledWith('reset');
-                    done();
-                });
-            });
+        it ('scrollToRight is called when clicking on auto scroll button', async (done) => {
+            await Vue.nextTick();
+            // use spyon to spy the scroll function
+            spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollHandler');
+            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
+            await Vue.nextTick();
+            parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
+            expect(imageryView._getInstance().$refs.ImageryContainer.scrollHandler);
+            done();
         });
         xit('should change the image zoom factor when using the zoom buttons', async (done) => {
             await Vue.nextTick();
