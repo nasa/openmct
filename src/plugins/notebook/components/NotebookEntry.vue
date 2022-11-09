@@ -24,7 +24,7 @@
 <div
     class="c-notebook__entry c-ne has-local-controls has-tag-applier"
     aria-label="Notebook Entry"
-    :class="{ 'locked': isLocked }"
+    :class="{ 'locked': isLocked, 'is-selected': isSelectedEntry }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
@@ -204,6 +204,10 @@ export default {
             default() {
                 return false;
             }
+        },
+        selectedEntryId: {
+            type: String,
+            required: true
         }
     },
     computed: {
@@ -212,6 +216,9 @@ export default {
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
+        },
+        isSelectedEntry() {
+            return this.selectedEntryId === this.entry.id;
         },
         entryText() {
             let text = this.entry.text;
@@ -359,20 +366,26 @@ export default {
                 this.$emit('cancelEdit');
             }
         },
-        selectEntry(event, entryKey) {
-            this.openmct.selection.select([{
-                element: event.currentTarget,
-                context: {
-                    type: 'notebook-entry',
-                    entryKey
-                }
-            }, {
-                element: this.openmct.layout.$refs.browseObject.$el,
-                context: {
-                    item: this.domainObject
-                }
-            }], false);
+        selectEntry(event, entry) {
+            this.openmct.selection.select(
+                [
+                    {
+                        element: this.openmct.layout.$refs.browseObject.$el,
+                        context: {
+                            item: this.domainObject
+                        }
+                    },
+                    {
+                        element: event.currentTarget,
+                        context: {
+                            type: 'notebook-entry',
+                            entry
+                        }
+                    }
+                ],
+                false);
             event.stopPropagation();
+            this.$emit('entry-selection', this.entry);
         }
     }
 };

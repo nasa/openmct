@@ -49,7 +49,7 @@
         class="c-inspect-properties__section c-annotation__list"
     >
         <AnnotationEditor
-            v-for="(annotation, index) in annotations"
+            v-for="(annotation, index) in nonTagAnnotations"
             :key="index"
             :annotation="annotation"
         />
@@ -86,6 +86,9 @@ export default {
                 && this.annotations.length
                 && !this.multiSelection
             );
+        },
+        nonTagAnnotations() {
+            return this.annotations.filter(annotation => !annotation.tags);
         },
         hasTags() {
             return Boolean(

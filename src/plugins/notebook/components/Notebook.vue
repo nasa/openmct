@@ -156,10 +156,12 @@
                     :selected-section="selectedSection"
                     :read-only="false"
                     :is-locked="selectedPage.isLocked"
+                    :selected-entry-id="selectedEntryId"
                     @cancelEdit="cancelTransaction"
                     @editingEntry="startTransaction"
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
+                    @entry-selection="entrySelection(entry)"
                 />
             </div>
             <div
@@ -225,7 +227,8 @@ export default {
             showNav: false,
             sidebarCoversEntries: false,
             filteredAndSortedEntries: [],
-            notebookAnnotations: {}
+            notebookAnnotations: {},
+            selectedEntryId: ''
         };
     },
     computed: {
@@ -913,6 +916,9 @@ export default {
                         this.openmct.objects.endTransaction();
                     });
             }
+        },
+        entrySelection(entry) {
+            this.selectedEntryId = entry.id;
         }
     }
 };
