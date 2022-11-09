@@ -1192,14 +1192,17 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
-            if (this.$parent.$refs.plotWrapper) {
-                const newOffsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
-                //we ignore when width gets smaller
-                const offsetChange = newOffsetWidth - this.offsetWidth;
-                if (offsetChange > OFFSET_THRESHOLD) {
-                    this.offsetWidth = newOffsetWidth;
-                    this.config.series.models.forEach(this.loadSeriesData, this);
-                }
+            const { plotWrapper } = this.$parent.$refs;
+            if (!plotWrapper) {
+                return;
+            }
+
+            const newOffsetWidth = plotWrapper.offsetWidth;
+            //we ignore when width gets smaller
+            const offsetChange = newOffsetWidth - this.offsetWidth;
+            if (offsetChange > OFFSET_THRESHOLD) {
+                this.offsetWidth = newOffsetWidth;
+                this.config.series.models.forEach(this.loadSeriesData, this);
             }
         },
         legendHoverChanged(data) {
