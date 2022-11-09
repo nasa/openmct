@@ -852,8 +852,19 @@ export default {
             }
 
             let domThumb = thumbsWrapper.children[this.focusedImageIndex];
+            const wrapperWidth = this.$refs.thumbsWrapper.clientWidth || 0;
 
             if (domThumb) {
+                // separate scrollTo function had to be implemented since scrollIntoView caused undesirable behavior in layouts and could not simply be scoped to the parent element
+                if (this.isComposedInLayout) {
+                    console.log('doing custom scroll to focused', wrapperWidth, domThumb.offsetLeft)
+                    this.$nextTick(() => {
+                        this.$refs.thumbsWrapper.scrollLeft = domThumb.offsetLeft - wrapperWidth / 2;
+                    });
+
+                    return;
+                }
+
                 domThumb.scrollIntoView({
                     behavior: 'smooth',
                     block: 'center',
@@ -877,9 +888,8 @@ export default {
         },
         scrollHandler() {
             // have some awareness if in a layout
-            console.log('scroll handler is in composed layout', this.isComposedInLayout);
 
-            if (this.isComposedInLayout || !this.isPaused) {
+            if (!this.isPaused) {
                 this.scrollToRight();
             } else {
                 this.scrollToFocused();
