@@ -481,7 +481,7 @@ describe("The Imagery View Layouts", () => {
                 });
             });
         });
-        it ('scrollToRight is called when clicking on auto scroll button', async (done) => {
+        it ('scrollToRight is called when clicking on auto scroll button', async () => {
             await Vue.nextTick();
             // use spyon to spy the scroll function
             spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollHandler');
@@ -489,9 +489,8 @@ describe("The Imagery View Layouts", () => {
             await Vue.nextTick();
             parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
             expect(imageryView._getInstance().$refs.ImageryContainer.scrollHandler);
-            done();
         });
-        xit('should change the image zoom factor when using the zoom buttons', async (done) => {
+        xit('should change the image zoom factor when using the zoom buttons', async () => {
             await Vue.nextTick();
             let imageSizeBefore;
             let imageSizeAfter;
@@ -510,7 +509,6 @@ describe("The Imagery View Layouts", () => {
             imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
             expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
-            done();
         });
         xit('should reset the zoom factor on the image when clicking the zoom button', async (done) => {
             await Vue.nextTick();
