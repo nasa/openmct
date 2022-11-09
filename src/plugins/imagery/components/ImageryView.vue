@@ -147,7 +147,7 @@
                     v-if="!isFixed"
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': isPaused}"
-                    @click="paused(!isPaused)"
+                    @click="handlePauseButton(!isPaused)"
                 ></button>
             </div>
         </div>
@@ -165,6 +165,9 @@
         <div
             ref="thumbsWrapper"
             class="c-imagery__thumbs-scroll-area"
+            :class="[{
+                'animate-scroll': animateThumbScroll
+            }]"
             @scroll="handleScroll"
         >
             <ImageThumbnail
@@ -181,7 +184,7 @@
         <button
             class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
             title="Resume automatic scrolling of image thumbnails"
-            @click="scrollToRight('reset')"
+            @click="scrollToRight"
         ></button>
     </div>
 </div>
@@ -191,6 +194,7 @@
 import eventHelpers from '../lib/eventHelpers';
 import _ from 'lodash';
 import moment from 'moment';
+import Vue from 'vue';
 
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
@@ -286,7 +290,8 @@ export default {
             pan: undefined,
             animateZoom: true,
             imagePanned: false,
-            forceShowThumbnails: false
+            forceShowThumbnails: false,
+            animateThumbScroll: false
         };
     },
     computed: {
@@ -629,6 +634,8 @@ export default {
 
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         this.loadVisibleLayers();
+        // // set after render so initial scroll event is skipped
+        setTimeout(this.setScrollBehavior, 3 * 1000)
     },
     beforeDestroy() {
         this.persistVisibleLayers();
@@ -835,6 +842,13 @@ export default {
             const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;
         },
+        handlePauseButton(newState) {
+            this.paused(newState);
+            if (newState) {
+                // need to set the focused index or the paused focus will drift
+                this.thumbnailClicked(this.focusedImageIndex);
+            }
+        },
         paused(state) {
             this.isPaused = Boolean(state);
 
@@ -842,59 +856,59 @@ export default {
                 this.previousFocusedImage = null;
                 this.setFocusedImage(this.nextImageIndex);
                 this.autoScroll = true;
-                this.scrollToRight();
+                this.scrollHandler();
             }
         },
-        scrollToFocused() {
+        async scrollToFocused() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
             if (!thumbsWrapper) {
                 return;
             }
 
             let domThumb = thumbsWrapper.children[this.focusedImageIndex];
-            const wrapperWidth = this.$refs.thumbsWrapper.clientWidth || 0;
-
-            if (domThumb) {
-                // separate scrollTo function had to be implemented since scrollIntoView caused undesirable behavior in layouts and could not simply be scoped to the parent element
-                if (this.isComposedInLayout) {
-                    console.log('doing custom scroll to focused', wrapperWidth, domThumb.offsetLeft)
-                    this.$nextTick(() => {
-                        this.$refs.thumbsWrapper.scrollLeft = domThumb.offsetLeft - wrapperWidth / 2;
-                    });
-
-                    return;
-                }
-
-                domThumb.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'center'
-                });
-            }
-        },
-        scrollToRight(type) {
-            if (type !== 'reset' && ((this.isPaused && !this.isComposedInLayout) || !this.$refs.thumbsWrapper || !this.autoScroll)) {
+            if (!domThumb) {
                 return;
             }
 
-            const scrollWidth = this.$refs.thumbsWrapper.scrollWidth || 0;
+            // separate scrollTo function had to be implemented since scrollIntoView caused undesirable behavior in layouts and could not simply be scoped to the parent element
+            if (this.isComposedInLayout) {
+                await Vue.nextTick();
+                const wrapperWidth = this.$refs.thumbsWrapper.clientWidth || 0;
+                this.$refs.thumbsWrapper.scrollLeft = domThumb.offsetLeft - (wrapperWidth - domThumb.clientWidth) / 2;
+
+                return;
+            }
+            domThumb.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'center'
+            });
+        },
+        async scrollToRight() {
+
+            const scrollWidth = this.$refs?.thumbsWrapper?.scrollWidth || 0;
             if (!scrollWidth) {
                 return;
             }
 
-            this.$nextTick(() => {
-                this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
-            });
+            await Vue.nextTick();
+            this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
         },
         scrollHandler() {
-            // have some awareness if in a layout
-
-            if (!this.isPaused) {
-                this.scrollToRight();
-            } else {
+            if (this.isPaused) {
                 this.scrollToFocused();
+
+                return;
             }
 
+            if (this.autoScroll) {
+
+                this.scrollToRight();
+            }
+
+        },
+        setScrollBehavior(value = true) {
+            this.animateThumbScroll = value;
         },
         matchIndexOfPreviousImage(previous, imageHistory) {
             // match logic uses a composite of url and time to account
@@ -1110,6 +1124,7 @@ export default {
             }
         },
         handleThumbWindowResizeStart() {
+            console.log('handleThumbWindow Resize')
             if (!this.autoScroll) {
                 return;
             }
@@ -1119,9 +1134,8 @@ export default {
             this.handleThumbWindowResizeEnded();
         },
         handleThumbWindowResizeEnded() {
-            if (!this.isPaused) {
-                this.scrollToRight('reset');
-            }
+            console.log('handle thumb resize')
+            this.scrollHandler();
 
             this.calculateViewHeight();
 
