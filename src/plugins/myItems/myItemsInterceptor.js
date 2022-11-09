@@ -37,7 +37,7 @@ function myItemsInterceptor(openmct, identifierObject, name) {
             return identifier.key === MY_ITEMS_KEY;
         },
         invoke: (identifier, object) => {
-            if (openmct.objects.isMissing(object)) {
+            if (!object || openmct.objects.isMissing(object)) {
                 openmct.objects.save(myItemsModel);
 
                 return myItemsModel;
