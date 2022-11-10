@@ -377,11 +377,13 @@ export default class ObjectAPI {
             this.#mutate(domainObject, 'modifiedBy', username);
 
             if (isNewObject) {
-                const persistedTime = Date.now();
-
-                this.#mutate(domainObject, 'persisted', persistedTime);
-                this.#mutate(domainObject, 'created', persistedTime);
                 this.#mutate(domainObject, 'createdBy', username);
+
+                const createdTime = Date.now();
+                this.#mutate(domainObject, 'created', createdTime);
+
+                const persistedTime = Date.now();
+                this.#mutate(domainObject, 'persisted', persistedTime);
 
                 savedObjectPromise = provider.create(domainObject);
             } else {
