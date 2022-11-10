@@ -363,7 +363,6 @@ export default class ObjectAPI {
         } else if (this.#hasAlreadyBeenPersisted(domainObject)) {
             result = Promise.resolve(true);
         } else {
-            const persistedTime = Date.now();
             const username = await this.#getCurrentUsername();
             const isNewObject = domainObject.persisted === undefined;
             let savedResolve;
@@ -375,15 +374,22 @@ export default class ObjectAPI {
                 savedReject = reject;
             });
 
-            this.#mutate(domainObject, 'persisted', persistedTime);
             this.#mutate(domainObject, 'modifiedBy', username);
 
             if (isNewObject) {
-                this.#mutate(domainObject, 'created', persistedTime);
                 this.#mutate(domainObject, 'createdBy', username);
+
+                const createdTime = Date.now();
+                this.#mutate(domainObject, 'created', createdTime);
+
+                const persistedTime = Date.now();
+                this.#mutate(domainObject, 'persisted', persistedTime);
 
                 savedObjectPromise = provider.create(domainObject);
             } else {
+                const persistedTime = Date.now();
+                this.#mutate(domainObject, 'persisted', persistedTime);
+
                 savedObjectPromise = provider.update(domainObject);
             }
 

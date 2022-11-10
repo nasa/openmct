@@ -32,6 +32,10 @@
         z-index: 10;
         background: gray;
 
+        &.hidden {
+            display: none;
+        }
+
         & .icon-arrow-down {
             font-size: large;
             position: absolute;
