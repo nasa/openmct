@@ -68,29 +68,14 @@ export default class SeriesCollection extends Collection {
     addTelemetryObject(domainObject, index) {
         let seriesConfig = this.plot.getPersistedSeriesConfig(domainObject.identifier);
         const filters = this.plot.getPersistedFilters(domainObject.identifier);
-        const plotObject = this.plot.get('domainObject');
 
-        if (!seriesConfig) {
+        if (seriesConfig !== undefined) {
+            // Clone to prevent accidental mutation by ref.
+            seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
+        } else {
             seriesConfig = {
                 identifier: domainObject.identifier
             };
-
-            if (plotObject.type === 'telemetry.plot.overlay') {
-                this.openmct.objects.mutate(
-                    plotObject,
-                    'configuration.series[' + this.size() + ']',
-                    seriesConfig
-                );
-                seriesConfig = this.plot
-                    .getPersistedSeriesConfig(domainObject.identifier);
-            }
-        }
-
-        // Clone to prevent accidental mutation by ref.
-        seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
-
-        if (!seriesConfig) {
-            throw "not possible";
         }
 
         this.add(new PlotSeries({
