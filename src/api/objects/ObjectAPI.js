@@ -33,7 +33,7 @@ import InMemorySearchProvider from './InMemorySearchProvider';
 /**
  * Uniquely identifies a domain object.
  *
- * @typedef Identifier
+ * @typedef {object} Identifier
  * @property {string} namespace the namespace to/from which this domain
  *           object should be loaded/stored.
  * @property {string} key a unique identifier for the domain object
@@ -50,8 +50,8 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  * A few common properties are defined for domain objects. Beyond these,
  * individual types of domain objects may add more as they see fit.
  *
- * @typedef DomainObject
- * @property {module:openmct.ObjectAPI~Identifier} identifier a key/namespace pair which
+ * @typedef {object} DomainObject
+ * @property {Identifier} identifier a key/namespace pair which
  *           uniquely identifies this domain object
  * @property {string} type the type of domain object
  * @property {string} name the human-readable name for this domain object
@@ -59,19 +59,19 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  *           object
  * @property {number} [modified] the time, in milliseconds since the UNIX
  *           epoch, at which this domain object was last modified
- * @property {module:openmct.ObjectAPI~Identifier[]} [composition] if
+ * @property {Identifier[]} [composition] if
  *           present, this will be used by the default composition provider
  *           to load domain objects
- * @memberof module:openmct
+ * @memberof module:openmct.ObjectAPI~
  */
 
 /**
-    * @readonly
-    * @enum {String} SEARCH_TYPES
-    * @property {String} OBJECTS Search for objects
-    * @property {String} ANNOTATIONS Search for annotations
-    * @property {String} TAGS Search for tags
-*/
+  * @readonly
+  * @enum {string} SEARCH_TYPES
+  * @property {string} OBJECTS Search for objects
+  * @property {string} ANNOTATIONS Search for annotations
+  * @property {string} TAGS Search for tags
+  */
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -96,7 +96,7 @@ export default class ObjectAPI {
         this.cache = {};
         this.interceptorRegistry = new InterceptorRegistry();
 
-        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan', 'annotation'];
+        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
 
         this.errors = {
             Conflict: ConflictError
@@ -204,13 +204,13 @@ export default class ObjectAPI {
         }
 
         identifier = utils.parseKeyString(identifier);
-        let dirtyObject;
-        if (this.isTransactionActive()) {
-            dirtyObject = this.transaction.getDirtyObject(identifier);
-        }
 
-        if (dirtyObject) {
-            return Promise.resolve(dirtyObject);
+        if (this.isTransactionActive()) {
+            let dirtyObject = this.transaction.getDirtyObject(identifier);
+
+            if (dirtyObject) {
+                return Promise.resolve(dirtyObject);
+            }
         }
 
         const provider = this.getProvider(identifier);
@@ -354,10 +354,8 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    save(domainObject) {
-        let provider = this.getProvider(domainObject.identifier);
-        let savedResolve;
-        let savedReject;
+    async save(domainObject) {
+        const provider = this.getProvider(domainObject.identifier);
         let result;
 
         if (!this.isPersistable(domainObject.identifier)) {
@@ -365,28 +363,44 @@ export default class ObjectAPI {
         } else if (this.#hasAlreadyBeenPersisted(domainObject)) {
             result = Promise.resolve(true);
         } else {
-            const persistedTime = Date.now();
-            if (domainObject.persisted === undefined) {
-                result = new Promise((resolve, reject) => {
-                    savedResolve = resolve;
-                    savedReject = reject;
-                });
-                domainObject.persisted = persistedTime;
-                const newObjectPromise = provider.create(domainObject);
-                if (newObjectPromise) {
-                    newObjectPromise.then(response => {
-                        this.mutate(domainObject, 'persisted', persistedTime);
-                        savedResolve(response);
-                    }).catch((error) => {
-                        savedReject(error);
-                    });
-                } else {
-                    result = Promise.reject(`[ObjectAPI][save] Object provider returned ${newObjectPromise} when creating new object.`);
-                }
+            const username = await this.#getCurrentUsername();
+            const isNewObject = domainObject.persisted === undefined;
+            let savedResolve;
+            let savedReject;
+            let savedObjectPromise;
+
+            result = new Promise((resolve, reject) => {
+                savedResolve = resolve;
+                savedReject = reject;
+            });
+
+            this.#mutate(domainObject, 'modifiedBy', username);
+
+            if (isNewObject) {
+                this.#mutate(domainObject, 'createdBy', username);
+
+                const createdTime = Date.now();
+                this.#mutate(domainObject, 'created', createdTime);
+
+                const persistedTime = Date.now();
+                this.#mutate(domainObject, 'persisted', persistedTime);
+
+                savedObjectPromise = provider.create(domainObject);
             } else {
-                domainObject.persisted = persistedTime;
-                this.mutate(domainObject, 'persisted', persistedTime);
-                result = provider.update(domainObject);
+                const persistedTime = Date.now();
+                this.#mutate(domainObject, 'persisted', persistedTime);
+
+                savedObjectPromise = provider.update(domainObject);
+            }
+
+            if (savedObjectPromise) {
+                savedObjectPromise.then(response => {
+                    savedResolve(response);
+                }).catch((error) => {
+                    savedReject(error);
+                });
+            } else {
+                result = Promise.reject(`[ObjectAPI][save] Object provider returned ${savedObjectPromise} when ${isNewObject ? 'creating new' : 'updating'} object.`);
             }
         }
 
@@ -399,8 +413,21 @@ export default class ObjectAPI {
         });
     }
 
+    async #getCurrentUsername() {
+        const user = await this.openmct.user.getCurrentUser();
+        let username;
+
+        if (user !== undefined) {
+            username = user.getName();
+        }
+
+        return username;
+    }
+
     /**
      * After entering into edit mode, creates a new instance of Transaction to keep track of changes in Objects
+     *
+     * @returns {Transaction} a new Transaction that was just created
      */
     startTransaction() {
         if (this.isTransactionActive()) {
@@ -408,6 +435,8 @@ export default class ObjectAPI {
         }
 
         this.transaction = new Transaction(this);
+
+        return this.transaction;
     }
 
     /**
@@ -480,14 +509,16 @@ export default class ObjectAPI {
     }
 
     /**
-     * Modify a domain object.
+     * Modify a domain object. Internal to ObjectAPI, won't call save after.
+     * @private
+     *
      * @param {module:openmct.DomainObject} object the object to mutate
      * @param {string} path the property to modify
      * @param {*} value the new value for this property
      * @method mutate
      * @memberof module:openmct.ObjectAPI#
      */
-    mutate(domainObject, path, value) {
+    #mutate(domainObject, path, value) {
         if (!this.supportsMutation(domainObject.identifier)) {
             throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
         }
@@ -508,6 +539,18 @@ export default class ObjectAPI {
             //Destroy temporary mutable object
             this.destroyMutable(mutableDomainObject);
         }
+    }
+
+    /**
+     * Modify a domain object and save.
+     * @param {module:openmct.DomainObject} object the object to mutate
+     * @param {string} path the property to modify
+     * @param {*} value the new value for this property
+     * @method mutate
+     * @memberof module:openmct.ObjectAPI#
+     */
+    mutate(domainObject, path, value) {
+        this.#mutate(domainObject, path, value);
 
         if (this.isTransactionActive()) {
             this.transaction.add(domainObject);
@@ -684,7 +727,7 @@ export default class ObjectAPI {
     }
 
     isTransactionActive() {
-        return Boolean(this.transaction && this.openmct.editor.isEditing());
+        return this.transaction !== undefined && this.transaction !== null;
     }
 
     #hasAlreadyBeenPersisted(domainObject) {

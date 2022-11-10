@@ -75,11 +75,7 @@ class MutableDomainObject {
         return eventOff;
     }
     $set(path, value) {
-        _.set(this, path, value);
-
-        if (path !== 'persisted' && path !== 'modified') {
-            _.set(this, 'modified', Date.now());
-        }
+        MutableDomainObject.mutateObject(this, path, value);
 
         //Emit secret synchronization event first, so that all objects are in sync before subsequent events fired.
         this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);
@@ -136,8 +132,11 @@ class MutableDomainObject {
     }
 
     static mutateObject(object, path, value) {
+        if (path !== 'persisted') {
+            _.set(object, 'modified', Date.now());
+        }
+
         _.set(object, path, value);
-        _.set(object, 'modified', Date.now());
     }
 }
 

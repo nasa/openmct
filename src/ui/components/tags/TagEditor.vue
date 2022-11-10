@@ -145,10 +145,10 @@ export default {
             const annotationsToDelete = this.annotations.filter((annotation) => {
                 return annotation.tags.includes(tagToRemove);
             });
-            const result = await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
-            this.$emit('tags-updated', annotationsToDelete);
-
-            return result;
+            if (annotationsToDelete) {
+                await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
+                this.$emit('tags-updated', annotationsToDelete);
+            }
         },
         async tagAdded(newTag) {
             // Either undelete an annotation, or create one (1) new annotation
