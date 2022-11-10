@@ -389,18 +389,14 @@ export default {
                 this.transaction = this.openmct.objects.startTransaction();
             }
         },
-        endTransaction() {
+        async endTransaction() {
             if (!this.transaction) {
                 return;
             }
 
-            return this.transaction.commit()
-                .catch(error => {
-                    throw error;
-                }).finally(() => {
-                    this.openmct.objects.endTransaction();
-                    this.transaction = null;
-                });
+            await this.transaction.commit();
+            this.openmct.objects.endTransaction();
+            this.transaction = null;
         }
     }
 };
