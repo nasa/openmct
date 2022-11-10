@@ -54,7 +54,7 @@ test.describe('Scatter Plot', () => {
         // the SWG appears in the elements pool
         await page.goto(scatterPlot.url);
         await editButtonLocator.click();
-        await expect(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
+        await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
         await saveButtonLocator.click();
         await page.locator('li[title="Save and Finish Editing"]').click();
 
@@ -66,15 +66,15 @@ test.describe('Scatter Plot', () => {
         });
 
         // Verify that the 'Replace telemetry source' modal appears and accept it
-        await expect(page.locator('text=This action will replace the current telemetry source. Do you want to continue?')).toBeVisible();
+        await expect.soft(page.locator('text=This action will replace the current telemetry source. Do you want to continue?')).toBeVisible();
         await page.click('text=Ok');
 
         // Navigate to the scatter plot and verify that the new SWG
         // appears in the elements pool and the old one is gone
         await page.goto(scatterPlot.url);
         await editButtonLocator.click();
-        await expect(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
-        await expect(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
+        await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
+        await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
         await saveButtonLocator.click();
 
         // Right click on the new SWG in the elements pool and delete it
@@ -84,7 +84,7 @@ test.describe('Scatter Plot', () => {
         await page.locator('li[title="Remove this object from its containing object."]').click();
 
         // Verify that the 'Remove object' confirmation modal appears and accept it
-        await expect(page.locator('text=Warning! This action will remove this object. Are you sure you want to continue?')).toBeVisible();
+        await expect.soft(page.locator('text=Warning! This action will remove this object. Are you sure you want to continue?')).toBeVisible();
         await page.click('text=Ok');
 
         // Verify that the elements pool shows no elements
