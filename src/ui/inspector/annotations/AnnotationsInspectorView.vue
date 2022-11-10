@@ -21,26 +21,18 @@
  *****************************************************************************/
 
 <template>
-<div class="c-inspector__properties c-inspect-properties">
+<div class="c-inspector__properties c-inspect-properties has-tag-applier">
     <div class="c-inspect-properties__header">
         Tags
     </div>
-    <ul
-        v-if="hasTags"
-        class="c-inspect-properties__section"
-    >
+    <ul class="c-inspect-properties__section">
         <TagEditor
-            :domain-object="getDomainObject()"
+            :domain-object="domainObject"
             :annotations="annotations"
-            :entry="null"
+            :annotation-type="annotationType"
+            :target-specific-details="targetSpecificDetails"
         />
     </ul>
-    <div
-        v-else
-        class="c-inspect-properties__row--span-all"
-    >
-        {{ noTagsMessage }}
-    </div>
     <div class="c-inspect-properties__header">
         Annotations
     </div>
@@ -66,6 +58,7 @@
 <script>
 import AnnotationEditor from './AnnotationEditor.vue';
 import TagEditor from '../../components/tags/TagEditor.vue';
+import _ from 'lodash';
 
 export default {
     components: {
@@ -82,18 +75,25 @@ export default {
     computed: {
         hasAnnotations() {
             return Boolean(
-                this.annotations
-                && this.annotations.length
+                this.nonTagAnnotations
+                && this.nonTagAnnotations.length
                 && !this.multiSelection
             );
         },
         nonTagAnnotations() {
-            return this.annotations.filter(annotation => !annotation.tags);
+            return this.annotations.filter(annotation => {
+                return !annotation.tags && !annotation._deleted;
+            });
+        },
+        tagAnnotations() {
+            return this.annotations.filter(annotation => {
+                return annotation.tags && !annotation._deleted;
+            });
         },
         hasTags() {
             return Boolean(
-                this.annotations
-                && this.annotations.length
+                this.tagAnnotations
+                && this.tagAnnotations.length
                 && !this.multiSelection
             );
         },
@@ -109,6 +109,15 @@ export default {
             return this.multiSelection
                 ? 'No tags to display for multiple items'
                 : 'No tags to display for this item';
+        },
+        domainObject() {
+            return this?.selection?.[0]?.[0]?.context?.item;
+        },
+        targetSpecificDetails() {
+            return this?.selection?.[0]?.[1]?.context?.targetSpecificDetails;
+        },
+        annotationType() {
+            return this?.selection?.[0]?.[1]?.context?.annotationType;
         }
     },
     mounted() {
@@ -124,10 +133,8 @@ export default {
     methods: {
         async updateSelection(selection) {
             this.selection = selection;
-            const domainObject = this.getDomainObject();
-            const targetSpecificDetails = this.getTargetSpecificDetails();
-            if (domainObject) {
-                const domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+            if (this.domainObject) {
+                const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
                 let totalAnnotations = await this.openmct.annotation.getAnnotations(domainObjectKeyString);
                 if (!totalAnnotations) {
                     this.annotations = [];
@@ -136,7 +143,9 @@ export default {
                 }
 
                 const targetFilteredAnnotations = totalAnnotations.filter(annotation => {
-                    return annotation.target === targetSpecificDetails;
+                    const targetSpecificDetailsEqual = _.isEqual(annotation.targets[domainObjectKeyString], this.targetSpecificDetails);
+
+                    return targetSpecificDetailsEqual;
                 });
 
                 const sortedAnnotations = targetFilteredAnnotations.sort((annotationA, annotationB) => {
@@ -152,12 +161,6 @@ export default {
             } else {
                 this.annotations = [];
             }
-        },
-        getDomainObject() {
-            return this?.selection?.[0]?.[0]?.context?.item;
-        },
-        getTargetSpecificDetails() {
-            return this?.selection?.[0]?.[0]?.context?.targetSpecificDetails;
         }
     }
 };

@@ -265,6 +265,31 @@ export default class AnnotationAPI extends EventEmitter {
         this.openmct.objects.mutate(annotation, '_deleted', false);
     }
 
+    getTagsFromAnnotations(annotations) {
+        const tagsFromAnnotations = annotations.flatMap((annotation) => {
+            if (annotation._deleted) {
+                return [];
+            } else {
+                return annotation.tags;
+            }
+        }).filter((tag, index, array) => {
+            return array.indexOf(tag) === index;
+        });
+
+        const fullTagModels = this.#addTagMetaInformationToTags(tagsFromAnnotations);
+
+        return fullTagModels;
+    }
+
+    #addTagMetaInformationToTags(tags) {
+        return tags.map(tagKey => {
+            const tagModel = this.availableTags[tagKey];
+            tagModel.tagID = tagKey;
+
+            return tagModel;
+        });
+    }
+
     #getMatchingTags(query) {
         if (!query) {
             return [];
@@ -283,12 +308,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     #addTagMetaInformationToResults(results, matchingTagKeys) {
         const tagsAddedToResults = results.map(result => {
-            const fullTagModels = result.tags.map(tagKey => {
-                const tagModel = this.availableTags[tagKey];
-                tagModel.tagID = tagKey;
-
-                return tagModel;
-            });
+            const fullTagModels = this.#addTagMetaInformationToTags(results.tags);
 
             return {
                 fullTagModels,

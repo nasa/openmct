@@ -35,6 +35,7 @@
         <div
             v-else
             class="c-tag"
+            :class="{'c-tag-edit': !readOnly}"
             :style="{ background: selectedBackgroundColor, color: selectedForegroundColor }"
         >
             <div
@@ -42,6 +43,7 @@
                 aria-label="Tag"
             >{{ selectedTagLabel }} </div>
             <button
+                v-show="!readOnly"
                 class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle"
                 @click="removeTag"
             ></button>
@@ -73,6 +75,12 @@ export default {
             }
         },
         newTag: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
+        readOnly: {
             type: Boolean,
             default() {
                 return false;

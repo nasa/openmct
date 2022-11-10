@@ -22,7 +22,7 @@
 
 <template>
 <div
-    class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
     :class="{ 'locked': isLocked, 'is-selected': isSelectedEntry }"
     @dragover="changeCursor"
@@ -83,13 +83,16 @@
                 </div>
             </template>
 
-            <TagEditor
-                :domain-object="domainObject"
-                :annotations="notebookAnnotations"
-                :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
-                :target-specific-details="{entryId: entry.id}"
-                @tags-updated="timestampAndUpdate"
-            />
+            <div>
+                <div
+                    v-for="(tag, index) in entryTags"
+                    :key="index"
+                    class="c-tag"
+                    :style="{ backgroundColor: tag.backgroundColor, color: tag.foregroundColor }"
+                >
+                    {{ tag.label }}
+                </div>
+            </div>
 
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed
@@ -140,7 +143,6 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
-import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
@@ -152,8 +154,7 @@ const UNKNOWN_USER = 'Unknown';
 export default {
     components: {
         NotebookEmbed,
-        TextHighlight,
-        TagEditor
+        TextHighlight
     },
     inject: ['openmct', 'snapshotContainer'],
     props: {
@@ -219,6 +220,11 @@ export default {
         },
         isSelectedEntry() {
             return this.selectedEntryId === this.entry.id;
+        },
+        entryTags() {
+            const tagsFromAnnotations = this.openmct.annotation.getTagsFromAnnotations(this.notebookAnnotations);
+
+            return tagsFromAnnotations;
         },
         entryText() {
             let text = this.entry.text;
@@ -380,7 +386,10 @@ export default {
                         element: event.currentTarget,
                         context: {
                             type: 'notebook-entry',
-                            targetSpecificDetails: entry.id
+                            targetSpecificDetails: {
+                                entryId: entry.id
+                            },
+                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK
                         }
                     }
                 ],

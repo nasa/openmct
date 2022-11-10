@@ -70,7 +70,7 @@ export default {
             default() {
                 return null;
             },
-            required: true
+            required: false
         }
     },
     data() {
