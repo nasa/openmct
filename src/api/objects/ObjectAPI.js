@@ -357,6 +357,7 @@ export default class ObjectAPI {
     async save(domainObject) {
         const provider = this.getProvider(domainObject.identifier);
         let result;
+        let lastPersistedTime;
 
         if (!this.isPersistable(domainObject.identifier)) {
             result = Promise.reject('Object provider does not support saving');
@@ -387,6 +388,7 @@ export default class ObjectAPI {
 
                 savedObjectPromise = provider.create(domainObject);
             } else {
+                lastPersistedTime = domainObject.persisted;
                 const persistedTime = Date.now();
                 this.#mutate(domainObject, 'persisted', persistedTime);
 
@@ -397,6 +399,10 @@ export default class ObjectAPI {
                 savedObjectPromise.then(response => {
                     savedResolve(response);
                 }).catch((error) => {
+                    if (lastPersistedTime !== undefined) {
+                        this.#mutate(domainObject, 'persisted', lastPersistedTime);
+                    }
+
                     savedReject(error);
                 });
             } else {
