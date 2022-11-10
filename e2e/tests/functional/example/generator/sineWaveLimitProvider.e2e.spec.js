@@ -96,7 +96,7 @@ test.describe('Sine Wave Generator', () => {
         //Click text=OK
         await Promise.all([
             page.waitForNavigation(),
-            page.click('text=OK')
+            page.click('button:has-text("OK")')
         ]);
 
         // Verify that the Sine Wave Generator is displayed and correct
