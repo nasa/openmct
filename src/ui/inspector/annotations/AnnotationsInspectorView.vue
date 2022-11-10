@@ -90,13 +90,6 @@ export default {
                 return annotation.tags && !annotation._deleted;
             });
         },
-        hasTags() {
-            return Boolean(
-                this.tagAnnotations
-                && this.tagAnnotations.length
-                && !this.multiSelection
-            );
-        },
         multiSelection() {
             return this.selection && this.selection.length > 1;
         },
@@ -104,11 +97,6 @@ export default {
             return this.multiSelection
                 ? 'No annotations to display for multiple items'
                 : 'No annotations to display for this item';
-        },
-        noTagsMessage() {
-            return this.multiSelection
-                ? 'No tags to display for multiple items'
-                : 'No tags to display for this item';
         },
         domainObject() {
             return this?.selection?.[0]?.[0]?.context?.item;
@@ -137,7 +125,7 @@ export default {
                 const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
                 let totalAnnotations = await this.openmct.annotation.getAnnotations(domainObjectKeyString);
                 if (!totalAnnotations) {
-                    this.annotations = [];
+                    this.annotations.splice(0);
 
                     return;
                 }
@@ -151,6 +139,7 @@ export default {
                 const sortedAnnotations = targetFilteredAnnotations.sort((annotationA, annotationB) => {
                     return annotationB.modified - annotationA.modified;
                 });
+
                 if (sortedAnnotations.length < this.annotations.length) {
                     this.annotations = this.annotations.slice(0, sortedAnnotations.length);
                 }
@@ -159,7 +148,7 @@ export default {
                     this.$set(this.annotations, index, sortedAnnotations[index]);
                 }
             } else {
-                this.annotations = [];
+                this.annotations.splice(0);
             }
         }
     }

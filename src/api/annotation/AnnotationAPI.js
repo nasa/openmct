@@ -308,7 +308,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     #addTagMetaInformationToResults(results, matchingTagKeys) {
         const tagsAddedToResults = results.map(result => {
-            const fullTagModels = this.#addTagMetaInformationToTags(results.tags);
+            const fullTagModels = this.#addTagMetaInformationToTags(result.tags);
 
             return {
                 fullTagModels,

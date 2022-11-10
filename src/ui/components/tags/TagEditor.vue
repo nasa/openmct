@@ -102,7 +102,7 @@ export default {
     },
     methods: {
         annotationsChanged() {
-            if (this.annotations && this.annotations.length) {
+            if (this.annotations) {
                 this.tagsChanged();
             }
         },
