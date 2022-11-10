@@ -90,8 +90,7 @@ test.describe('Flexible Layout', () => {
         await page.locator('li[role="menuitem"]:has-text("Remove")').click();
         await page.locator('button:has-text("OK")').click();
 
-        // delete
-
+        // Verify that the item has been removed from the layout
         expect(await page.locator('.c-fl-container__frame').count()).toEqual(0);
     });
     test('items in a flexible layout can be removed with object tree context menu when viewing another item', async ({ page }) => {
@@ -130,6 +129,7 @@ test.describe('Flexible Layout', () => {
         // navigate back to the display layout to confirm it has been removed
         await page.goto(flexibleLayout.url);
 
+        // Verify that the item has been removed from the layout
         expect(await page.locator('.c-fl-container__frame').count()).toEqual(0);
     });
 });
