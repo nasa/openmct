@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks with CouchDB.
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Notebook Tests with CouchDB @couchdb', () => {

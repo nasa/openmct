@@ -68,10 +68,10 @@ async function makeOverlayPlot(page) {
     // create overlay plot
 
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Overlay Plot")').click();
+    await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
@@ -86,13 +86,13 @@ async function makeOverlayPlot(page) {
     // create a sinewave generator
 
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
     // Click OK to make generator
 
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
