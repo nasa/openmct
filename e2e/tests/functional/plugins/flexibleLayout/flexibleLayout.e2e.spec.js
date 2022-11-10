@@ -87,8 +87,8 @@ test.describe('Flexible Layout', () => {
 
         // Bring up context menu and remove
         await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').first().click({ button: 'right' });
-        await page.locator('text=Remove').click();
-        await page.locator('text=OK').click();
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+        await page.locator('button:has-text("OK")').click();
 
         // delete
 
@@ -124,8 +124,8 @@ test.describe('Flexible Layout', () => {
 
         // Bring up context menu and remove
         await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').click({ button: 'right' });
-        await page.locator('text=Remove').click();
-        await page.locator('text=OK').click();
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+        await page.locator('button:has-text("OK")').click();
 
         // navigate back to the display layout to confirm it has been removed
         await page.goto(flexibleLayout.url);
