@@ -23,7 +23,7 @@
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
 
-test.describe('Testing Display Layout @unstable', () => {
+test.describe('Display Layout', () => {
     let sineWaveObject;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -55,12 +55,12 @@ test.describe('Testing Display Layout @unstable', () => {
         // On getting data, check if the value found in the  Display Layout is the most recent value
         // from the Sine Wave Generator
         const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
-        const formattedTelemetryValue = await getTelemValuePromise;
+        const formattedTelemetryValue = getTelemValuePromise;
         const displayLayoutValuePromise = await page.waitForSelector(`text="${formattedTelemetryValue}"`);
         const displayLayoutValue = await displayLayoutValuePromise.textContent();
         const trimmedDisplayValue = displayLayoutValue.trim();
 
-        await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+        expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
     });
     test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({ page }) => {
         // Create a Display Layout
@@ -86,12 +86,12 @@ test.describe('Testing Display Layout @unstable', () => {
 
         // On getting data, check if the value found in the Display Layout is the most recent value
         // from the Sine Wave Generator
-        const formattedTelemetryValue = await getTelemValuePromise;
+        const formattedTelemetryValue = getTelemValuePromise;
         const displayLayoutValuePromise = await page.waitForSelector(`text="${formattedTelemetryValue}"`);
         const displayLayoutValue = await displayLayoutValuePromise.textContent();
         const trimmedDisplayValue = displayLayoutValue.trim();
 
-        await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+        expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
     });
     test('items in a display layout can be removed with object tree context menu when viewing the display layout', async ({ page }) => {
         // Create a Display Layout
@@ -121,11 +121,15 @@ test.describe('Testing Display Layout @unstable', () => {
 
         // delete
 
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+        expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
     test('items in a display layout can be removed with object tree context menu when viewing another item', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/3117'
+        });
         // Create a Display Layout
-        await createDomainObjectWithDefaults(page, {
+        const displayLayout = await createDomainObjectWithDefaults(page, {
             type: 'Display Layout',
             name: "Test Display Layout"
         });
@@ -144,18 +148,18 @@ test.describe('Testing Display Layout @unstable', () => {
         // Expand the Display Layout so we can remove the sine wave generator
         await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
 
-        // Click the original Sine Wave Generator to navigate away from the Display Layout
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Sine Wave Generator")').click();
+        // Go to the original Sine Wave Generator to navigate away from the Display Layout
+        await page.goto(sineWaveObject.url);
 
         // Bring up context menu and remove
         await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').click({ button: 'right' });
-        await page.locator('text=Remove').click();
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
         await page.locator('button:has-text("OK")').click();
 
         // navigate back to the display layout to confirm it has been removed
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Display Layout")').click();
+        await page.goto(displayLayout.url);
 
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+        expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
 });
 
