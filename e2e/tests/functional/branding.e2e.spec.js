@@ -60,4 +60,45 @@ test.describe('Branding tests', () => {
         await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
         expect(page2.waitForURL('**/licenses**')).toBeTruthy();
     });
+    test('Verify the Link to User\'s Guide in About Modal',
+        async ({context, page, browserName, headless}) => {
+            // Go to baseURL
+            await page.goto('./', {waitUntil: 'networkidle'});
+
+            // Click About button
+            await page.click('.l-shell__app-logo');
+
+            // Verification for Chromium in headless mode
+            if (browserName === 'chromium' && headless === true) {
+                // Chromium handles pdf downloads differently in headless mode,
+                // see: https://github.com/microsoft/playwright/issues/6342
+                await Promise.all([
+                    page.waitForEvent('popup'),
+                    page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
+                ]);
+                const download = await page.waitForEvent('download');
+                const endsWithPdf = download.suggestedFilename().endsWith('.pdf');
+                expect(endsWithPdf).toBeTruthy();
+            }
+
+            // Verification for Chromium in visible mode and others
+            if ((browserName === 'chromium' && headless === false)
+                || browserName === 'firefox'
+                || browserName === 'webkit') {
+                // Clicking the download button opens a new page
+                const [page2] = await Promise.all([
+                    context.waitForEvent('page'),
+                    page.waitForEvent('popup'),
+                    page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
+                ]);
+
+                // Subscribe to 'response' events of the new page
+                page2.on('requestfinished', response => {
+                    expect(page2.waitForURL('**/Open_MCT_Users_Guide.pdf')).toBeTruthy();
+                });
+
+                // Reload to fire the request/response again
+                await page2.reload();
+            }
+        });
 });
