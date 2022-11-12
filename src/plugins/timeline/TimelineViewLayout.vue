@@ -124,12 +124,10 @@ export default {
             };
 
             this.items.push(item);
-            this.updateContentHeight();
         },
         removeItem(identifier) {
             let index = this.items.findIndex(item => this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier));
             this.items.splice(index, 1);
-            this.updateContentHeight();
         },
         reorder(reorderPlan) {
             let oldItems = this.items.slice();
@@ -138,7 +136,23 @@ export default {
             });
         },
         updateContentHeight() {
-            this.height = Math.round(this.$refs.contentHolder.getBoundingClientRect().height);
+            const clientHeight = this.getClientHeight();
+            if (this.height !== clientHeight) {
+                this.height = clientHeight;
+            }
+        },
+        getClientHeight() {
+            let clientHeight = this.$refs.contentHolder.getBoundingClientRect().height;
+
+            if (!clientHeight) {
+            //this is a hack - need a better way to find the parent of this component
+                let parent = this.openmct.layout.$refs.browseObject.$el;
+                if (parent) {
+                    clientHeight = parent.getBoundingClientRect().height;
+                }
+            }
+
+            return clientHeight;
         },
         getTimeSystems() {
             const timeSystems = this.openmct.time.getAllTimeSystems();
@@ -155,7 +169,9 @@ export default {
             //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
             return currentBounds;
         },
-        updateViewBounds(bounds) {
+        updateViewBounds() {
+            const bounds = this.timeContext.bounds();
+            this.updateContentHeight();
             let currentTimeSystem = this.timeSystems.find(item => item.timeSystem.key === this.openmct.time.timeSystem().key);
             if (currentTimeSystem) {
                 currentTimeSystem.bounds = bounds;
@@ -166,12 +182,14 @@ export default {
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
             this.getTimeSystems();
-            this.updateViewBounds(this.timeContext.bounds());
+            this.updateViewBounds();
             this.timeContext.on('bounds', this.updateViewBounds);
+            this.timeContext.on('clock', this.updateViewBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.updateViewBounds);
+                this.timeContext.off('clock', this.updateViewBounds);
             }
         }
     }

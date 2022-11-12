@@ -36,7 +36,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'networkidle' });
 
-    createDomainObjectWithDefaults(page, { type: 'Notebook' });
+    const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Create an entry
@@ -45,6 +45,8 @@ async function createNotebookAndEntry(page, iterations = 1) {
         await page.locator(entryLocator).click();
         await page.locator(entryLocator).fill(`Entry ${iteration}`);
     }
+
+    return notebook;
 }
 
 /**
@@ -53,7 +55,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
   * @param {number} [iterations = 1] - the number of entries (and tags) to create
   */
 async function createNotebookEntryAndTags(page, iterations = 1) {
-    await createNotebookAndEntry(page, iterations);
+    const notebook = await createNotebookAndEntry(page, iterations);
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Hover and click "Add Tag" button
@@ -75,6 +77,8 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
         // Select the "Science" tag
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
     }
+
+    return notebook;
 }
 
 test.describe('Tagging in Notebooks @addInit', () => {
@@ -173,10 +177,10 @@ test.describe('Tagging in Notebooks @addInit', () => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        await createDomainObjectWithDefaults(page, { type: 'Clock' });
+        const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
 
         const ITERATIONS = 4;
-        await createNotebookEntryAndTags(page, ITERATIONS);
+        const notebook = await createNotebookEntryAndTags(page, ITERATIONS);
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
@@ -189,11 +193,11 @@ test.describe('Tagging in Notebooks @addInit', () => {
             page.goto('./#/browse/mine?hideTree=false'),
             page.click('.c-disclosure-triangle')
         ]);
-        // Click Unnamed Clock
-        await page.click('text="Unnamed Clock"');
+        // Click Clock
+        await page.click(`text=${clock.name}`);
 
-        // Click Unnamed Notebook
-        await page.click('text="Unnamed Notebook"');
+        // Click Notebook
+        await page.click(`text=${notebook.name}`);
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
@@ -207,14 +211,13 @@ test.describe('Tagging in Notebooks @addInit', () => {
             page.waitForLoadState('networkidle')
         ]);
 
-        // Click Unnamed Notebook
-        await page.click('text="Unnamed Notebook"');
+        // Click Notebook
+        await page.click(`text="${notebook.name}"`);
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
             await expect(page.locator(entryLocator)).toContainText("Science");
             await expect(page.locator(entryLocator)).toContainText("Driving");
         }
-
     });
 });

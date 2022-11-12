@@ -40,11 +40,11 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
         await page.click('button:has-text("Create")');
 
-        await page.locator('li:has-text("Condition Set")').click();
+        await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
 
         await Promise.all([
             page.waitForNavigation(),
-            page.click('text=OK')
+            page.click('button:has-text("OK")')
         ]);
 
         //Save localStorage for future test execution
@@ -163,9 +163,9 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         // Click hamburger button
         await page.locator('[title="More options"]').click();
 
-        // Click text=Remove
-        await page.locator('text=Remove').click();
-        await page.locator('text=OK').click();
+        // Click 'Remove' and press OK
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+        await page.locator('button:has-text("OK")').click();
 
         //Expect Unnamed Condition Set to be removed in Main View
         const numberOfConditionSetsAtEnd = await page.locator('a:has-text("Unnamed Condition Set Condition Set")').count();
