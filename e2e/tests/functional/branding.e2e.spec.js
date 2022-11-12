@@ -60,47 +60,36 @@ test.describe('Branding tests', () => {
         await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
         expect(page2.waitForURL('**/licenses**')).toBeTruthy();
     });
-    test('Verify the Link to User\'s Guide in About Modal',
+    test('Verify the Link to User\'s Guide in About Modal @unstable',
         async ({context, page, browserName, headless}) => {
+            test.skip(browserName === 'chromium' && headless === true,
+                'This test cannot be executed with headless chrome');
+
+            test.fixme(browserName === 'firefox',
+                'This test needs to be updated to work with firefox default settings. '
+                + 'By default, Firefox saves PDFs instead of opening them.');
+
             // Go to baseURL
             await page.goto('./', {waitUntil: 'networkidle'});
 
             // Click About button
             await page.click('.l-shell__app-logo');
 
-            // Verification for Chromium in headless mode
-            if (browserName === 'chromium' && headless === true) {
-                // Chromium handles pdf downloads differently in headless mode,
-                // see: https://github.com/microsoft/playwright/issues/6342
-                const [download] = await Promise.all([
-                    page.waitForEvent('download'),
-                    page.waitForEvent('popup'),
-                    page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
-                ]);
+            // Clicking the download button opens a new page
+            const [page2] = await Promise.all([
+                context.waitForEvent('page'),
+                page.waitForEvent('popup'),
+                page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
+            ]);
 
-                const endsWithPdf = download.suggestedFilename().endsWith('Open_MCT_Users_Guide.pdf');
-                expect(endsWithPdf).toBe(true);
-            }
+            // await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
 
-            // Verification for Chromium in visible mode and others
-            if ((browserName === 'chromium' && headless === false)
-                || browserName === 'firefox'
-                || browserName === 'webkit') {
-                // Clicking the download button opens a new page
-                const [page2] = await Promise.all([
-                    context.waitForEvent('page'),
-                    page.waitForEvent('popup'),
-                    page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
-                ]);
+            // Subscribe to 'response' events of the new page
+            page2.on('requestfinished', response => {
+                expect(page2.waitForURL('**/Open_MCT_Users_Guide.pdf')).toBeTruthy();
+            });
 
-                // Subscribe to 'response' events of the new page
-                page2.on('requestfinished', response => {
-                    expect(page2.waitForURL('**/Open_MCT_Users_Guide.pdf')).toBeTruthy();
-                });
-
-                // Reload to fire the request/response again
-                await page2.reload();
-            }
+            await page2.reload();
 
             await context.close();
         });
