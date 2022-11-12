@@ -45,7 +45,7 @@ test.describe('Branding tests', () => {
         await expect.soft(versionInformationLocator).toContainText(/Revision: \b[0-9a-f]{5,40}\b/);
         await expect.soft(versionInformationLocator).toContainText(/Branch: ./);
     });
-    test('Verify Links in About Modal @2p', async ({ page }) => {
+    test('Verify the Link to Licenses in About Modal @2p', async ({ page }) => {
         // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
@@ -72,13 +72,14 @@ test.describe('Branding tests', () => {
             if (browserName === 'chromium' && headless === true) {
                 // Chromium handles pdf downloads differently in headless mode,
                 // see: https://github.com/microsoft/playwright/issues/6342
-                await Promise.all([
+                const [download] = await Promise.all([
+                    page.waitForEvent('download'),
                     page.waitForEvent('popup'),
                     page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
                 ]);
-                const download = await page.waitForEvent('download');
-                const endsWithPdf = download.suggestedFilename().endsWith('.pdf');
-                expect(endsWithPdf).toBeTruthy();
+
+                const endsWithPdf = download.suggestedFilename().endsWith('Open_MCT_Users_Guide.pdf');
+                expect(endsWithPdf).toBe(true);
             }
 
             // Verification for Chromium in visible mode and others
@@ -100,5 +101,7 @@ test.describe('Branding tests', () => {
                 // Reload to fire the request/response again
                 await page2.reload();
             }
+
+            await context.close();
         });
 });
