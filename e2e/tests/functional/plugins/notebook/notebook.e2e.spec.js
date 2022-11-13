@@ -26,7 +26,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
 const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../../../appActions');
 const nbUtils = require('../../../../helper/notebookUtils');
 
