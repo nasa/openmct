@@ -24,7 +24,7 @@
 * This test suite is dedicated to testing the Gauge component.
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const uuid = require('uuid').v4;
 
