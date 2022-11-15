@@ -79,10 +79,12 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     await nameInput.fill("");
     await nameInput.fill(name);
 
-    // Fill the "Notes" section with information about the
-    // currently running test and its project.
-    const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
-    await notesInput.fill(page.testNotes);
+    if (page.testNotes) {
+        // Fill the "Notes" section with information about the
+        // currently running test and its project.
+        const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+        await notesInput.fill(page.testNotes);
+    }
 
     // Click OK button and wait for Navigate event
     await Promise.all([
