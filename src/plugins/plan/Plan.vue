@@ -27,7 +27,7 @@
 >
     <template v-if="viewBounds && !options.compact">
         <swim-lane>
-            <template slot="label">{{ timeSystem.name }}</template>
+            <slot name="label">{{ timeSystem.name }}</slot>
             <timeline-axis
                 slot="object"
                 :bounds="viewBounds"

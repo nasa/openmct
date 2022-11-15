@@ -257,11 +257,11 @@
                 @change-height="setRowHeight"
             />
             <tr>
-                <template v-for="(title, key) in headers">
-                    <th
-                        :key="key"
-                        :style="{ width: configuredColumnWidths[key] + 'px', 'max-width': configuredColumnWidths[key] + 'px'}"
-                    >
+                <template
+                    v-for="(title, key) in headers"
+                    :key="key"
+                >
+                    <th :style="{ width: configuredColumnWidths[key] + 'px', 'max-width': configuredColumnWidths[key] + 'px'}">
                         {{ title }}
                     </th>
                 </template>

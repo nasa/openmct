@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import Conductor from './Conductor.vue';
+import Vue from 'vue';
 
 function isTruthy(a) {
     return Boolean(a);
@@ -91,15 +92,16 @@ function throwIfError(configResult) {
 }
 
 function mountComponent(openmct, configuration) {
-    openmct.layout.conductorComponent = Object.create({
+    // openmct.layout.conductorComponent = Object.create({
+    openmct.layout.conductorComponent = new Vue({
         components: {
             Conductor
         },
-        template: "<conductor></conductor>",
         provide: {
             openmct: openmct,
             configuration: configuration
-        }
+        },
+        template: "<conductor></conductor>"
     });
 }
 

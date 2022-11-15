@@ -14,7 +14,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const {VueLoaderPlugin} = require('vue-loader');
+const { VueLoaderPlugin } = require('vue-loader');
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
@@ -37,7 +37,7 @@ const config = {
         couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
         inMemorySearchWorker: './src/api/objects/InMemorySearchWorker.js',
         espressoTheme: './src/plugins/themes/espresso-theme.scss',
-        snowTheme: './src/plugins/themes/snow-theme.scss',
+        snowTheme: './src/plugins/themes/snow-theme.scss'
     },
     output: {
         globalObject: 'this',
@@ -65,7 +65,9 @@ const config = {
             "MCT": path.join(__dirname, "src/MCT"),
             "testUtils": path.join(__dirname, "src/utils/testUtils.js"),
             "objectUtils": path.join(__dirname, "src/api/objects/object-utils.js"),
-            "utils": path.join(__dirname, "src/utils")
+            "utils": path.join(__dirname, "src/utils"),
+            // "vue": "@vue/compat"
+            "vue": "@vue/compat/dist/vue.cjs.js"
         }
     },
     plugins: [
@@ -73,7 +75,8 @@ const config = {
             __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
             __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
             __OPENMCT_REVISION__: `'${gitRevision}'`,
-            __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
+            __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
+            __VUE_PROD_DEVTOOLS__: true
         }),
         new VueLoaderPlugin(),
         new CopyWebpackPlugin({
@@ -119,7 +122,14 @@ const config = {
             },
             {
                 test: /\.vue$/,
-                use: 'vue-loader'
+                loader: 'vue-loader',
+                options: {
+                    compilerOptions: {
+                        compatConfig: {
+                            MODE: 2
+                        }
+                    }
+                }
             },
             {
                 test: /\.html$/,
@@ -148,6 +158,9 @@ const config = {
             }
         ]
     },
+    // externals: {
+    //     "vue": "Vue"
+    // },
     stats: 'errors-warnings',
     performance: {
         // We should eventually consider chunking to decrease

@@ -359,7 +359,7 @@ define([
                 template: '<Layout ref="layout"></Layout>'
             });
             domElement.appendChild(appLayout.$mount().$el);
-
+            console.log('after')
             this.layout = appLayout.$refs.layout;
             Browse(this);
         }

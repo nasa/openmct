@@ -41,7 +41,7 @@
                     :key="openmct.objects.makeKeyString(objectResult.identifier)"
                     :result="objectResult"
                     @preview-changed="previewChanged"
-                    @click.native="selectedResult"
+                    @click="selectedResult"
                 />
             </div>
             <div
@@ -53,7 +53,7 @@
                     v-for="(annotationResult) in annotationResults"
                     :key="openmct.objects.makeKeyString(annotationResult.identifier)"
                     :result="annotationResult"
-                    @click.native="selectedResult"
+                    @click="selectedResult"
                 />
             </div>
             <div

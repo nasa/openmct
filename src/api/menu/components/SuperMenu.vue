@@ -10,11 +10,9 @@
     >
         <template
             v-for="(actionGroups, index) in options.actions"
+            :key="index"
         >
-            <div
-                :key="index"
-                role="group"
-            >
+            <div role="group">
                 <li
                     v-for="action in actionGroups"
                     :key="action.name"

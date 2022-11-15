@@ -180,8 +180,9 @@ export default {
                 });
         },
         hasParent() {
-            return this.domainObject !== PLACEHOLDER_OBJECT
-                    && this.parentUrl !== '/browse';
+            return false;
+            // return this.domainObject !== PLACEHOLDER_OBJECT
+            //         && this.parentUrl !== '/browse';
         },
         parentUrl() {
             const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);

@@ -174,7 +174,7 @@
                 :active="focusedImageIndex === index"
                 :selected="focusedImageIndex === index && isPaused"
                 :real-time="!isFixed"
-                @click.native="thumbnailClicked(index)"
+                @click="thumbnailClicked(index)"
             />
         </div>
 

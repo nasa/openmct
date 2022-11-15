@@ -166,7 +166,6 @@ export default {
             searchValue: '',
             treeItems: [],
             openTreeItems: [],
-            compositionCollections: {},
             searchResultItems: [],
             visibleItems: [],
             updatingView: false,
@@ -282,6 +281,7 @@ export default {
     methods: {
         async initialize() {
             this.isLoading = true;
+            this.compositionCollections = {};
             this.getSavedOpenItems();
             this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
             this.treeResizeObserver.observe(this.$el);

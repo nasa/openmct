@@ -14,7 +14,7 @@
             :bottom="keyString !== undefined"
             :type="'start'"
             :offset="offsets.start"
-            @focus.native="$event.target.select()"
+            @focus="$event.target.select()"
             @hide="hideAllTimePopups"
             @update="timePopUpdate"
         />
@@ -54,7 +54,7 @@
             :bottom="keyString !== undefined"
             :type="'end'"
             :offset="offsets.end"
-            @focus.native="$event.target.select()"
+            @focus="$event.target.select()"
             @hide="hideAllTimePopups"
             @update="timePopUpdate"
         />
