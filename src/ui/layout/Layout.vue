@@ -61,20 +61,21 @@
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
-            <button
-                slot="controls"
-                class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
-                title="Collapse all tree items"
-                @click="handleTreeReset"
-            >
-            </button>
-            <button
-                slot="controls"
-                class="c-icon-button l-shell__sync-tree-button icon-target"
-                title="Show selected item in tree"
-                @click="handleSyncTreeNavigation"
-            >
-            </button>
+            <template #controls>
+                <button
+                    class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+                    title="Collapse all tree items"
+                    @click="handleTreeReset"
+                >
+                </button>
+                <button
+                    slot="controls"
+                    class="c-icon-button l-shell__sync-tree-button icon-target"
+                    title="Show selected item in tree"
+                    @click="handleSyncTreeNavigation"
+                >
+                </button>
+            </template>
             <mct-tree
                 :sync-tree-navigation="triggerSync"
                 :reset-tree-navigation="triggerReset"
