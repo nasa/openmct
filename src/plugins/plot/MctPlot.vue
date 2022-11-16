@@ -384,6 +384,8 @@ export default {
         setTimeContext() {
             this.stopFollowingTimeContext();
 
+            console.log('setTimeContext');
+            console.log(this.path);
             this.timeContext = this.openmct.time.getContextForView(this.path);
             this.followTimeContext();
 
