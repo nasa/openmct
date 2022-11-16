@@ -390,8 +390,8 @@ export default {
         },
         followTimeContext() {
             console.log('followTimeContext');
-            console.log(this.timeContext);
             const bounds = this.timeContext.bounds();
+            console.log('bounds', bounds);
             this.updateDisplayBounds(this.timeContext.bounds());
             this.timeContext.on('clock', this.updateRealTime);
             this.timeContext.on('bounds', this.updateDisplayBounds);
