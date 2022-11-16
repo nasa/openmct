@@ -52,7 +52,7 @@ export default class EditPropertiesAction extends PropertiesAction {
     /**
      * @private
      */
-    _onSave(changes) {
+    async _onSave(changes) {
         if (!this.openmct.objects.isTransactionActive()) {
             this.openmct.objects.startTransaction();
         }
@@ -70,14 +70,8 @@ export default class EditPropertiesAction extends PropertiesAction {
                 this.openmct.objects.mutate(this.domainObject, key, value);
             });
             const transaction = this.openmct.objects.getActiveTransaction();
-
-            return transaction.commit()
-                .catch(error => {
-                    throw error;
-                }).finally(() => {
-                    this.openmct.objects.endTransaction();
-                });
-
+            await transaction.commit();
+            this.openmct.objects.endTransaction();
         } catch (error) {
             this.openmct.notifications.error('Error saving objects');
             console.error(error);
