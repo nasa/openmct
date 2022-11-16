@@ -328,7 +328,7 @@ define([
      * @param {HTMLElement} [domElement] the DOM element in which to run
      *        MCT; if undefined, MCT will be run in the body of the document
      */
-    MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
+    MCT.prototype.start = function (domElement = document.body.firstElementChild, isHeadlessMode = false) {
         if (this.types.get('layout') === undefined) {
             this.install(this.plugins.DisplayLayout({
                 showAsView: ['summary-widget']
@@ -349,7 +349,18 @@ define([
          */
 
         if (!isHeadlessMode) {
-            const appLayout = new Vue({
+            // const appLayout = new Vue({
+            //     components: {
+            //         'Layout': Layout.default
+            //     },
+            //     provide: {
+            //         openmct: this
+            //     },
+            //     template: '<Layout ref="layout"></Layout>'
+            // });
+            // domElement.appendChild(appLayout.$mount().$el);
+            // this.layout = appLayout.$refs.layout;
+            const appLayout = Vue.createApp({
                 components: {
                     'Layout': Layout.default
                 },
@@ -358,9 +369,9 @@ define([
                 },
                 template: '<Layout ref="layout"></Layout>'
             });
-            domElement.appendChild(appLayout.$mount().$el);
-
-            this.layout = appLayout.$refs.layout;
+            appLayout.mount(domElement);
+            console.log('appLayout', appLayout._instance.refs.layout);
+            this.layout = appLayout._instance.refs.layout;
             Browse(this);
         }
 
