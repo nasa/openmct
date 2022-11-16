@@ -43,9 +43,6 @@ class IndependentTimeContext extends TimeContext {
     }
 
     bounds(newBounds) {
-        console.log('independent time context bounds');
-        console.log('upstreamTimeContext');
-        console.log(this.upstreamTimeContext);
         if (this.upstreamTimeContext) {
             return this.upstreamTimeContext.bounds(...arguments);
         } else {
@@ -206,15 +203,11 @@ class IndependentTimeContext extends TimeContext {
 
     getUpstreamContext() {
         let timeContext = this.globalTimeContext;
-        console.log('getUpstreamContext');
-        console.log(this.objectPath);
 
         this.objectPath.some((item, index) => {
             const key = this.openmct.objects.makeKeyString(item.identifier);
             //last index is the view object itself
             const itemContext = this.globalTimeContext.independentContexts.get(key);
-            console.log('key: ', key);
-            console.log('itemContext: ', itemContext);
             if (index > 0 && itemContext && itemContext.hasOwnContext()) {
                 //upstream time context
                 timeContext = itemContext;
