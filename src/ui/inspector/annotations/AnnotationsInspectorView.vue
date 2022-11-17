@@ -21,9 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div
-    class="c-inspector__properties c-inspect-properties has-tag-applier"
->
+<div class="c-inspector__properties c-inspect-properties has-tag-applier">
     <div class="c-inspect-properties__header">
         Tags
     </div>
@@ -80,6 +78,7 @@ export default {
     data() {
         return {
             selection: null,
+            lastLocalAnnotationCreation: 0,
             annotations: []
         };
     },
@@ -133,13 +132,22 @@ export default {
         if (this.stopListeningToChanges) {
             this.stopListeningToChanges();
         }
+
+        if (this.unobserveEntries) {
+            this.unobserveEntries();
+        }
     },
     methods: {
-        async updateSelection(selection) {
-            this.selection = selection;
+        async loadAnnotations() {
             if (this.domainObject) {
                 const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                let totalAnnotations = await this.openmct.annotation.getAnnotations(domainObjectKeyString);
+
+                if (!this.openmct.annotation.getAvailableTags().length) {
+                    return;
+                }
+
+                const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+                const totalAnnotations = await this.openmct.annotation.getAnnotations(query);
                 if (!totalAnnotations) {
                     this.annotations.splice(0);
 
@@ -169,6 +177,21 @@ export default {
                 }
             } else {
                 this.annotations.splice(0);
+            }
+        },
+        async updateSelection(selection) {
+            if (this.unobserveEntries) {
+                this.unobserveEntries();
+            }
+
+            this.selection = selection;
+            this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
+            this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.domainObjectChanged());
+            await this.loadAnnotations();
+        },
+        domainObjectChanged() {
+            if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
+                this.loadAnnotations();
             }
         }
     }
