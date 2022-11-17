@@ -219,6 +219,20 @@ async function openObjectTreeContextMenu(page, url) {
 }
 
 /**
+ * Expands the entire object tree (every expandable tree item).
+ * @param {import('@playwright/test').Page} page
+ */
+async function expandEntireTree(page) {
+    const treePane = page.locator('#tree-pane');
+    const collapsedTreeItems = treePane.locator('role=treeitem[expanded=false]');
+    let count = await collapsedTreeItems.count();
+    while (count > 0) {
+        await collapsedTreeItems.first().locator('.c-disclosure-triangle').click();
+        count = await collapsedTreeItems.count();
+    }
+}
+
+/**
  * Gets the UUID of the currently focused object by parsing the current URL
  * and returning the last UUID in the path.
  * @param {import('@playwright/test').Page} page
@@ -362,6 +376,7 @@ module.exports = {
     createDomainObjectWithDefaults,
     createNotification,
     expandTreePaneItemByName,
+    expandEntireTree,
     createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
