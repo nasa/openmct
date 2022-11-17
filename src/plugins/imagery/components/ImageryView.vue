@@ -898,9 +898,9 @@ export default {
             await Vue.nextTick();
             this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
         },
-        scrollHandler() {
+        async scrollHandler() {
             if (this.isPaused) {
-                this.scrollToFocused();
+                await this.scrollToFocused();
 
                 return;
             }
