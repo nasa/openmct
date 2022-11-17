@@ -875,7 +875,7 @@ export default {
             // and could not simply be scoped to the parent element
             if (this.isComposedInLayout) {
                 await Vue.nextTick();
-                const wrapperWidth = this.$refs.thumbsWrapper.clientWidth || 0;
+                const wrapperWidth = this.$refs.thumbsWrapper.clientWidth ?? 0;
                 this.$refs.thumbsWrapper.scrollLeft = (
                     domThumb.offsetLeft - (wrapperWidth - domThumb.clientWidth) / 2);
 
@@ -890,7 +890,7 @@ export default {
         },
         async scrollToRight() {
 
-            const scrollWidth = this.$refs?.thumbsWrapper?.scrollWidth || 0;
+            const scrollWidth = this.$refs?.thumbsWrapper?.scrollWidth ?? 0;
             if (!scrollWidth) {
                 return;
             }
