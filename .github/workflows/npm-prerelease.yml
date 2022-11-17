@@ -16,7 +16,11 @@ jobs:
         with:
           node-version: 16
       - run: npm install
-      - run: npm test
+      - run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+          npm whoami
+          npm publish --access=public --tag unstable openmct
+      # - run: npm test
 
   publish-npm-prerelease:
     needs: build

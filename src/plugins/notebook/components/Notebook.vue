@@ -897,24 +897,16 @@ export default {
                 this.transaction = this.openmct.objects.startTransaction();
             }
         },
-        saveTransaction() {
+        async saveTransaction() {
             if (this.transaction !== undefined) {
-                this.transaction.commit()
-                    .catch(error => {
-                        throw error;
-                    }).finally(() => {
-                        this.openmct.objects.endTransaction();
-                    });
+                await this.transaction.commit();
+                this.openmct.objects.endTransaction();
             }
         },
-        cancelTransaction() {
+        async cancelTransaction() {
             if (this.transaction !== undefined) {
-                this.transaction.cancel()
-                    .catch(error => {
-                        throw error;
-                    }).finally(() => {
-                        this.openmct.objects.endTransaction();
-                    });
+                await this.transaction.cancel();
+                this.openmct.objects.endTransaction();
             }
         },
         entrySelection(entry) {
