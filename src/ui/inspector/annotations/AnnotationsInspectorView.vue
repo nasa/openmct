@@ -21,18 +21,29 @@
  *****************************************************************************/
 
 <template>
-<div class="c-inspector__properties c-inspect-properties has-tag-applier">
+<div
+    class="c-inspector__properties c-inspect-properties has-tag-applier"
+>
     <div class="c-inspect-properties__header">
         Tags
     </div>
-    <ul class="c-inspect-properties__section">
+    <div
+        v-if="annotationType"
+        class="c-inspect-properties__section"
+    >
         <TagEditor
             :domain-object="domainObject"
             :annotations="annotations"
             :annotation-type="annotationType"
             :target-specific-details="targetSpecificDetails"
         />
-    </ul>
+    </div>
+    <div
+        v-else
+        class="c-inspect-properties__row--span-all"
+    >
+        {{ noTagsMessage }}
+    </div>
     <div class="c-inspect-properties__header">
         Annotations
     </div>
@@ -98,6 +109,11 @@ export default {
                 ? 'No annotations to display for multiple items'
                 : 'No annotations to display for this item';
         },
+        noTagsMessage() {
+            return this.multiSelection
+                ? 'No tags to display for multiple items'
+                : 'No tags to display for this item';
+        },
         domainObject() {
             return this?.selection?.[0]?.[0]?.context?.item;
         },
@@ -136,7 +152,11 @@ export default {
                     return targetSpecificDetailsEqual;
                 });
 
-                const sortedAnnotations = targetFilteredAnnotations.sort((annotationA, annotationB) => {
+                const mutableAnnotations = targetFilteredAnnotations.map(annotation => {
+                    return this.openmct.objects.toMutable(annotation);
+                });
+
+                const sortedAnnotations = mutableAnnotations.sort((annotationA, annotationB) => {
                     return annotationB.modified - annotationA.modified;
                 });
 
