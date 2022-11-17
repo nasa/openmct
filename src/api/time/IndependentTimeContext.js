@@ -212,7 +212,7 @@ class IndependentTimeContext extends TimeContext {
             const key = this.openmct.objects.makeKeyString(item.identifier);
             //last index is the view object itself
             const itemContext = this.globalTimeContext.independentContexts.get(key);
-            if (index > 0 && itemContext && itemContext.hasOwnContext()) {
+            if (index > -1 && itemContext && itemContext.hasOwnContext()) {
                 //upstream time context
                 timeContext = itemContext;
 
