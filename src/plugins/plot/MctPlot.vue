@@ -383,19 +383,10 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
-
-            console.log('setTimeContext');
-            console.log(this.path);
-            console.log(this.openmct.time.getContextForView(this.path));
             this.timeContext = this.openmct.time.getContextForView(this.path);
             this.followTimeContext();
-
         },
         followTimeContext() {
-            console.log('followTimeContext');
-            const bounds = this.timeContext.bounds();
-            console.log('timeContext:', this.timeContext);
-            console.log('bounds:', bounds);
             this.updateDisplayBounds(this.timeContext.bounds());
             this.timeContext.on('clock', this.updateRealTime);
             this.timeContext.on('bounds', this.updateDisplayBounds);

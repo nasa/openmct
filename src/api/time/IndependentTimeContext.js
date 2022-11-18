@@ -44,12 +44,8 @@ class IndependentTimeContext extends TimeContext {
 
     bounds(newBounds) {
         if (this.upstreamTimeContext) {
-            console.log('upstreamTimeContext');
-            console.log(this.upstreamTimeContext);
             return this.upstreamTimeContext.bounds(...arguments);
         } else {
-            console.log('no upstream time context');
-            console.log(...arguments);
             return super.bounds(...arguments);
         }
     }
