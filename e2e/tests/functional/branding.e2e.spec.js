@@ -60,14 +60,14 @@ test.describe('Branding tests', () => {
         await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
         expect(page2.waitForURL('**/licenses**')).toBeTruthy();
     });
-    test('Verify the Link to User\'s Guide in About Modal @unstable',
+    test('Verify the Link to User\'s Guide in About Modal - Non-headless chrome version @unstable @2p',
         async ({context, page, browserName, headless}) => {
-            test.skip(browserName === 'chromium' && headless === true,
-                'This test cannot be executed with headless chrome');
-
-            test.fixme(browserName === 'firefox',
-                'This test needs to be updated to work with firefox default settings. '
-                + 'By default, Firefox saves PDFs instead of opening them.');
+            // eslint-disable-next-line playwright/no-skipped-test
+            test.skip(
+                (browserName === 'chromium' && headless === true)
+                || browserName === 'firefox'
+                || browserName === 'webkit',
+                'This test cannot be executed with headless chrome, firefox, and webkit');
 
             // Go to baseURL
             await page.goto('./', {waitUntil: 'networkidle'});
@@ -82,14 +82,41 @@ test.describe('Branding tests', () => {
                 page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
             ]);
 
-            // await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
-
             // Subscribe to 'response' events of the new page
             page2.on('requestfinished', response => {
                 expect(page2.waitForURL('**/Open_MCT_Users_Guide.pdf')).toBeTruthy();
             });
 
             await page2.reload();
+
+            // await context.close();
+        });
+    test('Verify the Link to User\'s Guide in About Modal - Headless chrome, firefox, webkit version @unstable @2p',
+        async ({context, page, browserName, headless}) => {
+            // eslint-disable-next-line playwright/no-skipped-test
+            test.skip(
+                browserName === 'chromium' && headless === false,
+                'This test cannot be executed with headed chrome');
+            // Chromium handles pdf downloads differently in headless mode,
+            // see: https://github.com/microsoft/playwright/issues/6342
+
+            // Go to baseURL
+            await page.goto('./', {waitUntil: 'networkidle'});
+
+            // Click About button
+            await page.click('.l-shell__app-logo');
+
+            const [download] = await Promise.all([
+                page.waitForEvent('download'),
+                page.waitForEvent('popup'),
+                page.locator('text=Click here for the Open MCT User\'s Guide in PDF format.').click()
+            ]);
+
+            await page.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
+
+            // const download = await page.waitForEvent('download');
+            const endsWithPdf = download.suggestedFilename().endsWith('Open_MCT_Users_Guide.pdf');
+            expect(endsWithPdf).toBeTruthy();
 
             await context.close();
         });
