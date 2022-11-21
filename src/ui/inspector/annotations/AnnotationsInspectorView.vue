@@ -123,60 +123,58 @@ export default {
             return this?.selection?.[0]?.[1]?.context?.annotationType;
         }
     },
-    mounted() {
-        this.stopListeningToChanges = this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
+    async mounted() {
+        this.openmct.selection.on('change', this.updateSelection);
+        await this.updateSelection(this.openmct.selection.get());
     },
     beforeDestroy() {
         this.openmct.selection.off('change', this.updateSelection);
-        if (this.stopListeningToChanges) {
-            this.stopListeningToChanges();
-        }
-
         if (this.unobserveEntries) {
             this.unobserveEntries();
         }
     },
     methods: {
         async loadAnnotations() {
-            if (this.domainObject) {
-                const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                return;
+            }
 
-                if (!this.openmct.annotation.getAvailableTags().length) {
-                    return;
-                }
-
-                const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                const totalAnnotations = await this.openmct.annotation.getAnnotations(query);
-                if (!totalAnnotations) {
-                    this.annotations.splice(0);
-
-                    return;
-                }
-
-                const targetFilteredAnnotations = totalAnnotations.filter(annotation => {
-                    const targetSpecificDetailsEqual = _.isEqual(annotation.targets[domainObjectKeyString], this.targetSpecificDetails);
-
-                    return targetSpecificDetailsEqual;
-                });
-
-                const mutableAnnotations = targetFilteredAnnotations.map(annotation => {
-                    return this.openmct.objects.toMutable(annotation);
-                });
-
-                const sortedAnnotations = mutableAnnotations.sort((annotationA, annotationB) => {
-                    return annotationB.modified - annotationA.modified;
-                });
-
-                if (sortedAnnotations.length < this.annotations.length) {
-                    this.annotations = this.annotations.slice(0, sortedAnnotations.length);
-                }
-
-                for (let index = 0; index < sortedAnnotations.length; index += 1) {
-                    this.$set(this.annotations, index, sortedAnnotations[index]);
-                }
-            } else {
+            if (!this.domainObject) {
                 this.annotations.splice(0);
+
+                return;
+            }
+
+            const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const totalAnnotations = await this.openmct.annotation.getAnnotations(query);
+            if (!totalAnnotations) {
+                this.annotations.splice(0);
+
+                return;
+            }
+
+            const targetFilteredAnnotations = totalAnnotations.filter(annotation => {
+                const targetSpecificDetailsEqual = _.isEqual(annotation.targets[domainObjectKeyString], this.targetSpecificDetails);
+
+                return targetSpecificDetailsEqual;
+            });
+
+            const mutableAnnotations = targetFilteredAnnotations.map(annotation => {
+                return this.openmct.objects.toMutable(annotation);
+            });
+
+            const sortedAnnotations = mutableAnnotations.sort((annotationA, annotationB) => {
+                return annotationB.modified - annotationA.modified;
+            });
+
+            if (sortedAnnotations.length < this.annotations.length) {
+                this.annotations = this.annotations.slice(0, sortedAnnotations.length);
+            }
+
+            for (let index = 0; index < sortedAnnotations.length; index += 1) {
+                this.$set(this.annotations, index, sortedAnnotations[index]);
             }
         },
         async updateSelection(selection) {
@@ -185,12 +183,14 @@ export default {
             }
 
             this.selection = selection;
-            this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
-            this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.domainObjectChanged());
-            await this.loadAnnotations();
+            if (this.domainObject) {
+                this.lastLocalAnnotationCreation = this.domainObject?.annotationLastCreated ?? 0;
+                this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.domainObjectChanged());
+                await this.loadAnnotations();
+            }
         },
         domainObjectChanged() {
-            if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
+            if (this.domainObject && (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated)) {
                 this.loadAnnotations();
             }
         }
