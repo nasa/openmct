@@ -300,6 +300,7 @@ export default {
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
+        this.openmct.selection.on('change', this.updateSelection);
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
@@ -323,6 +324,7 @@ export default {
 
         window.removeEventListener('orientationchange', this.formatSidebar);
         window.removeEventListener('hashchange', this.setSectionAndPageFromUrl);
+        this.openmct.selection.off('change', this.updateSelection);
     },
     updated: function () {
         this.$nextTick(() => {
@@ -351,6 +353,11 @@ export default {
                     });
                 }
             });
+        },
+        updateSelection(selection) {
+            if (!selection?.[0]?.[1]?.context?.targetSpecificDetails?.entryId) {
+                this.selectedEntryId = '';
+            }
         },
         async loadAnnotations() {
             if (!this.openmct.annotation.getAvailableTags().length) {

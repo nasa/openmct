@@ -33,6 +33,7 @@
             :domain-object="domainObject"
             :annotations="annotations"
             :annotation-type="annotationType"
+            :on-tag-change="onTagChange"
             :target-specific-details="targetSpecificDetails"
         />
     </div>
@@ -121,7 +122,10 @@ export default {
         },
         annotationType() {
             return this?.selection?.[0]?.[1]?.context?.annotationType;
-        }
+        },
+        onTagChange() {
+            return this?.selection?.[0]?.[1]?.context?.onTagChange;
+        },
     },
     async mounted() {
         this.openmct.selection.on('change', this.updateSelection);

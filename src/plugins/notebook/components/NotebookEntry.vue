@@ -373,7 +373,6 @@ export default {
             }
         },
         selectEntry(event, entry) {
-            // need to add "target specific details" to the selection event
             this.openmct.selection.select(
                 [
                     {
@@ -389,7 +388,8 @@ export default {
                             targetSpecificDetails: {
                                 entryId: entry.id
                             },
-                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK
+                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                            onTagChange: this.timestampAndUpdate
                         }
                     }
                 ],

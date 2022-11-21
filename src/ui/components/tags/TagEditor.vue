@@ -71,7 +71,12 @@ export default {
                 return null;
             },
             required: false
-        }
+        },
+        onTagChange: {
+            type: Function,
+            required: false,
+            default: null
+        },
     },
     data() {
         return {
@@ -151,9 +156,13 @@ export default {
             if (annotationsToDelete) {
                 await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
                 this.$emit('tags-updated', annotationsToDelete);
+                if (this.onTagChange) {
+                    this.onTagChange();
+                }
             }
         },
         async tagAdded(newTag) {
+            console.debug(`🍉 Tag added: ${newTag}`);
             // Either undelete an annotation, or create one (1) new annotation
             const existingAnnotation = this.annotations.find((annotation) => {
                 return annotation.tags.includes(newTag);
@@ -165,6 +174,9 @@ export default {
             this.userAddingTag = false;
 
             this.$emit('tags-updated', createdAnnotation);
+            if (this.onTagChange) {
+                this.onTagChange();
+            }
         }
     }
 };
