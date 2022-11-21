@@ -139,21 +139,23 @@ export default {
                 return;
             }
 
-            if (!this.domainObject) {
+            if (!this.domainObject || !this.annotationType) {
                 this.annotations.splice(0);
 
                 return;
             }
 
             const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            console.debug(`🍇 Loading annotations for ${domainObjectKeyString}`);
 
-            const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const totalAnnotations = await this.openmct.annotation.getAnnotations(query);
+            const totalAnnotations = await this.openmct.annotation.getAnnotations(domainObjectKeyString);
             if (!totalAnnotations) {
                 this.annotations.splice(0);
 
                 return;
             }
+
+            console.debug(`🍇 Found ${totalAnnotations.length} annotations`);
 
             const targetFilteredAnnotations = totalAnnotations.filter(annotation => {
                 const targetSpecificDetailsEqual = _.isEqual(annotation.targets[domainObjectKeyString], this.targetSpecificDetails);
@@ -185,7 +187,7 @@ export default {
             this.selection = selection;
             if (this.domainObject) {
                 this.lastLocalAnnotationCreation = this.domainObject?.annotationLastCreated ?? 0;
-                this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.domainObjectChanged());
+                this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.domainObjectChanged);
                 await this.loadAnnotations();
             }
         },
