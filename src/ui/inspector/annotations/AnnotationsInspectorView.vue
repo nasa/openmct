@@ -125,7 +125,7 @@ export default {
         },
         onTagChange() {
             return this?.selection?.[0]?.[1]?.context?.onTagChange;
-        },
+        }
     },
     async mounted() {
         this.openmct.selection.on('change', this.updateSelection);

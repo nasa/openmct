@@ -842,7 +842,7 @@ export default {
             }
         },
 
-        async onMouseUp(event) {
+        onMouseUp(event) {
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
 
@@ -856,7 +856,7 @@ export default {
             }
 
             if (this.marquee) {
-                await this.endMarquee(event);
+                this.endMarquee(event);
             }
 
             // resume the plot if no pan, zoom, or drag action is taken
@@ -911,29 +911,43 @@ export default {
                 this.trackHistory();
             }
         },
-        async createPlotAnnotations(minX, minY, maxX, maxY, annotationsBySeries) {
+        selectPlotAnnotations(minX, minY, maxX, maxY, annotationsBySeries, event) {
             const boundingBox = {
                 minX,
                 minY,
                 maxX,
                 maxY
             };
-            let targets = {};
+            let seriesTargets = {};
             annotationsBySeries.forEach(annotation => {
                 if (annotation.length) {
                     const seriesID = annotation[0].series.keyString;
-                    targets[seriesID] = boundingBox;
+                    seriesTargets[seriesID] = boundingBox;
                 }
             });
-            if (Object.keys(targets).length) {
-                await this.openmct.annotation.create({
-                    name: 'Unnamed Plot Annotation',
-                    domainObject: this.domainObject,
-                    annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                    tags: [],
-                    contentText: 'No Description',
-                    targets
-                });
+            if (Object.keys(seriesTargets).length) {
+                const selection =
+                    [
+                        {
+                            element: this.openmct.layout.$refs.browseObject.$el,
+                            context: {
+                                item: this.domainObject
+                            }
+                        },
+                        {
+                            element: this.$el,
+                            context: {
+                                type: 'plot-points',
+                                targetSpecificDetails: {
+                                    seriesTargets
+                                },
+                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                                onTagChange: this.tagOrAnnotationAdded
+                            }
+                        }
+                    ];
+                this.openmct.selection.select(selection, true);
+                event.preventDefault();
             }
 
         },
@@ -989,7 +1003,7 @@ export default {
 
             return seriesKDTrees;
         },
-        async endAnnotationMarquee() {
+        endAnnotationMarquee(event) {
             const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
             const minY = Math.min(this.marquee.start.y, this.marquee.end.y);
             const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
@@ -1002,7 +1016,7 @@ export default {
             };
             const pointsInBox = this.getPointsInBox(boundingBox);
             this.annotationSelections = pointsInBox.flat();
-            await this.createPlotAnnotations(minX, minY, maxX, maxY, pointsInBox);
+            this.selectPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event);
         },
         endZoomMarquee() {
             const startPixels = this.marquee.startPixels;
@@ -1028,15 +1042,20 @@ export default {
                 this.plotHistory.pop();
             }
         },
-        async endMarquee() {
+        endMarquee(event) {
             if (this.marquee.annotationEvent) {
-                await this.endAnnotationMarquee();
+                this.endAnnotationMarquee(event);
             } else {
                 this.endZoomMarquee();
                 this.rectangles = [];
             }
 
             this.marquee = undefined;
+        },
+
+        tagOrAnnotationAdded() {
+            this.rectangles = [];
+            this.marquee = null;
         },
 
         zoom(zoomDirection, zoomFactor) {
