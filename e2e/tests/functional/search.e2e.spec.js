@@ -31,7 +31,7 @@ test.describe('Grand Search', () => {
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
-        await createObjectsForSearch(page, myItemsFolderName);
+        const createdObjects = await createObjectsForSearch(page);
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
@@ -41,8 +41,8 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=1')).toContainText(`Clock B ${myItemsFolderName} Red Folder Blue Folder`);
         await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
         await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
-        // Click text=Elements >> nth=0
-        await page.locator('text=Elements').first().click();
+        // Click the Elements pool to dismiss the search menu
+        await page.locator('.l-pane__label:has-text("Elements")').click();
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
@@ -77,7 +77,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('.is-object-type-clock')).toBeVisible();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Disp');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText('Unnamed Display Layout');
+        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(createdObjects.displayLayout.name);
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toContainText('Folder');
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Clock C');
@@ -185,7 +185,7 @@ async function createFolderObject(page, folderName) {
     await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folderName);
 
     // Create folder object
-    await page.locator('text=OK').click();
+    await page.locator('button:has-text("OK")').click();
 }
 
 async function waitForSearchCompletion(page) {
@@ -197,75 +197,56 @@ async function waitForSearchCompletion(page) {
   * Creates some domain objects for searching
   * @param {import('@playwright/test').Page} page
   */
-async function createObjectsForSearch(page, myItemsFolderName) {
+async function createObjectsForSearch(page) {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'networkidle' });
 
-    await page.locator('button:has-text("Create")').click();
-    await page.locator('li:has-text("Folder") >> nth=1').click();
-    await Promise.all([
-        page.waitForNavigation(),
-        await page.locator('text=Properties Title Notes >> input[type="text"]').fill('Red Folder'),
-        await page.locator(`text=Save In Open MCT ${myItemsFolderName} >> span`).nth(3).click(),
-        page.locator('button:has-text("OK")').click()
-    ]);
+    const redFolder = await createDomainObjectWithDefaults(page, {
+        type: 'Folder',
+        name: 'Red Folder'
+    });
 
-    await page.locator('button:has-text("Create")').click();
-    await page.locator('li:has-text("Folder") >> nth=2').click();
-    await Promise.all([
-        page.waitForNavigation(),
-        await page.locator('text=Properties Title Notes >> input[type="text"]').fill('Blue Folder'),
-        await page.locator('form[name="mctForm"] >> text=Red Folder').click(),
-        page.locator('button:has-text("OK")').click()
-    ]);
+    const blueFolder = await createDomainObjectWithDefaults(page, {
+        type: 'Folder',
+        name: 'Blue Folder',
+        parent: redFolder.uuid
+    });
 
-    await page.locator('button:has-text("Create")').click();
-    await page.locator('li[title="A digital clock that uses system time and supports a variety of display formats and timezones."]').click();
-    await Promise.all([
-        page.waitForNavigation(),
-        await page.locator('text=Properties Title Notes >> input[type="text"] >> nth=0').fill('Clock A'),
-        await page.locator('form[name="mctForm"] >> text=Blue Folder').click(),
-        page.locator('button:has-text("OK")').click()
-    ]);
+    const clockA = await createDomainObjectWithDefaults(page, {
+        type: 'Clock',
+        name: 'Clock A',
+        parent: blueFolder.uuid
+    });
+    const clockB = await createDomainObjectWithDefaults(page, {
+        type: 'Clock',
+        name: 'Clock B',
+        parent: blueFolder.uuid
+    });
+    const clockC = await createDomainObjectWithDefaults(page, {
+        type: 'Clock',
+        name: 'Clock C',
+        parent: blueFolder.uuid
+    });
+    const clockD = await createDomainObjectWithDefaults(page, {
+        type: 'Clock',
+        name: 'Clock D',
+        parent: blueFolder.uuid
+    });
 
-    await page.locator('button:has-text("Create")').click();
-    await page.locator('li[title="A digital clock that uses system time and supports a variety of display formats and timezones."]').click();
-    await Promise.all([
-        page.waitForNavigation(),
-        await page.locator('text=Properties Title Notes >> input[type="text"] >> nth=0').fill('Clock B'),
-        await page.locator('form[name="mctForm"] >> text=Blue Folder').click(),
-        page.locator('button:has-text("OK")').click()
-    ]);
+    const displayLayout = await createDomainObjectWithDefaults(page, {
+        type: 'Display Layout'
+    });
 
-    await page.locator('button:has-text("Create")').click();
-    await page.locator('li[title="A digital clock that uses system time and supports a variety of display formats and timezones."]').click();
-    await Promise.all([
-        page.waitForNavigation(),
-        await page.locator('text=Properties Title Notes >> input[type="text"] >> nth=0').fill('Clock C'),
-        await page.locator('form[name="mctForm"] >> text=Blue Folder').click(),
-        page.locator('button:has-text("OK")').click()
-    ]);
+    // Go back into edit mode for the display layout
+    await page.locator('button[title="Edit"]').click();
 
-    await page.locator('button:has-text("Create")').click();
-    await page.locator('li[title="A digital clock that uses system time and supports a variety of display formats and timezones."]').click();
-    await Promise.all([
-        page.waitForNavigation(),
-        await page.locator('text=Properties Title Notes >> input[type="text"] >> nth=0').fill('Clock D'),
-        await page.locator('form[name="mctForm"] >> text=Blue Folder').click(),
-        page.locator('button:has-text("OK")').click()
-    ]);
-
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator(`a:has-text("${myItemsFolderName}") >> nth=0`).click()
-    ]);
-    // Click button:has-text("Create")
-    await page.locator('button:has-text("Create")').click();
-    // Click li:has-text("Notebook")
-    await page.locator('li:has-text("Display Layout")').click();
-    // Click button:has-text("OK")
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('button:has-text("OK")').click()
-    ]);
+    return {
+        redFolder,
+        blueFolder,
+        clockA,
+        clockB,
+        clockC,
+        clockD,
+        displayLayout
+    };
 }

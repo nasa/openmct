@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding the example event generator.
 */
 
-const { test, expect } = require('../../../baseFixtures');
+const { test, expect } = require('../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../appActions');
 
 test.describe('Example Event Generator CRUD Operations', () => {
