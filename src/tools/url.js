@@ -42,9 +42,16 @@ export function identifierToString(openmct, objectPath) {
     return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
-export default function objectPathToUrl(openmct, objectPath) {
+function setTimeParams(urlParams) {
+    console.log(urlParams);
+
+    return urlParams;
+}
+
+export default function objectPathToUrl(openmct, objectPath, timeContext) {
     let url = identifierToString(openmct, objectPath);
     let urlParams = paramsToArray(openmct);
+    urlParams = setTimeParams(urlParams);
     if (urlParams.length) {
         url += '?' + urlParams.join('&');
     }

@@ -31,8 +31,8 @@ export default class OpenInNewTab {
 
         this._openmct = openmct;
     }
-    invoke(objectPath) {
-        let url = objectPathToUrl(this._openmct, objectPath);
+    invoke(objectPath, timeContext = undefined) {
+        let url = objectPathToUrl(this._openmct, objectPath, timeContext);
         window.open(url);
     }
 }
