@@ -6,11 +6,6 @@ Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting S
 
 Once you've created something amazing with Open MCT, showcase your work in our GitHub Discussions [Show and Tell](https://github.com/nasa/openmct/discussions/categories/show-and-tell) section. We love seeing unique and wonderful implementations of Open MCT!
 
-## See Open MCT in Action
-
-Try Open MCT now with our [live demo](https://openmct-demo.herokuapp.com/).
-![Demo](https://nasa.github.io/openmct/static/res/images/Open-MCT.Browse.Layout.Mars-Weather-1.jpg)
-
 ## Building and Running Open MCT Locally
 
 Building and running Open MCT in your local dev environment is very easy. Be sure you have [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/) installed, then follow the directions below. Need additional information? Check out the [Getting Started](https://nasa.github.io/openmct/getting-started/) page on our website.
