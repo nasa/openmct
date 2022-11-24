@@ -24,9 +24,19 @@
  * Module defining url handling.
  */
 
-export function paramsToArray(openmct) {
-    // parse urlParams from an object to an array.
+function getUrlParams(openmct, timeContext) {
     let urlParams = openmct.router.getParams();
+    if (timeContext) {
+        urlParams['tc.startDelta'] = timeContext.boundsVal.start;
+        urlParams['tc.endDelta'] = timeContext.boundsVal.end;
+    }
+
+    return urlParams;
+}
+
+export function paramsToArray(openmct, timeContext) {
+    // parse urlParams from an object to an array.
+    let urlParams = getUrlParams(openmct, timeContext);
     let newTabParams = [];
     for (let key in urlParams) {
         if ({}.hasOwnProperty.call(urlParams, key)) {
@@ -42,16 +52,9 @@ export function identifierToString(openmct, objectPath) {
     return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
-function setTimeParams(urlParams) {
-    console.log(urlParams);
-
-    return urlParams;
-}
-
 export default function objectPathToUrl(openmct, objectPath, timeContext) {
     let url = identifierToString(openmct, objectPath);
-    let urlParams = paramsToArray(openmct);
-    urlParams = setTimeParams(urlParams);
+    let urlParams = paramsToArray(openmct, timeContext);
     if (urlParams.length) {
         url += '?' + urlParams.join('&');
     }
