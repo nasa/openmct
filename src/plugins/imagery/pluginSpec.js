@@ -529,6 +529,19 @@ describe("The Imagery View Layouts", () => {
             done();
         });
 
+        it('should display the viewable area when zoom factor is greater than 1', async () => {
+            await Vue.nextTick();
+            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
+
+            parent.querySelector('.t-btn-zoom-in').click();
+            await Vue.nextTick();
+            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(1);
+
+            parent.querySelector('.t-btn-zoom-reset').click();
+            await Vue.nextTick();
+            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
+        });
+
         it('should reset the brightness and contrast when clicking the reset button', async () => {
             const viewInstance = imageryView._getInstance();
             await Vue.nextTick();
