@@ -26,7 +26,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+          registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm publish --access=public --tag unstable
+      - run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+          npm publish --tag unstable
+#      - run: npm publish --access=public --tag unstable
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
