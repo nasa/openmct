@@ -29,8 +29,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
       - run: |
-          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ${{ github.workspace }}/.npmrc
-          npm publish --tag unstable
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> $NPM_CONFIG_USERCONFIG
+          npm publish --access=public --tag unstable
 #      - run: npm publish --access=public --tag unstable
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
