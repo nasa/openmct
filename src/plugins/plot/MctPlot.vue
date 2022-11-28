@@ -678,8 +678,15 @@ export default {
                 this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
                 this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
                 this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
+                this.listenTo(this.canvas, 'click', this.onClick, this);
                 this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
             }
+        },
+
+        onClick(event) {
+            // do nothing but stop the propogation so the selection doesn't change from
+            // what the user has selected
+            event.stopPropagation();
         },
 
         initialize() {
@@ -821,7 +828,7 @@ export default {
         },
 
         onMouseDown(event) {
-        // do not monitor drag events on browser context click
+            // do not monitor drag events on browser context click
             if (event.ctrlKey) {
                 return;
             }
@@ -946,8 +953,9 @@ export default {
                             }
                         }
                     ];
+
+                console.debug(`🍉 event that fired`, event);
                 this.openmct.selection.select(selection, true);
-                event.preventDefault();
             }
 
         },

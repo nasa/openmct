@@ -184,6 +184,7 @@ export default {
             }
         },
         async updateSelection(selection) {
+            console.debug(`🍇 Selection changed to ${selection.length} items`, selection);
             if (this.unobserveEntries) {
                 this.unobserveEntries();
             }
