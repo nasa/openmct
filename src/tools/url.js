@@ -29,6 +29,7 @@ function getUrlParams(openmct, timeContext) {
     if (timeContext) {
         urlParams['tc.startDelta'] = timeContext.boundsVal.start;
         urlParams['tc.endDelta'] = timeContext.boundsVal.end;
+        urlParams['tc.mode'] = 'fixed';
     }
 
     return urlParams;

@@ -184,6 +184,7 @@ export default class URLTimeSettingsSynchronizer {
                 isValid = this.areStartAndEndValid(timeParameters.clockOffsets);
             }
         }
+        debugger;
 
         return isValid;
     }
