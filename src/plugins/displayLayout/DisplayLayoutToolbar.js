@@ -583,6 +583,7 @@ define(['lodash'], function (_) {
                                 domainObject: selectedParent,
                                 icon: "icon-object",
                                 title: "Merge into a telemetry table or plot",
+                                label: "View type",
                                 options: APPLICABLE_VIEWS['telemetry-view-multi'],
                                 method: function (option) {
                                     displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);

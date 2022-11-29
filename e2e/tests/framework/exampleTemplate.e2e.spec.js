@@ -45,7 +45,7 @@
 */
 
 // Structure: Some standard Imports. Please update the required pathing.
-const { test, expect } = require('../../baseFixtures');
+const { test, expect } = require('../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 /**
@@ -144,5 +144,5 @@ async function renameTimerFrom3DotMenu(page, timerUrl, newNameForTimer) {
     await page.locator('text=Properties Title Notes >> input[type="text"]').fill(newNameForTimer);
 
     // Click Ok button to Save
-    await page.locator('text=OK').click();
+    await page.locator('button:has-text("OK")').click();
 }
