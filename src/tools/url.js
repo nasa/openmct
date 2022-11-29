@@ -24,22 +24,19 @@
  * Module defining url handling.
  */
 
-function getUrlParams(openmct, timeContext) {
+function getUrlParams(openmct, customUrlParams) {
     let urlParams = openmct.router.getParams();
-    if (timeContext) {
-        urlParams['tc.startBound'] = timeContext.boundsVal.start;
-        urlParams['tc.endBound'] = timeContext.boundsVal.end;
-        urlParams['tc.mode'] = 'fixed';
-        delete urlParams['tc.startDelta'];
-        delete urlParams['tc.endDelta'];
-    }
+    Object.entries(customUrlParams).forEach((urlParam) => {
+        const [key, value] = urlParam;
+        urlParams[key] = value;
+    });
 
     return urlParams;
 }
 
-export function paramsToArray(openmct, timeContext) {
+export function paramsToArray(openmct, customUrlParams) {
     // parse urlParams from an object to an array.
-    let urlParams = getUrlParams(openmct, timeContext);
+    let urlParams = getUrlParams(openmct, customUrlParams);
     let newTabParams = [];
     for (let key in urlParams) {
         if ({}.hasOwnProperty.call(urlParams, key)) {
@@ -55,9 +52,9 @@ export function identifierToString(openmct, objectPath) {
     return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
-export default function objectPathToUrl(openmct, objectPath, timeContext) {
+export default function objectPathToUrl(openmct, objectPath, customUrlParams) {
     let url = identifierToString(openmct, objectPath);
-    let urlParams = paramsToArray(openmct, timeContext);
+    let urlParams = paramsToArray(openmct, customUrlParams);
     if (urlParams.length) {
         url += '?' + urlParams.join('&');
     }
