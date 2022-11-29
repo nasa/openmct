@@ -27,9 +27,11 @@
 function getUrlParams(openmct, timeContext) {
     let urlParams = openmct.router.getParams();
     if (timeContext) {
-        urlParams['tc.startDelta'] = timeContext.boundsVal.start;
-        urlParams['tc.endDelta'] = timeContext.boundsVal.end;
+        urlParams['tc.startBound'] = timeContext.boundsVal.start;
+        urlParams['tc.endBound'] = timeContext.boundsVal.end;
         urlParams['tc.mode'] = 'fixed';
+        delete urlParams['tc.startDelta'];
+        delete urlParams['tc.endDelta'];
     }
 
     return urlParams;
