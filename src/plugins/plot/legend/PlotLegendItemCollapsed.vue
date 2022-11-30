@@ -121,12 +121,7 @@ export default {
         initialize(highlightedObject) {
             const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
             this.isMissing = seriesObject.domainObject.status === 'missing';
-            let color = seriesObject.get('series')?.color;
-            if (!color) {
-                color = seriesObject.get('color').asHexString();
-            }
-
-            this.colorAsHexString = color;
+            this.colorAsHexString = seriesObject.get('color').asHexString();
             this.nameWithUnit = seriesObject.nameWithUnit();
 
             const closest = seriesObject.closest;
