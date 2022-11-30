@@ -247,7 +247,7 @@ export default {
             this.listenTo(seriesConfig.series, 'remove', this.removeSeries, this);
         },
         addSeries(series) {
-            console.debug(`🍉 Added stacked plot series`, series);
+            console.debug(`🍉 Added stacked plot series`);
             const index = this.seriesModels.length;
             this.$set(this.seriesModels, index, series);
         },
