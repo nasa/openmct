@@ -76,7 +76,7 @@ export default class SeriesCollection extends Collection {
                 identifier: domainObject.identifier
             };
 
-            if (plotObject.type === 'telemetry.plot.overlay') {
+            if (plotObject.type.startsWith('telemetry.plot')) {
                 this.openmct.objects.mutate(
                     plotObject,
                     'configuration.series[' + this.size() + ']',
