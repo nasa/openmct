@@ -244,17 +244,13 @@ export default {
             this.highlights = data;
         },
         registerSeriesListeners(configId) {
-            this.seriesConfig[configId] = this.getConfig(configId);
             const superConfigId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
             const superConfig = this.getConfig(superConfigId);
             this.listenTo(superConfig.series, 'remove', this.removeSeries, this);
+            this.listenTo(superConfig.series, 'add', this.addSeries, this);
 
+            this.seriesConfig[configId] = this.getConfig(configId);
             this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
-        },
-        addSeries(series) {
-            const index = this.seriesModels.length;
-            this.$set(this.seriesModels, index, series);
         },
         removeSeries(plotSeries) {
             const index = this.seriesModels.findIndex(seriesModel => {
