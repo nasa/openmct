@@ -127,7 +127,6 @@ export default {
             }
 
             this.colorAsHexString = color;
-            console.debug(`colorAsHexString: ${this.colorAsHexString}`);
             this.nameWithUnit = seriesObject.nameWithUnit();
 
             const closest = seriesObject.closest;
