@@ -257,7 +257,6 @@ export default {
             this.$set(this.seriesModels, index, series);
         },
         removeSeries(plotSeries) {
-            console.debug(`👺 Removing `, plotSeries);
             const index = this.seriesModels.findIndex(seriesModel => {
                 return seriesModel.keyString === plotSeries.keyString;
             });

@@ -44,7 +44,6 @@ export default class SeriesCollection extends Collection {
         this.listenTo(this, 'add', this.onSeriesAdd, this);
         this.listenTo(this, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
-        console.debug(`🍊 SeriesCollection ${this.rando} initialized`);
         const domainObject = this.plot.get('domainObject');
         if (domainObject.telemetry) {
             this.addTelemetryObject(domainObject);
