@@ -31,6 +31,14 @@ function getUrlParams(openmct, customUrlParams) {
         urlParams[key] = value;
     });
 
+    if (urlParams['tc.mode'] === 'fixed') {
+        delete urlParams['tc.startDelta'];
+        delete urlParams['tc.endDelta'];
+    } else if (urlParams['tc.mode'] === 'local') {
+        delete urlParams['tc.startBound'];
+        delete urlParams['tc.endBound'];
+    }
+
     return urlParams;
 }
 
