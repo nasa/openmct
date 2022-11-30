@@ -51,7 +51,6 @@
             @gridLines="onGridLinesChange"
             @lockHighlightPoint="lockHighlightPointUpdated"
             @highlights="highlightsUpdated"
-            @configLoaded="registerSeriesListeners"
         />
     </div>
 </div>
@@ -83,8 +82,6 @@ export default {
         }
     },
     data() {
-        this.seriesConfig = {};
-
         return {
             hideExportButtons: false,
             cursorGuide: false,
@@ -122,8 +119,7 @@ export default {
     mounted() {
         eventHelpers.extend(this);
 
-        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.config = this.getConfig(configId);
+        this.config = this.getConfig();
         this.legend = this.config.legend;
 
         this.loaded = true;
@@ -133,9 +129,11 @@ export default {
         this.composition.on('remove', this.removeChild);
         this.composition.on('reorder', this.compositionReorder);
         this.composition.load();
+        this.registerSeriesListeners();
     },
     methods: {
-        getConfig(configId) {
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let config = configStore.get(configId);
             if (!config) {
                 config = new PlotConfigurationModel({
@@ -165,13 +163,12 @@ export default {
 
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
-
             this.$set(this.tickWidthMap, id, 0);
-
             this.compositionObjects.push(child);
         },
 
         removeChild(childIdentifier) {
+            console.debug(`🍉 Removed stacked plot child`);
             const id = this.openmct.objects.makeKeyString(childIdentifier);
 
             this.$delete(this.tickWidthMap, id);
@@ -243,19 +240,19 @@ export default {
         highlightsUpdated(data) {
             this.highlights = data;
         },
-        registerSeriesListeners(configId) {
-            this.seriesConfig[configId] = this.getConfig(configId);
-            this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
-            this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
-
-            this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
+        registerSeriesListeners() {
+            const seriesConfig = this.getConfig();
+            seriesConfig.series.models.forEach(this.addSeries, this);
+            this.listenTo(seriesConfig.series, 'add', this.addSeries, this);
+            this.listenTo(seriesConfig.series, 'remove', this.removeSeries, this);
         },
         addSeries(series) {
+            console.debug(`🍉 Added stacked plot series`, series);
             const index = this.seriesModels.length;
             this.$set(this.seriesModels, index, series);
         },
         removeSeries(plotSeries) {
-            const index = this.seriesModels.findIndex(seriesModel => this.openmct.objects.areIdsEqual(seriesModel.identifier, plotSeries.identifier));
+            const index = this.seriesModels.findIndex(seriesModel => seriesModel.keyString === plotSeries.keyString);
             if (index > -1) {
                 this.$delete(this.seriesModels, index);
             }
