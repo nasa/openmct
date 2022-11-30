@@ -40,10 +40,11 @@ export default class SeriesCollection extends Collection {
         this.plot = options.plot;
         this.openmct = options.openmct;
         this.palette = options.palette || new ColorPalette();
+        this.rando = Math.floor(Math.random() * 1000);
         this.listenTo(this, 'add', this.onSeriesAdd, this);
         this.listenTo(this, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
-
+        console.debug(`🍊 SeriesCollection ${this.rando} initialized`);
         const domainObject = this.plot.get('domainObject');
         if (domainObject.telemetry) {
             this.addTelemetryObject(domainObject);
@@ -105,7 +106,7 @@ export default class SeriesCollection extends Collection {
     }
     removeTelemetryObject(identifier) {
         const plotObject = this.plot.get('domainObject');
-        if (plotObject.type === 'telemetry.plot.overlay') {
+        if (plotObject.type.startsWith('telemetry.plot')) {
 
             const persistedIndex = plotObject.configuration.series.findIndex(s => {
                 return _.isEqual(identifier, s.identifier);
@@ -133,6 +134,20 @@ export default class SeriesCollection extends Collection {
                     this.openmct.objects.mutate(newPlotObject, 'configuration.series', cSeries);
                 }.bind(this));
             }
+        }
+    }
+    emit(event, a1, a2, a3, a4, a5) {
+        super.emit(event, a1, a2, a3, a4, a5);
+        if (event === 'remove') {
+            const listenerCount = this._events.remove.length ?? 0;
+            console.debug(`🎃 Series ${event} fired for ${this.rando}, current listeners ${listenerCount}`);
+        }
+    }
+    on(event, fn, context) {
+        super.on(event, fn, context);
+        if (event === 'remove') {
+            const listenerCount = this._events.remove.length ?? 0;
+            console.debug(`🎃 Series ${event} listener added for ${this.rando}, current listeners ${listenerCount}`);
         }
     }
     onSeriesAdd(series) {

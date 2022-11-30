@@ -168,7 +168,6 @@ export default {
         },
 
         removeChild(childIdentifier) {
-            console.debug(`🍉 Removed stacked plot child`);
             const id = this.openmct.objects.makeKeyString(childIdentifier);
 
             this.$delete(this.tickWidthMap, id);
@@ -243,6 +242,7 @@ export default {
         registerSeriesListeners() {
             const seriesConfig = this.getConfig();
             seriesConfig.series.models.forEach(this.addSeries, this);
+            console.debug(`🍉 Registered series listeners for Stacked Plot`);
             this.listenTo(seriesConfig.series, 'add', this.addSeries, this);
             this.listenTo(seriesConfig.series, 'remove', this.removeSeries, this);
         },
@@ -252,6 +252,7 @@ export default {
             this.$set(this.seriesModels, index, series);
         },
         removeSeries(plotSeries) {
+            console.debug(`🍉 Removed stacked plot series`);
             const index = this.seriesModels.findIndex(seriesModel => seriesModel.keyString === plotSeries.keyString);
             if (index > -1) {
                 this.$delete(this.seriesModels, index);
