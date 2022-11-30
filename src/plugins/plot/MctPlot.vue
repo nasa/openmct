@@ -383,6 +383,7 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
+
             this.timeContext = this.openmct.time.getContextForView(this.path);
             this.followTimeContext();
         },
