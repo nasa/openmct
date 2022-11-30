@@ -72,17 +72,19 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     await page.click('button:has-text("Create")');
 
     // Click the object specified by 'type'
-    await page.click(`li:text("${type}")`);
+    await page.click(`li[role='menuitem']:text("${type}")`);
 
     // Modify the name input field of the domain object to accept 'name'
     const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
     await nameInput.fill("");
     await nameInput.fill(name);
 
-    // Fill the "Notes" section with information about the
-    // currently running test and its project.
-    const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
-    await notesInput.fill(page.testNotes);
+    if (page.testNotes) {
+        // Fill the "Notes" section with information about the
+        // currently running test and its project.
+        const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+        await notesInput.fill(page.testNotes);
+    }
 
     // Click OK button and wait for Navigate event
     await Promise.all([
