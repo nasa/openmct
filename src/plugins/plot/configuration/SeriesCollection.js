@@ -135,20 +135,6 @@ export default class SeriesCollection extends Collection {
             }
         }
     }
-    emit(event, a1, a2, a3, a4, a5) {
-        super.emit(event, a1, a2, a3, a4, a5);
-        if (event === 'remove') {
-            const listenerCount = this._events.remove.length ?? 0;
-            //console.debug(`🎃 Series ${event} fired for ${this.rando}, current listeners ${listenerCount}`);
-        }
-    }
-    on(event, fn, context) {
-        super.on(event, fn, context);
-        if (event === 'remove') {
-            const listenerCount = this._events.remove.length ?? 0;
-            //console.debug(`🎃 Series ${event} listener added for ${this.rando}, current listeners ${listenerCount}`);
-        }
-    }
     onSeriesAdd(series) {
         let seriesColor = series.get('color');
         if (seriesColor) {
