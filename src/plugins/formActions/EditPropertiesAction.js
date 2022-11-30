@@ -22,6 +22,7 @@
 
 import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
+import _ from 'lodash';
 
 export default class EditPropertiesAction extends PropertiesAction {
     constructor(openmct) {
@@ -61,10 +62,7 @@ export default class EditPropertiesAction extends PropertiesAction {
             Object.entries(changes).forEach(([key, value]) => {
                 const existingValue = this.domainObject[key];
                 if (!(Array.isArray(existingValue)) && (typeof existingValue === 'object')) {
-                    value = {
-                        ...existingValue,
-                        ...value
-                    };
+                    value = _.merge(existingValue, value);
                 }
 
                 this.openmct.objects.mutate(this.domainObject, key, value);
