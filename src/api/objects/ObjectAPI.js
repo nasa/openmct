@@ -413,6 +413,8 @@ export default class ObjectAPI {
         return result.catch((error) => {
             if (error instanceof this.errors.Conflict) {
                 this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+
+                return this.refresh(domainObject);
             }
 
             throw error;
