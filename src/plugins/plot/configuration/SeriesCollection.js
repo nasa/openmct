@@ -40,7 +40,6 @@ export default class SeriesCollection extends Collection {
         this.plot = options.plot;
         this.openmct = options.openmct;
         this.palette = options.palette || new ColorPalette();
-        this.rando = Math.floor(Math.random() * 1000);
         this.listenTo(this, 'add', this.onSeriesAdd, this);
         this.listenTo(this, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
