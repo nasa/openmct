@@ -98,8 +98,18 @@ export default {
         this.limitLines = [];
         this.pointSets = [];
         this.alarmSets = [];
-        this.offset = {};
-        this.offset2 = {};
+        const yAxisId = this.config.yAxis.get('id');
+        this.offset = {
+          [yAxisId]: {}
+        };
+        if (this.config.additionalYAxes.length) {
+          this.config.additionalYAxes.forEach(yAxis => {
+            const id = yAxis.get('id');
+            this.offset[id] = {};
+            this.listenTo(yAxis, 'change', this.updateLimitsAndDraw);
+            this.listenTo(this.config.yAxis, 'change:key', this.clearOffset.bind(this, id), this);
+          });
+        }
         this.seriesElements = new WeakMap();
         this.seriesLimits = new WeakMap();
 
@@ -112,13 +122,8 @@ export default {
 
         this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
-        this.listenTo(this.config.yAxis, 'change:key', this.clearOffset, this);
+        this.listenTo(this.config.yAxis, 'change:key', this.clearOffset.bind(this, 1), this);
         this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
-        if (this.config.additionalYAxes.length) {
-            this.config.additionalYAxes.forEach(yAxis => {
-                this.listenTo(yAxis, 'change', this.updateLimitsAndDraw);
-            });
-        }
 
         this.listenTo(this.config.xAxis, 'change', this.updateLimitsAndDraw);
         this.config.series.forEach(this.onSeriesAdd, this);
@@ -231,13 +236,13 @@ export default {
             this.limitLines.forEach(line => line.destroy());
             DrawLoader.releaseDrawAPI(this.drawAPI);
         },
-        clearOffset() {
-            delete this.offset.x;
-            delete this.offset.y;
-            delete this.offset.xVal;
-            delete this.offset.yVal;
-            delete this.offset.xKey;
-            delete this.offset.yKey;
+        clearOffset(yAxisId) {
+            delete this.offset[yAxisId].x;
+            delete this.offset[yAxisId].y;
+            delete this.offset[yAxisId].xVal;
+            delete this.offset[yAxisId].yVal;
+            delete this.offset[yAxisId].xKey;
+            delete this.offset[yAxisId].yKey;
             this.lines.forEach(function (line) {
                 line.reset();
             });
@@ -249,53 +254,31 @@ export default {
             });
         },
         setOffset(offsetPoint, index, series) {
-            const yAxisId = series.get('yAxisId') || 1;
-            if (yAxisId > 1) {
-                if (this.offset2.x && this.offset2.y) {
-                    return;
-                }
+          const mainYAxisId = this.config.yAxis.get('id');
+          const yAxisId = series.get('yAxisId') || mainYAxisId;
+          if (this.offset[yAxisId].x && this.offset[yAxisId].y) {
+            return;
+          }
 
-                const offsets = {
-                    x: series.getXVal(offsetPoint),
-                    y: series.getYVal(offsetPoint)
-                };
+          const offsets = {
+            x: series.getXVal(offsetPoint),
+            y: series.getYVal(offsetPoint)
+          };
 
-                this.offset2.x = function (x) {
-                    return x - offsets.x;
-                }.bind(this);
-                this.offset2.y = function (y) {
-                    return y - offsets.y;
-                }.bind(this);
-                this.offset2.xVal = function (point, pSeries) {
-                    return this.offset2.x(pSeries.getXVal(point));
-                }.bind(this);
-                this.offset2.yVal = function (point, pSeries) {
-                    return this.offset2.y(pSeries.getYVal(point));
-                }.bind(this);
-            } else {
-                if (this.offset.x && this.offset.y) {
-                    return;
-                }
-
-                const offsets = {
-                    x: series.getXVal(offsetPoint),
-                    y: series.getYVal(offsetPoint)
-                };
-
-                this.offset.x = function (x) {
-                    return x - offsets.x;
-                }.bind(this);
-                this.offset.y = function (y) {
-                    return y - offsets.y;
-                }.bind(this);
-                this.offset.xVal = function (point, pSeries) {
-                    return this.offset.x(pSeries.getXVal(point));
-                }.bind(this);
-                this.offset.yVal = function (point, pSeries) {
-                    return this.offset.y(pSeries.getYVal(point));
-                }.bind(this);
-            }
+          this.offset[yAxisId].x = function (x) {
+            return x - offsets.x;
+          }.bind(this);
+          this.offset[yAxisId].y = function (y) {
+            return y - offsets.y;
+          }.bind(this);
+          this.offset[yAxisId].xVal = function (point, pSeries) {
+            return this.offset[yAxisId].x(pSeries.getXVal(point));
+          }.bind(this);
+          this.offset[yAxisId].yVal = function (point, pSeries) {
+            return this.offset[yAxisId].y(pSeries.getYVal(point));
+          }.bind(this);
         },
+
         initializeCanvas(canvas, overlay) {
             this.canvas = canvas;
             this.overlay = overlay;
@@ -343,11 +326,9 @@ export default {
             this.clearLimitLines(series);
         },
         lineForSeries(series) {
-            const yAxisId = series.get('yAxisId') || 1;
-            let offset = this.offset;
-            if (yAxisId > 1) {
-                offset = this.offset2;
-            }
+            const mainYAxisId = this.config.yAxis.get('id');
+            const yAxisId = series.get('yAxisId') || mainYAxisId;
+            let offset = this.offset[yAxisId];
 
             if (series.get('interpolate') === 'linear') {
                 return new MCTChartLineLinear(
@@ -366,11 +347,9 @@ export default {
             }
         },
         limitLineForSeries(series) {
-            const yAxisId = series.get('yAxisId') || 1;
-            let offset = this.offset;
-            if (yAxisId > 1) {
-                offset = this.offset2;
-            }
+          const mainYAxisId = this.config.yAxis.get('id');
+          const yAxisId = series.get('yAxisId') || mainYAxisId;
+            let offset = this.offset[yAxisId];
 
             return new MCTChartAlarmLineSet(
                 series,
@@ -380,11 +359,9 @@ export default {
             );
         },
         pointSetForSeries(series) {
-            const yAxisId = series.get('yAxisId') || 1;
-            let offset = this.offset;
-            if (yAxisId > 1) {
-                offset = this.offset2;
-            }
+          const mainYAxisId = this.config.yAxis.get('id');
+          const yAxisId = series.get('yAxisId') || mainYAxisId;
+            let offset = this.offset[yAxisId];
 
             if (series.get('markers')) {
                 return new MCTChartPointSet(
@@ -395,11 +372,9 @@ export default {
             }
         },
         alarmPointSetForSeries(series) {
-            const yAxisId = series.get('yAxisId') || 1;
-            let offset = this.offset;
-            if (yAxisId > 1) {
-                offset = this.offset2;
-            }
+          const mainYAxisId = this.config.yAxis.get('id');
+          const yAxisId = series.get('yAxisId') || mainYAxisId;
+            let offset = this.offset[yAxisId];
 
             if (series.get('alarmMarkers')) {
                 return new MCTChartAlarmPointSet(
@@ -466,8 +441,8 @@ export default {
                 this.seriesLimits.delete(series);
             }
         },
-        canDraw() {
-            if (!this.offset.x || !this.offset.y) {
+        canDraw(yAxisId) {
+            if (!this.offset[yAxisId].x || !this.offset[yAxisId].y) {
                 return false;
             }
 
@@ -490,26 +465,29 @@ export default {
             }
 
             this.drawAPI.clear();
-            if (this.canDraw()) {
-              //There has to be at least one yAxis with id===1
-              const yAxisIds = [1].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
-              // Repeat drawing for all yAxes
-              yAxisIds.forEach((id) => {
+            const mainYAxisId = this.config.yAxis.get('id');
+            //There has to be at least one yAxis
+            const yAxisIds = [mainYAxisId].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
+            // Repeat drawing for all yAxes
+            yAxisIds.forEach((id) => {
+              if (this.canDraw(id)) {
                 this.updateViewport(id);
                 this.drawSeries(id);
-                this.drawRectangles();
-                this.drawHighlights();
-              });
-            }
+                this.drawRectangles(id);
+                this.drawHighlights(id);
+              }
+            });
         },
-        updateViewport(id) {
-            const xRange = this.config.xAxis.get('displayRange');
+        updateViewport(yAxisId) {
+          const mainYAxisId = this.config.yAxis.get('id');
+          const xRange = this.config.xAxis.get('displayRange');
             let yRange;
-            if (id === 1) {
+            if (yAxisId === mainYAxisId) {
                 yRange = this.config.yAxis.get('displayRange');
             } else {
                 if (this.config.additionalYAxes.length) {
-                    yRange = this.config.additionalYAxes[id - 2].get('displayRange');
+                  const yAxisForId = this.config.additionalYAxes.find(yAxis => yAxis.get('id') === yAxisId);
+                    yRange = yAxisForId.get('displayRange');
                 }
             }
 
@@ -523,19 +501,10 @@ export default {
             ];
 
             let origin;
-            if (id === 1) {
-                origin = [
-                    this.offset.x(xRange.min),
-                    this.offset.y(yRange.min)
-                ];
-
-            } else {
-                origin = [
-                    this.offset2.x(xRange.min),
-                    this.offset2.y(yRange.min)
-                ];
-
-            }
+            origin = [
+              this.offset[yAxisId].x(xRange.min),
+              this.offset[yAxisId].y(yRange.min)
+            ];
 
             this.drawAPI.setDimensions(
                 dimensions,
@@ -543,77 +512,50 @@ export default {
             );
         },
         drawSeries(id) {
-            if (id === 1) {
-                this.lines.slice(0, 1).forEach(this.drawLine, this);
-                this.pointSets.slice(0, 1).forEach(this.drawPoints, this);
-                this.alarmSets.slice(0, 1).forEach(this.drawAlarmPoints, this);
-            } else {
-                this.lines.slice(1, 2).forEach(this.drawLine, this);
-                this.pointSets.slice(1, 2).forEach(this.drawPoints, this);
-                this.alarmSets.slice(1, 2).forEach(this.drawAlarmPoints, this);
-            }
+            const end = parseInt(id);
+            const start = end - 1;
+            this.lines.slice(start, end).forEach(this.drawLine, this);
+            this.pointSets.slice(start, end).forEach(this.drawPoints, this);
+            this.alarmSets.slice(start, end).forEach(this.drawAlarmPoints, this);
         },
         drawLimitLines() {
+          this.config.series.models.forEach(series => {
+            const yAxisId = series.get('yAxisId');
+            this.drawLimitLinesForSeries(yAxisId, series);
+          });
+        },
+        drawLimitLinesForSeries(yAxisId, series) {
+          if (!this.canDraw(yAxisId)) {
             return;
-            if (this.canDraw()) {
-                const series1 = this.config.series.models.filter(series => series.get('yAxisId') === 1).map(series => series.get('identifier').key);
-                this.updateViewport(1);
+          }
+          this.updateViewport(yAxisId);
 
-                if (!this.drawAPI.origin) {
-                    return;
-                }
+          if (!this.drawAPI.origin) {
+            return;
+          }
 
-                Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
-                let limitPointOverlap = [];
-                this.limitLines.forEach((limitLine) => {
-                    let limitContainerEl = this.$refs.limitArea;
-                    limitLine.limits.forEach((limit) => {
-                        if (!series1.includes(limit.seriesKey)) {
-                            return;
-                        }
+          Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
+          let limitPointOverlap = [];
+          this.limitLines.forEach((limitLine) => {
+            let limitContainerEl = this.$refs.limitArea;
+            limitLine.limits.forEach((limit) => {
+              if (!series.includes(limit.seriesKey)) {
+                return;
+              }
 
-                        const showLabels = this.showLabels(limit.seriesKey);
-                        if (showLabels) {
-                            const overlap = this.getLimitOverlap(limit, limitPointOverlap);
-                            limitPointOverlap.push(overlap);
-                            let limitLabelEl = this.getLimitLabel(limit, overlap);
-                            limitContainerEl.appendChild(limitLabelEl);
-                        }
+              const showLabels = this.showLabels(limit.seriesKey);
+              if (showLabels) {
+                const overlap = this.getLimitOverlap(limit, limitPointOverlap);
+                limitPointOverlap.push(overlap);
+                let limitLabelEl = this.getLimitLabel(limit, overlap);
+                limitContainerEl.appendChild(limitLabelEl);
+              }
 
-                        let limitEl = this.getLimitElement(limit);
-                        limitContainerEl.appendChild(limitEl);
+              let limitEl = this.getLimitElement(limit);
+              limitContainerEl.appendChild(limitEl);
 
-                    }, this);
-                });
-                const series2 = this.config.series.models.filter(series => series.get('yAxisId') === 2).map(series => series.get('identifier').key);
-                this.updateViewport(2);
-
-                if (!this.drawAPI.origin) {
-                    return;
-                }
-
-                limitPointOverlap = [];
-                this.limitLines.forEach((limitLine) => {
-                    let limitContainerEl = this.$refs.limitArea;
-                    limitLine.limits.forEach((limit) => {
-                        if (!series2.includes(limit.seriesKey)) {
-                            return;
-                        }
-
-                        const showLabels = this.showLabels(limit.seriesKey);
-                        if (showLabels) {
-                            const overlap = this.getLimitOverlap(limit, limitPointOverlap);
-                            limitPointOverlap.push(overlap);
-                            let limitLabelEl = this.getLimitLabel(limit, overlap);
-                            limitContainerEl.appendChild(limitLabelEl);
-                        }
-
-                        let limitEl = this.getLimitElement(limit);
-                        limitContainerEl.appendChild(limitEl);
-
-                    }, this);
-                });
-            }
+            }, this);
+          });
         },
         showLabels(seriesKey) {
             return this.showLimitLineLabels.seriesKey
@@ -704,15 +646,15 @@ export default {
                 );
             }
         },
-        drawHighlights() {
+        drawHighlights(yAxisId) {
             if (this.highlights && this.highlights.length) {
-                this.highlights.forEach(this.drawHighlight, this);
+                this.highlights.forEach(this.drawHighlight.bind(this, yAxisId), this);
             }
         },
-        drawHighlight(highlight) {
+        drawHighlight(yAxisId, highlight) {
             const points = new Float32Array([
-                this.offset.xVal(highlight.point, highlight.series),
-                this.offset.yVal(highlight.point, highlight.series)
+                this.offset[yAxisId].xVal(highlight.point, highlight.series),
+                this.offset[yAxisId].yVal(highlight.point, highlight.series)
             ]);
 
             const color = highlight.series.get('color').asRGBAArray();
@@ -721,20 +663,20 @@ export default {
 
             this.drawAPI.drawPoints(points, color, pointCount, HIGHLIGHT_SIZE, shape);
         },
-        drawRectangles() {
+        drawRectangles(yAxisId) {
             if (this.rectangles) {
-                this.rectangles.forEach(this.drawRectangle, this);
+                this.rectangles.forEach(this.drawRectangle.bind(this, yAxisId), this);
             }
         },
-        drawRectangle(rect) {
+        drawRectangle(yAxisId, rect) {
             this.drawAPI.drawSquare(
                 [
-                    this.offset.x(rect.start.x),
-                    this.offset.y(rect.start.y)
+                    this.offset[yAxisId].x(rect.start.x),
+                    this.offset[yAxisId].y(rect.start.y)
                 ],
                 [
-                    this.offset.x(rect.end.x),
-                    this.offset.y(rect.end.y)
+                    this.offset[yAxisId].x(rect.end.x),
+                    this.offset[yAxisId].y(rect.end.y)
                 ],
                 rect.color
             );
