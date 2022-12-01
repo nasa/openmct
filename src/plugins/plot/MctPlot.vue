@@ -442,7 +442,8 @@ export default {
             });
         },
 
-        removeSeries(plotSeries) {
+        removeSeries(plotSeries, index) {
+            this.seriesModels.splice(index, 1);
             this.checkSameRangeValue();
             this.stopListening(plotSeries);
         },
@@ -1193,11 +1194,15 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
-            const newOffsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+            const { plotWrapper } = this.$parent.$refs;
+            if (!plotWrapper) {
+                return;
+            }
+
+            const newOffsetWidth = plotWrapper.offsetWidth;
             //we ignore when width gets smaller
             const offsetChange = newOffsetWidth - this.offsetWidth;
-            if (this.$parent.$refs.plotWrapper
-                && offsetChange > OFFSET_THRESHOLD) {
+            if (offsetChange > OFFSET_THRESHOLD) {
                 this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
