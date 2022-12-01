@@ -174,6 +174,7 @@
                 :active="focusedImageIndex === index"
                 :selected="focusedImageIndex === index && isPaused"
                 :real-time="!isFixed"
+                :viewable-area="focusedImageIndex === index ? viewableArea : null"
                 @click.native="thumbnailClicked(index)"
             />
         </div>
@@ -218,6 +219,8 @@ const SCROLL_LATENCY = 250;
 const ZOOM_SCALE_DEFAULT = 1;
 const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
 const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
+
+const IMAGE_CONTAINER_BORDER_WIDTH = 1;
 
 export default {
     name: 'ImageryView',
@@ -281,6 +284,8 @@ export default {
             },
             imageTranslateX: 0,
             imageTranslateY: 0,
+            imageViewportWidth: 0,
+            imageViewportHeight: 0,
             pan: undefined,
             animateZoom: true,
             imagePanned: false,
@@ -516,6 +521,23 @@ export default {
             }
 
             return 'Alt drag to pan';
+        },
+        viewableArea() {
+            if (this.zoomFactor === 1) {
+                return null;
+            }
+
+            const imageWidth = this.sizedImageWidth * this.zoomFactor;
+            const imageHeight = this.sizedImageHeight * this.zoomFactor;
+            const xOffset = (imageWidth - this.imageViewportWidth) / 2;
+            const yOffset = (imageHeight - this.imageViewportHeight) / 2;
+
+            return {
+                widthRatio: this.imageViewportWidth / imageWidth,
+                heightRatio: this.imageViewportHeight / imageHeight,
+                xOffsetRatio: (xOffset - this.imageTranslateX * this.zoomFactor) / imageWidth,
+                yOffsetRatio: (yOffset - this.imageTranslateY * this.zoomFactor) / imageHeight
+            };
         }
     },
     watch: {
@@ -1063,12 +1085,12 @@ export default {
             }
 
             this.setSizedImageDimensions();
+            this.setImageViewport();
             this.calculateViewHeight();
             this.scrollToFocused();
         },
         setSizedImageDimensions() {
             this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
-
             if ((this.imageContainerWidth / this.imageContainerHeight) > this.focusedImageNaturalAspectRatio) {
                 // container is wider than image
                 this.sizedImageWidth = this.imageContainerHeight * this.focusedImageNaturalAspectRatio;
@@ -1077,6 +1099,17 @@ export default {
                 // container is taller than image
                 this.sizedImageWidth = this.imageContainerWidth;
                 this.sizedImageHeight = this.imageContainerWidth / this.focusedImageNaturalAspectRatio;
+            }
+        },
+        setImageViewport() {
+            if (this.imageContainerHeight > this.sizedImageHeight + IMAGE_CONTAINER_BORDER_WIDTH) {
+                // container is taller than wrapper
+                this.imageViewportWidth = this.sizedImageWidth;
+                this.imageViewportHeight = this.sizedImageHeight;
+            } else {
+                // container is wider than wrapper
+                this.imageViewportWidth = this.imageContainerWidth;
+                this.imageViewportHeight = this.imageContainerHeight;
             }
         },
         handleThumbWindowResizeStart() {
