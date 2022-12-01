@@ -66,6 +66,12 @@
     &__results-section-title {
         @include propertiesHeader();
     }
+
+    &__result-pane-msg {
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+    }
 }
 
 .c-gsearch-result {

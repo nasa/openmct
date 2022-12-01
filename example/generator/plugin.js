@@ -36,7 +36,7 @@ define([
 
         openmct.types.addType("example.state-generator", {
             name: "State Generator",
-            description: "For development use.  Generates test enumerated telemetry by cycling through a given set of states",
+            description: "For development use. Generates example enumerated telemetry by cycling through a given set of states.",
             cssClass: "icon-generator-telemetry",
             creatable: true,
             form: [

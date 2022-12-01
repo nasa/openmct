@@ -40,10 +40,10 @@ test.describe('Example Imagery Object', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create a default 'Example Imagery' object
-        await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
+        const exampleImagery = await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
 
         // Verify that the created object is focused
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
         await page.locator(backgroundImageSelector).hover({trial: true});
     });
 
@@ -188,7 +188,7 @@ test.describe('Example Imagery in Display Layout', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('li[role="menuitem"]:has-text("Example Imagery")');
 
         // Clear and set Image load delay to minimum value
         await page.locator('input[type="number"]').fill('');
@@ -197,7 +197,7 @@ test.describe('Example Imagery in Display Layout', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
@@ -275,7 +275,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('li[role="menuitem"]:has-text("Example Imagery")');
 
         // Clear and set Image load delay to minimum value
         await page.locator('input[type="number"]').fill('');
@@ -284,7 +284,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
@@ -317,7 +317,7 @@ test.describe('Example Imagery in Tabs View', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('li[role="menuitem"]:has-text("Example Imagery")');
 
         // Clear and set Image load delay to minimum value
         await page.locator('input[type="number"]').fill('');
@@ -326,7 +326,7 @@ test.describe('Example Imagery in Tabs View', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);

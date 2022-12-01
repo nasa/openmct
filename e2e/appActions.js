@@ -46,6 +46,7 @@
  */
 
 const Buffer = require('buffer').Buffer;
+const genUuid = require('uuid').v4;
 
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
@@ -56,6 +57,10 @@ const Buffer = require('buffer').Buffer;
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+    if (!name) {
+        name = `${type}:${genUuid()}`;
+    }
+
     const parentUrl = await getHashUrlToDomainObject(page, parent);
 
     // Navigate to the parent object. This is necessary to create the object
@@ -67,13 +72,18 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     await page.click('button:has-text("Create")');
 
     // Click the object specified by 'type'
-    await page.click(`li:text("${type}")`);
+    await page.click(`li[role='menuitem']:text("${type}")`);
 
     // Modify the name input field of the domain object to accept 'name'
-    if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
-        await nameInput.fill(name);
+    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+    await nameInput.fill("");
+    await nameInput.fill(name);
+
+    if (page.testNotes) {
+        // Fill the "Notes" section with information about the
+        // currently running test and its project.
+        const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+        await notesInput.fill(page.testNotes);
     }
 
     // Click OK button and wait for Navigate event
@@ -96,10 +106,21 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     }
 
     return {
-        name: name || `Unnamed ${type}`,
-        uuid: uuid,
+        name,
+        uuid,
         url: objectUrl
     };
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} name
+ */
+async function expandTreePaneItemByName(page, name) {
+    const treePane = page.locator('#tree-pane');
+    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
+    const expandTriangle = treeItem.locator('.c-disclosure-triangle');
+    await expandTriangle.click();
 }
 
 /**
@@ -214,15 +235,14 @@ async function getHashUrlToDomainObject(page, uuid) {
 }
 
 /**
- * Utilizes the OpenMCT API to detect if the given object has an active transaction (is in Edit mode).
+ * Utilizes the OpenMCT API to detect if the UI is in Edit mode.
  * @private
  * @param {import('@playwright/test').Page} page
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier
- * @return {Promise<boolean>} true if the object has an active transaction, false otherwise
+ * @return {Promise<boolean>} true if the Open MCT is in Edit Mode
  */
 async function _isInEditMode(page, identifier) {
     // eslint-disable-next-line no-return-await
-    return await page.evaluate((objectIdentifier) => window.openmct.objects.isTransactionActive(objectIdentifier), identifier);
+    return await page.evaluate(() => window.openmct.editor.isEditing());
 }
 
 /**
@@ -313,6 +333,7 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    expandTreePaneItemByName,
     createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,

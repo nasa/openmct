@@ -232,6 +232,8 @@ describe("GrandSearch", () => {
     it("should render an object search result if new object added", async () => {
         const composition = openmct.composition.get(mockFolderObject);
         composition.add(mockNewObject);
+        // after adding, need to wait a beat for the folder to be indexed
+        await Vue.nextTick();
         await grandSearchComponent.$children[0].searchEverything('apple');
         await Vue.nextTick();
         const searchResults = document.querySelectorAll('[aria-label="New Apple Test Folder folder result"]');
@@ -269,6 +271,13 @@ describe("GrandSearch", () => {
         const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
         expect(annotationResults.length).toBe(2);
         expect(annotationResults[1].innerText).toContain('Driving');
+    });
+
+    it("should render no annotation search results if no match", async () => {
+        await grandSearchComponent.$children[0].searchEverything('Qbert');
+        await Vue.nextTick();
+        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        expect(annotationResults.length).toBe(0);
     });
 
     it("should preview object search results in edit mode if object clicked", async () => {

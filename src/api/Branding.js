@@ -23,8 +23,7 @@
 let brandingOptions = {};
 
 /**
- * @typedef {Object} BrandingOptions
- * @memberOf openmct/branding
+ * @typedef {object} BrandingOptions
  * @property {string} smallLogoImage URL to the image to use as the applications logo.
  * This logo will appear on every screen and when clicked will launch the about dialog.
  * @property {string} aboutHtml Custom content for the about screen. When defined the

@@ -37,7 +37,9 @@ define([
     './types/TypeRegistry',
     './user/UserAPI',
     './annotation/AnnotationAPI'
-], function (
+],
+
+function (
     ActionsAPI,
     CompositionAPI,
     EditorAPI,

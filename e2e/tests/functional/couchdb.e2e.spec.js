@@ -25,7 +25,7 @@
 *
 */
 
-const { test, expect } = require('../../baseFixtures');
+const { test, expect } = require('../../pluginFixtures');
 
 test.describe("CouchDB Status Indicator @couchdb", () => {
     test.use({ failOnConsoleError: false });
@@ -100,7 +100,7 @@ test.describe("CouchDB initialization @couchdb", () => {
         expect(bannerMessage).toEqual('Failed to retrieve object mine');
 
         // Verify that a PUT request to create "My Items" folder was made
-        expect.poll(() => createMineFolderRequests.length, {
+        await expect.poll(() => createMineFolderRequests.length, {
             message: 'Verify that PUT request to create "mine" folder was made',
             timeout: 1000
         }).toBeGreaterThanOrEqual(1);
