@@ -411,7 +411,9 @@ export default class ObjectAPI {
         }
 
         return result.catch((error) => {
-            if (error instanceof this.errors.Conflict) {
+            // suppress conflict errors for remotely synced items
+            // (possibly just for notebook and restricted-notebook as they have conflic resolution)
+            if (error instanceof this.errors.Conflict && !this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
                 this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
             }
 
@@ -590,6 +592,7 @@ export default class ObjectAPI {
                 let unobserve = provider.observe(identifier, (updatedModel) => {
                     // modified can sometimes be undefined, so make it 0 in this case
                     const mutableObjectModification = mutableObject.modified ?? Number.MIN_SAFE_INTEGER;
+
                     if (updatedModel.persisted > mutableObjectModification) {
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                         //in rapid succession and intermediate persistence states are returned by the observe function.

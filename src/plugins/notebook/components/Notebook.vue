@@ -749,6 +749,7 @@ export default {
             return section.id;
         },
         async newEntry(embed = null) {
+            this.startTransaction();
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
