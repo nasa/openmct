@@ -541,7 +541,7 @@ export default {
                 composition = sortedComposition;
             }
 
-            if (parentObjectPath.length) {
+            if (parentObjectPath.length && !this.isSelectorTree) {
                 let navigationPath = this.buildNavigationPath(parentObjectPath);
 
                 if (this.compositionCollections[navigationPath]) {
