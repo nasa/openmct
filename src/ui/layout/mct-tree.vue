@@ -592,30 +592,6 @@ export default {
                 this.sortTreeItems.bind(this, parentObjectPath)
             );
         },
-        async updateTreeItems(parentObjectPath) {
-            let children;
-
-            if (parentObjectPath.length) {
-                const parentItem = this.treeItems.find(item => item.objectPath === parentObjectPath);
-                const descendants = this.getChildrenInTreeFor(parentItem, true);
-                const parentIndex = this.treeItems.map(e => e.object).indexOf(parentObjectPath[0]);
-
-                children = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
-
-                this.treeItems.splice(parentIndex + 1, descendants.length, ...children);
-            } else {
-                const root = await this.openmct.objects.get('ROOT');
-                children = await this.loadAndBuildTreeItemsFor(root, []);
-
-                this.treeItems = [...children];
-            }
-
-            for (let item of children) {
-                if (this.isTreeItemOpen(item)) {
-                    this.openTreeItem(item);
-                }
-            }
-        },
         sortTreeItems(parentObjectPath) {
             const navigationPath = this.buildNavigationPath(parentObjectPath);
             const parentItem = this.getTreeItemByPath(navigationPath);
