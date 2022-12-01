@@ -175,7 +175,8 @@ export default {
             activeSearch: false,
             mainTreeTopMargin: undefined,
             selectedItem: {},
-            observers: {}
+            observers: {},
+            mutables: {}
         };
     },
     computed: {
@@ -277,7 +278,8 @@ export default {
             this.treeResizeObserver.disconnect();
         }
 
-        this.destroyObservers(this.observers);
+        this.destroyObservers();
+        this.destroyMutables();
     },
     methods: {
         async initialize() {
@@ -560,7 +562,15 @@ export default {
             }
 
             return composition.map((object) => {
-                this.addTreeItemObserver(object, parentObjectPath);
+                // Only add observers and mutables if this is NOT a selector tree
+                if (!this.isSelectorTree) {
+                    if (this.openmct.objects.supportsMutation(object.identifier)) {
+                        object = this.openmct.objects.toMutable(object);
+                        this.addMutable(object, parentObjectPath);
+                    }
+
+                    this.addTreeItemObserver(object, parentObjectPath);
+                }
 
                 return this.buildTreeItem(object, parentObjectPath);
             });
@@ -577,6 +587,11 @@ export default {
                 objectPath,
                 navigationPath
             };
+        },
+        addMutable(mutableDomainObject, parentObjectPath) {
+            const objectPath = [mutableDomainObject].concat(parentObjectPath);
+            const navigationPath = this.buildNavigationPath(objectPath);
+            this.mutables[navigationPath] = () => this.openmct.objects.destroyMutable(mutableDomainObject);
         },
         addTreeItemObserver(domainObject, parentObjectPath) {
             const objectPath = [domainObject].concat(parentObjectPath);
@@ -642,6 +657,10 @@ export default {
                 const descendants = this.getChildrenInTreeFor(parentItem, true);
                 const directDescendants = this.getChildrenInTreeFor(parentItem);
 
+                if (domainObject.isMutable) {
+                    this.addMutable(domainObject, parentItem.objectPath);
+                }
+
                 this.addTreeItemObserver(domainObject, parentItem.objectPath);
 
                 if (directDescendants.length === 0) {
@@ -672,13 +691,15 @@ export default {
         },
         compositionRemoveHandler(navigationPath) {
             return (identifier) => {
-                let removeKeyString = this.openmct.objects.makeKeyString(identifier);
-                let parentItem = this.getTreeItemByPath(navigationPath);
-                let directDescendants = this.getChildrenInTreeFor(parentItem);
-                let removeItem = directDescendants.find(item => item.id === removeKeyString);
+                const removeKeyString = this.openmct.objects.makeKeyString(identifier);
+                const parentItem = this.getTreeItemByPath(navigationPath);
+                const directDescendants = this.getChildrenInTreeFor(parentItem);
+                const removeItem = directDescendants.find(item => item.id === removeKeyString);
 
+                // Remove the item from the tree, unobserve it, and clean up any mutables
                 this.removeItemFromTree(removeItem);
-                this.removeItemFromObservers(removeItem);
+                this.destroyObservers(removeItem.navigationPath);
+                this.destroyMutables(removeItem.navigationPath);
             };
         },
         removeCompositionListenerFor(navigationPath) {
@@ -699,13 +720,6 @@ export default {
 
             const removeIndex = this.getTreeItemIndex(item.navigationPath);
             this.treeItems.splice(removeIndex, 1);
-        },
-        removeItemFromObservers(item) {
-            if (this.observers[item.id]) {
-                this.observers[item.id]();
-
-                delete this.observers[item.id];
-            }
         },
         addItemToTreeBefore(addItem, beforeItem) {
             const addIndex = this.getTreeItemIndex(beforeItem.navigationPath);
@@ -939,14 +953,33 @@ export default {
         handleTreeResize() {
             this.calculateHeights();
         },
-        destroyObservers(observers) {
-            Object.entries(observers).forEach(([keyString, unobserve]) => {
-                if (typeof unobserve === 'function') {
-                    unobserve();
-                }
+        /**
+         * Destroy the given observer and its children.
+         * If no navigationPath is provided, destroys all observers.
+         */
+        destroyObservers(navigationPath = '') {
+            Object.entries(this.observers).filter(([key]) => key.includes(navigationPath))
+                .forEach(([key, unobserve]) => {
+                    if (typeof unobserve === 'function') {
+                        unobserve();
+                    }
 
-                delete observers[keyString];
-            });
+                    delete this.observers[key];
+                });
+        },
+        /**
+         * Destroys the given mutable object and its children.
+         * If no navigationPath is provided, destroys all mutables.
+         */
+        destroyMutables(navigationPath = '') {
+            Object.entries(this.mutables).filter(([key]) => key.includes(navigationPath))
+                .forEach(([key, destroyMutable]) => {
+                    if (typeof destroyMutable === 'function') {
+                        destroyMutable();
+                    }
+
+                    delete this.mutables[key];
+                });
         }
     }
 };
