@@ -60,7 +60,7 @@ export function identifierToString(openmct, objectPath) {
     return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
-export default function objectPathToUrl(openmct, objectPath, customUrlParams) {
+export default function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
     let url = identifierToString(openmct, objectPath);
     let urlParams = paramsToArray(openmct, customUrlParams);
     if (urlParams.length) {
