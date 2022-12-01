@@ -491,17 +491,15 @@ export default {
 
             this.drawAPI.clear();
             if (this.canDraw()) {
-                // Need to repeat these for each yaxis bucket
-                const series1 = this.config.series.models.filter(series => series.get('yAxisId') === 1).map(series => series.get('identifier').key);
-                this.updateViewport(1);
-                this.drawSeries(1);
+              //There has to be at least one yAxis with id===1
+              const yAxisIds = [1].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
+              // Repeat drawing for all yAxes
+              yAxisIds.forEach((id) => {
+                this.updateViewport(id);
+                this.drawSeries(id);
                 this.drawRectangles();
                 this.drawHighlights();
-                const series2 = this.config.series.models.filter(series => series.get('yAxisId') === 2).map(series => series.get('identifier').key);
-                this.updateViewport(2);
-                this.drawSeries(2);
-                this.drawRectangles();
-                this.drawHighlights();
+              });
             }
         },
         updateViewport(id) {
