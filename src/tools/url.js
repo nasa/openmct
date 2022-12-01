@@ -24,7 +24,7 @@
  * Module defining url handling.
  */
 
-function getUrlParams(openmct, customUrlParams) {
+function getUrlParams(openmct, customUrlParams = {}) {
     let urlParams = openmct.router.getParams();
     Object.entries(customUrlParams).forEach((urlParam) => {
         const [key, value] = urlParam;
@@ -42,7 +42,7 @@ function getUrlParams(openmct, customUrlParams) {
     return urlParams;
 }
 
-export function paramsToArray(openmct, customUrlParams) {
+export function paramsToArray(openmct, customUrlParams = {}) {
     // parse urlParams from an object to an array.
     let urlParams = getUrlParams(openmct, customUrlParams);
     let newTabParams = [];
