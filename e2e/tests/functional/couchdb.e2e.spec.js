@@ -95,10 +95,6 @@ test.describe("CouchDB initialization @couchdb", () => {
         // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        // Verify that error banner is displayed
-        const bannerMessage = await page.locator('.c-message-banner__message').innerText();
-        expect(bannerMessage).toEqual('Failed to retrieve object mine');
-
         // Verify that a PUT request to create "My Items" folder was made
         await expect.poll(() => createMineFolderRequests.length, {
             message: 'Verify that PUT request to create "mine" folder was made',
