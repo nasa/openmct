@@ -265,16 +265,20 @@ export default class AnnotationAPI extends EventEmitter {
         this.openmct.objects.mutate(annotation, '_deleted', false);
     }
 
-    getTagsFromAnnotations(annotations) {
-        const tagsFromAnnotations = annotations.flatMap((annotation) => {
+    getTagsFromAnnotations(annotations, filterDuplicates = true) {
+        let tagsFromAnnotations = annotations.flatMap((annotation) => {
             if (annotation._deleted) {
                 return [];
             } else {
                 return annotation.tags;
             }
-        }).filter((tag, index, array) => {
-            return array.indexOf(tag) === index;
         });
+
+        if (filterDuplicates) {
+            tagsFromAnnotations = tagsFromAnnotations.filter((tag, index, array) => {
+                return array.indexOf(tag) === index;
+            });
+        }
 
         const fullTagModels = this.#addTagMetaInformationToTags(tagsFromAnnotations);
 

@@ -38,6 +38,19 @@
         />
     </div>
     <div
+        v-else-if="tagsFromAnnotations.length"
+        class="c-inspect-properties__section"
+    >
+        <div
+            v-for="(tag, index) in tagsFromAnnotations"
+            :key="index"
+            class="c-tag"
+            :style="{ backgroundColor: tag.backgroundColor, color: tag.foregroundColor }"
+        >
+            {{ tag.label }}
+        </div>
+    </div>
+    <div
         v-else
         class="c-inspect-properties__row--span-all"
     >
@@ -98,8 +111,18 @@ export default {
         },
         tagAnnotations() {
             return this.annotations.filter(annotation => {
-                return annotation.tags && !annotation._deleted;
+                return !annotation.tags && !annotation._deleted;
             });
+        },
+        tagsFromAnnotations() {
+            const totalTags = this.openmct.annotation.getTagsFromAnnotations(this.annotations, false, false);
+
+            console.debug(`🥵 tagsFromAnnotations:`, totalTags);
+            if (totalTags) {
+                console.debug(`🥶 We should be displaying tags:`);
+            }
+
+            return totalTags;
         },
         multiSelection() {
             return this.selection && this.selection.length > 1;
@@ -143,7 +166,7 @@ export default {
                 return;
             }
 
-            if (!this.domainObject || !this.annotationType) {
+            if (!this.domainObject) {
                 this.annotations.splice(0);
 
                 return;
@@ -159,13 +182,18 @@ export default {
                 return;
             }
 
-            console.debug(`🍇 Found ${totalAnnotations.length} annotations`);
+            console.debug(`🍇 Found ${totalAnnotations.length} annotations`, totalAnnotations);
 
-            const targetFilteredAnnotations = totalAnnotations.filter(annotation => {
-                const targetSpecificDetailsEqual = _.isEqual(annotation.targets[domainObjectKeyString], this.targetSpecificDetails);
+            // If we have annotation type, we need to filter out the annotations
+            // for this specific target
+            let targetFilteredAnnotations = totalAnnotations;
+            if (this.annotationType) {
+                targetFilteredAnnotations = totalAnnotations.filter(annotation => {
+                    const targetSpecificDetailsEqual = _.isEqual(annotation.targets[domainObjectKeyString], this.targetSpecificDetails);
 
-                return targetSpecificDetailsEqual;
-            });
+                    return targetSpecificDetailsEqual;
+                });
+            }
 
             const mutableAnnotations = targetFilteredAnnotations.map(annotation => {
                 return this.openmct.objects.toMutable(annotation);
