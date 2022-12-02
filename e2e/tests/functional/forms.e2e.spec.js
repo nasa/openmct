@@ -128,7 +128,7 @@ test.describe('Persistence operations @couchdb', () => {
             timeout: 1000
         }).toEqual(1);
     });
-    test('Can create an object after a conflict error @couchdb', async ({ page }) => {
+    test('Can create an object after a conflict error @couchdb @2p', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5982'
