@@ -65,9 +65,10 @@
         &:not(.is-panning),
         &:not(.is-zooming) {
             .c-conductor-axis {
+                cursor: col-resize;
+
                 &:hover,
                 &:active {
-                    cursor: col-resize;
                     filter: $timeConductorAxisHoverFilter;
                 }
             }
