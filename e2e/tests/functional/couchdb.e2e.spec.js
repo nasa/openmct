@@ -74,12 +74,19 @@ test.describe("CouchDB Status Indicator @couchdb", () => {
 test.describe("CouchDB initialization @couchdb", () => {
     test.use({ failOnConsoleError: false });
     test("'My Items' folder is created if it doesn't exist", async ({ page }) => {
+        let requestMade;
+
+        const makeCreateMineFolderRequest = new Promise((resolve, reject) => {
+            requestMade = resolve;
+        });
+
         // Store any relevant PUT requests that happen on the page
         const createMineFolderRequests = [];
         page.on('request', req => {
             // eslint-disable-next-line playwright/no-conditional-in-test
             if (req.method() === 'PUT' && req.url().endsWith('openmct/mine')) {
                 createMineFolderRequests.push(req);
+                requestMade();
             }
         });
 
@@ -96,9 +103,7 @@ test.describe("CouchDB initialization @couchdb", () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Verify that a PUT request to create "My Items" folder was made
-        await expect.poll(() => createMineFolderRequests.length, {
-            message: 'Verify that PUT request to create "mine" folder was made',
-            timeout: 3000
-        }).toBeGreaterThanOrEqual(1);
+        await makeCreateMineFolderRequest;
+        expect(createMineFolderRequests.length).toBeGreaterThanOrEqual(1);
     });
 });
