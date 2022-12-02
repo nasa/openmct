@@ -76,7 +76,7 @@
             <div :style="childrenHeightStyles">
                 <tree-item
                     v-for="(treeItem, index) in visibleItems"
-                    :key="treeItem.navigationPath"
+                    :key="`${treeItem.navigationPath}-${index}`"
                     :node="treeItem"
                     :is-selector-tree="isSelectorTree"
                     :selected-item="selectedItem"

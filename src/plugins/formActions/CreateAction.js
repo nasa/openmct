@@ -53,10 +53,7 @@ export default class CreateAction extends PropertiesAction {
 
             const existingValue = this.domainObject[key];
             if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
-                value = {
-                    ...existingValue,
-                    ...value
-                };
+                value = _.merge(existingValue, value);
             }
 
             _.set(this.domainObject, key, value);
