@@ -459,6 +459,7 @@ export default {
                 const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.keyString);
                 rawAnnotationsForPlot.push(...seriesAnnotations);
             }));
+            console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`);
             if (rawAnnotationsForPlot) {
                 this.annotations = this.findAnnotationPoints(rawAnnotationsForPlot);
             }
@@ -954,7 +955,6 @@ export default {
                         }
                     ];
 
-                console.debug(`🍉 event that fired`, event);
                 this.openmct.selection.select(selection, true);
             }
 
@@ -966,7 +966,7 @@ export default {
                     const targetValues = Object.values(rawAnnotation.targets);
                     if (targetValues && targetValues.length) {
                         // just get the first one
-                        const boundingBox = Object.values(rawAnnotation.targets)[0];
+                        const boundingBox = Object.values(targetValues[0]?.seriesTargets)?.[0];
                         const pointsInBox = this.getPointsInBox(boundingBox);
                         if (pointsInBox && pointsInBox.length) {
                             annotationsByPoints.push(pointsInBox.flat());
