@@ -142,7 +142,7 @@ test.describe('Persistence operations @couchdb', () => {
         ]);
 
         // Create two clocks at the same time, different pages
-        const [clock1, clock2] = await Promise.all([
+        await Promise.all([
             createDomainObjectWithDefaults(page, {
                 type: 'Clock'
             }),
@@ -151,7 +151,7 @@ test.describe('Persistence operations @couchdb', () => {
             })
         ]);
 
-        // Conflict error occurs
+        // Trigger a conflict error and return the page on which it occurred
         const conflictPage = await Promise.race([
             new Promise((resolve, reject) => {
                 // eslint-disable-next-line playwright/missing-playwright-await
@@ -167,6 +167,7 @@ test.describe('Persistence operations @couchdb', () => {
             })
         ]);
 
+        // Start logging console errors from this point on
         let errors = [];
         conflictPage.on('console', (msg) => {
             if (msg.type() === 'error') {
@@ -174,12 +175,22 @@ test.describe('Persistence operations @couchdb', () => {
             }
         });
 
-        await createDomainObjectWithDefaults(conflictPage, {
+        // Try to create a clock with the page that had the conflict
+        const clockAfterConflict = await createDomainObjectWithDefaults(conflictPage, {
             type: 'Clock'
         });
 
-        // TODO: verify save dialog has closed and object has been created
+        // Wait for save dialog to appear/disappear
+        await conflictPage.locator('.c-message-banner__message', {
+            hasText: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
+            state: 'visible'
+        }).waitFor({ state: 'hidden' });
 
+        // Navigate to 'My Items' and verify that the second clock was created
+        await conflictPage.goto('./#/browse/mine');
+        await expect(conflictPage.locator(`.c-grid-item__name[title="${clockAfterConflict.name}"]`)).toBeVisible();
+
+        // Verify no console errors occurred
         expect(errors).toHaveLength(0);
     });
 });
