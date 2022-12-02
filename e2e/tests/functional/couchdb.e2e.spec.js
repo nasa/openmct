@@ -98,7 +98,7 @@ test.describe("CouchDB initialization @couchdb", () => {
         // Verify that a PUT request to create "My Items" folder was made
         await expect.poll(() => createMineFolderRequests.length, {
             message: 'Verify that PUT request to create "mine" folder was made',
-            timeout: 1000
+            timeout: 3000
         }).toBeGreaterThanOrEqual(1);
     });
 });
