@@ -128,6 +128,60 @@ test.describe('Persistence operations @couchdb', () => {
             timeout: 1000
         }).toEqual(1);
     });
+    test('Can create an object after a conflict error @couchdb', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5982'
+        });
+
+        const page2 = await page.context().newPage();
+
+        await Promise.all([
+            page.goto('./', { waitUntil: 'networkidle' }),
+            page2.goto('./', { waitUntil: 'networkidle' })
+        ]);
+
+        // Create two clocks at the same time, different pages
+        const [clock1, clock2] = await Promise.all([
+            createDomainObjectWithDefaults(page, {
+                type: 'Clock'
+            }),
+            createDomainObjectWithDefaults(page2, {
+                type: 'Clock'
+            })
+        ]);
+
+        // Conflict error occurs
+        const conflictPage = await Promise.race([
+            new Promise((resolve, reject) => {
+                // eslint-disable-next-line playwright/missing-playwright-await
+                page.locator('.c-message-banner__message:has-text("Conflict detected while saving mine")').waitFor({ state: 'visible' })
+                    .then(() => resolve(page))
+                    .catch(reject);
+            }),
+            new Promise((resolve, reject) => {
+                // eslint-disable-next-line playwright/missing-playwright-await
+                page2.locator('.c-message-banner__message:has-text("Conflict detected while saving mine")').waitFor({ state: 'visible' })
+                    .then(() => resolve(page2))
+                    .catch(reject);
+            })
+        ]);
+
+        let errors = [];
+        conflictPage.on('console', (msg) => {
+            if (msg.type() === 'error') {
+                errors.push(msg.text());
+            }
+        });
+
+        await createDomainObjectWithDefaults(conflictPage, {
+            type: 'Clock'
+        });
+
+        // TODO: verify save dialog has closed and object has been created
+
+        expect(errors).toHaveLength(0);
+    });
 });
 
 test.describe('Form Correctness by Object Type', () => {

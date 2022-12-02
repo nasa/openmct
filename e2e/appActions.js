@@ -82,7 +82,7 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     // Fill the "Notes" section with information about the
     // currently running test and its project.
     const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
-    await notesInput.fill(page.testNotes);
+    await notesInput.fill(page.testNotes || '');
 
     // Click OK button and wait for Navigate event
     await Promise.all([
