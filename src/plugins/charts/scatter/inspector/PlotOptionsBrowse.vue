@@ -104,10 +104,14 @@ export default {
             this.$set(this.plotSeries, this.plotSeries.length, series);
             this.setAxesLabels();
         },
-        removeSeries(series) {
-            const index = this.plotSeries.findIndex(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
-            if (index !== undefined) {
-                this.$delete(this.plotSeries, index);
+        removeSeries(seriesKey) {
+            const seriesIndex = this.plotSeries.findIndex(
+                plotSeries => this.openmct.objects.areIdsEqual(seriesKey, plotSeries.identifier)
+            );
+
+            const foundSeries = seriesIndex > -1;
+            if (foundSeries) {
+                this.$delete(this.plotSeries, seriesIndex);
                 this.setAxesLabels();
             }
         },
