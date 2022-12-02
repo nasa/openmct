@@ -152,16 +152,20 @@ test.describe('Persistence operations @couchdb', () => {
         ]);
 
         // Trigger a conflict error and return the page on which it occurred
-        const conflictPage = await Promise.race([
+        const conflictPage = await Promise.any([
             new Promise((resolve, reject) => {
                 // eslint-disable-next-line playwright/missing-playwright-await
-                page.locator('.c-message-banner__message:has-text("Conflict detected while saving mine")').waitFor({ state: 'visible' })
+                page.locator('.c-message-banner__message', {
+                    hasText: "Conflict detected while saving mine"
+                }).waitFor({ state: 'visible' })
                     .then(() => resolve(page))
                     .catch(reject);
             }),
             new Promise((resolve, reject) => {
                 // eslint-disable-next-line playwright/missing-playwright-await
-                page2.locator('.c-message-banner__message:has-text("Conflict detected while saving mine")').waitFor({ state: 'visible' })
+                page2.locator('.c-message-banner__message', {
+                    hasText: "Conflict detected while saving mine"
+                }).waitFor({ state: 'visible' })
                     .then(() => resolve(page2))
                     .catch(reject);
             })
