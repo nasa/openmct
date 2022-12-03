@@ -373,6 +373,11 @@ export default {
             }
         },
         selectEntry(event, entry) {
+            const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier); 
+            const targets = {};
+            targets[domainObjectKeyString] = {
+                entryId: entry.id
+            };
             this.openmct.selection.select(
                 [
                     {
@@ -384,10 +389,8 @@ export default {
                     {
                         element: event.currentTarget,
                         context: {
-                            type: 'notebook-entry',
-                            targetSpecificDetails: {
-                                entryId: entry.id
-                            },
+                            type: 'notebook-entry-selection',
+                            targets,
                             annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                             onTagChange: this.timestampAndUpdate
                         }

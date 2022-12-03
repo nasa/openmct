@@ -34,7 +34,7 @@
             :annotations="annotations"
             :annotation-type="annotationType"
             :on-tag-change="onTagChange"
-            :target-specific-details="targetSpecificDetails"
+            :targets="targets"
         />
     </div>
     <div
@@ -140,8 +140,8 @@ export default {
         domainObject() {
             return this?.selection?.[0]?.[0]?.context?.item;
         },
-        targetSpecificDetails() {
-            return this?.selection?.[0]?.[1]?.context?.targetSpecificDetails;
+        targets() {
+            return this?.selection?.[0]?.[1]?.context?.targets;
         },
         annotationType() {
             return this?.selection?.[0]?.[1]?.context?.annotationType;
@@ -166,16 +166,22 @@ export default {
                 return;
             }
 
-            if (!this.domainObject) {
+            if (!this.targets?.length) {
                 this.annotations.splice(0);
 
                 return;
             }
 
-            const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            console.debug(`🍇 Loading annotations for ${domainObjectKeyString}`);
+            const totalAnnotations = await Promise.all(this.targets.map(async target => {
+                const targetKeyString = this.openmct.objects.makeKeyString(target.identifier);
+                console.debug(`🍇 Loading annotations for ${targetKeyString}`);
 
-            const totalAnnotations = await this.openmct.annotation.getAnnotations(domainObjectKeyString);
+                const annotations = await this.openmct.objects.getAnnotations(target.identifier);
+                console.debug(`🍇 Loaded annotations for ${targetKeyString}`, annotations);
+
+                return annotations;
+            }));
+
             if (!totalAnnotations) {
                 this.annotations.splice(0);
 
@@ -184,18 +190,7 @@ export default {
 
             console.debug(`🍇 Found ${totalAnnotations.length} annotations`, totalAnnotations);
 
-            // If we have annotation type, we need to filter out the annotations
-            // for this specific target
-            let targetFilteredAnnotations = totalAnnotations;
-            if (this.annotationType) {
-                targetFilteredAnnotations = totalAnnotations.filter(annotation => {
-                    const targetSpecificDetailsEqual = _.isEqual(annotation.targets[domainObjectKeyString], this.targetSpecificDetails);
-
-                    return targetSpecificDetailsEqual;
-                });
-            }
-
-            const mutableAnnotations = targetFilteredAnnotations.map(annotation => {
+            const mutableAnnotations = totalAnnotations.map(annotation => {
                 return this.openmct.objects.toMutable(annotation);
             });
 
@@ -218,13 +213,18 @@ export default {
             }
 
             this.selection = selection;
-            if (this.domainObject) {
-                this.lastLocalAnnotationCreation = this.domainObject?.annotationLastCreated ?? 0;
-                this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.domainObjectChanged);
+            if (this.targets) {
+                this.unobserveEntries = this.targets.map(target => {
+                    const targetKeyString = this.openmct.objects.makeKeyString(target.identifier);
+                    const targetObject = this.openmct.objects.get(targetKeyString);
+                    this.lastLocalAnnotationCreation[targetKeyString] = targetObject?.annotationLastCreated ?? 0;
+
+                    return this.openmct.objects.observe(targetKeyString, '*', this.targetObjectChanged);
+                });
                 await this.loadAnnotations();
             }
         },
-        domainObjectChanged() {
+        targetObjectChanged() {
             if (this.domainObject && (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated)) {
                 this.loadAnnotations();
             }

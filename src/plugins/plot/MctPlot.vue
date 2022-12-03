@@ -926,14 +926,14 @@ export default {
                 maxX,
                 maxY
             };
-            let seriesTargets = {};
+            let targets = {};
             annotationsBySeries.forEach(annotation => {
                 if (annotation.length) {
                     const seriesID = annotation[0].series.keyString;
-                    seriesTargets[seriesID] = boundingBox;
+                    targets[seriesID] = boundingBox;
                 }
             });
-            if (Object.keys(seriesTargets).length) {
+            if (Object.keys(targets).length) {
                 const selection =
                     [
                         {
@@ -945,16 +945,13 @@ export default {
                         {
                             element: this.$el,
                             context: {
-                                type: 'plot-points',
-                                targetSpecificDetails: {
-                                    seriesTargets
-                                },
+                                type: 'plot-points-selection',
+                                targets,
                                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
                                 onTagChange: this.tagOrAnnotationAdded
                             }
                         }
                     ];
-
                 this.openmct.selection.select(selection, true);
             }
 

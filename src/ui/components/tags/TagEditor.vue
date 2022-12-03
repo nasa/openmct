@@ -60,23 +60,19 @@ export default {
             required: false,
             default: null
         },
-        targetSpecificDetails: {
-            type: Object,
-            required: false,
-            default: null
-        },
         domainObject: {
             type: Object,
-            default() {
-                return null;
-            },
-            required: false
+            required: true
+        },
+        targets: {
+            type: Object,
+            required: true
         },
         onTagChange: {
             type: Function,
             required: false,
             default: null
-        },
+        }
     },
     data() {
         return {
