@@ -357,8 +357,15 @@ export default {
             }
 
             this.treeItems = this.treeItems.filter((checkItem) => {
-                return checkItem.navigationPath === path
-                    || !checkItem.navigationPath.includes(path);
+                if (checkItem.navigationPath !== path
+                    && checkItem.navigationPath.includes(path)) {
+                    this.destroyObserverByPath(checkItem.navigationPath);
+                    this.destroyMutableByPath(checkItem.navigationPath);
+
+                    return false;
+                }
+
+                return true;
             });
             this.openTreeItems.splice(pathIndex, 1);
             this.removeCompositionListenerFor(path);
@@ -698,8 +705,8 @@ export default {
 
                 // Remove the item from the tree, unobserve it, and clean up any mutables
                 this.removeItemFromTree(removeItem);
-                this.destroyObservers(removeItem.navigationPath);
-                this.destroyMutables(removeItem.navigationPath);
+                this.destroyObserverByPath(removeItem.navigationPath);
+                this.destroyMutableByPath(removeItem.navigationPath);
             };
         },
         removeCompositionListenerFor(navigationPath) {
@@ -954,32 +961,46 @@ export default {
             this.calculateHeights();
         },
         /**
-         * Destroy the given observer and its children.
-         * If no navigationPath is provided, destroys all observers.
+         * Destroy an observer for the given navigationPath.
          */
-        destroyObservers(navigationPath = '') {
-            Object.entries(this.observers).filter(([key]) => key.includes(navigationPath))
-                .forEach(([key, unobserve]) => {
-                    if (typeof unobserve === 'function') {
-                        unobserve();
-                    }
-
-                    delete this.observers[key];
-                });
+        destroyObserverByPath(navigationPath) {
+            if (typeof this.observers[navigationPath] === 'function') {
+                this.observers[navigationPath]();
+                delete this.observers[navigationPath];
+            }
         },
         /**
-         * Destroys the given mutable object and its children.
-         * If no navigationPath is provided, destroys all mutables.
+         * Destroy all observers.
          */
-        destroyMutables(navigationPath = '') {
-            Object.entries(this.mutables).filter(([key]) => key.includes(navigationPath))
-                .forEach(([key, destroyMutable]) => {
-                    if (typeof destroyMutable === 'function') {
-                        destroyMutable();
-                    }
+        destroyObservers() {
+            Object.entries(this.observers).forEach(([key, unobserve]) => {
+                if (typeof unobserve === 'function') {
+                    unobserve();
+                }
 
-                    delete this.mutables[key];
-                });
+                delete this.observers[key];
+            });
+        },
+        /**
+         * Destroy a mutable for the given navigationPath.
+         */
+        destroyMutableByPath(navigationPath) {
+            if (typeof this.mutables[navigationPath] === 'function') {
+                this.mutables[navigationPath]();
+                delete this.mutables[navigationPath];
+            }
+        },
+        /**
+         * Destroy all mutables.
+         */
+        destroyMutables() {
+            Object.entries(this.mutables).forEach(([key, destroyMutable]) => {
+                if (typeof destroyMutable === 'function') {
+                    destroyMutable();
+                }
+
+                delete this.mutables[key];
+            });
         }
     }
 };
