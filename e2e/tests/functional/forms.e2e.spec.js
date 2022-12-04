@@ -24,8 +24,9 @@
 This test suite is dedicated to tests which verify form functionality in isolation
 */
 
-const { test, expect } = require('../../baseFixtures');
+const { test, expect } = require('../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
+const genUuid = require('uuid').v4;
 const path = require('path');
 
 const TEST_FOLDER = 'test folder';
@@ -136,63 +137,96 @@ test.describe('Persistence operations @couchdb', () => {
 
         const page2 = await page.context().newPage();
 
+        // Both pages: Go to baseURL
         await Promise.all([
             page.goto('./', { waitUntil: 'networkidle' }),
             page2.goto('./', { waitUntil: 'networkidle' })
         ]);
 
-        // Create two clocks at the same time, different pages
+        // Both pages: Click the Create button
         await Promise.all([
-            createDomainObjectWithDefaults(page, {
-                type: 'Clock'
-            }),
-            createDomainObjectWithDefaults(page2, {
-                type: 'Clock'
-            })
+            page.click('button:has-text("Create")'),
+            page2.click('button:has-text("Create")')
         ]);
 
-        // Trigger a conflict error and return the page on which it occurred
-        const conflictPage = await Promise.any([
-            new Promise((resolve, reject) => {
-                // eslint-disable-next-line playwright/missing-playwright-await
-                page.locator('.c-message-banner__message', {
-                    hasText: "Conflict detected while saving mine"
-                }).waitFor({ state: 'visible' })
-                    .then(() => resolve(page))
-                    .catch(reject);
-            }),
-            new Promise((resolve, reject) => {
-                // eslint-disable-next-line playwright/missing-playwright-await
-                page2.locator('.c-message-banner__message', {
-                    hasText: "Conflict detected while saving mine"
-                }).waitFor({ state: 'visible' })
-                    .then(() => resolve(page2))
-                    .catch(reject);
-            })
+        // Both pages: Click "Clock" in the Create menu
+        await Promise.all([
+            page.click(`li[role='menuitem']:text("Clock")`),
+            page2.click(`li[role='menuitem']:text("Clock")`)
         ]);
 
-        // Start logging console errors from this point on
+        // Generate unique names for both objects
+        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+        const nameInput2 = page2.locator('form[name="mctForm"] .first input[type="text"]');
+
+        // Both pages: Fill in the 'Name' form field.
+        await Promise.all([
+            nameInput.fill(""),
+            nameInput.fill(`Clock:${genUuid()}`),
+            nameInput2.fill(""),
+            nameInput2.fill(`Clock:${genUuid()}`)
+        ]);
+
+        // Both pages: Fill the "Notes" section with information about the
+        // currently running test and its project.
+        const testNotes = page.testNotes;
+        const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+        const notesInput2 = page2.locator('form[name="mctForm"] #notes-textarea');
+        await Promise.all([
+            notesInput.fill(testNotes),
+            notesInput2.fill(testNotes)
+        ]);
+
+        // Page 2: Click "OK" to create the domain object and wait for navigation.
+        // This will update the composition of the parent folder, setting the
+        // conditions for a conflict error from the first page.
+        await Promise.all([
+            page2.waitForLoadState(),
+            page2.click('[aria-label="Save"]'),
+            // Wait for Save Banner to appear
+            page2.waitForSelector('.c-message-banner__message')
+        ]);
+
+        // Close Page 2, we're done with it.
+        await page2.close();
+
+        // Page 1: Click "OK" to create the domain object and wait for navigation.
+        // This will trigger a conflict error upon attempting to update
+        // the composition of the parent folder.
+        await Promise.all([
+            page.waitForLoadState(),
+            page.click('[aria-label="Save"]'),
+            // Wait for Save Banner to appear
+            page.waitForSelector('.c-message-banner__message')
+        ]);
+
+        // Page 1: Verify that the conflict has occurred and an error notification is displayed.
+        await expect(page.locator('.c-message-banner__message', {
+            hasText: "Conflict detected while saving mine"
+        })).toBeVisible();
+
+        // Page 1: Start logging console errors from this point on
         let errors = [];
-        conflictPage.on('console', (msg) => {
+        page.on('console', (msg) => {
             if (msg.type() === 'error') {
                 errors.push(msg.text());
             }
         });
 
-        // Try to create a clock with the page that had the conflict
-        const clockAfterConflict = await createDomainObjectWithDefaults(conflictPage, {
+        // Page 1: Try to create a clock with the page that received the conflict.
+        const clockAfterConflict = await createDomainObjectWithDefaults(page, {
             type: 'Clock'
         });
 
-        // Wait for save dialog to appear/disappear
-        await conflictPage.locator('.c-message-banner__message', {
+        // Page 1: Wait for save progress dialog to appear/disappear
+        await page.locator('.c-message-banner__message', {
             hasText: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
             state: 'visible'
         }).waitFor({ state: 'hidden' });
 
-        // Navigate to 'My Items' and verify that the second clock was created
-        await conflictPage.goto('./#/browse/mine');
-        await expect(conflictPage.locator(`.c-grid-item__name[title="${clockAfterConflict.name}"]`)).toBeVisible();
+        // Page 1: Navigate to 'My Items' and verify that the second clock was created
+        await page.goto('./#/browse/mine');
+        await expect(page.locator(`.c-grid-item__name[title="${clockAfterConflict.name}"]`)).toBeVisible();
 
         // Verify no console errors occurred
         expect(errors).toHaveLength(0);
