@@ -174,9 +174,7 @@ export default {
             itemOffset: 0,
             activeSearch: false,
             mainTreeTopMargin: undefined,
-            selectedItem: {},
-            observers: {},
-            mutables: {}
+            selectedItem: {}
         };
     },
     computed: {
@@ -283,6 +281,8 @@ export default {
     },
     methods: {
         async initialize() {
+            this.observers = {};
+            this.mutables = {};
             this.isLoading = true;
             this.getSavedOpenItems();
             this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
