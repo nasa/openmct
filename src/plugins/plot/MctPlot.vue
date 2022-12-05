@@ -919,6 +919,9 @@ export default {
                 this.trackHistory();
             }
         },
+        annotationFilter(annotations) {
+            return annotations;
+        },
         selectPlotAnnotations(minX, minY, maxX, maxY, annotationsBySeries, event) {
             const boundingBox = {
                 minX,
@@ -928,10 +931,12 @@ export default {
             };
             let targetDomainObjects = {};
             let targetDetails = {};
+            let annotations = {};
             annotationsBySeries.forEach(annotation => {
                 if (annotation.length) {
                     const seriesID = annotation[0].series.keyString;
                     targetDetails[seriesID] = boundingBox;
+                    targetDomainObjects[seriesID] = annotation[0].series.domainObject;
                 }
             });
             if (Object.keys(targetDetails).length) {
@@ -947,7 +952,10 @@ export default {
                             element: this.$el,
                             context: {
                                 type: 'plot-points-selection',
-                                targets: targetDetails,
+                                targetDetails,
+                                targetDomainObjects,
+                                annotations,
+                                annotationFilter: this.annotationFilter,
                                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
                                 onTagChange: this.tagOrAnnotationAdded
                             }
@@ -964,7 +972,7 @@ export default {
                     const targetValues = Object.values(rawAnnotation.targets);
                     if (targetValues && targetValues.length) {
                         // just get the first one
-                        const boundingBox = Object.values(targetValues[0]?.seriesTargets)?.[0];
+                        const boundingBox = Object.values(targetValues[0])?.[0];
                         const pointsInBox = this.getPointsInBox(boundingBox);
                         if (pointsInBox && pointsInBox.length) {
                             annotationsByPoints.push(pointsInBox.flat());
