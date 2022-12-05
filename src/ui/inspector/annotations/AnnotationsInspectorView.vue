@@ -30,11 +30,11 @@
         class="c-inspect-properties__section"
     >
         <TagEditor
+            :targets="targetDetails"
             :domain-object="domainObject"
-            :annotations="annotations"
+            :annotations="loadedAnnotations"
             :annotation-type="annotationType"
-            :on-tag-change="onTagChange"
-            :targets="targets"
+            :on-tag-change="onAnnotationChange"
         />
     </div>
     <div
@@ -92,30 +92,38 @@ export default {
     data() {
         return {
             selection: null,
-            lastLocalAnnotationCreation: 0,
-            annotations: []
+            lastLocalAnnotationCreations: {},
+            unobserveEntries: {},
+            loadedAnnotations: []
         };
     },
     computed: {
         hasAnnotations() {
             return Boolean(
-                this.nonTagAnnotations
-                && this.nonTagAnnotations.length
-                && !this.multiSelection
+                this.loadedAnnotations
+                && this.loadedAnnotations.length
             );
         },
         nonTagAnnotations() {
-            return this.annotations.filter(annotation => {
+            if (!this.loadedAnnotations) {
+                return [];
+            }
+
+            return this.loadedAnnotations.filter(annotation => {
                 return !annotation.tags && !annotation._deleted;
             });
         },
         tagAnnotations() {
-            return this.annotations.filter(annotation => {
+            if (!this.loadedAnnotations) {
+                return [];
+            }
+
+            return this.loadedAnnotations.filter(annotation => {
                 return !annotation.tags && !annotation._deleted;
             });
         },
         tagsFromAnnotations() {
-            const totalTags = this.openmct.annotation.getTagsFromAnnotations(this.annotations, false, false);
+            const totalTags = this.openmct.annotation.getTagsFromAnnotations(this.loadedAnnotations, false, false);
 
             console.debug(`🥵 tagsFromAnnotations:`, totalTags);
             if (totalTags) {
@@ -140,14 +148,23 @@ export default {
         domainObject() {
             return this?.selection?.[0]?.[0]?.context?.item;
         },
-        targets() {
-            return this?.selection?.[0]?.[1]?.context?.targets;
+        targetDetails() {
+            return this?.selection?.[0]?.[1]?.context?.targetDetails ?? {};
+        },
+        targetDomainObjects() {
+            return this?.selection?.[0]?.[1]?.context?.targetDomainObjects ?? {};
+        },
+        selectedAnnotations() {
+            return this?.selection?.[0]?.[1]?.context?.annotations;
         },
         annotationType() {
             return this?.selection?.[0]?.[1]?.context?.annotationType;
         },
-        onTagChange() {
-            return this?.selection?.[0]?.[1]?.context?.onTagChange;
+        annotationFilter() {
+            return this?.selection?.[0]?.[1]?.context?.annotationFilter;
+        },
+        onAnnotationChange() {
+            return this?.selection?.[0]?.[1]?.context?.onAnnotationChange;
         }
     },
     async mounted() {
@@ -156,77 +173,65 @@ export default {
     },
     beforeDestroy() {
         this.openmct.selection.off('change', this.updateSelection);
-        if (this.unobserveEntries) {
-            this.unobserveEntries();
-        }
+        const unobserveEntryFunctions = Object.values(this.unobserveEntries);
+        unobserveEntryFunctions.forEach(unobserveEntry => {
+            unobserveEntry();
+        });
     },
     methods: {
-        async loadAnnotations() {
-            if (!this.openmct.annotation.getAvailableTags().length) {
-                return;
-            }
-
-            if (!this.targets?.length) {
-                this.annotations.splice(0);
+        loadNewAnnotations(annotationsToLoad) {
+            if (!annotationsToLoad || !annotationsToLoad.length) {
+                this.loadedAnnotations.splice(0);
 
                 return;
             }
 
-            const totalAnnotations = await Promise.all(this.targets.map(async target => {
-                const targetKeyString = this.openmct.objects.makeKeyString(target.identifier);
-                console.debug(`🍇 Loading annotations for ${targetKeyString}`);
+            console.debug(`🍇 Need to load ${annotationsToLoad.length} annotations`, annotationsToLoad);
 
-                const annotations = await this.openmct.objects.getAnnotations(target.identifier);
-                console.debug(`🍇 Loaded annotations for ${targetKeyString}`, annotations);
-
-                return annotations;
-            }));
-
-            if (!totalAnnotations) {
-                this.annotations.splice(0);
-
-                return;
-            }
-
-            console.debug(`🍇 Found ${totalAnnotations.length} annotations`, totalAnnotations);
-
-            const mutableAnnotations = totalAnnotations.map(annotation => {
-                return this.openmct.objects.toMutable(annotation);
-            });
-
-            const sortedAnnotations = mutableAnnotations.sort((annotationA, annotationB) => {
+            const sortedAnnotations = annotationsToLoad.sort((annotationA, annotationB) => {
                 return annotationB.modified - annotationA.modified;
             });
 
-            if (sortedAnnotations.length < this.annotations.length) {
-                this.annotations = this.annotations.slice(0, sortedAnnotations.length);
+            if (sortedAnnotations.length < this.loadedAnnotations.length) {
+                this.loadedAnnotations = this.loadedAnnotations.slice(0, sortedAnnotations.length);
             }
 
             for (let index = 0; index < sortedAnnotations.length; index += 1) {
-                this.$set(this.annotations, index, sortedAnnotations[index]);
+                this.$set(this.loadedAnnotations, index, sortedAnnotations[index]);
             }
         },
-        async updateSelection(selection) {
+        updateSelection(selection) {
             console.debug(`🍇 Selection changed to ${selection.length} items`, selection);
-            if (this.unobserveEntries) {
-                this.unobserveEntries();
-            }
+            const unobserveEntryFunctions = Object.values(this.unobserveEntries);
+            unobserveEntryFunctions.forEach(unobserveEntry => {
+                unobserveEntry();
+            });
+            this.unobserveEntries = {};
 
             this.selection = selection;
-            if (this.targets) {
-                this.unobserveEntries = this.targets.map(target => {
-                    const targetKeyString = this.openmct.objects.makeKeyString(target.identifier);
-                    const targetObject = this.openmct.objects.get(targetKeyString);
-                    this.lastLocalAnnotationCreation[targetKeyString] = targetObject?.annotationLastCreated ?? 0;
-
-                    return this.openmct.objects.observe(targetKeyString, '*', this.targetObjectChanged);
+            const targetKeys = Object.keys(this.targetDomainObjects);
+            if (targetKeys?.length) {
+                targetKeys.forEach(targetKey => {
+                    const targetObject = this.targetDomainObjects[targetKey];
+                    this.lastLocalAnnotationCreations[targetKey] = targetObject?.annotationLastCreated ?? 0;
+                    if (!this.unobserveEntries[targetKey]) {
+                        this.unobserveEntries[targetKey] = this.openmct.objects.observe(targetObject, '*', this.targetObjectChanged);
+                    } else {
+                        console.debug(`🍇 Already observing ${targetKey}`);
+                    }
                 });
-                await this.loadAnnotations();
+                this.loadNewAnnotations(this.selectedAnnotations);
             }
         },
-        targetObjectChanged() {
-            if (this.domainObject && (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated)) {
-                this.loadAnnotations();
+        async targetObjectChanged(target) {
+            const targetID = this.openmct.objects.makeKeyString(target.identifier);
+            const lastLocalAnnotationCreation = this.lastLocalAnnotationCreations[targetID] ?? 0;
+            if (lastLocalAnnotationCreation < target.annotationLastCreated) {
+                console.debug(`🍇 Target object annotation changed for ${targetID}`);
+                this.lastLocalAnnotationCreations[targetID] = target.annotationLastCreated;
+                const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(targetID);
+                const filteredAnnotations = this.annotationFilter(allAnnotationsForTarget);
+                this.loadNewAnnotations(filteredAnnotations);
             }
         }
     }

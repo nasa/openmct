@@ -360,6 +360,17 @@ export default {
 
             this.$emit('updateEntry', this.entry);
         },
+        filterAnnotations(annotations) {
+            const filteredAnnotations = annotations.filter(annotation => {
+                // should be first target in the annotation
+                const target = Object.values(annotation.targets)?.[0];
+                const targetEntryId = target?.entryId;
+
+                return targetEntryId === this.entry.id;
+            });
+
+            return filteredAnnotations;
+        },
         editingEntry() {
             this.$emit('editingEntry');
         },
@@ -373,11 +384,13 @@ export default {
             }
         },
         selectEntry(event, entry) {
-            const domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier); 
-            const targets = {};
-            targets[domainObjectKeyString] = {
+            const targetDetails = {};
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            targetDetails[keyString] = {
                 entryId: entry.id
             };
+            const targetDomainObjects = {};
+            targetDomainObjects[keyString] = this.domainObject;
             this.openmct.selection.select(
                 [
                     {
@@ -390,9 +403,12 @@ export default {
                         element: event.currentTarget,
                         context: {
                             type: 'notebook-entry-selection',
-                            targets,
+                            targetDetails,
+                            targetDomainObjects,
+                            annotations: this.notebookAnnotations,
+                            annotationFilter: this.filterAnnotations,
                             annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
-                            onTagChange: this.timestampAndUpdate
+                            onAnnotationChange: this.timestampAndUpdate
                         }
                     }
                 ],

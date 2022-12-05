@@ -62,11 +62,13 @@ export default {
         },
         domainObject: {
             type: Object,
-            required: true
+            required: true,
+            default: null
         },
         targets: {
             type: Object,
-            required: true
+            required: true,
+            default: null
         },
         onTagChange: {
             type: Function,
@@ -164,8 +166,15 @@ export default {
                 return annotation.tags.includes(newTag);
             });
 
-            const createdAnnotation = await this.openmct.annotation.addSingleAnnotationTag(existingAnnotation,
-                this.domainObject, this.targetSpecificDetails, this.annotationType, newTag);
+            const createdAnnotation = await this.openmct.annotation.addSingleAnnotationTag(
+                {
+                    existingAnnotation,
+                    targets: this.targets,
+                    domainObject: this.domainObject,
+                    annotationType: this.annotationType,
+                    tag: newTag
+                }
+            );
 
             this.userAddingTag = false;
 
