@@ -5,25 +5,21 @@ export default function (openmct) {
     const apiSave = openmct.objects.save.bind(openmct.objects);
 
     openmct.objects.save = async (domainObject) => {
-        console.log('notebook monkeypatch');
         if (!isNotebookOrAnnotationType(domainObject)) {
-            console.log('not a notebook, skipping');
             return apiSave(domainObject);
         }
-        console.log('is a notebook');
+
         const isNewMutable = !domainObject.isMutable;
         const localMutable = openmct.objects.toMutable(domainObject);
-        console.log('fozen local object entries', JSON.parse(JSON.stringify(domainObject.configuration.entries)));
         let result;
 
         try {
             result = await apiSave(localMutable);
         } catch (error) {
             if (error instanceof openmct.objects.errors.Conflict) {
-                console.log('tryin to save, but error', error);
+                console.log('we got ourselves a conflict');
                 result = await resolveConflicts(domainObject, localMutable, openmct);
             } else {
-                console.log('is not conflict type');
                 result = Promise.reject(error);
             }
         } finally {
@@ -38,7 +34,6 @@ export default function (openmct) {
 
 function resolveConflicts(domainObject, localMutable, openmct) {
     if (isNotebookType(domainObject)) {
-        console.log('conflict error is for notebook type');
         return resolveNotebookEntryConflicts(localMutable, openmct);
     } else if (isAnnotationType(domainObject)) {
         return resolveNotebookTagConflicts(localMutable, openmct);
@@ -79,12 +74,10 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
 }
 
 async function resolveNotebookEntryConflicts(localMutable, openmct) {
-    console.log('resolveNotebookEntryConflicts');
     if (localMutable.configuration.entries) {
-        console.log('therer are entries to resolve');
         const localEntries = structuredClone(localMutable.configuration.entries);
         const remoteMutable = await openmct.objects.getMutable(localMutable.identifier);
-        console.log('remoteMutable frozen entries', JSON.parse(JSON.stringify(remoteMutable.configuration.entries)));
+
         applyLocalEntries(remoteMutable, localEntries, openmct);
         openmct.objects.destroyMutable(remoteMutable);
     }
@@ -93,7 +86,7 @@ async function resolveNotebookEntryConflicts(localMutable, openmct) {
 }
 
 function applyLocalEntries(mutable, entries, openmct) {
-    console.log('apply local entries', entries);
+    console.log('apply local entries', entries, 'and remote entries', mutable.configuration.entries);
     Object.entries(entries).forEach(([sectionKey, pagesInSection]) => {
         Object.entries(pagesInSection).forEach(([pageKey, localEntries]) => {
             const remoteEntries = mutable.configuration.entries[sectionKey][pageKey];

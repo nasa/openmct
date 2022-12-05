@@ -411,7 +411,7 @@ export default class ObjectAPI {
         }
 
         return result.catch((error) => {
-            // suppress conflict errors for remotely synced items
+            // suppress conflict error notifications for remotely synced items
             // (possibly just for notebook and restricted-notebook as they have conflic resolution)
             if (error instanceof this.errors.Conflict && !this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
                 this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
@@ -441,7 +441,7 @@ export default class ObjectAPI {
         if (this.isTransactionActive()) {
             throw new Error("Unable to start new Transaction: Previous Transaction is active");
         }
-
+        console.log('start transactin');
         this.transaction = new Transaction(this);
 
         return this.transaction;
@@ -451,6 +451,7 @@ export default class ObjectAPI {
      * Clear instance of Transaction
      */
     endTransaction() {
+        console.log('end transactikon');
         this.transaction = null;
     }
 

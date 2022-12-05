@@ -350,6 +350,7 @@ export default {
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {
+            console.log('update entry vale', $event.target.innerText);
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;

@@ -219,9 +219,15 @@ class CouchObjectProvider {
                 console.error(error.message);
                 throw new Error(`CouchDB Error - No response"`);
             } else {
-                console.error(error.message);
+                if (!isNotebookOrAnnotationType(body.model)) {
+                    console.error(error.message);
 
-                throw error;
+                    throw error;
+                } else {
+                    // suppress errors since we handle conflicts for notebooks
+                    // and errors are disrupting the logic once thrown
+                    console.warn(error.message);
+                }
             }
         }
     }
