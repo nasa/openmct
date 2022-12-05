@@ -35,6 +35,7 @@ export default class RemoveAction {
         this.openmct = openmct;
 
         this.removeFromComposition = this.removeFromComposition.bind(this); // for access to private transaction variable
+        this.#transaction = null;
     }
 
     async invoke(objectPath) {
@@ -152,16 +153,13 @@ export default class RemoveAction {
         }
     }
 
-    saveTransaction() {
+    async saveTransaction() {
         if (!this.#transaction) {
             return;
         }
 
-        return this.#transaction.commit()
-            .catch(error => {
-                throw error;
-            }).finally(() => {
-                this.openmct.objects.endTransaction();
-            });
+        await this.#transaction.commit();
+        this.openmct.objects.endTransaction();
+        this.#transaction = null;
     }
 }

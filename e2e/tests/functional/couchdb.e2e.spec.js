@@ -25,7 +25,7 @@
 *
 */
 
-const { test, expect } = require('../../baseFixtures');
+const { test, expect } = require('../../pluginFixtures');
 
 test.describe("CouchDB Status Indicator @couchdb", () => {
     test.use({ failOnConsoleError: false });
