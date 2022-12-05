@@ -685,19 +685,20 @@ export default {
         },
 
         onClick(event) {
-            // do nothing but stop the propogation so the selection doesn't change from
-            // what the user has selected
-
             const closestAnnotations = [];
+            let targetDomainObjects = {};
             this.config.series.models.forEach(series => {
                 if (series.closest?.annotation && closestAnnotations.indexOf(series.closest.annotation) === -1) {
                     closestAnnotations.push(series.closest.annotation);
+                    targetDomainObjects[series.keyString] = series.domainObject;
                 }
             });
             console.debug(`🦸 Found annotation closest`, closestAnnotations);
+            let targetDetails = {};
             closestAnnotations.forEach(annotation => {
                 const firstTargetKeyString = Object.keys(annotation.targets)[0];
                 const firstTarget = annotation.targets[firstTargetKeyString];
+                targetDetails[firstTargetKeyString] = firstTarget;
                 const rectangle = {
                     start: {
                         x: firstTarget.minX,
@@ -712,6 +713,29 @@ export default {
                 this.rectangles.push(rectangle);
 
             });
+
+            const selection =
+                    [
+                        {
+                            element: this.openmct.layout.$refs.browseObject.$el,
+                            context: {
+                                item: this.domainObject
+                            }
+                        },
+                        {
+                            element: this.$el,
+                            context: {
+                                type: 'plot-points-selection',
+                                targetDetails,
+                                targetDomainObjects,
+                                annotations: closestAnnotations,
+                                annotationFilter: this.annotationFilter,
+                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                                onTagChange: this.tagOrAnnotationAdded
+                            }
+                        }
+                    ];
+            this.openmct.selection.select(selection, true);
             event.stopPropagation();
         },
 
