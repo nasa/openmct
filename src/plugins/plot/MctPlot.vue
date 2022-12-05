@@ -972,7 +972,7 @@ export default {
                     const targetValues = Object.values(rawAnnotation.targets);
                     if (targetValues && targetValues.length) {
                         // just get the first one
-                        const boundingBox = Object.values(targetValues[0])?.[0];
+                        const boundingBox = Object.values(targetValues)?.[0];
                         const pointsInBox = this.getPointsInBox(boundingBox);
                         if (pointsInBox && pointsInBox.length) {
                             annotationsByPoints.push(pointsInBox.flat());
