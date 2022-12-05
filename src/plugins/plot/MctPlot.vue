@@ -459,7 +459,7 @@ export default {
                 const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.keyString);
                 rawAnnotationsForPlot.push(...seriesAnnotations);
             }));
-            console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`);
+            console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`, rawAnnotationsForPlot);
             if (rawAnnotationsForPlot) {
                 this.annotations = this.findAnnotationPoints(rawAnnotationsForPlot);
             }
@@ -687,6 +687,34 @@ export default {
         onClick(event) {
             // do nothing but stop the propogation so the selection doesn't change from
             // what the user has selected
+
+            const closestAnnotations = [];
+            this.config.series.models.forEach(series => {
+                if (series.closest?.annotation && closestAnnotations.indexOf(series.closest.annotation) === -1) {
+                    closestAnnotations.push(series.closest.annotation);
+                }
+            });
+            console.debug(`🦸 Found annotation closest`, closestAnnotations);
+            closestAnnotations.forEach(annotation => {
+                const firstTargetKeyString = Object.keys(annotation.targets)[0];
+                const firstTarget = annotation.targets[firstTargetKeyString];
+                const color = annotation.series.get('color').asRGBAArray();
+                // set transparency
+                color[3] = 0.3;
+                const rectangle = {
+                    start: {
+                        x: firstTarget.minX,
+                        y: firstTarget.minY
+                    },
+                    end: {
+                        x: firstTarget.maxX,
+                        y: firstTarget.maxY
+                    },
+                    color: 'red'
+                };
+                this.rectangle.push(rectangle);
+
+            });
             event.stopPropagation();
         },
 
@@ -939,6 +967,7 @@ export default {
                     targetDomainObjects[seriesID] = annotation[0].series.domainObject;
                 }
             });
+            console.debug(`🧚‍♂️ Selection complete: ${JSON.stringify(targetDetails)}`);
             if (Object.keys(targetDetails).length) {
                 const selection =
                     [
@@ -963,7 +992,6 @@ export default {
                     ];
                 this.openmct.selection.select(selection, true);
             }
-
         },
         findAnnotationPoints(rawAnnotations) {
             const annotationsByPoints = [];
@@ -973,7 +1001,7 @@ export default {
                     if (targetValues && targetValues.length) {
                         // just get the first one
                         const boundingBox = Object.values(targetValues)?.[0];
-                        const pointsInBox = this.getPointsInBox(boundingBox);
+                        const pointsInBox = this.getPointsInBox(boundingBox, rawAnnotation);
                         if (pointsInBox && pointsInBox.length) {
                             annotationsByPoints.push(pointsInBox.flat());
                         }
@@ -983,7 +1011,7 @@ export default {
 
             return annotationsByPoints.flat();
         },
-        getPointsInBox(boundingBox) {
+        getPointsInBox(boundingBox, rawAnnotation) {
             // load series models in KD-Trees
             const seriesKDTrees = [];
             this.seriesModels.forEach(seriesModel => {
@@ -1007,6 +1035,10 @@ export default {
                                 point: seriesDatum
                             };
                             searchResults.push(result);
+                        }
+
+                        if (rawAnnotation) {
+                            seriesDatum.annotation = rawAnnotation;
                         }
                     });
                     if (searchResults.length) {
