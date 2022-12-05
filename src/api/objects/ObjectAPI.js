@@ -414,7 +414,11 @@ export default class ObjectAPI {
             if (error instanceof this.errors.Conflict) {
                 this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
 
-                return this.refresh(domainObject);
+                // Synchronized objects will resolve their own conflicts, so
+                // bypass the refresh here and throw the error.
+                if (!this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+                    return this.refresh(domainObject);
+                }
             }
 
             throw error;
@@ -521,7 +525,7 @@ export default class ObjectAPI {
      * @private
      *
      * @param {module:openmct.DomainObject} object the object to mutate
-     * @param {string} path the property to modify
+     * @param {string} path the property to modifya
      * @param {*} value the new value for this property
      * @method mutate
      * @memberof module:openmct.ObjectAPI#
