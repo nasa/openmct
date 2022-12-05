@@ -698,9 +698,6 @@ export default {
             closestAnnotations.forEach(annotation => {
                 const firstTargetKeyString = Object.keys(annotation.targets)[0];
                 const firstTarget = annotation.targets[firstTargetKeyString];
-                const color = annotation.series.get('color').asRGBAArray();
-                // set transparency
-                color[3] = 0.3;
                 const rectangle = {
                     start: {
                         x: firstTarget.minX,
@@ -710,9 +707,9 @@ export default {
                         x: firstTarget.maxX,
                         y: firstTarget.maxY
                     },
-                    color: 'red'
+                    color: [1, 1, 1, 0.5]
                 };
-                this.rectangle.push(rectangle);
+                this.rectangles.push(rectangle);
 
             });
             event.stopPropagation();
