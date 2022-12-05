@@ -525,7 +525,7 @@ export default class ObjectAPI {
      * @private
      *
      * @param {module:openmct.DomainObject} object the object to mutate
-     * @param {string} path the property to modifya
+     * @param {string} path the property to modify
      * @param {*} value the new value for this property
      * @method mutate
      * @memberof module:openmct.ObjectAPI#
