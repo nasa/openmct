@@ -598,6 +598,10 @@ export default {
         addMutable(mutableDomainObject, parentObjectPath) {
             const objectPath = [mutableDomainObject].concat(parentObjectPath);
             const navigationPath = this.buildNavigationPath(objectPath);
+
+            // If the mutable already exists, destroy it.
+            this.destroyMutableByPath(navigationPath);
+
             this.mutables[navigationPath] = () => this.openmct.objects.destroyMutable(mutableDomainObject);
         },
         addTreeItemObserver(domainObject, parentObjectPath) {
