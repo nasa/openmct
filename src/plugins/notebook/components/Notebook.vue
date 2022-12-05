@@ -355,7 +355,7 @@ export default {
             });
         },
         updateSelection(selection) {
-            if (!selection?.[0]?.[1]?.context?.targetSpecificDetails?.entryId) {
+            if (!selection?.[0]?.[1]?.context?.targetDetails?.entryId) {
                 this.selectedEntryId = '';
             }
         },

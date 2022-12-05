@@ -210,8 +210,7 @@ export default {
 
             this.selection = selection;
             const targetKeys = Object.keys(this.targetDomainObjects);
-            if (targetKeys?.length) {
-                targetKeys.forEach(targetKey => {
+            targetKeys.forEach(targetKey => {
                     const targetObject = this.targetDomainObjects[targetKey];
                     this.lastLocalAnnotationCreations[targetKey] = targetObject?.annotationLastCreated ?? 0;
                     if (!this.unobserveEntries[targetKey]) {
@@ -220,8 +219,7 @@ export default {
                         console.debug(`🍇 Already observing ${targetKey}`);
                     }
                 });
-                this.loadNewAnnotations(this.selectedAnnotations);
-            }
+            this.loadNewAnnotations(this.selectedAnnotations);
         },
         async targetObjectChanged(target) {
             const targetID = this.openmct.objects.makeKeyString(target.identifier);

@@ -926,14 +926,15 @@ export default {
                 maxX,
                 maxY
             };
-            let targets = {};
+            let targetDomainObjects = {};
+            let targetDetails = {};
             annotationsBySeries.forEach(annotation => {
                 if (annotation.length) {
                     const seriesID = annotation[0].series.keyString;
-                    targets[seriesID] = boundingBox;
+                    targetDetails[seriesID] = boundingBox;
                 }
             });
-            if (Object.keys(targets).length) {
+            if (Object.keys(targetDetails).length) {
                 const selection =
                     [
                         {
@@ -946,7 +947,7 @@ export default {
                             element: this.$el,
                             context: {
                                 type: 'plot-points-selection',
-                                targets,
+                                targets: targetDetails,
                                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
                                 onTagChange: this.tagOrAnnotationAdded
                             }
