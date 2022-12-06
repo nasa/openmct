@@ -683,15 +683,24 @@ export default {
         },
 
         onClick(event) {
+            if (!event.altKey || !event.shiftKey) {
+                return;
+            }
+
             const closestAnnotations = [];
             let targetDomainObjects = {};
             this.config.series.models.forEach(series => {
-                if (series.closest?.annotation && closestAnnotations.indexOf(series.closest.annotation) === -1) {
-                    closestAnnotations.push(series.closest.annotation);
-                    targetDomainObjects[series.keyString] = series.domainObject;
+                if (series.closest.annotations) {
+                    const closeSeries = series;
+                    series.closest.annotations.forEach(closeAnnotation => {
+                        if (closestAnnotations.indexOf(closeAnnotation) === -1) {
+                            closestAnnotations.push(closeAnnotation);
+                            targetDomainObjects[closeSeries.keyString] = closeSeries.domainObject;
+                        }
+                    });
                 }
             });
-            console.debug(`🦸 Found annotation closest`, closestAnnotations);
+            console.debug(`🦸 Found annotations closest`, closestAnnotations);
             let targetDetails = {};
             closestAnnotations.forEach(annotation => {
                 const firstTargetKeyString = Object.keys(annotation.targets)[0];
@@ -1057,7 +1066,11 @@ export default {
                         }
 
                         if (rawAnnotation) {
-                            seriesDatum.annotation = rawAnnotation;
+                            if (!seriesDatum.annotations) {
+                                seriesDatum.annotations = [];
+                            }
+
+                            seriesDatum.annotations.push(rawAnnotation);
                         }
                     });
                     if (searchResults.length) {

@@ -38,19 +38,6 @@
         />
     </div>
     <div
-        v-else-if="tagsFromAnnotations.length"
-        class="c-inspect-properties__section"
-    >
-        <div
-            v-for="(tag, index) in tagsFromAnnotations"
-            :key="index"
-            class="c-tag"
-            :style="{ backgroundColor: tag.backgroundColor, color: tag.foregroundColor }"
-        >
-            {{ tag.label }}
-        </div>
-    </div>
-    <div
         v-else
         class="c-inspect-properties__row--span-all"
     >
@@ -81,7 +68,6 @@
 <script>
 import AnnotationEditor from './AnnotationEditor.vue';
 import TagEditor from '../../components/tags/TagEditor.vue';
-import _ from 'lodash';
 
 export default {
     components: {
@@ -121,16 +107,6 @@ export default {
             return this.loadedAnnotations.filter(annotation => {
                 return !annotation.tags && !annotation._deleted;
             });
-        },
-        tagsFromAnnotations() {
-            const totalTags = this.openmct.annotation.getTagsFromAnnotations(this.loadedAnnotations, false, false);
-
-            console.debug(`🥵 tagsFromAnnotations:`, totalTags);
-            if (totalTags) {
-                console.debug(`🥶 We should be displaying tags:`);
-            }
-
-            return totalTags;
         },
         multiSelection() {
             return this.selection && this.selection.length > 1;
@@ -211,14 +187,14 @@ export default {
             this.selection = selection;
             const targetKeys = Object.keys(this.targetDomainObjects);
             targetKeys.forEach(targetKey => {
-                    const targetObject = this.targetDomainObjects[targetKey];
-                    this.lastLocalAnnotationCreations[targetKey] = targetObject?.annotationLastCreated ?? 0;
-                    if (!this.unobserveEntries[targetKey]) {
-                        this.unobserveEntries[targetKey] = this.openmct.objects.observe(targetObject, '*', this.targetObjectChanged);
-                    } else {
-                        console.debug(`🍇 Already observing ${targetKey}`);
-                    }
-                });
+                const targetObject = this.targetDomainObjects[targetKey];
+                this.lastLocalAnnotationCreations[targetKey] = targetObject?.annotationLastCreated ?? 0;
+                if (!this.unobserveEntries[targetKey]) {
+                    this.unobserveEntries[targetKey] = this.openmct.objects.observe(targetObject, '*', this.targetObjectChanged);
+                } else {
+                    console.debug(`🍇 Already observing ${targetKey}`);
+                }
+            });
             this.loadNewAnnotations(this.selectedAnnotations);
         },
         async targetObjectChanged(target) {
