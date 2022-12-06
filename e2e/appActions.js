@@ -111,6 +111,72 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 }
 
 /**
+ * This common function creates a domain object with the default options. It is the preferred way of creating objects
+ * in the e2e suite when uninterested in properties of the objects themselves.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {CreateObjectOptions} options
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
+ */
+async function createSineWaveWithInfinityOption(page, { type, name, parent = 'mine' }) {
+    if (!name) {
+        name = `${type}:${genUuid()}`;
+    }
+
+    const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+    // Navigate to the parent object. This is necessary to create the object
+    // in the correct location, such as a folder, layout, or plot.
+    await page.goto(`${parentUrl}?hideTree=true`);
+    await page.waitForLoadState('networkidle');
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click the object specified by 'type'
+    await page.click(`li:text("${type}")`);
+
+    // Modify the name input field of the domain object to accept 'name'
+    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+    await nameInput.fill("");
+    await nameInput.fill(name);
+
+    // Modify the infinity option to true
+    const infinityInput = page.locator('.c-toggle-switch__slider');
+    await infinityInput.click();
+
+    // Fill the "Notes" section with information about the
+    // currently running test and its project.
+    const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+    await notesInput.fill(page.testNotes);
+
+    // Click OK button and wait for Navigate event
+    await Promise.all([
+        page.waitForLoadState(),
+        page.click('[aria-label="Save"]'),
+        // Wait for Save Banner to appear
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+
+    // Wait until the URL is updated
+    await page.waitForURL(`**/${parent}/*`);
+    const uuid = await getFocusedObjectUuid(page);
+    const objectUrl = await getHashUrlToDomainObject(page, uuid);
+
+    if (await _isInEditMode(page, uuid)) {
+        // Save (exit edit mode)
+        await page.locator('button[title="Save"]').click();
+        await page.locator('li[title="Save and Finish Editing"]').click();
+    }
+
+    return {
+        name,
+        uuid,
+        url: objectUrl
+    };
+}
+
+/**
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  */
@@ -331,6 +397,7 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    createSineWaveWithInfinityOption,
     expandTreePaneItemByName,
     createPlanFromJSON,
     openObjectTreeContextMenu,

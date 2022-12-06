@@ -26,7 +26,7 @@
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, createSineWaveWithInfinityOption} = require('../../../../appActions');
 
 test.describe('Plot Integrity Testing @unstable', () => {
     let sineWaveGeneratorObject;
@@ -40,7 +40,6 @@ test.describe('Plot Integrity Testing @unstable', () => {
     test('Plots do not re-request data when a plot is clicked', async ({ page }) => {
         //Navigate to Sine Wave Generator
         await page.goto(sineWaveGeneratorObject.url);
-        //Capture the number of plots points and store as const name numberOfPlotPoints
         //Click on the plot canvas
         await page.locator('canvas').nth(1).click();
         //No request was made to get historical data
@@ -51,4 +50,47 @@ test.describe('Plot Integrity Testing @unstable', () => {
         });
         expect(createMineFolderRequests.length).toEqual(0);
     });
+
+    test('Plot is rendered when infinity values exist', async ({ page }) => {
+        // Create Plot
+        const sineObject = await createSineWaveWithInfinityOption(page, { type: 'Sine Wave Generator' });
+
+        //Navigate to Sine Wave Generator
+        await page.goto(sineObject.url);
+        //Get pixel data from Canvas
+        const plotPixels = await getCanvasPixelsWithData(page);
+        expect(plotPixels.length).toBeGreaterThan(0);
+    });
 });
+
+async function getCanvasPixelsWithData(page) {
+    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getCanvasValue', resolve));
+
+    await page.evaluate(() => {
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        const imageDataValues = Object.values(data);
+        let plotPixels = [];
+        // Each pixel consists of four values within the ImageData.data array. The for loop iterates by multiples of four.
+        // The values associated with each pixel are R (red), G (green), B (blue), and A (alpha), in that order.
+        for (let i = 0; i < imageDataValues.length;) {
+            if (imageDataValues[i] > 0) {
+                plotPixels.push({
+                    startIndex: i,
+                    endIndex: i + 3,
+                    value: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
+                });
+            }
+
+            i = i + 4;
+
+        }
+
+        console.log(plotPixels.length);
+
+        window.getCanvasValue(plotPixels);
+    });
+
+    return getTelemValuePromise;
+}
