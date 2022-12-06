@@ -682,29 +682,25 @@ export default {
             }
         },
 
-        onClick(event) {
-            if (!event.altKey || !event.shiftKey) {
-                return;
-            }
-
-            const closestAnnotations = [];
+        selectNearbyAnnotations() {
+            const nearbyAnnotations = [];
             let targetDomainObjects = {};
             this.config.series.models.forEach(series => {
                 if (series.closest.annotations) {
-                    const closeSeries = series;
                     series.closest.annotations.forEach(closeAnnotation => {
-                        if (closestAnnotations.indexOf(closeAnnotation) === -1) {
-                            closestAnnotations.push(closeAnnotation);
-                            targetDomainObjects[closeSeries.keyString] = closeSeries.domainObject;
+                        if (nearbyAnnotations.indexOf(closeAnnotation) === -1) {
+                            nearbyAnnotations.push(closeAnnotation);
                         }
                     });
                 }
+
+                targetDomainObjects[series.keyString] = series.domainObject;
             });
-            console.debug(`🦸 Found annotations closest`, closestAnnotations);
+
             let targetDetails = {};
-            closestAnnotations.forEach(annotation => {
-                const firstTargetKeyString = Object.keys(annotation.targets)[0];
-                const firstTarget = annotation.targets[firstTargetKeyString];
+            nearbyAnnotations.forEach(nearbyAnnotation => {
+                const firstTargetKeyString = Object.keys(nearbyAnnotation.targets)[0];
+                const firstTarget = nearbyAnnotation.targets[firstTargetKeyString];
                 targetDetails[firstTargetKeyString] = firstTarget;
                 const rectangle = {
                     start: {
@@ -715,12 +711,28 @@ export default {
                         x: firstTarget.maxX,
                         y: firstTarget.maxY
                     },
-                    color: [1, 1, 1, 0.5]
+                    color: [1, 1, 1, 0.10]
                 };
                 this.rectangles.push(rectangle);
 
             });
 
+            return {
+                nearbyAnnotations,
+                targetDomainObjects,
+                targetDetails
+            };
+        },
+
+        onClick(event) {
+            event.stopPropagation();
+
+            if (this.annotationSelections.length) {
+                return;
+            }
+
+            const { nearbyAnnotations, targetDomainObjects, targetDetails } = this.selectNearbyAnnotations();
+            console.debug(`🦸 Click detected, found annotations closest`, nearbyAnnotations);
             const selection =
                     [
                         {
@@ -735,7 +747,7 @@ export default {
                                 type: 'plot-points-selection',
                                 targetDetails,
                                 targetDomainObjects,
-                                annotations: closestAnnotations,
+                                annotations: nearbyAnnotations,
                                 annotationFilter: this.annotationFilter,
                                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
                                 onTagChange: this.tagOrAnnotationAdded
@@ -743,7 +755,6 @@ export default {
                         }
                     ];
             this.openmct.selection.select(selection, true);
-            event.stopPropagation();
         },
 
         initialize() {
@@ -988,6 +999,7 @@ export default {
             let targetDomainObjects = {};
             let targetDetails = {};
             let annotations = {};
+            this.annotationSelected = true;
             annotationsBySeries.forEach(annotation => {
                 if (annotation.length) {
                     const seriesID = annotation[0].series.keyString;
@@ -1128,12 +1140,10 @@ export default {
                 this.rectangles = [];
             }
 
-            this.marquee = undefined;
+            this.marquee = null;
         },
 
         tagOrAnnotationAdded() {
-            this.rectangles = [];
-            this.marquee = null;
         },
 
         zoom(zoomDirection, zoomFactor) {

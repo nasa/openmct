@@ -618,7 +618,7 @@ export default {
                 ]);
                 const color = annotation.series.get('color').asRGBAArray();
                 // set transparency
-                color[3] = 0.3;
+                color[3] = 0.15;
 
                 const pointCount = 1;
                 const shape = annotation.series.get('markerShape');
