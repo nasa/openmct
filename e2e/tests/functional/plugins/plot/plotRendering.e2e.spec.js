@@ -26,7 +26,7 @@
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, createSineWaveWithInfinityOption} = require('../../../../appActions');
+const { createDomainObjectWithDefaults} = require('../../../../appActions');
 
 test.describe('Plot Integrity Testing @unstable', () => {
     let sineWaveGeneratorObject;
@@ -51,25 +51,56 @@ test.describe('Plot Integrity Testing @unstable', () => {
         expect(createMineFolderRequests.length).toEqual(0);
     });
 
-    test('Plot is rendered when infinity values exist', async ({ page }) => {
-        // Create Plot
-        const sineObject = await createSineWaveWithInfinityOption(page, { type: 'Sine Wave Generator' });
+    test.only('Plot is rendered when infinity values exist', async ({ page }) => {
+        // Edit Plot
+        await editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject);
 
-        //Navigate to Sine Wave Generator
-        await page.goto(sineObject.url);
         //Get pixel data from Canvas
-        const plotPixels = await getCanvasPixelsWithData(page);
-        expect(plotPixels.length).toBeGreaterThan(0);
+        const plotPixelSize = await getCanvasPixelsWithData(page);
+        expect(plotPixelSize).toBeGreaterThan(0);
     });
 });
+
+/**
+ * This common function creates a domain object with the default options. It is the preferred way of creating objects
+ * in the e2e suite when uninterested in properties of the objects themselves.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {CreateObjectOptions} options
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
+ */
+async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
+    await page.goto(sineWaveGeneratorObject.url, { waitUntil: 'networkidle' });
+    // Edit LAD table
+    await page.locator('[title="More options"]').click();
+    await page.locator('[title="Edit properties of this object."]').click();
+    // Modify the infinity option to true
+    const infinityInput = page.locator('[aria-label="Include Infinity Values"]');
+    await infinityInput.click();
+
+    // Click OK button and wait for Navigate event
+    await Promise.all([
+        page.waitForLoadState(),
+        page.click('[aria-label="Save"]'),
+        // Wait for Save Banner to appear
+        page.waitForSelector('.c-message-banner__message')
+    ]);
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForTimeout(500);
+}
 
 async function getCanvasPixelsWithData(page) {
     const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getCanvasValue', resolve));
 
     await page.evaluate(() => {
-        const canvas = document.querySelector('canvas');
-        const ctx = canvas.getContext('2d');
-        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        // The document canvas is where the plot points and lines are drawn.
+        // The only way to access the canvas is using document (using page.evaluate)
+        let data;
+        let canvas;
+        let ctx;
+        canvas = document.querySelector('canvas');
+        ctx = canvas.getContext('2d');
+        data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
         const imageDataValues = Object.values(data);
         let plotPixels = [];
         // Each pixel consists of four values within the ImageData.data array. The for loop iterates by multiples of four.
@@ -87,9 +118,7 @@ async function getCanvasPixelsWithData(page) {
 
         }
 
-        console.log(plotPixels.length);
-
-        window.getCanvasValue(plotPixels);
+        window.getCanvasValue(plotPixels.length);
     });
 
     return getTelemValuePromise;
