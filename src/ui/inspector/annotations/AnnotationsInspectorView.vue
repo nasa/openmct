@@ -204,17 +204,21 @@ export default {
             const targetID = this.openmct.objects.makeKeyString(target.identifier);
             const lastLocalAnnotationCreation = this.lastLocalAnnotationCreations[targetID] ?? 0;
             if (lastLocalAnnotationCreation < target.annotationLastCreated) {
-                console.debug(`🍇 Target object annotation changed for ${targetID}`);
+                console.debug(`💂 Target object annotation changed for ${targetID}`);
                 this.lastLocalAnnotationCreations[targetID] = target.annotationLastCreated;
                 const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(targetID);
                 const filteredAnnotationsForSelection = allAnnotationsForTarget.filter(annotation => {
                     const matchingTargetID = Object.keys(annotation.targets).filter(loadedTargetID => {
                         return targetID === loadedTargetID;
                     });
+                    const fetchedTargetDetails = annotation.targets[matchingTargetID];
+                    const selectedTargetDetails = this.targetDetails[matchingTargetID];
 
-                    return _.isEqual(annotation.targets[matchingTargetID], this.targetDetails[matchingTargetID]);
+                    return _.isEqual(fetchedTargetDetails, selectedTargetDetails);
                 });
                 this.loadNewAnnotations(filteredAnnotationsForSelection);
+            } else {
+                console.debug(`🍇 Target object annotation did not change for ${targetID}`);
             }
         }
     }

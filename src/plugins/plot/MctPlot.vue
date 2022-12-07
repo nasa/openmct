@@ -724,9 +724,9 @@ export default {
 
             let targetDetails = {};
             annotations.forEach(annotation => {
-                const firstTargetKeyString = Object.keys(annotation.targets)[0];
-                const firstTarget = annotation.targets[firstTargetKeyString];
-                targetDetails[firstTargetKeyString] = firstTarget;
+                Object.entries(annotation.targets).forEach(([key, value]) => {
+                    targetDetails[key] = value;
+                });
             });
 
             this.marqueeAnnotations(annotations);
