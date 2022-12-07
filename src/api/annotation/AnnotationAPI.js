@@ -98,13 +98,17 @@ export default class AnnotationAPI extends EventEmitter {
     * @returns {Promise<import('../objects/ObjectAPI').DomainObject>} a promise which will resolve when the domain object
     *          has been created, or be rejected if it cannot be saved
     */
-    async create({name, domainObject, annotationType, tags, contentText, targets}) {
+    async create({name, domainObject, annotationType, tags, contentText, targets, targetDomainObjects}) {
         if (!Object.keys(this.ANNOTATION_TYPES).includes(annotationType)) {
             throw new Error(`Unknown annotation type: ${annotationType}`);
         }
 
         if (!Object.keys(targets).length) {
             throw new Error(`At least one target is required to create an annotation`);
+        }
+
+        if (!Object.keys(targetDomainObjects).length) {
+            throw new Error(`At least one targetDomainObject is required to create an annotation`);
         }
 
         const domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -139,7 +143,9 @@ export default class AnnotationAPI extends EventEmitter {
         const success = await this.openmct.objects.save(createdObject);
         if (success) {
             this.emit('annotationCreated', createdObject);
-            this.#updateAnnotationModified(domainObject);
+            Object.values(targetDomainObjects).forEach(targetDomainObject => {
+                this.#updateAnnotationModified(targetDomainObject);
+            });
 
             return createdObject;
         } else {
@@ -147,8 +153,8 @@ export default class AnnotationAPI extends EventEmitter {
         }
     }
 
-    #updateAnnotationModified(domainObject) {
-        this.openmct.objects.mutate(domainObject, this.ANNOTATION_LAST_CREATED, Date.now());
+    #updateAnnotationModified(targetDomainObject) {
+        this.openmct.objects.mutate(targetDomainObject, this.ANNOTATION_LAST_CREATED, Date.now());
     }
 
     /**
@@ -207,7 +213,7 @@ export default class AnnotationAPI extends EventEmitter {
     * @param {AnnotationType} annotationType - The type of annotation this is for.
     * @returns {import('../objects/ObjectAPI').DomainObject[]} Returns the annotation that was either created or passed as an existingAnnotation
     */
-    async addSingleAnnotationTag({existingAnnotation, domainObject, targets, annotationType, tag}) {
+    async addSingleAnnotationTag({existingAnnotation, domainObject, targets, targetDomainObjects, annotationType, tag}) {
         if (!existingAnnotation) {
             const contentText = `${annotationType} tag`;
             const annotationCreationArguments = {
@@ -216,7 +222,8 @@ export default class AnnotationAPI extends EventEmitter {
                 annotationType,
                 tags: [tag],
                 contentText,
-                targets
+                targets,
+                targetDomainObjects
             };
             const newAnnotation = await this.create(annotationCreationArguments);
 

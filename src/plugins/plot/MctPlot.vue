@@ -987,6 +987,8 @@ export default {
             }
         },
         annotationFilter(annotations) {
+            console.debug(`🧚‍♂️ TODO we should be filtering annotations: ${annotations.length}`);
+
             return annotations;
         },
         selectPlotAnnotations(minX, minY, maxX, maxY, annotationsBySeries, event) {
@@ -1144,6 +1146,7 @@ export default {
         },
 
         tagOrAnnotationAdded() {
+            console.debug(`👮‍♀️ Tag or annotation added for a chart`);
         },
 
         zoom(zoomDirection, zoomFactor) {

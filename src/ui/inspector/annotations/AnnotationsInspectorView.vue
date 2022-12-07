@@ -31,6 +31,7 @@
     >
         <TagEditor
             :targets="targetDetails"
+            :targetDomainObjects="targetDomainObjects"
             :domain-object="domainObject"
             :annotations="loadedAnnotations"
             :annotation-type="annotationType"

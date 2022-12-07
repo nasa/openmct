@@ -70,6 +70,11 @@ export default {
             required: true,
             default: null
         },
+        targetDomainObjects: {
+            type: Object,
+            required: true,
+            default: null
+        },
         onTagChange: {
             type: Function,
             required: false,
@@ -170,6 +175,7 @@ export default {
                 {
                     existingAnnotation,
                     targets: this.targets,
+                    targetDomainObjects: this.targetDomainObjects,
                     domainObject: this.domainObject,
                     annotationType: this.annotationType,
                     tag: newTag
