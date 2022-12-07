@@ -682,26 +682,10 @@ export default {
             }
         },
 
-        selectNearbyAnnotations() {
-            const nearbyAnnotations = [];
-            let targetDomainObjects = {};
-            this.config.series.models.forEach(series => {
-                if (series.closest.annotations) {
-                    series.closest.annotations.forEach(closeAnnotation => {
-                        if (nearbyAnnotations.indexOf(closeAnnotation) === -1) {
-                            nearbyAnnotations.push(closeAnnotation);
-                        }
-                    });
-                }
-
-                targetDomainObjects[series.keyString] = series.domainObject;
-            });
-
-            let targetDetails = {};
-            nearbyAnnotations.forEach(nearbyAnnotation => {
-                const firstTargetKeyString = Object.keys(nearbyAnnotation.targets)[0];
-                const firstTarget = nearbyAnnotation.targets[firstTargetKeyString];
-                targetDetails[firstTargetKeyString] = firstTarget;
+        marqueeAnnotations(annotationsToSelect) {
+            annotationsToSelect.forEach(annotationToSelect => {
+                const firstTargetKeyString = Object.keys(annotationToSelect.targets)[0];
+                const firstTarget = annotationToSelect.targets[firstTargetKeyString];
                 const rectangle = {
                     start: {
                         x: firstTarget.minX,
@@ -716,47 +700,42 @@ export default {
                 this.rectangles.push(rectangle);
 
             });
+        },
+        gatherNearbyAnnotations() {
+            const nearbyAnnotations = [];
+            this.config.series.models.forEach(series => {
+                if (series.closest.annotations) {
+                    series.closest.annotations.forEach(closeAnnotation => {
+                        if (nearbyAnnotations.indexOf(closeAnnotation) === -1) {
+                            nearbyAnnotations.push(closeAnnotation);
+                        }
+                    });
+                }
+            });
+
+            return nearbyAnnotations;
+        },
+
+        prepareExistingAnnotationSelection(annotations) {
+            const targetDomainObjects = {};
+            this.config.series.models.forEach(series => {
+                targetDomainObjects[series.keyString] = series.domainObject;
+            });
+
+            let targetDetails = {};
+            annotations.forEach(annotation => {
+                const firstTargetKeyString = Object.keys(annotation.targets)[0];
+                const firstTarget = annotation.targets[firstTargetKeyString];
+                targetDetails[firstTargetKeyString] = firstTarget;
+            });
+
+            this.marqueeAnnotations(annotations);
 
             return {
-                nearbyAnnotations,
                 targetDomainObjects,
                 targetDetails
             };
         },
-
-        onClick(event) {
-            event.stopPropagation();
-
-            if (this.annotationSelections.length) {
-                return;
-            }
-
-            const { nearbyAnnotations, targetDomainObjects, targetDetails } = this.selectNearbyAnnotations();
-            console.debug(`🦸 Click detected, found annotations closest`, nearbyAnnotations);
-            const selection =
-                    [
-                        {
-                            element: this.openmct.layout.$refs.browseObject.$el,
-                            context: {
-                                item: this.domainObject
-                            }
-                        },
-                        {
-                            element: this.$el,
-                            context: {
-                                type: 'plot-points-selection',
-                                targetDetails,
-                                targetDomainObjects,
-                                annotations: nearbyAnnotations,
-                                annotationFilter: this.annotationFilter,
-                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                                onTagChange: this.tagOrAnnotationAdded
-                            }
-                        }
-                    ];
-            this.openmct.selection.select(selection, true);
-        },
-
         initialize() {
             this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
@@ -986,32 +965,24 @@ export default {
                 this.trackHistory();
             }
         },
-        annotationFilter(annotations) {
-            console.debug(`🧚‍♂️ TODO we should be filtering annotations: ${annotations.length}`);
+        onClick(event) {
+            event.stopPropagation();
 
-            return annotations;
-        },
-        selectPlotAnnotations(minX, minY, maxX, maxY, annotationsBySeries, event) {
-            const boundingBox = {
-                minX,
-                minY,
-                maxX,
-                maxY
-            };
-            let targetDomainObjects = {};
-            let targetDetails = {};
-            let annotations = {};
-            this.annotationSelected = true;
-            annotationsBySeries.forEach(annotation => {
-                if (annotation.length) {
-                    const seriesID = annotation[0].series.keyString;
-                    targetDetails[seriesID] = boundingBox;
-                    targetDomainObjects[seriesID] = annotation[0].series.domainObject;
-                }
+            if (this.annotationSelections.length) {
+                return;
+            }
+
+            const nearbyAnnotations = this.gatherNearbyAnnotations();
+            const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
+            console.debug(`🦸 Click detected, found annotations closest`, nearbyAnnotations);
+            this.selectPlotAnnotations({
+                targetDetails,
+                targetDomainObjects,
+                annotations: nearbyAnnotations
             });
-            console.debug(`🧚‍♂️ Selection complete: ${JSON.stringify(targetDetails)}`);
-            if (Object.keys(targetDetails).length) {
-                const selection =
+        },
+        selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
+            const selection =
                     [
                         {
                             element: this.openmct.layout.$refs.browseObject.$el,
@@ -1026,14 +997,36 @@ export default {
                                 targetDetails,
                                 targetDomainObjects,
                                 annotations,
-                                annotationFilter: this.annotationFilter,
                                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                                onTagChange: this.tagOrAnnotationAdded
+                                onAnnotationChange: this.onAnnotationChange
                             }
                         }
                     ];
-                this.openmct.selection.select(selection, true);
-            }
+            this.openmct.selection.select(selection, true);
+        },
+        selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event) {
+            const boundingBox = {
+                minX,
+                minY,
+                maxX,
+                maxY
+            };
+            let targetDomainObjects = {};
+            let targetDetails = {};
+            let annotations = {};
+            pointsInBox.forEach(pointInBox => {
+                if (pointInBox.length) {
+                    const seriesID = pointInBox[0].series.keyString;
+                    targetDetails[seriesID] = boundingBox;
+                    targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
+                }
+            });
+            console.debug(`🧚‍♂️ New Annotation selection complete: ${JSON.stringify(targetDetails)}`);
+            this.selectPlotAnnotations({
+                targetDetails,
+                targetDomainObjects,
+                annotations
+            });
         },
         findAnnotationPoints(rawAnnotations) {
             const annotationsByPoints = [];
@@ -1108,7 +1101,7 @@ export default {
             };
             const pointsInBox = this.getPointsInBox(boundingBox);
             this.annotationSelections = pointsInBox.flat();
-            this.selectPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event);
+            this.selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event);
         },
         endZoomMarquee() {
             const startPixels = this.marquee.startPixels;
@@ -1145,8 +1138,21 @@ export default {
             this.marquee = null;
         },
 
-        tagOrAnnotationAdded() {
-            console.debug(`👮‍♀️ Tag or annotation added for a chart`);
+        onAnnotationChange(annotation) {
+            console.debug(`👮‍♀️ Tag or annotation added for a chart, TODO, need to check for nearby annotations`, annotation);
+            const annotations = [annotation];
+            if (this.marquee) {
+                this.marquee.annotationEvent = false;
+                this.endMarquee();
+            }
+
+            this.loadAnnotations();
+            const { targetDetails, targetDomainObjects} = this.prepareExistingAnnotationSelection(annotations);
+            this.selectPlotAnnotations({
+                targetDetails,
+                targetDomainObjects,
+                annotations
+            });
         },
 
         zoom(zoomDirection, zoomFactor) {

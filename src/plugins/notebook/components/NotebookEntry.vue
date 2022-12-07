@@ -360,17 +360,6 @@ export default {
 
             this.$emit('updateEntry', this.entry);
         },
-        filterAnnotations(annotations) {
-            const filteredAnnotations = annotations.filter(annotation => {
-                // should be first target in the annotation
-                const target = Object.values(annotation.targets)?.[0];
-                const targetEntryId = target?.entryId;
-
-                return targetEntryId === this.entry.id;
-            });
-
-            return filteredAnnotations;
-        },
         editingEntry() {
             this.$emit('editingEntry');
         },
@@ -406,7 +395,6 @@ export default {
                             targetDetails,
                             targetDomainObjects,
                             annotations: this.notebookAnnotations,
-                            annotationFilter: this.filterAnnotations,
                             annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                             onAnnotationChange: this.timestampAndUpdate
                         }

@@ -31,7 +31,7 @@
     >
         <TagEditor
             :targets="targetDetails"
-            :targetDomainObjects="targetDomainObjects"
+            :target-domain-objects="targetDomainObjects"
             :domain-object="domainObject"
             :annotations="loadedAnnotations"
             :annotation-type="annotationType"
@@ -69,6 +69,7 @@
 <script>
 import AnnotationEditor from './AnnotationEditor.vue';
 import TagEditor from '../../components/tags/TagEditor.vue';
+import _ from 'lodash';
 
 export default {
     components: {
@@ -199,14 +200,21 @@ export default {
             this.loadNewAnnotations(this.selectedAnnotations);
         },
         async targetObjectChanged(target) {
+            // TODO this method needs to handle multiple targets selected. MCTChart should be sending both targets as part of the selection
             const targetID = this.openmct.objects.makeKeyString(target.identifier);
             const lastLocalAnnotationCreation = this.lastLocalAnnotationCreations[targetID] ?? 0;
             if (lastLocalAnnotationCreation < target.annotationLastCreated) {
                 console.debug(`🍇 Target object annotation changed for ${targetID}`);
                 this.lastLocalAnnotationCreations[targetID] = target.annotationLastCreated;
                 const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(targetID);
-                const filteredAnnotations = this.annotationFilter(allAnnotationsForTarget);
-                this.loadNewAnnotations(filteredAnnotations);
+                const filteredAnnotationsForSelection = allAnnotationsForTarget.filter(annotation => {
+                    const matchingTargetID = Object.keys(annotation.targets).filter(loadedTargetID => {
+                        return targetID === loadedTargetID;
+                    });
+
+                    return _.isEqual(annotation.targets[matchingTargetID], this.targetDetails[matchingTargetID]);
+                });
+                this.loadNewAnnotations(filteredAnnotationsForSelection);
             }
         }
     }

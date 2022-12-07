@@ -186,7 +186,7 @@ export default {
 
             this.$emit('tags-updated', createdAnnotation);
             if (this.onTagChange) {
-                this.onTagChange();
+                this.onTagChange(createdAnnotation);
             }
         }
     }
