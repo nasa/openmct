@@ -125,6 +125,7 @@ const config = {
                 loader: 'vue-loader',
                 options: {
                     compilerOptions: {
+                        whitespace: 'preserve',
                         compatConfig: {
                             MODE: 2
                         }
@@ -158,9 +159,6 @@ const config = {
             }
         ]
     },
-    // externals: {
-    //     "vue": "Vue"
-    // },
     stats: 'errors-warnings',
     performance: {
         // We should eventually consider chunking to decrease

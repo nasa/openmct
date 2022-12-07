@@ -349,17 +349,6 @@ define([
          */
 
         if (!isHeadlessMode) {
-            // const appLayout = new Vue({
-            //     components: {
-            //         'Layout': Layout.default
-            //     },
-            //     provide: {
-            //         openmct: this
-            //     },
-            //     template: '<Layout ref="layout"></Layout>'
-            // });
-            // domElement.appendChild(appLayout.$mount().$el);
-            // this.layout = appLayout.$refs.layout;
             const appLayout = Vue.createApp({
                 components: {
                     'Layout': Layout.default
@@ -370,7 +359,6 @@ define([
                 template: '<Layout ref="layout"></Layout>'
             });
             appLayout.mount(domElement);
-            console.log('appLayout', appLayout._instance.refs.layout);
             this.layout = appLayout._instance.refs.layout;
             Browse(this);
         }
