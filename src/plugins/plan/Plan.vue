@@ -107,7 +107,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         clearInterval(this.resizeTimer);
         this.stopFollowingTimeContext();
         if (this.unlisten) {

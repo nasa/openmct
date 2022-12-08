@@ -302,7 +302,7 @@ export default {
         this.filterAndSortEntries();
         this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.unlisten) {
             this.unlisten();
         }

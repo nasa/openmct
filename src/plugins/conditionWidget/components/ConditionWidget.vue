@@ -75,7 +75,7 @@ export default {
             this.listenToConditionSetChanges();
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.conditionSetIdentifier = null;
 
         if (this.unlisten) {

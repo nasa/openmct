@@ -101,7 +101,7 @@ export default {
         this.registerListeners();
         this.composition.load();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stopListening();
     },
     methods: {

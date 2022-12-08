@@ -47,7 +47,7 @@ export default {
         this.unsubscribe = this.openmct.faults
             .subscribe(this.domainObject, this.updateFault);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.unsubscribe) {
             this.unsubscribe();
         }

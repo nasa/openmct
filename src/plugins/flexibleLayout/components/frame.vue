@@ -113,7 +113,7 @@ export default {
 
         this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.domainObjectPromise) {
             this.domainObjectPromise.then(() => {
                 if (this?.domainObject?.isMutable) {

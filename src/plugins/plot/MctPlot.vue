@@ -365,7 +365,7 @@ export default {
 
         this.loaded = true;
     },
-    beforeDestroy() {
+    beforeUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
         this.destroy();

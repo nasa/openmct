@@ -138,7 +138,7 @@ export default {
                 .then(this.setObject);
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.removeSelectable) {
             this.removeSelectable();
         }

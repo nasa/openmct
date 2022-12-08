@@ -131,7 +131,7 @@ export default {
         this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
         this.updateTicks();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stopListening();
     },
     methods: {

@@ -71,7 +71,7 @@ export default {
         this.unobserveInterpolation = this.openmct.objects.observe(this.domainObject, 'configuration.useInterpolation', this.refreshData);
         this.unobserveBar = this.openmct.objects.observe(this.domainObject, 'configuration.useBar', this.refreshData);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stopFollowingTimeContext();
 
         this.removeAllSubscriptions();

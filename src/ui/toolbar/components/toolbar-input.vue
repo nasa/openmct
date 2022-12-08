@@ -43,7 +43,7 @@ export default {
             this.$el.addEventListener('change', this.onChange);
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.options.type === 'number') {
             this.$el.removeEventListener('input', this.onInput);
         } else {

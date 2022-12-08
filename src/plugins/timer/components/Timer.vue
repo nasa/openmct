@@ -204,7 +204,7 @@ export default {
             this.showOrHideAvailableActions();
         });
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.active = false;
         if (this.unlisten) {
             this.unlisten();

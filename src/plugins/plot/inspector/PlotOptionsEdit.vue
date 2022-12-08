@@ -94,7 +94,7 @@ export default {
         this.registerListeners();
         this.loaded = true;
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stopListening();
     },
     methods: {

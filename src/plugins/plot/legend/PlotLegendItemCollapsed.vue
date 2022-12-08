@@ -114,7 +114,7 @@ export default {
         }, this);
         this.initialize();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stopListening();
     },
     methods: {

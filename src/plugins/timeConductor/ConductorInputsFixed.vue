@@ -125,7 +125,7 @@ export default {
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.setTimeContext();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.clearAllValidation();
         this.openmct.time.off('timeSystem', this.setTimeSystem);
         this.stopFollowingTimeContext();

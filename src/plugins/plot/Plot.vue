@@ -81,7 +81,7 @@ export default {
         eventHelpers.extend(this);
         this.imageExporter = new ImageExporter(this.openmct);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.destroy();
     },
     methods: {

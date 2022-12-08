@@ -115,7 +115,7 @@ export default {
         this.initColorAndName();
         this.removeBarStylesListener = this.openmct.objects.observe(this.domainObject, `configuration.barStyles.series["${this.key}"]`, this.initColorAndName);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.removeBarStylesListener) {
             this.removeBarStylesListener();
         }

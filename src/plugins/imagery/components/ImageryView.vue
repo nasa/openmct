@@ -643,7 +643,7 @@ export default {
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         this.loadVisibleLayers();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.persistVisibleLayers();
         this.stopFollowingTimeContext();
 

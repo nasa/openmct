@@ -91,7 +91,7 @@ export default {
         this.unobserve = this.openmct.objects.observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
         this.unobserveGlobalFilters = this.openmct.objects.observe(this.providedObject, 'configuration.globalFilters', this.updateGlobalFilters);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.composition.off('add', this.addChildren);
         this.composition.off('remove', this.removeChildren);
         this.unobserve();

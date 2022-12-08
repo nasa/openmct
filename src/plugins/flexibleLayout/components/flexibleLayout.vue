@@ -179,7 +179,7 @@ export default {
         this.composition.on('add', this.addFrame);
         this.composition.load();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.composition.off('remove', this.removeChildObject);
         this.composition.off('add', this.addFrame);
     },

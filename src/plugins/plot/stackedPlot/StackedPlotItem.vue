@@ -98,7 +98,7 @@ export default {
     mounted() {
         this.updateView();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.removeSelectable) {
             this.removeSelectable();
         }

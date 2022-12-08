@@ -147,7 +147,7 @@ export default {
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.setTimeContext();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.openmct.time.off('timeSystem', this.setTimeSystem);
         this.stopFollowingTime();
     },

@@ -116,7 +116,7 @@ export default {
             return Math.max(...Object.values(this.tickWidthMap));
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.destroy();
     },
     mounted() {

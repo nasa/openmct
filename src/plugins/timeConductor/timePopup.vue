@@ -110,7 +110,7 @@ export default {
         this.setOffset();
         document.addEventListener('click', this.hide);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         document.removeEventListener('click', this.hide);
     },
     methods: {

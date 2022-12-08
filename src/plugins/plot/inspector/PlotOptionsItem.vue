@@ -163,7 +163,7 @@ export default {
         this.status = this.openmct.status.get(this.series.domainObject.identifier);
         this.removeStatusListener = this.openmct.status.observe(this.series.domainObject.identifier, this.setStatus);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.removeStatusListener) {
             this.removeStatusListener();
         }

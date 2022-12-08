@@ -510,7 +510,7 @@ export default {
 
         this.table.initialize();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
         this.table.off('historical-rows-processed', this.checkForMarkedRows);

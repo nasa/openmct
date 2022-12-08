@@ -69,7 +69,7 @@ export default {
         this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration.axes', this.reloadTelemetry);
         this.unobserveUnderlayRanges = this.openmct.objects.observe(this.domainObject, 'configuration.ranges', this.reloadTelemetry);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stopFollowingTimeContext();
 
         if (!this.composition) {

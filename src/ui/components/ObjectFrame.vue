@@ -178,7 +178,7 @@ export default {
             this.soViewResizeObserver.observe(this.$refs.soView);
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.removeStatusListener();
 
         if (this.actionCollection) {

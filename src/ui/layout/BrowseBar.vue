@@ -248,7 +248,7 @@ export default {
             this.isEditing = isEditing;
         });
     },
-    beforeDestroy: function () {
+    beforeUnmount: function () {
         if (this.mutationObserver) {
             this.mutationObserver();
         }

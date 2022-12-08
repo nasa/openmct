@@ -38,7 +38,7 @@ export default {
         this.objectStyle = this.getObjectStyleForItem(this.parentDomainObject.configuration.objectStyles);
         this.initObjectStyles();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.stopListeningObjectStyles) {
             this.stopListeningObjectStyles();
         }

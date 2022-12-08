@@ -132,7 +132,7 @@ export default {
 
         this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.unsubscribeSelection();
     },
     methods: {
