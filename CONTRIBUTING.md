@@ -10,7 +10,7 @@ accept changes from external contributors.
 
 The short version:
 
-1. Write your contribution or describe your idea in the form of an [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions)
+1. Write your contribution or describe your idea in the form of a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [start a GitHub discussion](https://github.com/nasa/openmct/discussions).
 2. Make sure your contribution meets code, test, and commit message
    standards as described below.
 3. Submit a pull request from a topic branch back to `master`. Include a check

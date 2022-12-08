@@ -112,11 +112,7 @@ export default {
             }
         },
         removeFromComposition(telemetryObject) {
-            let composition = this.domainObject.composition.filter(id =>
-                !this.openmct.objects.areIdsEqual(id, telemetryObject.identifier)
-            );
-
-            this.openmct.objects.mutate(this.domainObject, 'composition', composition);
+            this.composition.remove(telemetryObject);
         },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
