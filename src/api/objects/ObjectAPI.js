@@ -187,7 +187,7 @@ export default class ObjectAPI {
      */
 
     /**
-     * Get a domain object.
+     * Force remote get for a domain object. Don't return dirty objects.
      *
      * @method get
      * @memberof module:openmct.ObjectProvider#
@@ -196,23 +196,8 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    get(identifier, abortSignal) {
-        let keystring = this.makeKeyString(identifier);
-
-        if (this.cache[keystring] !== undefined) {
-            return this.cache[keystring];
-        }
-
-        identifier = utils.parseKeyString(identifier);
-
-        if (this.isTransactionActive()) {
-            let dirtyObject = this.transaction.getDirtyObject(identifier);
-
-            if (dirtyObject) {
-                return Promise.resolve(dirtyObject);
-            }
-        }
-
+    remoteGet(identifier, abortSignal) {
+        const keystring = this.makeKeyString(identifier);
         const provider = this.getProvider(identifier);
 
         if (!provider) {
@@ -225,7 +210,6 @@ export default class ObjectAPI {
 
         let objectPromise = provider.get(identifier, abortSignal).then(result => {
             delete this.cache[keystring];
-
             result = this.applyGetInterceptors(identifier, result);
             if (result.isMutable) {
                 result.$refresh(result);
@@ -248,6 +232,36 @@ export default class ObjectAPI {
         this.cache[keystring] = objectPromise;
 
         return objectPromise;
+    }
+
+    /**
+     * Get a domain object.
+     *
+     * @method get
+     * @memberof module:openmct.ObjectProvider#
+     * @param {string} key the key for the domain object to load
+     * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
+     * @returns {Promise} a promise which will resolve when the domain object
+     *          has been saved, or be rejected if it cannot be saved
+     */
+    get(identifier, abortSignal) {
+        const keystring = this.makeKeyString(identifier);
+
+        if (this.cache[keystring] !== undefined) {
+            return this.cache[keystring];
+        }
+
+        identifier = utils.parseKeyString(identifier);
+
+        if (this.isTransactionActive()) {
+            let dirtyObject = this.transaction.getDirtyObject(identifier);
+
+            if (dirtyObject) {
+                return Promise.resolve(dirtyObject);
+            }
+        }
+
+        return this.remoteGet(identifier, abortSignal);
     }
 
     /**
@@ -441,7 +455,7 @@ export default class ObjectAPI {
         if (this.isTransactionActive()) {
             throw new Error("Unable to start new Transaction: Previous Transaction is active");
         }
-        console.log('start transactin');
+
         this.transaction = new Transaction(this);
 
         return this.transaction;
@@ -451,7 +465,6 @@ export default class ObjectAPI {
      * Clear instance of Transaction
      */
     endTransaction() {
-        console.log('end transactikon');
         this.transaction = null;
     }
 

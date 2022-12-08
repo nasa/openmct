@@ -9,34 +9,41 @@ export default function (openmct) {
             return apiSave(domainObject);
         }
 
-        const isNewMutable = !domainObject.isMutable;
-        const localMutable = openmct.objects.toMutable(domainObject);
+        // const isNewMutable = !domainObject.isMutable;
+        // const localMutable = openmct.objects.toMutable(domainObject);
         let result;
 
         try {
-            result = await apiSave(localMutable);
+            console.log('monkeypatch save');
+            result = await apiSave(domainObject);
+            // result = await apiSave(localMutable);
         } catch (error) {
+            console.log('monkeypatch save error', error);
             if (error instanceof openmct.objects.errors.Conflict) {
                 console.log('we got ourselves a conflict');
-                result = await resolveConflicts(domainObject, localMutable, openmct);
+                result = await resolveConflicts(domainObject, openmct);
+                // result = await resolveConflicts(domainObject, localMutable, openmct);
             } else {
                 result = Promise.reject(error);
             }
         } finally {
-            if (isNewMutable) {
-                openmct.objects.destroyMutable(localMutable);
-            }
+            // if (isNewMutable) {
+            //     openmct.objects.destroyMutable(localMutable);
+            // }
         }
 
         return result;
     };
 }
 
-function resolveConflicts(domainObject, localMutable, openmct) {
+// function resolveConflicts(domainObject, localMutable, openmct) {
+function resolveConflicts(domainObject, openmct) {
     if (isNotebookType(domainObject)) {
-        return resolveNotebookEntryConflicts(localMutable, openmct);
+        return resolveNotebookEntryConflicts(domainObject, openmct);
+        // return resolveNotebookEntryConflicts(localMutable, openmct);
     } else if (isAnnotationType(domainObject)) {
-        return resolveNotebookTagConflicts(localMutable, openmct);
+        return resolveNotebookTagConflicts(domainObject, openmct);
+        // return resolveNotebookTagConflicts(localMutable, openmct);
     }
 }
 
@@ -73,34 +80,40 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
     return true;
 }
 
-async function resolveNotebookEntryConflicts(localMutable, openmct) {
-    if (localMutable.configuration.entries) {
-        const localEntries = structuredClone(localMutable.configuration.entries);
-        const remoteMutable = await openmct.objects.getMutable(localMutable.identifier);
+// async function resolveNotebookEntryConflicts(localMutable, openmct) {
+async function resolveNotebookEntryConflicts(domainObject, openmct) {
+    if (domainObject.configuration.entries) {
+    // if (localMutable.configuration.entries) {
+        // const localEntries = structuredClone(localMutable.configuration.entries);
+        // const remoteObject = await openmct.objects.remoteGet(localMutable.identifier);
+        const localEntries = structuredClone(domainObject.configuration.entries);
+        const remoteObject = await openmct.objects.remoteGet(domainObject.identifier);
 
-        applyLocalEntries(remoteMutable, localEntries, openmct);
-        openmct.objects.destroyMutable(remoteMutable);
+        return applyLocalEntries(remoteObject, localEntries, openmct);
+        // openmct.objects.destroyMutable(remoteMutable);
     }
 
     return true;
 }
 
-function applyLocalEntries(mutable, entries, openmct) {
-    console.log('apply local entries', entries, 'and remote entries', mutable.configuration.entries);
+function applyLocalEntries(remoteObject, entries, openmct) {
+    console.log('apply local entries', entries, 'and remote entries', remoteObject.configuration.entries);
     Object.entries(entries).forEach(([sectionKey, pagesInSection]) => {
         Object.entries(pagesInSection).forEach(([pageKey, localEntries]) => {
-            const remoteEntries = mutable.configuration.entries[sectionKey][pageKey];
+            const remoteEntries = remoteObject.configuration.entries[sectionKey][pageKey];
             const mergedEntries = [].concat(remoteEntries);
-            let shouldMutate = false;
+            let shouldSave = false;
 
             const locallyAddedEntries = _.differenceBy(localEntries, remoteEntries, 'id');
             const locallyModifiedEntries = _.differenceWith(localEntries, remoteEntries, (localEntry, remoteEntry) => {
                 return localEntry.id === remoteEntry.id && localEntry.text === remoteEntry.text;
             });
 
+            console.log('locally added', locallyAddedEntries);
+            console.log('locally modified', locallyModifiedEntries);
             locallyAddedEntries.forEach((localEntry) => {
                 mergedEntries.push(localEntry);
-                shouldMutate = true;
+                shouldSave = true;
             });
 
             locallyModifiedEntries.forEach((locallyModifiedEntry) => {
@@ -108,12 +121,16 @@ function applyLocalEntries(mutable, entries, openmct) {
                 if (mergedEntry !== undefined
                     && locallyModifiedEntry.text.match(/\S/)) {
                     mergedEntry.text = locallyModifiedEntry.text;
-                    shouldMutate = true;
+                    shouldSave = true;
                 }
             });
+            console.log('mergedEntries', mergedEntries);
 
-            if (shouldMutate) {
-                openmct.objects.mutate(mutable, `configuration.entries.${sectionKey}.${pageKey}`, mergedEntries);
+            if (shouldSave) {
+                remoteObject.configuration.entries = mergedEntries;
+                console.log('save this one', remoteObject);
+                return openmct.objects.save(remoteObject);
+                // openmct.objects.save(remoteObject, `configuration.entries.${sectionKey}.${pageKey}`, mergedEntries);
             }
         });
     });

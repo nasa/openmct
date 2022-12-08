@@ -347,15 +347,17 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
+            console.log('nb entry: editingEntry');
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {
-            console.log('update entry vale', $event.target.innerText);
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
+                console.log('nb entry: updateEntryValue', value);
                 this.entry.text = value;
                 this.timestampAndUpdate();
             } else {
+                console.log('nb entry: updateEntryValue, same value not updating');
                 this.$emit('cancelEdit');
             }
         }

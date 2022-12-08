@@ -100,6 +100,7 @@ class CouchObjectProvider {
             if (observersForObject) {
                 observersForObject.forEach(async (observer) => {
                     const updatedObject = await this.get(objectIdentifier);
+
                     if (this.isSynchronizedObject(updatedObject)) {
                         observer(updatedObject);
                     }
@@ -184,6 +185,7 @@ class CouchObjectProvider {
     }
 
     async request(subPath, method, body, signal) {
+        console.log('couchobjectprovider.js: request', subPath, method, body, signal);
         let fetchOptions = {
             method,
             body,
@@ -221,13 +223,12 @@ class CouchObjectProvider {
             } else {
                 if (!isNotebookOrAnnotationType(body.model)) {
                     console.error(error.message);
-
-                    throw error;
                 } else {
-                    // suppress errors since we handle conflicts for notebooks
-                    // and errors are disrupting the logic once thrown
+                    // warn since we handle conflicts for notebooks
                     console.warn(error.message);
                 }
+
+                throw error;
             }
         }
     }
@@ -240,7 +241,7 @@ class CouchObjectProvider {
     #handleResponseCode(status, json, fetchOptions) {
         this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
         if (status === CouchObjectProvider.HTTP_CONFLICT) {
-            throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+            throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${JSON.parse(fetchOptions.body).name}`);
         } else if (status >= CouchObjectProvider.HTTP_BAD_REQUEST) {
             if (!json.error || !json.reason) {
                 throw new Error(`CouchDB Error ${status}`);
@@ -297,6 +298,16 @@ class CouchObjectProvider {
             }
 
             if (isNotebookOrAnnotationType(object)) {
+                // check if the object is currently being edited, if so, don't update revision so a conflict will be thrown
+                // and handled with our notebook conflict resolution
+                if (this.openmct.objects.isTransactionActive()) {
+                    let dirtyObject = this.openmct.objects.transaction.getDirtyObject(object.identifier);
+
+                    if (dirtyObject) {
+                        return object;
+                    }
+                }
+
                 //Temporary measure until object sync is supported for all object types
                 //Always update notebook revision number because we have realtime sync, so always assume it's the latest.
                 this.objectQueue[key].updateRevision(response[REV]);
