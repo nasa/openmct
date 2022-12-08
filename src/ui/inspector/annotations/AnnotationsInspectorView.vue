@@ -26,7 +26,7 @@
         Tags
     </div>
     <div
-        v-if="annotationType"
+        v-if="shouldShowTagsEditor"
         class="c-inspect-properties__section"
     >
         <TagEditor
@@ -128,6 +128,9 @@ export default {
         },
         targetDetails() {
             return this?.selection?.[0]?.[1]?.context?.targetDetails ?? {};
+        },
+        shouldShowTagsEditor() {
+            return Object.keys(this.targetDetails).length > 0;
         },
         targetDomainObjects() {
             return this?.selection?.[0]?.[1]?.context?.targetDomainObjects ?? {};
