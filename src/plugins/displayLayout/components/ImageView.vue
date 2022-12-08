@@ -120,7 +120,7 @@ export default {
         this.removeSelectable = this.openmct.selection.selectable(
             this.$el, this.context, this.initSelect);
     },
-    destroyed() {
+    unmounted() {
         if (this.removeSelectable) {
             this.removeSelectable();
         }

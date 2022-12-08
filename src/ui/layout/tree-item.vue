@@ -159,7 +159,7 @@ export default {
 
         this.$emit('tree-item-mounted', this.navigationPath);
     },
-    destroyed() {
+    unmounted() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
         this.$emit('tree-item-destoyed', this.navigationPath);
     },

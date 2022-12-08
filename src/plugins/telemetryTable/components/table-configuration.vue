@@ -97,7 +97,7 @@ export default {
                 this.unlisteners.push(compositionCollection.off.bind(compositionCollection, 'remove', this.removeObject));
             });
     },
-    destroyed() {
+    unmounted() {
         this.tableConfiguration.destroy();
         this.openmct.editor.off('isEditing', this.toggleEdit);
         this.unlisteners.forEach((unlisten) => unlisten());

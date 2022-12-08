@@ -150,7 +150,7 @@ export default {
     beforeUnmount() {
         this.persistCurrentTabIndex(this.currentTabIndex);
     },
-    destroyed() {
+    unmounted() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.onReorder);

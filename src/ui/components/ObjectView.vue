@@ -89,7 +89,7 @@ export default {
             return this.domainObject && ('is-object-type-' + this.domainObject.type);
         }
     },
-    destroyed() {
+    unmounted() {
         this.clear();
         if (this.releaseEditModeHandler) {
             this.releaseEditModeHandler();

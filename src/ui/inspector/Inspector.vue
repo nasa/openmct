@@ -133,7 +133,7 @@ export default {
         this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
         this.openmct.selection.on('change', this.updateInspectorViews);
     },
-    destroyed() {
+    unmounted() {
         this.openmct.selection.off('change', this.updateInspectorViews);
     },
     methods: {

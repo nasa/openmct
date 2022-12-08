@@ -109,7 +109,7 @@ export default {
 
         this.formControl.show(this.$refs.rowElement, this.row, this.onChange);
     },
-    destroyed() {
+    unmounted() {
         const destroy = this.formControl.destroy;
         if (destroy) {
             destroy();

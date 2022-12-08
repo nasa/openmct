@@ -28,7 +28,7 @@ export default {
             }
         });
     },
-    destroyed() {
+    unmounted() {
         this.$el.removeEventListener('contextMenu', this.showContextMenu);
     },
     methods: {

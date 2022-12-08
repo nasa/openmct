@@ -271,7 +271,7 @@ export default {
         this.handleTreeResize = _.debounce(this.handleTreeResize, 300);
         this.scrollEndEvent = _.debounce(this.scrollEndEvent, 100);
     },
-    destroyed() {
+    unmounted() {
         if (this.treeResizeObserver) {
             this.treeResizeObserver.disconnect();
         }

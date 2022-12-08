@@ -46,7 +46,7 @@ export default {
     mounted() {
         document.addEventListener('click', this.hideMenu);
     },
-    destroyed() {
+    unmounted() {
         document.removeEventListener('click', this.hideMenu);
     },
     methods: {

@@ -64,7 +64,7 @@ export default {
             objectSearchResults: []
         };
     },
-    destroyed() {
+    unmounted() {
         document.body.removeEventListener('click', this.handleOutsideClick);
     },
     methods: {

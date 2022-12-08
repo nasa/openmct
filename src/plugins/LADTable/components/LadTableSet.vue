@@ -102,7 +102,7 @@ export default {
         this.composition.on('reorder', this.reorderLadTables);
         this.composition.load();
     },
-    destroyed() {
+    unmounted() {
         this.composition.off('add', this.addLadTable);
         this.composition.off('remove', this.removeLadTable);
         this.composition.off('reorder', this.reorderLadTables);
