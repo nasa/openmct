@@ -22,7 +22,7 @@
 <template>
 <div
     v-if="loaded"
-    class="gl-plot-axis-area gl-plot-y has-local-controls"
+    class="gl-plot-axis-area gl-plot-y has-local-controls js-plot-y-axis"
     :style="{
         width: (tickWidth + 20) + 'px'
     }"

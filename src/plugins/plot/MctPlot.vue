@@ -48,8 +48,8 @@
                 @tickWidthChanged="onTickWidthChange"
             />
             <y-axis
-                v-for="(additionalYAxisId, index) in additionalYAxesIds"
-                :id="additionalYAxisId"
+                v-for="(additionalYAxis, index) in additionalYAxesIds"
+                :id="additionalYAxis.id"
                 :key="`yAxis-${index}`"
                 :tick-width="tickWidth"
                 :style="{
@@ -301,10 +301,13 @@ export default {
             cursorGuide: this.initCursorGuide,
             gridLines: this.initGridLines,
             yAxisId: undefined,
-            additionalYAxesIds: []
+            additionalYAxes: []
         };
     },
     computed: {
+        additionalYAxesIds() {
+            return this.additionalYAxes.filter(yAxis => yAxis.visible === true);
+        },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
 
@@ -359,7 +362,12 @@ export default {
         this.legend = this.config.legend;
         this.yAxisId = this.config.yAxis.id;
         if (this.config.additionalYAxes) {
-            this.additionalYAxesIds = this.config.additionalYAxes.map(yAxis => yAxis.id);
+            this.additionalYAxes = this.config.additionalYAxes.map(yAxis => {
+                return {
+                    id: yAxis.id,
+                    visible: false
+                };
+            });
         }
 
         if (this.isNestedWithinAStackedPlot) {
@@ -428,7 +436,6 @@ export default {
                     domainObject: this.domainObject,
                     openmct: this.openmct,
                     palette: this.colorPalette,
-                    max_y_axes: this.options.max_y_axes,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -439,6 +446,8 @@ export default {
             return config;
         },
         addSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.setAxisVisibility(yAxisId, true);
             this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
@@ -455,8 +464,17 @@ export default {
         },
 
         removeSeries(plotSeries, index) {
+            const yAxisId = plotSeries.get('yAxisId');
+            this.setAxisVisibility(yAxisId, false);
             this.seriesModels.splice(index, 1);
             this.stopListening(plotSeries);
+        },
+
+        setAxisVisibility(yAxisId, visible) {
+            const yAxis = this.additionalYAxes.find(additionalYAxis => additionalYAxis.id === yAxisId);
+            if (yAxis) {
+                yAxis.visible = visible;
+            }
         },
 
         loadSeriesData(series) {

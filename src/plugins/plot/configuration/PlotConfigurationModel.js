@@ -64,7 +64,7 @@ export default class PlotConfigurationModel extends Model {
             id: options.model.yAxis.id || 1
         });
         //Add any axes in addition to the yAxis above
-        const max_additional_axes = Math.min(options.max_y_axes || 1, MAX_Y_AXES) - 1;
+        const max_additional_axes = MAX_Y_AXES - 1;
         this.additionalYAxes = [];
         if (Array.isArray(options.model.additionalYAxes)) {
             options.model.additionalYAxes.forEach((yAxis) => {

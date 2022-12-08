@@ -443,7 +443,7 @@ export default {
             }
         },
         canDraw(yAxisId) {
-            if (!this.offset[yAxisId].x || !this.offset[yAxisId].y) {
+            if (!this.offset[yAxisId] || !this.offset[yAxisId].x || !this.offset[yAxisId].y) {
                 return false;
             }
 
@@ -513,7 +513,7 @@ export default {
             );
         },
         drawSeries(id) {
-            const end = parseInt(id);
+            const end = parseInt(id, 10);
             const start = end - 1;
             this.lines.slice(start, end).forEach(this.drawLine, this);
             this.pointSets.slice(start, end).forEach(this.drawPoints, this);

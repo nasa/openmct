@@ -61,8 +61,7 @@ export default function OverlayPlotViewProvider(openmct) {
                         data() {
                             return {
                                 options: {
-                                    compact: isCompact,
-                                    max_y_axes: 2
+                                    compact: isCompact
                                 }
                             };
                         },
