@@ -173,7 +173,7 @@ describe("the plugin", function () {
 
     });
 
-    describe("The overlay plot view", () => {
+    describe("The overlay plot view with multiple axes", () => {
         let testTelemetryObject;
         let testTelemetryObject2;
         let config;
@@ -298,7 +298,7 @@ describe("the plugin", function () {
                 });
         });
 
-        it("Renders multiple Y-axis for the telemetry object", (done) => {
+        it("Renders multiple Y-axis for the telemetry objects", (done) => {
             config.yAxis.set('displayRange', {
                 min: 10,
                 max: 20
@@ -306,6 +306,105 @@ describe("the plugin", function () {
             Vue.nextTick(() => {
                 let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper");
                 expect(yAxisElement.length).toBe(2);
+                done();
+            });
+        });
+    });
+
+    describe("The overlay plot view with single axes", () => {
+        let testTelemetryObject;
+        let config;
+        let component;
+        let mockComposition;
+
+        afterAll(() => {
+            component.$destroy();
+            openmct.router.path = null;
+        });
+
+        beforeEach(() => {
+            testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
+            overlayPlotObject.composition = [
+                {
+                    identifier: testTelemetryObject.identifier
+                }
+            ];
+            overlayPlotObject.configuration.series = [
+                {
+                    identifier: testTelemetryObject.identifier
+                }
+            ];
+            mockComposition = new EventEmitter();
+            mockComposition.load = () => {
+                mockComposition.emit('add', testTelemetryObject);
+
+                return [testTelemetryObject];
+            };
+
+            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
+            let viewContainer = document.createElement("div");
+            child.append(viewContainer);
+            component = new Vue({
+                el: viewContainer,
+                components: {
+                    Plot
+                },
+                provide: {
+                    openmct: openmct,
+                    domainObject: overlayPlotObject,
+                    composition: openmct.composition.get(overlayPlotObject),
+                    path: [overlayPlotObject]
+                },
+                template: '<plot ref="plotComponent"></plot>'
+            });
+
+            return telemetryPromise
+                .then(Vue.nextTick())
+                .then(() => {
+                    const configId = openmct.objects.makeKeyString(overlayPlotObject.identifier);
+                    config = configStore.get(configId);
+                });
+        });
+
+        it("Renders single Y-axis for the telemetry object", (done) => {
+            config.yAxis.set('displayRange', {
+                min: 10,
+                max: 20
+            });
+            Vue.nextTick(() => {
+                let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper");
+                expect(yAxisElement.length).toBe(1);
                 done();
             });
         });
