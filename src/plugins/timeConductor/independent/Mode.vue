@@ -98,7 +98,7 @@ export default {
 
         this.followTimeConductor();
     },
-    destroyed: function () {
+    unmounted: function () {
         this.stopFollowTimeConductor();
     },
     methods: {

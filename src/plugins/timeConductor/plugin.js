@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { markRaw } from 'vue';
 import Conductor from './Conductor.vue';
-import Vue from 'vue';
 
 function isTruthy(a) {
     return Boolean(a);
@@ -92,8 +92,7 @@ function throwIfError(configResult) {
 }
 
 function mountComponent(openmct, configuration) {
-    // openmct.layout.conductorComponent = Object.create({
-    openmct.layout.conductorComponent = new Vue({
+    const conductorApp = {
         components: {
             Conductor
         },
@@ -101,8 +100,9 @@ function mountComponent(openmct, configuration) {
             openmct: openmct,
             configuration: configuration
         },
-        template: "<conductor></conductor>"
-    });
+        template: "<conductor />"
+    };
+    openmct.layout.conductorComponent = markRaw(conductorApp);
 }
 
 export default function (config) {
