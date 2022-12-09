@@ -68,7 +68,7 @@ export default {
                 return [];
             }
         },
-        annotations: {
+        annotatedPoints: {
             type: Array,
             default() {
                 return [];
@@ -96,7 +96,7 @@ export default {
         highlights() {
             this.scheduleDraw();
         },
-        annotations() {
+        annotatedPoints() {
             this.scheduleDraw();
         },
         annotationSelections() {
@@ -458,7 +458,7 @@ export default {
                 this.drawSeries();
                 this.drawRectangles();
                 this.drawHighlights();
-                this.drawAnnotations();
+                this.drawAnnotatedPoints();
                 this.drawAnnotationSelections();
             }
         },
@@ -605,28 +605,38 @@ export default {
                 disconnected
             );
         },
-        drawAnnotations() {
-            if (this.annotations && this.annotations.length) {
-                this.annotations.forEach(this.drawAnnotation, this);
+        drawAnnotatedPoints() {
+            // we should do this by series, and then plot all the points at once instead
+            // of doing it one by one
+            if (this.annotatedPoints && this.annotatedPoints.length) {
+                const uniquePointsToDraw = [];
+                this.annotatedPoints.forEach((annotatedPoint) => {
+                    const xValue = this.offset.xVal(annotatedPoint.point, annotatedPoint.series);
+                    const yValue = this.offset.yVal(annotatedPoint.point, annotatedPoint.series);
+                    const pointToDraw = new Float32Array([xValue, yValue]);
+                    const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
+                        return rawPoint[0] === pointToDraw[0] && rawPoint[1] === pointToDraw[1];
+                    });
+                    if (!drawnPoint) {
+                        uniquePointsToDraw.push(pointToDraw);
+                        this.drawAnnotatedPoint(annotatedPoint, pointToDraw);
+                    }
+                });
             }
         },
-        drawAnnotation(annotation) {
-            if (annotation.point && annotation.series) {
-                const points = new Float32Array([
-                    this.offset.xVal(annotation.point, annotation.series),
-                    this.offset.yVal(annotation.point, annotation.series)
-                ]);
-                const color = annotation.series.get('color').asRGBAArray();
+        drawAnnotatedPoint(annotatedPoint, pointToDraw) {
+            if (annotatedPoint.point && annotatedPoint.series) {
+                const color = annotatedPoint.series.get('color').asRGBAArray();
                 // set transparency
                 color[3] = 0.15;
-
                 const pointCount = 1;
-                const shape = annotation.series.get('markerShape');
+                const shape = annotatedPoint.series.get('markerShape');
 
-                this.drawAPI.drawPoints(points, color, pointCount, ANNOTATION_SIZE, shape);
+                this.drawAPI.drawPoints(pointToDraw, color, pointCount, ANNOTATION_SIZE, shape);
             }
         },
         drawAnnotationSelections() {
+            console.debug(`👩‍🎨 ${this.annotationSelections.length} annotation selections to draw...`);
             if (this.annotationSelections && this.annotationSelections.length) {
                 this.annotationSelections.forEach(this.drawAnnotationSelection, this);
             }

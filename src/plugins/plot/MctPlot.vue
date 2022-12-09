@@ -85,7 +85,7 @@
                     <mct-chart
                         :rectangles="rectangles"
                         :highlights="highlights"
-                        :annotations="annotations"
+                        :annotated-points="annotatedPoints"
                         :annotation-selections="annotationSelections"
                         :show-limit-line-labels="showLimitLineLabels"
                         @plotReinitializeCanvas="initCanvas"
@@ -271,7 +271,7 @@ export default {
         return {
             altPressed: false,
             highlights: [],
-            annotations: [],
+            annotatedPoints: [],
             annotationSelections: [],
             lockHighlightPoint: false,
             tickWidth: 0,
@@ -459,7 +459,7 @@ export default {
             }));
             console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`, rawAnnotationsForPlot);
             if (rawAnnotationsForPlot) {
-                this.annotations = this.findAnnotationPoints(rawAnnotationsForPlot);
+                this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
             }
         },
         loadSeriesData(series) {
