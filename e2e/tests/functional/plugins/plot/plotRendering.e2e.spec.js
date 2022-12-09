@@ -51,7 +51,7 @@ test.describe('Plot Integrity Testing @unstable', () => {
         expect(createMineFolderRequests.length).toEqual(0);
     });
 
-    test.only('Plot is rendered when infinity values exist', async ({ page }) => {
+    test('Plot is rendered when infinity values exist', async ({ page }) => {
         // Edit Plot
         await editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject);
 
