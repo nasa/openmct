@@ -84,10 +84,25 @@ async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
         // Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
-    await page.reload({ waitUntil: 'networkidle' });
+
+    // FIXME: Changes to SWG properties should be reflected on save, but they're not?
+    // Thus, navigate away and back to the object.
+    await page.goto('./#/browse/mine');
+    await page.goto(sineWaveGeneratorObject.url);
+
+    await page.locator('c-progress-bar c-telemetry-table__progress-bar').waitFor({
+        state: 'hidden'
+    });
+
+    // FIXME: The progress bar disappears on series data load, not on plot render,
+    // so wait for a half a second before evaluating the canvas.
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(500);
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function getCanvasPixelsWithData(page) {
     const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getCanvasValue', resolve));
 
