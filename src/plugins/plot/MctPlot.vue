@@ -39,32 +39,19 @@
             class="u-contents"
         >
             <y-axis
+                v-for="(yAxisId, index) in yAxesIds"
                 :id="yAxisId"
-                :tick-width="tickWidth"
-                :style="{
-                    left: additionalYAxesIds.length ? (plotWidth - tickWidth + 40) + 'px' : (plotWidth - tickWidth) + 'px'
-                }"
-                @yKeyChanged="setYAxisKey"
-                @tickWidthChanged="onTickWidthChange"
-            />
-            <y-axis
-                v-for="(additionalYAxis, index) in additionalYAxesIds"
-                :id="additionalYAxis.id"
                 :key="`yAxis-${index}`"
+                :visible-y-axes="yAxesIds.length"
                 :tick-width="tickWidth"
-                :style="{
-                    left: additionalYAxesIds.length ? (plotWidth - tickWidth - 3) + 'px' : (plotWidth - tickWidth) + 'px',
-                    'border-right': '1px solid'
-                }"
+                :plot-width="plotWidth"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
             />
         </div>
         <div
             class="gl-plot-wrapper-display-area-and-x-axis"
-            :style="{
-                left: additionalYAxesIds.length ? (plotWidth + 60) + 'px' : (plotWidth + 20) + 'px'
-            }"
+            :style="xAxisStyle"
         >
 
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
@@ -300,13 +287,21 @@ export default {
             isFrozenOnMouseDown: false,
             cursorGuide: this.initCursorGuide,
             gridLines: this.initGridLines,
-            yAxisId: undefined,
-            additionalYAxes: []
+            yAxes: []
         };
     },
     computed: {
-        additionalYAxesIds() {
-            return this.additionalYAxes.filter(yAxis => yAxis.visible === true);
+        xAxisStyle() {
+            let style = `left: ${this.plotWidth + 20}px`;
+
+            if (this.yAxesIds.length > 1) {
+                style = `left: ${this.plotWidth + 60}px`;
+            }
+
+            return style;
+        },
+        yAxesIds() {
+            return this.yAxes.filter(yAxis => yAxis.visible === true).map(yAxis => yAxis.id);
         },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
@@ -360,14 +355,17 @@ export default {
 
         this.config = this.getConfig();
         this.legend = this.config.legend;
-        this.yAxisId = this.config.yAxis.id;
+        this.yAxes = [{
+            id: this.config.yAxis.id,
+            visible: false
+        }];
         if (this.config.additionalYAxes) {
-            this.additionalYAxes = this.config.additionalYAxes.map(yAxis => {
+            this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
                 return {
                     id: yAxis.id,
                     visible: false
                 };
-            });
+            }));
         }
 
         if (this.isNestedWithinAStackedPlot) {
@@ -471,9 +469,9 @@ export default {
         },
 
         setAxisVisibility(yAxisId, visible) {
-            const yAxis = this.additionalYAxes.find(additionalYAxis => additionalYAxis.id === yAxisId);
-            if (yAxis) {
-                yAxis.visible = visible;
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            if (foundYAxis) {
+                foundYAxis.visible = visible;
             }
         },
 

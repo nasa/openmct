@@ -23,9 +23,7 @@
 <div
     v-if="loaded"
     class="gl-plot-axis-area gl-plot-y has-local-controls js-plot-y-axis"
-    :style="{
-        width: (tickWidth + 20) + 'px'
-    }"
+    :style="yAxisStyle"
 >
 
     <div
@@ -83,6 +81,18 @@ export default {
             default() {
                 return 0;
             }
+        },
+        plotWidth: {
+            type: Number,
+            default() {
+                return 0;
+            }
+        },
+        visibleYAxes: {
+            type: Number,
+            default() {
+                return 0;
+            }
         }
     },
     data() {
@@ -93,12 +103,31 @@ export default {
             loaded: false,
             yKeyOptions: [],
             hasSameRangeValue: true,
-            singleSeries: true
+            singleSeries: true,
+            mainYAxisId: null,
+            hasAdditionalYAxes: false
         };
     },
     computed: {
         canShowYAxisLabel() {
             return this.singleSeries === true || this.hasSameRangeValue === true;
+        },
+        yAxisStyle() {
+            const isMainYAxis = this?.id === this.mainYAxisId;
+            let style;
+            const width = `width: ${this.tickWidth + 20}px`;
+            const border = `border-right: 1px solid`;
+            if (isMainYAxis) {
+                if (this.visibleYAxes > 1) {
+                    style = `${width}; left: ${this.plotWidth - this.tickWidth + 40}px`;
+                } else {
+                    style = `${width}; left: ${this.plotWidth - this.tickWidth}px`;
+                }
+            } else {
+                style = `${width}; ${border}; left: ${this.plotWidth - this.tickWidth - 3}px`;
+            }
+
+            return style;
         }
     },
     mounted() {
@@ -112,10 +141,12 @@ export default {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let config = configStore.get(configId);
             if (config) {
-                if (!this.id || this.id === config.yAxis.id) {
-                    this.yAxis = config.yAxis;
-                } else {
+                this.mainYAxisId = config.yAxis.id;
+                this.hasAdditionalYAxes = config?.additionalYAxes.length;
+                if (this.id && this.id !== this.mainYAxisId) {
                     this.yAxis = config.additionalYAxes.find(yAxis => yAxis.id === this.id);
+                } else {
+                    this.yAxis = config.yAxis;
                 }
 
                 this.config = config;

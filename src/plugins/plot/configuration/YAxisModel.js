@@ -282,6 +282,27 @@ export default class YAxisModel extends Model {
         // Update the series collection labels and formatting
         this.updateFromSeries(this.seriesCollection);
     }
+
+    /**
+     * For a given series collection, get the metadata of the current yKey for each series.
+     * Then return first available value of the given property from the metadata.
+     * @param {import('./SeriesCollection').default} series
+     * @param {String} property
+     */
+    getMetadataValueByProperty(series, property) {
+        return series.map(s => (s.metadata ? s.metadata.value(s.get('yKey'))[property] : ''))
+            .reduce((a, b) => {
+                if (a === undefined) {
+                    return b;
+                }
+
+                if (a === b) {
+                    return a;
+                }
+
+                return '';
+            }, undefined);
+    }
     /**
      * Update yAxis format, values, and label from known series.
      * @param {import('./SeriesCollection').default} seriesCollection
@@ -314,41 +335,17 @@ export default class YAxisModel extends Model {
         }
 
         this.set('values', yMetadata.values);
+
         if (!label) {
-            const labelName = seriesForThisYAxis
-                .map(s => (s.metadata ? s.metadata.value(s.get('yKey')).name : ''))
-                .reduce((a, b) => {
-                    if (a === undefined) {
-                        return b;
-                    }
-
-                    if (a === b) {
-                        return a;
-                    }
-
-                    return '';
-                }, undefined);
-
+            const labelName = this.getMetadataValueByProperty(seriesForThisYAxis, 'name');
             if (labelName) {
                 this.set('label', labelName);
 
                 return;
             }
 
-            const labelUnits = seriesForThisYAxis
-                .map(s => (s.metadata ? s.metadata.value(s.get('yKey')).units : ''))
-                .reduce((a, b) => {
-                    if (a === undefined) {
-                        return b;
-                    }
-
-                    if (a === b) {
-                        return a;
-                    }
-
-                    return '';
-                }, undefined);
-
+            //if the name is not available, set the units as the label
+            const labelUnits = this.getMetadataValueByProperty(seriesForThisYAxis, 'units');
             if (labelUnits) {
                 this.set('label', labelUnits);
 

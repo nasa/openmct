@@ -106,7 +106,7 @@ export default {
         axisId: {
             type: Number,
             default() {
-                return undefined;
+                return null;
             }
         },
         position: {
@@ -152,10 +152,10 @@ export default {
             }
 
             if (this.axisType === 'yAxis') {
-                if (!this.axisId || this.axisId === config.yAxis.id) {
-                    return config.yAxis;
-                } else {
+                if (this.axisId && this.axisId !== config.yAxis.id) {
                     return config.additionalYAxes.find(axis => axis.id === this.axisId);
+                } else {
+                    return config.yAxis;
                 }
             } else {
                 return config[this.axisType];

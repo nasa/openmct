@@ -513,7 +513,7 @@ export default {
             );
         },
         drawSeries(id) {
-            const end = parseInt(id, 10);
+            const end = Number(id);
             const start = end - 1;
             this.lines.slice(start, end).forEach(this.drawLine, this);
             this.pointSets.slice(start, end).forEach(this.drawPoints, this);
