@@ -62,15 +62,14 @@ test.describe('Plot Integrity Testing @unstable', () => {
 });
 
 /**
- * This common function creates a domain object with the default options. It is the preferred way of creating objects
- * in the e2e suite when uninterested in properties of the objects themselves.
+ * This function edits a sine wave generator with the default options and enables the infinity values option.
  *
  * @param {import('@playwright/test').Page} page
- * @param {CreateObjectOptions} options
- * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
+ * @param {import('../../../../appActions').CreateObjectInfo} sineWaveGeneratorObject
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the edited domain object.
  */
 async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
-    await page.goto(sineWaveGeneratorObject.url, { waitUntil: 'networkidle' });
+    await page.goto(sineWaveGeneratorObject.url);
     // Edit LAD table
     await page.locator('[title="More options"]').click();
     await page.locator('[title="Edit properties of this object."]').click();

@@ -10,7 +10,6 @@
         <span
             class="c-toggle-switch__slider"
             role="switch"
-            :aria-labelledby="id"
             :aria-label="name"
         ></span>
     </label>
