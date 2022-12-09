@@ -203,7 +203,6 @@ export default {
             this.loadNewAnnotations(this.selectedAnnotations);
         },
         async targetObjectChanged(target) {
-            // TODO this method needs to handle multiple targets selected. MCTChart should be sending both targets as part of the selection
             const targetID = this.openmct.objects.makeKeyString(target.identifier);
             const lastLocalAnnotationCreation = this.lastLocalAnnotationCreations[targetID] ?? 0;
             if (lastLocalAnnotationCreation < target.annotationLastCreated) {
@@ -220,8 +219,6 @@ export default {
                     return _.isEqual(fetchedTargetDetails, selectedTargetDetails);
                 });
                 this.loadNewAnnotations(filteredAnnotationsForSelection);
-            } else {
-                console.debug(`🍇 Target object annotation did not change for ${targetID}`);
             }
         }
     }

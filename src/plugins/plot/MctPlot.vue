@@ -457,9 +457,12 @@ export default {
                 const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.keyString);
                 rawAnnotationsForPlot.push(...seriesAnnotations);
             }));
-            console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`, rawAnnotationsForPlot);
+            const filteredNonDeletedAnnotations = rawAnnotationsForPlot.filter((annotation) => {
+                return !annotation._deleted;
+            });
+            console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`, filteredNonDeletedAnnotations);
             if (rawAnnotationsForPlot) {
-                this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
+                this.annotatedPoints = this.findAnnotationPoints(filteredNonDeletedAnnotations);
             }
         },
         loadSeriesData(series) {
@@ -915,7 +918,7 @@ export default {
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
 
-            if (this.isMouseClick()) {
+            if (this.isMouseClick() && event.shiftKey) {
                 this.lockHighlightPoint = !this.lockHighlightPoint;
                 this.$emit('lockHighlightPoint', this.lockHighlightPoint);
             }
@@ -1153,20 +1156,24 @@ export default {
             this.marquee = null;
         },
 
-        onAnnotationChange(annotation) {
-            console.debug(`👮‍♀️ Tag or annotation added for a chart, TODO, need to check for nearby annotations`, annotation);
-            const annotations = [annotation];
+        onAnnotationChange(annotations) {
+            console.debug(`👮‍♀️ Tag or annotation added or deleted for a chart, TODO, need to check for nearby annotations`, annotations);
+            const nonDeletedAnnotations = annotations.filter(annotation => !annotation._deleted);
+            if (nonDeletedAnnotations.length === 0) {
+                return;
+            }
+
             if (this.marquee) {
                 this.marquee.annotationEvent = false;
                 this.endMarquee();
             }
 
             this.loadAnnotations();
-            const { targetDetails, targetDomainObjects} = this.prepareExistingAnnotationSelection(annotations);
+            const { targetDetails, targetDomainObjects} = this.prepareExistingAnnotationSelection(nonDeletedAnnotations);
             this.selectPlotAnnotations({
                 targetDetails,
                 targetDomainObjects,
-                annotations
+                annotations: nonDeletedAnnotations
             });
         },
 

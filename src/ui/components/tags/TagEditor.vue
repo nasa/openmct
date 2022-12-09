@@ -152,15 +152,15 @@ export default {
             this.userAddingTag = true;
         },
         async tagRemoved(tagToRemove) {
-            // Soft delete annotations that match tag instead
+            // Soft delete annotations that match tag instead (that aren't already deleted)
             const annotationsToDelete = this.annotations.filter((annotation) => {
-                return annotation.tags.includes(tagToRemove);
+                return annotation.tags.includes(tagToRemove) && !annotation._deleted;
             });
             if (annotationsToDelete) {
                 await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
                 this.$emit('tags-updated', annotationsToDelete);
                 if (this.onTagChange) {
-                    this.onTagChange();
+                    this.onTagChange(this.annotations);
                 }
             }
         },
@@ -186,7 +186,7 @@ export default {
 
             this.$emit('tags-updated', createdAnnotation);
             if (this.onTagChange) {
-                this.onTagChange(createdAnnotation);
+                this.onTagChange([createdAnnotation]);
             }
         }
     }
