@@ -636,7 +636,6 @@ export default {
             }
         },
         drawAnnotationSelections() {
-            console.debug(`👩‍🎨 ${this.annotationSelections.length} annotation selections to draw...`);
             if (this.annotationSelections && this.annotationSelections.length) {
                 this.annotationSelections.forEach(this.drawAnnotationSelection, this);
             }

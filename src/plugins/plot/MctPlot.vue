@@ -723,13 +723,28 @@ export default {
             });
 
             let targetDetails = {};
+            const uniqueBoundsAnnotations = [];
             annotations.forEach(annotation => {
                 Object.entries(annotation.targets).forEach(([key, value]) => {
                     targetDetails[key] = value;
                 });
-            });
 
-            this.marqueeAnnotations(annotations);
+                const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some(existingAnnotation => {
+                    const existingBoundingBox = Object.values(existingAnnotation.targets)[0];
+                    const newBoundingBox = Object.values(annotation.targets)[0];
+
+                    return (existingBoundingBox.minX === newBoundingBox.minX
+                        && existingBoundingBox.minY === newBoundingBox.minY
+                        && existingBoundingBox.maxX === newBoundingBox.maxX
+                        && existingBoundingBox.maxY === newBoundingBox.maxY);
+
+                });
+                if (!boundingBoxAlreadyAdded) {
+                    uniqueBoundsAnnotations.push(annotation);
+                }
+            });
+            console.debug(`👩‍🎨 ${uniqueBoundsAnnotations.length} annotation selections to draw...`);
+            this.marqueeAnnotations(uniqueBoundsAnnotations);
 
             return {
                 targetDomainObjects,
