@@ -413,7 +413,6 @@ describe("the plugin", function () {
             });
             yAxisElement.$emit('yKeyChanged', 'test-key');
             config.yAxis.seriesCollection.models.forEach((plotSeries) => {
-                console.log(plotSeries.model.yKey);
                 expect(plotSeries.model.yKey).toBe('test-key');
             });
         });
