@@ -533,11 +533,24 @@ export default {
             );
         },
         drawSeries(id) {
-            const end = Number(id);
-            const start = end - 1;
-            this.lines.slice(start, end).forEach(this.drawLine, this);
-            this.pointSets.slice(start, end).forEach(this.drawPoints, this);
-            this.alarmSets.slice(start, end).forEach(this.drawAlarmPoints, this);
+            const mainYAxisId = this.config.yAxis.get('id');
+            function matchByYAxisId(item) {
+                const series = item.series;
+                if (series) {
+                    const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
+
+                    return seriesYAxisId === id;
+                }
+
+                return false;
+            }
+
+            const lines = this.lines.filter(matchByYAxisId);
+            lines.forEach(this.drawLine, this);
+            const pointSets = this.pointSets.filter(matchByYAxisId);
+            pointSets.forEach(this.drawPoints, this);
+            const alarmSets = this.alarmSets.filter(matchByYAxisId);
+            alarmSets.forEach(this.drawAlarmPoints, this);
         },
         drawLimitLines() {
             this.config.series.models.forEach(series => {
