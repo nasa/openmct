@@ -76,10 +76,10 @@
                             name: data.name,
                             utc: nextStep,
                             yesterday: nextStep - 60 * 60 * 24 * 1000,
-                            sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
+                            sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness, data.infinityValues),
                             wavelengths: wavelengths(),
                             intensities: intensities(),
-                            cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
+                            cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness, data.infinityValues)
                         }
                     });
                     nextStep += step;
@@ -117,6 +117,7 @@
         var phase = request.phase;
         var randomness = request.randomness;
         var loadDelay = Math.max(request.loadDelay, 0);
+        var infinityValues = request.infinityValues;
 
         var step = 1000 / dataRateInHz;
         var nextStep = start - (start % step) + step;
@@ -127,10 +128,10 @@
             data.push({
                 utc: nextStep,
                 yesterday: nextStep - 60 * 60 * 24 * 1000,
-                sin: sin(nextStep, period, amplitude, offset, phase, randomness),
+                sin: sin(nextStep, period, amplitude, offset, phase, randomness, infinityValues),
                 wavelengths: wavelengths(),
                 intensities: intensities(),
-                cos: cos(nextStep, period, amplitude, offset, phase, randomness)
+                cos: cos(nextStep, period, amplitude, offset, phase, randomness, infinityValues)
             });
         }
 
@@ -155,12 +156,20 @@
         });
     }
 
-    function cos(timestamp, period, amplitude, offset, phase, randomness) {
+    function cos(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
+        if (infinityValues && Math.random() > 0.5) {
+            return Number.POSITIVE_INFINITY;
+        }
+
         return amplitude
             * Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
 
-    function sin(timestamp, period, amplitude, offset, phase, randomness) {
+    function sin(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
+        if (infinityValues && Math.random() > 0.5) {
+            return Number.POSITIVE_INFINITY;
+        }
+
         return amplitude
             * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
