@@ -686,7 +686,8 @@ export default {
         },
         drawRectangles(yAxisId) {
             if (this.rectangles) {
-                this.rectangles.forEach(this.drawRectangle.bind(this, yAxisId), this);
+                const rectangles = this.rectangles.filter(this.matchByYAxisId.bind(this, yAxisId));
+                rectangles.forEach(this.drawRectangle.bind(this, yAxisId), this);
             }
         },
         drawRectangle(yAxisId, rect) {
