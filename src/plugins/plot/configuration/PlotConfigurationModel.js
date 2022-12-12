@@ -28,7 +28,7 @@ import YAxisModel from "./YAxisModel";
 import LegendModel from "./LegendModel";
 
 const MAX_Y_AXES = 3;
-
+const MAIN_Y_AXES_ID = 1;
 /**
  * PlotConfiguration model stores the configuration of a plot and some
  * limited state.  The indiidual parts of the plot configuration model
@@ -61,32 +61,31 @@ export default class PlotConfigurationModel extends Model {
             model: options.model.yAxis,
             plot: this,
             openmct: options.openmct,
-            id: options.model.yAxis.id || 1
+            id: options.model.yAxis.id || MAIN_Y_AXES_ID
         });
-        //Add any axes in addition to the yAxis above
+        //Add any axes in addition to the main yAxis above - we must always have at least 1 y-axis
+        //Addition axes ids will be the MAIN_Y_AXES_ID + x where x is between 1 and max_additional_axes
         const max_additional_axes = MAX_Y_AXES - 1;
         this.additionalYAxes = [];
         if (Array.isArray(options.model.additionalYAxes)) {
-            options.model.additionalYAxes.forEach((yAxis) => {
-                if (this.additionalYAxes.length >= max_additional_axes) {
-                    return;
-                }
-
+            const maxLength = Math.min(max_additional_axes, options.model.additionalYAxes.length);
+            for (let yAxisCount = 0; yAxisCount < maxLength; yAxisCount++) {
+                const yAxis = options.model.additionalYAxes[yAxisCount];
                 this.additionalYAxes.push(new YAxisModel({
                     model: yAxis,
                     plot: this,
                     openmct: options.openmct,
-                    id: yAxis.id || this.additionalYAxes.length + 2
+                    id: yAxis.id || (MAIN_Y_AXES_ID + yAxisCount + 1)
                 }));
-            });
+            }
         }
 
-        // If the config doesn't have info about all additional axes, we add them
+        // If the saved options config doesn't include information about all the additional axes, we initialize the remaining here
         for (let axesCount = this.additionalYAxes.length; axesCount < max_additional_axes; axesCount++) {
             this.additionalYAxes.push(new YAxisModel({
                 plot: this,
                 openmct: options.openmct,
-                id: axesCount + 2
+                id: MAIN_Y_AXES_ID + axesCount + 1
             }));
         }
         // end add additional axes

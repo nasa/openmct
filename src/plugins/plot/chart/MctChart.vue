@@ -102,12 +102,14 @@ export default {
         this.offset = {
             [yAxisId]: {}
         };
+        this.listenTo(this.config.yAxis, 'change:key', this.resetOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
+        this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
         if (this.config.additionalYAxes.length) {
             this.config.additionalYAxes.forEach(yAxis => {
                 const id = yAxis.get('id');
                 this.offset[id] = {};
                 this.listenTo(yAxis, 'change', this.updateLimitsAndDraw);
-                this.listenTo(this.config.yAxis, 'change:key', this.clearOffset.bind(this, id), this);
+                this.listenTo(this.config.yAxis, 'change:key', this.resetOffsetAndSeriesDataForYAxis.bind(this, id), this);
             });
         }
 
@@ -123,8 +125,6 @@ export default {
 
         this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
-        this.listenTo(this.config.yAxis, 'change:key', this.clearOffset.bind(this, 1), this);
-        this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
 
         this.listenTo(this.config.xAxis, 'change', this.updateLimitsAndDraw);
         this.config.series.forEach(this.onSeriesAdd, this);
@@ -237,21 +237,41 @@ export default {
             this.limitLines.forEach(line => line.destroy());
             DrawLoader.releaseDrawAPI(this.drawAPI);
         },
-        clearOffset(yAxisId) {
+        resetOffsetAndSeriesDataForYAxis(yAxisId) {
             delete this.offset[yAxisId].x;
             delete this.offset[yAxisId].y;
             delete this.offset[yAxisId].xVal;
             delete this.offset[yAxisId].yVal;
             delete this.offset[yAxisId].xKey;
             delete this.offset[yAxisId].yKey;
+            const mainYAxisId = this.config.yAxis.get('id');
+
             this.lines.forEach(function (line) {
-                line.reset();
+                const series = line.series;
+                if (series) {
+                    const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
+                    if (seriesYAxisId === yAxisId) {
+                        line.reset();
+                    }
+                }
             });
             this.limitLines.forEach(function (line) {
-                line.reset();
+                const series = line.series;
+                if (series) {
+                    const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
+                    if (seriesYAxisId === yAxisId) {
+                        line.reset();
+                    }
+                }
             });
             this.pointSets.forEach(function (pointSet) {
-                pointSet.reset();
+                const series = pointSet.series;
+                if (series) {
+                    const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
+                    if (seriesYAxisId === yAxisId) {
+                        pointSet.reset();
+                    }
+                }
             });
         },
         setOffset(offsetPoint, index, series) {
