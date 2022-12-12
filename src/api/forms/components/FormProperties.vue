@@ -73,7 +73,7 @@
             tabindex="0"
             class="c-button js-cancel-button"
             aria-label="Cancel"
-            @click="onDismiss"
+            @click="onCancel"
         >
             {{ cancelLabel }}
         </button>
@@ -164,8 +164,8 @@ export default {
 
             this.$emit('onChange', data);
         },
-        onDismiss() {
-            this.$emit('onDismiss');
+        onCancel() {
+            this.$emit('onCancel');
         },
         onSave() {
             this.$emit('onSave');

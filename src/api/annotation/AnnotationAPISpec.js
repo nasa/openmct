@@ -94,7 +94,6 @@ describe("The Annotation API", () => {
         openmct.startHeadless();
     });
     afterEach(async () => {
-        openmct.objects.providers = {};
         await resetApplicationState(openmct);
     });
     it("is defined", () => {
@@ -184,6 +183,11 @@ describe("The Annotation API", () => {
             const results = await openmct.annotation.searchForTags('S');
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
+        });
+        it("returns no tags for empty search", async () => {
+            const results = await openmct.annotation.searchForTags('q');
+            expect(results).toBeDefined();
+            expect(results.length).toEqual(0);
         });
     });
 });
