@@ -668,7 +668,8 @@ export default {
         },
         drawHighlights(yAxisId) {
             if (this.highlights && this.highlights.length) {
-                this.highlights.forEach(this.drawHighlight.bind(this, yAxisId), this);
+                const highlights = this.highlights.filter(this.matchByYAxisId.bind(this, yAxisId));
+                highlights.forEach(this.drawHighlight.bind(this, yAxisId), this);
             }
         },
         drawHighlight(yAxisId, highlight) {
