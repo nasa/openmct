@@ -283,7 +283,7 @@ export default {
                 await this.addNewEmbed(objectPath);
             }
 
-            this.timestampAndUpdate();
+            await this.timestampAndUpdate();
         },
         findPositionInArray(array, id) {
             let position = -1;
@@ -316,14 +316,14 @@ export default {
                 pageId: null
             });
         },
-        removeEmbed(id) {
+        async removeEmbed(id) {
             const embedPosition = this.findPositionInArray(this.entry.embeds, id);
             // TODO: remove notebook snapshot object using object remove API
             this.entry.embeds.splice(embedPosition, 1);
 
-            this.timestampAndUpdate();
+            await this.timestampAndUpdate();
         },
-        updateEmbed(newEmbed) {
+        async updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
                 const found = (e.id === newEmbed.id);
                 if (found) {
@@ -333,7 +333,7 @@ export default {
                 return found;
             });
 
-            this.timestampAndUpdate();
+            await this.timestampAndUpdate();
         },
         async timestampAndUpdate() {
             const user = await this.openmct.user.getCurrentUser();
@@ -350,12 +350,12 @@ export default {
             console.log('nb entry: editingEntry');
             this.$emit('editingEntry');
         },
-        updateEntryValue($event) {
+        async updateEntryValue($event) {
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
-                console.log('nb entry: updateEntryValue', value);
+                console.log('nb entry: updateEntryValue - prev val is empty, new val', this.entry.text === '', value);
                 this.entry.text = value;
-                this.timestampAndUpdate();
+                await this.timestampAndUpdate();
             } else {
                 console.log('nb entry: updateEntryValue, same value not updating');
                 this.$emit('cancelEdit');

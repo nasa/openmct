@@ -260,7 +260,7 @@ class CouchObjectProvider {
      */
     #checkResponse(response, intermediateResponse, key) {
         let requestSuccess = false;
-        const id = response ? response.id : undefined;
+        const id = response?.id;
         let rev;
 
         if (response && response.ok) {
@@ -300,12 +300,9 @@ class CouchObjectProvider {
             if (isNotebookOrAnnotationType(object)) {
                 // check if the object is currently being edited, if so, don't update revision so a conflict will be thrown
                 // and handled with our notebook conflict resolution
-                if (this.openmct.objects.isTransactionActive()) {
-                    let dirtyObject = this.openmct.objects.transaction.getDirtyObject(object.identifier);
-
-                    if (dirtyObject) {
-                        return object;
-                    }
+                if (this.openmct.objects.isTransactionActive()
+                    && this.openmct.objects.transaction.getDirtyObject(object.identifier)) {
+                    return object;
                 }
 
                 //Temporary measure until object sync is supported for all object types
@@ -701,6 +698,7 @@ class CouchObjectProvider {
     }
 
     update(model) {
+        console.log('couchobjectprovider.js: update', model);
         let intermediateResponse = this.#getIntermediateResponse();
         const key = model.identifier.key;
         model = this.toPersistableModel(model);

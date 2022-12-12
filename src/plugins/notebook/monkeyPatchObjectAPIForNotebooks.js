@@ -4,9 +4,10 @@ import _ from 'lodash';
 export default function (openmct) {
     const apiSave = openmct.objects.save.bind(openmct.objects);
 
-    openmct.objects.save = async (domainObject) => {
-        if (!isNotebookOrAnnotationType(domainObject)) {
-            return apiSave(domainObject);
+    openmct.objects.save = async (saveObject) => {
+        let domainObject = cloneObject(saveObject);
+        if (!isNotebookOrAnnotationType(saveObject)) {
+            return apiSave(saveObject);
         }
 
         // const isNewMutable = !domainObject.isMutable;
@@ -15,7 +16,7 @@ export default function (openmct) {
 
         try {
             console.log('monkeypatch save');
-            result = await apiSave(domainObject);
+            result = await apiSave(saveObject);
             // result = await apiSave(localMutable);
         } catch (error) {
             console.log('monkeypatch save error', error);
@@ -48,7 +49,7 @@ function resolveConflicts(domainObject, openmct) {
 }
 
 async function resolveNotebookTagConflicts(localAnnotation, openmct) {
-    const localClonedAnnotation = structuredClone(localAnnotation);
+    const localClonedAnnotation = cloneObject(localAnnotation);
     const remoteMutable = await openmct.objects.getMutable(localClonedAnnotation.identifier);
 
     // should only be one annotation per targetID, entryID, and tag; so for sanity, ensure we have the
@@ -86,7 +87,7 @@ async function resolveNotebookEntryConflicts(domainObject, openmct) {
     // if (localMutable.configuration.entries) {
         // const localEntries = structuredClone(localMutable.configuration.entries);
         // const remoteObject = await openmct.objects.remoteGet(localMutable.identifier);
-        const localEntries = structuredClone(domainObject.configuration.entries);
+        const localEntries = domainObject.configuration.entries;
         const remoteObject = await openmct.objects.remoteGet(domainObject.identifier);
 
         return applyLocalEntries(remoteObject, localEntries, openmct);
@@ -134,4 +135,12 @@ function applyLocalEntries(remoteObject, entries, openmct) {
             }
         });
     });
+}
+
+function cloneObject(object) {
+    if (typeof window.structuredClone === 'function') {
+        return structuredClone(object);
+    } else {
+        return JSON.parse(JSON.stringify(object));
+    }
 }

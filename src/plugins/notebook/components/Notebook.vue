@@ -329,7 +329,7 @@ export default {
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
-        this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.handleObservedUpdates);
+        this.startObservingEntries();
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -356,6 +356,12 @@ export default {
         });
     },
     methods: {
+        startObservingEntries() {
+            this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
+        },
+        stopObservingEntries() {
+            this.unobserveEntries();
+        },
         changeSectionPage(newParams, oldParams, changedParams) {
             if (isNotebookViewType(newParams.view)) {
                 return;
@@ -403,11 +409,6 @@ export default {
                     annotationArray.push(mutableAnnotation);
                 }
             });
-        },
-        handleObservedUpdates() {
-            if (!this.activeTransaction) {
-                this.filterAndSortEntries();
-            }
         },
         filterAndSortEntries() {
             const filterTime = Date.now();
@@ -788,6 +789,7 @@ export default {
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
+            console.log('newEntry, id, entries', id, JSON.parse(JSON.stringify(this.domainObject.configuration.entries)));
             this.focusEntryId = id;
             this.filterAndSortEntries();
         },
@@ -871,8 +873,10 @@ export default {
             setDefaultNotebookSectionId(defaultNotebookSectionId);
         },
         async updateEntry(entry) {
+            console.log('update entry', entry);
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
+            console.log('entry pos', entry, entryPos);
             entries[entryPos] = entry;
 
             await this.updateEntries(entries);
@@ -927,6 +931,7 @@ export default {
         startTransaction() {
             console.log('notebook: startTransaction');
             if (!this.openmct.objects.isTransactionActive()) {
+                this.stopObservingEntries();
                 this.activeTransaction = true;
                 console.log('notebook: startTransaction - starting a new transaction');
                 this.transaction = this.openmct.objects.startTransaction();
@@ -937,7 +942,13 @@ export default {
             if (this.activeTransaction) {
                 this.savingTransaction = true;
                 console.log('notebook: saveTransaction - saving a transaction');
-                await this.transaction.commit();
+
+                try {
+                    await this.transaction.commit();
+                } catch (error) {
+                    console.log('error committing', error);
+                }
+
                 console.log('notebook: saveTransaction - done saving');
                 this.endTransaction();
             }
@@ -956,6 +967,7 @@ export default {
             this.activeTransaction = false;
             this.transaction = undefined;
             this.savingTransaction = false;
+            this.startObservingEntries();
         }
     }
 };

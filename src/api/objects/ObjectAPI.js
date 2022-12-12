@@ -369,6 +369,7 @@ export default class ObjectAPI {
      *          has been saved, or be rejected if it cannot be saved
      */
     async save(domainObject) {
+        console.log('save', JSON.parse(JSON.stringify(domainObject)));
         const provider = this.getProvider(domainObject.identifier);
         let result;
         let lastPersistedTime;
@@ -413,7 +414,7 @@ export default class ObjectAPI {
                 savedObjectPromise.then(response => {
                     savedResolve(response);
                 }).catch((error) => {
-                    if (lastPersistedTime !== undefined) {
+                    if (!isNewObject) {
                         this.#mutate(domainObject, 'persisted', lastPersistedTime);
                     }
 
@@ -575,6 +576,7 @@ export default class ObjectAPI {
         this.#mutate(domainObject, path, value);
 
         if (this.isTransactionActive()) {
+            console.log('objectAPI: mutate', JSON.parse(JSON.stringify(domainObject)), path, value);
             this.transaction.add(domainObject);
         } else {
             this.save(domainObject);

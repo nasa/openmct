@@ -41,6 +41,7 @@ export default class Transaction {
         const save = this.objectAPI.save.bind(this.objectAPI);
 
         Object.values(this.dirtyObjects).forEach(object => {
+            console.log('transaction: commit, objects', object);
             promiseArray.push(this.createDirtyObjectPromise(object, save));
         });
 
