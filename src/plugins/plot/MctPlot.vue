@@ -457,12 +457,9 @@ export default {
                 const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.keyString);
                 rawAnnotationsForPlot.push(...seriesAnnotations);
             }));
-            const filteredNonDeletedAnnotations = rawAnnotationsForPlot.filter((annotation) => {
-                return !annotation._deleted;
-            });
-            console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`, filteredNonDeletedAnnotations);
+            console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`, rawAnnotationsForPlot);
             if (rawAnnotationsForPlot) {
-                this.annotatedPoints = this.findAnnotationPoints(filteredNonDeletedAnnotations);
+                this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
             }
         },
         loadSeriesData(series) {
@@ -707,9 +704,13 @@ export default {
         gatherNearbyAnnotations() {
             const nearbyAnnotations = [];
             this.config.series.models.forEach(series => {
-                if (series.closest.annotations) {
-                    series.closest.annotations.forEach(closeAnnotation => {
-                        if (nearbyAnnotations.indexOf(closeAnnotation) === -1) {
+                if (series.closest.annotationsById) {
+                    Object.values(series.closest.annotationsById).forEach(closeAnnotation => {
+                        const addedAnnotationAlready = nearbyAnnotations.some(annotation => {
+                            return _.isEqual(annotation.targets, closeAnnotation.targets)
+                            && _.isEqual(annotation.tags, closeAnnotation.tags);
+                        });
+                        if (!addedAnnotationAlready) {
                             nearbyAnnotations.push(closeAnnotation);
                         }
                     });
@@ -1091,12 +1092,15 @@ export default {
                         }
 
                         if (rawAnnotation) {
-                            if (!seriesDatum.annotations) {
-                                seriesDatum.annotations = [];
+                            if (!seriesDatum.annotationsById) {
+                                seriesDatum.annotationsById = {};
                             }
 
-                            seriesDatum.annotations.push(rawAnnotation);
+                            const annotationKeyString = this.openmct.objects.makeKeyString(rawAnnotation.identifier);
+                            seriesDatum.annotationsById[annotationKeyString] = rawAnnotation;
+                            console.debug(`🧚‍♂️ seriesDatum.annotationsById now sized at ${Object.values(seriesDatum.annotationsById).length}:`, seriesDatum.annotationsById);
                         }
+
                     });
                     if (searchResults.length) {
                         seriesKDTrees.push(searchResults);
@@ -1158,10 +1162,6 @@ export default {
 
         onAnnotationChange(annotations) {
             console.debug(`👮‍♀️ Tag or annotation added or deleted for a chart, TODO, need to check for nearby annotations`, annotations);
-            const nonDeletedAnnotations = annotations.filter(annotation => !annotation._deleted);
-            if (nonDeletedAnnotations.length === 0) {
-                return;
-            }
 
             if (this.marquee) {
                 this.marquee.annotationEvent = false;
@@ -1169,12 +1169,6 @@ export default {
             }
 
             this.loadAnnotations();
-            const { targetDetails, targetDomainObjects} = this.prepareExistingAnnotationSelection(nonDeletedAnnotations);
-            this.selectPlotAnnotations({
-                targetDetails,
-                targetDomainObjects,
-                annotations: nonDeletedAnnotations
-            });
         },
 
         zoom(zoomDirection, zoomFactor) {

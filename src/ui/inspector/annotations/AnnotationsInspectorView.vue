@@ -173,12 +173,16 @@ export default {
                 return annotationB.modified - annotationA.modified;
             });
 
+            const mutableAnnotations = sortedAnnotations.map((annotation) => {
+                return this.openmct.objects.toMutable(annotation);
+            });
+
             if (sortedAnnotations.length < this.loadedAnnotations.length) {
-                this.loadedAnnotations = this.loadedAnnotations.slice(0, sortedAnnotations.length);
+                this.loadedAnnotations = this.loadedAnnotations.slice(0, mutableAnnotations.length);
             }
 
-            for (let index = 0; index < sortedAnnotations.length; index += 1) {
-                this.$set(this.loadedAnnotations, index, sortedAnnotations[index]);
+            for (let index = 0; index < mutableAnnotations.length; index += 1) {
+                this.$set(this.loadedAnnotations, index, mutableAnnotations[index]);
             }
         },
         updateSelection(selection) {
