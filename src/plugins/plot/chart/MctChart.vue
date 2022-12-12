@@ -244,34 +244,18 @@ export default {
             delete this.offset[yAxisId].yVal;
             delete this.offset[yAxisId].xKey;
             delete this.offset[yAxisId].yKey;
-            const mainYAxisId = this.config.yAxis.get('id');
 
-            this.lines.forEach(function (line) {
-                const series = line.series;
-                if (series) {
-                    const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
-                    if (seriesYAxisId === yAxisId) {
-                        line.reset();
-                    }
-                }
+            const lines = this.lines.filter(this.matchByYAxisId.bind(this, yAxisId));
+            lines.forEach(function (line) {
+                line.reset();
             });
-            this.limitLines.forEach(function (line) {
-                const series = line.series;
-                if (series) {
-                    const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
-                    if (seriesYAxisId === yAxisId) {
-                        line.reset();
-                    }
-                }
+            const limitLines = this.limitLines.filter(this.matchByYAxisId.bind(this, yAxisId));
+            limitLines.forEach(function (line) {
+                line.reset();
             });
-            this.pointSets.forEach(function (pointSet) {
-                const series = pointSet.series;
-                if (series) {
-                    const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
-                    if (seriesYAxisId === yAxisId) {
-                        pointSet.reset();
-                    }
-                }
+            const pointSets = this.pointSets.filter(this.matchByYAxisId.bind(this, yAxisId));
+            pointSets.forEach(function (pointSet) {
+                pointSet.reset();
             });
         },
         setOffset(offsetPoint, index, series) {
@@ -532,24 +516,25 @@ export default {
                 origin
             );
         },
-        drawSeries(id) {
+        matchByYAxisId(id, item) {
             const mainYAxisId = this.config.yAxis.get('id');
-            function matchByYAxisId(item) {
-                const series = item.series;
-                if (series) {
-                    const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
+            let matchesId = false;
 
-                    return seriesYAxisId === id;
-                }
+            const series = item.series;
+            if (series) {
+                const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
 
-                return false;
+                matchesId = seriesYAxisId === id;
             }
 
-            const lines = this.lines.filter(matchByYAxisId);
+            return matchesId;
+        },
+        drawSeries(id) {
+            const lines = this.lines.filter(this.matchByYAxisId.bind(this, id));
             lines.forEach(this.drawLine, this);
-            const pointSets = this.pointSets.filter(matchByYAxisId);
+            const pointSets = this.pointSets.filter(this.matchByYAxisId.bind(this, id));
             pointSets.forEach(this.drawPoints, this);
-            const alarmSets = this.alarmSets.filter(matchByYAxisId);
+            const alarmSets = this.alarmSets.filter(this.matchByYAxisId.bind(this, id));
             alarmSets.forEach(this.drawAlarmPoints, this);
         },
         drawLimitLines() {
