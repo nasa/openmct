@@ -34,23 +34,24 @@
         @legendHoverChanged="legendHoverChanged"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis
-            v-if="seriesModels.length > 0"
-            :tick-width="tickWidth"
-            :single-series="seriesModels.length === 1"
-            :has-same-range-value="hasSameRangeValue"
-            :series-model="seriesModels[0]"
-            :style="{
-                left: (plotWidth - tickWidth) + 'px'
-            }"
-            @yKeyChanged="setYAxisKey"
-            @tickWidthChanged="onTickWidthChange"
-        />
+        <div
+            v-if="seriesModels.length"
+            class="u-contents"
+        >
+            <y-axis
+                v-for="(yAxisId, index) in yAxesIds"
+                :id="yAxisId"
+                :key="`yAxis-${index}`"
+                :visible-y-axes="yAxesIds.length"
+                :tick-width="tickWidth"
+                :plot-width="plotWidth"
+                @yKeyChanged="setYAxisKey"
+                @tickWidthChanged="onTickWidthChange"
+            />
+        </div>
         <div
             class="gl-plot-wrapper-display-area-and-x-axis"
-            :style="{
-                left: (plotWidth + 20) + 'px'
-            }"
+            :style="xAxisStyle"
         >
 
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
@@ -284,12 +285,24 @@ export default {
             isTimeOutOfSync: false,
             showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
-            hasSameRangeValue: true,
             cursorGuide: this.initCursorGuide,
-            gridLines: this.initGridLines
+            gridLines: this.initGridLines,
+            yAxes: []
         };
     },
     computed: {
+        xAxisStyle() {
+            let style = `left: ${this.plotWidth + 20}px`;
+
+            if (this.yAxesIds.length > 1) {
+                style = `left: ${this.plotWidth + 60}px`;
+            }
+
+            return style;
+        },
+        yAxesIds() {
+            return this.yAxes.filter(yAxis => yAxis.visible === true).map(yAxis => yAxis.id);
+        },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
 
@@ -342,6 +355,18 @@ export default {
 
         this.config = this.getConfig();
         this.legend = this.config.legend;
+        this.yAxes = [{
+            id: this.config.yAxis.id,
+            visible: false
+        }];
+        if (this.config.additionalYAxes) {
+            this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
+                return {
+                    id: yAxis.id,
+                    visible: false
+                };
+            }));
+        }
 
         if (this.isNestedWithinAStackedPlot) {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -417,12 +442,13 @@ export default {
             return config;
         },
         addSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.setAxisVisibility(yAxisId, true);
             this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
             }, this);
             this.listenTo(series, 'change:yKey', () => {
-                this.checkSameRangeValue();
                 this.loadSeriesData(series);
             }, this);
 
@@ -430,20 +456,21 @@ export default {
                 this.loadSeriesData(series);
             }, this);
 
-            this.checkSameRangeValue();
             this.loadSeriesData(series);
         },
 
-        checkSameRangeValue() {
-            this.hasSameRangeValue = this.seriesModels.every((model) => {
-                return model.get('yKey') === this.seriesModels[0].get('yKey');
-            });
+        removeSeries(plotSeries, index) {
+            const yAxisId = plotSeries.get('yAxisId');
+            this.setAxisVisibility(yAxisId, false);
+            this.seriesModels.splice(index, 1);
+            this.stopListening(plotSeries);
         },
 
-        removeSeries(plotSeries, index) {
-            this.seriesModels.splice(index, 1);
-            this.checkSameRangeValue();
-            this.stopListening(plotSeries);
+        setAxisVisibility(yAxisId, visible) {
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            if (foundYAxis) {
+                foundYAxis.visible = visible;
+            }
         },
 
         loadSeriesData(series) {
@@ -673,6 +700,7 @@ export default {
 
             // Setup canvas etc.
             this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
+            //TODO: handle yScale, zoom/pan for all yAxes
             this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
 
             this.pan = undefined;
@@ -690,6 +718,9 @@ export default {
 
             this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
             this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
+            this.config.additionalYAxes.forEach(yAxis => {
+                this.listenTo(yAxis, 'change:displayRange', this.onYAxisChange, this);
+            });
         },
 
         onXAxisChange(displayBounds) {
@@ -1108,7 +1139,7 @@ export default {
             this.userViewportChangeEnd();
         },
 
-        setYAxisKey(yKey) {
+        setYAxisKey(yKey, yAxisId) {
             this.config.series.models.forEach((model) => {
                 model.set('yKey', yKey);
             });

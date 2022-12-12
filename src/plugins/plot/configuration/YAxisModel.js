@@ -135,18 +135,44 @@ export default class YAxisModel extends Model {
         }
     }
     resetStats() {
+        //TODO: do we need the series id here?
         this.unset('stats');
-        this.seriesCollection.forEach(series => {
+        this.getSeriesForYAxis(this.seriesCollection).forEach(series => {
             if (series.has('stats')) {
                 this.updateStats(series.get('stats'));
             }
         });
+    }
+    getSeriesForYAxis(seriesCollection) {
+        return seriesCollection.filter(series => {
+            const seriesYAxisId = series.get('yAxisId') || 1;
+
+            return seriesYAxisId === this.id;
+        });
+    }
+
+    getYAxisForId(id) {
+        const plotModel = this.plot.get('domainObject');
+        let yAxis;
+        if (this.id === 1) {
+            yAxis = plotModel.configuration?.yAxis;
+        } else {
+            if (plotModel.configuration?.additionalYAxes) {
+                yAxis = plotModel.configuration.additionalYAxes.find(additionalYAxis => additionalYAxis.id === id);
+            }
+        }
+
+        return yAxis;
     }
     /**
      * @param {import('./PlotSeries').default} series
      */
     trackSeries(series) {
         this.listenTo(series, 'change:stats', seriesStats => {
+            if (series.get('yAxisId') !== this.id) {
+                return;
+            }
+
             if (!seriesStats) {
                 this.resetStats();
             } else {
@@ -154,6 +180,10 @@ export default class YAxisModel extends Model {
             }
         });
         this.listenTo(series, 'change:yKey', () => {
+            if (series.get('yAxisId') !== this.id) {
+                return;
+            }
+
             this.updateFromSeries(this.seriesCollection);
         });
     }
@@ -252,14 +282,40 @@ export default class YAxisModel extends Model {
         // Update the series collection labels and formatting
         this.updateFromSeries(this.seriesCollection);
     }
+
+    /**
+     * For a given series collection, get the metadata of the current yKey for each series.
+     * Then return first available value of the given property from the metadata.
+     * @param {import('./SeriesCollection').default} series
+     * @param {String} property
+     */
+    getMetadataValueByProperty(series, property) {
+        return series.map(s => (s.metadata ? s.metadata.value(s.get('yKey'))[property] : ''))
+            .reduce((a, b) => {
+                if (a === undefined) {
+                    return b;
+                }
+
+                if (a === b) {
+                    return a;
+                }
+
+                return '';
+            }, undefined);
+    }
     /**
      * Update yAxis format, values, and label from known series.
      * @param {import('./SeriesCollection').default} seriesCollection
      */
     updateFromSeries(seriesCollection) {
-        const plotModel = this.plot.get('domainObject');
-        const label = plotModel.configuration?.yAxis?.label;
-        const sampleSeries = seriesCollection.first();
+        const seriesForThisYAxis = this.getSeriesForYAxis(seriesCollection);
+        if (!seriesForThisYAxis.length) {
+            return;
+        }
+
+        const yAxis = this.getYAxisForId(this.id);
+        const label = yAxis?.label;
+        const sampleSeries = seriesForThisYAxis[0];
         if (!sampleSeries || !sampleSeries.metadata) {
             if (!label) {
                 this.unset('label');
@@ -279,41 +335,17 @@ export default class YAxisModel extends Model {
         }
 
         this.set('values', yMetadata.values);
+
         if (!label) {
-            const labelName = seriesCollection
-                .map(s => (s.metadata ? s.metadata.value(s.get('yKey')).name : ''))
-                .reduce((a, b) => {
-                    if (a === undefined) {
-                        return b;
-                    }
-
-                    if (a === b) {
-                        return a;
-                    }
-
-                    return '';
-                }, undefined);
-
+            const labelName = this.getMetadataValueByProperty(seriesForThisYAxis, 'name');
             if (labelName) {
                 this.set('label', labelName);
 
                 return;
             }
 
-            const labelUnits = seriesCollection
-                .map(s => (s.metadata ? s.metadata.value(s.get('yKey')).units : ''))
-                .reduce((a, b) => {
-                    if (a === undefined) {
-                        return b;
-                    }
-
-                    if (a === b) {
-                        return a;
-                    }
-
-                    return '';
-                }, undefined);
-
+            //if the name is not available, set the units as the label
+            const labelUnits = this.getMetadataValueByProperty(seriesForThisYAxis, 'units');
             if (labelUnits) {
                 this.set('label', labelUnits);
 
@@ -331,7 +363,8 @@ export default class YAxisModel extends Model {
             frozen: false,
             autoscale: true,
             logMode: options.model?.logMode ?? false,
-            autoscalePadding: 0.1
+            autoscalePadding: 0.1,
+            id: options.id
 
             // 'range' is not specified here, it is undefined at first. When the
             // user turns off autoscale, the current 'displayRange' is used for
