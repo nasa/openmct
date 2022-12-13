@@ -53,8 +53,7 @@
         type="horizontal"
     >
         <pane
-            id="tree-pane"
-            class="l-shell__pane-tree"
+            style="width: 300px;"
             handle="after"
             label="Browse"
             hide-param="hideTree"
@@ -75,11 +74,24 @@
                 @click="handleSyncTreeNavigation"
             >
             </button>
-            <mct-tree
-                :sync-tree-navigation="triggerSync"
-                :reset-tree-navigation="triggerReset"
-                class="l-shell__tree"
-            />
+            <multipane
+                class="l-shell__pane-tree"
+                type="vertical"
+            >
+                <pane
+                    id="tree-pane"
+                >
+                    <mct-tree
+                        :sync-tree-navigation="triggerSync"
+                        :reset-tree-navigation="triggerReset"
+                        class="l-shell__tree"
+                    />
+                </pane>
+                <pane
+                    handle="before"
+                    label="Recently Viewed"
+                />
+            </multipane>
         </pane>
         <pane class="l-shell__pane-main">
             <browse-bar
