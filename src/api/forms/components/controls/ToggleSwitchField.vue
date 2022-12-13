@@ -29,6 +29,7 @@
         <ToggleSwitch
             id="switchId"
             :checked="isChecked"
+            :name="model.name"
             @change="toggleCheckBox"
         />
     </span>
