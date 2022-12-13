@@ -94,7 +94,6 @@
 import multipane from "../layout/multipane.vue";
 import pane from "../layout/pane.vue";
 import ElementsPool from "./ElementsPool.vue";
-import ObjectPath from '../components/ObjectPath.vue';
 import Properties from "./details/Properties.vue";
 import ObjectName from "./ObjectName.vue";
 import InspectorViews from "./InspectorViews.vue";
@@ -114,7 +113,6 @@ export default {
         ElementsPool,
         Properties,
         ObjectName,
-        ObjectPath,
         InspectorViews
     },
     provide: {
