@@ -40,7 +40,7 @@ function resolveConflicts(domainObject, localMutable, openmct) {
 }
 
 async function resolveNotebookTagConflicts(localAnnotation, openmct) {
-    const localClonedAnnotation = structuredClone(localAnnotation);
+    const localClonedAnnotation = cloneObject(localAnnotation);
     const remoteMutable = await openmct.objects.getMutable(localClonedAnnotation.identifier);
 
     // should only be one annotation per targetID, entryID, and tag; so for sanity, ensure we have the
@@ -74,7 +74,7 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
 
 async function resolveNotebookEntryConflicts(localMutable, openmct) {
     if (localMutable.configuration.entries) {
-        const localEntries = structuredClone(localMutable.configuration.entries);
+        const localEntries = cloneObject(localMutable.configuration.entries);
         const remoteMutable = await openmct.objects.getMutable(localMutable.identifier);
         applyLocalEntries(remoteMutable, localEntries, openmct);
         openmct.objects.destroyMutable(remoteMutable);
@@ -114,4 +114,12 @@ function applyLocalEntries(mutable, entries, openmct) {
             }
         });
     });
+}
+
+function cloneObject(object) {
+    if (typeof structuredClone === 'function') {
+        return structuredClone(object);
+    } else {
+        return JSON.parse(JSON.stringify(object));
+    }
 }

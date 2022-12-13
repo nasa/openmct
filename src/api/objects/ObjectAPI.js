@@ -412,7 +412,10 @@ export default class ObjectAPI {
 
         return result.catch((error) => {
             if (error instanceof this.errors.Conflict) {
-                this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+                // only show notification if it is not a synchronized object, we handle these conflicts ourselves
+                if (!this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+                    this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+                }
             }
 
             throw error;

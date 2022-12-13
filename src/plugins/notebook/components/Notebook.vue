@@ -50,7 +50,7 @@
         <Sidebar
             ref="sidebar"
             class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
-            :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}, {'c-drawer--overlays': sidebarCoversEntries}]"
+            :class="sidebarClasses"
             :default-page-id="defaultPageId"
             :selected-page-id="getSelectedPageId()"
             :default-section-id="defaultSectionId"
@@ -124,6 +124,7 @@
             <div
                 v-if="selectedPage && !selectedPage.isLocked"
                 class="c-notebook__drag-area icon-plus"
+                :class="{ 'disabled' : activeTransaction }"
                 @click="newEntry()"
                 @dragover="dragOver"
                 @drop.capture="dropCapture"
@@ -133,6 +134,11 @@
                     To start a new entry, click here or drag and drop any object
                 </span>
             </div>
+            <progress-bar
+                v-if="savingTransaction"
+                class="c-telemetry-table__progress-bar"
+                :model="{ progressPerc: undefined }"
+            />
             <div
                 v-if="selectedPage && selectedPage.isLocked"
                 class="c-notebook__page-locked"
@@ -183,6 +189,7 @@ import NotebookEntry from './NotebookEntry.vue';
 import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
+import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSectionId, setDefaultNotebookPageId } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
@@ -200,7 +207,8 @@ export default {
         NotebookEntry,
         Search,
         SearchResults,
-        Sidebar
+        Sidebar,
+        ProgressBar
     },
     inject: ['agent', 'openmct', 'snapshotContainer'],
     props: {
@@ -225,7 +233,10 @@ export default {
             showNav: false,
             sidebarCoversEntries: false,
             filteredAndSortedEntries: [],
-            notebookAnnotations: {}
+            notebookAnnotations: {},
+            transaction: undefined,
+            activeTransaction: false,
+            savingTransaction: false
         };
     },
     computed: {
@@ -274,9 +285,30 @@ export default {
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
 
             return entries && entries.length > 0 && this.isRestricted && !this.selectedPage.isLocked;
+        },
+        sidebarClasses() {
+            let sidebarClasses = [];
+            if (this.showNav) {
+                sidebarClasses.push('is-expanded');
+            }
+
+            if (this.sidebarCoversEntries) {
+                sidebarClasses.push('c-drawer--overlays');
+            } else {
+                sidebarClasses.push('c-drawer--push');
+            }
+
+            return sidebarClasses;
         }
     },
     watch: {
+        activeTransaction() {
+            if (this.activeTransaction) {
+                this.stopObservingEntries();
+            } else {
+                this.startObservingEntries();
+            }
+        },
         search() {
             this.getSearchResults();
         },
@@ -300,7 +332,7 @@ export default {
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
-        this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
+        this.startObservingEntries();
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -327,6 +359,12 @@ export default {
         });
     },
     methods: {
+        startObservingEntries() {
+            this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
+        },
+        stopObservingEntries() {
+            this.unobserveEntries();
+        },
         changeSectionPage(newParams, oldParams, changedParams) {
             if (isNotebookViewType(newParams.view)) {
                 return;
@@ -496,10 +534,10 @@ export default {
                     {
                         label: "Ok",
                         emphasis: true,
-                        callback: () => {
+                        callback: async () => {
                             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
                             entries.splice(entryPos, 1);
-                            this.updateEntries(entries);
+                            await this.updateEntries(entries);
                             this.filterAndSortEntries();
                             this.removeAnnotations(entryId);
                             dialog.dismiss();
@@ -547,7 +585,7 @@ export default {
             const snapshotId = event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
                 const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
-                this.newEntry(snapshot.embedObject);
+                await this.newEntry(snapshot.embedObject);
                 this.snapshotContainer.removeSnapshot(snapshotId);
 
                 const namespace = this.domainObject.identifier.namespace;
@@ -568,7 +606,7 @@ export default {
             };
             const embed = await createNewEmbed(snapshotMeta);
 
-            this.newEntry(embed);
+            await this.newEntry(embed);
         },
         focusOnEntryId() {
             if (!this.focusEntryId) {
@@ -835,21 +873,21 @@ export default {
 
             setDefaultNotebookSectionId(defaultNotebookSectionId);
         },
-        updateEntry(entry) {
+        async updateEntry(entry) {
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
             entries[entryPos] = entry;
 
-            this.updateEntries(entries);
+            await this.updateEntries(entries);
         },
-        updateEntries(entries) {
+        async updateEntries(entries) {
             const configuration = this.domainObject.configuration;
             const notebookEntries = configuration.entries || {};
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
             mutateObject(this.openmct, this.domainObject, 'configuration.entries', notebookEntries);
 
-            this.saveTransaction();
+            await this.saveTransaction();
         },
         getPageIdFromUrl() {
             return this.openmct.router.getParams().pageId;
@@ -891,20 +929,33 @@ export default {
         },
         startTransaction() {
             if (!this.openmct.objects.isTransactionActive()) {
+                this.activeTransaction = true;
                 this.transaction = this.openmct.objects.startTransaction();
             }
         },
         async saveTransaction() {
-            if (this.transaction !== undefined) {
-                await this.transaction.commit();
-                this.openmct.objects.endTransaction();
+            if (this.activeTransaction) {
+                this.savingTransaction = true;
+                try {
+                    await this.transaction.commit();
+                } catch (error) {
+                    console.warn('Error committing Notebook transaction:', error);
+                } finally {
+                    this.endTransaction();
+                }
             }
         },
         async cancelTransaction() {
             if (this.transaction !== undefined) {
+                this.savingTransaction = true;
                 await this.transaction.cancel();
-                this.openmct.objects.endTransaction();
+                this.endTransaction();
             }
+        },
+        endTransaction() {
+            this.openmct.objects.endTransaction();
+            this.savingTransaction = false;
+            this.activeTransaction = false;
         }
     }
 };
