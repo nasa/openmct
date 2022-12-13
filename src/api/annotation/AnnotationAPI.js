@@ -370,6 +370,28 @@ export default class AnnotationAPI extends EventEmitter {
         return combinedResults;
     }
 
+    #breakApartSeparateTargets(results) {
+        const separateResults = [];
+        results.forEach(result => {
+            Object.keys(result.targets).forEach(targetID => {
+                const separatedResult = {
+                    ...result
+                };
+                separatedResult.targets = {
+                    [targetID]: result.targets[targetID]
+                };
+                separatedResult.targetModels = result.targetModels.filter(targetModel => {
+                    const targetKeyString = this.openmct.objects.makeKeyString(targetModel.identifier);
+
+                    return targetKeyString === targetID;
+                });
+                separateResults.push(separatedResult);
+            });
+        });
+
+        return separateResults;
+    }
+
     /**
     * @method searchForTags
     * @param {String} query A query to match against tags. E.g., "dr" will match the tags "drilling" and "driving"
@@ -377,6 +399,7 @@ export default class AnnotationAPI extends EventEmitter {
     * @returns {Promise} returns a model of matching tags with their target domain objects attached
     */
     async searchForTags(query, abortController) {
+        console.debug(`Searching for tags with query: ${query}`);
         const matchingTagKeys = this.#getMatchingTags(query);
         if (!matchingTagKeys.length) {
             return [];
@@ -392,7 +415,8 @@ export default class AnnotationAPI extends EventEmitter {
         const resultsWithValidPath = appliedTargetsModels.filter(result => {
             return this.openmct.objects.isReachable(result.targetModels?.[0]?.originalPath);
         });
+        const breakApartSeparateTargets = this.#breakApartSeparateTargets(resultsWithValidPath);
 
-        return resultsWithValidPath;
+        return breakApartSeparateTargets;
     }
 }
