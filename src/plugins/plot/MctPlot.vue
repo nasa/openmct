@@ -437,7 +437,7 @@ export default {
                     min: minY,
                     max: maxY
                 });
-                this.userViewportChangeEnd();
+                this.zoom('out', 0.2);
             }
 
             this.prepareExistingAnnotationSelection(selectedAnnotations);
