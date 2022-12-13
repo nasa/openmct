@@ -86,11 +86,12 @@ export default class AnnotationAPI extends EventEmitter {
     * Create the a generic annotation
     * @typedef {Object} CreateAnnotationOptions
     * @property {String} name a name for the new parameter
-    * @property {import('../objects/ObjectAPI').DomainObject} domainObject the domain object to create
+    * @property {import('../objects/ObjectAPI').DomainObject} domainObject the domain object this annotation was created with
     * @property {ANNOTATION_TYPES} annotationType the type of annotation to create
     * @property {Tag[]} tags
     * @property {String} contentText
-    * @property {import('../objects/ObjectAPI').Identifier[]} targets
+    * @property {import('../objects/ObjectAPI').Identifier[]} targets the targets and their specific properties
+    * @property {import('../objects/ObjectAPI').DomainObject[]} targetDomainObjects the domain objects this annotation points to
     */
     /**
     * @method create

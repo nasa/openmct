@@ -108,6 +108,7 @@ describe("The Annotation API", () => {
                 annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                 tags: ['sometag'],
                 contentText: "fooContext",
+                targetDomainObjects: [mockDomainObject],
                 targets: {'fooTarget': {}}
             };
             const annotationObject = await openmct.annotation.create(annotationCreationArguments);
@@ -124,27 +125,38 @@ describe("The Annotation API", () => {
     });
 
     describe("Tagging", () => {
+        let tagCreationArguments;
+        beforeEach(() => {
+            tagCreationArguments = {
+                existingAnnotation: null,
+                domainObject: mockDomainObject,
+                targets: {'fooNameSpace:some-object': {entryId: 'fooBarEntry'}},
+                targetDomainObjects: [mockDomainObject],
+                annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                tag: 'aWonderfulTag'
+            };
+        });
         it("can create a tag", async () => {
-            const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.addSingleAnnotationTag(tagCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
             expect(annotationObject.tags).toContain('aWonderfulTag');
         });
         it("can delete a tag", async () => {
-            const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.addSingleAnnotationTag(tagCreationArguments);
             expect(annotationObject).toBeDefined();
             openmct.annotation.deleteAnnotations([annotationObject]);
             expect(annotationObject._deleted).toBeTrue();
         });
         it("throws an error if deleting non-existent tag", async () => {
-            const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.addSingleAnnotationTag(tagCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(() => {
                 openmct.annotation.removeAnnotationTag(annotationObject, 'ThisTagShouldNotExist');
             }).toThrow();
         });
         it("can remove all tags", async () => {
-            const annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.addSingleAnnotationTag(tagCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(() => {
                 openmct.annotation.deleteAnnotations([annotationObject]);
@@ -152,13 +164,13 @@ describe("The Annotation API", () => {
             expect(annotationObject._deleted).toBeTrue();
         });
         it("can add/delete/add a tag", async () => {
-            let annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            let annotationObject = await openmct.annotation.addSingleAnnotationTag(tagCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
             expect(annotationObject.tags).toContain('aWonderfulTag');
             openmct.annotation.deleteAnnotations([annotationObject]);
             expect(annotationObject._deleted).toBeTrue();
-            annotationObject = await openmct.annotation.addSingleAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            annotationObject = await openmct.annotation.addSingleAnnotationTag(tagCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
             expect(annotationObject.tags).toContain('aWonderfulTag');
