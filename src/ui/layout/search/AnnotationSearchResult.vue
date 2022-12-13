@@ -135,6 +135,41 @@ export default {
             }
 
             this.openmct.router.navigate(resultUrl);
+            if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
+                this.clickedPlotAnnotation();
+            }
+        },
+        clickedPlotAnnotation() {
+            const targetDetails = {};
+            const targetDomainObjects = {};
+            Object.entries(this.result.targets).forEach(([key, value]) => {
+                targetDetails[key] = value;
+            });
+            this.result.targetModels.forEach((targetModel) => {
+                const keyString = this.openmct.objects.makeKeyString(targetModel.identifier);
+                targetDomainObjects[keyString] = targetModel;
+            });
+            const selection =
+                    [
+                        {
+                            element: this.openmct.layout.$refs.browseObject.$el,
+                            context: {
+                                item: this.result
+                            }
+                        },
+                        {
+                            element: this.$el,
+                            context: {
+                                type: 'plot-points-selection',
+                                targetDetails,
+                                targetDomainObjects,
+                                annotations: [this.result],
+                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                                onAnnotationChange: () => {}
+                            }
+                        }
+                    ];
+            this.openmct.selection.select(selection, true);
         },
         isSearchMatched(tag) {
             if (this.result.matchingTagKeys) {

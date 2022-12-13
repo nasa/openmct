@@ -107,6 +107,15 @@
 }
 
 .c-inspect-properties,
+.c-inspect-tags {
+    [class*="header"] {
+        @include propertiesHeader();
+        flex: 0 0 auto;
+        font-size: .85em;
+    }
+}
+
+.c-inspect-properties,
 .c-inspect-styles {
     [class*="header"] {
         @include propertiesHeader();

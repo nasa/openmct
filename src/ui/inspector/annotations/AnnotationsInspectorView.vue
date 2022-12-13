@@ -44,36 +44,15 @@
     >
         {{ noTagsMessage }}
     </div>
-    <div class="c-inspect-properties__header">
-        Annotations
-    </div>
-    <div
-        v-if="hasAnnotations"
-        class="c-inspect-properties__section c-annotation__list"
-    >
-        <AnnotationEditor
-            v-for="(annotation, index) in nonTagAnnotations"
-            :key="index"
-            :annotation="annotation"
-        />
-    </div>
-    <div
-        v-else
-        class="c-inspect-properties__row--span-all"
-    >
-        {{ noAnnotationsMessage }}
-    </div>
 </div>
 </template>
 
 <script>
-import AnnotationEditor from './AnnotationEditor.vue';
 import TagEditor from '../../components/tags/TagEditor.vue';
 import _ from 'lodash';
 
 export default {
     components: {
-        AnnotationEditor,
         TagEditor
     },
     inject: ['openmct'],

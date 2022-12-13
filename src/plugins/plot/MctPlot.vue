@@ -367,16 +367,81 @@ export default {
 
         this.openmct.objectViews.on('clearData', this.clearData);
         this.$on('loadingUpdated', this.loadAnnotations);
+        this.openmct.selection.on('change', this.updateSelection);
         this.setTimeContext();
 
         this.loaded = true;
     },
     beforeDestroy() {
+        this.openmct.selection.off('change', this.updateSelection);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
         this.destroy();
     },
     methods: {
+        updateSelection(selection) {
+            const selectionContext = selection?.[0]?.[0]?.context?.item;
+            if (!selectionContext
+                || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
+                // Selection changed, but it's us, so ignoring it
+                return;
+            }
+
+            const selectionType = selection?.[0]?.[1]?.context?.type;
+            if (selectionType !== 'plot-points-selection') {
+                // wrong type of selection
+                return;
+            }
+
+            const currentXaxis = this.config.xAxis.get('displayRange');
+            const currentYaxis = this.config.yAxis.get('displayRange');
+
+            // when there is no plot data, the ranges can be undefined
+            // in which case we should not perform selection
+            if (!currentXaxis || !currentYaxis) {
+                return;
+            }
+
+            const selectedAnnotations = selection?.[0]?.[1]?.context?.annotations;
+            if (selectedAnnotations?.length) {
+                console.debug(`🍊 Selection changed`, selectedAnnotations);
+                // just use first annotation
+                const boundingBoxes = Object.values(selectedAnnotations[0].targets);
+                let minX = Number.MAX_SAFE_INTEGER;
+                let minY = Number.MAX_SAFE_INTEGER;
+                let maxX = Number.MIN_SAFE_INTEGER;
+                let maxY = Number.MIN_SAFE_INTEGER;
+                boundingBoxes.forEach(boundingBox => {
+                    if (boundingBox.minX < minX) {
+                        minX = boundingBox.minX;
+                    }
+
+                    if (boundingBox.maxX > maxX) {
+                        maxX = boundingBox.maxX;
+                    }
+
+                    if (boundingBox.maxY > maxY) {
+                        maxY = boundingBox.maxY;
+                    }
+
+                    if (boundingBox.minY < minY) {
+                        minY = boundingBox.minY;
+                    }
+                });
+
+                this.config.xAxis.set('displayRange', {
+                    min: minX,
+                    max: maxX
+                });
+                this.config.yAxis.set('displayRange', {
+                    min: minY,
+                    max: maxY
+                });
+                this.userViewportChangeEnd();
+            }
+
+            this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
                 this.altPressed = true;
@@ -726,7 +791,7 @@ export default {
                 targetDomainObjects[series.keyString] = series.domainObject;
             });
 
-            let targetDetails = {};
+            const targetDetails = {};
             const uniqueBoundsAnnotations = [];
             annotations.forEach(annotation => {
                 Object.entries(annotation.targets).forEach(([key, value]) => {
@@ -1098,7 +1163,6 @@ export default {
 
                             const annotationKeyString = this.openmct.objects.makeKeyString(rawAnnotation.identifier);
                             seriesDatum.annotationsById[annotationKeyString] = rawAnnotation;
-                            console.debug(`🧚‍♂️ seriesDatum.annotationsById now sized at ${Object.values(seriesDatum.annotationsById).length}:`, seriesDatum.annotationsById);
                         }
 
                     });
