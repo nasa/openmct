@@ -517,6 +517,11 @@ export default {
             this.stopListening(plotSeries);
         },
         async loadAnnotations() {
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother loading annotations if there are no tags
+                return;
+            }
+
             const rawAnnotationsForPlot = [];
             await Promise.all(this.seriesModels.map(async (seriesModel) => {
                 const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.keyString);

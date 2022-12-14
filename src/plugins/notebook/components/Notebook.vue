@@ -361,6 +361,7 @@ export default {
         },
         async loadAnnotations() {
             if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother loading annotations if there are no tags
                 return;
             }
 
