@@ -224,7 +224,6 @@ const ZOOM_SCALE_DEFAULT = 1;
 const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
 const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
-const LAYOUT_NAMES = new Set(['Display Layout', 'Flexible Layout']);
 const IMAGE_CONTAINER_BORDER_WIDTH = 1;
 
 export default {
@@ -400,11 +399,10 @@ export default {
             return disabled;
         },
         isComposedInLayout() {
-            const parent = this.currentView?.objectPath[1];
-            const parentType = parent && this.openmct.types.get(parent.type);
-            const parentTypeName = parentType?.definition.name;
-
-            return LAYOUT_NAMES.has(parentTypeName);
+            return (
+                this.currentView?.objectPath
+                && !this.openmct.router.isNavigatedObject(this.currentView.objectPath)
+            );
         },
         focusedImage() {
             return this.imageHistory[this.focusedImageIndex];
