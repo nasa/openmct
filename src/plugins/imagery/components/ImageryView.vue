@@ -553,7 +553,7 @@ export default {
     },
     watch: {
         imageHistory: {
-            handler(newHistory, _oldHistory) {
+            async handler(newHistory, oldHistory) {
                 const newSize = newHistory.length;
                 let imageIndex = newSize > 0 ? newSize - 1 : undefined;
                 if (this.focusedImageTimestamp !== undefined) {
@@ -583,7 +583,11 @@ export default {
                     this.setFocusedImage(imageIndex);
                 }
 
-                this.scrollHandler();
+
+                await this.scrollHandler();
+                if (oldHistory?.length > 0) {
+                    this.animateThumbScroll = true;
+                }
 
             },
             deep: true
@@ -653,8 +657,6 @@ export default {
 
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         this.loadVisibleLayers();
-        // // set after render so initial scroll event is skipped
-        setTimeout(this.setScrollBehavior, 3 * 1000);
     },
     beforeDestroy() {
         this.persistVisibleLayers();
@@ -893,7 +895,6 @@ export default {
             // caused undesirable behavior in layouts
             // and could not simply be scoped to the parent element
             if (this.isComposedInLayout) {
-                await Vue.nextTick();
                 const wrapperWidth = this.$refs.thumbsWrapper.clientWidth ?? 0;
                 this.$refs.thumbsWrapper.scrollLeft = (
                     domThumb.offsetLeft - (wrapperWidth - domThumb.clientWidth) / 2);
@@ -917,21 +918,12 @@ export default {
             await Vue.nextTick();
             this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
         },
-        async scrollHandler() {
+        scrollHandler() {
             if (this.isPaused) {
-                await this.scrollToFocused();
-
-                return;
+                return this.scrollToFocused();
+            } else if (this.autoScroll) {
+                return this.scrollToRight();
             }
-
-            if (this.autoScroll) {
-
-                this.scrollToRight();
-            }
-
-        },
-        setScrollBehavior(value = true) {
-            this.animateThumbScroll = value;
         },
         matchIndexOfPreviousImage(previous, imageHistory) {
             // match logic uses a composite of url and time to account
