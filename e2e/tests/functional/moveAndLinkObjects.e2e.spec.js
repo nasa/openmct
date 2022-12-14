@@ -49,8 +49,6 @@ test.describe('Move & link item tests', () => {
             parent: childFolder.uuid
         });
 
-        await page.pause();
-
         // Attempt to move parent to its own grandparent
         await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
 
