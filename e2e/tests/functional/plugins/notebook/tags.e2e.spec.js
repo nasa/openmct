@@ -180,7 +180,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
-        await page.pause();
 
         const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
 
