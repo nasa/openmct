@@ -21,8 +21,13 @@
  *****************************************************************************/
 
 <template>
-<div class="c-inspector__properties c-inspect-properties has-tag-applier">
-    <div class="c-inspect-properties__header">
+<div
+    class="c-inspector__properties c-inspect-properties has-tag-applier"
+    aria-label="Tags Inspector"
+>
+    <div
+        class="c-inspect-properties__header"
+    >
         Tags
     </div>
     <div
