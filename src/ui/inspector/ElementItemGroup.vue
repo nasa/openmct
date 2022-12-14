@@ -56,8 +56,6 @@
 
 <script>
 export default {
-    components: {
-    },
     props: {
         parentObject: {
             type: Object,
