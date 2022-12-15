@@ -168,6 +168,12 @@ export default {
                 return [];
             }
         },
+        // isNew: {
+        //     type: Boolean,
+        //     default() {
+        //         return false;
+        //     }
+        // },
         entry: {
             type: Object,
             default() {
@@ -233,6 +239,7 @@ export default {
     },
     mounted() {
         this.dropOnEntry = this.dropOnEntry.bind(this);
+        this.initialLoade = true;
     },
     methods: {
         async addNewEmbed(objectPath) {
@@ -347,7 +354,11 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
-            this.$emit('editingEntry');
+            // if (!this.isNew) {
+                this.$emit('editingEntry');
+            // } else {
+            //     this.$emit('newEntryLoaded');
+            // }
         },
         updateEntryValue($event) {
             const value = $event.target.innerText;

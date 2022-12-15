@@ -152,6 +152,7 @@
                 class="c-notebook__entries"
                 aria-label="Notebook Entries"
             >
+            <!-- :is-new="entry.id === newlyCreatedEntryId" -->
                 <NotebookEntry
                     v-for="entry in filteredAndSortedEntries"
                     :key="entry.id"
@@ -167,6 +168,7 @@
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
                 />
+                <!-- @newEntryLoaded="newlyCreatedEntryId = undefined"-->
             </div>
             <div
                 v-if="showLockButton"
@@ -234,9 +236,9 @@ export default {
             sidebarCoversEntries: false,
             filteredAndSortedEntries: [],
             notebookAnnotations: {},
-            transaction: undefined,
             activeTransaction: false,
-            savingTransaction: false
+            savingTransaction: false,
+            newlyCreatedEntryId: undefined
         };
     },
     computed: {
@@ -787,10 +789,12 @@ export default {
             return section.id;
         },
         async newEntry(embed = null) {
+            // this.startTransaction();
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
+            this.newlyCreatedEntryId = id;
             this.focusEntryId = id;
             this.filterAndSortEntries();
         },
@@ -934,7 +938,7 @@ export default {
             }
         },
         async saveTransaction() {
-            if (this.activeTransaction) {
+            if (this.transaction !== undefined) {
                 this.savingTransaction = true;
                 try {
                     await this.transaction.commit();
@@ -948,14 +952,20 @@ export default {
         async cancelTransaction() {
             if (this.transaction !== undefined) {
                 this.savingTransaction = true;
-                await this.transaction.cancel();
-                this.endTransaction();
+                try {
+                    await this.transaction.cancel();
+                } catch (error) {
+                    console.warn('Error canceling Notebook transaction:', error);
+                } finally {
+                    this.endTransaction();
+                }
             }
         },
         endTransaction() {
             this.openmct.objects.endTransaction();
             this.savingTransaction = false;
             this.activeTransaction = false;
+            this.transaction = undefined;
         }
     }
 };
