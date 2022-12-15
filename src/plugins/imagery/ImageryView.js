@@ -53,21 +53,25 @@ export default class ImageryView {
         return this.component.$refs.ImageryContainer;
     }
 
-    pause(previousPausedState) {
-        if (previousPausedState) {
-            return;
-        }
-
+    pause() {
         const imageContext = this.getViewContext();
+        // persist previous pause value to return to after unpausing
+        this.previouslyPaused = imageContext.isPaused;
         imageContext.thumbnailClicked(imageContext.imageHistory.length - 1);
     }
-    unpause(previousPausedState) {
-        if (previousPausedState) {
-            return;
-        }
-
+    unpause() {
+        const pausedStateBefore = this.previouslyPaused;
+        this.previouslyPaused = undefined; // clear value
         const imageContext = this.getViewContext();
-        imageContext.paused(false);
+        imageContext.paused(pausedStateBefore);
+    }
+
+    onPreviewModeChange({ isPreviewing } = {}) {
+        if (isPreviewing) {
+            this.pause();
+        } else {
+            this.unpause();
+        }
     }
 
     destroy() {

@@ -58,14 +58,7 @@ export default class ViewLargeAction {
 
     _expand(objectPath, view) {
         const element = this._getPreview(objectPath, view);
-
-        const viewContext = view.getViewContext && view.getViewContext();
-        let isPausedBeforeState;
-        const isImagery = view?.domainObject?.type === 'example.imagery';
-        if (isImagery && viewContext) {
-            isPausedBeforeState = viewContext.isPaused;
-            view.pause(isPausedBeforeState);
-        }
+        view?.onPreviewModeChange({ isPreviewing: true });
 
         this.overlay = this.openmct.overlays.overlay({
             element,
@@ -75,9 +68,7 @@ export default class ViewLargeAction {
                 this.preview.$destroy();
                 this.preview = undefined;
                 delete this.preview;
-                if (isImagery && viewContext && !isPausedBeforeState) {
-                    view.unpause(isPausedBeforeState);
-                }
+                view?.onPreviewModeChange();
             }
         });
     }
