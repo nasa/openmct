@@ -583,7 +583,6 @@ export default {
                     this.setFocusedImage(imageIndex);
                 }
 
-
                 await this.scrollHandler();
                 if (oldHistory?.length > 0) {
                     this.animateThumbScroll = true;
@@ -880,7 +879,7 @@ export default {
                 this.scrollHandler();
             }
         },
-        async scrollToFocused() {
+        scrollToFocused() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
             if (!thumbsWrapper) {
                 return;
