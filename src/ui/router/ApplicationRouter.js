@@ -392,6 +392,7 @@ class ApplicationRouter extends EventEmitter {
      */
     hashChanged(hash) {
         this.handleLocationChange(hash);
+        this.emit('change:hash', hash);
     }
 
     /**
