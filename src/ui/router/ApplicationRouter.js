@@ -227,7 +227,7 @@ class ApplicationRouter extends EventEmitter {
 
         this.started = true;
 
-        this.locationBar.onChange(p => this.hashChaged(p));
+        this.locationBar.onChange(p => this.hashChanged(p));
         this.locationBar.start({
             root: location.pathname
         });
@@ -390,8 +390,7 @@ class ApplicationRouter extends EventEmitter {
      *
      * @param {string} hash new hash for url
      */
-    hashChaged(hash) {
-        this.emit('change:hash', hash);
+    hashChanged(hash) {
         this.handleLocationChange(hash);
     }
 
