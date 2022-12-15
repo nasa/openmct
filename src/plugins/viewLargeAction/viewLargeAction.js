@@ -58,7 +58,7 @@ export default class ViewLargeAction {
 
     _expand(objectPath, view) {
         const element = this._getPreview(objectPath, view);
-        view?.onPreviewModeChange({ isPreviewing: true });
+        view.onPreviewModeChange?.({ isPreviewing: true });
 
         this.overlay = this.openmct.overlays.overlay({
             element,
@@ -68,7 +68,7 @@ export default class ViewLargeAction {
                 this.preview.$destroy();
                 this.preview = undefined;
                 delete this.preview;
-                view?.onPreviewModeChange();
+                view.onPreviewModeChange?.();
             }
         });
     }
