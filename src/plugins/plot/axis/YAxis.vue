@@ -82,7 +82,7 @@ export default {
                 return 0;
             }
         },
-        plotWidth: {
+        plotLeftTickWidth: {
             type: Number,
             default() {
                 return 0;
@@ -92,6 +92,12 @@ export default {
             type: Number,
             default() {
                 return 0;
+            }
+        },
+        position: {
+            type: String,
+            default() {
+                return 'left';
             }
         }
     },
@@ -119,12 +125,16 @@ export default {
             const border = `border-right: 1px solid`;
             if (isMainYAxis) {
                 if (this.visibleYAxes > 1) {
-                    style = `${width}; left: ${this.plotWidth - this.tickWidth + 40}px`;
+                    style = `${width}; left: ${this.plotLeftTickWidth - this.tickWidth + 40}px`;
                 } else {
-                    style = `${width}; left: ${this.plotWidth - this.tickWidth}px`;
+                    style = `${width}; left: ${this.plotLeftTickWidth - this.tickWidth}px`;
                 }
             } else {
-                style = `${width}; ${border}; left: ${this.plotWidth - this.tickWidth - 3}px`;
+                if (this.position === 'right') {
+                    style = `${width}; left: -${this.tickWidth + 20}px`;
+                } else {
+                    style = `${width}; ${border}; left: ${this.plotLeftTickWidth - this.tickWidth - 3}px`;
+                }
             }
 
             return style;
@@ -223,8 +233,11 @@ export default {
                 this.yAxis.set('label', this.yAxisLabel);
             }
         },
-        onTickWidthChange(width) {
-            this.$emit('tickWidthChanged', width);
+        onTickWidthChange(data) {
+            this.$emit('tickWidthChanged', {
+                width: data.width,
+                yAxisId: this.id
+            });
         }
     }
 };
