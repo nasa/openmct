@@ -88,10 +88,10 @@ export default {
                 return 0;
             }
         },
-        visibleYAxes: {
-            type: Number,
+        multipleLeftAxes: {
+            type: Boolean,
             default() {
-                return 0;
+                return false;
             }
         },
         position: {
@@ -119,22 +119,20 @@ export default {
             return this.singleSeries === true || this.hasSameRangeValue === true;
         },
         yAxisStyle() {
-            const isMainYAxis = this?.id === this.mainYAxisId;
             let style;
             const width = `width: ${this.tickWidth + 20}px`;
-            const border = `border-right: 1px solid`;
-            if (isMainYAxis) {
-                if (this.visibleYAxes > 1) {
-                    style = `${width}; left: ${this.plotLeftTickWidth - this.tickWidth + 40}px`;
+            const multipleTickOffset = this.multipleLeftAxes ? 20 : 0;
+            const border = this.multipleLeftAxes ? `border-right: 1px solid` : '';
+
+            if (this.position === 'left') {
+                const offset = (this.id - 1);
+                if (offset) {
+                    style = `${width}; ${border}; left: ${this.plotLeftTickWidth - this.tickWidth - offset * (multipleTickOffset + 5)}px`;
                 } else {
-                    style = `${width}; left: ${this.plotLeftTickWidth - this.tickWidth}px`;
+                    style = `${width}; left: ${this.plotLeftTickWidth - this.tickWidth + multipleTickOffset}px`;
                 }
-            } else {
-                if (this.position === 'right') {
-                    style = `${width}; left: -${this.tickWidth + 20}px`;
-                } else {
-                    style = `${width}; ${border}; left: ${this.plotLeftTickWidth - this.tickWidth - 3}px`;
-                }
+            } else if (this.position === 'right') {
+                style = `${width}; left: -${this.tickWidth + 20}px`;
             }
 
             return style;

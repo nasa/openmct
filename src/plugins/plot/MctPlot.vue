@@ -42,11 +42,11 @@
                 v-for="(yAxis, index) in yAxesIds"
                 :id="yAxis.id"
                 :key="`yAxis-${index}`"
-                :visible-y-axes="yAxesIds.length"
-                :position="index > 1 ? 'right' : 'left'"
-                :class="{'plot-yaxis-right': index > 1}"
+                :multiple-left-axes="multipleLeftAxes"
+                :position="yAxis.id > 2 ? 'right' : 'left'"
+                :class="{'plot-yaxis-right': yAxis.id > 2}"
                 :tick-width="yAxis.tickWidth"
-                :plot-left-tick-width="index > 1 ? yAxis.tickWidth: plotLeftTickWidth"
+                :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
             />
@@ -297,18 +297,23 @@ export default {
     computed: {
         xAxisStyle() {
             let style;
+            const hasRightAxis = this.yAxesIds.find(yAxis => yAxis.id > 2);
+            const leftOffset = this.multipleLeftAxes ? 40 : 20;
 
-            if (this.yAxesIds.length > 1) {
+            if (hasRightAxis) {
                 const rightTickWidth = this.yAxes[2].tickWidth;
-                style = `left: ${this.plotLeftTickWidth + 60}px; right: ${rightTickWidth + 20}px`;
+                style = `left: ${this.plotLeftTickWidth + leftOffset}px; right: ${rightTickWidth + 20}px`;
             } else {
-                style = `left: ${this.plotLeftTickWidth + 20}px`;
+                style = `left: ${this.plotLeftTickWidth + leftOffset}px`;
             }
 
             return style;
         },
         yAxesIds() {
-            return this.yAxes.filter(yAxis => yAxis.visible === true);
+            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
+        },
+        multipleLeftAxes() {
+            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
         },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
@@ -334,8 +339,8 @@ export default {
         },
         plotLeftTickWidth() {
             let leftTickWidth = 0;
-            this.yAxes.forEach((yAxis, index) => {
-                if (index > 1) {
+            this.yAxes.forEach((yAxis) => {
+                if (yAxis.id > 2) {
                     return;
                 }
 
@@ -373,14 +378,14 @@ export default {
         this.legend = this.config.legend;
         this.yAxes = [{
             id: this.config.yAxis.id,
-            visible: false,
+            seriesCount: 0,
             tickWidth: 0
         }];
         if (this.config.additionalYAxes) {
             this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
                 return {
                     id: yAxis.id,
-                    visible: false,
+                    seriesCount: 0,
                     tickWidth: 0
                 };
             }));
@@ -463,7 +468,7 @@ export default {
         },
         addSeries(series, index) {
             const yAxisId = series.get('yAxisId');
-            this.setAxisVisibility(yAxisId, true);
+            this.updateAxisUsageCount(yAxisId, 1);
             this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
@@ -481,15 +486,15 @@ export default {
 
         removeSeries(plotSeries, index) {
             const yAxisId = plotSeries.get('yAxisId');
-            this.setAxisVisibility(yAxisId, false);
+            this.updateAxisUsageCount(yAxisId, -1);
             this.seriesModels.splice(index, 1);
             this.stopListening(plotSeries);
         },
 
-        setAxisVisibility(yAxisId, visible) {
+        updateAxisUsageCount(yAxisId, updateCount) {
             const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
             if (foundYAxis) {
-                foundYAxis.visible = visible;
+                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
             }
         },
 
