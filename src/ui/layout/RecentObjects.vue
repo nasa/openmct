@@ -6,14 +6,13 @@
         :node="recentItem"
         :is-selector-tree="false"
         :selected-item="selectedItem"
-        :active-search="activeSearch"
-        :left-offset="!activeSearch ? recentItem.leftOffset : '0px'"
+        :left-offset="'0px'"
         :is-new="recentItem.isNew"
         :item-offset="itemOffset"
         :item-index="index"
         :item-height="itemHeight"
         :open-items="[]"
-        :loading-items="false"
+        :loading-items="{}"
     />
     <!-- @tree-item-mounted="scrollToCheck($event)"
         @tree-item-destroyed="removeCompositionListenerFor($event)"
@@ -43,11 +42,7 @@ export default {
         };
     },
     async mounted() {
-        if (typeof this.unlisten === 'function') {
-            this.unlisten();
-        }
-
-        this.unlisten = this.openmct.router.on('change:hash', this.onHashChange);
+        this.openmct.router.on('change:hash', this.onHashChange);
 
         this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
         this.treeResizeObserver.observe(this.$el);
@@ -57,19 +52,22 @@ export default {
         this.handleTreeResize = _.debounce(this.handleTreeResize, 300);
     },
     destroyed() {
-        if (typeof this.unlisten === 'function') {
-            this.unlisten();
-        }
+        this.openmct.router.off('change:hash', this.onHashChange);
     },
     methods: {
         async onHashChange(hash) {
             const objectPath = await this.openmct.objects.getRelativeObjectPath(hash);
-            this.recentItems.unshift({
+            const navigationPath = `/browse/${this.openmct.objects.getRelativePath(objectPath.slice(0, -1))}`;
+            this.recentItems = this.recentItems.filter(
+                item => navigationPath !== item.navigationPath
+            );
+            this.selectedItem = {
                 id: objectPath[0].id,
                 object: objectPath[0],
                 objectPath,
-                navigationPath: `/browse/${this.openmct.objects.getRelativePath(objectPath.slice(0, -1))}`
-            });
+                navigationPath
+            };
+            this.recentItems.unshift(this.selectedItem);
         },
         calculateHeights() {
             const RECHECK = 100;
