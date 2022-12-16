@@ -32,95 +32,41 @@
         class="c-elements-pool__elements"
     >
         <ul
-            v-if="yAxis1.length > 0
-                || yAxis2.length > 0
-                || yAxis3.length > 0"
+            v-if="hasElements"
             id="inspector-elements-tree"
             class="c-tree c-elements-pool__tree"
         >
             <element-item-group
+                v-for="(yAxis, index) in yAxes"
+                :key="index"
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
-                label="Y Axis 1"
-                @drop-group="moveTo($event, 0, Y_AXIS_1)"
+                :label="`Y Axis ${yAxis.id}`"
+                @drop-group="moveTo($event, 0, yAxis.id)"
             >
                 <li
                     class="js-first-place"
-                    @drop="moveTo($event, 0, Y_AXIS_1)"
+                    @drop="moveTo($event, 0, yAxis.id)"
                 ></li>
                 <element-item
-                    v-for="(element, index) in yAxis1"
+                    v-for="(element, elemIndex) in yAxis.elements"
                     :key="element.identifier.key"
-                    :index="index"
+                    :index="elemIndex"
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, Y_AXIS_1)"
-                    @drop-custom="moveTo($event, index, Y_AXIS_1)"
+                    @dragstart-custom="moveFrom($event, yAxis.id)"
+                    @drop-custom="moveTo($event, index, yAxis.id)"
                 />
                 <li
-                    v-if="yAxis1.length > 0"
+                    v-if="yAxis.elements.length > 0"
                     class="js-last-place"
-                    @drop="moveTo($event, yAxis1.length, Y_AXIS_1)"
-                ></li>
-            </element-item-group>
-            <element-item-group
-                :parent-object="parentObject"
-                :allow-drop="allowDrop"
-                label="Y Axis 2"
-                @drop-group="moveTo($event, 0, Y_AXIS_2)"
-            >
-                <li
-                    class="js-first-place"
-                    @drop="moveTo($event, 0, Y_AXIS_2)"
-                ></li>
-                <element-item
-                    v-for="(element, index) in yAxis2"
-                    :key="element.identifier.key"
-                    :index="index"
-                    :element-object="element"
-                    :parent-object="parentObject"
-                    :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, Y_AXIS_2)"
-                    @drop-custom="moveTo($event, index, Y_AXIS_2)"
-                />
-                <li
-                    v-if="yAxis2.length > 0"
-                    class="js-last-place"
-                    @drop="moveTo($event, yAxis2.length, Y_AXIS_2)"
-                ></li>
-            </element-item-group>
-            <element-item-group
-                :parent-object="parentObject"
-                :allow-drop="allowDrop"
-                label="Y Axis 3"
-                @drop-group="moveTo($event, 0, Y_AXIS_3)"
-            >
-                <li
-                    class="js-first-place"
-                    @drop="moveTo($event, 0, Y_AXIS_3)"
-                ></li>
-                <element-item
-                    v-for="(element, index) in yAxis3"
-                    :key="element.identifier.key"
-                    :index="index"
-                    :element-object="element"
-                    :parent-object="parentObject"
-                    :allow-drop="allowDrop"
-                    @dragstart-custom="moveFrom($event, Y_AXIS_3)"
-                    @drop-custom="moveTo($event, index, Y_AXIS_3)"
-                />
-                <li
-                    v-if="yAxis3.length > 0"
-                    class="js-last-place"
-                    @drop="moveTo($event, yAxis3.length, Y_AXIS_3)"
+                    @drop="moveTo($event, yAxis.elements.length, yAxis.id)"
                 ></li>
             </element-item-group>
         </ul>
         <div
-            v-if="yAxis1.length === 0
-                && yAxis2.length === 0
-                && yAxis3.length === 0"
+            v-if="!hasElements"
         >
             No contained elements
         </div>
@@ -133,6 +79,7 @@ import _ from 'lodash';
 import Search from '../components/search.vue';
 import ElementItem from './ElementItem.vue';
 import ElementItemGroup from './ElementItemGroup.vue';
+import configStore from '../../plugins/plot/configuration/ConfigStore';
 
 const Y_AXIS_1 = 1;
 const Y_AXIS_2 = 2;
@@ -147,6 +94,7 @@ export default {
     inject: ['openmct'],
     data() {
         return {
+            yAxes: [],
             yAxis1: [],
             yAxis2: [],
             yAxis3: [],
@@ -157,6 +105,17 @@ export default {
             contextClickTracker: {},
             allowDrop: false
         };
+    },
+    computed: {
+        hasElements() {
+            for (let yAxis of this.yAxes) {
+                if (yAxis.elements.length > 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     },
     created() {
         this.Y_AXIS_1 = Y_AXIS_1;
@@ -192,6 +151,7 @@ export default {
             this.elementsCache = {};
             this.listeners = [];
             this.parentObject = selection && selection[0] && selection[0][0].context.item;
+            this.setYAxisIds();
 
             this.unlistenComposition();
 
@@ -220,6 +180,26 @@ export default {
                 this.composition.off('reorder', this.reorderElements);
                 delete this.compositionUnlistener;
             };
+        },
+        setYAxisIds() {
+            const configId = this.openmct.objects.makeKeyString(this.parentObject.identifier);
+            this.config = configStore.get(configId);
+            this.yAxes.push({
+                id: this.config.yAxis.id,
+                elements: this.parentObject.configuration.series.filter(
+                    series => series.yAxisId === this.config.yAxis.id
+                )
+            });
+            if (this.config.additionalYAxes) {
+                this.config.additionalYAxes.forEach(yAxis => {
+                    this.yAxes.push({
+                        id: yAxis.id,
+                        elements: this.parentObject.configuration.series.filter(
+                            series => series.yAxisId === yAxis.id
+                        )
+                    });
+                });
+            }
         },
         addElement(element) {
             // Get the index of the corresponding element in the series list
@@ -255,9 +235,9 @@ export default {
         },
         applySearch(input) {
             this.currentSearch = input;
-            this.yAxis1 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_1);
-            this.yAxis2 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_2);
-            this.yAxis3 = this.filterForSearchAndAxis(this.currentSearch, Y_AXIS_3);
+            this.yAxes.forEach(yAxis => {
+                yAxis.elements = this.filterForSearchAndAxis(input, yAxis.id);
+            });
         },
         filterForSearchAndAxis(input, yAxisId) {
             return this.parentObject.composition.map((id) =>
