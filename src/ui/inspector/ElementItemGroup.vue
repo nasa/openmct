@@ -75,16 +75,15 @@ export default {
             type: Boolean
         }
     },
-    calculated: {
+    data() {
+        return {
+            dragCounter: 0
+        };
+    },
+    computed: {
         hover() {
             return this.dragCounter > 0;
         }
-    },
-    data() {
-        return {
-            hover: false,
-            dragCounter: 0
-        };
     },
     methods: {
         emitDrop(event) {
