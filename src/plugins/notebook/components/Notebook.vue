@@ -321,7 +321,7 @@ export default {
             this.unlisten();
         }
 
-        this.stopObservingEntries()
+        this.stopObservingEntries();
 
         Object.keys(this.notebookAnnotations).forEach(entryID => {
             const notebookAnnotationsForEntry = this.notebookAnnotations[entryID];
