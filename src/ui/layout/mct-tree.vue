@@ -968,7 +968,7 @@ export default {
          * Destroy an observer for the given navigationPath.
          */
         destroyObserverByPath(navigationPath) {
-            if (typeof this.observers[navigationPath] === 'function') {
+            if (this.observers[navigationPath]) {
                 this.observers[navigationPath]();
                 delete this.observers[navigationPath];
             }
@@ -978,7 +978,7 @@ export default {
          */
         destroyObservers() {
             Object.entries(this.observers).forEach(([key, unobserve]) => {
-                if (typeof unobserve === 'function') {
+                if (unobserve) {
                     unobserve();
                 }
 
@@ -989,7 +989,7 @@ export default {
          * Destroy a mutable for the given navigationPath.
          */
         destroyMutableByPath(navigationPath) {
-            if (typeof this.mutables[navigationPath] === 'function') {
+            if (this.mutables[navigationPath]) {
                 this.mutables[navigationPath]();
                 delete this.mutables[navigationPath];
             }
@@ -999,7 +999,7 @@ export default {
          */
         destroyMutables() {
             Object.entries(this.mutables).forEach(([key, destroyMutable]) => {
-                if (typeof destroyMutable === 'function') {
+                if (destroyMutable) {
                     destroyMutable();
                 }
 
