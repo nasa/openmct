@@ -167,26 +167,32 @@ export default {
         async tagAdded(newTag) {
             console.debug(`🍉 Tag added: ${newTag}`);
             // Either undelete an annotation, or create one (1) new annotation
-            const existingAnnotation = this.annotations.find((annotation) => {
+            let existingAnnotation = this.annotations.find((annotation) => {
                 return annotation.tags.includes(newTag);
             });
 
-            const createdAnnotation = await this.openmct.annotation.addSingleAnnotationTag(
-                {
+            if (!existingAnnotation) {
+                const contentText = `${this.annotationType} tag`;
+                const annotationCreationArguments = {
+                    name: contentText,
                     existingAnnotation,
+                    contentText: contentText,
                     targets: this.targets,
                     targetDomainObjects: this.targetDomainObjects,
                     domainObject: this.domainObject,
                     annotationType: this.annotationType,
-                    tag: newTag
-                }
-            );
+                    tags: [newTag]
+                };
+                existingAnnotation = await this.openmct.annotation.create(annotationCreationArguments);
+            } else if (existingAnnotation._deleted) {
+                this.openmct.annotation.unDeleteAnnotation(existingAnnotation);
+            }
 
             this.userAddingTag = false;
 
-            this.$emit('tags-updated', createdAnnotation);
+            this.$emit('tags-updated', existingAnnotation);
             if (this.onTagChange) {
-                this.onTagChange([createdAnnotation]);
+                this.onTagChange([existingAnnotation]);
             }
         }
     }

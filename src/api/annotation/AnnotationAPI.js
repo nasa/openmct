@@ -207,42 +207,6 @@ export default class AnnotationAPI extends EventEmitter {
     }
 
     /**
-    * @method addSingleAnnotationTag
-    * @param {import('../objects/ObjectAPI').DomainObject=} existingAnnotation - An optional annotation to add the tag to. If not specified, we will create an annotation.
-    * @param {import('../objects/ObjectAPI').DomainObject[]} targets - The domain object the annotation will point to.
-    * @param {Object=} targetSpecificDetails - Optional object to add to the target object. E.g., for notebooks this would be an entryID
-    * @param {AnnotationType} annotationType - The type of annotation this is for.
-    * @returns {import('../objects/ObjectAPI').DomainObject[]} Returns the annotation that was either created or passed as an existingAnnotation
-    */
-    async addSingleAnnotationTag({existingAnnotation, domainObject, targets, targetDomainObjects, annotationType, tag}) {
-        if (!existingAnnotation) {
-            const contentText = `${annotationType} tag`;
-            const annotationCreationArguments = {
-                name: contentText,
-                domainObject,
-                annotationType,
-                tags: [tag],
-                contentText,
-                targets,
-                targetDomainObjects
-            };
-            const newAnnotation = await this.create(annotationCreationArguments);
-
-            return newAnnotation;
-        } else {
-            if (!existingAnnotation.tags.includes(tag)) {
-                throw new Error(`Existing annotation did not contain tag ${tag}`);
-            }
-
-            if (existingAnnotation._deleted) {
-                this.unDeleteAnnotation(existingAnnotation);
-            }
-
-            return existingAnnotation;
-        }
-    }
-
-    /**
     * @method deleteAnnotations
     * @param {import('../objects/ObjectAPI').DomainObject[]} existingAnnotation - An array of annotations to delete (set _deleted to true)
     */
