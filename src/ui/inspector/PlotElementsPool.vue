@@ -176,9 +176,7 @@ export default {
         this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.selection.off('change', this.showSelection);
 
-        if (this.compositionUnlistener) {
-            this.compositionUnlistener();
-        }
+        this.unlistenComposition();
     },
     methods: {
         setEditState(isEditing) {
@@ -195,28 +193,33 @@ export default {
             this.listeners = [];
             this.parentObject = selection && selection[0] && selection[0][0].context.item;
 
-            if (this.compositionUnlistener) {
-                this.compositionUnlistener();
-            }
+            this.unlistenComposition();
 
             if (this.parentObject) {
                 this.composition = this.openmct.composition.get(this.parentObject);
 
                 if (this.composition) {
                     this.composition.load();
-
-                    this.composition.on('add', this.addElement);
-                    this.composition.on('remove', this.removeElement);
-                    this.composition.on('reorder', this.reorderElements);
-
-                    this.compositionUnlistener = () => {
-                        this.composition.off('add', this.addElement);
-                        this.composition.off('remove', this.removeElement);
-                        this.composition.off('reorder', this.reorderElements);
-                        delete this.compositionUnlistener;
-                    };
+                    this.registerCompositionListeners();
                 }
             }
+        },
+        unlistenComposition() {
+            if (this.compositionUnlistener) {
+                this.compositionUnlistener();
+            }
+        },
+        registerCompositionListeners() {
+            this.composition.on('add', this.addElement);
+            this.composition.on('remove', this.removeElement);
+            this.composition.on('reorder', this.reorderElements);
+
+            this.compositionUnlistener = () => {
+                this.composition.off('add', this.addElement);
+                this.composition.off('remove', this.removeElement);
+                this.composition.off('reorder', this.reorderElements);
+                delete this.compositionUnlistener;
+            };
         },
         addElement(element) {
             // Get the index of the corresponding element in the series list
