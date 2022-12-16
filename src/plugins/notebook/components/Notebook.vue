@@ -340,10 +340,15 @@ export default {
     },
     methods: {
         startObservingEntries() {
+            if (this.unobserveEntries) {
+                this.stopObservingEntries();
+            }
+
             this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
         },
         stopObservingEntries() {
             this.unobserveEntries();
+            delete this.unobserveEntries;
         },
         changeSectionPage(newParams, oldParams, changedParams) {
             if (isNotebookViewType(newParams.view)) {
@@ -939,6 +944,7 @@ export default {
         endTransaction() {
             this.openmct.objects.endTransaction();
             this.transaction = undefined;
+            this.startObservingEntries();
         }
     }
 };
