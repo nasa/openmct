@@ -8,7 +8,7 @@ export default function (openmct) {
         if (!isNotebookOrAnnotationType(domainObject)) {
             return apiSave(domainObject);
         }
-        console.log('monkeypatch save', JSON.parse(JSON.stringify(domainObject.configuration.entries)));
+
         const isNewMutable = !domainObject.isMutable;
         const localMutable = openmct.objects.toMutable(domainObject);
         let result;

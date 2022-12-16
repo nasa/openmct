@@ -917,13 +917,10 @@ export default {
         async saveTransaction() {
             if (this.transaction !== undefined) {
                 try {
-                    console.log('try to commit');
-                    let committed = await this.transaction.commit();
-                    console.log('committed', committed);
+                    await this.transaction.commit();
                 } catch (error) {
                     console.warn('Error saving Notebook transaction', error);
                 } finally {
-                    console.log('finally of try to commit');
                     this.endTransaction();
                 }
             }
@@ -940,7 +937,6 @@ export default {
             }
         },
         endTransaction() {
-            console.log('end transaction');
             this.openmct.objects.endTransaction();
             this.transaction = undefined;
         }

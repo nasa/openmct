@@ -197,11 +197,9 @@ export default class ObjectAPI {
      *          has been saved, or be rejected if it cannot be saved
      */
     get(identifier, abortSignal = undefined, forceRemote = false) {
-        console.log('object get', arguments);
         let keystring = this.makeKeyString(identifier);
 
         if (!forceRemote) {
-            console.log('not forcing remote');
             if (this.cache[keystring] !== undefined) {
                 return this.cache[keystring];
             }
@@ -237,7 +235,7 @@ export default class ObjectAPI {
                 let mutableDomainObject = this.toMutable(result);
                 mutableDomainObject.$refresh(result);
             }
-            console.log('result', result);
+
             return result;
         }).catch((result) => {
             console.warn(`Failed to retrieve ${keystring}:`, result);
@@ -445,7 +443,7 @@ export default class ObjectAPI {
         if (this.isTransactionActive()) {
             throw new Error("Unable to start new Transaction: Previous Transaction is active");
         }
-        console.log('start transaction');
+
         this.transaction = new Transaction(this);
 
         return this.transaction;
@@ -455,7 +453,6 @@ export default class ObjectAPI {
      * Clear instance of Transaction
      */
     endTransaction() {
-        console.log('end transaction');
         this.transaction = null;
     }
 
@@ -563,14 +560,11 @@ export default class ObjectAPI {
      * @memberof module:openmct.ObjectAPI#
      */
     mutate(domainObject, path, value) {
-        console.log('mutate');
         this.#mutate(domainObject, path, value);
 
         if (this.isTransactionActive()) {
-            console.log('transaction active');
             this.transaction.add(domainObject);
         } else {
-            console.log('transaction not active');
             this.save(domainObject);
         }
     }
