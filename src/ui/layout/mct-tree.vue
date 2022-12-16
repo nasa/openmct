@@ -446,9 +446,14 @@ export default {
             }, Promise.resolve()).then(() => {
                 if (this.isSelectorTree) {
                     // If item is missing due to error in object creation,
-                    // default selector tree selection to the "mine" folder
-                    const item = this.getTreeItemByPath(navigationPath)
-                              ?? this.getTreeItemByPath("/browse/mine");
+                    // walk up the navigationPath until we find an item
+                    let item = this.getTreeItemByPath(navigationPath);
+                    while(!item) {
+                        const startIndex = 0;
+                        const endIndex = navigationPath.lastIndexOf('/');
+                        navigationPath = navigationPath.substring(startIndex, endIndex);
+                        item = this.getTreeItemByPath(navigationPath);
+                    }
                     this.treeItemSelection(item);
                 }
             });
