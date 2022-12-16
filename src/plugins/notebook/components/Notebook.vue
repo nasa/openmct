@@ -50,7 +50,7 @@
         <Sidebar
             ref="sidebar"
             class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
-            :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}, {'c-drawer--overlays': sidebarCoversEntries}]"
+            :class="sidebarClasses"
             :default-page-id="defaultPageId"
             :selected-page-id="getSelectedPageId()"
             :default-section-id="defaultSectionId"
@@ -270,6 +270,20 @@ export default {
 
             return this.sections[0];
         },
+        sidebarClasses() {
+            let sidebarClasses = [];
+            if (this.showNav) {
+                sidebarClasses.push('is-expanded');
+            }
+
+            if (this.sidebarCoversEntries) {
+                sidebarClasses.push('c-drawer--overlays');
+            } else {
+                sidebarClasses.push('c-drawer--push');
+            }
+
+            return sidebarClasses;
+        },
         showLockButton() {
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
 
@@ -300,16 +314,14 @@ export default {
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
-        this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
+        this.startObservingEntries();
     },
     beforeDestroy() {
         if (this.unlisten) {
             this.unlisten();
         }
 
-        if (this.unobserveEntries) {
-            this.unobserveEntries();
-        }
+        this.stopObservingEntries()
 
         Object.keys(this.notebookAnnotations).forEach(entryID => {
             const notebookAnnotationsForEntry = this.notebookAnnotations[entryID];
@@ -327,6 +339,12 @@ export default {
         });
     },
     methods: {
+        startObservingEntries() {
+            this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
+        },
+        stopObservingEntries() {
+            this.unobserveEntries();
+        },
         changeSectionPage(newParams, oldParams, changedParams) {
             if (isNotebookViewType(newParams.view)) {
                 return;
@@ -749,6 +767,7 @@ export default {
             return section.id;
         },
         async newEntry(embed = null) {
+            this.startTransaction();
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
@@ -835,21 +854,21 @@ export default {
 
             setDefaultNotebookSectionId(defaultNotebookSectionId);
         },
-        updateEntry(entry) {
+        async updateEntry(entry) {
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
             entries[entryPos] = entry;
 
-            this.updateEntries(entries);
+            await this.updateEntries(entries);
         },
-        updateEntries(entries) {
+        async updateEntries(entries) {
             const configuration = this.domainObject.configuration;
             const notebookEntries = configuration.entries || {};
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
             mutateObject(this.openmct, this.domainObject, 'configuration.entries', notebookEntries);
 
-            this.saveTransaction();
+            await this.saveTransaction();
         },
         getPageIdFromUrl() {
             return this.openmct.router.getParams().pageId;
@@ -891,20 +910,39 @@ export default {
         },
         startTransaction() {
             if (!this.openmct.objects.isTransactionActive()) {
+                this.stopObservingEntries();
                 this.transaction = this.openmct.objects.startTransaction();
             }
         },
         async saveTransaction() {
             if (this.transaction !== undefined) {
-                await this.transaction.commit();
-                this.openmct.objects.endTransaction();
+                try {
+                    console.log('try to commit');
+                    let committed = await this.transaction.commit();
+                    console.log('committed', committed);
+                } catch (error) {
+                    console.warn('Error saving Notebook transaction', error);
+                } finally {
+                    console.log('finally of try to commit');
+                    this.endTransaction();
+                }
             }
         },
         async cancelTransaction() {
             if (this.transaction !== undefined) {
-                await this.transaction.cancel();
-                this.openmct.objects.endTransaction();
+                try {
+                    await this.transaction.cancel();
+                } catch (error) {
+                    console.warn('Error canceling Notebook transaction', error);
+                } finally {
+                    this.endTransaction();
+                }
             }
+        },
+        endTransaction() {
+            console.log('end transaction');
+            this.openmct.objects.endTransaction();
+            this.transaction = undefined;
         }
     }
 };

@@ -219,7 +219,12 @@ class CouchObjectProvider {
                 console.error(error.message);
                 throw new Error(`CouchDB Error - No response"`);
             } else {
-                console.error(error.message);
+                if (!isNotebookOrAnnotationType(body.model)) {
+                    console.error(error.message);
+                } else {
+                    // warn since we handle conflicts for notebooks
+                    console.warn(error.message);
+                }
 
                 throw error;
             }
@@ -554,8 +559,9 @@ class CouchObjectProvider {
         let observersForObject = this.observers[keyString];
 
         if (observersForObject) {
+            const FORCE_REMOTE = true;
             observersForObject.forEach(async (observer) => {
-                const updatedObject = await this.get(identifier);
+                const updatedObject = await this.get(identifier, undefined, FORCE_REMOTE);
                 if (this.isSynchronizedObject(updatedObject)) {
                     observer(updatedObject);
                 }
