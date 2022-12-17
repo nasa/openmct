@@ -287,18 +287,22 @@ export default {
                 return;
             }
 
-            // Calculate the index of the element in the composition array
-            // based on the moveFrom / moveTo indexes and the YAxisId
-            if (this.moveFromYAxisId === Y_AXIS_2) {
-                moveFromIndex = moveFromIndex + this.yAxis1.length;
-            } else if (this.moveFromYAxisId === Y_AXIS_3) {
-                moveFromIndex = moveFromIndex + this.yAxis1.length + this.yAxis2.length;
+            let foundYAxisIndex = this.yAxes.findIndex(yAxis => yAxis.id === this.moveFromYAxisId);
+            if (foundYAxisIndex > -1) {
+                for (let count = 0; count < foundYAxisIndex; count++) {
+                    //add lengths of buckets above the chosen axis
+                    const yAxisElementLength = this.yAxes[count].elements.length;
+                    moveFromIndex = moveFromIndex + yAxisElementLength;
+                }
             }
 
-            if (moveToYAxisId === Y_AXIS_2) {
-                moveToIndex = moveToIndex + this.yAxis1.length;
-            } else if (moveToYAxisId === Y_AXIS_3) {
-                moveToIndex = moveToIndex + this.yAxis1.length + this.yAxis2.length;
+            foundYAxisIndex = this.yAxes.findIndex(yAxis => yAxis.id === moveToYAxisId);
+            if (foundYAxisIndex > -1) {
+                for (let count = 0; count < foundYAxisIndex; count++) {
+                    //add lengths of buckets above the chosen axis
+                    const yAxisElementLength = this.yAxes[count].elements.length;
+                    moveToIndex = this.moveToIndex + yAxisElementLength;
+                }
             }
 
             // Adjust the index if we're moving from one bucket to another
