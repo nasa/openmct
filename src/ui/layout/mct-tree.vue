@@ -448,12 +448,13 @@ export default {
                     // If item is missing due to error in object creation,
                     // walk up the navigationPath until we find an item
                     let item = this.getTreeItemByPath(navigationPath);
-                    while(!item) {
+                    while (!item) {
                         const startIndex = 0;
                         const endIndex = navigationPath.lastIndexOf('/');
                         navigationPath = navigationPath.substring(startIndex, endIndex);
                         item = this.getTreeItemByPath(navigationPath);
                     }
+
                     this.treeItemSelection(item);
                 }
             });
