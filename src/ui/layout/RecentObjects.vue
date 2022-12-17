@@ -23,6 +23,7 @@
 
 <script>
 import treeItem from './tree-item.vue';
+const MAX_RECENT_ITEMS = 20;
 const LOCAL_STORAGE_KEY__RECENT_OBJECTS = 'mct-recent-objects';
 export default {
     name: 'RecentObjects',
@@ -57,17 +58,30 @@ export default {
     methods: {
         async onHashChange(hash) {
             const objectPath = await this.openmct.objects.getRelativeObjectPath(hash);
+            if (!objectPath.length) {
+                return;
+            }
+
             const navigationPath = `/browse/${this.openmct.objects.getRelativePath(objectPath.slice(0, -1))}`;
-            this.recentItems = this.recentItems.filter(
-                item => navigationPath !== item.navigationPath
-            );
-            this.selectedItem = {
-                id: objectPath[0].id,
-                object: objectPath[0],
-                objectPath,
-                navigationPath
-            };
+            const foundIndex = this.recentItems.findIndex((item) => {
+                return navigationPath === item.navigationPath;
+            });
+            if (foundIndex > -1) {
+                const removedItem = this.recentItems.splice(foundIndex, 1);
+                this.selectedItem = removedItem[0];
+            } else {
+                this.selectedItem = {
+                    id: objectPath[0].identifier,
+                    object: objectPath[0],
+                    objectPath,
+                    navigationPath
+                };
+            }
+
             this.recentItems.unshift(this.selectedItem);
+            while (this.recentItems.length > MAX_RECENT_ITEMS) {
+                this.recentItems.pop();
+            }
         },
         calculateHeights() {
             const RECHECK = 100;
