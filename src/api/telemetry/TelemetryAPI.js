@@ -134,6 +134,15 @@ export default class TelemetryAPI {
     }
 
     /**
+     * @private
+     */
+    #findStalenessProvider(domainObject) {
+        return this.stalenessProviders.filter(function (p) {
+            return p.supportsStaleness(domainObject);
+        })[0];
+    }
+
+    /**
      * Returns a telemetry request provider that supports
      * a given domain object and options.
      */
@@ -159,15 +168,6 @@ export default class TelemetryAPI {
      * @private
      */
     #findLimitEvaluator(domainObject) {
-        return this.limitProviders.filter(function (p) {
-            return p.supportsLimits(domainObject);
-        })[0];
-    }
-
-    /**
-     * @private
-     */
-    #findStalenessEvaluator(domainObject) {
         return this.limitProviders.filter(function (p) {
             return p.supportsLimits(domainObject);
         })[0];
@@ -310,6 +310,58 @@ export default class TelemetryAPI {
         } finally {
             this.requestAbortControllers.delete(abortController);
         }
+    }
+
+    /**
+     * Subscribe to staleness updates for a specific domain object.
+     * The callback will be called whenever staleness changes.
+     *
+     * @method subscribeToStaleness
+     * @memberof module:openmct.TelemetryAPI~StalenessProvider#
+     * @param {module:openmct.DomainObject} domainObject the object
+     *          to watch for staleness updates
+     * @param {Function} callback the callback to invoke with staleness
+     *          updates
+     * @returns {Function} a function which may be called to terminate
+     *          the subscription to staleness updates
+     */
+    subscribeToStaleness(domainObject, callback) {
+        const provider = this.#findStalenessProvider(domainObject);
+
+        if (!this.stalenessSubscriberCache) {
+            this.stalenessSubscriberCache = {};
+        }
+
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let stalenessSubscriber = this.subscribeCache[keyString];
+
+        if (!stalenessSubscriber) {
+            stalenessSubscriber = this.stalenessSubscriberCache[keyString] = {
+                callbacks: [callback]
+            };
+            if (provider) {
+                stalenessSubscriber.unsubscribe = provider
+                    .subscribeToStaleness(domainObject, function (isStale) {
+                        stalenessSubscriber.callbacks.forEach(function (cb) {
+                            cb(isStale);
+                        });
+                    });
+            } else {
+                stalenessSubscriber.unsubscribe = function () {};
+            }
+        } else {
+            stalenessSubscriber.callbacks.push(callback);
+        }
+
+        return function unsubscribe() {
+            stalenessSubscriber.callbacks = stalenessSubscriber.callbacks.filter(function (cb) {
+                return cb !== callback;
+            });
+            if (stalenessSubscriber.callbacks.length === 0) {
+                stalenessSubscriber.unsubscribe();
+                delete this.stalenessSubscriberCache[keyString];
+            }
+        }.bind(this);
     }
 
     /**
@@ -478,25 +530,6 @@ export default class TelemetryAPI {
     }
 
     /**
-     * Get a staleness evaluator for this domain object.
-     * Staleness Evaluators let you konw when a telemetry from a
-     * telemetry-producing domainObject has become stale.
-     *
-     * This method is optional.
-     * If a provider does not implement this method, it is presumed
-     * that no staleness evaluators are defined for this domain object's telemetry.
-     *
-     * @param {module:openmct.DomainObject} domainObject the domain
-     *        object for which to watch staleness
-     * @returns {module:openmct.TelemetryAPI~StalenessEvaluator}
-     * @method stalenessEvaluator
-     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-     */
-    stalenessEvaluator(domainObject) {
-        return this.getLimitEvaluator(domainObject);
-    }
-
-    /**
      * Get a limit evaluator for this domain object.
      * Limit Evaluators help you evaluate limit and alarm status of individual
      * telemetry datums for display purposes without having to interact directly
@@ -561,32 +594,6 @@ export default class TelemetryAPI {
         }
 
         return provider.getLimitEvaluator(domainObject);
-    }
-
-    /**
-     * Get a staleness evaluator for this domain object.
-     * Staleness Evaluators let you konw when a telemetry from a
-     * telemetry-producing domainObject has become stale.
-     *
-     * This method is optional.
-     * If a provider does not implement this method, it is presumed
-     * that no staleness evaluators are defined for this domain object's telemetry.
-     *
-     * @param {module:openmct.DomainObject} domainObject the domain
-     *        object for which to watch staleness
-     * @returns {module:openmct.TelemetryAPI~StalenessEvaluator}
-     * @method stalenessEvaluator
-     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-     */
-    getStalenessEvaluator(domainObject) {
-        const provider = this.#findStalenessEvaluator(domainObject);
-        if (!provider) {
-            return {
-                evaluate: function () {}
-            };
-        }
-
-        return provider.getStalenessEvaluator(domainObject);
     }
 
     /**

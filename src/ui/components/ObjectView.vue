@@ -128,6 +128,7 @@ export default {
         if (this.domainObject) {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
+            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, this.handleStaleness);
         }
     },
     methods: {
@@ -159,6 +160,10 @@ export default {
 
             if (this.composition) {
                 this.composition._destroy();
+            }
+
+            if (this.unsubscribeFromStaleness) {
+                this.unsubscribeFromStaleness();
             }
 
             this.openmct.objectViews.off('clearData', this.clearData);
@@ -298,6 +303,8 @@ export default {
 
             this.domainObject = object;
 
+            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, this.handleStaleness);
+
             if (currentObjectPath) {
                 this.currentObjectPath = currentObjectPath;
             }
@@ -307,6 +314,9 @@ export default {
             this.updateView(immediatelySelect);
 
             this.initObjectStyles();
+        },
+        handleStaleness(isStale) {
+            console.log('domainObject staleness', this.domainObject.name, isStale);
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
