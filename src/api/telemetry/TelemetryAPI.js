@@ -333,7 +333,7 @@ export default class TelemetryAPI {
         }
 
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
-        let stalenessSubscriber = this.subscribeCache[keyString];
+        let stalenessSubscriber = this.stalenessSubscriberCache[keyString];
 
         if (!stalenessSubscriber) {
             stalenessSubscriber = this.stalenessSubscriberCache[keyString] = {
