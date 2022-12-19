@@ -49,11 +49,11 @@ export default class Transaction {
 
     createDirtyObjectPromise(object, action) {
         return new Promise((resolve, reject) => {
-            console.log('transaction bout to save', object);
+            console.log('transaction bout to save', JSON.parse(JSON.stringify(object)));
             action(object)
                 .then((success) => {
                     const key = this.objectAPI.makeKeyString(object.identifier);
-                    console.log('successful save', object, success);
+                    console.log('successful save', JSON.parse(JSON.stringify(object)), success);
                     delete this.dirtyObjects[key];
                     resolve(success);
                 })

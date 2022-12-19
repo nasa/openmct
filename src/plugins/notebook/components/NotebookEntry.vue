@@ -290,7 +290,7 @@ export default {
                 await this.addNewEmbed(objectPath);
             }
 
-            this.timestampAndUpdate();
+            await this.timestampAndUpdate();
         },
         findPositionInArray(array, id) {
             let position = -1;
@@ -323,14 +323,14 @@ export default {
                 pageId: null
             });
         },
-        removeEmbed(id) {
+        async removeEmbed(id) {
             const embedPosition = this.findPositionInArray(this.entry.embeds, id);
             // TODO: remove notebook snapshot object using object remove API
             this.entry.embeds.splice(embedPosition, 1);
 
-            this.timestampAndUpdate();
+            await this.timestampAndUpdate();
         },
-        updateEmbed(newEmbed) {
+        async updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
                 const found = (e.id === newEmbed.id);
                 if (found) {
@@ -340,7 +340,7 @@ export default {
                 return found;
             });
 
-            this.timestampAndUpdate();
+            await this.timestampAndUpdate();
         },
         async timestampAndUpdate() {
             const user = await this.openmct.user.getCurrentUser();
@@ -354,17 +354,13 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
-            // if (!this.isNew) {
-                this.$emit('editingEntry');
-            // } else {
-            //     this.$emit('newEntryLoaded');
-            // }
+            this.$emit('editingEntry');
         },
-        updateEntryValue($event) {
+        async updateEntryValue($event) {
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;
-                this.timestampAndUpdate();
+                await this.timestampAndUpdate();
             } else {
                 this.$emit('cancelEdit');
             }
