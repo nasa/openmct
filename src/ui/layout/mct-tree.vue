@@ -792,12 +792,17 @@ export default {
 
             for (const result of results) {
                 if (!abortSignal.aborted) {
+                    // Don't show deleted objects in search results
+                    if (result.location === null) {
+                        continue;
+                    }
+
                     resultPromises.push(this.openmct.objects.getOriginalPath(result.identifier).then((objectPath) => {
                         // removing the item itself, as the path we pass to buildTreeItem is a parent path
                         objectPath.shift();
 
                         // if root, remove, we're not using in object path for tree
-                        let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
+                        const lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
                         if (lastObject && lastObject.type === 'root') {
                             objectPath.pop();
                         }
