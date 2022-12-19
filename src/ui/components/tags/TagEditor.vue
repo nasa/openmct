@@ -165,7 +165,6 @@ export default {
             }
         },
         async tagAdded(newTag) {
-            console.debug(`🍉 Tag added: ${newTag}`);
             // Either undelete an annotation, or create one (1) new annotation
             let existingAnnotation = this.annotations.find((annotation) => {
                 return annotation.tags.includes(newTag);

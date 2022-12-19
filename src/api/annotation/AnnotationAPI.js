@@ -382,7 +382,6 @@ export default class AnnotationAPI extends EventEmitter {
     * @returns {Promise} returns a model of matching tags with their target domain objects attached
     */
     async searchForTags(query, abortController) {
-        console.debug(`Searching for tags with query: ${query}`);
         const matchingTagKeys = this.#getMatchingTags(query);
         if (!matchingTagKeys.length) {
             return [];

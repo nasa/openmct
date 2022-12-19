@@ -151,8 +151,6 @@ export default {
                 return;
             }
 
-            console.debug(`🍇 Need to load ${annotationsToLoad.length} annotations`, annotationsToLoad);
-
             const sortedAnnotations = annotationsToLoad.sort((annotationA, annotationB) => {
                 return annotationB.modified - annotationA.modified;
             });
@@ -170,7 +168,6 @@ export default {
             }
         },
         updateSelection(selection) {
-            console.debug(`🍇 Selection changed to ${selection.length} items`, selection);
             const unobserveEntryFunctions = Object.values(this.unobserveEntries);
             unobserveEntryFunctions.forEach(unobserveEntry => {
                 unobserveEntry();
@@ -184,8 +181,6 @@ export default {
                 this.lastLocalAnnotationCreations[targetKey] = targetObject?.annotationLastCreated ?? 0;
                 if (!this.unobserveEntries[targetKey]) {
                     this.unobserveEntries[targetKey] = this.openmct.objects.observe(targetObject, '*', this.targetObjectChanged);
-                } else {
-                    console.debug(`🍇 Already observing ${targetKey}`);
                 }
             });
             this.loadNewAnnotations(this.selectedAnnotations);
@@ -194,7 +189,6 @@ export default {
             const targetID = this.openmct.objects.makeKeyString(target.identifier);
             const lastLocalAnnotationCreation = this.lastLocalAnnotationCreations[targetID] ?? 0;
             if (lastLocalAnnotationCreation < target.annotationLastCreated) {
-                console.debug(`💂 Target object annotation changed for ${targetID}`);
                 this.lastLocalAnnotationCreations[targetID] = target.annotationLastCreated;
                 const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(targetID);
                 const filteredAnnotationsForSelection = allAnnotationsForTarget.filter(annotation => {

@@ -404,7 +404,6 @@ export default {
 
             const selectedAnnotations = selection?.[0]?.[1]?.context?.annotations;
             if (selectedAnnotations?.length) {
-                console.debug(`🍊 Selection changed`, selectedAnnotations);
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
                 let minX = Number.MAX_SAFE_INTEGER;
@@ -527,7 +526,6 @@ export default {
                 const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.keyString);
                 rawAnnotationsForPlot.push(...seriesAnnotations);
             }));
-            console.debug(`👺 Loaded ${rawAnnotationsForPlot.length} annotations for plot`, rawAnnotationsForPlot);
             if (rawAnnotationsForPlot) {
                 this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
             }
@@ -747,7 +745,7 @@ export default {
                 this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
                 this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
                 this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
-                this.listenTo(this.canvas, 'click', this.onClick, this);
+                this.listenTo(this.canvas, 'click', this.selectNearbyAnnotations, this);
                 this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
             }
         },
@@ -817,7 +815,6 @@ export default {
                     uniqueBoundsAnnotations.push(annotation);
                 }
             });
-            console.debug(`👩‍🎨 ${uniqueBoundsAnnotations.length} annotation selections to draw...`);
             this.marqueeAnnotations(uniqueBoundsAnnotations);
 
             return {
@@ -1054,7 +1051,7 @@ export default {
                 this.trackHistory();
             }
         },
-        onClick(event) {
+        selectNearbyAnnotations(event) {
             event.stopPropagation();
 
             if (this.annotationSelections.length) {
@@ -1063,7 +1060,6 @@ export default {
 
             const nearbyAnnotations = this.gatherNearbyAnnotations();
             const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
-            console.debug(`🦸 Click detected, found annotations closest`, nearbyAnnotations);
             this.selectPlotAnnotations({
                 targetDetails,
                 targetDomainObjects,
@@ -1110,7 +1106,6 @@ export default {
                     targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
                 }
             });
-            console.debug(`🧚‍♂️ New Annotation selection complete: ${JSON.stringify(targetDetails)}`);
             this.selectPlotAnnotations({
                 targetDetails,
                 targetDomainObjects,
@@ -1230,8 +1225,6 @@ export default {
         },
 
         onAnnotationChange(annotations) {
-            console.debug(`👮‍♀️ Tag or annotation added or deleted for a chart, TODO, need to check for nearby annotations`, annotations);
-
             if (this.marquee) {
                 this.marquee.annotationEvent = false;
                 this.endMarquee();
