@@ -52,6 +52,25 @@ const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
  * @property {String} foregroundColor eg. "#ffffff"
  */
 
+/**
+ * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ */
+
+/**
+ * @typedef {import('../../../openmct').OpenMCT} OpenMCT
+ */
+
+/**
+ * An interface for interacting with annotations of domain objects.
+ * An annotation of a domain object is an operator created object for the purposes
+ * of further describing data in plots, notebooks, maps, etc. For example, an annotation
+ * could be a tag on a plot notating an interesting set of points labeled SCIENCE. It could
+ * also be set of notebook entries the operator has tagged DRIVING when a robot monitored by OpenMCT
+ * about rationals behind why the robot has taken a certain path.
+ * Annotations are discoverable using search, and are typically rendered in OpenMCT views to bring attention
+ * to other users.
+ * @constructor
+ */
 export default class AnnotationAPI extends EventEmitter {
 
     /**
@@ -81,22 +100,21 @@ export default class AnnotationAPI extends EventEmitter {
             }
         });
     }
-
     /**
-    * Create the a generic annotation
+    * Creates an annotation on a given domain object (e.g., a plot) and a set of targets (e.g., telemetry objects)
     * @typedef {Object} CreateAnnotationOptions
-    * @property {String} name a name for the new parameter
-    * @property {import('../objects/ObjectAPI').DomainObject} domainObject the domain object this annotation was created with
-    * @property {ANNOTATION_TYPES} annotationType the type of annotation to create
-    * @property {Tag[]} tags
-    * @property {String} contentText
-    * @property {import('../objects/ObjectAPI').Identifier[]} targets the targets and their specific properties
-    * @property {import('../objects/ObjectAPI').DomainObject[]} targetDomainObjects the domain objects this annotation points to
+    * @property {String} name a name for the new annotation (e.g., "Plot annnotation")
+    * @property {DomainObject} domainObject the domain object this annotation was created with
+    * @property {ANNOTATION_TYPES} annotationType the type of annotation to create (e.g., PLOT_SPATIAL)
+    * @property {Tag[]} tags tags to add to the annotation, e.g., SCIENCE for science related annotations
+    * @property {String} contentText Some text to add to the annotation, e.g. ("This annotation is about science")
+    * @property {Object<string, Object>} targets the targets ID keystrings and their specific properties (e.g., a bounding box for a plot)
+    * @property {DomainObject>} targetDomainObjects the targets ID keystrings and the domain objects this annotation points to (e.g., telemetry objects for a plot)
     */
     /**
     * @method create
     * @param {CreateAnnotationOptions} options
-    * @returns {Promise<import('../objects/ObjectAPI').DomainObject>} a promise which will resolve when the domain object
+    * @returns {Promise<DomainObject>} a promise which will resolve when the domain object
     *          has been created, or be rejected if it cannot be saved
     */
     async create({name, domainObject, annotationType, tags, contentText, targets, targetDomainObjects}) {
@@ -198,7 +216,7 @@ export default class AnnotationAPI extends EventEmitter {
     /**
     * @method getAnnotations
     * @param {String} query - The keystring of the domain object to search for annotations for
-    * @returns {import('../objects/ObjectAPI').DomainObject[]} Returns an array of domain objects that match the search query
+    * @returns {DomainObject[]} Returns an array of domain objects that match the search query
     */
     async getAnnotations(query) {
         const searchResults = (await Promise.all(this.openmct.objects.search(query, null, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS))).flat();
@@ -208,7 +226,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method deleteAnnotations
-    * @param {import('../objects/ObjectAPI').DomainObject[]} existingAnnotation - An array of annotations to delete (set _deleted to true)
+    * @param {DomainObject[]} existingAnnotation - An array of annotations to delete (set _deleted to true)
     */
     deleteAnnotations(annotations) {
         if (!annotations) {
@@ -224,7 +242,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method deleteAnnotations
-    * @param {import('../objects/ObjectAPI').DomainObject} existingAnnotation - An annotations to undelete (set _deleted to false)
+    * @param {DomainObject} existingAnnotation - An annotations to undelete (set _deleted to false)
     */
     unDeleteAnnotation(annotation) {
         if (!annotation) {
