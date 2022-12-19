@@ -83,6 +83,8 @@ export default class PlotSeries extends Model {
         // Model.apply(this, arguments);
         this.onXKeyChange(this.get('xKey'));
         this.onYKeyChange(this.get('yKey'));
+
+        this.unPlottableValues = [undefined, Infinity, -Infinity];
     }
 
     /**
@@ -342,6 +344,10 @@ export default class PlotSeries extends Model {
         let stats = this.get('stats');
         let changed = false;
         if (!stats) {
+            if ([Infinity, -Infinity].includes(value)) {
+                return;
+            }
+
             stats = {
                 minValue: value,
                 minPoint: point,
@@ -350,13 +356,13 @@ export default class PlotSeries extends Model {
             };
             changed = true;
         } else {
-            if (stats.maxValue < value) {
+            if (stats.maxValue < value && value !== Infinity) {
                 stats.maxValue = value;
                 stats.maxPoint = point;
                 changed = true;
             }
 
-            if (stats.minValue > value) {
+            if (stats.minValue > value && value !== -Infinity) {
                 stats.minValue = value;
                 stats.minPoint = point;
                 changed = true;
@@ -419,7 +425,7 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValueInvalid(val) {
-        return Number.isNaN(val) || val === undefined;
+        return Number.isNaN(val) || this.unPlottableValues.includes(val);
     }
 
     /**
