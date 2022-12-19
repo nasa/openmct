@@ -57,6 +57,10 @@ const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
  */
 
 /**
+ * @typedef {import('../objects/ObjectAPI').Identifier} Identifier
+ */
+
+/**
  * @typedef {import('../../../openmct').OpenMCT} OpenMCT
  */
 
@@ -187,7 +191,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method isAnnotation
-    * @param {import('../objects/ObjectAPI').DomainObject} domainObject domainObject the domainObject in question
+    * @param {DomainObject} domainObject domainObject the domainObject in question
     * @returns {Boolean} Returns true if the domain object is an annotation
     */
     isAnnotation(domainObject) {
@@ -215,11 +219,12 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method getAnnotations
-    * @param {String} query - The keystring of the domain object to search for annotations for
+    * @param {Identifier} domainObjectIdentifier - The domain object identifier to use to search for annotations
     * @returns {DomainObject[]} Returns an array of domain objects that match the search query
     */
-    async getAnnotations(query) {
-        const searchResults = (await Promise.all(this.openmct.objects.search(query, null, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS))).flat();
+    async getAnnotations(domainObjectIdentifier) {
+        const keyStringQuery = this.openmct.objects.makeKeyString(domainObjectIdentifier);
+        const searchResults = (await Promise.all(this.openmct.objects.search(keyStringQuery, null, this.openmct.objects.SEARCH_TYPES.ANNOTATIONS))).flat();
 
         return searchResults;
     }

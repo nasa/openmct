@@ -190,7 +190,7 @@ export default {
             const lastLocalAnnotationCreation = this.lastLocalAnnotationCreations[targetID] ?? 0;
             if (lastLocalAnnotationCreation < target.annotationLastCreated) {
                 this.lastLocalAnnotationCreations[targetID] = target.annotationLastCreated;
-                const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(targetID);
+                const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(target.identifier);
                 const filteredAnnotationsForSelection = allAnnotationsForTarget.filter(annotation => {
                     const matchingTargetID = Object.keys(annotation.targets).filter(loadedTargetID => {
                         return targetID === loadedTargetID;

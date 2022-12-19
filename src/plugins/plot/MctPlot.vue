@@ -523,7 +523,7 @@ export default {
 
             const rawAnnotationsForPlot = [];
             await Promise.all(this.seriesModels.map(async (seriesModel) => {
-                const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.keyString);
+                const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.model.identifier);
                 rawAnnotationsForPlot.push(...seriesAnnotations);
             }));
             if (rawAnnotationsForPlot) {
