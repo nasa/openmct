@@ -51,6 +51,9 @@
                 @drop="moveToIndex(elements.length)"
             ></li>
         </ul>
+        <div v-if="elements.length === 0">
+            No contained elements
+        </div>
     </div>
 </div>
 </template>
