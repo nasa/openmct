@@ -410,9 +410,19 @@ export default class ObjectAPI {
             }
         }
 
-        return result.catch((error) => {
+        return result.catch(async (error) => {
             if (error instanceof this.errors.Conflict) {
                 this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+
+                // Synchronized objects will resolve their own conflicts, so
+                // bypass the refresh here and throw the error.
+                if (!this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+                    if (this.isTransactionActive()) {
+                        this.endTransaction();
+                    }
+
+                    await this.refresh(domainObject);
+                }
             }
 
             throw error;
