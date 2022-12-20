@@ -82,8 +82,6 @@ import ElementItemGroup from './ElementItemGroup.vue';
 import configStore from '../../plugins/plot/configuration/ConfigStore';
 
 const Y_AXIS_1 = 1;
-const Y_AXIS_2 = 2;
-const Y_AXIS_3 = 3;
 
 export default {
     components: {
@@ -95,9 +93,6 @@ export default {
     data() {
         return {
             yAxes: [],
-            yAxis1: [],
-            yAxis2: [],
-            yAxis3: [],
             isEditing: this.openmct.editor.isEditing(),
             parentObject: undefined,
             currentSearch: '',
@@ -108,7 +103,7 @@ export default {
     },
     computed: {
         hasElements() {
-            for (let yAxis of this.yAxes) {
+            for (const yAxis of this.yAxes) {
                 if (yAxis.elements.length > 0) {
                     return true;
                 }
@@ -116,11 +111,6 @@ export default {
 
             return false;
         }
-    },
-    created() {
-        this.Y_AXIS_1 = Y_AXIS_1;
-        this.Y_AXIS_2 = Y_AXIS_2;
-        this.Y_AXIS_3 = Y_AXIS_3;
     },
     mounted() {
         const selection = this.openmct.selection.get();
@@ -209,14 +199,20 @@ export default {
             let yAxisId = this.parentObject.configuration.series[index].yAxisId;
             if (yAxisId === undefined) {
                 yAxisId = Y_AXIS_1;
-                this.composition.reorder(index, this.yAxis1.length);
+
+                // Insert the element at the end of the YAxis1 bucket
+                let insertIndex = 0;
+                while (insertIndex < this.yAxes.length && this.yAxes[insertIndex].id === yAxisId) {
+                    insertIndex++;
+                }
+
+                this.composition.reorder(index, insertIndex + 1);
             }
 
             const keyString = this.openmct.objects.makeKeyString(element.identifier);
 
             // Store the element in the cache and set its yAxisId
-            this.elementsCache[keyString] =
-            JSON.parse(JSON.stringify(element));
+            this.elementsCache[keyString] = JSON.parse(JSON.stringify(element));
             if (this.elementsCache[keyString].yAxisId !== yAxisId) {
                 this.elementsCache[keyString].yAxisId = yAxisId;
                 // Mutate the YAxisId on the domainObject itself
