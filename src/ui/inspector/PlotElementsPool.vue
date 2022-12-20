@@ -194,7 +194,7 @@ export default {
         addElement(element) {
             // Get the index of the corresponding element in the series list
             const index = this.parentObject.configuration.series.findIndex(
-                series => series.identifier.key === element.identifier.key
+                series => this.openmct.objects.areIdsEqual(series.identifier, element.identifier)
             );
             let yAxisId = this.parentObject.configuration.series[index].yAxisId;
             if (yAxisId === undefined) {
