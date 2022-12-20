@@ -252,7 +252,6 @@ export default class ObjectAPI {
         return objectPromise;
     }
 
-
     /**
      * Search for domain objects.
      *
@@ -413,11 +412,18 @@ export default class ObjectAPI {
             }
         }
 
-        return result.catch((error) => {
+        return result.catch(async (error) => {
             if (error instanceof this.errors.Conflict) {
-                // only show notification if it is not a synchronized object, we handle these conflicts ourselves
+                // Synchronized objects will resolve their own conflicts, so
+                // bypass the refresh here and throw the error.
                 if (!this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
                     this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+
+                    if (this.isTransactionActive()) {
+                        this.endTransaction();
+                    }
+
+                    await this.refresh(domainObject);
                 }
             }
 

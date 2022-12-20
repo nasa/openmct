@@ -481,19 +481,16 @@ describe("The Imagery View Layouts", () => {
                 });
             });
         });
-        it ('scrollToRight is called when clicking on auto scroll button', (done) => {
-            Vue.nextTick(() => {
-                // use spyon to spy the scroll function
-                spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollToRight');
-                imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
-                Vue.nextTick(() => {
-                    parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
-                    expect(imageryView._getInstance().$refs.ImageryContainer.scrollToRight).toHaveBeenCalledWith('reset');
-                    done();
-                });
-            });
+        it ('scrollToRight is called when clicking on auto scroll button', async () => {
+            await Vue.nextTick();
+            // use spyon to spy the scroll function
+            spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollHandler');
+            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
+            await Vue.nextTick();
+            parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
+            expect(imageryView._getInstance().$refs.ImageryContainer.scrollHandler);
         });
-        xit('should change the image zoom factor when using the zoom buttons', async (done) => {
+        xit('should change the image zoom factor when using the zoom buttons', async () => {
             await Vue.nextTick();
             let imageSizeBefore;
             let imageSizeAfter;
@@ -512,7 +509,6 @@ describe("The Imagery View Layouts", () => {
             imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
             expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
-            done();
         });
         xit('should reset the zoom factor on the image when clicking the zoom button', async (done) => {
             await Vue.nextTick();
