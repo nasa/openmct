@@ -32,7 +32,7 @@
         class="c-elements-pool__elements"
     >
         <ul
-            v-if="elements && elements.length > 0"
+            v-if="elements.length > 0"
             id="inspector-elements-tree"
             class="c-tree c-elements-pool__tree"
         >
