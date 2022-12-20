@@ -276,13 +276,35 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
   - Leverage `await page.goto('./', { waitUntil: 'networkidle' });`
   - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
-### How to write a great test (TODO)
+### How to write a great test (WIP)
+
+- Use our [App Actions](./appActions.js) for performing common actions whenever applicable.
+- If you create an object outside of using the `createDomainObjectWithDefaults` App Action, make sure to fill in the 'Notes' section of your object with `page.testNotes`:
+
+  ```js
+  // Fill the "Notes" section with information about the
+  // currently running test and its project.
+  const { testNotes } = page;
+  const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+  await notesInput.fill(testNotes);
+  ```
 
 #### How to write a great visual test (TODO)
+
+#### How to write a great network test
+
+- Where possible, it is best to mock out third-party network activity to ensure we are testing application behavior of Open MCT.
+- It is best to be as specific as possible about the expected network request/response structures in creating your mocks.
+- Make sure to only mock requests which are relevant to the specific behavior being tested.
+- Where possible, network requests and responses should be treated in an order-agnostic manner, as the order in which certain requests/responses happen is dynamic and subject to change.
+
+Some examples of mocking network responses in regards to CouchDB can be found in our [couchdb.e2e.spec.js](./tests/functional/couchdb.e2e.spec.js) test file.
 
 ### Best Practices
 
 For now, our best practices exist as self-tested, living documentation in our [exampleTemplate.e2e.spec.js](./tests/framework/exampleTemplate.e2e.spec.js) file.
+
+For best practices with regards to mocking network responses, see our [couchdb.e2e.spec.js](./tests/functional/couchdb.e2e.spec.js) file.
 
 ### Tips & Tricks (TODO)
 
