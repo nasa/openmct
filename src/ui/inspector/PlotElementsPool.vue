@@ -266,7 +266,6 @@ export default {
             this.mutateYAxisId(domainObject, moveToYAxisId);
 
             const moveFromIndex = this.moveFromIndex;
-            this.moveToIndex = moveToIndex;
 
             this.moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId);
         },
@@ -287,25 +286,26 @@ export default {
                 return;
             }
 
-            let foundYAxisIndex = this.yAxes.findIndex(yAxis => yAxis.id === this.moveFromYAxisId);
-            if (foundYAxisIndex > -1) {
-                for (let count = 0; count < foundYAxisIndex; count++) {
-                    //add lengths of buckets above the chosen axis
-                    const yAxisElementLength = this.yAxes[count].elements.length;
-                    moveFromIndex = moveFromIndex + yAxisElementLength;
-                }
+            // Find the corresponding indexes of the from/to yAxes in the yAxes list
+            const moveFromYAxisIndex = this.yAxes.findIndex(yAxis => yAxis.id === this.moveFromYAxisId);
+            const moveToYAxisIndex = this.yAxes.findIndex(yAxis => yAxis.id === moveToYAxisId);
+
+            // Calculate the actual indexes of the elements in the composition array
+            // based on which bucket and index they are being moved from/to.
+            // Then, trigger a composition reorder.
+            for (let yAxisId = 0; yAxisId < moveFromYAxisIndex; yAxisId++) {
+                const lesserYAxisBucketLength = this.yAxes[yAxisId].elements.length;
+                // Add the lengths of preceding buckets to calculate the actual 'from' index
+                moveFromIndex = moveFromIndex + lesserYAxisBucketLength;
             }
 
-            foundYAxisIndex = this.yAxes.findIndex(yAxis => yAxis.id === moveToYAxisId);
-            if (foundYAxisIndex > -1) {
-                for (let count = 0; count < foundYAxisIndex; count++) {
-                    //add lengths of buckets above the chosen axis
-                    const yAxisElementLength = this.yAxes[count].elements.length;
-                    moveToIndex = this.moveToIndex + yAxisElementLength;
-                }
+            for (let yAxisId = 0; yAxisId < moveToYAxisIndex; yAxisId++) {
+                const greaterYAxisBucketLength = this.yAxes[yAxisId].elements.length;
+                // Add the lengths of subsequent buckets to calculate the actual 'to' index
+                moveToIndex = moveToIndex + greaterYAxisBucketLength;
             }
 
-            // Adjust the index if we're moving from one bucket to another
+            // Adjust the index by 1 if we're moving from one bucket to another
             if (this.moveFromYAxisId !== moveToYAxisId && moveToIndex > 0) {
                 moveToIndex--;
             }
