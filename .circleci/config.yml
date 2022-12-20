@@ -66,7 +66,7 @@ commands:
       suite:
         type: string
    steps:
-    - run: npm run cov:e2e:report || true
+    - run: npm run cov:e2e:report
     - run: npm run cov:e2e:<<parameters.suite>>:publish
 orbs:
   node: circleci/node@4.9.0
