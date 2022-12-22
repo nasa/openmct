@@ -69,16 +69,26 @@ export default class RelatedTelemetry {
         await Promise.all(
             this.keys.map(async (key) => {
                 if (this[key]) {
-                    if (this[key].historical) {
-                        await this._initializeHistorical(key);
-                    }
+                    const telemetryObjectId = this[key]?.historical?.telemetryObjectId || this[key]?.realtime?.telemetryObjectId;
+                    if (telemetryObjectId) {
+                        this[key].domainObject = await this._openmct.objects.get(telemetryObjectId);
+                        this[key].telemetryCollection = this._openmct.telemetry.requestCollection(this[key].domainObject);
 
-                    if (this[key].realtime && this[key].realtime.telemetryObjectId && this[key].realtime.telemetryObjectId !== '') {
-                        await this._intializeRealtime(key);
+                        return this._initializeTelemetry(key);
                     }
                 }
             })
         );
+    }
+
+    async _initializeTelemetry(key) {
+        if (!this[key]?.telemetryCollection) {
+            return;
+        }
+
+        this[key].telemetryCollection.load();
+        await this._initializeHistorical(key);
+        await this._intializeRealtime(key);
     }
 
     async _initializeHistorical(key) {
@@ -87,14 +97,10 @@ export default class RelatedTelemetry {
         } else if (this[key].historical.telemetryObjectId !== '') {
             this[key].historicalDomainObject = await this._openmct.objects.get(this[key].historical.telemetryObjectId);
 
-            this[key].requestLatestFor = async (datum) => {
-                const options = {
-                    start: this._openmct.time.bounds().start,
-                    end: this._parseTime(datum),
-                    strategy: 'latest'
-                };
-                let results = await this._openmct.telemetry
-                    .request(this[key].historicalDomainObject, options);
+            this[key].requestLatestFor = (targetDatum) => {
+                const results = this[key].telemetryCollection.getAll().filter((datum) => {
+                    return this._parseTime(datum) <= this._parseTime(targetDatum);
+                });
 
                 return results[results.length - 1];
             };
@@ -127,16 +133,13 @@ export default class RelatedTelemetry {
             return;
         }
 
-        if (this[key].realtimeDomainObject) {
-            this[key].unsubscribe = this._openmct.telemetry.subscribe(
-                this[key].realtimeDomainObject, datum => {
-                    this[key].listeners.forEach(callback => {
-                        callback(datum);
-                    });
-
-                }
-            );
-
+        if (this[key].realtimeDomainObject && this[key].telemetryCollection) {
+            this[key].telemetryCollection.on('add', (data) => {
+                const latestDatum = data[data.length - 1];
+                this[key].listeners.forEach((callback) => {
+                    callback(latestDatum);
+                });
+            });
             this[key].isSubscribed = true;
         }
     }
