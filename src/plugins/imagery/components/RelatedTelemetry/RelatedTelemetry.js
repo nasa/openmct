@@ -86,9 +86,9 @@ export default class RelatedTelemetry {
             return;
         }
 
-        this[key].telemetryCollection.load();
         await this._initializeHistorical(key);
         await this._intializeRealtime(key);
+        this[key].telemetryCollection.load();
     }
 
     async _initializeHistorical(key) {
