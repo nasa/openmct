@@ -196,22 +196,20 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    get(identifier, abortSignal = undefined, forceRemote = false) {
-        const keystring = this.makeKeyString(identifier);
+    get(identifier, abortSignal) {
+        let keystring = this.makeKeyString(identifier);
 
-        if (!forceRemote) {
-            if (this.cache[keystring] !== undefined) {
-                return this.cache[keystring];
-            }
+        if (this.cache[keystring] !== undefined) {
+            return this.cache[keystring];
+        }
 
-            identifier = utils.parseKeyString(identifier);
+        identifier = utils.parseKeyString(identifier);
 
-            if (this.isTransactionActive()) {
-                let dirtyObject = this.transaction.getDirtyObject(identifier);
+        if (this.isTransactionActive()) {
+            let dirtyObject = this.transaction.getDirtyObject(identifier);
 
-                if (dirtyObject) {
-                    return Promise.resolve(dirtyObject);
-                }
+            if (dirtyObject) {
+                return Promise.resolve(dirtyObject);
             }
         }
 
@@ -227,8 +225,8 @@ export default class ObjectAPI {
 
         let objectPromise = provider.get(identifier, abortSignal).then(result => {
             delete this.cache[keystring];
-            result = this.applyGetInterceptors(identifier, result);
 
+            result = this.applyGetInterceptors(identifier, result);
             if (result.isMutable) {
                 result.$refresh(result);
             } else {
@@ -401,7 +399,7 @@ export default class ObjectAPI {
                 savedObjectPromise.then(response => {
                     savedResolve(response);
                 }).catch((error) => {
-                    if (!isNewObject) {
+                    if (lastPersistedTime !== undefined) {
                         this.#mutate(domainObject, 'persisted', lastPersistedTime);
                     }
 
@@ -414,11 +412,11 @@ export default class ObjectAPI {
 
         return result.catch(async (error) => {
             if (error instanceof this.errors.Conflict) {
+                this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+
                 // Synchronized objects will resolve their own conflicts, so
                 // bypass the refresh here and throw the error.
                 if (!this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
-                    this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
-
                     if (this.isTransactionActive()) {
                         this.endTransaction();
                     }

@@ -50,7 +50,7 @@
         <Sidebar
             ref="sidebar"
             class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
-            :class="sidebarClasses"
+            :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}, {'c-drawer--overlays': sidebarCoversEntries}]"
             :default-page-id="defaultPageId"
             :selected-page-id="getSelectedPageId()"
             :default-section-id="defaultSectionId"
@@ -124,7 +124,6 @@
             <div
                 v-if="selectedPage && !selectedPage.isLocked"
                 class="c-notebook__drag-area icon-plus"
-                :class="{ 'disabled' : activeTransaction }"
                 @click="newEntry()"
                 @dragover="dragOver"
                 @drop.capture="dropCapture"
@@ -134,11 +133,6 @@
                     To start a new entry, click here or drag and drop any object
                 </span>
             </div>
-            <progress-bar
-                v-if="savingTransaction"
-                class="c-telemetry-table__progress-bar"
-                :model="{ progressPerc: undefined }"
-            />
             <div
                 v-if="selectedPage && selectedPage.isLocked"
                 class="c-notebook__page-locked"
@@ -152,7 +146,6 @@
                 class="c-notebook__entries"
                 aria-label="Notebook Entries"
             >
-            <!-- :is-new="entry.id === newlyCreatedEntryId" -->
                 <NotebookEntry
                     v-for="entry in filteredAndSortedEntries"
                     :key="entry.id"
@@ -168,7 +161,6 @@
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
                 />
-                <!-- @newEntryLoaded="newlyCreatedEntryId = undefined"-->
             </div>
             <div
                 v-if="showLockButton"
@@ -191,7 +183,6 @@ import NotebookEntry from './NotebookEntry.vue';
 import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
-import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSectionId, setDefaultNotebookPageId } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
@@ -209,8 +200,7 @@ export default {
         NotebookEntry,
         Search,
         SearchResults,
-        Sidebar,
-        ProgressBar
+        Sidebar
     },
     inject: ['agent', 'openmct', 'snapshotContainer'],
     props: {
@@ -235,10 +225,7 @@ export default {
             showNav: false,
             sidebarCoversEntries: false,
             filteredAndSortedEntries: [],
-            notebookAnnotations: {},
-            activeTransaction: false,
-            savingTransaction: false,
-            newlyCreatedEntryId: undefined
+            notebookAnnotations: {}
         };
     },
     computed: {
@@ -287,30 +274,9 @@ export default {
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
 
             return entries && entries.length > 0 && this.isRestricted && !this.selectedPage.isLocked;
-        },
-        sidebarClasses() {
-            let sidebarClasses = [];
-            if (this.showNav) {
-                sidebarClasses.push('is-expanded');
-            }
-
-            if (this.sidebarCoversEntries) {
-                sidebarClasses.push('c-drawer--overlays');
-            } else {
-                sidebarClasses.push('c-drawer--push');
-            }
-
-            return sidebarClasses;
         }
     },
     watch: {
-        activeTransaction() {
-            if (this.activeTransaction) {
-                this.stopObservingEntries();
-            } else {
-                this.startObservingEntries();
-            }
-        },
         search() {
             this.getSearchResults();
         },
@@ -334,7 +300,7 @@ export default {
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
-        this.startObservingEntries();
+        this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -361,12 +327,6 @@ export default {
         });
     },
     methods: {
-        startObservingEntries() {
-            this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
-        },
-        stopObservingEntries() {
-            this.unobserveEntries();
-        },
         changeSectionPage(newParams, oldParams, changedParams) {
             if (isNotebookViewType(newParams.view)) {
                 return;
@@ -536,10 +496,10 @@ export default {
                     {
                         label: "Ok",
                         emphasis: true,
-                        callback: async () => {
+                        callback: () => {
                             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
                             entries.splice(entryPos, 1);
-                            await this.updateEntries(entries);
+                            this.updateEntries(entries);
                             this.filterAndSortEntries();
                             this.removeAnnotations(entryId);
                             dialog.dismiss();
@@ -587,7 +547,7 @@ export default {
             const snapshotId = event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
                 const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
-                await this.newEntry(snapshot.embedObject);
+                this.newEntry(snapshot.embedObject);
                 this.snapshotContainer.removeSnapshot(snapshotId);
 
                 const namespace = this.domainObject.identifier.namespace;
@@ -608,7 +568,7 @@ export default {
             };
             const embed = await createNewEmbed(snapshotMeta);
 
-            await this.newEntry(embed);
+            this.newEntry(embed);
         },
         focusOnEntryId() {
             if (!this.focusEntryId) {
@@ -789,12 +749,10 @@ export default {
             return section.id;
         },
         async newEntry(embed = null) {
-            this.startTransaction();
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
-            this.newlyCreatedEntryId = id;
             this.focusEntryId = id;
             this.filterAndSortEntries();
         },
@@ -877,21 +835,21 @@ export default {
 
             setDefaultNotebookSectionId(defaultNotebookSectionId);
         },
-        async updateEntry(entry) {
+        updateEntry(entry) {
             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
             const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
             entries[entryPos] = entry;
 
-            await this.updateEntries(entries);
+            this.updateEntries(entries);
         },
-        async updateEntries(entries) {
+        updateEntries(entries) {
             const configuration = this.domainObject.configuration;
             const notebookEntries = configuration.entries || {};
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
             mutateObject(this.openmct, this.domainObject, 'configuration.entries', notebookEntries);
 
-            await this.saveTransaction();
+            this.saveTransaction();
         },
         getPageIdFromUrl() {
             return this.openmct.router.getParams().pageId;
@@ -933,39 +891,20 @@ export default {
         },
         startTransaction() {
             if (!this.openmct.objects.isTransactionActive()) {
-                this.activeTransaction = true;
                 this.transaction = this.openmct.objects.startTransaction();
             }
         },
         async saveTransaction() {
             if (this.transaction !== undefined) {
-                this.savingTransaction = true;
-                try {
-                    await this.transaction.commit();
-                } catch (error) {
-                    console.warn('Error committing Notebook transaction:', error);
-                } finally {
-                    this.endTransaction();
-                }
+                await this.transaction.commit();
+                this.openmct.objects.endTransaction();
             }
         },
         async cancelTransaction() {
             if (this.transaction !== undefined) {
-                this.savingTransaction = true;
-                try {
-                    await this.transaction.cancel();
-                } catch (error) {
-                    console.warn('Error canceling Notebook transaction:', error);
-                } finally {
-                    this.endTransaction();
-                }
+                await this.transaction.cancel();
+                this.openmct.objects.endTransaction();
             }
-        },
-        endTransaction() {
-            this.openmct.objects.endTransaction();
-            this.savingTransaction = false;
-            this.activeTransaction = false;
-            this.transaction = undefined;
         }
     }
 };

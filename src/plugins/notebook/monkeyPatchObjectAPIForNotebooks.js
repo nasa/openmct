@@ -10,8 +10,7 @@ export default function (openmct) {
         }
 
         const isNewMutable = !domainObject.isMutable;
-        // const localMutable = openmct.objects.toMutable(domainObject);
-        const localMutable = JSON.parse(JSON.stringify(domainObject));
+        const localMutable = openmct.objects.toMutable(domainObject);
         let result;
 
         try {
@@ -41,7 +40,7 @@ function resolveConflicts(domainObject, localMutable, openmct) {
 }
 
 async function resolveNotebookTagConflicts(localAnnotation, openmct) {
-    const localClonedAnnotation = cloneObject(localAnnotation);
+    const localClonedAnnotation = structuredClone(localAnnotation);
     const remoteMutable = await openmct.objects.getMutable(localClonedAnnotation.identifier);
 
     // should only be one annotation per targetID, entryID, and tag; so for sanity, ensure we have the
@@ -75,25 +74,22 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
 
 async function resolveNotebookEntryConflicts(localMutable, openmct) {
     if (localMutable.configuration.entries) {
-        const REMOTE_GET = true;
-        const localEntries = cloneObject(localMutable.configuration.entries);
-        const remoteObject = await openmct.objects.get(localMutable.identifier, undefined, REMOTE_GET);
-
-        return applyLocalEntries(remoteObject, localEntries, openmct);
+        const localEntries = structuredClone(localMutable.configuration.entries);
+        const remoteMutable = await openmct.objects.getMutable(localMutable.identifier);
+        applyLocalEntries(remoteMutable, localEntries, openmct);
+        openmct.objects.destroyMutable(remoteMutable);
     }
 
     return true;
 }
 
-function applyLocalEntries(remoteObject, entries, openmct) {
-    let shouldSave = false;
-
+function applyLocalEntries(mutable, entries, openmct) {
     Object.entries(entries).forEach(([sectionKey, pagesInSection]) => {
         Object.entries(pagesInSection).forEach(([pageKey, localEntries]) => {
-            const remoteEntries = remoteObject.configuration.entries[sectionKey][pageKey];
+            const remoteEntries = mutable.configuration.entries[sectionKey][pageKey];
             const mergedEntries = [].concat(remoteEntries);
             let shouldMutate = false;
-            console.log('remote entries', JSON.parse(JSON.stringify(remoteEntries)), 'local entries', entries);
+
             const locallyAddedEntries = _.differenceBy(localEntries, remoteEntries, 'id');
             const locallyModifiedEntries = _.differenceWith(localEntries, remoteEntries, (localEntry, remoteEntry) => {
                 return localEntry.id === remoteEntry.id && localEntry.text === remoteEntry.text;
@@ -114,23 +110,8 @@ function applyLocalEntries(remoteObject, entries, openmct) {
             });
 
             if (shouldMutate) {
-                shouldSave = true;
-                openmct.objects.mutate(remoteObject, `configuration.entries.${sectionKey}.${pageKey}`, mergedEntries);
+                openmct.objects.mutate(mutable, `configuration.entries.${sectionKey}.${pageKey}`, mergedEntries);
             }
         });
     });
-
-    if (shouldSave) {
-        return openmct.objects.save(remoteObject);
-    } else {
-        return;
-    }
-}
-
-function cloneObject(object) {
-    if (typeof structuredClone === 'function') {
-        return structuredClone(object);
-    } else {
-        return JSON.parse(JSON.stringify(object));
-    }
 }

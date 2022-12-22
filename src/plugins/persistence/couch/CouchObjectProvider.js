@@ -294,9 +294,7 @@ class CouchObjectProvider {
             if (isNotebookOrAnnotationType(object)) {
                 //Temporary measure until object sync is supported for all object types
                 //Always update notebook revision number because we have realtime sync, so always assume it's the latest.
-                if (!(this.openmct.objects.isTransactionActive() && this.openmct.objects.transaction.getDirtyObject(key))) {
-                    this.objectQueue[key].updateRevision(response[REV]);
-                }
+                this.objectQueue[key].updateRevision(response[REV]);
             } else if (!this.objectQueue[key].pending) {
                 //Sometimes CouchDB returns the old rev which fetching the object if there is a document update in progress
                 this.objectQueue[key].updateRevision(response[REV]);
