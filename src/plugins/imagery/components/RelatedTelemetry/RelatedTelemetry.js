@@ -158,8 +158,8 @@ export default class RelatedTelemetry {
     destroy() {
         this._openmct.time.off('timeSystem', this._timeSystemChange);
         for (let key of this.keys) {
-            if (this[key] && this[key].unsubscribe) {
-                this[key].unsubscribe();
+            if (this[key]?.telemetryCollection) {
+                this[key].telemetryCollection.destroy();
             }
         }
     }
