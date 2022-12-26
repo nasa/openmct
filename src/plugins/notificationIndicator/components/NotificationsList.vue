@@ -10,7 +10,9 @@
         <notification-message
             v-for="notification in notifications"
             :key="notification.model.timestamp"
+            :close-overlay="closeOverlay"
             :notification="notification"
+            :notifications-count="notifications.length"
         />
     </div>
 </div>
@@ -56,6 +58,9 @@ export default {
                     this.$emit('close', false);
                 }
             });
+        },
+        closeOverlay() {
+            this.overlay.dismiss();
         },
         notificationsCountDisplayMessage(count) {
             if (count > 1 || count === 0) {
