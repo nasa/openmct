@@ -20,6 +20,11 @@
                 </div>
             </div>
         </div>
+        <button
+            aria-label="Dismiss notification"
+            class="c-click-icon c-overlay__close-button icon-x"
+            @click="dismiss()"
+        ></button>
         <div class="c-overlay__button-bar">
             <button
                 v-for="(dialogOption, index) in notification.model.options"
@@ -52,6 +57,14 @@ export default {
         notification: {
             type: Object,
             required: true
+        },
+        closeOverlay: {
+            type: Function,
+            required: true
+        },
+        notificationsCount: {
+            type: Number,
+            required: true
         }
     },
     data() {
@@ -79,6 +92,12 @@ export default {
         updateProgressBar(progressPerc, progressText) {
             this.progressPerc = progressPerc;
             this.progressText = progressText;
+        },
+        dismiss() {
+            this.notification.dismiss();
+            if (this.notificationsCount === 1) {
+                this.closeOverlay();
+            }
         }
     }
 };
