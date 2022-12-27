@@ -28,6 +28,7 @@ function copyRelatedMetadata(metadata) {
     return copiedMetadata;
 }
 
+import IndependentTimeContext from "@/api/time/IndependentTimeContext";
 export default class RelatedTelemetry {
 
     constructor(openmct, domainObject, telemetryKeys) {
@@ -88,9 +89,17 @@ export default class RelatedTelemetry {
             this[key].historicalDomainObject = await this._openmct.objects.get(this[key].historical.telemetryObjectId);
 
             this[key].requestLatestFor = async (datum) => {
-                const options = {
+                const ephemeralContext = new IndependentTimeContext(this._openmct, this._openmct.time, [this[key].historicalDomainObject]);
+                ephemeralContext.resetContext();
+                const newBounds = {
                     start: this._openmct.time.bounds().start,
-                    end: this._parseTime(datum),
+                    end: this._parseTime(datum)
+                };
+                ephemeralContext.stopClock();
+                ephemeralContext.bounds(newBounds);
+
+                const options = {
+                    timeContext: ephemeralContext,
                     strategy: 'latest'
                 };
                 let results = await this._openmct.telemetry
