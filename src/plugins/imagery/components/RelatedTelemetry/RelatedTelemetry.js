@@ -99,6 +99,8 @@ export default class RelatedTelemetry {
                 ephemeralContext.bounds(newBounds);
 
                 const options = {
+                    start: newBounds.start,
+                    end: newBounds.end,
                     timeContext: ephemeralContext,
                     strategy: 'latest'
                 };
