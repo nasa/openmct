@@ -38,7 +38,7 @@
         >
             <element-item-group
                 v-for="(yAxis, index) in yAxes"
-                :key="index"
+                :key="`element-group-yaxis-${yAxis.id}`"
                 :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 :label="`Y Axis ${yAxis.id}`"
