@@ -82,22 +82,16 @@ export default {
                 return 0;
             }
         },
-        plotLeftTickWidth: {
+        plotWidth: {
             type: Number,
             default() {
                 return 0;
             }
         },
-        multipleLeftAxes: {
-            type: Boolean,
+        visibleYAxes: {
+            type: Number,
             default() {
-                return false;
-            }
-        },
-        position: {
-            type: String,
-            default() {
-                return 'left';
+                return 0;
             }
         }
     },
@@ -119,20 +113,18 @@ export default {
             return this.singleSeries === true || this.hasSameRangeValue === true;
         },
         yAxisStyle() {
+            const isMainYAxis = this?.id === this.mainYAxisId;
             let style;
             const width = `width: ${this.tickWidth + 20}px`;
-            const multipleTickOffset = this.multipleLeftAxes ? 20 : 0;
-            const border = this.multipleLeftAxes ? `border-right: 1px solid` : '';
-
-            if (this.position === 'left') {
-                const offset = (this.id - 1);
-                if (offset) {
-                    style = `${width}; ${border}; left: ${this.plotLeftTickWidth - this.tickWidth - offset * (multipleTickOffset + 5)}px`;
+            const border = `border-right: 1px solid`;
+            if (isMainYAxis) {
+                if (this.visibleYAxes > 1) {
+                    style = `${width}; left: ${this.plotWidth - this.tickWidth + 40}px`;
                 } else {
-                    style = `${width}; left: ${this.plotLeftTickWidth - this.tickWidth + multipleTickOffset}px`;
+                    style = `${width}; left: ${this.plotWidth - this.tickWidth}px`;
                 }
-            } else if (this.position === 'right') {
-                style = `${width}; left: -${this.tickWidth + 20}px`;
+            } else {
+                style = `${width}; ${border}; left: ${this.plotWidth - this.tickWidth - 3}px`;
             }
 
             return style;
@@ -231,11 +223,8 @@ export default {
                 this.yAxis.set('label', this.yAxisLabel);
             }
         },
-        onTickWidthChange(data) {
-            this.$emit('tickWidthChanged', {
-                width: data.width,
-                yAxisId: this.id
-            });
+        onTickWidthChange(width) {
+            this.$emit('tickWidthChanged', width);
         }
     }
 };

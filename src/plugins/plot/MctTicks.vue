@@ -272,10 +272,7 @@ export default {
                     }, 0));
 
                     this.tickWidth = tickWidth;
-                    this.$emit('plotTickWidth', {
-                        width: tickWidth,
-                        yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
-                    });
+                    this.$emit('plotTickWidth', tickWidth);
                     this.shouldCheckWidth = false;
                 }
             }
