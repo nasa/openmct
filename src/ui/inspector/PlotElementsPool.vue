@@ -141,11 +141,11 @@ export default {
             this.elementsCache = {};
             this.listeners = [];
             this.parentObject = selection && selection[0] && selection[0][0].context.item;
-            this.setYAxisIds();
 
             this.unlistenComposition();
 
             if (this.parentObject) {
+                this.setYAxisIds();
                 this.composition = this.openmct.composition.get(this.parentObject);
 
                 if (this.composition) {
@@ -176,17 +176,13 @@ export default {
             this.config = configStore.get(configId);
             this.yAxes.push({
                 id: this.config.yAxis.id,
-                elements: this.parentObject.configuration.series.filter(
-                    series => series.yAxisId === this.config.yAxis.id
-                )
+                elements: []
             });
             if (this.config.additionalYAxes) {
                 this.config.additionalYAxes.forEach(yAxis => {
                     this.yAxes.push({
                         id: yAxis.id,
-                        elements: this.parentObject.configuration.series.filter(
-                            series => series.yAxisId === yAxis.id
-                        )
+                        elements: []
                     });
                 });
             }
@@ -214,9 +210,8 @@ export default {
             // Store the element in the cache and set its yAxisId
             this.elementsCache[keyString] = JSON.parse(JSON.stringify(element));
             if (this.elementsCache[keyString].yAxisId !== yAxisId) {
-                this.elementsCache[keyString].yAxisId = yAxisId;
                 // Mutate the YAxisId on the domainObject itself
-                this.mutateYAxisId(element, yAxisId);
+                this.updateCacheAndMutate(element, yAxisId);
             }
 
             this.applySearch(this.currentSearch);
@@ -259,23 +254,27 @@ export default {
             }
 
             const domainObject = JSON.parse(serializedDomainObject);
-            this.mutateYAxisId(domainObject, moveToYAxisId);
+            this.updateCacheAndMutate(domainObject, moveToYAxisId);
 
             const moveFromIndex = this.moveFromIndex;
 
             this.moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId);
         },
-        mutateYAxisId(domainObject, yAxisId) {
+        updateCacheAndMutate(domainObject, yAxisId) {
             const index = this.parentObject.configuration.series.findIndex(
                 series => series.identifier.key === domainObject.identifier.key
             );
             const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
             this.elementsCache[keyString].yAxisId = yAxisId;
-            this.openmct.objects.mutate(
-                this.parentObject,
-                `configuration.series[${index}].yAxisId`,
-                yAxisId
-            );
+            const shouldMutate = this.parentObject.configuration.series?.[index]?.yAxisId !== yAxisId;
+            if (shouldMutate) {
+                this.openmct.objects.mutate(
+                    this.parentObject,
+                    `configuration.series[${index}].yAxisId`,
+                    yAxisId
+                );
+            }
         },
         moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId) {
             if (!this.allowDrop) {
