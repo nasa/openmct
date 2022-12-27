@@ -234,7 +234,8 @@ class CouchObjectProvider {
     #handleResponseCode(status, json, fetchOptions) {
         this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
         if (status === CouchObjectProvider.HTTP_CONFLICT) {
-            throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+            const objectName = JSON.parse(fetchOptions.body)?.model?.name;
+            throw new this.openmct.objects.errors.Conflict(`Conflict persisting "${objectName}"`);
         } else if (status >= CouchObjectProvider.HTTP_BAD_REQUEST) {
             if (!json.error || !json.reason) {
                 throw new Error(`CouchDB Error ${status}`);
