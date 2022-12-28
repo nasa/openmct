@@ -21,6 +21,11 @@
         flex: 0 0 auto;
     }
 
+    &__group {
+        flex: 1 1 auto;
+        overflow: auto;
+    }
+
     &__elements {
         flex: 1 1 auto;
         overflow: auto;

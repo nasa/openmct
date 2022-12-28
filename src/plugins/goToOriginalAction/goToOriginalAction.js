@@ -45,6 +45,10 @@ export default class GoToOriginalAction {
             });
     }
     appliesTo(objectPath) {
+        if (this._openmct.editor.isEditing()) {
+            return false;
+        }
+
         let parentKeystring = objectPath[1] && this._openmct.objects.makeKeyString(objectPath[1].identifier);
 
         if (!parentKeystring) {
