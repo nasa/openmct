@@ -774,7 +774,7 @@ export default {
             }
         },
         persistVisibleLayers() {
-            if (this.domainObject.configuration) {
+            if (this.domainObject.configuration && this.openmct.objects.supportsMutation(this.domainObject.identifier)) {
                 this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
             }
 
