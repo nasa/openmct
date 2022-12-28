@@ -80,6 +80,7 @@ export default {
     methods: {
         handleFiles() {
             const fileList = this.$refs.fileInput.files;
+            console.log(fileList[0]);
             this.readFile(fileList[0]);
         },
         readFile(file) {
