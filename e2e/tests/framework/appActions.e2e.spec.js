@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults, createNotification } = require('../../appActions.js');
+const { createDomainObjectWithDefaults, createNotification, expandEntireTree } = require('../../appActions.js');
 
 test.describe('AppActions', () => {
     test('createDomainObjectsWithDefaults', async ({ page }) => {
@@ -108,5 +108,39 @@ test.describe('AppActions', () => {
         await expect(page.locator('.c-message-banner__message')).toHaveText('Test error notification');
         await expect(page.locator('.c-message-banner')).toHaveClass(/error/);
         await page.locator('[aria-label="Dismiss"]').click();
+    });
+    test('expandEntireTree', async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        const rootFolder = await createDomainObjectWithDefaults(page, {
+            type: 'Folder'
+        });
+        const folder1 = await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            parent: rootFolder.uuid
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: 'Clock',
+            parent: folder1.uuid
+        });
+        const folder2 = await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            parent: folder1.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout',
+            parent: folder2.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            parent: folder2.uuid
+        });
+
+        await expandEntireTree(page);
+        const treePane = page.locator('#tree-pane');
+        const collapsedTreeItems = treePane.locator('role=treeitem[expanded=false]');
+        const count = await collapsedTreeItems.count();
+        expect(count).toBe(0);
     });
 });
