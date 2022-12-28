@@ -56,7 +56,12 @@
                 handle="before"
                 label="Elements"
             >
-                <elements-pool />
+                <plot-elements-pool
+                    v-if="isOverlayPlot"
+                />
+                <elements-pool
+                    v-else
+                />
             </pane>
         </multipane>
         <multipane
@@ -83,6 +88,7 @@
 import multipane from '../layout/multipane.vue';
 import pane from '../layout/pane.vue';
 import ElementsPool from './ElementsPool.vue';
+import PlotElementsPool from './PlotElementsPool.vue';
 import Location from './Location.vue';
 import Properties from './details/Properties.vue';
 import ObjectName from './ObjectName.vue';
@@ -99,6 +105,7 @@ export default {
         multipane,
         pane,
         ElementsPool,
+        PlotElementsPool,
         Properties,
         ObjectName,
         Location,
@@ -118,6 +125,7 @@ export default {
         return {
             hasComposition: false,
             showStyles: false,
+            isOverlayPlot: false,
             tabbedViews: [{
                 key: '__properties',
                 name: 'Properties'
@@ -151,6 +159,7 @@ export default {
                 let parentObject = selection[0][0].context.item;
 
                 this.hasComposition = Boolean(parentObject && this.openmct.composition.get(parentObject));
+                this.isOverlayPlot = selection[0][0].context.item.type === 'telemetry.plot.overlay';
             }
         },
         refreshTabs(selection) {
