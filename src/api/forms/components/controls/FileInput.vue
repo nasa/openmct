@@ -30,7 +30,6 @@
             id="fileElem"
             ref="fileInput"
             type="file"
-            accept=".json"
             style="display:none"
         >
         <button
@@ -80,8 +79,12 @@ export default {
     methods: {
         handleFiles() {
             const fileList = this.$refs.fileInput.files;
-            console.log(fileList[0]);
-            this.readFile(fileList[0]);
+            const file = fileList[0];
+            if (file.type === 'application/json') {
+                this.readFile(fileList[0]);
+            } else {
+                this.$emit('onChange', file);
+            }
         },
         readFile(file) {
             const self = this;
