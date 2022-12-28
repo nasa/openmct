@@ -227,7 +227,10 @@ async function expandEntireTree(page) {
     const collapsedTreeItems = treePane.locator('role=treeitem[expanded=false]');
     let count = await collapsedTreeItems.count();
     while (count > 0) {
-        await collapsedTreeItems.first().locator('.c-disclosure-triangle').click();
+        await collapsedTreeItems.locator('.c-disclosure-triangle.is-enabled').first().click();
+        // Wait for the loading indicator to appear then disappear
+        await page.locator('.is-loading').isVisible();
+        await page.locator('.is-loading').isHidden();
         count = await collapsedTreeItems.count();
     }
 }
