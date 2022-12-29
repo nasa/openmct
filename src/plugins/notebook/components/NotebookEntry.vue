@@ -144,10 +144,17 @@ import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
+import sanitizeHtml from 'sanitize-html';
 import { v4 as uuid } from 'uuid';
 import Moment from 'moment';
 
-const URL_REGEX = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+const SANITIZATION_SCHEMA = {
+    allowedTags: ['a'],
+    allowedAttributes: {
+        'a': ['target', 'contenteditable', 'class', 'href']
+    }
+}
+const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 const UNKNOWN_USER = 'Unknown';
 
@@ -224,26 +231,27 @@ export default {
             let text = this.entry.text;
 
             if (this.editMode) {
-                return text;
+                return sanitizeHtml(text);
             }
 
             let urlsExist = false;
             let urlMap = {};
 
             while (text.match(URL_REGEX)) {
-                urlsExist = true;
                 let id = uuid();
+
+                urlsExist = true;
                 urlMap[id] = sanitizeUrl(text.match(URL_REGEX)[0]);
                 text = text.replace(urlMap[id], id);
             }
 
             if (urlsExist) {
                 for (const [id, url] of Object.entries(urlMap)) {
-                    text = text.replace(id, `<a class="c-hyperlink" contenteditable="false" href="${url}">${url}</a>`);
+                    text = text.replace(id, `<a class="c-hyperlink" contenteditable="false" target="_blank" href="${url}">${url}</a>`);
                 }
             }
 
-            return text;
+            return sanitizeHtml(text, SANITIZATION_SCHEMA);
         },
         entryText() {
             let text = this.entry.text;

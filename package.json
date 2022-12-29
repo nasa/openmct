@@ -114,5 +114,8 @@
     "ios_saf > 15"
   ],
   "author": "",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "sanitize-html": "^2.8.1"
+  }
 }
