@@ -66,7 +66,7 @@
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
-                    v-text="entry.text"
+                    v-html="formattedText"
                 >
                 </div>
             </template>
@@ -77,7 +77,7 @@
                     class="c-ne__text"
                     contenteditable="false"
                     tabindex="0"
-                    v-text="entry.text"
+                    v-html="formattedText"
                 >
                 </div>
             </template>
@@ -144,8 +144,11 @@ import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
+import { v4 as uuid } from 'uuid';
 import Moment from 'moment';
 
+const URL_REGEX = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 const UNKNOWN_USER = 'Unknown';
 
 export default {
@@ -205,12 +208,42 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            editMode: false
+        };
+    },
     computed: {
         createdOnDate() {
             return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
+        },
+        formattedText() {
+            let text = this.entry.text;
+
+            if (this.editMode) {
+                return text;
+            }
+
+            let urlsExist = false;
+            let urlMap = {};
+
+            while (text.match(URL_REGEX)) {
+                urlsExist = true;
+                let id = uuid();
+                urlMap[id] = sanitizeUrl(text.match(URL_REGEX)[0]);
+                text = text.replace(urlMap[id], id);
+            }
+
+            if (urlsExist) {
+                for (const [id, url] of Object.entries(urlMap)) {
+                    text = text.replace(id, `<a class="c-hyperlink" contenteditable="false" href="${url}">${url}</a>`);
+                }
+            }
+
+            return text;
         },
         entryText() {
             let text = this.entry.text;
@@ -232,6 +265,7 @@ export default {
         }
     },
     mounted() {
+        console.log('uh')
         this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {
@@ -347,9 +381,11 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
+            this.editMode = true;
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {
+            this.editMode = false;
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;
