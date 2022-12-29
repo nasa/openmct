@@ -193,10 +193,12 @@ export default class ObjectAPI {
      * @memberof module:openmct.ObjectProvider#
      * @param {string} key the key for the domain object to load
      * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
+     * @param {boolean} forceRemote defaults to false. If true, will skip cached and
+     *          dirty/in-transaction objects use and the provider.get method
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    get(identifier, abortSignal = undefined, forceRemote = false) {
+    get(identifier, abortSignal, forceRemote = false) {
         let keystring = this.makeKeyString(identifier);
 
         if (!forceRemote) {
@@ -413,9 +415,10 @@ export default class ObjectAPI {
 
         return result.catch(async (error) => {
             if (error instanceof this.errors.Conflict) {
-                // Synchronized objects will resolve their own conflicts, so
-                // bypass the refresh here and throw the error.
-                if (!this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+                // Synchronized objects will resolve their own conflicts
+                if (this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+                    this.openmct.notifications.info(`Conflict detected while saving "${this.makeKeyString(domainObject.name)}", attempting to resolve`);
+                } else {
                     this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
 
                     if (this.isTransactionActive()) {
@@ -423,8 +426,6 @@ export default class ObjectAPI {
                     }
 
                     await this.refresh(domainObject);
-                } else {
-                    this.openmct.notifications.info(`Conflict detected while saving ${this.makeKeyString(domainObject.name)} attempting to resolve`);
                 }
             }
 
