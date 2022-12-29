@@ -64,6 +64,9 @@ import MctTicks from "../MctTicks.vue";
 import configStore from "../configuration/ConfigStore";
 import eventHelpers from "../lib/eventHelpers";
 
+const AXIS_PADDING = 20;
+const AXIS_OFFSET = 5;
+
 export default {
     components: {
         MctTicks
@@ -119,20 +122,21 @@ export default {
             return this.singleSeries === true || this.hasSameRangeValue === true;
         },
         yAxisStyle() {
-            let style;
-            const width = `width: ${this.tickWidth + 20}px`;
-            const multipleTickOffset = this.multipleLeftAxes ? 20 : 0;
-            const border = this.multipleLeftAxes ? `border-right: 1px solid` : '';
+            let style = {
+                width: `${this.tickWidth + AXIS_PADDING}px`
+            };
+            const multipleAxesPadding = this.multipleLeftAxes ? AXIS_PADDING : 0;
 
-            if (this.position === 'left') {
-                const offset = (this.id - 1);
-                if (offset) {
-                    style = `${width}; ${border}; left: ${this.plotLeftTickWidth - this.tickWidth - offset * (multipleTickOffset + 5)}px`;
+            if (this.position === 'right') {
+                style.left = `-${this.tickWidth + AXIS_PADDING}px`;
+            } else {
+                const thisIsTheSecondLeftAxis = (this.id - 1) > 0;
+                if (this.multipleLeftAxes && thisIsTheSecondLeftAxis) {
+                    style.left = `${ this.plotLeftTickWidth - this.tickWidth - multipleAxesPadding - AXIS_OFFSET }px`;
+                    style['border-right'] = `1px solid`;
                 } else {
-                    style = `${width}; left: ${this.plotLeftTickWidth - this.tickWidth + multipleTickOffset}px`;
+                    style.left = `${this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;
                 }
-            } else if (this.position === 'right') {
-                style = `${width}; left: -${this.tickWidth + 20}px`;
             }
 
             return style;

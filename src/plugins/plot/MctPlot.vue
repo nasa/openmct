@@ -220,6 +220,7 @@ import YAxis from "./axis/YAxis.vue";
 import _ from "lodash";
 
 const OFFSET_THRESHOLD = 10;
+const AXES_PADDING = 20;
 
 export default {
     components: {
@@ -296,15 +297,14 @@ export default {
     },
     computed: {
         xAxisStyle() {
-            let style;
-            const hasRightAxis = this.yAxesIds.find(yAxis => yAxis.id > 2);
-            const leftOffset = this.multipleLeftAxes ? 40 : 20;
+            const rightAxis = this.yAxesIds.find(yAxis => yAxis.id > 2);
+            const leftOffset = this.multipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
+            let style = {
+                left: `${this.plotLeftTickWidth + leftOffset}px`
+            };
 
-            if (hasRightAxis) {
-                const rightTickWidth = this.yAxes[2].tickWidth;
-                style = `left: ${this.plotLeftTickWidth + leftOffset}px; right: ${rightTickWidth + 20}px`;
-            } else {
-                style = `left: ${this.plotLeftTickWidth + leftOffset}px`;
+            if (rightAxis) {
+                style.right = `${rightAxis.tickWidth + AXES_PADDING}px`;
             }
 
             return style;
