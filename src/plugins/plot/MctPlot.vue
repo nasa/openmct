@@ -491,10 +491,10 @@ export default {
             this.stopListening(plotSeries);
         },
 
-        updateAxisUsageCount(yAxisId, updateCount) {
+        updateAxisUsageCount(yAxisId, updateCountBy) {
             const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
             if (foundYAxis) {
-                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
+                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCountBy;
             }
         },
 
