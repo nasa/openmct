@@ -321,6 +321,8 @@ export default {
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
+        this.transaction = null;
+
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
