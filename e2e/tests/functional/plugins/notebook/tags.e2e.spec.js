@@ -26,7 +26,6 @@ This test suite is dedicated to tests which verify form functionality.
 
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const nbUtils = require('../../../../helper/notebookUtils');
 
 /**
   * Creates a notebook object and adds an entry.
