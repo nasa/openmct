@@ -593,6 +593,8 @@ mct-plot {
 .plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
 .plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
 
+.gl-plot .plot-yaxis-right.gl-plot-y { margin-left: 100%; }
+
 .gl-plot,
 .c-plot {
     &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
