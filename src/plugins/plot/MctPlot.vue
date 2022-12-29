@@ -39,12 +39,14 @@
             class="u-contents"
         >
             <y-axis
-                v-for="(yAxisId, index) in yAxesIds"
-                :id="yAxisId"
+                v-for="(yAxis, index) in yAxesIds"
+                :id="yAxis.id"
                 :key="`yAxis-${index}`"
-                :visible-y-axes="yAxesIds.length"
-                :tick-width="tickWidth"
-                :plot-width="plotWidth"
+                :multiple-left-axes="multipleLeftAxes"
+                :position="yAxis.id > 2 ? 'right' : 'left'"
+                :class="{'plot-yaxis-right': yAxis.id > 2}"
+                :tick-width="yAxis.tickWidth"
+                :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
             />
@@ -70,9 +72,12 @@
                 />
 
                 <mct-ticks
+                    v-for="(yAxis, index) in yAxesIds"
                     v-show="gridLines"
+                    :key="`yAxis-gridlines-${index}`"
                     :axis-type="'yAxis'"
                     :position="'bottom'"
+                    :axis-id="yAxis.id"
                     @plotTickWidth="onTickWidthChange"
                 />
 
@@ -215,6 +220,7 @@ import YAxis from "./axis/YAxis.vue";
 import _ from "lodash";
 
 const OFFSET_THRESHOLD = 10;
+const AXES_PADDING = 20;
 
 export default {
     components: {
@@ -270,7 +276,6 @@ export default {
             altPressed: false,
             highlights: [],
             lockHighlightPoint: false,
-            tickWidth: 0,
             yKeyOptions: [],
             yAxisLabel: '',
             rectangles: [],
@@ -292,16 +297,23 @@ export default {
     },
     computed: {
         xAxisStyle() {
-            let style = `left: ${this.plotWidth + 20}px`;
+            const rightAxis = this.yAxesIds.find(yAxis => yAxis.id > 2);
+            const leftOffset = this.multipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
+            let style = {
+                left: `${this.plotLeftTickWidth + leftOffset}px`
+            };
 
-            if (this.yAxesIds.length > 1) {
-                style = `left: ${this.plotWidth + 60}px`;
+            if (rightAxis) {
+                style.right = `${rightAxis.tickWidth + AXES_PADDING}px`;
             }
 
             return style;
         },
         yAxesIds() {
-            return this.yAxes.filter(yAxis => yAxis.visible === true).map(yAxis => yAxis.id);
+            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
+        },
+        multipleLeftAxes() {
+            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
         },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
@@ -325,8 +337,17 @@ export default {
                 return 'plot-legend-collapsed';
             }
         },
-        plotWidth() {
-            return this.plotTickWidth || this.tickWidth;
+        plotLeftTickWidth() {
+            let leftTickWidth = 0;
+            this.yAxes.forEach((yAxis) => {
+                if (yAxis.id > 2) {
+                    return;
+                }
+
+                leftTickWidth = leftTickWidth + yAxis.tickWidth;
+            });
+
+            return this.plotTickWidth || leftTickWidth;
         }
     },
     watch: {
@@ -357,13 +378,15 @@ export default {
         this.legend = this.config.legend;
         this.yAxes = [{
             id: this.config.yAxis.id,
-            visible: false
+            seriesCount: 0,
+            tickWidth: 0
         }];
         if (this.config.additionalYAxes) {
             this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
                 return {
                     id: yAxis.id,
-                    visible: false
+                    seriesCount: 0,
+                    tickWidth: 0
                 };
             }));
         }
@@ -408,8 +431,10 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
+
             this.timeContext = this.openmct.time.getContextForView(this.path);
             this.followTimeContext();
+
         },
         followTimeContext() {
             this.updateDisplayBounds(this.timeContext.bounds());
@@ -443,7 +468,7 @@ export default {
         },
         addSeries(series, index) {
             const yAxisId = series.get('yAxisId');
-            this.setAxisVisibility(yAxisId, true);
+            this.updateAxisUsageCount(yAxisId, 1);
             this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
@@ -461,15 +486,15 @@ export default {
 
         removeSeries(plotSeries, index) {
             const yAxisId = plotSeries.get('yAxisId');
-            this.setAxisVisibility(yAxisId, false);
+            this.updateAxisUsageCount(yAxisId, -1);
             this.seriesModels.splice(index, 1);
             this.stopListening(plotSeries);
         },
 
-        setAxisVisibility(yAxisId, visible) {
+        updateAxisUsageCount(yAxisId, updateCountBy) {
             const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
             if (foundYAxis) {
-                foundYAxis.visible = visible;
+                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCountBy;
             }
         },
 
@@ -735,20 +760,24 @@ export default {
             }
         },
 
-        onTickWidthChange(width, fromDifferentObject) {
-            if (fromDifferentObject) {
+        onTickWidthChange(data, fromDifferentObject) {
+            const {width, yAxisId} = data;
+            if (yAxisId) {
+                const index = this.yAxes.findIndex(yAxis => yAxis.id === yAxisId);
+                if (fromDifferentObject) {
                 // Always accept tick width if it comes from a different object.
-                this.tickWidth = width;
-            } else {
+                    this.yAxes[index].tickWidth = width;
+                } else {
                 // Otherwise, only accept tick with if it's larger.
-                const newWidth = Math.max(width, this.tickWidth);
-                if (newWidth !== this.tickWidth) {
-                    this.tickWidth = newWidth;
+                    const newWidth = Math.max(width, this.yAxes[index].tickWidth);
+                    if (newWidth !== this.yAxes[index].tickWidth) {
+                        this.yAxes[index].tickWidth = newWidth;
+                    }
                 }
-            }
 
-            const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.$emit('plotTickWidth', this.tickWidth, id);
+                const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+                this.$emit('plotTickWidth', this.yAxes[index].tickWidth, id);
+            }
         },
 
         trackMousePosition(event) {

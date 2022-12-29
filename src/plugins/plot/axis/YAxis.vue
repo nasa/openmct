@@ -64,6 +64,9 @@ import MctTicks from "../MctTicks.vue";
 import configStore from "../configuration/ConfigStore";
 import eventHelpers from "../lib/eventHelpers";
 
+const AXIS_PADDING = 20;
+const AXIS_OFFSET = 5;
+
 export default {
     components: {
         MctTicks
@@ -82,16 +85,22 @@ export default {
                 return 0;
             }
         },
-        plotWidth: {
+        plotLeftTickWidth: {
             type: Number,
             default() {
                 return 0;
             }
         },
-        visibleYAxes: {
-            type: Number,
+        multipleLeftAxes: {
+            type: Boolean,
             default() {
-                return 0;
+                return false;
+            }
+        },
+        position: {
+            type: String,
+            default() {
+                return 'left';
             }
         }
     },
@@ -113,18 +122,21 @@ export default {
             return this.singleSeries === true || this.hasSameRangeValue === true;
         },
         yAxisStyle() {
-            const isMainYAxis = this?.id === this.mainYAxisId;
-            let style;
-            const width = `width: ${this.tickWidth + 20}px`;
-            const border = `border-right: 1px solid`;
-            if (isMainYAxis) {
-                if (this.visibleYAxes > 1) {
-                    style = `${width}; left: ${this.plotWidth - this.tickWidth + 40}px`;
-                } else {
-                    style = `${width}; left: ${this.plotWidth - this.tickWidth}px`;
-                }
+            let style = {
+                width: `${this.tickWidth + AXIS_PADDING}px`
+            };
+            const multipleAxesPadding = this.multipleLeftAxes ? AXIS_PADDING : 0;
+
+            if (this.position === 'right') {
+                style.left = `-${this.tickWidth + AXIS_PADDING}px`;
             } else {
-                style = `${width}; ${border}; left: ${this.plotWidth - this.tickWidth - 3}px`;
+                const thisIsTheSecondLeftAxis = (this.id - 1) > 0;
+                if (this.multipleLeftAxes && thisIsTheSecondLeftAxis) {
+                    style.left = `${ this.plotLeftTickWidth - this.tickWidth - multipleAxesPadding - AXIS_OFFSET }px`;
+                    style['border-right'] = `1px solid`;
+                } else {
+                    style.left = `${this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;
+                }
             }
 
             return style;
@@ -223,8 +235,11 @@ export default {
                 this.yAxis.set('label', this.yAxisLabel);
             }
         },
-        onTickWidthChange(width) {
-            this.$emit('tickWidthChanged', width);
+        onTickWidthChange(data) {
+            this.$emit('tickWidthChanged', {
+                width: data.width,
+                yAxisId: this.id
+            });
         }
     }
 };
