@@ -118,12 +118,16 @@ export default {
             fileReader.readAsText(file);
         },
         handleRawFile(file) {
+            const fileInfo = {
+                name: file.name,
+                body: file
+            };
+
+            this.fileInfo = Object.assign({}, fileInfo);
+
             const data = {
                 model: this.model,
-                value: {
-                    name: file.name,
-                    body: file
-                }
+                value: fileInfo
             };
 
             this.$emit('onChange', data);
