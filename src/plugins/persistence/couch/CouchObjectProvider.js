@@ -224,11 +224,11 @@ class CouchObjectProvider {
                 console.error(error.message);
                 throw new Error(`CouchDB Error - No response"`);
             } else {
-                if (!isNotebookOrAnnotationType(body.model)) {
-                    console.error(error.message);
-                } else {
+                if (body?.model && isNotebookOrAnnotationType(body.model)) {
                     // warn since we handle conflicts for notebooks
                     console.warn(error.message);
+                } else {
+                    console.error(error.message);
                 }
 
                 throw error;

@@ -400,7 +400,7 @@ export default class ObjectAPI {
                 savedObjectPromise.then(response => {
                     savedResolve(response);
                 }).catch((error) => {
-                    if (isNewObject) {
+                    if (!isNewObject) {
                         this.#mutate(domainObject, 'persisted', lastPersistedTime);
                     }
 

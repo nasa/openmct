@@ -921,23 +921,29 @@ export default {
             }
         },
         async saveTransaction() {
-            if (this.transaction !== undefined) {
+            if (this.transaction !== null) {
                 this.savingTransaction = true;
                 try {
                     await this.transaction.commit();
                 } finally {
-                    this.openmct.objects.endTransaction();
-                    this.transaction = undefined;
-                    this.savingTransaction = false;
-                    this.activeTransaction = false;
+                    this.endTransaction();
                 }
             }
         },
         async cancelTransaction() {
-            if (this.transaction !== undefined) {
-                await this.transaction.cancel();
-                this.openmct.objects.endTransaction();
+            if (this.transaction !== null) {
+                try {
+                    await this.transaction.cancel();
+                } finally {
+                    this.endTransaction();
+                }
             }
+        },
+        endTransaction() {
+            this.openmct.objects.endTransaction();
+            this.transaction = null;
+            this.savingTransaction = false;
+            this.activeTransaction = false;
         }
     }
 };
