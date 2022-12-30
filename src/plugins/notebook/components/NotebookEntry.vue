@@ -61,7 +61,9 @@
                     class="c-ne__text c-ne__input"
                     aria-label="Notebook Entry Input"
                     tabindex="0"
-                    contenteditable="true"
+                    :contenteditable="canEdit"
+                    @mouseover="checkEditability($event)"
+                    @mouseleave="canEdit = true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
@@ -216,7 +218,8 @@ export default {
     },
     data() {
         return {
-            editMode: false
+            editMode: false,
+            canEdit: true
         };
     },
     computed: {
@@ -246,7 +249,7 @@ export default {
 
             if (urlsExist) {
                 for (const [id, url] of Object.entries(urlMap)) {
-                    text = text.replace(id, `<a class="c-hyperlink" contenteditable="false" target="_blank" href="${url}">${url}</a>`);
+                    text = text.replace(id, `<span contenteditable="false"><a class="c-hyperlink" target="_blank" href="${url}">${url}</a></span>`);
                 }
             }
 
@@ -300,6 +303,11 @@ export default {
             } else {
                 event.dataTransfer.dropEffect = 'none';
                 event.dataTransfer.effectAllowed = 'none';
+            }
+        },
+        checkEditability($event) {
+            if ($event.target.nodeName === 'A') {
+                this.canEdit = false;
             }
         },
         deleteEntry() {
