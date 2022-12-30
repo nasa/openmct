@@ -249,7 +249,7 @@ export default {
 
             if (urlsExist) {
                 for (const [id, url] of Object.entries(urlMap)) {
-                    text = text.replace(id, `<span contenteditable="false"><a class="c-hyperlink" target="_blank" href="${url}">${url}</a></span>`);
+                    text = text.replace(id, `<a class="c-hyperlink" target="_blank" href="${url}">${url}</a>`);
                 }
             }
 
