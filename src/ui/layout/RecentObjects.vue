@@ -1,28 +1,29 @@
 <template>
 <div class="c-tree-scrollable">
     <tree-item
-        v-for="(recentItem, index) in recentItems"
+        v-for="(recentItem, index) in treeItems"
         :key="`${recentItem.navigationPath}-recent-${index}`"
         :node="recentItem"
         :is-selector-tree="false"
         :selected-item="selectedItem"
-        :left-offset="'0px'"
+        :left-offset="recentItem.leftOffset"
         :is-new="recentItem.isNew"
         :item-offset="itemOffset"
         :item-index="index"
         :item-height="itemHeight"
-        :open-items="[]"
-        :loading-items="{}"
+        :open-items="openTreeItems"
+        :loading-items="treeItemLoading"
     />
     <!-- @tree-item-mounted="scrollToCheck($event)"
+        @tree-item-action="treeItemAction(recentItem, $event)"
         @tree-item-destroyed="removeCompositionListenerFor($event)"
-        @tree-item-action="recentItemAction(recentItem, $event)"
         @tree-item-selection="recentItemSelection(recentItem)" -->
 </div>
 </template>
 
 <script>
 import treeItem from './tree-item.vue';
+import treeMixin from '../mixins/tree-mixin.js';
 const MAX_RECENT_ITEMS = 20;
 const LOCAL_STORAGE_KEY__RECENT_OBJECTS = 'mct-recent-objects';
 export default {
@@ -30,16 +31,13 @@ export default {
     components: {
         treeItem
     },
+    mixins: [treeMixin],
     inject: ['openmct'],
     props: {
 
     },
     data() {
         return {
-            recentItems: [],
-            selectedItem: null,
-            itemHeight: 27,
-            itemOffset: 0
         };
     },
     async mounted() {
@@ -63,11 +61,11 @@ export default {
             }
 
             const navigationPath = `/browse/${this.openmct.objects.getRelativePath(objectPath.slice(0, -1))}`;
-            const foundIndex = this.recentItems.findIndex((item) => {
+            const foundIndex = this.treeItems.findIndex((item) => {
                 return navigationPath === item.navigationPath;
             });
             if (foundIndex > -1) {
-                const removedItem = this.recentItems.splice(foundIndex, 1);
+                const removedItem = this.treeItems.splice(foundIndex, 1);
                 this.selectedItem = removedItem[0];
             } else {
                 this.selectedItem = {
@@ -78,58 +76,18 @@ export default {
                 };
             }
 
-            this.recentItems.unshift(this.selectedItem);
-            while (this.recentItems.length > MAX_RECENT_ITEMS) {
-                this.recentItems.pop();
+            this.treeItems.unshift(this.selectedItem);
+            while (this.treeItems.length > MAX_RECENT_ITEMS) {
+                this.treeItems.pop();
             }
         },
-        calculateHeights() {
-            const RECHECK = 100;
+        async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
+            let collection = this.openmct.composition.get(domainObject);
+            let composition = await collection.load(abortSignal);
 
-            return new Promise((resolve, reject) => {
-
-                let checkHeights = () => {
-                    let treeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-                    let paddingOffset = 0;
-
-                    if (
-                        this.$el
-                        && this.$refs.search
-                        && this.$refs.mainTree
-                        && this.$refs.treeContainer
-                        && this.$refs.dummyItem
-                        && this.$el.offsetHeight !== 0
-                        && treeTopMargin > 0
-                    ) {
-
-                        this.mainTreeTopMargin = treeTopMargin;
-                        this.mainTreeHeight = this.$el.offsetHeight
-                            - this.$refs.search.offsetHeight
-                            - this.mainTreeTopMargin
-                            - (paddingOffset * 2);
-                        this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
-
-                        resolve();
-                    } else {
-                        setTimeout(checkHeights, RECHECK);
-                    }
-                };
-
-                checkHeights();
+            return composition.map((object) => {
+                return this.buildTreeItem(object, parentObjectPath);
             });
-        },
-        getElementStyleValue(el, style) {
-            if (!el) {
-                return;
-            }
-
-            let styleString = window.getComputedStyle(el)[style];
-            let index = styleString.indexOf('px');
-
-            return Number(styleString.slice(0, index));
-        },
-        handleTreeResize() {
-            this.calculateHeights();
         }
     }
 };
