@@ -89,15 +89,11 @@ export default {
             const fileList = this.$refs.fileInput.files;
             const file = fileList[0];
 
-            this.readFile(file);
-
-            // if (this.acceptableFileTypes === 'application/json') {
-            //     console.log('reading file');
-            //     this.readFile(file);
-            // } else {
-            //     console.log('raw file');
-            //     this.handleRawFile(file);
-            // }
+            if (this.acceptableFileTypes === 'application/json') {
+                this.readFile(file);
+            } else {
+                this.handleRawFile(file);
+            }
         },
         readFile(file) {
             const self = this;
@@ -119,9 +115,7 @@ export default {
                 console.error('fileReader error', error);
             };
 
-            if (this.acceptableFileTypes === 'application/json') {
-                fileReader.readAsText(file);
-            }
+            fileReader.readAsText(file);
         },
         handleRawFile(file) {
             const fileInfo = {
