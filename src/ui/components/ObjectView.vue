@@ -302,7 +302,7 @@ export default {
             }
 
             this.domainObject = object;
-
+            console.log('subscribing to staleness');
             this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, this.handleStaleness);
 
             if (currentObjectPath) {
