@@ -265,6 +265,69 @@ test.describe('Notebook entry tests', () => {
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
     test.fixme('previous and new entries can be deleted', async ({ page }) => {});
+    test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.google.com';
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Entry Link Test"
+        });
+
+        await expandTreePaneItemByName(page, 'My Items');
+
+        await page.goto(notebook.url);
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when an valid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'www.google.com';
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Entry Link Test"
+        });
+
+        await expandTreePaneItemByName(page, 'My Items');
+
+        await page.goto(notebook.url);
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        expect(await invalidLink.count()).toBe(0);
+    });
+    test.only('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.google.com?bad=';
+        const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Entry Link Test"
+        });
+
+        await expandTreePaneItemByName(page, 'My Items');
+
+        await page.goto(notebook.url);
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const sanitizedLink = page.locator(`a[href="${TEST_LINK}"]`);
+        const unsanitizedLink = page.locator(`a[href="${TEST_LINK_BAD}"]`);
+
+        expect.soft(await sanitizedLink.count()).toBe(1);
+        expect(await unsanitizedLink.count()).toBe(0);
+    });
 });
 
 test.describe('Snapshot Menu tests', () => {
