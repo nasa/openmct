@@ -272,7 +272,6 @@ export default {
         }
     },
     mounted() {
-        console.log('uh')
         this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {

@@ -285,7 +285,7 @@ test.describe('Notebook entry tests', () => {
 
         expect(await validLink.count()).toBe(1);
     });
-    test('when an valid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
+    test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'www.google.com';
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
@@ -299,13 +299,13 @@ test.describe('Notebook entry tests', () => {
 
         await page.goto(notebook.url);
 
-        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+        await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
 
         const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
 
         expect(await invalidLink.count()).toBe(0);
     });
-    test.only('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
+    test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com?bad=';
         const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
@@ -320,7 +320,7 @@ test.describe('Notebook entry tests', () => {
 
         await page.goto(notebook.url);
 
-        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+        await nbUtils.enterTextEntry(page, `This should be a link, BUT not a bad link: ${TEST_LINK} is it?`);
 
         const sanitizedLink = page.locator(`a[href="${TEST_LINK}"]`);
         const unsanitizedLink = page.locator(`a[href="${TEST_LINK_BAD}"]`);
