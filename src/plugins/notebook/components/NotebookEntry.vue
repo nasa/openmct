@@ -155,7 +155,6 @@ const SANITIZATION_SCHEMA = {
     }
 }
 const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
-const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 const UNKNOWN_USER = 'Unknown';
 
 export default {
@@ -241,7 +240,7 @@ export default {
                 let id = uuid();
 
                 urlsExist = true;
-                urlMap[id] = sanitizeUrl(text.match(URL_REGEX)[0]);
+                urlMap[id] = text.match(URL_REGEX)[0];
                 text = text.replace(urlMap[id], id);
             }
 

@@ -53,6 +53,7 @@
     "plotly.js-gl2d-dist": "2.14.0",
     "printj": "1.3.1",
     "resolve-url-loader": "5.0.0",
+    "sanitize-html": "^2.8.1",
     "sass": "1.56.1",
     "sass-loader": "13.0.2",
     "sinon": "15.0.1",
@@ -115,7 +116,4 @@
   ],
   "author": "",
   "license": "Apache-2.0",
-  "dependencies": {
-    "sanitize-html": "^2.8.1"
-  }
 }
