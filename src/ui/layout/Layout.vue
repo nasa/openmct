@@ -53,6 +53,7 @@
         type="horizontal"
     >
         <pane
+            class="l-shell__pane-tree"
             style="width: 300px;"
             handle="after"
             label="Browse"
@@ -75,7 +76,6 @@
             >
             </button>
             <multipane
-                class="l-shell__pane-tree"
                 type="vertical"
             >
                 <pane
@@ -91,7 +91,9 @@
                     handle="before"
                     label="Recently Viewed"
                 >
-                    <RecentObjects />
+                    <RecentObjects
+                        class="l-shell__tree"
+                    />
                 </pane>
             </multipane>
         </pane>

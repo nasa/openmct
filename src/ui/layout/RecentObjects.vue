@@ -1,23 +1,30 @@
 <template>
-<div class="c-tree-scrollable">
-    <tree-item
-        v-for="(recentItem, index) in treeItems"
-        :key="`${recentItem.navigationPath}-recent-${index}`"
-        :node="recentItem"
-        :is-selector-tree="false"
-        :selected-item="selectedItem"
-        :left-offset="recentItem.leftOffset"
-        :is-new="recentItem.isNew"
-        :item-offset="itemOffset"
-        :item-index="index"
-        :item-height="itemHeight"
-        :open-items="openTreeItems"
-        :loading-items="treeItemLoading"
-    />
-    <!-- @tree-item-mounted="scrollToCheck($event)"
-        @tree-item-action="treeItemAction(recentItem, $event)"
-        @tree-item-destroyed="removeCompositionListenerFor($event)"
-        @tree-item-selection="recentItemSelection(recentItem)" -->
+<div
+    class="c-tree-and-search l-shell__tree"
+>
+    <div
+        class="c-tree-and-search__tree c-tree c-tree__scrollable"
+    >
+
+        <tree-item
+            v-for="(recentItem, index) in treeItems"
+            :key="`${recentItem.navigationPath}-recent-${index}`"
+            :node="recentItem"
+            :is-selector-tree="false"
+            :selected-item="selectedItem"
+            :left-offset="recentItem.leftOffset"
+            :is-new="recentItem.isNew"
+            :item-offset="itemOffset"
+            :item-index="index"
+            :item-height="itemHeight"
+            :open-items="openTreeItems"
+            :loading-items="treeItemLoading"
+        />
+        <!-- @tree-item-mounted="scrollToCheck($event)"
+            @tree-item-action="treeItemAction(recentItem, $event)"
+            @tree-item-destroyed="removeCompositionListenerFor($event)"
+            @tree-item-selection="recentItemSelection(recentItem)" -->
+    </div>
 </div>
 </template>
 
