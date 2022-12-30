@@ -302,8 +302,6 @@ export default {
             }
 
             this.domainObject = object;
-            console.log('subscribing to staleness');
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, this.handleStaleness);
 
             if (currentObjectPath) {
                 this.currentObjectPath = currentObjectPath;
@@ -313,6 +311,8 @@ export default {
 
             this.updateView(immediatelySelect);
 
+            console.log('subscribing to staleness');
+            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, this.handleStaleness);
             this.initObjectStyles();
         },
         handleStaleness(isStale) {
