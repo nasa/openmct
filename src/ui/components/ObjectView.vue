@@ -14,7 +14,7 @@
     <div
         ref="objectViewWrapper"
         class="c-object-view"
-        :class="objectTypeClass"
+        :class="viewClasses"
     ></div>
 </div>
 </template>
@@ -64,7 +64,8 @@ export default {
     },
     data() {
         return {
-            domainObject: this.defaultObject
+            domainObject: this.defaultObject,
+            isStale: false
         };
     },
     computed: {
@@ -85,8 +86,14 @@ export default {
 
             return this.domainObject && SupportedViewTypes.includes(viewKey);
         },
-        objectTypeClass() {
-            return this.domainObject && ('is-object-type-' + this.domainObject.type);
+        viewClasses() {
+            let classes;
+
+            if (this.domainObject) {
+                classes = `is-object-type-${this.domainObject.type} ${this.isStale ? 'is-stale' : ''}`;
+            }
+
+            return classes;
         }
     },
     destroyed() {
@@ -311,12 +318,11 @@ export default {
 
             this.updateView(immediatelySelect);
 
-            console.log('subscribing to staleness');
             this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, this.handleStaleness);
             this.initObjectStyles();
         },
         handleStaleness(isStale) {
-            console.log('domainObject staleness', this.domainObject.name, isStale);
+            this.isStale = isStale;
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
