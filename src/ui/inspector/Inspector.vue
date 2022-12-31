@@ -48,7 +48,7 @@
                     v-if="!activity"
                 />
                 <location />
-                <inspector-views />
+                <InspectorViews />
             </pane>
             <pane
                 v-if="isEditing && hasComposition"
