@@ -320,6 +320,10 @@
     display: block;
     height: 100%;
     overflow: auto;
+
+    &.is-stale {
+        border: 1px solid cyan;
+    }
 }
 
 .is-editing {
