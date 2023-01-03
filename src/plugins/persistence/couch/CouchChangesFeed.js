@@ -28,6 +28,7 @@
                 connected = false;
                 // stop listening for events
                 couchEventSource.removeEventListener('message', self.onCouchMessage);
+                couchEventSource.close();
                 console.debug('🚪 Closed couch connection 🚪');
 
                 return;
