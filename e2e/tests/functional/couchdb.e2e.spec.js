@@ -27,7 +27,7 @@
 
 const { test, expect } = require('../../pluginFixtures');
 
-test.describe("CouchDB Status Indicator @couchdb", () => {
+test.describe("CouchDB Status Indicator with mocked responses @couchdb", () => {
     test.use({ failOnConsoleError: false });
     //TODO BeforeAll Verify CouchDB Connectivity with APIContext
     test('Shows green if connected', async ({ page }) => {
@@ -71,38 +71,41 @@ test.describe("CouchDB Status Indicator @couchdb", () => {
     });
 });
 
-test.describe("CouchDB initialization @couchdb", () => {
+test.describe("CouchDB initialization with mocked responses @couchdb", () => {
     test.use({ failOnConsoleError: false });
     test("'My Items' folder is created if it doesn't exist", async ({ page }) => {
-        // Store any relevant PUT requests that happen on the page
-        const createMineFolderRequests = [];
-        page.on('request', req => {
-            // eslint-disable-next-line playwright/no-conditional-in-test
-            if (req.method() === 'PUT' && req.url().endsWith('openmct/mine')) {
-                createMineFolderRequests.push(req);
-            }
-        });
+        const mockedMissingObjectResponsefromCouchDB = {
+            status: 404,
+            contentType: 'application/json',
+            body: JSON.stringify({})
+        };
 
-        // Override the first request to GET openmct/mine to return a 404
-        await page.route('**/openmct/mine', route => {
-            route.fulfill({
-                status: 404,
-                contentType: 'application/json',
-                body: JSON.stringify({})
-            });
+        // Override the first request to GET openmct/mine to return a 404.
+        // This simulates the case of starting Open MCT with a fresh database
+        // and no "My Items" folder created yet.
+        await page.route('**/mine', route => {
+            route.fulfill(mockedMissingObjectResponsefromCouchDB);
         }, { times: 1 });
 
-        // Go to baseURL
+        // Set up promise to verify that a PUT request to create "My Items"
+        // folder was made.
+        const putMineFolderRequest = page.waitForRequest(req =>
+            req.url().endsWith('/mine')
+            && req.method() === 'PUT');
+
+        // Set up promise to verify that a GET request to retrieve "My Items"
+        // folder was made.
+        const getMineFolderRequest = page.waitForRequest(req =>
+            req.url().endsWith('/mine')
+            && req.method() === 'GET');
+
+        // Go to baseURL.
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        // Verify that error banner is displayed
-        const bannerMessage = await page.locator('.c-message-banner__message').innerText();
-        expect(bannerMessage).toEqual('Failed to retrieve object mine');
-
-        // Verify that a PUT request to create "My Items" folder was made
-        await expect.poll(() => createMineFolderRequests.length, {
-            message: 'Verify that PUT request to create "mine" folder was made',
-            timeout: 1000
-        }).toBeGreaterThanOrEqual(1);
+        // Wait for both requests to resolve.
+        await Promise.all([
+            putMineFolderRequest,
+            getMineFolderRequest
+        ]);
     });
 });
