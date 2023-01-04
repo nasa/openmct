@@ -31,7 +31,7 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view u-style-receiver"
-        :class="[statusClass]"
+        :class="[itemClasses]"
         :style="styleObject"
         :data-font-size="item.fontSize"
         :data-font="item.font"
@@ -128,6 +128,7 @@ export default {
     data() {
         return {
             currentObjectPath: undefined,
+            isStale: false,
             datum: undefined,
             domainObject: undefined,
             formats: undefined,
@@ -137,8 +138,18 @@ export default {
         };
     },
     computed: {
-        statusClass() {
-            return (this.status) ? `is-status--${this.status}` : '';
+        itemClasses() {
+            let classes = [];
+
+            if (this.status) {
+                classes.push(`is-status--${this.status}`);
+            }
+
+            if (this.isStale) {
+                classes.push('is-stale');
+            }
+
+            return classes;
         },
         showLabel() {
             let displayMode = this.item.displayMode;
@@ -227,6 +238,7 @@ export default {
     },
     beforeDestroy() {
         this.removeStatusListener();
+        this.unsubscribeFromStaleness();
 
         if (this.removeSelectable) {
             this.removeSelectable();
@@ -310,6 +322,9 @@ export default {
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context, this.immediatelySelect || this.initSelect);
             delete this.immediatelySelect;
+            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, (isStale) => {
+                this.isStale = isStale;
+            });
         },
         updateTelemetryFormat(format) {
             this.customStringformatter.setFormat(format);

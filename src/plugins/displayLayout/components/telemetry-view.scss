@@ -25,6 +25,10 @@
         margin-right: $interiorMargin;
     }
 
+    &.is-stale {
+        border: 1px solid cyan!important;
+    }
+
     .c-frame & {
         @include abs();
         border: 1px solid transparent;
