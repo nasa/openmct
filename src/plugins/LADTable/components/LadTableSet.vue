@@ -21,38 +21,44 @@
  *****************************************************************************/
 
 <template>
-<table class="c-table c-lad-table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Timestamp</th>
-            <th>Value</th>
-            <th v-if="hasUnits">Unit</th>
-        </tr>
-    </thead>
-    <tbody>
-        <template
-            v-for="ladTable in ladTableObjects"
-        >
-            <tr
-                :key="ladTable.key"
-                class="c-table__group-header js-lad-table-set__table-headers"
-            >
-                <td colspan="10">
-                    {{ ladTable.domainObject.name }}
-                </td>
+<div
+    class="c-lad-table-wrapper u-style-receiver js-style-receiver"
+    :class="staleClass"
+>
+    <table class="c-table c-lad-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Timestamp</th>
+                <th>Value</th>
+                <th v-if="hasUnits">Unit</th>
             </tr>
-            <lad-row
-                v-for="ladRow in ladTelemetryObjects[ladTable.key]"
-                :key="ladRow.key"
-                :domain-object="ladRow.domainObject"
-                :path-to-table="ladTable.objectPath"
-                :has-units="hasUnits"
-                @rowContextClick="updateViewContext"
-            />
-        </template>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <template
+                v-for="ladTable in ladTableObjects"
+            >
+                <tr
+                    :key="ladTable.key"
+                    class="c-table__group-header js-lad-table-set__table-headers"
+                >
+                    <td colspan="10">
+                        {{ ladTable.domainObject.name }}
+                    </td>
+                </tr>
+                <lad-row
+                    v-for="ladRow in ladTelemetryObjects[ladTable.key]"
+                    :key="ladRow.key"
+                    :domain-object="ladRow.domainObject"
+                    :path-to-table="ladTable.objectPath"
+                    :has-units="hasUnits"
+                    @rowContextClick="updateViewContext"
+                    @stalenessChanged="handleStaleness"
+                />
+            </template>
+        </tbody>
+    </table>
+</div>
 </template>
 
 <script>
@@ -74,7 +80,8 @@ export default {
             ladTableObjects: [],
             ladTelemetryObjects: {},
             compositions: [],
-            viewContext: {}
+            viewContext: {},
+            staleCount: 0
         };
     },
     computed: {
@@ -95,6 +102,13 @@ export default {
             }
 
             return false;
+        },
+        staleClass() {
+            if (this.staleCount !== 0) {
+                return 'is-stale';
+            }
+
+            return '';
         }
     },
     mounted() {
@@ -171,6 +185,9 @@ export default {
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
             };
+        },
+        handleStaleness(isStale) {
+            this.staleCount += isStale ? 1 : -1;
         },
         updateViewContext(rowContext) {
             this.viewContext.row = rowContext;

@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-lad-table-wrapper u-style-receiver js-style-receiver">
+<div
+    class="c-lad-table-wrapper u-style-receiver js-style-receiver"
+    :class="staleClass"
+>
     <table class="c-table c-lad-table">
         <thead>
             <tr>
@@ -39,6 +42,7 @@
                 :path-to-table="objectPath"
                 :has-units="hasUnits"
                 @rowContextClick="updateViewContext"
+                @stalenessChanged="handleStaleness"
             />
         </tbody>
     </table>
@@ -66,7 +70,8 @@ export default {
     data() {
         return {
             items: [],
-            viewContext: {}
+            viewContext: {},
+            staleCount: 0
         };
     },
     computed: {
@@ -80,6 +85,13 @@ export default {
             });
 
             return itemsWithUnits.length !== 0;
+        },
+        staleClass() {
+            if (this.staleCount !== 0) {
+                return 'is-stale';
+            }
+
+            return '';
         }
     },
     mounted() {
@@ -117,6 +129,9 @@ export default {
             let metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
 
             return metadataWithUnits.length > 0;
+        },
+        handleStaleness(isStale) {
+            this.staleCount += isStale ? 1 : -1;
         },
         updateViewContext(rowContext) {
             this.viewContext.row = rowContext;

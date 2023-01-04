@@ -29,7 +29,7 @@
     <td class="js-second-data">{{ formattedTimestamp }}</td>
     <td
         class="js-third-data"
-        :class="valueClass"
+        :class="valueClasses"
     >{{ value }}</td>
     <td
         v-if="hasUnits"
@@ -70,7 +70,8 @@ export default {
             datum: undefined,
             timestamp: undefined,
             timestampKey: undefined,
-            unit: ''
+            unit: '',
+            isStale: false
         };
     },
     computed: {
@@ -81,14 +82,22 @@ export default {
 
             return this.formats[this.valueKey].format(this.datum);
         },
-        valueClass() {
-            if (!this.datum) {
-                return '';
+        valueClasses() {
+            let classes = [];
+
+            if (this.isStale) {
+                classes.push('is-stale');
             }
 
-            const limit = this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+            if (this.datum) {
+                const limit = this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
 
-            return limit ? limit.cssClass : '';
+                if (limit) {
+                    classes.push(limit.cssClass);
+                }
+            }
+
+            return classes;
 
         },
         formattedTimestamp() {
@@ -143,6 +152,11 @@ export default {
         this.telemetryCollection.on('clear', this.resetValues);
         this.telemetryCollection.load();
 
+        this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, (isStale) => {
+            this.isStale = isStale;
+            this.$emit('stalenessChanged', isStale);
+        });
+
         if (this.hasUnits) {
             this.setUnit();
         }
@@ -153,6 +167,7 @@ export default {
         this.telemetryCollection.off('clear', this.resetValues);
 
         this.telemetryCollection.destroy();
+        this.unsubscribeFromStaleness();
     },
     methods: {
         updateView() {
