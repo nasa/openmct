@@ -747,8 +747,10 @@ export default class ObjectAPI {
      * @returns {DomainObject[]} objectPath
      */
     async getRelativeObjectPath(navigationPath) {
-        const identifierRegexp = /mine|\/.*\/?(?=\?)/gi;
-        const identifiers = navigationPath.split('?')[0].match(identifierRegexp);
+        navigationPath = navigationPath.replace('/browse/', '');
+
+        // Remove any query params and split on '/'
+        const identifiers = navigationPath.split('?')?.[0].split('/');
         if (!identifiers) {
             return [];
         }
