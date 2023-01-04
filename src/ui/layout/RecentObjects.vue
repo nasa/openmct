@@ -30,7 +30,6 @@
 
 <script>
 import treeItem from './tree-item.vue';
-import treeMixin from '../mixins/tree-mixin.js';
 const MAX_RECENT_ITEMS = 20;
 const LOCAL_STORAGE_KEY__RECENT_OBJECTS = 'mct-recent-objects';
 export default {
@@ -38,7 +37,6 @@ export default {
     components: {
         treeItem
     },
-    mixins: [treeMixin],
     inject: ['openmct'],
     props: {
 
@@ -63,10 +61,6 @@ export default {
     methods: {
         async onHashChange(hash) {
             const objectPath = await this.openmct.objects.getRelativeObjectPath(hash);
-            if (!objectPath.length) {
-                return;
-            }
-
             const navigationPath = `/browse/${this.openmct.objects.getRelativePath(objectPath.slice(0, -1))}`;
             const foundIndex = this.treeItems.findIndex((item) => {
                 return navigationPath === item.navigationPath;
