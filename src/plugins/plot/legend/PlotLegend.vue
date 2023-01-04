@@ -144,6 +144,7 @@ export default {
         }
     },
     data() {
+        console.log('legend', this.legend);
         return {
             isLegendExpanded: this.legend.get('expanded') === true
         };

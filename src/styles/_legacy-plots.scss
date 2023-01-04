@@ -562,6 +562,11 @@ mct-plot {
         margin-left: $interiorMarginSm;
     }
 
+    &.is-stale {
+        background: cyan;
+        color: darkblue;
+    }
+
     .plot-series-color-swatch {
         @include colorSwatch();
         display: inline-block;

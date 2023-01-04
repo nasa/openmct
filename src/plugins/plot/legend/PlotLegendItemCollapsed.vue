@@ -23,6 +23,7 @@
 <div
     class="plot-legend-item"
     :class="{
+        'is-stale': isStale,
         'is-status--missing': isMissing
     }"
     @mouseover="toggleHover(true)"
@@ -80,6 +81,7 @@ export default {
     data() {
         return {
             isMissing: false,
+            isStale: false,
             colorAsHexString: '',
             nameWithUnit: '',
             formattedYValue: '',
@@ -116,10 +118,16 @@ export default {
     },
     beforeDestroy() {
         this.stopListening();
+        this.unsubscribeFromStalenes();
     },
     methods: {
         initialize(highlightedObject) {
             const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
+
+            this.unsubscribeFromStalenes = this.openmct.telemetry.subscribeToStaleness(seriesObject.domainObject, (isStale) => {
+                this.isStale = isStale;
+            });
+
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();
             this.nameWithUnit = seriesObject.nameWithUnit();
