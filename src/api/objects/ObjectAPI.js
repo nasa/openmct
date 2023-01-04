@@ -753,8 +753,6 @@ export default class ObjectAPI {
             return [];
         }
 
-        identifiers.unshift('ROOT');
-
         const objectPath = (await Promise.all(
             identifiers.map(
                 identifier => this.get(utils.parseKeyString(identifier))

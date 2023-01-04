@@ -1,34 +1,27 @@
 <template>
-<div class="c-tree-scrollable">
-    <tree-item
-        v-for="(recentItem, index) in recentItems"
-        :key="`${recentItem.navigationPath}-recent-${index}`"
-        :node="recentItem"
-        :is-selector-tree="false"
-        :selected-item="selectedItem"
-        :left-offset="'0px'"
-        :is-new="recentItem.isNew"
-        :item-offset="itemOffset"
-        :item-index="index"
-        :item-height="itemHeight"
-        :open-items="[]"
-        :loading-items="{}"
-    />
-    <!-- @tree-item-mounted="scrollToCheck($event)"
-        @tree-item-destroyed="removeCompositionListenerFor($event)"
-        @tree-item-action="recentItemAction(recentItem, $event)"
-        @tree-item-selection="recentItemSelection(recentItem)" -->
+<div
+    class="c-tree-and-search l-shell__tree"
+>
+    <div
+        class="c-tree-and-search__tree c-tree c-tree__scrollable"
+    >
+        <object-search-result
+            v-for="(recentObject) in recents"
+            :key="openmct.objects.makeKeyString(recentObject.identifier)"
+            :result="recentObject"
+        />
+    </div>
 </div>
 </template>
 
 <script>
-import treeItem from './tree-item.vue';
 const MAX_RECENT_ITEMS = 20;
 const LOCAL_STORAGE_KEY__RECENT_OBJECTS = 'mct-recent-objects';
+import ObjectSearchResult from './search/ObjectSearchResult.vue';
 export default {
     name: 'RecentObjects',
     components: {
-        treeItem
+        ObjectSearchResult
     },
     inject: ['openmct'],
     props: {
@@ -36,96 +29,38 @@ export default {
     },
     data() {
         return {
-            recentItems: [],
-            selectedItem: null,
-            itemHeight: 27,
-            itemOffset: 0
+            recents: []
         };
     },
-    async mounted() {
-        this.openmct.router.on('change:hash', this.onHashChange);
-
-        this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
-        this.treeResizeObserver.observe(this.$el);
-        await this.calculateHeights();
-    },
-    created() {
-        this.handleTreeResize = _.debounce(this.handleTreeResize, 300);
+    mounted() {
+        this.openmct.router.on('change:path', this.onPathChange);
     },
     destroyed() {
-        this.openmct.router.off('change:hash', this.onHashChange);
+        this.openmct.router.off('change:path', this.onPathChange);
     },
     methods: {
-        async onHashChange(hash) {
+        async onPathChange(hash) {
+            console.log('hashy changey', hash);
             const objectPath = await this.openmct.objects.getRelativeObjectPath(hash);
-            const navigationPath = `/browse/${this.openmct.objects.getRelativePath(objectPath.slice(0, -1))}`;
-            const foundIndex = this.recentItems.findIndex((item) => {
-                return navigationPath === item.navigationPath;
+            const domainObject = objectPath[0];
+            const { identifier } = domainObject;
+            const keyString = this.openmct.objects.makeKeyString(identifier);
+            const originalPathObjects = await this.openmct.objects.getOriginalPath(keyString);
+            const existingIndex = this.recents.findIndex((recentObject) => {
+                return this.openmct.objects.makeKeyString(recentObject.identifier) === keyString;
             });
-            if (foundIndex > -1) {
-                const removedItem = this.recentItems.splice(foundIndex, 1);
-                this.selectedItem = removedItem[0];
-            } else {
-                this.selectedItem = {
-                    id: objectPath[0].identifier,
-                    object: objectPath[0],
-                    objectPath,
-                    navigationPath
-                };
+            if (existingIndex !== -1) {
+                this.recents.splice(existingIndex, 1);
             }
 
-            this.recentItems.unshift(this.selectedItem);
-            while (this.recentItems.length > MAX_RECENT_ITEMS) {
-                this.recentItems.pop();
-            }
-        },
-        calculateHeights() {
-            const RECHECK = 100;
-
-            return new Promise((resolve, reject) => {
-
-                let checkHeights = () => {
-                    let treeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-                    let paddingOffset = 0;
-
-                    if (
-                        this.$el
-                        && this.$refs.search
-                        && this.$refs.mainTree
-                        && this.$refs.treeContainer
-                        && this.$refs.dummyItem
-                        && this.$el.offsetHeight !== 0
-                        && treeTopMargin > 0
-                    ) {
-
-                        this.mainTreeTopMargin = treeTopMargin;
-                        this.mainTreeHeight = this.$el.offsetHeight
-                            - this.$refs.search.offsetHeight
-                            - this.mainTreeTopMargin
-                            - (paddingOffset * 2);
-                        this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
-
-                        resolve();
-                    } else {
-                        setTimeout(checkHeights, RECHECK);
-                    }
-                };
-
-                checkHeights();
+            this.recents.unshift({
+                originalPath: originalPathObjects,
+                ...domainObject
             });
-        },
-        getElementStyleValue(el, style) {
-            if (!el) {
-                return;
+
+            while (this.recents.length > MAX_RECENT_ITEMS) {
+                this.recents.pop();
             }
-
-            let styleString = window.getComputedStyle(el)[style];
-            let index = styleString.indexOf('px');
-
-            return Number(styleString.slice(0, index));
-        },
-        handleTreeResize() {
-            this.calculateHeights();
         }
     }
 };
