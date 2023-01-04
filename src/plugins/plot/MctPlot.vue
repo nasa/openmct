@@ -1169,9 +1169,8 @@ export default {
         },
 
         setYAxisKey(yKey, yAxisId) {
-            this.config.series.models.forEach((model) => {
-                model.set('yKey', yKey);
-            });
+            const seriesForYAxis = this.config.series.models.filter((model => model.get('yAxisId') === yAxisId));
+            seriesForYAxis.forEach(model => model.set('yKey', yKey));
         },
 
         pause() {

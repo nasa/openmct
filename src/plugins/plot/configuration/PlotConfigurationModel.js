@@ -179,6 +179,7 @@ export default class PlotConfigurationModel extends Model {
             domainObject: options.domainObject,
             xAxis: {},
             yAxis: _.cloneDeep(options.domainObject.configuration?.yAxis ?? {}),
+            additionalYAxes: _.cloneDeep(options.domainObject.configuration?.additionalYAxes ?? []),
             legend: _.cloneDeep(options.domainObject.configuration?.legend ?? {})
         };
     }

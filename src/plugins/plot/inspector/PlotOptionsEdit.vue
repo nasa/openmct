@@ -40,7 +40,9 @@
         </li>
     </ul>
     <y-axis-form
-        v-if="plotSeries.length && !isStackedPlotObject"
+        v-for="(yAxisId, index) in yAxesIds"
+        :id="yAxisId.id"
+        :key="`yAxis-${index}`"
         class="grid-properties"
         :y-axis="config.yAxis"
         @seriesUpdated="updateSeriesConfigForObject"
@@ -76,6 +78,7 @@ export default {
     data() {
         return {
             config: {},
+            yAxes: [],
             plotSeries: [],
             loaded: false
         };
@@ -86,11 +89,27 @@ export default {
         },
         isStackedPlotObject() {
             return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+        },
+        yAxesIds() {
+            return !this.isStackedPlotObject && this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         }
     },
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
+        this.yAxes = [{
+            id: this.config.yAxis.id,
+            seriesCount: 0
+        }];
+        if (this.config.additionalYAxes) {
+            this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
+                return {
+                    id: yAxis.id,
+                    seriesCount: 0
+                };
+            }));
+        }
+
         this.registerListeners();
         this.loaded = true;
     },
@@ -107,16 +126,26 @@ export default {
             this.config.series.forEach(this.addSeries, this);
 
             this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+            this.listenTo(this.config.series, 'remove', this.removeSeries, this);
         },
 
         addSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.updateAxisUsageCount(yAxisId, 1);
             this.$set(this.plotSeries, index, series);
         },
 
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
+        removeSeries(plotSeries, index) {
+            const yAxisId = plotSeries.get('yAxisId');
+            this.updateAxisUsageCount(yAxisId, -1);
+            this.plotSeries.splice(index, 1);
+        },
+
+        updateAxisUsageCount(yAxisId, updateCount) {
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            if (foundYAxis) {
+                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
+            }
         },
 
         updateSeriesConfigForObject(config) {
