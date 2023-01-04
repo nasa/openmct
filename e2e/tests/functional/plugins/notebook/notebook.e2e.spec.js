@@ -283,6 +283,16 @@ test.describe('Notebook entry tests', () => {
 
         const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
+        // Start waiting for popup before clicking. Note no await.
+        const popupPromise = page.waitForEvent('popup');
+
+        await validLink.click();
+        const popup = await popupPromise;
+
+        // Wait for the popup to load.
+        await popup.waitForLoadState();
+        expect.soft(popup.url()).toContain('www.google.com');
+
         expect(await validLink.count()).toBe(1);
     });
     test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
@@ -305,7 +315,7 @@ test.describe('Notebook entry tests', () => {
 
         expect(await invalidLink.count()).toBe(0);
     });
-    test.only('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
+    test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com?bad=';
         const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
