@@ -89,6 +89,10 @@ mct-plot {
         min-height: $plotMinH;
         overflow: hidden;
 
+        .is-stale {
+            border: 1px solid cyan;
+        }
+
         &[s-selected] {
             .is-editing & {
                 border: $editMarqueeBorder;
