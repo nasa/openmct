@@ -39,7 +39,6 @@
             :key="object.id"
             class="c-plot--stacked-container"
             :child-object="object"
-            :is-stale="stalenessTracker[object.id]"
             :options="options"
             :grid-lines="gridLines"
             :color-palette="colorPalette"
@@ -99,7 +98,6 @@ export default {
             highlights: [],
             seriesModels: [],
             showLimitLineLabels: undefined,
-            stalenessTracker: {},
             colorPalette: new ColorPalette()
         };
     },
@@ -130,7 +128,6 @@ export default {
 
         this.loaded = true;
         this.imageExporter = new ImageExporter(this.openmct);
-        this.stalenessTrackerUnsubscribe = {};
 
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
@@ -168,8 +165,7 @@ export default {
 
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
-            this.$set(this.stalenessTracker, id, false);
-            this.stalenessTrackerUnsubscribe[id] = this.openmct.telemetry.subscribeToStaleness(child, this.handleStaleness(id));
+
             this.$set(this.tickWidthMap, id, 0);
 
             this.compositionObjects.push(child);
@@ -177,9 +173,6 @@ export default {
 
         removeChild(childIdentifier) {
             const id = this.openmct.objects.makeKeyString(childIdentifier);
-
-            this.stalenessTrackerUnsubscribe[id].unsubscribe();
-            delete this.stalenessTracker[id];
 
             this.$delete(this.tickWidthMap, id);
 
@@ -207,13 +200,6 @@ export default {
             reorderPlan.forEach((reorder) => {
                 this.compositionObjects[reorder.newIndex] = oldComposition[reorder.oldIndex];
             });
-        },
-
-        handleStaleness(id) {
-            return (isStale = false) => {
-                this.$set(this.stalenessTracker, id, isStale);
-                console.log('handling stalenes stacked plot...', this.stalenessTracker[id]);
-            };
         },
 
         resetTelemetryAndTicks(domainObject) {

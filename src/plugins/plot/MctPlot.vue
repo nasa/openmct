@@ -23,7 +23,7 @@
 <div
     v-if="loaded"
     class="gl-plot"
-    :class="plotClasses"
+    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend
         v-if="!isNestedWithinAStackedPlot"
@@ -233,12 +233,6 @@ export default {
                 };
             }
         },
-        initIsStale: {
-            type: Boolean,
-            default() {
-                return false;
-            }
-        },
         initGridLines: {
             type: Boolean,
             default() {
@@ -292,8 +286,7 @@ export default {
             isFrozenOnMouseDown: false,
             hasSameRangeValue: true,
             cursorGuide: this.initCursorGuide,
-            gridLines: this.initGridLines,
-            isStale: this.initIsStale
+            gridLines: this.initGridLines
         };
     },
     computed: {
@@ -305,24 +298,19 @@ export default {
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
-        plotClasses() {
-            let classes = [];
+        plotLegendPositionClass() {
+            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
+        },
+        plotLegendExpandedStateClass() {
+            if (this.isNestedWithinAStackedPlot) {
+                return '';
+            }
 
-            if (!this.isNestedWithinAStackedPlot) {
-                classes.push(`plot-legend-${this.config.legend.get('position')}`);
+            if (this.config.legend.get('expanded')) {
+                return 'plot-legend-expanded';
             } else {
-                if (this.config.legend.get('expanded')) {
-                    classes.push('plot-legend-expanded');
-                } else {
-                    classes.push('plot-legend-collapsed');
-                }
+                return 'plot-legend-collapsed';
             }
-
-            if (this.isStale) {
-                classes.push('is-stale');
-            }
-
-            return classes;
         },
         plotWidth() {
             return this.plotTickWidth || this.tickWidth;
@@ -337,10 +325,6 @@ export default {
         },
         initGridLines(newGridLines) {
             this.gridLines = newGridLines;
-        },
-        initIsStale(staleness) {
-            console.log('is stale watch mct plot')
-            this.isStale = staleness;
         },
         initCursorGuide(newCursorGuide) {
             this.cursorGuide = newCursorGuide;

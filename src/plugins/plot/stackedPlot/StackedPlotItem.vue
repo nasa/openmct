@@ -41,12 +41,6 @@ export default {
                 return {};
             }
         },
-        isStale: {
-            type: Boolean,
-            default() {
-                return false;
-            }
-        },
         options: {
             type: Object,
             default() {
@@ -85,10 +79,6 @@ export default {
         }
     },
     watch: {
-        isStale(staleness) {
-            console.log('watching stalenes stacked plot item');
-            this.updateComponentProp('isStale', staleness);
-        },
         gridLines(newGridLines) {
             this.updateComponentProp('gridLines', newGridLines);
         },
@@ -137,7 +127,6 @@ export default {
             const onCursorGuideChange = this.onCursorGuideChange;
             const onGridLinesChange = this.onGridLinesChange;
             const setStatus = this.setStatus;
-            const isStale = this.isStale;
 
             const openmct = this.openmct;
             const path = this.path;
@@ -179,7 +168,7 @@ export default {
                         this.loading = loaded;
                     }
                 },
-                template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-is-stale="isStale" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
 
             this.setSelection();
@@ -221,7 +210,6 @@ export default {
             return {
                 limitLineLabels: this.showLimitLineLabels,
                 gridLines: this.gridLines,
-                isStale: this.isStale,
                 cursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,
                 options: this.options,
