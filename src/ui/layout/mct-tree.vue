@@ -118,13 +118,12 @@
 <script>
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
-import treeMixin from '../mixins/tree-mixin.js';
 import search from '../components/search.vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
-const TREE_ITEM_INDENT_PX = 18;
 const SORT_MY_ITEMS_ALPH_ASC = true;
+const TREE_ITEM_INDENT_PX = 18;
 const LOCATOR_ITEM_COUNT_HEIGHT = 10; // how many tree items to make the locator selection box show
 
 export default {
@@ -133,7 +132,6 @@ export default {
         search,
         treeItem
     },
-    mixins: [treeMixin],
     inject: ['openmct'],
     props: {
         isSelectorTree: {
@@ -216,6 +214,21 @@ export default {
         }
     },
     watch: {
+        syncTreeNavigation() {
+            this.searchValue = '';
+
+            // if there is an abort controller, then a search is in progress and will need to be canceled
+            if (this.abortSearchController) {
+                this.abortSearchController.abort();
+                delete this.abortSearchController;
+            }
+
+            if (!this.openmct.router.path) {
+                return;
+            }
+
+            this.$nextTick(this.showCurrentPathInTree);
+        },
         resetTreeNavigation() {
             [...this.openTreeItems].reverse().map(this.closeTreeItemByPath);
         },
@@ -330,6 +343,58 @@ export default {
             }
 
             return;
+        },
+        closeTreeItemByPath(path) {
+            // if actively loading, abort
+            if (this.isItemLoading(path)) {
+                this.abortItemLoad(path);
+            }
+
+            let pathIndex = this.openTreeItems.indexOf(path);
+
+            if (pathIndex === -1) {
+                return;
+            }
+
+            this.treeItems = this.treeItems.filter((checkItem) => {
+                if (checkItem.navigationPath !== path
+                    && checkItem.navigationPath.includes(path)) {
+                    this.destroyObserverByPath(checkItem.navigationPath);
+                    this.destroyMutableByPath(checkItem.navigationPath);
+
+                    return false;
+                }
+
+                return true;
+            });
+            this.openTreeItems.splice(pathIndex, 1);
+            this.removeCompositionListenerFor(path);
+        },
+        closeTreeItem(item) {
+            this.closeTreeItemByPath(item.navigationPath);
+        },
+        // returns an AbortController signal to be passed on to requests
+        startItemLoad(path) {
+            if (this.isItemLoading(path)) {
+                this.abortItemLoad(path);
+            }
+
+            this.$set(this.treeItemLoading, path, new AbortController());
+
+            return this.treeItemLoading[path].signal;
+        },
+        endItemLoad(path) {
+            this.$set(this.treeItemLoading, path, undefined);
+            delete this.treeItemLoading[path];
+        },
+        abortItemLoad(path) {
+            if (this.treeItemLoading[path]) {
+                this.treeItemLoading[path].abort();
+                this.endItemLoad(path);
+            }
+        },
+        isItemLoading(path) {
+            return this.treeItemLoading[path] instanceof AbortController;
         },
         showCurrentPathInTree() {
             const currentPath = this.buildNavigationPath(this.openmct.router.path);
@@ -482,6 +547,69 @@ export default {
             // determine if any part of the parent's path includes a key value of mine; aka My Items
             return Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
         },
+        async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
+            let collection = this.openmct.composition.get(domainObject);
+            let composition = await collection.load(abortSignal);
+
+            if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
+                const sortedComposition = composition.slice().sort(this.sortNameAscending);
+                composition = sortedComposition;
+            }
+
+            if (parentObjectPath.length && !this.isSelectorTree) {
+                let navigationPath = this.buildNavigationPath(parentObjectPath);
+
+                if (this.compositionCollections[navigationPath]) {
+                    this.removeCompositionListenerFor(navigationPath);
+                }
+
+                this.compositionCollections[navigationPath] = {};
+                this.compositionCollections[navigationPath].collection = collection;
+                this.compositionCollections[navigationPath].addHandler = this.compositionAddHandler(navigationPath);
+                this.compositionCollections[navigationPath].removeHandler = this.compositionRemoveHandler(navigationPath);
+
+                this.compositionCollections[navigationPath].collection.on('add',
+                    this.compositionCollections[navigationPath].addHandler);
+                this.compositionCollections[navigationPath].collection.on('remove',
+                    this.compositionCollections[navigationPath].removeHandler);
+            }
+
+            return composition.map((object) => {
+                // Only add observers and mutables if this is NOT a selector tree
+                if (!this.isSelectorTree) {
+                    if (this.openmct.objects.supportsMutation(object.identifier)) {
+                        object = this.openmct.objects.toMutable(object);
+                        this.addMutable(object, parentObjectPath);
+                    }
+
+                    this.addTreeItemObserver(object, parentObjectPath);
+                }
+
+                return this.buildTreeItem(object, parentObjectPath);
+            });
+        },
+        buildTreeItem(domainObject, parentObjectPath, isNew = false) {
+            let objectPath = [domainObject].concat(parentObjectPath);
+            let navigationPath = this.buildNavigationPath(objectPath);
+
+            return {
+                id: this.openmct.objects.makeKeyString(domainObject.identifier),
+                object: domainObject,
+                leftOffset: ((objectPath.length - 1) * TREE_ITEM_INDENT_PX) + 'px',
+                isNew,
+                objectPath,
+                navigationPath
+            };
+        },
+        addMutable(mutableDomainObject, parentObjectPath) {
+            const objectPath = [mutableDomainObject].concat(parentObjectPath);
+            const navigationPath = this.buildNavigationPath(objectPath);
+
+            // If the mutable already exists, destroy it.
+            this.destroyMutableByPath(navigationPath);
+
+            this.mutables[navigationPath] = () => this.openmct.objects.destroyMutable(mutableDomainObject);
+        },
         addTreeItemObserver(domainObject, parentObjectPath) {
             const objectPath = [domainObject].concat(parentObjectPath);
             const navigationPath = this.buildNavigationPath(objectPath);
@@ -533,6 +661,11 @@ export default {
 
             // Splice in all of the sorted descendants
             this.treeItems.splice(this.treeItems.indexOf(parentItem) + 1, sortedTreeItems.length, ...sortedTreeItems);
+        },
+        buildNavigationPath(objectPath) {
+            return '/browse/' + [...objectPath].reverse()
+                .map((object) => this.openmct.objects.makeKeyString(object.identifier))
+                .join('/');
         },
         compositionAddHandler(navigationPath) {
             return (domainObject) => {
@@ -748,6 +881,44 @@ export default {
 
             return Math.ceil(scrollBottom / this.itemHeight);
         },
+        calculateHeights() {
+            const RECHECK = 100;
+
+            return new Promise((resolve, reject) => {
+
+                let checkHeights = () => {
+                    let treeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+                    let paddingOffset = 0;
+
+                    if (
+                        this.$el
+                        && this.$refs.search
+                        && this.$refs.mainTree
+                        && this.$refs.treeContainer
+                        && this.$refs.dummyItem
+                        && this.$el.offsetHeight !== 0
+                        && treeTopMargin > 0
+                    ) {
+                        if (this.isSelectorTree) {
+                            paddingOffset = this.getElementStyleValue(this.$refs.treeContainer, 'padding');
+                        }
+
+                        this.mainTreeTopMargin = treeTopMargin;
+                        this.mainTreeHeight = this.$el.offsetHeight
+                            - this.$refs.search.offsetHeight
+                            - this.mainTreeTopMargin
+                            - (paddingOffset * 2);
+                        this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
+
+                        resolve();
+                    } else {
+                        setTimeout(checkHeights, RECHECK);
+                    }
+                };
+
+                checkHeights();
+            });
+        },
         getTreeItemByPath(path) {
             return this.treeItems.find(item => item.navigationPath === path);
         },
@@ -770,6 +941,22 @@ export default {
                 && childItem.navigationPath.includes(parentPath);
             });
         },
+        isTreeItemOpen(item) {
+            return this.isTreeItemPathOpen(item.navigationPath);
+        },
+        isTreeItemPathOpen(path) {
+            return this.openTreeItems.includes(path);
+        },
+        getElementStyleValue(el, style) {
+            if (!el) {
+                return;
+            }
+
+            let styleString = window.getComputedStyle(el)[style];
+            let index = styleString.indexOf('px');
+
+            return Number(styleString.slice(0, index));
+        },
         getSavedOpenItems() {
             if (this.isSelectorTree) {
                 return;
@@ -784,6 +971,9 @@ export default {
             }
 
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.openTreeItems));
+        },
+        handleTreeResize() {
+            this.calculateHeights();
         },
         /**
          * Destroy an observer for the given navigationPath.
