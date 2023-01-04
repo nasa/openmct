@@ -39,7 +39,7 @@
             :key="object.id"
             class="c-plot--stacked-container"
             :child-object="object"
-            :is-stale="stalenessTracker[object.id] && stalenessTracker[object.id].status === true"
+            :is-stale="stalenessTracker[object.id]"
             :options="options"
             :grid-lines="gridLines"
             :color-palette="colorPalette"
@@ -130,6 +130,7 @@ export default {
 
         this.loaded = true;
         this.imageExporter = new ImageExporter(this.openmct);
+        this.stalenessTrackerUnsubscribe = {};
 
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
@@ -167,10 +168,8 @@ export default {
 
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
-            this.$set(this.stalenessTracker, id, {
-                unsubscribe: this.openmct.telemetry.subscribeToStaleness(child, this.handleStaleness(id)),
-                status: undefined
-            });
+            this.$set(this.stalenessTracker, id, false);
+            this.stalenessTrackerUnsubscribe[id] = this.openmct.telemetry.subscribeToStaleness(child, this.handleStaleness(id));
             this.$set(this.tickWidthMap, id, 0);
 
             this.compositionObjects.push(child);
@@ -179,7 +178,7 @@ export default {
         removeChild(childIdentifier) {
             const id = this.openmct.objects.makeKeyString(childIdentifier);
 
-            this.stalenessTracker[id].unsubscribe();
+            this.stalenessTrackerUnsubscribe[id].unsubscribe();
             delete this.stalenessTracker[id];
 
             this.$delete(this.tickWidthMap, id);
@@ -211,8 +210,9 @@ export default {
         },
 
         handleStaleness(id) {
-            return (isStale) => {
-                this.stalenessTracker.status = isStale;
+            return (isStale = false) => {
+                this.$set(this.stalenessTracker, id, isStale);
+                console.log('handling stalenes stacked plot...', this.stalenessTracker[id]);
             };
         },
 
