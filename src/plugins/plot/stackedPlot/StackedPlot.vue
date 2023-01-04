@@ -39,6 +39,7 @@
             :key="object.id"
             class="c-plot--stacked-container"
             :child-object="object"
+            :is-stale="stalenessTracker[object.id] && stalenessTracker[object.id].status === true"
             :options="options"
             :grid-lines="gridLines"
             :color-palette="colorPalette"
@@ -98,6 +99,7 @@ export default {
             highlights: [],
             seriesModels: [],
             showLimitLineLabels: undefined,
+            stalenessTracker: {},
             colorPalette: new ColorPalette()
         };
     },
@@ -165,7 +167,10 @@ export default {
 
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
-
+            this.$set(this.stalenessTracker, id, {
+                unsubscribe: this.openmct.telemetry.subscribeToStaleness(child, this.handleStaleness(id)),
+                status: undefined
+            });
             this.$set(this.tickWidthMap, id, 0);
 
             this.compositionObjects.push(child);
@@ -173,6 +178,9 @@ export default {
 
         removeChild(childIdentifier) {
             const id = this.openmct.objects.makeKeyString(childIdentifier);
+
+            this.stalenessTracker[id].unsubscribe();
+            delete this.stalenessTracker[id];
 
             this.$delete(this.tickWidthMap, id);
 
@@ -200,6 +208,12 @@ export default {
             reorderPlan.forEach((reorder) => {
                 this.compositionObjects[reorder.newIndex] = oldComposition[reorder.oldIndex];
             });
+        },
+
+        handleStaleness(id) {
+            return (isStale) => {
+                this.stalenessTracker.status = isStale;
+            };
         },
 
         resetTelemetryAndTicks(domainObject) {

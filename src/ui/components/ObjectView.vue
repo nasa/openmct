@@ -169,6 +169,7 @@ export default {
                 this.composition._destroy();
             }
 
+            this.isStale = false;
             if (this.unsubscribeFromStaleness) {
                 this.unsubscribeFromStaleness();
             }

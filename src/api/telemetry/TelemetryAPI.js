@@ -326,7 +326,6 @@ export default class TelemetryAPI {
      *          the subscription to staleness updates
      */
     subscribeToStaleness(domainObject, callback) {
-        console.log('TAPI: subscribeToStaleness', domainObject.name);
         const provider = this.#findStalenessProvider(domainObject);
 
         if (!this.stalenessSubscriberCache) {
@@ -341,10 +340,8 @@ export default class TelemetryAPI {
                 callbacks: [callback]
             };
             if (provider) {
-                console.log('TAPI: subscribeToStaleness: provider exists', domainObject.name);
                 stalenessSubscriber.unsubscribe = provider
                     .subscribeToStaleness(domainObject, function (isStale) {
-                        console.log('callback, isStale', isStale);
                         stalenessSubscriber.callbacks.forEach(function (cb) {
                             cb(isStale);
                         });
