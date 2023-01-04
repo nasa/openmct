@@ -258,16 +258,33 @@ export default {
             }
         },
 
+        setYAxisLabel(yAxisId) {
+            const found = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            if (found && found.seriesCount > 0) {
+                const mainYAxisId = this.config.yAxis.id;
+                if (mainYAxisId === yAxisId) {
+                    found.label = this.config.yAxis.get('label');
+                } else {
+                    const additionalYAxis = this.config.additionalYAxes.find(axis => axis.id === yAxisId);
+                    if (additionalYAxis) {
+                        found.label = additionalYAxis.get('label');
+                    }
+                }
+            }
+        },
+
         addSeries(series, index) {
             const yAxisId = series.get('yAxisId');
             this.updateAxisUsageCount(yAxisId, 1);
             this.$set(this.plotSeries, index, series);
+            this.setYAxisLabel(yAxisId);
         },
 
         removeSeries(plotSeries, index) {
             const yAxisId = plotSeries.get('yAxisId');
             this.updateAxisUsageCount(yAxisId, -1);
             this.plotSeries.splice(index, 1);
+            this.setYAxisLabel(yAxisId);
         },
 
         updateAxisUsageCount(yAxisId, updateCount) {

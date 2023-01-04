@@ -142,6 +142,7 @@ export default {
                 const mainYAxisId = config.yAxis.id;
                 this.isAdditionalYAxis = this.id !== mainYAxisId;
                 if (this.isAdditionalYAxis) {
+                    this.additionalYAxes = config.additionalYAxes;
                     this.yAxis = config.additionalYAxes.find(yAxis => yAxis.id === this.id);
                 } else {
                     this.yAxis = config.yAxis;
@@ -225,8 +226,8 @@ export default {
             let prefix = 'yAxis';
             if (this.isAdditionalYAxis) {
                 let index = -1;
-                if (this.domainObject.configuration.additionalYAxes) {
-                    index = this.domainObject.configuration.additionalYAxes.findIndex((yAxis) => {
+                if (this.additionalYAxes) {
+                    index = this.additionalYAxes.findIndex((yAxis) => {
                         return yAxis.id === this.id;
                     });
                 }
@@ -284,7 +285,7 @@ export default {
                                 `configuration.${this.getPrefix()}.id`,
                                 this.id
                             );
-                            //upate the
+                            //update the yAxes values
                             this.openmct.objects.mutate(
                                 this.domainObject,
                                 path(this.domainObject, this.yAxis),
