@@ -91,7 +91,7 @@
                     handle="before"
                     label="Recently Viewed"
                 >
-                    <RecentObjects
+                    <RecentObjectsList
                         class="l-shell__tree"
                     />
                 </pane>
@@ -150,7 +150,7 @@ import Toolbar from '../toolbar/Toolbar.vue';
 import AppLogo from './AppLogo.vue';
 import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
-import RecentObjects from './RecentObjects.vue';
+import RecentObjectsList from './RecentObjectsList.vue';
 
 export default {
     components: {
@@ -166,7 +166,7 @@ export default {
         AppLogo,
         Indicators,
         NotificationBanner,
-        RecentObjects
+        RecentObjectsList
     },
     inject: ['openmct'],
     data: function () {

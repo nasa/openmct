@@ -17,9 +17,9 @@
 <script>
 const MAX_RECENT_ITEMS = 20;
 const LOCAL_STORAGE_KEY__RECENT_OBJECTS = 'mct-recent-objects';
-import ObjectSearchResult from './search/ObjectSearchResult.vue';
+import ObjectSearchResult from './search/ObjectSearchResult.vue'
 export default {
-    name: 'RecentObjects',
+    name: 'RecentObjectsList',
     components: {
         ObjectSearchResult
     },
@@ -39,29 +39,24 @@ export default {
         this.openmct.router.off('change:path', this.onPathChange);
     },
     methods: {
-        async onPathChange(hash) {
-            console.log('hashy changey', hash);
-            const objectPath = await this.openmct.objects.getRelativeObjectPath(hash);
+        async onPathChange(navigationPath) {
+            console.log('hashy changey', navigationPath);
+            const objectPath = await this.openmct.objects.getRelativeObjectPath(navigationPath);
             if (!objectPath.length) {
                 return;
             }
 
-            // get rid of ROOT if extant
-            if (hash.includes('/ROOT')) {
-                hash = hash.split('/ROOT').join('');
-            }
-
             const domainObject = objectPath[0];
             const existingIndex = this.recents.findIndex((recentObject) => {
-                return hash === recentObject.navigationPath;
+                return navigationPath === recentObject.navigationPath;
             });
             if (existingIndex !== -1) {
                 this.recents.splice(existingIndex, 1);
             }
 
             this.recents.unshift({
-                originalPath: objectPath,
-                navigationPath: hash,
+                objectPath,
+                navigationPath,
                 ...domainObject
             });
 
