@@ -7,7 +7,7 @@
     >
         <object-search-result
             v-for="(recentObject) in recents"
-            :key="openmct.objects.makeKeyString(recentObject.identifier)"
+            :key="recentObject.navigationPath"
             :result="recentObject"
         />
     </div>
@@ -46,19 +46,22 @@ export default {
                 return;
             }
 
+            // get rid of ROOT if extant
+            if (hash.includes('/ROOT')) {
+                hash = hash.split('/ROOT').join('');
+            }
+
             const domainObject = objectPath[0];
-            const { identifier } = domainObject;
-            const keyString = this.openmct.objects.makeKeyString(identifier);
-            const originalPathObjects = await this.openmct.objects.getOriginalPath(keyString);
             const existingIndex = this.recents.findIndex((recentObject) => {
-                return this.openmct.objects.makeKeyString(recentObject.identifier) === keyString;
+                return hash === recentObject.navigationPath;
             });
             if (existingIndex !== -1) {
                 this.recents.splice(existingIndex, 1);
             }
 
             this.recents.unshift({
-                originalPath: originalPathObjects,
+                originalPath: objectPath,
+                navigationPath: hash,
                 ...domainObject
             });
 
