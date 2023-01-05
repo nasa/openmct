@@ -24,22 +24,19 @@
 * This test suite is dedicated to testing the Gauge component.
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const uuid = require('uuid').v4;
 
 test.describe('Gauge', () => {
-    let gauge;
-
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
-
-        // Create the gauge
-        gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge' });
     });
 
     test('Can add and remove telemetry sources @unstable', async ({ page }) => {
+        // Create the gauge with defaults
+        const gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge' });
         const editButtonLocator = page.locator('button[title="Edit"]');
         const saveButtonLocator = page.locator('button[title="Save"]');
 
@@ -89,5 +86,39 @@ test.describe('Gauge', () => {
 
         // Verify that the elements pool shows no elements
         await expect(page.locator('text="No contained elements"')).toBeVisible();
+    });
+    test('Can create a non-default Gauge', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5356'
+        });
+        //Click the Create button
+        await page.click('button:has-text("Create")');
+
+        // Click the object specified by 'type'
+        await page.click(`li[role='menuitem']:text("Gauge")`);
+        // FIXME: We need better selectors for these custom form controls
+        const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
+        await displayCurrentValueSwitch.setChecked(false);
+        await page.click('button[aria-label="Save"]');
+
+        // TODO: Verify changes in the UI
+    });
+    test('Can edit a single Gauge-specific property', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5985'
+        });
+
+        // Create the gauge with defaults
+        await createDomainObjectWithDefaults(page, { type: 'Gauge' });
+        await page.click('button[title="More options"]');
+        await page.click('li[role="menuitem"]:has-text("Edit Properties")');
+        // FIXME: We need better selectors for these custom form controls
+        const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
+        await displayCurrentValueSwitch.setChecked(false);
+        await page.click('button[aria-label="Save"]');
+
+        // TODO: Verify changes in the UI
     });
 });

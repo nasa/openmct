@@ -7,7 +7,11 @@
             :checked="checked"
             @change="onUserSelect($event)"
         >
-        <span class="c-toggle-switch__slider"></span>
+        <span
+            class="c-toggle-switch__slider"
+            role="switch"
+            :aria-label="name"
+        ></span>
     </label>
     <div
         v-if="label && label.length"
@@ -28,6 +32,11 @@ export default {
             required: true
         },
         label: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        name: {
             type: String,
             required: false,
             default: ''
