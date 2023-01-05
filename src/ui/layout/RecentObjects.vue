@@ -42,6 +42,10 @@ export default {
         async onPathChange(hash) {
             console.log('hashy changey', hash);
             const objectPath = await this.openmct.objects.getRelativeObjectPath(hash);
+            if (!objectPath.length) {
+                return;
+            }
+
             const domainObject = objectPath[0];
             const { identifier } = domainObject;
             const keyString = this.openmct.objects.makeKeyString(identifier);

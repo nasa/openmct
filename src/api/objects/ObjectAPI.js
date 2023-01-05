@@ -747,13 +747,16 @@ export default class ObjectAPI {
      * @returns {DomainObject[]} objectPath
      */
     async getRelativeObjectPath(navigationPath) {
-        navigationPath = navigationPath.replace('/browse/', '');
+        if (navigationPath.indexOf('/browse/') > -1) {
+            navigationPath = navigationPath.replace('/browse/', '');
+        }
+
+        if (!navigationPath || navigationPath === '/') {
+            return [];
+        }
 
         // Remove any query params and split on '/'
         const identifiers = navigationPath.split('?')?.[0].split('/');
-        if (!identifiers) {
-            return [];
-        }
 
         const objectPath = (await Promise.all(
             identifiers.map(
