@@ -36,8 +36,8 @@ export default function () {
         }
 
         let wrappedFunction = openmct.objects.get;
-        openmct.objects.get = function migrate(identifier) {
-            return wrappedFunction.apply(openmct.objects, [identifier])
+        openmct.objects.get = function migrate() {
+            return wrappedFunction.apply(openmct.objects, [...arguments])
                 .then(function (object) {
                     if (needsMigration(object)) {
                         migrateObject(object)
