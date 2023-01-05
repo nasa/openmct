@@ -17,7 +17,7 @@
 <script>
 const MAX_RECENT_ITEMS = 20;
 const LOCAL_STORAGE_KEY__RECENT_OBJECTS = 'mct-recent-objects';
-import RecentObjectsListItem from './RecentObjectsListItem.vue'
+import RecentObjectsListItem from './RecentObjectsListItem.vue';
 export default {
     name: 'RecentObjectsList',
     components: {
