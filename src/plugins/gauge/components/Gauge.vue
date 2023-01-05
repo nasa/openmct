@@ -22,7 +22,7 @@
 <template>
 <div
     class="c-gauge__wrapper js-gauge-wrapper"
-    :class="`c-gauge--${gaugeType}`"
+    :class="gaugeClasses"
     :title="gaugeTitle"
 >
     <template v-if="typeDial">
@@ -371,7 +371,8 @@ export default {
             gaugeType: gaugeController.gaugeType,
             showUnits: gaugeController.showUnits,
             activeTimeSystem: this.openmct.time.timeSystem(),
-            units: ''
+            units: '',
+            isStale: false
         };
     },
     computed: {
@@ -402,6 +403,15 @@ export default {
             const VIEWBOX_STR = '0 0 X 10';
 
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
+        },
+        gaugeClasses() {
+            let classes = [`c-gauge--${this.gaugeType}`];
+
+            if (this.isStale) {
+                classes.push('is-stale');
+            }
+
+            return classes;
         },
         rangeFontSize() {
             const CHAR_THRESHOLD = 3;
@@ -544,6 +554,10 @@ export default {
             this.unsubscribe();
         }
 
+        if (this.unsubscribeFromStaleness) {
+            this.unsubscribeFromStaleness();
+        }
+
         this.openmct.time.off('bounds', this.refreshData);
         this.openmct.time.off('timeSystem', this.setTimeSystem);
     },
@@ -553,6 +567,10 @@ export default {
             this.telemetryObject = domainObject;
             this.request();
             this.subscribe();
+
+            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
+                this.isStale = isStale;
+            });
         },
         addedToComposition(domainObject) {
             if (this.telemetryObject) {
@@ -609,6 +627,11 @@ export default {
             if (this.unsubscribe) {
                 this.unsubscribe();
                 this.unsubscribe = null;
+            }
+
+            if (this.unsubscribeFromStaleness) {
+                this.unsubscribeFromStaleness();
+                this.unsubscribeFromStaleness = null;
             }
 
             this.curVal = DEFAULT_CURRENT_VALUE;

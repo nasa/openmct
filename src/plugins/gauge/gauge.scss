@@ -32,6 +32,14 @@ $meterNeedleBorderRadius: 5px;
   &__wrapper {
     @include abs();
     overflow: hidden;
+
+    &.is-stale {
+      border: 1px solid cyan;
+
+      [class*=__current-value-text] {
+        fill: cyan!important;
+      }
+    }
   }
 
   &__current-value-text-wrapper {
