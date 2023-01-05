@@ -598,11 +598,7 @@ export default {
             return this.round(((vPercent / 100) * 270) + DIAL_VALUE_DEG_OFFSET, 2);
         },
         removeFromComposition(telemetryObject = this.telemetryObject) {
-            let composition = this.domainObject.composition.filter(id =>
-                !this.openmct.objects.areIdsEqual(id, telemetryObject.identifier)
-            );
-
-            this.openmct.objects.mutate(this.domainObject, 'composition', composition);
+            this.composition.remove(telemetryObject);
         },
         refreshData(bounds, isTick) {
             if (!isTick) {

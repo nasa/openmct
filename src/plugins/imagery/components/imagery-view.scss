@@ -194,6 +194,9 @@
         overflow-y: hidden;
         margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
+        &.animate-scroll {
+            scroll-behavior: smooth; 
+        }
     }
 
     &__auto-scroll-resume-button {
@@ -284,6 +287,13 @@
     &__timestamp {
         flex: 0 0 auto;
         padding: 2px 3px;
+    }
+
+    &__viewable-area {
+        position: absolute;
+        border: 2px yellow solid;
+        left: 0;
+        top: 0;
     }
 }
 

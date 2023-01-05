@@ -56,17 +56,12 @@ export default class Editor extends EventEmitter {
      * Save any unsaved changes from this editing session. This will
      * end the current transaction.
      */
-    save() {
+    async save() {
         const transaction = this.openmct.objects.getActiveTransaction();
-
-        return transaction.commit()
-            .then(() => {
-                this.editing = false;
-                this.emit('isEditing', false);
-                this.openmct.objects.endTransaction();
-            }).catch(error => {
-                throw error;
-            });
+        await transaction.commit();
+        this.editing = false;
+        this.emit('isEditing', false);
+        this.openmct.objects.endTransaction();
     }
 
     /**
@@ -78,6 +73,10 @@ export default class Editor extends EventEmitter {
 
         return new Promise((resolve, reject) => {
             const transaction = this.openmct.objects.getActiveTransaction();
+            if (!transaction) {
+                return resolve();
+            }
+
             transaction.cancel()
                 .then(resolve)
                 .catch(reject)

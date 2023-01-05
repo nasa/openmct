@@ -53,10 +53,7 @@ export default class CreateAction extends PropertiesAction {
 
             const existingValue = this.domainObject[key];
             if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
-                value = {
-                    ...existingValue,
-                    ...value
-                };
+                value = _.merge(existingValue, value);
             }
 
             _.set(this.domainObject, key, value);
@@ -76,19 +73,21 @@ export default class CreateAction extends PropertiesAction {
             title: 'Saving'
         });
 
-        const success = await this.openmct.objects.save(this.domainObject);
-        if (success) {
+        try {
+            await this.openmct.objects.save(this.domainObject);
             const compositionCollection = await this.openmct.composition.get(parentDomainObject);
             compositionCollection.add(this.domainObject);
 
             this._navigateAndEdit(this.domainObject, parentDomainObjectPath);
 
             this.openmct.notifications.info('Save successful');
-        } else {
-            this.openmct.notifications.error('Error saving objects');
+        } catch (err) {
+            console.error(err);
+            this.openmct.notifications.error(`Error saving objects: ${err}`);
+        } finally {
+            dialog.dismiss();
         }
 
-        dialog.dismiss();
     }
 
     /**

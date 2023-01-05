@@ -78,6 +78,8 @@ describe("The Remove Action plugin", () => {
             spyOn(removeAction, 'removeFromComposition').and.callThrough();
             spyOn(removeAction, 'inNavigationPath').and.returnValue(false);
             spyOn(openmct.objects, 'mutate').and.callThrough();
+            spyOn(openmct.objects, 'startTransaction').and.callThrough();
+            spyOn(openmct.objects, 'endTransaction').and.callThrough();
             removeAction.removeFromComposition(parentObject, childObject);
         });
 
@@ -89,6 +91,17 @@ describe("The Remove Action plugin", () => {
         it("it should mutate the parent object", () => {
             expect(openmct.objects.mutate).toHaveBeenCalled();
             expect(openmct.objects.mutate.calls.argsFor(0)[0]).toEqual(parentObject);
+        });
+
+        it("it should start a transaction", () => {
+            expect(openmct.objects.startTransaction).toHaveBeenCalled();
+        });
+
+        it("it should end the transaction", (done) => {
+            setTimeout(() => {
+                expect(openmct.objects.endTransaction).toHaveBeenCalled();
+                done();
+            }, 100);
         });
     });
 
