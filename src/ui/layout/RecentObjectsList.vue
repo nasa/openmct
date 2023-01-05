@@ -5,7 +5,7 @@
     <div
         class="c-tree-and-search__tree c-tree c-tree__scrollable"
     >
-        <object-search-result
+        <recent-objects-list-item
             v-for="(recentObject) in recents"
             :key="recentObject.navigationPath"
             :result="recentObject"
@@ -17,11 +17,11 @@
 <script>
 const MAX_RECENT_ITEMS = 20;
 const LOCAL_STORAGE_KEY__RECENT_OBJECTS = 'mct-recent-objects';
-import ObjectSearchResult from './search/ObjectSearchResult.vue'
+import RecentObjectsListItem from './RecentObjectsListItem.vue'
 export default {
     name: 'RecentObjectsList',
     components: {
-        ObjectSearchResult
+        RecentObjectsListItem
     },
     inject: ['openmct'],
     props: {
