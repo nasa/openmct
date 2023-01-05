@@ -757,6 +757,7 @@ export default class ObjectAPI {
 
         // Remove any query params and split on '/'
         const identifiers = navigationPath.split('?')?.[0].split('/');
+        identifiers.unshift('ROOT');
 
         const objectPath = (await Promise.all(
             identifiers.map(
