@@ -70,8 +70,7 @@ export default {
     },
     data() {
         return {
-            menuActions: [],
-            objectPath: []
+            menuActions: []
         };
     },
     computed: {
@@ -94,6 +93,7 @@ export default {
         }
     },
     async mounted() {
+        this.objectPath = [];
         await this.setEmbedObjectPath();
         this.addMenuActions();
         this.imageExporter = new ImageExporter(this.openmct);
@@ -165,7 +165,7 @@ export default {
         async setEmbedObjectPath() {
             this.objectPath = await this.openmct.objects.getOriginalPath(this.embed.domainObject.identifier);
 
-            if (this.objectPath[this.objectPath.length - 1].type === 'root') {
+            if (this.objectPath.length > 0 && this.objectPath[this.objectPath.length - 1].type === 'root') {
                 this.objectPath.pop();
             }
         },

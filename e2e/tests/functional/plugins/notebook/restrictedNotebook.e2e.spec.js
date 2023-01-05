@@ -152,7 +152,7 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
 
     test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {
         // Click .c-ne__embed__name .c-popup-menu-button
-        await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
+        await page.locator('.c-ne__embed__name .c-icon-button').click(); // embed popup menu
 
         const embedMenu = page.locator('body >> .c-menu');
         await expect(embedMenu).toContainText('Remove This Embed');
@@ -161,7 +161,7 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
     test('Disallows embeds to be deleted if page locked @addInit', async ({ page }) => {
         await lockPage(page);
         // Click .c-ne__embed__name .c-popup-menu-button
-        await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
+        await page.locator('.c-ne__embed__name .c-icon-button').click(); // embed popup menu
 
         const embedMenu = page.locator('body >> .c-menu');
         await expect(embedMenu).not.toContainText('Remove This Embed');
