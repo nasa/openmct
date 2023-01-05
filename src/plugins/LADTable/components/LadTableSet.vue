@@ -52,8 +52,8 @@
                     :domain-object="ladRow.domainObject"
                     :path-to-table="ladTable.objectPath"
                     :has-units="hasUnits"
+                    :is-stale="staleObjects.includes(ladRow.key)"
                     @rowContextClick="updateViewContext"
-                    @stalenessChanged="handleStaleness"
                 />
             </template>
         </tbody>
@@ -81,7 +81,7 @@ export default {
             ladTelemetryObjects: {},
             compositions: [],
             viewContext: {},
-            staleCount: 0
+            staleObjects: []
         };
     },
     computed: {
@@ -104,7 +104,7 @@ export default {
             return false;
         },
         staleClass() {
-            if (this.staleCount !== 0) {
+            if (this.staleObjects.length !== 0) {
                 return 'is-stale';
             }
 
@@ -126,6 +126,10 @@ export default {
             c.composition.off('add', c.addCallback);
             c.composition.off('remove', c.removeCallback);
         });
+
+        for (const id of Object.keys(this.unsubsubscribes)) {
+            this.unsubsubscribes[id]();
+        }
     },
     methods: {
         addLadTable(domainObject) {
@@ -174,20 +178,46 @@ export default {
                 telemetryObjects.push(telemetryObject);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+
+                // if tracking already, possibly in another table, return
+                if (this.unsubsubscribes?.[telemetryObject.key]) {
+                    return;
+                } else if (!this.unsubsubscribes) {
+                    this.unsubsubscribes = {};
+                }
+
+                const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
+                    this.handleStaleness(telemetryObject.key, isStale);
+                });
+
+                this.unsubsubscribes[telemetryObject.key] = unsubscribeFromStaleness;
             };
         },
         removeTelemetryObject(ladTable) {
             return (identifier) => {
+                const keystring = this.openmct.objects.makeKeyString(identifier);
                 let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
-                let index = telemetryObjects.findIndex(telemetryObject => this.openmct.objects.makeKeyString(identifier) === telemetryObject.key);
+                let index = telemetryObjects.findIndex(telemetryObject => keystring === telemetryObject.key);
 
                 telemetryObjects.splice(index, 1);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+
+                this.unsubsubscribes[keystring]();
+                this.handleStaleness(keystring, false);
             };
         },
-        handleStaleness(isStale) {
-            this.staleCount += isStale ? 1 : -1;
+        handleStaleness(id, isStale) {
+            const index = this.staleObjects.indexOf(id);
+            if (isStale) {
+                if (index === -1) {
+                    this.staleObjects.push(id);
+                }
+            } else {
+                if (index !== -1) {
+                    this.staleObjects.splice(index, 1);
+                }
+            }
         },
         updateViewContext(rowContext) {
             this.viewContext.row = rowContext;

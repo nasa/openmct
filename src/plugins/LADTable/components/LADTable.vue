@@ -41,8 +41,8 @@
                 :domain-object="ladRow.domainObject"
                 :path-to-table="objectPath"
                 :has-units="hasUnits"
+                :is-stale="staleObjects.includes(ladRow.key)"
                 @rowContextClick="updateViewContext"
-                @stalenessChanged="handleStaleness"
             />
         </tbody>
     </table>
@@ -71,7 +71,7 @@ export default {
         return {
             items: [],
             viewContext: {},
-            staleCount: 0
+            staleObjects: []
         };
     },
     computed: {
@@ -87,7 +87,7 @@ export default {
             return itemsWithUnits.length !== 0;
         },
         staleClass() {
-            if (this.staleCount !== 0) {
+            if (this.staleObjects.length !== 0) {
                 return 'is-stale';
             }
 
@@ -105,6 +105,10 @@ export default {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
+
+        for (const id of Object.keys(this.unsubsubscribes)) {
+            this.unsubsubscribes[id]();
+        }
     },
     methods: {
         addItem(domainObject) {
@@ -112,26 +116,49 @@ export default {
             item.domainObject = domainObject;
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
+            if (!this.unsubsubscribes) {
+                this.unsubsubscribes = {};
+            }
+
             this.items.push(item);
+
+            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
+                this.handleStaleness(item.key, isStale);
+            });
+
+            this.unsubsubscribes[item.key] = unsubscribeFromStaleness;
         },
         removeItem(identifier) {
-            let index = this.items.findIndex(item => this.openmct.objects.makeKeyString(identifier) === item.key);
+            const keystring = this.openmct.objects.makeKeyString(object);
+            const index = this.items.findIndex(item => keystring === item.key);
 
             this.items.splice(index, 1);
+
+            this.unsubsubscribes[keystring]();
+            this.handleStaleness(keystring, false);
         },
         reorder(reorderPlan) {
-            let oldItems = this.items.slice();
+            const oldItems = this.items.slice();
             reorderPlan.forEach((reorderEvent) => {
                 this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
             });
         },
         metadataHasUnits(valueMetadatas) {
-            let metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
+            const metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
 
             return metadataWithUnits.length > 0;
         },
-        handleStaleness(isStale) {
-            this.staleCount += isStale ? 1 : -1;
+        handleStaleness(id, isStale) {
+            const index = this.staleObjects.indexOf(id);
+            if (isStale) {
+                if (index === -1) {
+                    this.staleObjects.push(id);
+                }
+            } else {
+                if (index !== -1) {
+                    this.staleObjects.splice(index, 1);
+                }
+            }
         },
         updateViewContext(rowContext) {
             this.viewContext.row = rowContext;

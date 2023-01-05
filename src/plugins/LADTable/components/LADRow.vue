@@ -63,6 +63,12 @@ export default {
         hasUnits: {
             type: Boolean,
             requred: true
+        },
+        isStale: {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     data() {
@@ -70,8 +76,7 @@ export default {
             datum: undefined,
             timestamp: undefined,
             timestampKey: undefined,
-            unit: '',
-            isStale: false
+            unit: ''
         };
     },
     computed: {
@@ -152,11 +157,6 @@ export default {
         this.telemetryCollection.on('clear', this.resetValues);
         this.telemetryCollection.load();
 
-        this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, (isStale) => {
-            this.isStale = isStale;
-            this.$emit('stalenessChanged', isStale);
-        });
-
         if (this.hasUnits) {
             this.setUnit();
         }
@@ -167,7 +167,6 @@ export default {
         this.telemetryCollection.off('clear', this.resetValues);
 
         this.telemetryCollection.destroy();
-        this.unsubscribeFromStaleness();
     },
     methods: {
         updateView() {

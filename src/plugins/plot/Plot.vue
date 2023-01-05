@@ -98,10 +98,13 @@ export default {
     },
     methods: {
         loadComposition() {
-            const compositionCollection = this.openmct.composition.get(this.domainObject);
-            compositionCollection.on('add', this.addItem);
-            compositionCollection.on('remove', this.removeItem);
-            compositionCollection.load();
+            this.compositionCollection = this.openmct.composition.get(this.domainObject);
+
+            if (this.compositionCollection) {
+                this.compositionCollection.on('add', this.addItem);
+                this.compositionCollection.on('remove', this.removeItem);
+                this.compositionCollection.load();
+            }
 
         },
         addItem(object) {
@@ -138,8 +141,15 @@ export default {
             this.loading = loading;
         },
         destroy() {
-            for (const id of Object.keys(this.unsubsubscribes)) {
-                this.unsubsubscribes[id]();
+            if (!this.unsubsubscribes) {
+                for (const id of Object.keys(this.unsubsubscribes)) {
+                    this.unsubsubscribes[id]();
+                }
+            }
+
+            if (this.compositionCollection) {
+                this.compositionCollection.off('add', this.addItem);
+                this.compositionCollection.off('remove', this.removeItem);
             }
 
             this.stopListening();
