@@ -81,7 +81,6 @@ export default {
     },
     computed: {
         staleClass() {
-            console.log('stale objects...', this.staleObjects);
             if (this.staleObjects.length !== 0) {
                 return 'is-stale';
             }
