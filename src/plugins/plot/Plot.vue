@@ -23,6 +23,7 @@
 <div
     ref="plotWrapper"
     class="c-plot holder holder-plot has-control-bar"
+    :class="staleClass"
 >
     <div
         ref="plotContainer"
@@ -74,21 +75,74 @@ export default {
             cursorGuide: false,
             gridLines: !this.options.compact,
             loading: false,
-            status: ''
+            status: '',
+            staleObjects: []
         };
+    },
+    computed: {
+        staleClass() {
+            console.log('stale objects...', this.staleObjects);
+            if (this.staleObjects.length !== 0) {
+                return 'is-stale';
+            }
+
+            return '';
+        }
     },
     mounted() {
         eventHelpers.extend(this);
         this.imageExporter = new ImageExporter(this.openmct);
+        this.loadComposition();
     },
     beforeDestroy() {
         this.destroy();
     },
     methods: {
+        loadComposition() {
+            const compositionCollection = this.openmct.composition.get(this.domainObject);
+            compositionCollection.on('add', this.addItem);
+            compositionCollection.on('remove', this.removeItem);
+            compositionCollection.load();
+
+        },
+        addItem(object) {
+            const keystring = this.openmct.objects.makeKeyString(object);
+
+            if (!this.unsubsubscribes) {
+                this.unsubsubscribes = {};
+            }
+
+            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(object, (isStale) => {
+                this.handleStaleness(keystring, isStale);
+            });
+
+            this.unsubsubscribes[keystring] = unsubscribeFromStaleness;
+        },
+        removeItem(object) {
+            const keystring = this.openmct.objects.makeKeyString(object);
+            this.unsubsubscribes[keystring]();
+            this.handleStaleness(keystring, false);
+        },
+        handleStaleness(id, isStale) {
+            const index = this.staleObjects.indexOf(id);
+            if (isStale) {
+                if (index === -1) {
+                    this.staleObjects.push(id);
+                }
+            } else {
+                if (index !== -1) {
+                    this.staleObjects.splice(index, 1);
+                }
+            }
+        },
         loadingUpdated(loading) {
             this.loading = loading;
         },
         destroy() {
+            for (const id of Object.keys(this.unsubsubscribes)) {
+                this.unsubsubscribes[id]();
+            }
+
             this.stopListening();
         },
         exportJPG() {

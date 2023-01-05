@@ -81,6 +81,10 @@ mct-plot {
         overflow-x: hidden;
     }
 
+    &.is-stale {
+        border: 1px solid cyan;
+    }
+
     .c-plot--stacked-container {
         border: 1px solid transparent;
         display: flex;
