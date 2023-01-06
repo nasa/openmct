@@ -58,6 +58,13 @@
                         {{ entry.roleCount }}
                     </div>
                 </div>
+                <div class="c-status-poll-report__actions">
+                    <button
+                        class="c-button"
+                        title="Clear the previous poll question"
+                        @click="clearPollQuestion"
+                    >Clear Poll</button>
+                </div>
             </div>
         </template>
 
@@ -148,6 +155,9 @@ export default {
             }
 
             this.newPollQuestion = undefined;
+        },
+        async clearPollQuestion() {
+            await this.openmct.user.status.resetAllStatuses();
         },
         async fetchStatusSummary() {
             const allStatuses = await this.openmct.user.status.getPossibleStatuses();

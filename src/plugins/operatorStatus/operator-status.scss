@@ -123,6 +123,12 @@
             opacity: 0.6;
         }
     }
+    &__actions {
+        display:flex; 
+        flex: auto;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
 }
 
 .c-indicator {
