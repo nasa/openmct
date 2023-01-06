@@ -34,6 +34,7 @@
 
 <script>
 const COLLAPSE_THRESHOLD_PX = 40;
+const LOCAL_STORAGE_KEY__PANE_POSITIONS = 'mct-pane-positions';
 
 export default {
     inject: ['openmct'],
@@ -52,6 +53,11 @@ export default {
         hideParam: {
             type: String,
             default: ''
+        },
+        persistPosition: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     data() {
@@ -63,6 +69,13 @@ export default {
     computed: {
         isCollapsable() {
             return this.hideParam?.length > 0;
+        },
+        localStorageKey() {
+            if (!this.label) {
+                return null;
+            }
+
+            return this.label.toLowerCase().replace(/ /g, '-');
         },
         paneClasses() {
             return {
@@ -86,6 +99,13 @@ export default {
         if (this.isCollapsable) {
             this.handleHideUrl();
         }
+
+        if (this.persistPosition) {
+            const savedPosition = this.getSavedPosition();
+            if (savedPosition) {
+                this.$el.style[this.styleProp] = savedPosition;
+            }
+        }
     },
     methods: {
         addHideParam(target) {
@@ -107,6 +127,16 @@ export default {
             if (this.handle === "after") {
                 return `${this.initial - delta}px`;
             }
+        },
+        getSavedPosition() {
+            if (!this.localStorageKey) {
+                return null;
+            }
+
+            const savedPositionsString = localStorage.getItem(LOCAL_STORAGE_KEY__PANE_POSITIONS);
+            const savedPositions = savedPositionsString ? JSON.parse(savedPositionsString) : {};
+
+            return savedPositions[this.localStorageKey];
         },
         getPosition(event) {
             return this.type === 'horizontal'
@@ -134,6 +164,12 @@ export default {
         removeHideParam(target) {
             this.openmct.router.deleteSearchParam(target);
         },
+        setSavedPosition(panePosition) {
+            const panePositionsString = localStorage.getItem(LOCAL_STORAGE_KEY__PANE_POSITIONS);
+            const panePositions = panePositionsString ? JSON.parse(panePositionsString) : {};
+            panePositions[this.localStorageKey] = panePosition;
+            localStorage.setItem(LOCAL_STORAGE_KEY__PANE_POSITIONS, JSON.stringify(panePositions));
+        },
         startResizing(event) {
             this.startPosition = this.getPosition(event);
             document.body.addEventListener('mousemove', this.updatePosition);
@@ -157,6 +193,10 @@ export default {
                     this.initial = this.$el.offsetHeight;
                 } else if (this.type === 'horizontal') {
                     this.initial = this.$el.offsetWidth;
+                }
+
+                if (this.persistPosition) {
+                    this.setSavedPosition(`${this.initial}px`);
                 }
             }
         },
