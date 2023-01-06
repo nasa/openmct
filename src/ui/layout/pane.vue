@@ -1,20 +1,12 @@
 <template>
 <div
     class="l-pane"
-    :class="{
-        'l-pane--horizontal-handle-before': type === 'horizontal' && handle === 'before',
-        'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
-        'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
-        'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
-        'l-pane--collapsed': collapsed,
-        'l-pane--reacts': !handle,
-        'l-pane--resizing': resizing === true
-    }"
+    :class="paneClasses"
 >
     <div
         v-if="handle"
         class="l-pane__handle"
-        @mousedown="start"
+        @mousedown.prevent="start"
     ></div>
     <div class="l-pane__header">
         <span
@@ -70,7 +62,18 @@ export default {
     },
     computed: {
         isCollapsable() {
-            return this.hideParam && this.hideParam.length > 0;
+            return this.hideParam?.length > 0;
+        },
+        paneClasses() {
+            return {
+                'l-pane--horizontal-handle-before': this.type === 'horizontal' && this.handle === 'before',
+                'l-pane--horizontal-handle-after': this.type === 'horizontal' && this.handle === 'after',
+                'l-pane--vertical-handle-before': this.type === 'vertical' && this.handle === 'before',
+                'l-pane--vertical-handle-after': this.type === 'vertical' && this.handle === 'after',
+                'l-pane--collapsed': this.collapsed,
+                'l-pane--reacts': !this.handle,
+                'l-pane--resizing': this.resizing === true
+            };
         }
     },
     beforeMount() {
@@ -85,7 +88,7 @@ export default {
         }
     },
     methods: {
-        toggleCollapse: function (e) {
+        toggleCollapse(_event) {
             if (this.collapsed) {
                 this.handleExpand();
                 this.removeHideParam(this.hideParam);
@@ -94,32 +97,32 @@ export default {
                 this.addHideParam(this.hideParam);
             }
         },
-        handleHideUrl: function () {
+        handleHideUrl() {
             const hideParam = this.openmct.router.getSearchParam(this.hideParam);
 
             if (hideParam === 'true') {
                 this.handleCollapse();
             }
         },
-        addHideParam: function (target) {
+        addHideParam(target) {
             this.openmct.router.setSearchParam(target, 'true');
         },
-        removeHideParam: function (target) {
+        removeHideParam(target) {
             this.openmct.router.deleteSearchParam(target);
         },
-        handleCollapse: function () {
+        handleCollapse() {
             this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
             this.$el.style[this.styleProp] = '';
             this.collapsed = true;
         },
-        handleExpand: function () {
+        handleExpand() {
             this.$el.style[this.styleProp] = this.currentSize;
             delete this.currentSize;
             delete this.dragCollapse;
             this.collapsed = false;
         },
-        trackSize: function () {
-            if (!this.dragCollapse === true) {
+        trackSize() {
+            if (!this.dragCollapse) {
                 if (this.type === 'vertical') {
                     this.initial = this.$el.offsetHeight;
                 } else if (this.type === 'horizontal') {
@@ -127,13 +130,13 @@ export default {
                 }
             }
         },
-        getPosition: function (event) {
+        getPosition(event) {
             return this.type === 'horizontal'
                 ? event.pageX
                 : event.pageY;
         },
-        getNewSize: function (event) {
-            let delta = this.startPosition - this.getPosition(event);
+        getNewSize(event) {
+            const delta = this.startPosition - this.getPosition(event);
             if (this.handle === "before") {
                 return `${this.initial + delta}px`;
             }
@@ -142,9 +145,9 @@ export default {
                 return `${this.initial - delta}px`;
             }
         },
-        updatePosition: function (event) {
-            let size = this.getNewSize(event);
-            let intSize = parseInt(size.substr(0, size.length - 2), 10);
+        updatePosition(event) {
+            const size = this.getNewSize(event);
+            const intSize = parseInt(size.substr(0, size.length - 2), 10);
             if (intSize < COLLAPSE_THRESHOLD_PX && this.isCollapsable === true) {
                 this.dragCollapse = true;
                 this.end();
@@ -153,9 +156,7 @@ export default {
                 this.$el.style[this.styleProp] = size;
             }
         },
-        start: function (event) {
-            event.preventDefault(); // stop from firing drag event
-
+        start(event) {
             this.startPosition = this.getPosition(event);
             document.body.addEventListener('mousemove', this.updatePosition);
             document.body.addEventListener('mouseup', this.end);
@@ -163,7 +164,7 @@ export default {
             this.$emit('start-resizing');
             this.trackSize();
         },
-        end: function (event) {
+        end(event) {
             document.body.removeEventListener('mousemove', this.updatePosition);
             document.body.removeEventListener('mouseup', this.end);
             this.resizing = false;
