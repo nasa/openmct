@@ -244,11 +244,19 @@ mct-plot {
 
         &.gl-plot-y-label {
             display: block;
-            left: 0; top: 0; right: auto; bottom: 0;
+            left: 0; right: auto; bottom: 0;
             text-orientation: mixed;
             writing-mode: vertical-lr;
-            &:before {
+
+            .icon-gear:before {
                 // Icon denoting configurability
+                margin-bottom: $interiorMargin; // Uses margin-bottom due to writing-mode
+            }
+
+            .plot-series-color-swatch {
+                @include colorSwatch();
+                display: inline-block;
+                flex: 0 0 auto;
                 margin-bottom: $interiorMargin; // Uses margin-bottom due to writing-mode
             }
         }
