@@ -39,11 +39,25 @@ export default {
         this.openmct.router.off('change:path', this.onPathChange);
     },
     methods: {
+        /**
+         * @param {string} navigationPath
+         */
         async onPathChange(navigationPath) {
-            console.log('hashy changey', navigationPath);
+            // Short-circuit if the path is not a navigationPath
+            if (!navigationPath.startsWith('/browse/')) {
+                return;
+            }
+
             const objectPath = await this.openmct.objects.getRelativeObjectPath(navigationPath);
             if (!objectPath.length) {
                 return;
+            }
+
+            // Get rid of '/ROOT' if it exists in the navigationPath.
+            // Handles for the case of navigating to "My Items" from a RecentObjectsListItem.
+            // Could lead to dupes of "My Items" in the RecentObjectsList if we don't drop the 'ROOT' here.
+            if (navigationPath.includes('/ROOT')) {
+                navigationPath = navigationPath.replace('/ROOT', '');
             }
 
             const domainObject = objectPath[0];
