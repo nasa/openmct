@@ -23,7 +23,7 @@
 <template>
 <div
     class="c-gsearch-result c-gsearch-result--object"
-    aria-label="Search Result"
+    aria-label="Recent Object"
     role="presentation"
 >
     <div
@@ -102,7 +102,7 @@ export default {
                 event.preventDefault();
                 this.preview();
             } else {
-                const objectPath = this.result.objectPath;
+                const { objectPath } = this.result;
                 let resultUrl = objectPathToUrl(this.openmct, objectPath);
                 // get rid of ROOT if extant
                 if (resultUrl.includes('/ROOT')) {
@@ -116,14 +116,14 @@ export default {
             this.$emit('preview-changed', previewState);
         },
         preview() {
-            const objectPath = this.result.objectPath;
+            const { objectPath } = this.result;
             if (this.previewAction.appliesTo(objectPath)) {
                 this.previewAction.invoke(objectPath);
             }
         },
         dragStart(event) {
             const navigatedObject = this.openmct.router.path[0];
-            const objectPath = this.result.objectPath;
+            const { objectPath } = this.result;
             const serializedPath = JSON.stringify(objectPath);
             const keyString = this.openmct.objects.makeKeyString(this.result.identifier);
             if (this.openmct.composition.checkPolicy(navigatedObject, this.result)) {
