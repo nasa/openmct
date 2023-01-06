@@ -6,9 +6,11 @@
         class="c-tree-and-search__tree c-tree c-tree__scrollable"
     >
         <recent-objects-list-item
-            v-for="(recentObject) in recents"
+            v-for="(recentObject) in recentObjects"
             :key="recentObject.navigationPath"
-            :result="recentObject"
+            :object-path="recentObject.objectPath"
+            :navigation-path="recentObject.navigationPath"
+            :domain-object="recentObject.domainObject"
         />
     </div>
 </div>
@@ -31,6 +33,13 @@ export default {
         return {
             recents: []
         };
+    },
+    computed: {
+        recentObjects() {
+            return this.recents.filter((recentObject) => {
+                return recentObject.location !== null;
+            });
+        }
     },
     mounted() {
         this.openmct.router.on('change:path', this.onPathChange);
@@ -71,7 +80,7 @@ export default {
             this.recents.unshift({
                 objectPath,
                 navigationPath,
-                ...domainObject
+                domainObject
             });
 
             while (this.recents.length > MAX_RECENT_ITEMS) {

@@ -33,23 +33,23 @@
     <div
         class="c-gsearch-result__body"
         role="option"
-        :aria-label="`${resultName} ${resultType} result`"
+        :aria-label="`${domainObject.name} ${domainObject.type} recent object`"
     >
         <div
             class="c-gsearch-result__title"
-            :name="resultName"
+            :name="domainObject.name"
             draggable="true"
             @dragstart="dragStart"
             @click="clickedResult"
         >
-            {{ resultName }}
+            {{ domainObject.name }}
         </div>
 
         <ObjectPath
             :read-only="false"
-            :domain-object="result"
+            :domain-object="domainObject"
             :show-original-path="false"
-            :object-path="result.objectPath"
+            :object-path="objectPath"
         />
     </div>
     <div class="c-gsearch-result__more-options-button">
@@ -70,23 +70,31 @@ export default {
     },
     inject: ['openmct'],
     props: {
-        result: {
+        domainObject: {
             type: Object,
             required: true,
             default() {
                 return {};
             }
+        },
+        navigationPath: {
+            type: String,
+            required: true,
+            default() {
+                return '';
+            }
+        },
+        objectPath: {
+            type: Array,
+            required: true,
+            default() {
+                return [];
+            }
         }
     },
     computed: {
-        resultName() {
-            return this.result.name;
-        },
         resultTypeIcon() {
-            return this.openmct.types.get(this.result.type).definition.cssClass;
-        },
-        resultType() {
-            return this.result.type;
+            return this.openmct.types.get(this.domainObject.type).definition.cssClass;
         }
     },
     mounted() {
@@ -102,8 +110,7 @@ export default {
                 event.preventDefault();
                 this.preview();
             } else {
-                const { objectPath } = this.result;
-                let resultUrl = objectPathToUrl(this.openmct, objectPath);
+                let resultUrl = objectPathToUrl(this.openmct, this.objectPath);
                 // get rid of ROOT if extant
                 if (resultUrl.includes('/ROOT')) {
                     resultUrl = resultUrl.split('/ROOT').join('');
@@ -116,22 +123,20 @@ export default {
             this.$emit('preview-changed', previewState);
         },
         preview() {
-            const { objectPath } = this.result;
-            if (this.previewAction.appliesTo(objectPath)) {
-                this.previewAction.invoke(objectPath);
+            if (this.previewAction.appliesTo(this.objectPath)) {
+                this.previewAction.invoke(this.objectPath);
             }
         },
         dragStart(event) {
             const navigatedObject = this.openmct.router.path[0];
-            const { objectPath } = this.result;
-            const serializedPath = JSON.stringify(objectPath);
-            const keyString = this.openmct.objects.makeKeyString(this.result.identifier);
-            if (this.openmct.composition.checkPolicy(navigatedObject, this.result)) {
-                event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.result));
+            const serializedPath = JSON.stringify(this.objectPath);
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            if (this.openmct.composition.checkPolicy(navigatedObject, this.domainObject)) {
+                event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
 
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
-            event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.result);
+            event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
         }
     }
 };
