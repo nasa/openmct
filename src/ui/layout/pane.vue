@@ -6,7 +6,7 @@
     <div
         v-if="handle"
         class="l-pane__handle"
-        @mousedown.prevent="start"
+        @mousedown.prevent="startResizing"
     ></div>
     <div class="l-pane__header">
         <span
@@ -156,17 +156,17 @@ export default {
                 this.$el.style[this.styleProp] = size;
             }
         },
-        start(event) {
+        startResizing(event) {
             this.startPosition = this.getPosition(event);
             document.body.addEventListener('mousemove', this.updatePosition);
-            document.body.addEventListener('mouseup', this.end);
+            document.body.addEventListener('mouseup', this.endResizing);
             this.resizing = true;
             this.$emit('start-resizing');
             this.trackSize();
         },
-        end(event) {
+        endResizing(_event) {
             document.body.removeEventListener('mousemove', this.updatePosition);
-            document.body.removeEventListener('mouseup', this.end);
+            document.body.removeEventListener('mouseup', this.endResizing);
             this.resizing = false;
             this.$emit('end-resizing');
             this.trackSize();
