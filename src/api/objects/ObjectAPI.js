@@ -769,7 +769,9 @@ export default class ObjectAPI {
 
         const objectPath = (await Promise.all(
             identifiers.map(
-                identifier => this.get(utils.parseKeyString(identifier))
+                identifier => this.supportsMutation(identifier)
+                    ? this.getMutable(utils.parseKeyString(identifier))
+                    : this.get(utils.parseKeyString(identifier))
             )
         )).reverse();
 
