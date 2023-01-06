@@ -60,8 +60,20 @@ export function identifierToString(openmct, objectPath) {
     return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
+/**
+ * @param {import('../../openmct').OpenMCT} openmct
+ * @param {Array<import('../api/objects/ObjectAPI').DomainObject>} objectPath
+ * @param {any} customUrlParams
+ * @returns {string} url
+ */
 export default function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
     let url = identifierToString(openmct, objectPath);
+
+    // Remove the vestigial 'ROOT' identifier from url if it exists
+    if (url.includes('/ROOT')) {
+        url = url.split('/ROOT').join('');
+    }
+
     let urlParams = paramsToArray(openmct, customUrlParams);
     if (urlParams.length) {
         url += '?' + urlParams.join('&');
