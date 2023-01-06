@@ -44,6 +44,7 @@ export default {
     mounted() {
         this.compositionCollections = {};
         this.openmct.router.on('change:path', this.onPathChange);
+        this.getSavedRecentItems();
     },
     destroyed() {
         this.openmct.router.off('change:path', this.onPathChange);
@@ -78,6 +79,26 @@ export default {
 
                 this.removeCompositionListenerFor(removedNavigationPath);
             };
+        },
+        /**
+         * Restores the RecentObjects list from localStorage, retrieves composition collections,
+         * and registers composition listeners for composable objects.
+         */
+        getSavedRecentItems() {
+            const savedRecentsString = localStorage.getItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
+            const savedRecents = savedRecentsString ? JSON.parse(savedRecentsString) : [];
+
+            // Get composition collections and add composition listeners for composable objects
+            savedRecents.forEach((recentObject) => {
+                const { domainObject, navigationPath } = recentObject;
+                if (this.shouldTrackCompositionFor(domainObject)) {
+                    this.compositionCollections[navigationPath] = {};
+                    this.compositionCollections[navigationPath].collection = this.openmct.composition.get(domainObject);
+                    this.addCompositionListenerFor(navigationPath);
+                }
+            });
+
+            this.recents = savedRecents;
         },
         /**
          * Handler for 'change:path' router events.
@@ -136,6 +157,8 @@ export default {
                 const poppedRecentItem = this.recents.pop();
                 this.removeCompositionListenerFor(poppedRecentItem.navigationPath);
             }
+
+            this.setSavedRecentItems();
         },
         /**
          * Delete the composition collection and unregister its remove handler
@@ -147,6 +170,12 @@ export default {
                     this.compositionCollections[navigationPath].removeHandler);
                 delete this.compositionCollections[navigationPath];
             }
+        },
+        /**
+         * Saves the Recent Objects list to localStorage.
+         */
+        setSavedRecentItems() {
+            localStorage.setItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS, JSON.stringify(this.recents));
         },
         /**
          * Returns true if the `domainObject` supports composition and we are not already
