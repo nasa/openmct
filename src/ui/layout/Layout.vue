@@ -90,6 +90,7 @@
                 <pane
                     handle="before"
                     label="Recently Viewed"
+                    :persist-position="true"
                 >
                     <RecentObjectsList
                         class="l-shell__tree"
