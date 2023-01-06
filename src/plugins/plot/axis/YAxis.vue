@@ -39,6 +39,7 @@
             :class="{'icon-gear-after': (yKeyOptions.length > 1 && singleSeries)}"
         >{{ canShowYAxisLabel ? yAxisLabel : `Y Axis ${id}` }}</span>
         <span
+            v-if="showVisibilityToggle"
             :class="{ 'icon-eye-open': visible, 'icon-eye-disabled': !visible}"
             @click="toggleSeriesVisibility"
         ></span>
@@ -129,6 +130,9 @@ export default {
         };
     },
     computed: {
+        showVisibilityToggle() {
+            return this.domainObject.type === 'telemetry.plot.overlay';
+        },
         canShowYAxisLabel() {
             return this.singleSeries === true || this.hasSameRangeValue === true;
         },
