@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { IS_OLD_KEY } from "./constants";
+
 function convertToNumbers(input) {
     let numberInputs = [];
     input.forEach(inputValue => numberInputs.push(Number(inputValue)));
@@ -295,7 +297,7 @@ export const OPERATIONS = [
         }
     },
     {
-        name: 'isStale',
+        name: IS_OLD_KEY,
         operation: function () {
             return false;
         },

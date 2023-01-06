@@ -122,7 +122,7 @@
 
 <script>
 import { OPERATIONS, INPUT_TYPES } from '../utils/operations';
-import {TRIGGER_CONJUNCTION} from "../utils/constants";
+import { TRIGGER_CONJUNCTION, IS_OLD_KEY } from "../utils/constants";
 
 export default {
     inject: ['openmct'],
@@ -164,7 +164,7 @@ export default {
         },
         filteredOps: function () {
             if (this.criterion.metadata === 'dataReceived') {
-                return this.operations.filter(op => op.name === 'isStale');
+                return this.operations.filter(op => op.name === IS_OLD_KEY);
             } else {
                 return this.operations.filter(op => op.appliesTo.indexOf(this.operationFormat) !== -1);
             }

@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 import { OPERATIONS, getOperatorText } from '../utils/operations';
-import { subscribeForStaleness } from "../utils/time";
+import { checkIfOld } from "../utils/time";
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -44,7 +44,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.result = undefined;
-        this.stalenessSubscription = undefined;
+        this.ageCheck = undefined;
 
         this.initialize();
         this.emitEvent('criterionUpdated', this);
@@ -57,8 +57,8 @@ export default class TelemetryCriterion extends EventEmitter {
         }
 
         this.updateTelemetryObjects(this.telemetryDomainObjectDefinition.telemetryObjects);
-        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
-            this.subscribeForStaleData();
+        if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
+            this.checkForOldData();
         }
     }
 
@@ -66,24 +66,24 @@ export default class TelemetryCriterion extends EventEmitter {
         return this.telemetryObjectIdAsString && (this.telemetryObjectIdAsString === id);
     }
 
-    subscribeForStaleData() {
-        if (this.stalenessSubscription) {
-            this.stalenessSubscription.clear();
+    checkForOldData() {
+        if (this.ageCheck) {
+            this.ageCheck.clear();
         }
 
-        this.stalenessSubscription = subscribeForStaleness(this.handleStaleTelemetry.bind(this), this.input[0] * 1000);
+        this.ageCheck = checkIfOld(this.handleOldTelemetry.bind(this), this.input[0] * 1000);
     }
 
-    handleStaleTelemetry(data) {
+    handleOldTelemetry(data) {
         this.result = true;
-        this.emitEvent('telemetryIsStale', data);
+        this.emitEvent('telemetryIsOld', data);
     }
 
     isValid() {
         return this.telemetryObject && this.metadata && this.operation;
     }
 
-    isStalenessCheck() {
+    isOldCheck() {
         return this.metadata && this.metadata === 'dataReceived';
     }
 
@@ -93,8 +93,8 @@ export default class TelemetryCriterion extends EventEmitter {
 
     updateTelemetryObjects(telemetryObjects) {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
-        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
-            this.subscribeForStaleData();
+        if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
+            this.checkForOldData();
         }
     }
 
@@ -130,9 +130,9 @@ export default class TelemetryCriterion extends EventEmitter {
 
     updateResult(data) {
         const validatedData = this.isValid() ? data : {};
-        if (this.isStalenessCheck()) {
-            if (this.stalenessSubscription) {
-                this.stalenessSubscription.update(validatedData);
+        if (this.isOldCheck()) {
+            if (this.ageCheck) {
+                this.ageCheck.update(validatedData);
             }
 
             this.result = false;
@@ -268,8 +268,8 @@ export default class TelemetryCriterion extends EventEmitter {
     destroy() {
         delete this.telemetryObject;
         delete this.telemetryObjectIdAsString;
-        if (this.stalenessSubscription) {
-            delete this.stalenessSubscription;
+        if (this.ageCheck) {
+            delete this.ageCheck;
         }
     }
 }

@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { subscribeForStaleness } from "./time";
+import { checkIfOld } from "./time";
 
 describe('time related utils', () => {
     let subscription;
@@ -27,11 +27,11 @@ describe('time related utils', () => {
 
     beforeEach(() => {
         mockListener = jasmine.createSpy('listener');
-        subscription = subscribeForStaleness(mockListener, 100);
+        subscription = checkIfOld(mockListener, 100);
     });
 
-    describe('subscribe for staleness', () => {
-        it('should call listeners when stale', (done) => {
+    describe('check if old', () => {
+        it('should call listeners when old', (done) => {
             setTimeout(() => {
                 expect(mockListener).toHaveBeenCalled();
                 done();

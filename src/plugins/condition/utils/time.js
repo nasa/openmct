@@ -51,26 +51,26 @@ export function getLatestTimestamp(
     return latest;
 }
 
-export function subscribeForStaleness(callback, timeout) {
-    let stalenessTimer = setTimeout(() => {
-        clearTimeout(stalenessTimer);
+export function checkIfOld(callback, timeout) {
+    let oldCheckTimer = setTimeout(() => {
+        clearTimeout(oldCheckTimer);
         callback();
     }, timeout);
 
     return {
         update: (data) => {
-            if (stalenessTimer) {
-                clearTimeout(stalenessTimer);
+            if (oldCheckTimer) {
+                clearTimeout(oldCheckTimer);
             }
 
-            stalenessTimer = setTimeout(() => {
-                clearTimeout(stalenessTimer);
+            oldCheckTimer = setTimeout(() => {
+                clearTimeout(oldCheckTimer);
                 callback(data);
             }, timeout);
         },
         clear: () => {
-            if (stalenessTimer) {
-                clearTimeout(stalenessTimer);
+            if (oldCheckTimer) {
+                clearTimeout(oldCheckTimer);
             }
         }
     };

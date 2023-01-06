@@ -59,3 +59,6 @@ export const ERROR = {
         errorText: 'Condition not found'
     }
 };
+
+export const IS_OLD_KEY = 'isStale';
+export const IS_STALE_KEY = 'isStale.new';
