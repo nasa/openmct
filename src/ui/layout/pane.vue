@@ -165,7 +165,7 @@ export default {
             const intSize = parseInt(size.substr(0, size.length - 2), 10);
             if (intSize < COLLAPSE_THRESHOLD_PX && this.isCollapsable === true) {
                 this.dragCollapse = true;
-                this.end();
+                this.endResizing();
                 this.toggleCollapse();
             } else {
                 this.$el.style[this.styleProp] = size;
