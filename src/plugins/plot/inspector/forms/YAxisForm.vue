@@ -25,6 +25,7 @@
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <input
                     v-model="logMode"
+                    class="js-log-mode-input"
                     type="checkbox"
                     @change="updateForm('logMode')"
                 />

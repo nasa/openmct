@@ -411,7 +411,8 @@ describe("the plugin", function () {
             config.yAxis.seriesCollection.models.forEach((plotSeries) => {
                 expect(plotSeries.model.yKey).toBe('some-key');
             });
-            yAxisElement.$emit('yKeyChanged', 'test-key');
+
+            yAxisElement.$emit('yKeyChanged', 'test-key', 1);
             config.yAxis.seriesCollection.models.forEach((plotSeries) => {
                 expect(plotSeries.model.yKey).toBe('test-key');
             });

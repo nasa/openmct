@@ -43,7 +43,7 @@
         v-for="(yAxisId, index) in yAxesIds"
         :id="yAxisId.id"
         :key="`yAxis-${index}`"
-        class="grid-properties"
+        class="grid-properties js-yaxis-grid-properties"
         :y-axis="config.yAxis"
         @seriesUpdated="updateSeriesConfigForObject"
     />
