@@ -157,7 +157,10 @@ export default {
             this.newPollQuestion = undefined;
         },
         async clearPollQuestion() {
-            await this.openmct.user.status.resetAllStatuses();
+            await Promise.all([
+                this.openmct.user.status.resetAllStatuses(),
+                this.openmct.user.status.setPollQuestion()
+            ]);
         },
         async fetchStatusSummary() {
             const allStatuses = await this.openmct.user.status.getPossibleStatuses();
