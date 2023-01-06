@@ -42,6 +42,7 @@ export default {
         }
     },
     mounted() {
+        this.compositionCollections = {};
         this.openmct.router.on('change:path', this.onPathChange);
     },
     destroyed() {
@@ -49,6 +50,40 @@ export default {
     },
     methods: {
         /**
+         * Add a composition collection to the map and register its remove handler
+         * @param {string} navigationPath
+         */
+        addCompositionListenerFor(navigationPath) {
+            this.compositionCollections[navigationPath].removeHandler = this.compositionRemoveHandler(navigationPath);
+            this.compositionCollections[navigationPath].collection.on('remove',
+                this.compositionCollections[navigationPath].removeHandler);
+        },
+        /**
+         * Handler for composition collection remove events.
+         * Removes the object and any of its children from the recents list.
+         * @param {string} navigationPath
+         */
+        compositionRemoveHandler(navigationPath) {
+            /**
+             * @param {import('../../api/objects/ObjectAPI').Identifier | string} identifier
+             */
+            return (identifier) => {
+                // Construct the navigationPath of the removed object itself
+                const removedNavigationPath = `${navigationPath}/${this.openmct.objects.makeKeyString(identifier)}`;
+
+                // Remove the object and any of its children from the recents list
+                this.recents = this.recents.filter((recentObject) => {
+                    return !recentObject.navigationPath.includes(removedNavigationPath);
+                });
+
+                this.removeCompositionListenerFor(removedNavigationPath);
+            };
+        },
+        /**
+         * Handler for 'change:path' router events.
+         * Adds or moves to the top the object at the given path to the recents list.
+         * Registers compositionCollection listeners for composable objects.
+         * Enforces the MAX_RECENT_ITEMS limit.
          * @param {string} navigationPath
          */
         async onPathChange(navigationPath) {
@@ -62,6 +97,8 @@ export default {
                 return;
             }
 
+            const domainObject = objectPath[0];
+
             // Get rid of '/ROOT' if it exists in the navigationPath.
             // Handles for the case of navigating to "My Items" from a RecentObjectsListItem.
             // Could lead to dupes of "My Items" in the RecentObjectsList if we don't drop the 'ROOT' here.
@@ -69,7 +106,18 @@ export default {
                 navigationPath = navigationPath.replace('/ROOT', '');
             }
 
-            const domainObject = objectPath[0];
+            if (this.shouldTrackCompositionFor(domainObject, navigationPath)) {
+                this.compositionCollections[navigationPath] = {};
+                this.compositionCollections[navigationPath].collection = this.openmct.composition.get(domainObject);
+                this.addCompositionListenerFor(navigationPath);
+            }
+
+            // Don't add deleted objects to the recents list
+            if (domainObject?.location === null) {
+                return;
+            }
+
+            // Move the object to the top if its already existing in the recents list
             const existingIndex = this.recents.findIndex((recentObject) => {
                 return navigationPath === recentObject.navigationPath;
             });
@@ -83,9 +131,32 @@ export default {
                 domainObject
             });
 
+            // Enforce a max number of recent items
             while (this.recents.length > MAX_RECENT_ITEMS) {
-                this.recents.pop();
+                const poppedRecentItem = this.recents.pop();
+                this.removeCompositionListenerFor(poppedRecentItem.navigationPath);
             }
+        },
+        /**
+         * Delete the composition collection and unregister its remove handler
+         * @param {string} navigationPath
+         */
+        removeCompositionListenerFor(navigationPath) {
+            if (this.compositionCollections[navigationPath]) {
+                this.compositionCollections[navigationPath].collection.off('remove',
+                    this.compositionCollections[navigationPath].removeHandler);
+                delete this.compositionCollections[navigationPath];
+            }
+        },
+        /**
+         * Returns true if the `domainObject` supports composition and we are not already
+         * tracking its composition.
+         * @param {import('../../api/objects/ObjectAPI').DomainObject} domainObject
+         * @param {string} navigationPath
+         */
+        shouldTrackCompositionFor(domainObject, navigationPath) {
+            return this.compositionCollections[navigationPath] === undefined
+                && this.openmct.composition.supportsComposition(domainObject);
         }
     }
 };
