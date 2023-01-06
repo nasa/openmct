@@ -66,18 +66,11 @@ export default {
                 return false;
             }
         },
-        showOriginalPath: {
-            type: Boolean,
-            required: false,
-            default() {
-                return true;
-            }
-        },
         objectPath: {
             type: Array,
             required: false,
             default() {
-                return [];
+                return null;
             }
         }
     },
@@ -94,7 +87,7 @@ export default {
             this.originalPath = [];
 
             let rawPath = null;
-            if (this.showOriginalPath) {
+            if (this.objectPath === null) {
                 rawPath = await this.openmct.objects.getOriginalPath(keyString);
             } else {
                 rawPath = this.objectPath;
