@@ -88,27 +88,30 @@ export default {
         }
     },
     methods: {
-        toggleCollapse(_event) {
-            if (this.collapsed) {
-                this.handleExpand();
-                this.removeHideParam(this.hideParam);
-            } else {
-                this.handleCollapse();
-                this.addHideParam(this.hideParam);
-            }
-        },
-        handleHideUrl() {
-            const hideParam = this.openmct.router.getSearchParam(this.hideParam);
-
-            if (hideParam === 'true') {
-                this.handleCollapse();
-            }
-        },
         addHideParam(target) {
             this.openmct.router.setSearchParam(target, 'true');
         },
-        removeHideParam(target) {
-            this.openmct.router.deleteSearchParam(target);
+        endResizing(_event) {
+            document.body.removeEventListener('mousemove', this.updatePosition);
+            document.body.removeEventListener('mouseup', this.endResizing);
+            this.resizing = false;
+            this.$emit('end-resizing');
+            this.trackSize();
+        },
+        getNewSize(event) {
+            const delta = this.startPosition - this.getPosition(event);
+            if (this.handle === "before") {
+                return `${this.initial + delta}px`;
+            }
+
+            if (this.handle === "after") {
+                return `${this.initial - delta}px`;
+            }
+        },
+        getPosition(event) {
+            return this.type === 'horizontal'
+                ? event.pageX
+                : event.pageY;
         },
         handleCollapse() {
             this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
@@ -121,6 +124,33 @@ export default {
             delete this.dragCollapse;
             this.collapsed = false;
         },
+        handleHideUrl() {
+            const hideParam = this.openmct.router.getSearchParam(this.hideParam);
+
+            if (hideParam === 'true') {
+                this.handleCollapse();
+            }
+        },
+        removeHideParam(target) {
+            this.openmct.router.deleteSearchParam(target);
+        },
+        startResizing(event) {
+            this.startPosition = this.getPosition(event);
+            document.body.addEventListener('mousemove', this.updatePosition);
+            document.body.addEventListener('mouseup', this.endResizing);
+            this.resizing = true;
+            this.$emit('start-resizing');
+            this.trackSize();
+        },
+        toggleCollapse(_event) {
+            if (this.collapsed) {
+                this.handleExpand();
+                this.removeHideParam(this.hideParam);
+            } else {
+                this.handleCollapse();
+                this.addHideParam(this.hideParam);
+            }
+        },
         trackSize() {
             if (!this.dragCollapse) {
                 if (this.type === 'vertical') {
@@ -128,21 +158,6 @@ export default {
                 } else if (this.type === 'horizontal') {
                     this.initial = this.$el.offsetWidth;
                 }
-            }
-        },
-        getPosition(event) {
-            return this.type === 'horizontal'
-                ? event.pageX
-                : event.pageY;
-        },
-        getNewSize(event) {
-            const delta = this.startPosition - this.getPosition(event);
-            if (this.handle === "before") {
-                return `${this.initial + delta}px`;
-            }
-
-            if (this.handle === "after") {
-                return `${this.initial - delta}px`;
             }
         },
         updatePosition(event) {
@@ -155,21 +170,6 @@ export default {
             } else {
                 this.$el.style[this.styleProp] = size;
             }
-        },
-        startResizing(event) {
-            this.startPosition = this.getPosition(event);
-            document.body.addEventListener('mousemove', this.updatePosition);
-            document.body.addEventListener('mouseup', this.endResizing);
-            this.resizing = true;
-            this.$emit('start-resizing');
-            this.trackSize();
-        },
-        endResizing(_event) {
-            document.body.removeEventListener('mousemove', this.updatePosition);
-            document.body.removeEventListener('mouseup', this.endResizing);
-            this.resizing = false;
-            this.$emit('end-resizing');
-            this.trackSize();
         }
     }
 };
