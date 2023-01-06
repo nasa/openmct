@@ -36,8 +36,12 @@
         >
         </span>
         <span
-            :class="{'icon-gear': (yKeyOptions.length > 1 && singleSeries)}"
+            :class="{'icon-gear-after': (yKeyOptions.length > 1 && singleSeries)}"
         >{{ canShowYAxisLabel ? yAxisLabel : `Y Axis ${id}` }}</span>
+        <span
+            :class="{ 'icon-eye-open': visible, 'icon-eye-disabled': !visible}"
+            @click="toggleSeriesVisibility"
+        ></span>
     </div>
     <select
         v-if="yKeyOptions.length > 1 && singleSeries"
@@ -120,7 +124,8 @@ export default {
             singleSeries: true,
             mainYAxisId: null,
             hasAdditionalYAxes: false,
-            seriesColors: []
+            seriesColors: [],
+            visible: true
         };
     },
     computed: {
@@ -248,6 +253,13 @@ export default {
             this.$emit('tickWidthChanged', {
                 width: data.width,
                 yAxisId: this.id
+            });
+        },
+        toggleSeriesVisibility() {
+            this.visible = !this.visible;
+            this.$emit('toggleAxisVisibility', {
+                id: this.id,
+                visible: this.visible
             });
         }
     }

@@ -247,10 +247,16 @@ mct-plot {
             left: 0; right: auto; bottom: 0;
             text-orientation: mixed;
             writing-mode: vertical-lr;
+            //z-index allows clicking on visibility icon
+            z-index: 2;
 
-            .icon-gear:before {
+            .icon-gear-after:after {
                 // Icon denoting configurability
-                margin-bottom: $interiorMargin; // Uses margin-bottom due to writing-mode
+                margin-top: $interiorMargin; // Uses margin-top due to writing-mode
+            }
+
+            .icon-eye-open:before, .icon-eye-disabled:before {
+                padding-top: 5px;
             }
 
             .plot-series-color-swatch {
@@ -272,10 +278,15 @@ mct-plot {
 
     .gl-plot-y-label__select {
         position: absolute;
-        top: 50%;
+        bottom: 2%;
         transform: translateY(-50%);
         left: 0;
         z-index: 10;
+    }
+
+    .plot-yaxis-right .gl-plot-y-label__select {
+        left: auto;
+        right: 0;
     }
 
     .gl-plot-x-options,
