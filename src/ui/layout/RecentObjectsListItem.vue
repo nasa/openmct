@@ -23,11 +23,12 @@
 <template>
 <div
     class="c-gsearch-result c-gsearch-result--object"
+    :class="{'is-alias': isAlias}"
     aria-label="Recent Object"
     role="presentation"
 >
     <div
-        class="c-gsearch-result__type-icon"
+        class="c-gsearch-result__type-icon recent-object-icon"
         :class="resultTypeIcon"
     ></div>
     <div
@@ -93,6 +94,9 @@ export default {
         }
     },
     computed: {
+        isAlias() {
+            return this.openmct.objects.isObjectPathToALink(this.domainObject, this.objectPath);
+        },
         resultTypeIcon() {
             return this.openmct.types.get(this.domainObject.type).definition.cssClass;
         }
