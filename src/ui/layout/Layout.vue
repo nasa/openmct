@@ -58,6 +58,7 @@
             handle="after"
             label="Browse"
             hide-param="hideTree"
+            :persist-position="true"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
@@ -126,6 +127,7 @@
             handle="before"
             label="Inspect"
             hide-param="hideInspector"
+            :persist-position="true"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
