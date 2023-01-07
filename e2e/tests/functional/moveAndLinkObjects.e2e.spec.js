@@ -50,41 +50,69 @@ test.describe('Move & link item tests', () => {
         });
 
         // Attempt to move parent to its own grandparent
-        await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-        await page.locator('.c-disclosure-triangle >> nth=0').click();
+        await page.locator('button[title="Show selected item in tree"]').click();
 
-        await page.locator(`a:has-text("Parent Folder") >> nth=0`).click({
+        const treePane = await page.locator('#tree-pane');
+        await treePane.getByRole('treeitem', {
+            name: 'Parent Folder'
+        }).click({
             button: 'right'
         });
 
-        await page.locator('li.icon-move').click();
-        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=0').click();
-        await page.locator('form[name="mctForm"] >> text=Parent Folder').click();
+        await page.getByRole('menuitem', {
+            name: /Move/
+        }).click();
+
+        const locatorTree = page.locator('#locator-tree');
+        const myItemsLocatorTreeItem = locatorTree.getByRole('treeitem', {
+            name: myItemsFolderName
+        });
+        await myItemsLocatorTreeItem.locator('.c-disclosure-triangle').click();
+        await myItemsLocatorTreeItem.click();
+
+        const parentFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+            name: 'Parent Folder'
+        });
+        await parentFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
+        await parentFolderLocatorTreeItem.click();
         await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
-        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=1').click();
-        await page.locator('form[name="mctForm"] >> text=Child Folder').click();
+
+        const childFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+            name: /Child Folder/
+        });
+        await childFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
+        await childFolderLocatorTreeItem.click();
         await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
-        await page.locator('form[name="mctForm"] >> .c-disclosure-triangle >> nth=2').click();
-        await page.locator('form[name="mctForm"] >> text=Grandchild Folder').click();
+
+        const grandchildFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+            name: 'Grandchild Folder'
+        });
+        await grandchildFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
+        await grandchildFolderLocatorTreeItem.click();
         await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
-        await page.locator('form[name="mctForm"] >> text=Parent Folder').click();
+
+        await parentFolderLocatorTreeItem.click();
         await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
         await page.locator('[aria-label="Cancel"]').click();
 
         // Move Child Folder from Parent Folder to My Items
-        await page.locator('.c-disclosure-triangle >> nth=0').click();
-        await page.locator('.c-disclosure-triangle >> nth=1').click();
-
-        await page.locator(`a:has-text("Child Folder") >> nth=0`).click({
+        await treePane.getByRole('treeitem', {
+            name: /Child Folder/
+        }).click({
             button: 'right'
         });
-        await page.locator('li.icon-move').click();
-        await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
+        await page.getByRole('menuitem', {
+            name: /Move/
+        }).click();
+        await myItemsLocatorTreeItem.click();
 
-        await page.locator('button:has-text("OK")').click();
+        await page.locator('[aria-label="Save"]').click();
+        const myItemsPaneTreeItem = treePane.getByRole('treeitem', {
+            name: myItemsFolderName
+        });
 
         // Expect that Child Folder is in My Items, the root folder
-        expect(page.locator(`text=${myItemsFolderName} >> nth=0:has(text=Child Folder)`)).toBeTruthy();
+        expect(myItemsPaneTreeItem.locator('nth=0:has(text=Child Folder)')).toBeTruthy();
     });
     test('Create a basic object and verify that it cannot be moved to telemetry object without Composition Provider', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
