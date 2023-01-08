@@ -24,6 +24,7 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
 
 test.describe('Display Layout', () => {
+    /** @type {import('../../../../appActions').CreatedObjectInfo} */
     let sineWaveObject;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -47,7 +48,12 @@ test.describe('Display Layout', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        const treePane = page.locator('#tree-pane');
+        const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(sineWaveObject.name)
+        });
+        const layoutGridHolder = page.locator('.l-layout__grid-holder');
+        await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
@@ -74,7 +80,12 @@ test.describe('Display Layout', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        const treePane = page.locator('#tree-pane');
+        const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(sineWaveObject.name)
+        });
+        const layoutGridHolder = page.locator('.l-layout__grid-holder');
+        await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
@@ -105,7 +116,12 @@ test.describe('Display Layout', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        const treePane = page.locator('#tree-pane');
+        const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(sineWaveObject.name)
+        });
+        const layoutGridHolder = page.locator('.l-layout__grid-holder');
+        await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
@@ -139,7 +155,12 @@ test.describe('Display Layout', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        const treePane = page.locator('#tree-pane');
+        const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(sineWaveObject.name)
+        });
+        const layoutGridHolder = page.locator('.l-layout__grid-holder');
+        await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
