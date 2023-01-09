@@ -38,13 +38,17 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     initialize() {
         this.telemetryObjects = { ...this.telemetryDomainObjectDefinition.telemetryObjects };
         this.telemetryDataCache = {};
+
         if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
             this.checkForOldData(this.telemetryObjects || {});
+        }
+
+        if (this.isValid() && this.isStalenessCheck()) {
+            this.subscribeToStaleness(this.telemetryObjects || {});
         }
     }
 
     checkForOldData(telemetryObjects) {
-
         if (!this.ageCheck) {
             this.ageCheck = {};
         }
@@ -68,6 +72,33 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         this.emitEvent('telemetryIsOld', data);
     }
 
+    subscribeToStaleness(telemetryObjects) {
+        if (!this.stalenessSubscription) {
+            this.stalenessSubscription = {};
+        }
+
+        Object.values(telemetryObjects).forEach((telemetryObject) => {
+            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            if (!this.stalenessSubscription[id]) {
+                this.stalenessSubscription[id] = this.openmct.telemetry.subscribeToStaleness(
+                    telemetryObject,
+                    (isStale) => {
+                        this.handleStaleTelemetry(id, isStale);
+                    }
+                );
+            }
+        });
+    }
+
+    handleStaleTelemetry(id, isStale) {
+        if (this.telemetryDataCache) {
+            this.telemetryDataCache[id] = isStale;
+            this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
+        }
+
+        this.emitEvent('telemetryStaleness');
+    }
+
     isValid() {
         return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
     }
@@ -75,8 +106,13 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     updateTelemetryObjects(telemetryObjects) {
         this.telemetryObjects = { ...telemetryObjects };
         this.removeTelemetryDataCache();
+
         if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
             this.checkForOldData(this.telemetryObjects || {});
+        }
+
+        if (this.isValid() && this.isStalenessCheck()) {
+            this.subscribeToStaleness(this.telemetryObjects || {});
         }
     }
 
@@ -92,6 +128,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         telemetryCacheIds.forEach(id => {
             delete (this.telemetryDataCache[id]);
             delete (this.ageCheck[id]);
+            delete (this.stalenessSubscription[id]);
         });
     }
 
@@ -125,9 +162,9 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     updateResult(data, telemetryObjects) {
         const validatedData = this.isValid() ? data : {};
 
-        if (validatedData) {
+        if (validatedData && !this.isStalenessCheck()) {
             if (this.isOldCheck()) {
-                if (this.ageCheck && this.ageCheck[validatedData.id]) {
+                if (this.ageCheck?.[validatedData.id]) {
                     this.ageCheck[validatedData.id].update(validatedData);
                 }
 
@@ -226,9 +263,14 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     destroy() {
         delete this.telemetryObjects;
         delete this.telemetryDataCache;
+
         if (this.ageCheck) {
             Object.values(this.ageCheck).forEach((subscription) => subscription.clear);
             delete this.ageCheck;
+        }
+
+        if (this.stalenessSubscription) {
+            Object.values(this.stalenessSubscription).forEach(unsubscribe => unsubscribe());
         }
     }
 }

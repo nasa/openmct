@@ -110,19 +110,19 @@ export default {
         addItem(object) {
             const keystring = this.openmct.objects.makeKeyString(object);
 
-            if (!this.unsubsubscribes) {
-                this.unsubsubscribes = {};
+            if (!this.unsubscribes) {
+                this.unsubscribes = {};
             }
 
             const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(object, (isStale) => {
                 this.handleStaleness(keystring, isStale);
             });
 
-            this.unsubsubscribes[keystring] = unsubscribeFromStaleness;
+            this.unsubscribes[keystring] = unsubscribeFromStaleness;
         },
         removeItem(object) {
             const keystring = this.openmct.objects.makeKeyString(object);
-            this.unsubsubscribes[keystring]();
+            this.unsubscribes[keystring]();
             this.handleStaleness(keystring, false);
         },
         handleStaleness(id, isStale) {
@@ -141,10 +141,8 @@ export default {
             this.loading = loading;
         },
         destroy() {
-            if (!this.unsubsubscribes) {
-                for (const id of Object.keys(this.unsubsubscribes)) {
-                    this.unsubsubscribes[id]();
-                }
+            if (this.unsubscribes) {
+                Object.values(this.unsubscribes).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
             }
 
             if (this.compositionCollection) {

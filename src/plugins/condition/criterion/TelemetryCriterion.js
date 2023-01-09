@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+import { IS_OLD_KEY, IS_STALE_KEY } from '../utils/constants';
 import { OPERATIONS, getOperatorText } from '../utils/operations';
 import { checkIfOld } from "../utils/time";
 
@@ -45,6 +46,9 @@ export default class TelemetryCriterion extends EventEmitter {
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.result = undefined;
         this.ageCheck = undefined;
+        this.unsubscribeFromStaleness = undefined;
+
+        console.log(telemetryDomainObjectDefinition);
 
         this.initialize();
         this.emitEvent('criterionUpdated', this);
@@ -57,8 +61,13 @@ export default class TelemetryCriterion extends EventEmitter {
         }
 
         this.updateTelemetryObjects(this.telemetryDomainObjectDefinition.telemetryObjects);
+
         if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
             this.checkForOldData();
+        }
+
+        if (this.isValid() && this.isStalenessCheck()) {
+            this.subscribeToStaleness();
         }
     }
 
@@ -79,12 +88,33 @@ export default class TelemetryCriterion extends EventEmitter {
         this.emitEvent('telemetryIsOld', data);
     }
 
+    subscribeToStaleness() {
+        if (this.unsubscribeFromStaleness) {
+            this.unsubscribeFromStaleness();
+        }
+
+        this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(
+            this.telemetryObject,
+            (isStale) => this.handleStaleTelemetry(isStale)
+        );
+    }
+
+    handleStaleTelemetry(isStale) {
+        console.log('single handle stale telemetry', isStale);
+        this.result = isStale;
+        this.emitEvent('telemetryStaleness');
+    }
+
     isValid() {
         return this.telemetryObject && this.metadata && this.operation;
     }
 
     isOldCheck() {
-        return this.metadata && this.metadata === 'dataReceived';
+        return this.metadata && this.metadata === 'dataReceived' && this.operation === IS_OLD_KEY;
+    }
+
+    isStalenessCheck() {
+        return this.metadata && this.metadata === 'dataReceived' && this.operation === IS_STALE_KEY;
     }
 
     isValidInput() {
@@ -93,8 +123,13 @@ export default class TelemetryCriterion extends EventEmitter {
 
     updateTelemetryObjects(telemetryObjects) {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
+
         if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
             this.checkForOldData();
+        }
+
+        if (this.isValid() && this.isStalenessCheck()) {
+            this.subscribeToStaleness();
         }
     }
 
@@ -130,14 +165,17 @@ export default class TelemetryCriterion extends EventEmitter {
 
     updateResult(data) {
         const validatedData = this.isValid() ? data : {};
-        if (this.isOldCheck()) {
-            if (this.ageCheck) {
-                this.ageCheck.update(validatedData);
-            }
 
-            this.result = false;
-        } else {
-            this.result = this.computeResult(validatedData);
+        if (!this.isStalenessCheck()) {
+            if (this.isOldCheck()) {
+                if (this.ageCheck) {
+                    this.ageCheck.update(validatedData);
+                }
+
+                this.result = false;
+            } else {
+                this.result = this.computeResult(validatedData);
+            }
         }
     }
 
@@ -252,6 +290,7 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     getDescription(criterion, index) {
+        console.log('get description', this.telemetryObject);
         let description;
         if (!this.telemetry || !this.telemetryObject || (this.telemetryObject.type === 'unknown')) {
             description = `Unknown ${this.metadata} ${getOperatorText(this.operation, this.input)}`;
@@ -268,8 +307,13 @@ export default class TelemetryCriterion extends EventEmitter {
     destroy() {
         delete this.telemetryObject;
         delete this.telemetryObjectIdAsString;
+
         if (this.ageCheck) {
             delete this.ageCheck;
+        }
+
+        if (this.unsubscribeFromStaleness) {
+            this.unsubscribeFromStaleness();
         }
     }
 }
