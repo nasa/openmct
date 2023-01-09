@@ -88,6 +88,14 @@
             padding: 3px 0;
         }
 
+        [class*='__label'] {
+            padding: 3px 0;
+        }
+
+        [class*='__poll-table'] {
+            grid-column: span 2;
+        }
+
         [class*='new-question'] {
             align-items: center;
             display: flex;

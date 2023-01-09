@@ -81,6 +81,50 @@
                 @click="updatePollQuestion"
             >Update</button>
         </div>
+        <div class="c-table c-table--sortable c-spq__poll-table">
+            <table class="c-table__body">
+                <thead class="c-table__header">
+                    <tr>
+                        <th
+                            class="is-sortable"
+                            :class="{
+                                'is-sorting': sortBy === 'model.position',
+                                'asc': ascending,
+                                'desc': !ascending
+                            }"
+                            @click="sort('model.position', true)"
+                        >
+                            Position
+                        </th>
+                        <th
+                            class="is-sortable"
+                            :class="{
+                                'is-sorting': sortBy === 'model.status',
+                                'asc': ascending,
+                                'desc': !ascending
+                            }"
+                            @click="sort('model.status', true)"
+                        >
+                            Status
+                        </th>
+                        <th
+                            class="is-sortable"
+                            :class="{
+                                'is-sorting': sortBy === 'model.age',
+                                'asc': ascending,
+                                'desc': !ascending
+                            }"
+                            @click="sort('model.age', false)"
+                        >
+                            Age
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- should have stuff here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </div>
@@ -106,7 +150,8 @@ export default {
             pollQuestionUpdated: '--',
             currentPollQuestion: '--',
             newPollQuestion: undefined,
-            statusCountViewModel: []
+            statusCountViewModel: [],
+            statusesForRolesViewModel: []
         };
     },
     computed: {
@@ -183,6 +228,8 @@ export default {
                     roleCount: statusCountMap[status.key]
                 };
             });
+
+            this.statusesForRolesViewModel = statusesForRoles.map(status => this.applyStyling(status));
         },
         applyStyling(status) {
             const stylesForStatus = this.configuration?.statusStyles?.[status.label];
