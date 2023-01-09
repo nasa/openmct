@@ -1,6 +1,7 @@
 <template>
 <div
     class="c-message"
+    role="listitem"
     :class="'message-severity-' + notification.model.severity"
 >
     <div class="c-ne__time-and-content">
@@ -21,7 +22,7 @@
             </div>
         </div>
         <button
-            aria-label="Dismiss notification"
+            :aria-label="'Dismiss notification of ' + notification.model.message"
             class="c-click-icon c-overlay__close-button icon-x"
             @click="dismiss()"
         ></button>

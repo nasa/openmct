@@ -6,7 +6,10 @@
             {{ notificationsCountDisplayMessage(notifications.length) }}
         </div>
     </div>
-    <div class="w-messages c-overlay__messages">
+    <div
+        role="list"
+        class="w-messages c-overlay__messages"
+    >
         <notification-message
             v-for="notification in notifications"
             :key="notification.model.timestamp"
