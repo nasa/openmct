@@ -202,6 +202,7 @@ export default {
             this.newPollQuestion = undefined;
         },
         async clearPollQuestion() {
+            this.currentPollQuestion = undefined;
             await Promise.all([
                 this.openmct.user.status.resetAllStatuses(),
                 this.openmct.user.status.setPollQuestion()
