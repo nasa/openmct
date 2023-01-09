@@ -86,16 +86,6 @@
         border-top: 1px solid $colorInteriorBorder;
     }
 
-    &.is-alias {
-        // Object is an alias to an original.
-        [class~='recent-object-icon'] {
-            @include isAlias();
-            &:after {
-                bottom: 20%;
-            }
-        }
-    }
-
     &__type-icon,
     &__more-options-button {
         flex: 0 0 auto;

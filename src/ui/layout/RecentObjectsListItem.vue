@@ -22,22 +22,22 @@
 
 <template>
 <div
-    class="c-gsearch-result c-gsearch-result--object"
+    class="c-recentobjects-listitem c-recentobjects-listitem--object"
     :class="{'is-alias': isAlias}"
     aria-label="Recent Object"
     role="presentation"
 >
     <div
-        class="c-gsearch-result__type-icon recent-object-icon"
+        class="c-recentobjects-listitem__type-icon recent-object-icon"
         :class="resultTypeIcon"
     ></div>
     <div
-        class="c-gsearch-result__body"
+        class="c-recentobjects-listitem__body"
         role="option"
         :aria-label="`${domainObject.name} ${domainObject.type} recent object`"
     >
         <div
-            class="c-gsearch-result__title"
+            class="c-recentobjects-listitem__title"
             :name="domainObject.name"
             draggable="true"
             @dragstart="dragStart"
@@ -53,8 +53,10 @@
             :object-path="objectPath"
         />
     </div>
-    <div class="c-gsearch-result__more-options-button">
-        <button class="c-icon-button icon-3-dots"></button>
+    <div class="c-recentobjects-listitem__more-options-buttonsdsd">
+        <button
+            class="c-icon-button icon-target"
+        ></button>
     </div>
 </div>
 </template>
