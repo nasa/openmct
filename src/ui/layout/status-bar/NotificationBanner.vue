@@ -20,6 +20,8 @@
 <div
     v-if="activeModel.message"
     class="c-message-banner"
+    role="alert"
+    :aria-live="activeModel.severity === 'error' ? 'assertive' : 'polite'"
     :class="[
         activeModel.severity,
         {
@@ -42,6 +44,7 @@
     />
     <button
         class="c-message-banner__close-button c-click-icon icon-x-in-circle"
+        aria-label="Dismiss"
         @click.stop="dismiss()"
     ></button>
 </div>
