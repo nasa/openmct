@@ -454,6 +454,7 @@ export default {
                     this.treeItemSelection(item);
                 }
             });
+            this.scrollToCheck(navigationPath);
         },
         scrollToCheck(navigationPath) {
             if (this.scrollToPath && this.scrollToPath === navigationPath) {

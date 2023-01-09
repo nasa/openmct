@@ -11,6 +11,7 @@
             :object-path="recentObject.objectPath"
             :navigation-path="recentObject.navigationPath"
             :domain-object="recentObject.domainObject"
+            @openAndScrollTo="openAndScrollTo($event)"
         />
     </div>
 </div>
@@ -170,6 +171,9 @@ export default {
                     this.compositionCollections[navigationPath].removeHandler);
                 delete this.compositionCollections[navigationPath];
             }
+        },
+        openAndScrollTo(navigationPath) {
+            this.$emit("openAndScrollTo", navigationPath);
         },
         /**
          * Saves the Recent Objects list to localStorage.

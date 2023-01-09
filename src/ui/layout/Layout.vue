@@ -83,6 +83,7 @@
                     id="tree-pane"
                 >
                     <mct-tree
+                        ref="mctTree"
                         :sync-tree-navigation="triggerSync"
                         :reset-tree-navigation="triggerReset"
                         class="l-shell__tree"
@@ -95,6 +96,7 @@
                 >
                     <RecentObjectsList
                         class="l-shell__tree"
+                        @openAndScrollTo="openAndScrollTo($event)"
                     />
                 </pane>
             </multipane>
@@ -265,6 +267,9 @@ export default {
             }
 
             this.hasToolbar = structure.length > 0;
+        },
+        openAndScrollTo(navigationPath) {
+            this.$refs.mctTree.openAndScrollTo(navigationPath);
         },
         setActionCollection(actionCollection) {
             this.actionCollection = actionCollection;

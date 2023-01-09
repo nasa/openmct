@@ -41,7 +41,7 @@
             :name="domainObject.name"
             draggable="true"
             @dragstart="dragStart"
-            @click="clickedResult"
+            @click.prevent="clickedResult"
         >
             {{ domainObject.name }}
         </div>
@@ -56,6 +56,7 @@
     <div class="c-recentobjects-listitem__more-options-buttonsdsd">
         <button
             class="c-icon-button icon-target"
+            @click="openAndScrollTo(navigationPath)"
         ></button>
     </div>
 </div>
@@ -111,9 +112,8 @@ export default {
         this.previewAction.off('isVisible', this.togglePreviewState);
     },
     methods: {
-        clickedResult(event) {
+        clickedResult(_event) {
             if (this.openmct.editor.isEditing()) {
-                event.preventDefault();
                 this.preview();
             } else {
                 let resultUrl = objectPathToUrl(this.openmct, this.objectPath);
@@ -143,6 +143,9 @@ export default {
 
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
             event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
+        },
+        openAndScrollTo(navigationPath) {
+            this.$emit('openAndScrollTo', navigationPath);
         }
     }
 };
