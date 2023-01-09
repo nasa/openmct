@@ -94,18 +94,19 @@ export default {
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     async mounted() {
-        await this.$nextTick();
-        // Hide tree and/or inspector pane if specified in URL
-        if (this.isCollapsable) {
-            this.handleHideUrl();
-        }
-
         if (this.persistPosition) {
             const savedPosition = this.getSavedPosition();
             if (savedPosition) {
                 this.$el.style[this.styleProp] = savedPosition;
             }
         }
+
+        await this.$nextTick();
+        // Hide tree and/or inspector pane if specified in URL
+        if (this.isCollapsable) {
+            this.handleHideUrl();
+        }
+
     },
     methods: {
         addHideParam(target) {
