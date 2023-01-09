@@ -179,14 +179,12 @@ export default {
     },
     computed: {
         childrenHeight() {
-            let childrenCount = this.focusedItems.length || 1;
+            const childrenCount = this.focusedItems.length || 1;
 
             return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
         },
         childrenHeightStyles() {
-            let height = this.childrenHeight + 'px';
-
-            return { height };
+            return { height: `${this.childrenHeight}px` };
         },
         focusedItems() {
             return this.activeSearch ? this.searchResultItems : this.treeItems;
@@ -195,9 +193,7 @@ export default {
             return Math.ceil(this.mainTreeHeight / this.itemHeight) + ITEM_BUFFER;
         },
         scrollableStyles() {
-            let height = this.mainTreeHeight + 'px';
-
-            return { height };
+            return { height: `${this.mainTreeHeight}px` };
         },
         showNoItems() {
             return this.visibleItems.length === 0 && !this.activeSearch && this.searchValue === '' && !this.isLoading;
@@ -209,7 +205,7 @@ export default {
             if (!this.isSelectorTree) {
                 return {};
             } else {
-                return { 'min-height': this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
+                return { minHeight: `${this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT}px`};
             }
         }
     },
