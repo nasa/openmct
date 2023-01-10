@@ -56,7 +56,7 @@
             @click="openAndScrollTo(navigationPath)"
         ></button>
     </div>
-</div>
+</li>
 </template>
 
 <script>
