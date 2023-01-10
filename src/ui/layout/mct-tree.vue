@@ -453,8 +453,10 @@ export default {
 
                     this.treeItemSelection(item);
                 }
+
+                this.scrollToCheck(navigationPath);
+                this.scrollToPath = null;
             });
-            this.scrollToCheck(navigationPath);
         },
         scrollToCheck(navigationPath) {
             if (this.scrollToPath && this.scrollToPath === navigationPath) {
@@ -477,8 +479,7 @@ export default {
                     behavior: 'smooth'
                 });
             } else if (this.scrollToPath) {
-                this.scrollToPath = undefined;
-                delete this.scrollToPath;
+                this.scrollToPath = null;
             }
         },
         scrollEndEvent() {
@@ -491,8 +492,7 @@ export default {
                     if (!this.isItemInView(this.scrollToPath)) {
                         this.scrollTo(this.scrollToPath);
                     } else {
-                        this.scrollToPath = undefined;
-                        delete this.scrollToPath;
+                        this.scrollToPath = null;
                     }
                 }
             });
