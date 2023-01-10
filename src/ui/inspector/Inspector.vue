@@ -47,7 +47,6 @@
                 <Properties
                     v-if="!activity"
                 />
-                <location />
                 <InspectorViews />
             </pane>
             <pane
@@ -83,7 +82,6 @@
 import multipane from '../layout/multipane.vue';
 import pane from '../layout/pane.vue';
 import ElementsPool from './ElementsPool.vue';
-import Location from './Location.vue';
 import Properties from './details/Properties.vue';
 import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
@@ -101,7 +99,6 @@ export default {
         ElementsPool,
         Properties,
         ObjectName,
-        Location,
         InspectorViews
     },
     provide: {
