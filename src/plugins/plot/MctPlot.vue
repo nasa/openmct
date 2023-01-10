@@ -292,7 +292,8 @@ export default {
             isFrozenOnMouseDown: false,
             cursorGuide: this.initCursorGuide,
             gridLines: this.initGridLines,
-            yAxes: []
+            yAxes: [],
+            yAxisListWithRange: []
         };
     },
     computed: {
@@ -410,6 +411,8 @@ export default {
 
         this.openmct.objectViews.on('clearData', this.clearData);
         this.setTimeContext();
+
+        this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
         this.loaded = true;
     },
@@ -949,6 +952,7 @@ export default {
         },
 
         endMarquee() {
+            console.log('endMarquee');
             const startPixels = this.marquee.startPixels;
             const endPixels = this.marquee.endPixels;
             const marqueeDistance = Math.sqrt(
@@ -978,19 +982,19 @@ export default {
 
         zoom(zoomDirection, zoomFactor) {
             const currentXaxis = this.config.xAxis.get('displayRange');
-            const currentYaxis = this.config.yAxis.get('displayRange');
 
             // when there is no plot data, the ranges can be undefined
             // in which case we should not perform zoom
-            if (!currentXaxis || !currentYaxis) {
+            if (!currentXaxis || !this.yAxisListWithRange[0].get('displayRange')) {
                 return;
             }
+
+            this.yAxisListWithRange = this.yAxisListWithRange.filter((yAxis) => yAxis.get('displayRange'));
 
             this.freeze();
             this.trackHistory();
 
             const xAxisDist = (currentXaxis.max - currentXaxis.min) * zoomFactor;
-            const yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
 
             if (zoomDirection === 'in') {
                 this.config.xAxis.set('displayRange', {
@@ -998,9 +1002,13 @@ export default {
                     max: currentXaxis.max - xAxisDist
                 });
 
-                this.config.yAxis.set('displayRange', {
-                    min: currentYaxis.min + yAxisDist,
-                    max: currentYaxis.max - yAxisDist
+                this.yAxisListWithRange.forEach((yAxisModel) => {
+                    const currentYaxis = yAxisModel.get('displayRange');
+                    const yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
+                    yAxisModel.set('displayRange', {
+                        min: currentYaxis.min + yAxisDist,
+                        max: currentYaxis.max - yAxisDist
+                    });
                 });
             } else if (zoomDirection === 'out') {
                 this.config.xAxis.set('displayRange', {
@@ -1008,9 +1016,13 @@ export default {
                     max: currentXaxis.max + xAxisDist
                 });
 
-                this.config.yAxis.set('displayRange', {
-                    min: currentYaxis.min - yAxisDist,
-                    max: currentYaxis.max + yAxisDist
+                this.yAxisListWithRange.forEach((yAxisModel) => {
+                    const currentYaxis = yAxisModel.get('displayRange');
+                    const yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
+                    yAxisModel.set('displayRange', {
+                        min: currentYaxis.min - yAxisDist,
+                        max: currentYaxis.max + yAxisDist
+                    });
                 });
             }
 
@@ -1027,36 +1039,23 @@ export default {
             }
 
             let xDisplayRange = this.config.xAxis.get('displayRange');
-            let yDisplayRange = this.config.yAxis.get('displayRange');
 
             // when there is no plot data, the ranges can be undefined
             // in which case we should not perform zoom
-            if (!xDisplayRange || !yDisplayRange) {
+            if (!xDisplayRange || !this.yAxisListWithRange[0].get('displayRange')) {
                 return;
             }
+
+            this.yAxisListWithRange = this.yAxisListWithRange.filter((yAxis) => yAxis.get('displayRange'));
 
             this.freeze();
             window.clearTimeout(this.stillZooming);
 
             let xAxisDist = (xDisplayRange.max - xDisplayRange.min);
-            let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
             let xDistMouseToMax = xDisplayRange.max - this.positionOverPlot.x;
             let xDistMouseToMin = this.positionOverPlot.x - xDisplayRange.min;
-            let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y;
-            let yDistMouseToMin = this.positionOverPlot.y - yDisplayRange.min;
             let xAxisMaxDist = xDistMouseToMax / xAxisDist;
             let xAxisMinDist = xDistMouseToMin / xAxisDist;
-            let yAxisMaxDist = yDistMouseToMax / yAxisDist;
-            let yAxisMinDist = yDistMouseToMin / yAxisDist;
-
-            let plotHistoryStep;
-
-            if (!plotHistoryStep) {
-                plotHistoryStep = {
-                    x: xDisplayRange,
-                    y: yDisplayRange
-                };
-            }
 
             if (event.wheelDelta < 0) {
 
@@ -1065,9 +1064,18 @@ export default {
                     max: xDisplayRange.max - ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
                 });
 
-                this.config.yAxis.set('displayRange', {
-                    min: yDisplayRange.min + ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
-                    max: yDisplayRange.max - ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
+                this.yAxisListWithRange.forEach((yAxisModel) => {
+                    const yDisplayRange = yAxisModel.get('displayRange');
+                    let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
+                    let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y;
+                    let yDistMouseToMin = this.positionOverPlot.y - yDisplayRange.min;
+                    let yAxisMaxDist = yDistMouseToMax / yAxisDist;
+                    let yAxisMinDist = yDistMouseToMin / yAxisDist;
+
+                    yAxisModel.set('displayRange', {
+                        min: yDisplayRange.min + ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
+                        max: yDisplayRange.max - ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
+                    });
                 });
             } else if (event.wheelDelta >= 0) {
 
@@ -1076,10 +1084,30 @@ export default {
                     max: xDisplayRange.max + ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
                 });
 
-                this.config.yAxis.set('displayRange', {
-                    min: yDisplayRange.min - ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
-                    max: yDisplayRange.max + ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
+                this.yAxisListWithRange.forEach((yAxisModel) => {
+                    const yDisplayRange = yAxisModel.get('displayRange');
+                    let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
+                    let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y;
+                    let yDistMouseToMin = this.positionOverPlot.y - yDisplayRange.min;
+                    let yAxisMaxDist = yDistMouseToMax / yAxisDist;
+                    let yAxisMinDist = yDistMouseToMin / yAxisDist;
+
+                    yAxisModel.set('displayRange', {
+                        min: yDisplayRange.min - ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
+                        max: yDisplayRange.max + ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
+                    });
                 });
+            }
+
+            let plotHistoryStep;
+
+            if (!plotHistoryStep) {
+                const yRangeList = [];
+                this.yAxisListWithRange.map((yAxis) => yRangeList.push(yAxis.get('displayRange')));
+                plotHistoryStep = {
+                    x: this.config.xAxis.get('displayRange'),
+                    y: yRangeList
+                };
             }
 
             this.stillZooming = window.setTimeout(function () {
@@ -1113,23 +1141,31 @@ export default {
             const dX = this.pan.start.x - this.positionOverPlot.x;
             const dY = this.pan.start.y - this.positionOverPlot.y;
             const xRange = this.config.xAxis.get('displayRange');
-            const yRange = this.config.yAxis.get('displayRange');
 
             this.config.xAxis.set('displayRange', {
                 min: xRange.min + dX,
                 max: xRange.max + dX
             });
-            this.config.yAxis.set('displayRange', {
-                min: yRange.min + dY,
-                max: yRange.max + dY
+
+            this.yAxisListWithRange = this.yAxisListWithRange.filter((yAxis) => yAxis.get('displayRange'));
+            this.yAxisListWithRange.forEach((yAxis) => {
+                const yRange = yAxis.get('displayRange');
+                yAxis.set('displayRange', {
+                    min: yRange.min + dY,
+                    max: yRange.max + dY
+                });
             });
         },
 
         trackHistory() {
+            const yRangeList = [];
+            this.yAxisListWithRange.map((yAxis) => yRangeList.push(yAxis.get('displayRange')));
+            console.log('trackHistory');
             this.plotHistory.push({
                 x: this.config.xAxis.get('displayRange'),
-                y: this.config.yAxis.get('displayRange')
+                y: yRangeList
             });
+            console.log(this.plotHistory);
         },
 
         endPan() {
@@ -1138,7 +1174,10 @@ export default {
         },
 
         freeze() {
-            this.config.yAxis.set('frozen', true);
+            const yAxisList = [this.config.yAxis, ...this.config.additionalYAxes];
+            yAxisList.forEach((yAxis) => {
+                yAxis.set('frozen', true);
+            });
             this.config.xAxis.set('frozen', true);
             this.setStatus();
         },
@@ -1149,7 +1188,10 @@ export default {
         },
 
         clearPanZoomHistory() {
-            this.config.yAxis.set('frozen', false);
+            const yAxisList = [this.config.yAxis, ...this.config.additionalYAxes];
+            yAxisList.forEach((yAxis) => {
+                yAxis.set('frozen', false);
+            });
             this.config.xAxis.set('frozen', false);
             this.setStatus();
             this.plotHistory = [];
@@ -1163,8 +1205,14 @@ export default {
                 return;
             }
 
+            console.log('back');
+            console.log(previousAxisRanges);
+
             this.config.xAxis.set('displayRange', previousAxisRanges.x);
-            this.config.yAxis.set('displayRange', previousAxisRanges.y);
+            this.yAxisListWithRange.forEach((yAxis, index) => {
+                yAxis.set('displayRange', previousAxisRanges.y[index]);
+            });
+
             this.userViewportChangeEnd();
         },
 
