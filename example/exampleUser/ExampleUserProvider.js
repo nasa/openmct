@@ -27,11 +27,13 @@ import createExampleUser from './exampleUserCreator';
 const STATUSES = [{
     key: "NO_STATUS",
     label: "Not set",
+    timestamp: Date.now(),
     iconClass: "icon-question-mark",
     iconClassPoll: "icon-status-poll-question-mark"
 }, {
     key: "GO",
     label: "Go",
+    timestamp: Date.now(),
     iconClass: "icon-check",
     iconClassPoll: "icon-status-poll-question-mark",
     statusClass: "s-status-ok",
@@ -40,6 +42,7 @@ const STATUSES = [{
 }, {
     key: "MAYBE",
     label: "Maybe",
+    timestamp: Date.now(),
     iconClass: "icon-alert-triangle",
     iconClassPoll: "icon-status-poll-question-mark",
     statusClass: "s-status-warning",
@@ -48,6 +51,7 @@ const STATUSES = [{
 }, {
     key: "NO_GO",
     label: "No go",
+    timestamp: Date.now(),
     iconClass: "icon-circle-slash",
     iconClassPoll: "icon-status-poll-question-mark",
     statusClass: "s-status-error",
@@ -124,6 +128,7 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     setStatusForRole(role, status) {
+        status.timestamp = Date.now();
         this.status = status;
         this.emit('statusChange', {
             role,

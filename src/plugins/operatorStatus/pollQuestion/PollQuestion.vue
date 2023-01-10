@@ -81,47 +81,39 @@
                 @click="updatePollQuestion"
             >Update</button>
         </div>
-        <div class="c-table c-table--sortable c-spq__poll-table">
+        <div class="c-table c-spq__poll-table">
             <table class="c-table__body">
                 <thead class="c-table__header">
                     <tr>
-                        <th
-                            class="is-sortable"
-                            :class="{
-                                'is-sorting': sortBy === 'model.position',
-                                'asc': ascending,
-                                'desc': !ascending
-                            }"
-                            @click="sort('model.position', true)"
-                        >
+                        <th>
                             Position
                         </th>
-                        <th
-                            class="is-sortable"
-                            :class="{
-                                'is-sorting': sortBy === 'model.status',
-                                'asc': ascending,
-                                'desc': !ascending
-                            }"
-                            @click="sort('model.status', true)"
-                        >
+                        <th>
                             Status
                         </th>
-                        <th
-                            class="is-sortable"
-                            :class="{
-                                'is-sorting': sortBy === 'model.age',
-                                'asc': ascending,
-                                'desc': !ascending
-                            }"
-                            @click="sort('model.age', false)"
-                        >
+                        <th>
                             Age
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- should have stuff here -->
+                    <tr
+                        v-for="statusForRole in statusesForRolesViewModel"
+                        :key="statusForRole.key"
+                    >
+                        <td>
+                            {{ statusForRole.role }}
+                        </td>
+                        <td
+                            :style="{ background: statusForRole.status.statusBgColor, color: statusForRole.status.statusFgColor }"
+                        >
+                            {{ statusForRole.status.label }}
+                        </td>
+                        <td>
+                            {{ statusForRole.age }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -148,6 +140,7 @@ export default {
     data() {
         return {
             pollQuestionUpdated: '--',
+            pollQuestionTimestamp: undefined,
             currentPollQuestion: '--',
             newPollQuestion: undefined,
             statusCountViewModel: [],
@@ -188,6 +181,7 @@ export default {
         },
         setPollQuestion(pollQuestion) {
             this.currentPollQuestion = pollQuestion.question;
+            this.pollQuestionTimestamp = pollQuestion.timestamp;
             this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
             this.indicator.text(pollQuestion.question);
         },
@@ -229,8 +223,43 @@ export default {
                     roleCount: statusCountMap[status.key]
                 };
             });
+            this.statusesForRolesViewModel = [];
+            statusesForRoles.forEach((status, index) => {
+                this.statusesForRolesViewModel.push({
+                    status: this.applyStyling(status),
+                    role: allStatusRoles[index],
+                    age: this.formatStatusAge(status.timestamp, this.pollQuestionTimestamp)
+                });
+            });
+        },
+        formatStatusAge(statusTimestamp, pollQuestionTimestamp) {
+            if (statusTimestamp === undefined || pollQuestionTimestamp === undefined) {
+                return '--';
+            }
 
-            this.statusesForRolesViewModel = statusesForRoles.map(status => this.applyStyling(status));
+            const statusAgeInMs = statusTimestamp - pollQuestionTimestamp;
+            const absoluteTotalSeconds = Math.floor(Math.abs(statusAgeInMs) / 1000);
+            let hours = Math.floor(absoluteTotalSeconds / 3600);
+            let minutes = Math.floor((absoluteTotalSeconds - (hours * 3600)) / 60);
+            let secondsString = absoluteTotalSeconds - (hours * 3600) - (minutes * 60);
+
+            if (statusAgeInMs > 0 || (absoluteTotalSeconds === 0)) {
+                hours = `+ ${hours}`;
+            } else {
+                hours = `- ${hours}`;
+            }
+
+            if (minutes < 10) {
+                minutes = `0${minutes}`;
+            }
+
+            if (secondsString < 10) {
+                secondsString = `0${secondsString}`;
+            }
+
+            const statusAgeString = `${hours}:${minutes}:${secondsString}`;
+
+            return statusAgeString;
         },
         applyStyling(status) {
             const stylesForStatus = this.configuration?.statusStyles?.[status.label];
