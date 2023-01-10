@@ -129,7 +129,7 @@ export default {
             this.unsubsubscribes[item.key] = unsubscribeFromStaleness;
         },
         removeItem(identifier) {
-            const keystring = this.openmct.objects.makeKeyString(object);
+            const keystring = this.openmct.objects.makeKeyString(identifier);
             const index = this.items.findIndex(item => keystring === item.key);
 
             this.items.splice(index, 1);

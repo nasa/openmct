@@ -56,6 +56,7 @@ define([
             this.telemetryCollections = {};
             this.delayedActions = [];
             this.outstandingRequests = 0;
+            this.unsubscribeFromStaleness = {};
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
@@ -154,6 +155,15 @@ define([
             this.telemetryCollections[keyString].on('add', telemetryProcessor);
             this.telemetryCollections[keyString].on('clear', this.clearData);
             this.telemetryCollections[keyString].load();
+
+            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(telemetryObject, (isStale) => {
+                this.emit('telemetry-staleness', {
+                    keyString,
+                    isStale
+                });
+            });
+
+            this.unsubscribeFromStaleness[keyString] = unsubscribeFromStaleness;
 
             this.telemetryObjects[keyString] = {
                 telemetryObject,
@@ -263,6 +273,12 @@ define([
             delete this.telemetryObjects[keyString];
 
             this.emit('object-removed', objectIdentifier);
+
+            this.unsubscribeFromStaleness[keyString]();
+            this.emit('telemetry-staleness', {
+                keyString,
+                isStale: false
+            });
         }
 
         clearData() {

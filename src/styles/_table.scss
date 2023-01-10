@@ -90,6 +90,10 @@ div.c-table {
         flex: 1 1 auto;
     }
 
+    &.is-stale {
+        border: 1px solid cyan;
+    }
+    
     .--width-less-than-600 & {
         &:not(.is-paused) {
             .c-table-control-bar {
