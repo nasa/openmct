@@ -2,7 +2,7 @@
 <div
     class="c-tree-and-search l-shell__tree"
 >
-    <div
+    <ul
         class="c-tree-and-search__tree c-tree c-tree__scrollable"
     >
         <recent-objects-list-item
@@ -13,7 +13,7 @@
             :domain-object="recentObject.domainObject"
             @openAndScrollTo="openAndScrollTo($event)"
         />
-    </div>
+    </ul>
 </div>
 </template>
 

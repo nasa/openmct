@@ -21,11 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div
+<li
     class="c-recentobjects-listitem c-recentobjects-listitem--object"
-    :class="{'is-alias': isAlias}"
-    aria-label="Recent Object"
-    role="presentation"
+    :class="isAlias"
+    :aria-label="`${domainObject.name}`"
 >
     <div
         class="c-recentobjects-listitem__type-icon recent-object-icon"
@@ -33,18 +32,16 @@
     ></div>
     <div
         class="c-recentobjects-listitem__body"
-        role="option"
-        :aria-label="`${domainObject.name} ${domainObject.type} recent object`"
     >
-        <div
+        <span
             class="c-recentobjects-listitem__title"
             :name="domainObject.name"
             draggable="true"
             @dragstart="dragStart"
-            @click.prevent="clickedResult"
+            @click.prevent="clickedRecent"
         >
             {{ domainObject.name }}
-        </div>
+        </span>
 
         <ObjectPath
             :read-only="false"
@@ -53,7 +50,7 @@
             :object-path="objectPath"
         />
     </div>
-    <div class="c-recentobjects-listitem__more-options-buttonsdsd">
+    <div class="c-recentobjects-listitem__target-button">
         <button
             class="c-icon-button icon-target"
             @click="openAndScrollTo(navigationPath)"
@@ -98,7 +95,7 @@ export default {
     },
     computed: {
         isAlias() {
-            return this.openmct.objects.isObjectPathToALink(this.domainObject, this.objectPath);
+            return this.openmct.objects.isObjectPathToALink(this.domainObject, this.objectPath) ? { 'is-alias': true } : undefined;
         },
         resultTypeIcon() {
             return this.openmct.types.get(this.domainObject.type).definition.cssClass;
@@ -112,7 +109,7 @@ export default {
         this.previewAction.off('isVisible', this.togglePreviewState);
     },
     methods: {
-        clickedResult(_event) {
+        clickedRecent(_event) {
             if (this.openmct.editor.isEditing()) {
                 this.preview();
             } else {
