@@ -82,6 +82,7 @@
 </template>
 
 <script>
+
 import Condition from './Condition.vue';
 import ConditionManager from '../ConditionManager';
 

@@ -240,9 +240,8 @@ export default class Condition extends EventEmitter {
     }
 
     handleTelemetryStaleness() {
-        console.log('condition handle staleness', this.criteria, this.trigger);
         this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
-        console.log('result', this.result);
+        this.conditionManager.updateCurrentCondition();
     }
 
     updateDescription() {

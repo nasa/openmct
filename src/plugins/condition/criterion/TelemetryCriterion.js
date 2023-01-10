@@ -48,8 +48,6 @@ export default class TelemetryCriterion extends EventEmitter {
         this.ageCheck = undefined;
         this.unsubscribeFromStaleness = undefined;
 
-        console.log(telemetryDomainObjectDefinition);
-
         this.initialize();
         this.emitEvent('criterionUpdated', this);
     }
@@ -100,7 +98,6 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     handleStaleTelemetry(isStale) {
-        console.log('single handle stale telemetry', isStale);
         this.result = isStale;
         this.emitEvent('telemetryStaleness');
     }
@@ -290,7 +287,6 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     getDescription(criterion, index) {
-        console.log('get description', this.telemetryObject);
         let description;
         if (!this.telemetry || !this.telemetryObject || (this.telemetryObject.type === 'unknown')) {
             description = `Unknown ${this.metadata} ${getOperatorText(this.operation, this.input)}`;

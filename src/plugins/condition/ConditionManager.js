@@ -375,7 +375,6 @@ export default class ConditionManager extends EventEmitter {
 
     updateConditionResults(normalizedDatum) {
         //We want to stop when the first condition evaluates to true.
-        console.log('this.conditions in conditionmanager.js', this.conditions);
         this.conditions.some((condition) => {
             condition.updateResult(normalizedDatum);
 
