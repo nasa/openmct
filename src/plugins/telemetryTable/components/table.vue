@@ -753,7 +753,6 @@ export default {
                     this.staleObjects.splice(index, 1);
                 }
             }
-            console.log('stale objects', this.staleObjects);
         },
         calculateTableSize() {
             this.$nextTick().then(this.calculateColumnWidths);

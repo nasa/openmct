@@ -38,7 +38,6 @@ export default function GaugeViewProvider(openmct) {
         },
         view: function (domainObject) {
             let component;
-            let composition = openmct.composition.get(domainObject);
 
             return {
                 show: function (element) {
@@ -50,7 +49,7 @@ export default function GaugeViewProvider(openmct) {
                         provide: {
                             openmct,
                             domainObject,
-                            composition
+                            composition: openmct.composition.get(domainObject)
                         },
                         template: '<gauge-component></gauge-component>'
                     });

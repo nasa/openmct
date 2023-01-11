@@ -317,7 +317,7 @@ export const OPERATIONS = [
         appliesTo: ["number"],
         inputCount: 0,
         getDescription: function () {
-            return ' is stale (dependent on an installed staleness provider)';
+            return ' is stale';
         }
     }
 ];
