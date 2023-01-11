@@ -140,6 +140,10 @@ export default {
         if (this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
+
+        if (this.unsubscribeFromStaleness) {
+            Object.values(this.unsubscribeFromStaleness).forEach(unsubscribe => unsubscribe());
+        }
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
@@ -211,18 +215,43 @@ export default {
             return arr;
         },
         addTelemetryObject(domainObject) {
+            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
             this.telemetryObjs.push(domainObject);
             this.$emit('telemetryUpdated', this.telemetryObjs);
+
+            if (!this.unsubscribeFromStaleness) {
+                this.unsubscribeFromStaleness = {};
+            }
+
+            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
+                this.$emit('telemetryStaleness', {
+                    keyString,
+                    isStale
+                });
+            });
+
+            this.unsubscribeFromStaleness[keyString] = unsubscribeFromStaleness;
         },
         removeTelemetryObject(identifier) {
-            let index = this.telemetryObjs.findIndex(obj => {
+            const keyString = this.openmct.objects.makeKeyString(identifier);
+            const index = this.telemetryObjs.findIndex(obj => {
                 let objId = this.openmct.objects.makeKeyString(obj.identifier);
-                let id = this.openmct.objects.makeKeyString(identifier);
 
-                return objId === id;
+                return objId === keyString;
             });
+
             if (index > -1) {
                 this.telemetryObjs.splice(index, 1);
+            }
+
+            if (this.unsubscribeFromStaleness[keyString]) {
+                this.unsubscribeFromStaleness[keyString]();
+
+                this.$emit('telemetryStaleness', {
+                    keyString,
+                    isStale: false
+                });
             }
         },
         addCondition() {

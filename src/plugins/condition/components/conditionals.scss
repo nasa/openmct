@@ -54,6 +54,10 @@
     height: 100%;
     overflow: hidden;
 
+    &.is-stale {
+        border: 1px solid cyan;
+    }
+
     /************************** CONDITION SET LAYOUT */
     &__current-output {
         flex: 0 0 auto;
