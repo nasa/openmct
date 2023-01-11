@@ -97,7 +97,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- should have stuff here -->
                     <tr
                         v-for="statusForRole in statusesForRolesViewModel"
                         :key="statusForRole.key"
