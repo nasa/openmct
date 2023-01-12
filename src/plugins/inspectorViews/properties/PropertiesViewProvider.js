@@ -20,14 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PropertiesViewProvider from './properties/PropertiesViewProvider';
-import LocationViewProvider from './location/LocationViewProvider';
-import ElementsViewProvider from './elements/ElementsViewProvider';
+import Properties from './Properties.vue';
+import Vue from 'vue';
 
-export default function InspectorViewsPlugin() {
-    return function install(openmct) {
-        openmct.inspectorViews.addProvider(new PropertiesViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new LocationViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new ElementsViewProvider(openmct));
+export default function PropertiesViewProvider(openmct) {
+    return {
+        key: 'propertiesView',
+        name: 'Properties',
+        canView: function (selection) {
+            return selection.length > 0;
+        },
+        view: function (selection) {
+            let component;
+
+            return {
+                show: function (el) {
+                    component = new Vue({
+                        el,
+                        components: {
+                            Properties
+                        },
+                        provide: {
+                            openmct
+                        },
+                        template: `<Properties />`
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        },
+        priority: function () {
+            return this.openmct.priority.LOW;
+        }
     };
 }

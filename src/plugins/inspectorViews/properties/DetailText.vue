@@ -20,14 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PropertiesViewProvider from './properties/PropertiesViewProvider';
-import LocationViewProvider from './location/LocationViewProvider';
-import ElementsViewProvider from './elements/ElementsViewProvider';
+<template>
+<li class="c-inspect-properties__row">
+    <div class="c-inspect-properties__label">
+        {{ detail.name }}
+    </div>
+    <div class="c-inspect-properties__value">
+        {{ detail.value }}
+    </div>
+</li>
+</template>
 
-export default function InspectorViewsPlugin() {
-    return function install(openmct) {
-        openmct.inspectorViews.addProvider(new PropertiesViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new LocationViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new ElementsViewProvider(openmct));
-    };
-}
+<script>
+export default {
+    props: {
+        detail: {
+            type: Object,
+            required: true
+        }
+    }
+};
+</script>
