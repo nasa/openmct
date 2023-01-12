@@ -66,5 +66,14 @@ describe('the url tool', function () {
             const constructedURL = objectPathToUrl(openmct, mockObjectPath);
             expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder');
         });
+        it('can take params to set a custom url', () => {
+            const customParams = {
+                'tc.startBound': 1669911059,
+                'tc.endBound': 1669911082,
+                'tc.mode': 'fixed'
+            };
+            const constructedURL = objectPathToUrl(openmct, mockObjectPath, customParams);
+            expect(constructedURL).toContain('tc.startBound=1669911059&tc.endBound=1669911082&tc.mode=fixed');
+        });
     });
 });

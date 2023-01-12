@@ -33,7 +33,8 @@ define([
         dataRateInHz: 1,
         randomness: 0,
         phase: 0,
-        loadDelay: 0
+        loadDelay: 0,
+        infinityValues: false
     };
 
     function GeneratorProvider(openmct) {
@@ -56,7 +57,8 @@ define([
             'dataRateInHz',
             'randomness',
             'phase',
-            'loadDelay'
+            'loadDelay',
+            'infinityValues'
         ];
 
         request = request || {};

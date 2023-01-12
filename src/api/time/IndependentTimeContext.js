@@ -202,8 +202,13 @@ class IndependentTimeContext extends TimeContext {
     }
 
     getUpstreamContext() {
-        let timeContext = this.globalTimeContext;
+        const objectKey = this.openmct.objects.makeKeyString(this.objectPath[this.objectPath.length - 1].identifier);
+        const doesObjectHaveTimeContext = this.globalTimeContext.independentContexts.get(objectKey);
+        if (doesObjectHaveTimeContext) {
+            return undefined;
+        }
 
+        let timeContext = this.globalTimeContext;
         this.objectPath.some((item, index) => {
             const key = this.openmct.objects.makeKeyString(item.identifier);
             //last index is the view object itself

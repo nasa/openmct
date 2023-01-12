@@ -143,6 +143,16 @@ define([
                         "telemetry",
                         "loadDelay"
                     ]
+                },
+                {
+                    name: "Include Infinity Values",
+                    control: "toggleSwitch",
+                    cssClass: "l-input",
+                    key: "infinityValues",
+                    property: [
+                        "telemetry",
+                        "infinityValues"
+                    ]
                 }
             ],
             initialize: function (object) {
@@ -153,7 +163,8 @@ define([
                     dataRateInHz: 1,
                     phase: 0,
                     randomness: 0,
-                    loadDelay: 0
+                    loadDelay: 0,
+                    infinityValues: false
                 };
             }
         });
