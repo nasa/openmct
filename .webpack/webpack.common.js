@@ -15,21 +15,25 @@ const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const { VueLoaderPlugin } = require("vue-loader");
-let gitRevision = "error-retrieving-revision";
-let gitBranch = "error-retrieving-branch";
 
-try {
-    gitRevision = require("child_process")
-        .execSync("git rev-parse HEAD")
-        .toString()
-        .trim();
-    gitBranch = require("child_process")
-        .execSync("git rev-parse --abbrev-ref HEAD")
-        .toString()
-        .trim();
-} catch (err) {
-    console.warn(err);
-}
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const gitRevisionPlugin = new GitRevisionPlugin();
+
+let gitRevision = gitRevisionPlugin.commithash();
+let gitBranch = gitRevisionPlugin.branch();
+
+// try {
+//     gitRevision = require("child_process")
+//         .execSync("git rev-parse HEAD")
+//         .toString()
+//         .trim();
+//     gitBranch = require("child_process")
+//         .execSync("git rev-parse --abbrev-ref HEAD")
+//         .toString()
+//         .trim();
+// } catch (err) {
+//     console.warn(err);
+// }
 
 /** @type {import('webpack').Configuration} */
 const config = {
