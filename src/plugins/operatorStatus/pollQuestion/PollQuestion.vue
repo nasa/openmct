@@ -223,6 +223,7 @@ export default {
             });
             const defaultStatuses = await Promise.all(allStatusRoles.map(role => this.openmct.user.status.getDefaultStatusForRole(role)));
             this.statusesForRolesViewModel = [];
+            console.debug(`🍉 Checking for default statues`);
             statusesForRoles.forEach((status, index) => {
                 const isDefaultStatus = defaultStatuses[index].key === status.key;
                 let statusTimestamp = status.timestamp;
