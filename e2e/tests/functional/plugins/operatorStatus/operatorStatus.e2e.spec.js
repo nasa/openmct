@@ -139,4 +139,8 @@ test.describe('Operator Status', () => {
 
     });
 
+    test.fixme('iterate through all possible response values', async ({ page }) => {
+        // test all possible respone values for the poll
+    });
+
 });
