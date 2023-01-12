@@ -21,9 +21,11 @@
  *****************************************************************************/
 
 import LocationViewProvider from './location/LocationViewProvider';
+import ElementsViewProvider from './elements/ElementsViewProvider';
 
 export default function InspectorViewsPlugin() {
     return function install(openmct) {
         openmct.inspectorViews.addProvider(new LocationViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new ElementsViewProvider(openmct));
     };
 }
