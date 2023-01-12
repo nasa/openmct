@@ -69,6 +69,8 @@ export default {
     },
     methods: {
         updateSelection(selection) {
+            this.selectedTab = undefined;
+
             const inspectorViews = this.openmct.inspectorViews.get(selection);
 
             this.tabs = inspectorViews.map(view => {
@@ -77,6 +79,8 @@ export default {
                     hideTab: view.hideTab
                 };
             });
+
+            this.selectTab(this.visibleTabs[0]);
         },
         isSelected(tab) {
             return this.selectedTab === tab;

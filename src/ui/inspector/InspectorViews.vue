@@ -41,9 +41,6 @@ export default {
     watch: {
         selectedTab() {
             this.showViewsForTab();
-        },
-        selection() {
-            this.updateSelectionViews();
         }
     },
     mounted() {
@@ -58,7 +55,6 @@ export default {
             this.selection = selection;
             this.clearViews();
             this.selectedViews = this.openmct.inspectorViews.get(this.selection);
-            console.log(this.selectedViews);
         },
         clearViews() {
             if (this.visibleViews) {
