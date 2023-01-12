@@ -210,7 +210,6 @@ export default {
             }, {});
             const allStatusRoles = await this.openmct.user.status.getAllStatusRoles();
             const statusesForRoles = await Promise.all(allStatusRoles.map(role => this.openmct.user.status.getStatusForRole(role)));
-
             statusesForRoles.forEach((status, i) => {
                 const currentCount = statusCountMap[status.key];
                 statusCountMap[status.key] = currentCount + 1;
@@ -222,12 +221,20 @@ export default {
                     roleCount: statusCountMap[status.key]
                 };
             });
+            const defaultStatuses = await Promise.all(allStatusRoles.map(role => this.openmct.user.status.getDefaultStatusForRole(role)));
             this.statusesForRolesViewModel = [];
             statusesForRoles.forEach((status, index) => {
+                const isDefaultStatus = defaultStatuses[index].key === status.key;
+                let statusTimestamp = status.timestamp;
+                if (isDefaultStatus) {
+                    // if the default is selected, set timestamp to undefined
+                    statusTimestamp = undefined;
+                }
+
                 this.statusesForRolesViewModel.push({
                     status: this.applyStyling(status),
                     role: allStatusRoles[index],
-                    age: this.formatStatusAge(status.timestamp, this.pollQuestionTimestamp)
+                    age: this.formatStatusAge(statusTimestamp, this.pollQuestionTimestamp)
                 });
             });
         },
