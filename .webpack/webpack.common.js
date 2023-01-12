@@ -16,10 +16,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const { VueLoaderPlugin } = require("vue-loader");
 
-const git = require('git-rev-sync');
+// const git = require('git-rev-sync');
 
-let gitRevision = git.long();
-let gitBranch = git.branch();
+// let gitRevision = git.long();
+// let gitBranch = git.branch();
+let gitRevision = 'no-clue';
+let gitBranch = 'no-clue';
 
 // try {
 //     gitRevision = require("child_process")
