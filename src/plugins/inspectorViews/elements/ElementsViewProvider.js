@@ -49,10 +49,10 @@ export default function ElementsViewProvider(openmct) {
                         template: `<ElementsPool />`
                     });
                 },
-                hideTab: function (isEditing) {
+                showTab: function (isEditing) {
                     const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
 
-                    return !hasComposition || !isEditing;
+                    return hasComposition && isEditing;
                 },
                 destroy: function () {
                     component.$destroy();

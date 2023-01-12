@@ -56,7 +56,9 @@ export default {
     computed: {
         visibleTabs() {
             return this.tabs
-                .filter(tab => !tab.hideTab || tab.hideTab(this.isEditing))
+                .filter(tab => {
+                    return tab.showTab === undefined || tab.showTab(this.isEditing);
+                })
                 .map(tab => tab.name);
         }
     },
@@ -76,7 +78,7 @@ export default {
             this.tabs = inspectorViews.map(view => {
                 return {
                     name: view.name,
-                    hideTab: view.hideTab
+                    showTab: view.showTab
                 };
             });
 
