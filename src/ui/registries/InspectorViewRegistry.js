@@ -40,9 +40,14 @@ export default class InspectorViewRegistry {
      * @private for platform-internal use
      */
     get(selection) {
-        return this.#getAllProviders().filter(function (provider) {
-            return provider.canView(selection);
-        }).map(provider => provider.view(selection));
+        return this.#getAllProviders()
+            .filter(provider => provider.canView(selection))
+            .map(provider => {
+                const view = provider.view(selection);
+                view.name = provider.name;
+
+                return view;
+            });
     }
 
     /**
