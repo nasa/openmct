@@ -23,6 +23,13 @@
 <template>
 <div class="c-inspector">
     <object-name />
+    <InspectorTabs
+        :is-editing="isEditing"
+        @select-tab="selectTab"
+    />
+    <InspectorViews
+        :selected-tab="selectedTab"
+    />
     <div
         v-if="showStyles"
         class="c-inspector__tabs c-tabs"
@@ -84,6 +91,7 @@ import pane from '../layout/pane.vue';
 import ElementsPool from './ElementsPool.vue';
 import Properties from './details/Properties.vue';
 import ObjectName from './ObjectName.vue';
+import InspectorTabs from './InspectorTabs.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
 import stylesManager from '@/ui/inspector/styles/StylesManager';
@@ -99,6 +107,7 @@ export default {
         ElementsPool,
         Properties,
         ObjectName,
+        InspectorTabs,
         InspectorViews
     },
     provide: {
@@ -113,6 +122,7 @@ export default {
     },
     data() {
         return {
+            selectedTab: undefined,
             hasComposition: false,
             showStyles: false,
             tabbedViews: [{
@@ -184,6 +194,9 @@ export default {
                 && selection.length
                 && selection[0].length
                 && selection[0][0].activity;
+        },
+        selectTab(tab) {
+            this.selectedTab = tab;
         }
     }
 };

@@ -21,63 +21,69 @@
  *****************************************************************************/
 
 <template>
-<div></div>
+<div
+    class="c-inspector__tabs c-tabs"
+>
+    <div
+        v-for="tab in visibleTabs"
+        :key="tab"
+        class="c-inspector__tab c-tab"
+        :class="{'is-current': isSelected(tab)}"
+        @click="selectTab(tab)"
+    >
+        {{ tab }}
+    </div>
+
+</div>
 </template>
 
 <script>
 export default {
     inject: ['openmct'],
     props: {
-        selectedTab: {
-            type: String,
-            default: ''
+        isEditing: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
         return {
+            tabs: [],
+            selectedTab: undefined,
             selection: []
         };
     },
-    watch: {
-        selectedTab() {
-            this.showViewsForTab();
-        },
-        selection() {
-            this.updateSelectionViews();
+    computed: {
+        visibleTabs() {
+            return this.tabs
+                .filter(tab => !tab.hideTab || tab.hideTab(this.isEditing))
+                .map(tab => tab.name);
         }
     },
     mounted() {
-        this.openmct.selection.on('change', this.updateSelectionViews);
-        this.updateSelectionViews(this.openmct.selection.get());
+        this.openmct.selection.on('change', this.updateSelection);
+        this.updateSelection(this.openmct.selection.get());
     },
     destroyed() {
-        this.openmct.selection.off('change', this.updateSelectionViews);
+        this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
-        updateSelectionViews(selection) {
-            this.selection = selection;
-            this.clearViews();
-            this.selectedViews = this.openmct.inspectorViews.get(this.selection);
-            console.log(this.selectedViews);
-        },
-        clearViews() {
-            if (this.visibleViews) {
-                this.visibleViews.forEach(visibleView => {
-                    visibleView.destroy();
-                });
-                this.$el.innerHTML = '';
-            }
-        },
-        showViewsForTab() {
-            this.clearViews();
-            this.visibleViews = this.selectedViews
-                .filter(view => view.name === this.selectedTab);
+        updateSelection(selection) {
+            const inspectorViews = this.openmct.inspectorViews.get(selection);
 
-            this.visibleViews.forEach(visibleView => {
-                let viewContainer = document.createElement('div');
-                this.$el.append(viewContainer);
-                visibleView.show(viewContainer);
+            this.tabs = inspectorViews.map(view => {
+                return {
+                    name: view.name,
+                    hideTab: view.hideTab
+                };
             });
+        },
+        isSelected(tab) {
+            return this.selectedTab === tab;
+        },
+        selectTab(tab) {
+            this.selectedTab = tab;
+            this.$emit('select-tab', tab);
         }
     }
 };
