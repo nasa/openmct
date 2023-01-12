@@ -56,14 +56,6 @@
                 />
                 <InspectorViews />
             </pane>
-            <pane
-                v-if="isEditing && hasComposition"
-                class="c-inspector__elements"
-                handle="before"
-                label="Elements"
-            >
-                <elements-pool />
-            </pane>
         </multipane>
         <multipane
             v-show="currentTabbedView.key === '__styles'"
@@ -88,7 +80,6 @@
 <script>
 import multipane from '../layout/multipane.vue';
 import pane from '../layout/pane.vue';
-import ElementsPool from './ElementsPool.vue';
 import Properties from './details/Properties.vue';
 import ObjectName from './ObjectName.vue';
 import InspectorTabs from './InspectorTabs.vue';
@@ -104,7 +95,6 @@ export default {
         SavedStylesInspectorView,
         multipane,
         pane,
-        ElementsPool,
         Properties,
         ObjectName,
         InspectorTabs,
