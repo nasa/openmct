@@ -71,6 +71,7 @@ test.describe('Operator Status', () => {
 
         // get selected status value
         const selectStatus = page.locator('select[name="setStatus"]');
+        await selectStatus.selectOption({ index: 1});
         const initialStatusValue = await selectStatus.inputValue();
 
         // open manage status poll
@@ -97,11 +98,48 @@ test.describe('Operator Status', () => {
         const updatedRowValues = await updatedRow.innerText();
         const updatedRowValuesArr = updatedRowValues.split('\t');
 
-        expect(updatedRowValuesArr[COLUMN_STATUS_INDEX].toLowerCase()).toEqual(updatedStatusValue.toLowerCase());
+        expect(updatedRowValuesArr[COLUMN_STATUS_INDEX].toLowerCase())
+            .toEqual(updatedStatusValue.toLowerCase());
 
     });
 
-    test.fixme('clear poll button removes poll responses', () => {
+    test('clear poll button removes poll responses', async ({ page }) => {
+        // user navigates to operator status poll
+        const statusPollIndicator = page.locator('div[title="Set my operator status"]');
+        await statusPollIndicator.click();
+
+        // get user role value
+        const userRole = page.locator('.c-status-poll-panel__user-role');
+        const userRoleText = await userRole.innerText();
+
+        // get selected status value
+        const selectStatus = page.locator('select[name="setStatus"]');
+        // FIXME: might want to grab a dynamic option instead of arbitrary
+        await selectStatus.selectOption({ index: 1});
+        const initialStatusValue = await selectStatus.inputValue();
+
+        // open manage status poll
+        const manageStatusPollIndicator = page.locator('div[title="Set the current poll question"]');
+        await manageStatusPollIndicator.click();
+        // parse the table row values
+        const row = page.locator(`tr:has-text("${userRoleText}")`);
+        const rowValues = await row.innerText();
+        const rowValuesArr = rowValues.split('\t');
+        const COLUMN_STATUS_INDEX = 1;
+        // check initial set value matches status table
+        expect(rowValuesArr[COLUMN_STATUS_INDEX].toLowerCase())
+            .toEqual(initialStatusValue.toLowerCase());
+
+        // clear the poll
+        await page.locator('button[title="Clear the previous poll question"]').click();
+
+        const updatedRow = page.locator(`tr:has-text("${userRoleText}")`);
+        const updatedRowValues = await updatedRow.innerText();
+        const updatedRowValuesArr = updatedRowValues.split('\t');
+        const UNSET_VALUE_LABEL = 'Not set';
+        expect(updatedRowValuesArr[COLUMN_STATUS_INDEX])
+            .toEqual(UNSET_VALUE_LABEL);
+
     });
 
 });
