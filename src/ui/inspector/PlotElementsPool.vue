@@ -204,7 +204,7 @@ export default {
                 : this.parentObject.configuration.series[seriesIndex].yAxisId;
 
             if (wasDraggedOntoPlot) {
-                const insertIndex = this.yAxes[seriesIndex].elements.length;
+                const insertIndex = this.yAxes[0].elements.length;
                 // Insert the element at the end of the first YAxis bucket
                 this.composition.reorder(seriesIndex, insertIndex);
             }
