@@ -39,14 +39,11 @@ STUB (test.fixme) Rolling through each
 
 test.describe('Operator Status', () => {
     test.beforeEach(async ({ page }) => {
-
         // FIXME: determine if plugins will be added to index.html or need to be injected
         // await Promise.all([
         //     page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleUser.js') }),
         //     page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js') })
         // ]);
-        page.on('console', msg => console.log(msg.text()))
-
         await page.goto('./', { waitUntil: 'networkidle' });
     });
 
