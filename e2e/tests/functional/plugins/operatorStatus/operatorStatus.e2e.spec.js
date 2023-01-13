@@ -49,7 +49,7 @@ test.describe('Operator Status', () => {
 
     // verify that operator status is visible
     test('operator status is visible and expands when clicked', async ({ page }) => {
-        await page.locator('div[title="Set my operator status"]').isVisible();
+        await expect(page.locator('div[title="Set my operator status"]')).toBeVisible();
         await page.locator('div[title="Set my operator status"]').click();
 
         // expect default status to be 'GO'
