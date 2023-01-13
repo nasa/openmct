@@ -44,6 +44,7 @@
         </span>
 
         <ObjectPath
+            class="c-recentobjects-listitem__object-path"
             :read-only="false"
             :domain-object="domainObject"
             :show-original-path="false"

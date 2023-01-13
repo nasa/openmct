@@ -23,6 +23,7 @@
 .c-recentobjects-listitem {
   display: flex;
   padding: $interiorMargin $interiorMarginSm;
+  align-items: flex-start;
 
   > * + * {
       margin-left: $interiorMarginLg;
@@ -40,6 +41,14 @@
               bottom: 20%;
           }
       }
+  }
+
+  &__object-path {
+   // background: red;
+  }
+
+  &__target-button{
+    opacity: 0;
   }
 
   &__type-icon,
@@ -71,7 +80,16 @@
       .c-location {
           font-size: 0.9em;
           opacity: 0.8;
+
+          &__item {
+
+            > * + * {
+                background: blue !important;
+
+            }
+          }
       }
+
   }
 
   &__tags {
@@ -97,4 +115,8 @@
   .c-tag {
       font-size: 0.9em;
   }
+}
+
+.c-recentobjects-listitem:hover .c-recentobjects-listitem__target-button {
+    opacity: 100;
 }
