@@ -731,11 +731,11 @@ export default {
             this.yScale = [];
             //TODO: handle yScale, zoom/pan for all yAxes
             this.yAxisListWithRange.forEach((yAxis) => {
-                console.log(yAxis.id);
-                console.log(yAxis.get('displayRange'));
-                this.yScale.push(new LinearScale(yAxis.get('displayRange')));
+                this.yScale.push({
+                    id: yAxis.id,
+                    scale: new LinearScale(yAxis.get('displayRange'))
+                });
             });
-            console.log(this.yScale);
 
             this.pan = undefined;
             this.marquee = undefined;
@@ -751,9 +751,8 @@ export default {
             this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
 
             this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
-            this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
-            this.config.additionalYAxes.forEach(yAxis => {
-                this.listenTo(yAxis, 'change:displayRange', this.onYAxisChange, this);
+            this.yAxisListWithRange.forEach((yAxis) => {
+                this.listenTo(yAxis, 'change:displayRange', this.onYAxisChange.bind(this, yAxis.id), this);
             });
         },
 
@@ -763,10 +762,10 @@ export default {
             }
         },
 
-        onYAxisChange(displayBounds) {
+        onYAxisChange(yAxisId, displayBounds) {
             if (displayBounds) {
-                this.yScale.forEach((yAxis) => {
-                    yAxis.domain(displayBounds);
+                this.yScale.filter((yAxis) => yAxis.id === yAxisId).forEach((yAxis) => {
+                    yAxis.scale.domain(displayBounds);
                 });
             }
         },
@@ -798,7 +797,7 @@ export default {
                 max: this.chartElementBounds.width
             });
             this.yScale.forEach((yAxis) => {
-                yAxis.range({
+                yAxis.scale.range({
                     min: 0,
                     max: this.chartElementBounds.height
                 });
@@ -810,7 +809,7 @@ export default {
                     - (event.clientY - this.chartElementBounds.top)
             };
 
-            const yLocationForPositionOverPlot = this.yScale.map((yAxis) => yAxis.invert(this.positionOverElement.y));
+            const yLocationForPositionOverPlot = this.yScale.map((yAxis) => yAxis.scale.invert(this.positionOverElement.y));
             this.positionOverPlot = {
                 x: this.xScale.invert(this.positionOverElement.x),
                 y: yLocationForPositionOverPlot
@@ -935,6 +934,7 @@ export default {
         },
 
         updateMarquee() {
+            console.log('updateMarqee');
             if (!this.marquee) {
                 return;
             }
@@ -950,6 +950,10 @@ export default {
             this.trackMousePosition(event);
             if (this.positionOverPlot) {
                 this.freeze();
+                const positionOverPlot = {
+                    x: this.positionOverPlot.x,
+                    y: this.positionOverPlot.y[0]
+                };
                 this.marquee = {
                     startPixels: this.positionOverElement,
                     endPixels: this.positionOverElement,
@@ -957,7 +961,12 @@ export default {
                     end: this.positionOverPlot,
                     color: [1, 1, 1, 0.5]
                 };
-                this.rectangles.push(this.marquee);
+                const marquee = {
+                    ...this.marquee,
+                    start: positionOverPlot,
+                    end: positionOverPlot
+                };
+                this.rectangles.push(marquee);
                 this.trackHistory();
             }
         },
@@ -978,13 +987,9 @@ export default {
                 });
                 this.yAxisListWithRange.forEach((yAxis, index) => {
                     yAxis.set('displayRange', {
-                        min: Math.min(this.marquee.start[index].y, this.marqee.end[index].y),
-                        max: Math.max(this.marquee.start[index].y, this.marquee.end[index].y)
+                        min: Math.min(this.marquee.start.y[index], this.marquee.end.y[index]),
+                        max: Math.max(this.marquee.start.y[index], this.marquee.end.y[index])
                     });
-                });
-                this.config.yAxis.set('displayRange', {
-                    min: Math.min(this.marquee.start.y, this.marquee.end.y),
-                    max: Math.max(this.marquee.start.y, this.marquee.end.y)
                 });
                 this.userViewportChangeEnd();
             } else {
@@ -1078,6 +1083,17 @@ export default {
             let xAxisMaxDist = xDistMouseToMax / xAxisDist;
             let xAxisMinDist = xDistMouseToMin / xAxisDist;
 
+            let plotHistoryStep;
+
+            if (!plotHistoryStep) {
+                const yRangeList = [];
+                this.yAxisListWithRange.map((yAxis) => yRangeList.push(yAxis.get('displayRange')));
+                plotHistoryStep = {
+                    x: this.config.xAxis.get('displayRange'),
+                    y: yRangeList
+                };
+            }
+
             if (event.wheelDelta < 0) {
 
                 this.config.xAxis.set('displayRange', {
@@ -1125,16 +1141,6 @@ export default {
                         max: yDisplayRange.max + ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
                     });
                 });
-            }
-
-            let plotHistoryStep;
-
-            if (!plotHistoryStep) {
-                const yRangeList = [];
-                plotHistoryStep = {
-                    x: this.config.xAxis.get('displayRange'),
-                    y: yRangeList
-                };
             }
 
             this.stillZooming = window.setTimeout(function () {
@@ -1193,12 +1199,10 @@ export default {
         trackHistory() {
             const yRangeList = [];
             this.yAxisListWithRange.map((yAxis) => yRangeList.push(yAxis.get('displayRange')));
-            console.log('trackHistory');
             this.plotHistory.push({
                 x: this.config.xAxis.get('displayRange'),
                 y: yRangeList
             });
-            console.log(this.plotHistory);
         },
 
         endPan() {
@@ -1235,9 +1239,6 @@ export default {
 
                 return;
             }
-
-            console.log('back');
-            console.log(previousAxisRanges);
 
             this.config.xAxis.set('displayRange', previousAxisRanges.x);
             this.yAxisListWithRange.forEach((yAxis, index) => {
