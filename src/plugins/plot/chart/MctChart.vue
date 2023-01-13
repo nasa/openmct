@@ -109,7 +109,7 @@ export default {
                 const id = yAxis.get('id');
                 this.offset[id] = {};
                 this.listenTo(yAxis, 'change', this.updateLimitsAndDraw);
-                this.listenTo(this.config.yAxis, 'change:key', this.resetOffsetAndSeriesDataForYAxis.bind(this, id), this);
+                this.listenTo(yAxis, 'change:key', this.resetOffsetAndSeriesDataForYAxis.bind(this, id), this);
             });
         }
 
@@ -517,6 +517,7 @@ export default {
             );
         },
         matchByYAxisId(id, item) {
+            console.log('matchByYAxisId');
             const mainYAxisId = this.config.yAxis.get('id');
             let matchesId = false;
 
@@ -691,6 +692,7 @@ export default {
             }
         },
         drawRectangle(yAxisId, rect) {
+            console.log('drawRectangle');
             this.drawAPI.drawSquare(
                 [
                     this.offset[yAxisId].x(rect.start.x),
