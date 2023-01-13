@@ -124,6 +124,8 @@ export default {
 
         const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.config = this.getConfig(configId);
+        this.addSeriesListeners();
+
         this.legend = this.config.legend;
 
         this.loaded = true;
@@ -243,22 +245,39 @@ export default {
         highlightsUpdated(data) {
             this.highlights = data;
         },
-        registerSeriesListeners(configId) {
-            const superConfigId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const superConfig = this.getConfig(superConfigId);
-            this.listenTo(superConfig.series, 'remove', this.removeSeries, this);
-            this.listenTo(superConfig.series, 'add', this.addSeries, this);
+        addSeriesListeners() {
+            this.listenTo(this.config.series, 'add', this.addSeries, this);
+            this.listenTo(this.config.series, 'remove', this.removeSeries, this);
 
-            this.seriesConfig[configId] = this.getConfig(configId);
-            this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
+            this.config.series.models.forEach(this.addSeries, this);
+        },
+        registerSeriesListeners(configId) {
+            const config = this.getConfig(configId);
+            this.seriesConfig[configId] = config;
+            const childObject = config.get('domainObject');
+
+            if (childObject.configuration && childObject.configuration.series) {
+                this.listenTo(config.series, 'add', this.addSeries, this);
+                this.listenTo(config.series, 'remove', this.removeSeries, this);
+
+                config.series.models.forEach(this.addSeries, this);
+            }
+        },
+        addSeries(series) {
+            const childObject = series.domainObject;
+            if (!childObject.configuration || !childObject.configuration.series) {
+                const index = this.seriesModels.length;
+                this.$set(this.seriesModels, index, series);
+            }
+
         },
         removeSeries(plotSeries) {
-            const index = this.seriesModels.findIndex(seriesModel => {
-                return seriesModel.keyString === plotSeries.keyString;
-            });
+            const index = this.seriesModels.findIndex(seriesModel => seriesModel.keyString === plotSeries.keyString);
             if (index > -1) {
                 this.$delete(this.seriesModels, index);
             }
+
+            this.stopListening(plotSeries);
         },
         onCursorGuideChange(cursorGuide) {
             this.cursorGuide = cursorGuide === true;

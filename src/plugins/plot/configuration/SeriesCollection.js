@@ -43,6 +43,7 @@ export default class SeriesCollection extends Collection {
         this.listenTo(this, 'add', this.onSeriesAdd, this);
         this.listenTo(this, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
+
         const domainObject = this.plot.get('domainObject');
         if (domainObject.telemetry) {
             this.addTelemetryObject(domainObject);
@@ -74,7 +75,7 @@ export default class SeriesCollection extends Collection {
                 identifier: domainObject.identifier
             };
 
-            if (plotObject.type.startsWith('telemetry.plot')) {
+            if (plotObject.type === 'telemetry.plot.overlay') {
                 this.openmct.objects.mutate(
                     plotObject,
                     'configuration.series[' + this.size() + ']',
@@ -104,7 +105,7 @@ export default class SeriesCollection extends Collection {
     }
     removeTelemetryObject(identifier) {
         const plotObject = this.plot.get('domainObject');
-        if (plotObject.type.startsWith('telemetry.plot')) {
+        if (plotObject.type === 'telemetry.plot.overlay' || plotObject.type === 'telemetry.plot.stacked') {
 
             const persistedIndex = plotObject.configuration.series.findIndex(s => {
                 return _.isEqual(identifier, s.identifier);
