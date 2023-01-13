@@ -21,7 +21,9 @@
  *****************************************************************************/
 
 <template>
-<div></div>
+<div
+    class="c-inspector__content"
+></div>
 </template>
 
 <script>
@@ -31,28 +33,34 @@ export default {
         selectedTab: {
             type: String,
             default: ''
+        },
+        selection: {
+            type: Array,
+            default: () => {
+                return [];
+            }
         }
     },
     data() {
         return {
-            selection: []
+            // selection: []
         };
     },
     watch: {
+        selection() {
+            this.updateSelectionViews();
+        },
         selectedTab() {
             this.showViewsForTab();
         }
     },
     mounted() {
-        this.openmct.selection.on('change', this.updateSelectionViews);
-        this.updateSelectionViews(this.openmct.selection.get());
+        // this.updateSelectionViews(this.openmct.selection.get());
     },
-    destroyed() {
-        this.openmct.selection.off('change', this.updateSelectionViews);
+    beforeDestroy() {
     },
     methods: {
         updateSelectionViews(selection) {
-            this.selection = selection;
             this.clearViews();
             this.selectedViews = this.openmct.inspectorViews.get(this.selection);
         },
@@ -61,6 +69,8 @@ export default {
                 this.visibleViews.forEach(visibleView => {
                     visibleView.destroy();
                 });
+
+                this.visibleViews = [];
                 this.$el.innerHTML = '';
             }
         },

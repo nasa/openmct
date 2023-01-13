@@ -23,11 +23,13 @@
 import PropertiesViewProvider from './properties/PropertiesViewProvider';
 import LocationViewProvider from './location/LocationViewProvider';
 import ElementsViewProvider from './elements/ElementsViewProvider';
+import StylesInspectorViewProvider from './styles/StylesInspectorViewProvider';
 
 export default function InspectorViewsPlugin() {
     return function install(openmct) {
         openmct.inspectorViews.addProvider(new PropertiesViewProvider(openmct));
         openmct.inspectorViews.addProvider(new LocationViewProvider(openmct));
         openmct.inspectorViews.addProvider(new ElementsViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new StylesInspectorViewProvider(openmct));
     };
 }

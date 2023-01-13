@@ -41,16 +41,25 @@
 export default {
     inject: ['openmct'],
     props: {
+        selection: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        },
         isEditing: {
             type: Boolean,
             required: true
         }
     },
+    selection: {
+        type: Array,
+        default: []
+    },
     data() {
         return {
             tabs: [],
-            selectedTab: undefined,
-            selection: []
+            selectedTab: undefined
         };
     },
     computed: {
@@ -62,18 +71,23 @@ export default {
                 .map(tab => tab.name);
         }
     },
+    watch: {
+        selection(selection) {
+            this.updateSelection();
+        }
+    },
     mounted() {
-        this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
+        // this.openmct.selection.on('change', this.updateSelection);
+        // this.updateSelection(this.openmct.selection.get());
     },
     destroyed() {
-        this.openmct.selection.off('change', this.updateSelection);
+        // this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
-        updateSelection(selection) {
+        updateSelection() {
             this.selectedTab = undefined;
 
-            const inspectorViews = this.openmct.inspectorViews.get(selection);
+            const inspectorViews = this.openmct.inspectorViews.get(this.selection);
 
             this.tabs = inspectorViews.map(view => {
                 return {
@@ -87,6 +101,10 @@ export default {
         isSelected(tab) {
             return this.selectedTab === tab;
         },
+        // deSelectTab() {
+        //     this.selectedTab = undefined;
+        //     this.$emit('de-select-tab');
+        // },
         selectTab(tab) {
             this.selectedTab = tab;
             this.$emit('select-tab', tab);
