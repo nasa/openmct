@@ -193,23 +193,27 @@ export default class ObjectAPI {
      * @memberof module:openmct.ObjectProvider#
      * @param {string} key the key for the domain object to load
      * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
+     * @param {boolean} forceRemote defaults to false. If true, will skip cached and
+     *          dirty/in-transaction objects use and the provider.get method
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    get(identifier, abortSignal) {
+    get(identifier, abortSignal, forceRemote = false) {
         let keystring = this.makeKeyString(identifier);
 
-        if (this.cache[keystring] !== undefined) {
-            return this.cache[keystring];
-        }
+        if (!forceRemote) {
+            if (this.cache[keystring] !== undefined) {
+                return this.cache[keystring];
+            }
 
-        identifier = utils.parseKeyString(identifier);
+            identifier = utils.parseKeyString(identifier);
 
-        if (this.isTransactionActive()) {
-            let dirtyObject = this.transaction.getDirtyObject(identifier);
+            if (this.isTransactionActive()) {
+                let dirtyObject = this.transaction.getDirtyObject(identifier);
 
-            if (dirtyObject) {
-                return Promise.resolve(dirtyObject);
+                if (dirtyObject) {
+                    return Promise.resolve(dirtyObject);
+                }
             }
         }
 
@@ -391,7 +395,6 @@ export default class ObjectAPI {
                 lastPersistedTime = domainObject.persisted;
                 const persistedTime = Date.now();
                 this.#mutate(domainObject, 'persisted', persistedTime);
-
                 savedObjectPromise = provider.update(domainObject);
             }
 
@@ -399,7 +402,7 @@ export default class ObjectAPI {
                 savedObjectPromise.then(response => {
                     savedResolve(response);
                 }).catch((error) => {
-                    if (lastPersistedTime !== undefined) {
+                    if (!isNewObject) {
                         this.#mutate(domainObject, 'persisted', lastPersistedTime);
                     }
 
@@ -412,11 +415,12 @@ export default class ObjectAPI {
 
         return result.catch(async (error) => {
             if (error instanceof this.errors.Conflict) {
-                this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+                // Synchronized objects will resolve their own conflicts
+                if (this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+                    this.openmct.notifications.info(`Conflict detected while saving "${this.makeKeyString(domainObject.name)}", attempting to resolve`);
+                } else {
+                    this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
 
-                // Synchronized objects will resolve their own conflicts, so
-                // bypass the refresh here and throw the error.
-                if (!this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
                     if (this.isTransactionActive()) {
                         this.endTransaction();
                     }

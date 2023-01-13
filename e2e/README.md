@@ -8,7 +8,7 @@ This document is designed to capture on the What, Why, and How's of writing and 
 
 1. [Getting Started](#getting-started)
 2. [Types of Testing](#types-of-e2e-testing)
-3. [Architecture](#architecture)
+3. [Architecture](#test-architecture-and-ci)
 
 ## Getting Started
 
@@ -400,3 +400,23 @@ A single e2e test in Open MCT is extended to run:
 - Tests won't start because 'Error: <http://localhost:8080/># is already used...'
 This error will appear when running the tests locally. Sometimes, the webserver is left in an orphaned state and needs to be cleaned up. To clear up the orphaned webserver, execute the following from your Terminal:
 ```lsof -n -i4TCP:8080 | awk '{print$2}' | tail -1 | xargs kill -9```
+
+### Upgrading Playwright
+
+In order to upgrade from one version of Playwright to another, the version should be updated in several places in both `openmct` and `openmct-yamcs` repos. An easy way to identify these locations is to search for the current version in all files and find/replace.
+
+For reference, all of the locations where the version should be updated are listed below:
+
+#### **In `openmct`:**
+
+- `package.json`
+  - Both packages `@playwright/test` and `playwright-core` should be updated to the same target version.
+- `.circleci/config.yml`
+- `.github/workflows/e2e-couchdb.yml`
+- `.github/workflows/e2e-pr.yml`
+
+#### **In `openmct-yamcs`:**
+
+- `package.json`
+  - `@playwright/test` should be updated to the target version.
+- `.github/workflows/yamcs-quickstart-e2e.yml`
