@@ -24,7 +24,7 @@
 * This test suite is dedicated to testing the operator status plugin.
 */
 
-// const path = require('path');
+const path = require('path');
 const { test, expect } = require('../../../../pluginFixtures');
 
 /*
@@ -40,10 +40,10 @@ STUB (test.fixme) Rolling through each
 test.describe('Operator Status', () => {
     test.beforeEach(async ({ page }) => {
         // FIXME: determine if plugins will be added to index.html or need to be injected
-        // await Promise.all([
-        //     page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleUser.js') }),
-        //     page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js') })
-        // ]);
+        // eslint-disable-next-line no-undef
+        await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleUser.js')});
+        // eslint-disable-next-line no-undef
+        await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js')});
         await page.goto('./', { waitUntil: 'networkidle' });
     });
 
