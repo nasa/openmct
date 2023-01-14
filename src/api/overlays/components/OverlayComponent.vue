@@ -15,6 +15,8 @@
             ref="element"
             class="c-overlay__contents js-notebook-snapshot-item-wrapper"
             tabindex="0"
+            aria-modal="true"
+            role="dialog"
         ></div>
         <div
             v-if="buttons"
