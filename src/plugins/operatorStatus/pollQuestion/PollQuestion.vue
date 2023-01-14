@@ -180,13 +180,12 @@ export default {
         },
         setPollQuestion(pollQuestion) {
             let pollQuestionText = pollQuestion.question;
-            this.indicator.text(pollQuestionText);
-            // if (!pollQuestionText || pollQuestionText === '') {
-            //     pollQuestionText = '--';
-            //     this.indicator.text('Poll Question');
-            // } else {
-            //     this.indicator.text(pollQuestionText);
-            // }
+            if (!pollQuestionText || pollQuestionText === '') {
+                pollQuestionText = '--';
+                this.indicator.text('Poll Question');
+            } else {
+                this.indicator.text(pollQuestionText);
+            }
 
             console.debug(`🍇 Poll question changed to: ${pollQuestionText}`);
             this.currentPollQuestion = pollQuestionText;
