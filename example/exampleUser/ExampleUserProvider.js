@@ -134,14 +134,22 @@ export default class ExampleUserProvider extends EventEmitter {
         return true;
     }
 
-    getPollQuestion() {
-        return Promise.resolve({
-            question: 'Set "GO" if your position is ready for a boarding action on the Klingon cruiser',
-            timestamp: Date.now()
-        });
+    // eslint-disable-next-line require-await
+    async getPollQuestion() {
+        if (this.pollQuestion) {
+            return this.pollQuestion;
+        } else {
+            return undefined;
+        }
     }
 
     setPollQuestion(pollQuestion) {
+        if (!pollQuestion) {
+            // this behhavior better reflects how other telemetry systems
+            // deal with undefined poll questions
+            pollQuestion = '';
+        }
+
         this.pollQuestion = {
             question: pollQuestion,
             timestamp: Date.now()
