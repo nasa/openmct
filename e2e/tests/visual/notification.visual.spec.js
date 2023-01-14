@@ -26,6 +26,7 @@
 
 const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe('Visual - Check Notification Info Banner of \'Save successful\'', () => {
     test.beforeEach(async ({ page }) => {
@@ -34,12 +35,8 @@ test.describe('Visual - Check Notification Info Banner of \'Save successful\'', 
     });
 
     test('Create a clock, click on \'Save successful\' banner and dismiss it', async ({ page }) => {
-        // Click on button that has text "Create" text
-        await page.locator('button:has-text("Create")').click();
-        // Click on "Clock" option from the "menuitem" list
-        await page.locator('li[role="menuitem"]:has-text("Clock")').click();
-        // Click on button that has text=OK
-        await page.locator('text=OK').click();
+        // Create a clock domain object
+        await createDomainObjectWithDefaults(page, { type: 'Clock' });
         // Verify there is a button with aria-label="Review 1 Notification"
         expect(await page.locator('button[aria-label="Review 1 Notification"]').isVisible()).toBe(true);
         // Verify there is a button with aria-label="Clear all notifications"
