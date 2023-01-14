@@ -45,6 +45,14 @@
  * @property {string} url the relative url to the object (for use with `page.goto()`)
  */
 
+/**
+ * Defines parameters to be used in the creation of a notification.
+ * @typedef {Object} CreateNotificationOptions
+ * @property {string} message the message
+ * @property {'info' | 'alert' | 'error'} severity the severity
+ * @property {import('../src/api/notifications/NotificationAPI').NotificationOptions} [notificationOptions] additional options
+ */
+
 const Buffer = require('buffer').Buffer;
 const genUuid = require('uuid').v4;
 
@@ -110,6 +118,25 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
         uuid,
         url: objectUrl
     };
+}
+
+/**
+ * Generate a notification with the given options.
+ * @param {import('@playwright/test').Page} page
+ * @param {CreateNotificationOptions} createNotificationOptions
+ */
+async function createNotification(page, createNotificationOptions) {
+    await page.evaluate((_createNotificationOptions) => {
+        const { message, severity, options } = _createNotificationOptions;
+        const notificationApi = window.openmct.notifications;
+        if (severity === 'info') {
+            notificationApi.info(message, options);
+        } else if (severity === 'alert') {
+            notificationApi.alert(message, options);
+        } else {
+            notificationApi.error(message, options);
+        }
+    }, createNotificationOptions);
 }
 
 /**
@@ -333,6 +360,7 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    createNotification,
     expandTreePaneItemByName,
     createPlanFromJSON,
     openObjectTreeContextMenu,
