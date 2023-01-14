@@ -179,10 +179,19 @@ export default {
             this.openmct.user.status.on('pollQuestionChange', this.setPollQuestion);
         },
         setPollQuestion(pollQuestion) {
-            this.currentPollQuestion = pollQuestion.question;
+            let pollQuestionText = pollQuestion.question;
+            this.indicator.text(pollQuestionText);
+            // if (!pollQuestionText || pollQuestionText === '') {
+            //     pollQuestionText = '--';
+            //     this.indicator.text('Poll Question');
+            // } else {
+            //     this.indicator.text(pollQuestionText);
+            // }
+
+            console.debug(`🍇 Poll question changed to: ${pollQuestionText}`);
+            this.currentPollQuestion = pollQuestionText;
             this.pollQuestionTimestamp = pollQuestion.timestamp;
             this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
-            this.indicator.text(pollQuestion.question);
         },
         async updatePollQuestion() {
             const result = await this.openmct.user.status.setPollQuestion(this.newPollQuestion);

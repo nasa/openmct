@@ -54,8 +54,18 @@ test.describe('Operator Status', () => {
 
         // expect default status to be 'GO'
         await expect(page.locator('.c-status-poll-panel')).toBeVisible();
-
     });
+
+    test('poll question indicator remains when blank poll set', async ({ page }) => {
+        await expect(page.locator('div[title="Set the current poll question"]')).toBeVisible();
+        await page.locator('div[title="Set the current poll question"]').click();
+        // set to blank
+        await page.getByRole('button', { name: 'Update' }).click();
+
+        // should still be visible
+        await expect(page.locator('div[title="Set the current poll question"]')).toBeVisible();
+    });
+
     // Verify that user 1 sees updates from user/role 2 (Not possible without openmct-yamcs implementation)
     test('operator status table reflects answered values', async ({ page }) => {
         // user navigates to operator status poll
