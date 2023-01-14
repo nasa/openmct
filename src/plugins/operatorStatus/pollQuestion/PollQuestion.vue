@@ -187,7 +187,6 @@ export default {
                 this.indicator.text(pollQuestionText);
             }
 
-            console.debug(`🍇 Poll question changed to: ${pollQuestionText}`);
             this.currentPollQuestion = pollQuestionText;
             this.pollQuestionTimestamp = pollQuestion.timestamp;
             this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
