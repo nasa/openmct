@@ -172,7 +172,7 @@
         >
             <ImageThumbnail
                 v-for="(image, index) in imageHistory"
-                :key="image.url + image.time"
+                :key="`${image.thumbnailUrl || image.url}${image.time}`"
                 :image="image"
                 :active="focusedImageIndex === index"
                 :selected="focusedImageIndex === index && isPaused"

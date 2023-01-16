@@ -167,6 +167,7 @@ export default {
         normalizeDatum(datum) {
             const formattedTime = this.formatTime(datum);
             const url = this.formatImageUrl(datum);
+            const thumbnailUrl = this.formatImageThumbnailUrl(datum);
             const time = this.parseTime(formattedTime);
             const imageDownloadName = this.getImageDownloadName(datum);
 
@@ -174,6 +175,7 @@ export default {
                 ...datum,
                 formattedTime,
                 url,
+                thumbnailUrl,
                 time,
                 imageDownloadName
             };
