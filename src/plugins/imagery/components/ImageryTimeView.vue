@@ -186,17 +186,17 @@ export default {
                 item.remove();
             });
             let imagery = this.$el.querySelectorAll(`.${IMAGE_WRAPPER_CLASS}`);
-            imagery.forEach(item => {
+            imagery.forEach(imageElm => {
                 if (clearAllImagery) {
-                    item.remove();
+                    imageElm.remove();
                 } else {
-                    const id = item.getAttributeNS(null, 'id');
+                    const id = imageElm.getAttributeNS(null, 'id');
                     if (id) {
                         const timestamp = id.replace(ID_PREFIX, '');
                         if (!this.isImageryInBounds({
                             time: timestamp
                         })) {
-                            item.remove();
+                            imageElm.remove();
                         }
                     }
                 }
