@@ -343,25 +343,25 @@ export default {
                 imageElement.style.display = 'block';
             }
         },
-        updateExistingImageWrapper(existingImageWrapper, item, showImagePlaceholders) {
+        updateExistingImageWrapper(existingImageWrapper, image, showImagePlaceholders) {
             //Update the x co-ordinates of the image wrapper and the url of image
             //this is to avoid tearing down all elements completely and re-drawing them
             this.setNSAttributesForElement(existingImageWrapper, {
                 'data-show-image-placeholders': showImagePlaceholders
             });
-            existingImageWrapper.style.left = `${this.xScale(item.time)}px`;
+            existingImageWrapper.style.left = `${this.xScale(image.time)}px`;
 
             let imageElement = existingImageWrapper.querySelector('img');
             this.setNSAttributesForElement(imageElement, {
-                src: item.url
+                src: image.thumbnailUrl || image.url
             });
             this.setImageDisplay(imageElement, showImagePlaceholders);
         },
-        createImageWrapper(index, item, showImagePlaceholders) {
-            const id = `${ID_PREFIX}${item.time}`;
+        createImageWrapper(index, image, showImagePlaceholders) {
+            const id = `${ID_PREFIX}${image.time}`;
             let imageWrapper = document.createElement('div');
             imageWrapper.classList.add(IMAGE_WRAPPER_CLASS);
-            imageWrapper.style.left = `${this.xScale(item.time)}px`;
+            imageWrapper.style.left = `${this.xScale(image.time)}px`;
             this.setNSAttributesForElement(imageWrapper, {
                 id,
                 'data-show-image-placeholders': showImagePlaceholders
@@ -383,7 +383,7 @@ export default {
             //create image element
             let imageElement = document.createElement('img');
             this.setNSAttributesForElement(imageElement, {
-                src: item.url
+                src: image.thumbnailUrl || image.url
             });
             imageElement.style.width = `${IMAGE_SIZE}px`;
             imageElement.style.height = `${IMAGE_SIZE}px`;
@@ -392,7 +392,7 @@ export default {
             //handle mousedown event to show the image in a large view
             imageWrapper.addEventListener('mousedown', (e) => {
                 if (e.button === 0) {
-                    this.expand(item.time);
+                    this.expand(image.time);
                 }
             });
 
