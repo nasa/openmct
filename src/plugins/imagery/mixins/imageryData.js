@@ -35,7 +35,7 @@ export default {
         this.setDataTimeContext();
         this.openmct.objectViews.on('clearData', this.dataCleared);
 
-        // set
+        // Get metadata and formatters
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
 
