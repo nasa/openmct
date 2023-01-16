@@ -226,6 +226,9 @@ const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
 const IMAGE_CONTAINER_BORDER_WIDTH = 1;
 
+const DEFAULT_IMAGE_PAN_ALT_TEXT = "Alt drag to pan";
+const LINUX_IMAGE_PAN_ALT_TEXT = `Ctrl+${DEFAULT_IMAGE_PAN_ALT_TEXT}`;
+
 export default {
     name: 'ImageryView',
     components: {
@@ -321,8 +324,8 @@ export default {
         },
         focusImageStyles() {
             return {
-                'filter': `brightness(${this.filters.brightness}%) contrast(${this.filters.contrast}%)`,
-                'background-image':
+                filter: `brightness(${this.filters.brightness}%) contrast(${this.filters.contrast}%)`,
+                backgroundImage:
                     `${this.imageUrl ? (
                         `url(${this.imageUrl}),
                             repeating-linear-gradient(
@@ -333,10 +336,10 @@ export default {
                                 rgba(125,125,125,.2) 8px
                             )`
                     ) : ''}`,
-                'transform': `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
-                'transition': `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
-                'width': `${this.sizedImageWidth}px`,
-                'height': `${this.sizedImageHeight}px`
+                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
+                width: `${this.sizedImageWidth}px`,
+                height: `${this.sizedImageHeight}px`
             };
         },
         time() {
@@ -347,11 +350,12 @@ export default {
         },
         imageWrapperStyle() {
             return {
-                'cursor-zoom-in': this.cursorStates.showCursorZoomIn,
-                'cursor-zoom-out': this.cursorStates.showCursorZoomOut,
-                'pannable': this.cursorStates.isPannable,
-                'paused unnsynced': this.isPaused && !this.isFixed,
-                'stale': false
+                cursorZoomIn: this.cursorStates.showCursorZoomIn,
+                cursorZoomOut: this.cursorStates.showCursorZoomOut,
+                pannable: this.cursorStates.isPannable,
+                paused: this.isPaused && !this.isFixed,
+                unsynced: this.isPaused && !this.isFixed,
+                stale: false
             };
         },
         isImageNew() {
@@ -528,10 +532,10 @@ export default {
             const navigator = window.navigator.userAgent;
 
             if (regexLinux.test(navigator)) {
-                return 'Ctrl+Alt drag to pan';
+                return LINUX_IMAGE_PAN_ALT_TEXT;
             }
 
-            return 'Alt drag to pan';
+            return DEFAULT_IMAGE_PAN_ALT_TEXT;
         },
         viewableArea() {
             if (this.zoomFactor === 1) {
@@ -691,9 +695,9 @@ export default {
         },
         getVisibleLayerStyles(layer) {
             return {
-                'background-image': `url(${layer.source})`,
-                'transform': `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
-                'transition': `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
+                backgroundImage: `url(${layer.source})`,
+                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
             };
         },
         setTimeContext() {
@@ -765,26 +769,26 @@ export default {
             return mostRecent[valueKey];
         },
         loadVisibleLayers() {
-            const metaDataValues = this.metadata.valuesForHints(['image'])[0];
-            this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
-            let layersMetadata = metaDataValues.layers;
-            if (layersMetadata) {
-                this.layers = layersMetadata;
-                if (this.domainObject.configuration) {
-                    let persistedLayers = this.domainObject.configuration.layers;
-                    layersMetadata.forEach((layer) => {
-                        const persistedLayer = persistedLayers.find(object => object.name === layer.name);
-                        if (persistedLayer) {
-                            layer.visible = persistedLayer.visible === true;
-                        }
-                    });
-                    this.visibleLayers = this.layers.filter(layer => layer.visible);
-                } else {
-                    this.visibleLayers = [];
-                    this.layers.forEach((layer) => {
-                        layer.visible = false;
-                    });
-                }
+            const layersMetadata = this.imageMetadataValue.layers;
+            if (!layersMetadata) {
+                return;
+            }
+
+            this.layers = layersMetadata;
+            if (this.domainObject.configuration) {
+                const persistedLayers = this.domainObject.configuration.layers;
+                layersMetadata.forEach((layer) => {
+                    const persistedLayer = persistedLayers.find(object => object.name === layer.name);
+                    if (persistedLayer) {
+                        layer.visible = persistedLayer.visible === true;
+                    }
+                });
+                this.visibleLayers = this.layers.filter(layer => layer.visible);
+            } else {
+                this.visibleLayers = [];
+                this.layers.forEach((layer) => {
+                    layer.visible = false;
+                });
             }
         },
         persistVisibleLayers() {
