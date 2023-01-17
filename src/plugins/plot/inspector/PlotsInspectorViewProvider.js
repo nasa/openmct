@@ -5,7 +5,7 @@ import Vue from 'vue';
 export default function PlotsInspectorViewProvider(openmct) {
     return {
         key: 'plots-inspector',
-        name: 'Plots Inspector View',
+        name: 'Plots Configuration',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
