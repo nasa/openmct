@@ -145,8 +145,9 @@ export default class ExampleUserProvider extends EventEmitter {
 
     setPollQuestion(pollQuestion) {
         if (!pollQuestion) {
-            // this behhavior better reflects how other telemetry systems
-            // deal with undefined poll questions
+            // If the poll question is undefined, set it to a blank string.
+            // This behavior better reflects how other telemetry systems
+            // deal with undefined poll questions.
             pollQuestion = '';
         }
 
