@@ -106,8 +106,8 @@ export default {
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
 
-        for (const id of Object.keys(this.unsubsubscribes)) {
-            this.unsubsubscribes[id]();
+        for (const id of Object.keys(this.unsubscribes)) {
+            this.unsubscribes[id]();
         }
     },
     methods: {
@@ -116,8 +116,8 @@ export default {
             item.domainObject = domainObject;
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-            if (!this.unsubsubscribes) {
-                this.unsubsubscribes = {};
+            if (!this.unsubscribes) {
+                this.unsubscribes = {};
             }
 
             this.items.push(item);
@@ -126,7 +126,7 @@ export default {
                 this.handleStaleness(item.key, isStale);
             });
 
-            this.unsubsubscribes[item.key] = unsubscribeFromStaleness;
+            this.unsubscribes[item.key] = unsubscribeFromStaleness;
         },
         removeItem(identifier) {
             const keystring = this.openmct.objects.makeKeyString(identifier);
@@ -134,7 +134,7 @@ export default {
 
             this.items.splice(index, 1);
 
-            this.unsubsubscribes[keystring]();
+            this.unsubscribes[keystring]();
             this.handleStaleness(keystring, false);
         },
         reorder(reorderPlan) {
