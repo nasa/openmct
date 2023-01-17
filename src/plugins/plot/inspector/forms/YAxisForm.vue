@@ -117,7 +117,7 @@ export default {
     },
     data() {
         return {
-            yAxis: undefined,
+            yAxis: null,
             label: '',
             autoscale: '',
             logMode: false,
@@ -138,7 +138,7 @@ export default {
     methods: {
         getConfig() {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            let config = configStore.get(configId);
+            const config = configStore.get(configId);
             if (config) {
                 const mainYAxisId = config.yAxis.id;
                 this.isAdditionalYAxis = this.id !== mainYAxisId;
@@ -272,14 +272,7 @@ export default {
                 // Then we mutate the domain object configuration to persist the settings
                 if (path) {
                     if (this.isAdditionalYAxis) {
-                        if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-                            this.$emit('seriesUpdated', {
-                                identifier: this.domainObject.identifier,
-                                path: `${this.getPrefix()}.${formKey}`,
-                                id: this.id,
-                                value: newVal
-                            });
-                        } else {
+                        if (this.domainObject.configuration && this.domainObject.configuration.series) {
                             //update the id
                             this.openmct.objects.mutate(
                                 this.domainObject,
@@ -292,20 +285,27 @@ export default {
                                 path(this.domainObject, this.yAxis),
                                 newVal
                             );
-                        }
-                    } else {
-                        if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
+                        } else {
                             this.$emit('seriesUpdated', {
                                 identifier: this.domainObject.identifier,
                                 path: `${this.getPrefix()}.${formKey}`,
+                                id: this.id,
                                 value: newVal
                             });
-                        } else {
+                        }
+                    } else {
+                        if (this.domainObject.configuration && this.domainObject.configuration.series) {
                             this.openmct.objects.mutate(
                                 this.domainObject,
                                 path(this.domainObject, this.yAxis),
                                 newVal
                             );
+                        } else {
+                            this.$emit('seriesUpdated', {
+                                identifier: this.domainObject.identifier,
+                                path: `${this.getPrefix()}.${formKey}`,
+                                value: newVal
+                            });
                         }
                     }
                 }

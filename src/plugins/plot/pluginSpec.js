@@ -28,6 +28,8 @@ import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
 
+const TEST_KEY_ID = 'test-key';
+
 describe("the plugin", function () {
     let element;
     let child;
@@ -412,9 +414,9 @@ describe("the plugin", function () {
                 expect(plotSeries.model.yKey).toBe('some-key');
             });
 
-            yAxisElement.$emit('yKeyChanged', 'test-key', 1);
+            yAxisElement.$emit('yKeyChanged', TEST_KEY_ID, 1);
             config.yAxis.seriesCollection.models.forEach((plotSeries) => {
-                expect(plotSeries.model.yKey).toBe('test-key');
+                expect(plotSeries.model.yKey).toBe(TEST_KEY_ID);
             });
         });
 

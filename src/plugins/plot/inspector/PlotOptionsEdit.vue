@@ -129,8 +129,12 @@ export default {
             this.listenTo(this.config.series, 'remove', this.removeSeries, this);
         },
 
+        findYAxisForId(yAxisId) {
+            return this.yAxes.find(yAxis => yAxis.id === yAxisId);
+        },
+
         setYAxisLabel(yAxisId) {
-            const found = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            const found = this.findYAxisForId(yAxisId);
             if (found && found.seriesCount > 0) {
                 const mainYAxisId = this.config.yAxis.id;
                 if (mainYAxisId === yAxisId) {
@@ -151,15 +155,15 @@ export default {
             this.setYAxisLabel(yAxisId);
         },
 
-        removeSeries(plotSeries, index) {
-            const yAxisId = plotSeries.get('yAxisId');
+        removeSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
             this.updateAxisUsageCount(yAxisId, -1);
             this.plotSeries.splice(index, 1);
             this.setYAxisLabel(yAxisId);
         },
 
         updateAxisUsageCount(yAxisId, updateCount) {
-            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            const foundYAxis = this.findYAxisForId(yAxisId);
             if (foundYAxis) {
                 foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
             }

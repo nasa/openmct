@@ -40,7 +40,7 @@
         class="grid-properties"
     >
         <ul
-            v-for="(yAxis, index) in yAxesIds"
+            v-for="(yAxis, index) in yAxesWithSeries"
             :key="`yAxis-${index}`"
             class="l-inspector-part js-yaxis-properties"
         >
@@ -183,7 +183,7 @@ export default {
         isStackedPlotObject() {
             return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
         },
-        yAxesIds() {
+        yAxesWithSeries() {
             return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         }
     },
