@@ -205,7 +205,8 @@ async function enableEditMode(page) {
  */
 async function enableLogMode(page) {
     // turn on log mode
-    await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
+    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').check();
+    // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
 }
 
 /**
@@ -213,7 +214,7 @@ async function enableLogMode(page) {
  */
 async function disableLogMode(page) {
     // turn off log mode
-    await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().uncheck();
+    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').uncheck();
 }
 
 /**

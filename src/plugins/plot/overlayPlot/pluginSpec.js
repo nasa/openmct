@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
+import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
 import PlotVuePlugin from "../plugin";
 import Vue from "vue";
 import Plot from "../Plot.vue";
 import configStore from "../configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
+import PlotOptions from "../inspector/PlotOptions.vue";
 
 describe("the plugin", function () {
     let element;
@@ -257,11 +258,22 @@ describe("the plugin", function () {
             ];
             overlayPlotObject.configuration.series = [
                 {
-                    identifier: testTelemetryObject.identifier
+                    identifier: testTelemetryObject.identifier,
+                    yAxisId: 1
                 },
                 {
                     identifier: testTelemetryObject2.identifier,
-                    yAxisId: 2
+                    yAxisId: 3
+                }
+            ];
+            overlayPlotObject.configuration.additionalYAxes = [
+                {
+                    label: 'Test Object Label',
+                    id: 2
+                },
+                {
+                    label: 'Test Object 2 Label',
+                    id: 3
                 }
             ];
             mockComposition = new EventEmitter();
@@ -309,6 +321,86 @@ describe("the plugin", function () {
                 done();
             });
         });
+
+        describe('the inspector view', () => {
+            let inspectorComponent;
+            let viewComponentObject;
+            let selection;
+            beforeEach((done) => {
+                selection = [
+                    [
+                        {
+                            context: {
+                                item: {
+                                    id: overlayPlotObject.identifier.key,
+                                    identifier: overlayPlotObject.identifier,
+                                    type: overlayPlotObject.type,
+                                    configuration: overlayPlotObject.configuration,
+                                    composition: overlayPlotObject.composition
+                                }
+                            }
+                        }
+                    ]
+                ];
+
+                let viewContainer = document.createElement('div');
+                child.append(viewContainer);
+                inspectorComponent = new Vue({
+                    el: viewContainer,
+                    components: {
+                        PlotOptions
+                    },
+                    provide: {
+                        openmct: openmct,
+                        domainObject: selection[0][0].context.item,
+                        path: [selection[0][0].context.item]
+                    },
+                    template: '<plot-options/>'
+                });
+
+                Vue.nextTick(() => {
+                    viewComponentObject = inspectorComponent.$root.$children[0];
+                    done();
+                });
+            });
+
+            afterEach(() => {
+                openmct.router.path = null;
+            });
+
+            describe('in edit mode', () => {
+                let editOptionsEl;
+
+                beforeEach((done) => {
+                    viewComponentObject.setEditState(true);
+                    Vue.nextTick(() => {
+                        editOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-edit');
+                        done();
+                    });
+                });
+
+                it('shows multiple yAxis options', () => {
+                    const yAxisProperties = editOptionsEl.querySelectorAll(".js-yaxis-grid-properties .l-inspector-part h2");
+                    expect(yAxisProperties.length).toEqual(2);
+                });
+
+                it('saves yAxis options', () => {
+                    //toggle log mode and save
+                    config.additionalYAxes[1].set('displayRange', {
+                        min: 10,
+                        max: 20
+                    });
+                    const yAxisProperties = editOptionsEl.querySelectorAll(".js-log-mode-input");
+                    const clickEvent = createMouseEvent("click");
+                    yAxisProperties[1].dispatchEvent(clickEvent);
+
+                    expect(config.additionalYAxes[1].get('logMode')).toEqual(true);
+
+                });
+            });
+
+        });
+
     });
 
     describe("The overlay plot view with single axes", () => {
