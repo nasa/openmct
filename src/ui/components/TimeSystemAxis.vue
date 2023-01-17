@@ -101,7 +101,8 @@ export default {
                 if (nowMarker) {
                     nowMarker.classList.remove('hidden');
                     nowMarker.style.height = this.contentHeight + 'px';
-                    const now = this.xScale(Date.now());
+                    const nowTimeStamp = this.openmct.time.clock().currentValue();
+                    const now = this.xScale(nowTimeStamp);
                     nowMarker.style.left = now + this.offset + 'px';
                 }
             }

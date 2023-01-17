@@ -96,8 +96,13 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
+            let isInTransaction = false;
 
-            if (observersForObject) {
+            if (this.openmct.objects.isTransactionActive()) {
+                isInTransaction = this.openmct.objects.transaction.getDirtyObject(objectIdentifier);
+            }
+
+            if (observersForObject && !isInTransaction) {
                 observersForObject.forEach(async (observer) => {
                     const updatedObject = await this.get(objectIdentifier);
                     if (this.isSynchronizedObject(updatedObject)) {
@@ -219,7 +224,12 @@ class CouchObjectProvider {
                 console.error(error.message);
                 throw new Error(`CouchDB Error - No response"`);
             } else {
-                console.error(error.message);
+                if (body?.model && isNotebookOrAnnotationType(body.model)) {
+                    // warn since we handle conflicts for notebooks
+                    console.warn(error.message);
+                } else {
+                    console.error(error.message);
+                }
 
                 throw error;
             }
