@@ -178,7 +178,7 @@ define([
                 if (this.paused) {
                     this.delayedActions.push(this.tableRows.addRows.bind(this, telemetryRows, 'add'));
                 } else {
-                    this.tableRows.addRows(telemetryRows, 'add');
+                    this.tableRows.addRows(telemetryRows);
                 }
             };
         }
@@ -229,7 +229,7 @@ define([
                 });
             });
 
-            this.tableRows.addRows(allRows, 'filter');
+            this.tableRows.clearRowsFromTableAndFilter(allRows);
         }
 
         updateFilters(updatedFilters) {

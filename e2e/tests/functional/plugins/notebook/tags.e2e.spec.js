@@ -44,6 +44,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
         const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = ${iteration}`;
         await page.locator(entryLocator).click();
         await page.locator(entryLocator).fill(`Entry ${iteration}`);
+        await page.locator(entryLocator).press('Enter');
     }
 
     return notebook;

@@ -383,10 +383,8 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
-
             this.timeContext = this.openmct.time.getContextForView(this.path);
             this.followTimeContext();
-
         },
         followTimeContext() {
             this.updateDisplayBounds(this.timeContext.bounds());

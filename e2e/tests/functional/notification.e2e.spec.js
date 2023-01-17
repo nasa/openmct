@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,12 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ObjectView from './ObjectView.vue';
-import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
-import Plot from '../../plugins/plot/Plot.vue';
+/*
+This test suite is dedicated to tests which verify Open MCT's Notification functionality
+*/
 
-export default {
-    ObjectView,
-    StackedPlot,
-    Plot
-};
+// FIXME: Remove this eslint exception once tests are implemented
+// eslint-disable-next-line no-unused-vars
+const { test, expect } = require('../../pluginFixtures');
+
+test.describe('Notifications List', () => {
+    test.fixme('Notifications can be dismissed individually', async ({ page }) => {
+        // Create some persistent notifications
+        // Verify that they are present in the notifications list
+        // Dismiss one of the notifications
+        // Verify that it is no longer present in the notifications list
+        // Verify that the other notifications are still present in the notifications list
+    });
+});

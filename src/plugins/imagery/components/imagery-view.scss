@@ -194,6 +194,9 @@
         overflow-y: hidden;
         margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
+        &.animate-scroll {
+            scroll-behavior: smooth; 
+        }
     }
 
     &__auto-scroll-resume-button {
