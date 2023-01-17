@@ -30,6 +30,8 @@ const genUuid = require('uuid').v4;
 const path = require('path');
 
 const TEST_FOLDER = 'test folder';
+const jsonFilePath = 'e2e/test-data/ExampleLayouts.json';
+const imageFilePath = 'e2e/test-data/rick.jpg';
 
 test.describe('Form Validation Behavior', () => {
     test('Required Field indicators appear if title is empty and can be corrected', async ({ page }) => {
@@ -65,6 +67,41 @@ test.describe('Form Validation Behavior', () => {
 
         //Verify that the Domain Object has been created with the corrected title property
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(TEST_FOLDER);
+    });
+});
+
+test.describe('Form File Input Behavior', () => {
+    test.beforeEach(async ({ page }) => {
+        // eslint-disable-next-line no-undef
+        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js') });
+    });
+
+    test('Can select a JSON file type', async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        await page.getByRole('button', { name: ' Create ' }).click();
+        await page.getByRole('menuitem', { name: 'JSON File Input Object' }).click();
+
+        await page.setInputFiles('#fileElem', jsonFilePath);
+
+        await page.getByRole('button', { name: 'Save' }).click();
+
+        const type = await page.locator('#file-input-type').textContent();
+        await expect(type).toBe(`"string"`);
+    });
+
+    test('Can select an image file type', async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        await page.getByRole('button', { name: ' Create ' }).click();
+        await page.getByRole('menuitem', { name: 'Image File Input Object' }).click();
+
+        await page.setInputFiles('#fileElem', imageFilePath);
+
+        await page.getByRole('button', { name: 'Save' }).click();
+
+        const type = await page.locator('#file-input-type').textContent();
+        await expect(type).toBe(`"object"`);
     });
 });
 
