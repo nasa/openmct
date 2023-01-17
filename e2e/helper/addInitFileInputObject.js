@@ -11,7 +11,6 @@ class DomainObjectViewProvider {
     }
 
     view(domainObject, objectPath) {
-        let component;
         let content;
 
         return {
@@ -25,11 +24,8 @@ class DomainObjectViewProvider {
                 element.appendChild(content);
             },
             destroy: function (element) {
-                component.removeChild(content);
+                element.removeChild(content);
                 content = undefined;
-
-                component.$destroy();
-                component = undefined;
             }
         };
     }
