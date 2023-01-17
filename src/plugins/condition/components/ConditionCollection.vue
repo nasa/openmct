@@ -225,7 +225,7 @@ export default {
             }
 
             const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
-                this.$emit('telemetryStaleness', {
+                this.emitStaleness({
                     keyString,
                     isStale
                 });
@@ -247,12 +247,14 @@ export default {
 
             if (this.unsubscribeFromStaleness[keyString]) {
                 this.unsubscribeFromStaleness[keyString]();
-
-                this.$emit('telemetryStaleness', {
+                this.emitStaleness({
                     keyString,
                     isStale: false
                 });
             }
+        },
+        emitStaleness(stalenessObject) {
+            this.$emit('telemetryStaleness', stalenessObject);
         },
         addCondition() {
             this.conditionManager.addCondition();
