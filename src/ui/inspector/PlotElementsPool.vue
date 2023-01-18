@@ -36,6 +36,7 @@
             id="inspector-elements-tree"
             class="c-tree c-elements-pool__tree"
         >
+            <div class="c-elements-pool__instructions"> Select and drag an element to move it into a different axis. </div>
             <element-item-group
                 v-for="(yAxis, index) in yAxes"
                 :key="`element-group-yaxis-${yAxis.id}`"
