@@ -23,7 +23,7 @@
 import {createOpenMct, resetApplicationState} from "utils/testing";
 import PlanPlugin from "../plan/plugin";
 import Vue from 'vue';
-import Properties from "@/ui/inspector/details/Properties.vue";
+import Properties from "../inspectorViews/properties/Properties.vue";
 
 describe('the plugin', function () {
     let planDefinition;
