@@ -100,25 +100,20 @@ export default {
         this.composition.on('remove', this.removeItem);
         this.composition.on('reorder', this.reorder);
         this.composition.load();
+        this.unsubscribes = {};
     },
     destroyed() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
 
-        for (const id of Object.keys(this.unsubscribes)) {
-            this.unsubscribes[id]();
-        }
+        Object.values(this.unsubscribes).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
     },
     methods: {
         addItem(domainObject) {
             let item = {};
             item.domainObject = domainObject;
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
-
-            if (!this.unsubscribes) {
-                this.unsubscribes = {};
-            }
 
             this.items.push(item);
 
