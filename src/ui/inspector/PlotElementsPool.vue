@@ -55,6 +55,7 @@
                     :element-object="element"
                     :parent-object="parentObject"
                     :allow-drop="allowDrop"
+                    :show-grippy="false"
                     @dragstart-custom="moveFrom($event, yAxis.id)"
                     @drop-custom="moveTo($event, index, yAxis.id)"
                 />

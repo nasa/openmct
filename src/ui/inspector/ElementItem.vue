@@ -38,6 +38,7 @@
         }"
     >
         <span
+            v-if="showGrippy"
             class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"
         ></span>
         <object-label
@@ -81,6 +82,10 @@ export default {
         },
         allowDrop: {
             type: Boolean
+        },
+        showGrippy: {
+            type: Boolean,
+            default: true
         }
     },
     data() {
