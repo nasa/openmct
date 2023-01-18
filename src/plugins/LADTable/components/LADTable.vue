@@ -100,14 +100,14 @@ export default {
         this.composition.on('remove', this.removeItem);
         this.composition.on('reorder', this.reorder);
         this.composition.load();
-        this.unsubscribes = {};
+        this.unsubscribeFromStaleness = {};
     },
     destroyed() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
 
-        Object.values(this.unsubscribes).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
+        Object.values(this.unsubscribeFromStaleness).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
     },
     methods: {
         addItem(domainObject) {
@@ -121,7 +121,7 @@ export default {
                 this.handleStaleness(item.key, isStale);
             });
 
-            this.unsubscribes[item.key] = unsubscribeFromStaleness;
+            this.unsubscribeFromStaleness[item.key] = unsubscribeFromStaleness;
         },
         removeItem(identifier) {
             const keystring = this.openmct.objects.makeKeyString(identifier);
@@ -129,7 +129,7 @@ export default {
 
             this.items.splice(index, 1);
 
-            this.unsubscribes[keystring]();
+            this.unsubscribeFromStaleness[keystring]();
             this.handleStaleness(keystring, false);
         },
         reorder(reorderPlan) {
