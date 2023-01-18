@@ -63,7 +63,6 @@ export default class SinewaveLimitProvider extends EventEmitter {
         }, 10000);
 
         return () => {
-            console.log('unsubscribing from', domainObject.name);
             clearInterval(intervalId);
             delete this.observingStaleness[id];
             this.handleClockUpdate();
@@ -74,11 +73,9 @@ export default class SinewaveLimitProvider extends EventEmitter {
         let observers = Object.values(this.observingStaleness).length > 0;
 
         if (observers && !this.watchingTheClock) {
-            console.log('we have observers, need to watch the clack');
             this.watchingTheClock = true;
             this.openmct.time.on('clock', this.updateRealTime, this);
         } else if (!observers && this.watchingTheClock) {
-            console.log('we have NO observers, dont watch the clack');
             this.watchingTheClock = false;
             this.openmct.time.off('clock', this.updateRealTime, this);
         }
@@ -86,7 +83,6 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
     updateRealTime(clock) {
         this.isRealTime = clock !== undefined;
-        console.log('update realtime, is it realtime?', this.isRealTime, 'what is the clock', clock);
 
         if (!this.isRealTime) {
             Object.keys(this.observingStaleness).forEach((id) => {
