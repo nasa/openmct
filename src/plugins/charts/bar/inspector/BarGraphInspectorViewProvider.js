@@ -5,7 +5,7 @@ import BarGraphOptions from "./BarGraphOptions.vue";
 export default function BarGraphInspectorViewProvider(openmct) {
     return {
         key: BAR_GRAPH_INSPECTOR_KEY,
-        name: 'Bar Graph Inspector View',
+        name: 'Bar Graph Configuration',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
