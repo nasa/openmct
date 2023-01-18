@@ -6,9 +6,9 @@ OpenMCT Continuous Integration servers use this configuration to add code covera
 information to pull requests.
 */
 
-const config = require('./webpack.dev');
+const config = require("./webpack.dev");
 // eslint-disable-next-line no-undef
-const CI = process.env.CI === 'true';
+const CI = process.env.CI === "true";
 
 config.devtool = CI ? false : undefined;
 
@@ -18,13 +18,18 @@ config.module.rules.push({
     test: /\.js$/,
     exclude: /(Spec\.js$)|(node_modules)/,
     use: {
-        loader: 'babel-loader',
+        loader: "babel-loader",
         options: {
             retainLines: true,
             // eslint-disable-next-line no-undef
-            plugins: [['babel-plugin-istanbul', {
-                extension: ['.js', '.vue']
-            }]]
+            plugins: [
+                [
+                    "babel-plugin-istanbul",
+                    {
+                        extension: [".js", ".vue"]
+                    }
+                ]
+            ]
         }
     }
 });
