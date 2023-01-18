@@ -337,11 +337,13 @@ export default class TelemetryAPI {
 
         if (!stalenessSubscriber) {
             stalenessSubscriber = this.stalenessSubscriberCache[keyString] = {
+                isStale: false,
                 callbacks: [callback]
             };
             if (provider) {
                 stalenessSubscriber.unsubscribe = provider
                     .subscribeToStaleness(domainObject, function (isStale) {
+                        stalenessSubscriber.isStale = isStale;
                         stalenessSubscriber.callbacks.forEach(function (cb) {
                             cb(isStale);
                         });
@@ -350,6 +352,7 @@ export default class TelemetryAPI {
                 stalenessSubscriber.unsubscribe = function () {};
             }
         } else {
+            callback(stalenessSubscriber.isStale);
             stalenessSubscriber.callbacks.push(callback);
         }
 

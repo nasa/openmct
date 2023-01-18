@@ -64,6 +64,7 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
         return () => {
             clearInterval(intervalId);
+            this.updateStaleness(id, false);
             delete this.observingStaleness[id];
             this.handleClockUpdate();
         };
