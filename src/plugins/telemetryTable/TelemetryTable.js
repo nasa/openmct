@@ -384,6 +384,8 @@ define([
                 this.filterObserver();
             }
 
+            Object.values(this.unsubscribeFromStaleness).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
+
             if (this.tableComposition !== undefined) {
                 this.tableComposition.off('add', this.addTelemetryObject);
                 this.tableComposition.off('remove', this.removeTelemetryObject);

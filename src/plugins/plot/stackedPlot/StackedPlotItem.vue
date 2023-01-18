@@ -111,6 +111,10 @@ export default {
         if (this.component) {
             this.component.$destroy();
         }
+
+        if (this.unsubscribeFromStaleness) {
+            this.unsubscribeFromStaleness();
+        }
     },
     methods: {
         updateComponentProp(prop, value) {

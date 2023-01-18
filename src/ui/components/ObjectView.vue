@@ -135,7 +135,7 @@ export default {
         if (this.domainObject) {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, this.handleStaleness);
+            this.subscribeToStaleness(this.domainObject);
         }
     },
     methods: {
@@ -204,6 +204,11 @@ export default {
         toggleEditView(editMode) {
             this.clear();
             this.updateView(true);
+        },
+        subscribeToStaleness(object) {
+            if (this.openmct.telemetry.isTelemetryObject(object)) {
+                this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(object, this.handleStaleness);
+            }
         },
         updateStyle(styleObj) {
             let elemToStyle = this.getStyleReceiver();
@@ -319,7 +324,7 @@ export default {
 
             this.updateView(immediatelySelect);
 
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, this.handleStaleness);
+            this.subscribeToStaleness(this.domainObject);
             this.initObjectStyles();
         },
         handleStaleness(isStale) {

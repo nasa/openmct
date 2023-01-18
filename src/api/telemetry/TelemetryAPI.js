@@ -354,6 +354,7 @@ export default class TelemetryAPI {
         }
 
         return function unsubscribe() {
+            console.log('unsubscribe telemapi', domainObject.name);
             stalenessSubscriber.callbacks = stalenessSubscriber.callbacks.filter(function (cb) {
                 return cb !== callback;
             });

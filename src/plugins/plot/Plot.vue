@@ -108,7 +108,7 @@ export default {
 
         },
         addItem(object) {
-            const keystring = this.openmct.objects.makeKeyString(object);
+            const keystring = this.openmct.objects.makeKeyString(object.identifier);
 
             if (!this.unsubscribes) {
                 this.unsubscribes = {};

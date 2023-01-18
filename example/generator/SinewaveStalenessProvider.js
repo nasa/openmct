@@ -29,6 +29,13 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
         this.openmct = openmct;
         this.observingStaleness = {};
+        this.watchingTheClock = false;
+        this.isRealTime = undefined;
+
+        this.subscribeToStaleness = this.subscribeToStaleness.bind(this);
+        this.handleClockUpdate = this.handleClockUpdate.bind(this);
+        this.updateRealTime = this.updateRealTime.bind(this);
+        this.updateStaleness = this.updateStaleness.bind(this);
     }
 
     supportsStaleness(domainObject) {
@@ -38,25 +45,62 @@ export default class SinewaveLimitProvider extends EventEmitter {
     subscribeToStaleness(domainObject, callback) {
         const id = this.openmct.objects.makeKeyString(domainObject.identifier);
 
+        if (this.isRealTime === undefined) {
+            this.updateRealTime(this.openmct.time.clock());
+        }
+
         this.observingStaleness[id] = {
             isStale: false,
             callback
         };
 
+        this.handleClockUpdate();
+
         const intervalId = setInterval(() => {
-            if (domainObject.telemetry?.staleness === true) {
-                this.observingStaleness[id].isStale = !this.observingStaleness[id].isStale;
-                this.observingStaleness[id].callback(this.observingStaleness[id].isStale);
-                this.emit('stalenessEvent', {
-                    id,
-                    isStale: this.observingStaleness[id].isStale
-                });
+            if (domainObject.telemetry?.staleness === true && this.isRealTime) {
+                this.updateStaleness(id, !this.observingStaleness[id].isStale);
             }
         }, 10000);
 
         return () => {
+            console.log('unsubscribing from', domainObject.name);
             clearInterval(intervalId);
             delete this.observingStaleness[id];
+            this.handleClockUpdate();
         };
+    }
+
+    handleClockUpdate() {
+        let observers = Object.values(this.observingStaleness).length > 0;
+
+        if (observers && !this.watchingTheClock) {
+            console.log('we have observers, need to watch the clack');
+            this.watchingTheClock = true;
+            this.openmct.time.on('clock', this.updateRealTime, this);
+        } else if (!observers && this.watchingTheClock) {
+            console.log('we have NO observers, dont watch the clack');
+            this.watchingTheClock = false;
+            this.openmct.time.off('clock', this.updateRealTime, this);
+        }
+    }
+
+    updateRealTime(clock) {
+        this.isRealTime = clock !== undefined;
+        console.log('update realtime, is it realtime?', this.isRealTime, 'what is the clock', clock);
+
+        if (!this.isRealTime) {
+            Object.keys(this.observingStaleness).forEach((id) => {
+                this.updateStaleness(id, false);
+            });
+        }
+    }
+
+    updateStaleness(id, isStale) {
+        this.observingStaleness[id].isStale = isStale;
+        this.observingStaleness[id].callback(this.observingStaleness[id].isStale);
+        this.emit('stalenessEvent', {
+            id,
+            isStale: this.observingStaleness[id].isStale
+        });
     }
 }
