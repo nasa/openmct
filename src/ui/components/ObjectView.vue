@@ -24,6 +24,7 @@ import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 const SupportedViewTypes = [
     'plot-stacked',
@@ -36,6 +37,7 @@ export default {
     components: {
         IndependentTimeConductor
     },
+    mixins: [stalenessMixin],
     inject: ["openmct"],
     props: {
         showEditView: Boolean,
@@ -64,8 +66,7 @@ export default {
     },
     data() {
         return {
-            domainObject: this.defaultObject,
-            isStale: false
+            domainObject: this.defaultObject
         };
     },
     computed: {
@@ -135,7 +136,7 @@ export default {
         if (this.domainObject) {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
-            this.subscribeToStaleness(this.domainObject);
+            this.triggerStalenessSubscribe(this.domainObject);
         }
     },
     methods: {
@@ -170,9 +171,7 @@ export default {
             }
 
             this.isStale = false;
-            if (this.unsubscribeFromStaleness) {
-                this.unsubscribeFromStaleness();
-            }
+            this.triggerUnsubscribeFromStaleness();
 
             this.openmct.objectViews.off('clearData', this.clearData);
         },
@@ -205,9 +204,9 @@ export default {
             this.clear();
             this.updateView(true);
         },
-        subscribeToStaleness(object) {
+        triggerStalenessSubscribe(object) {
             if (this.openmct.telemetry.isTelemetryObject(object)) {
-                this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(object, this.handleStaleness);
+                this.subscribeToStaleness(object);
             }
         },
         updateStyle(styleObj) {
@@ -324,11 +323,8 @@ export default {
 
             this.updateView(immediatelySelect);
 
-            this.subscribeToStaleness(this.domainObject);
+            this.triggerStalenessSubscribe(this.domainObject);
             this.initObjectStyles();
-        },
-        handleStaleness(isStale) {
-            this.isStale = isStale;
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {

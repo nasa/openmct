@@ -82,8 +82,10 @@
 <script>
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
 import eventHelpers from "@/plugins/plot/lib/eventHelpers";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
+    mixins: [stalenessMixin],
     inject: ['openmct', 'domainObject'],
     props: {
         seriesObject: {
@@ -107,7 +109,6 @@ export default {
     data() {
         return {
             isMissing: false,
-            isStale: false,
             colorAsHexString: '',
             name: '',
             unit: '',
@@ -155,15 +156,12 @@ export default {
     },
     beforeDestroy() {
         this.stopListening();
-        this.unsubscribeFromStaleness();
     },
     methods: {
         initialize(highlightedObject) {
             const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
 
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(seriesObject.domainObject, (isStale) => {
-                this.isStale = isStale;
-            });
+            this.subscribeToStaleness(seriesObject.domainObject);
 
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();

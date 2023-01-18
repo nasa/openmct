@@ -347,12 +347,14 @@
 
 <script>
 import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
     name: 'Gauge',
+    mixins: [stalenessMixin],
     inject: ['openmct', 'domainObject', 'composition'],
     data() {
         let gaugeController = this.domainObject.configuration.gaugeController;
@@ -371,8 +373,7 @@ export default {
             gaugeType: gaugeController.gaugeType,
             showUnits: gaugeController.showUnits,
             activeTimeSystem: this.openmct.time.timeSystem(),
-            units: '',
-            isStale: false
+            units: ''
         };
     },
     computed: {
@@ -554,10 +555,6 @@ export default {
             this.unsubscribe();
         }
 
-        if (this.unsubscribeFromStaleness) {
-            this.unsubscribeFromStaleness();
-        }
-
         this.openmct.time.off('bounds', this.refreshData);
         this.openmct.time.off('timeSystem', this.setTimeSystem);
     },
@@ -568,9 +565,7 @@ export default {
             this.request();
             this.subscribe();
 
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
-                this.isStale = isStale;
-            });
+            this.subscribeToStaleness(domainObject);
         },
         addedToComposition(domainObject) {
             if (this.telemetryObject) {
@@ -632,6 +627,7 @@ export default {
             if (this.unsubscribeFromStaleness) {
                 this.unsubscribeFromStaleness();
                 this.unsubscribeFromStaleness = null;
+                this.isStale = false;
             }
 
             this.curVal = DEFAULT_CURRENT_VALUE;

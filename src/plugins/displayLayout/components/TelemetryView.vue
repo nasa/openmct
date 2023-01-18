@@ -73,6 +73,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import { getDefaultNotebook, getNotebookSectionAndPage } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
@@ -102,7 +103,7 @@ export default {
     components: {
         LayoutFrame
     },
-    mixins: [conditionalStylesMixin],
+    mixins: [conditionalStylesMixin, stalenessMixin],
     inject: ['openmct', 'objectPath', 'currentView'],
     props: {
         item: {
@@ -128,7 +129,6 @@ export default {
     data() {
         return {
             currentObjectPath: undefined,
-            isStale: false,
             datum: undefined,
             domainObject: undefined,
             formats: undefined,
@@ -238,7 +238,6 @@ export default {
     },
     beforeDestroy() {
         this.removeStatusListener();
-        this.unsubscribeFromStaleness();
 
         if (this.removeSelectable) {
             this.removeSelectable();
@@ -322,9 +321,7 @@ export default {
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context, this.immediatelySelect || this.initSelect);
             delete this.immediatelySelect;
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(this.domainObject, (isStale) => {
-                this.isStale = isStale;
-            });
+            this.subscribeToStaleness(this.domainObject);
         },
         updateTelemetryFormat(format) {
             this.customStringformatter.setFormat(format);
