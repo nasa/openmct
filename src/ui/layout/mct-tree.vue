@@ -176,7 +176,7 @@ export default {
             activeSearch: false,
             mainTreeTopMargin: undefined,
             selectedItem: {},
-            targetedPath: null
+            targetedPath: ''
         };
     },
     computed: {
