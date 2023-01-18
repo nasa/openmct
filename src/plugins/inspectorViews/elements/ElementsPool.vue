@@ -41,7 +41,6 @@
                 :key="element.identifier.key"
                 :index="index"
                 :element-object="element"
-                :parent-object="parentObject"
                 :allow-drop="allowDrop"
                 @dragstart-custom="moveFrom(index)"
                 @drop-custom="moveTo(index)"
@@ -60,7 +59,7 @@
 
 <script>
 import _ from 'lodash';
-import Search from '../components/search.vue';
+import Search from '../../../ui/components/search.vue';
 import ElementItem from './ElementItem.vue';
 
 export default {
@@ -68,7 +67,10 @@ export default {
         'Search': Search,
         'ElementItem': ElementItem
     },
-    inject: ['openmct'],
+    inject: [
+        'openmct',
+        'domainObject'
+    ],
     data() {
         return {
             elements: [],
@@ -117,8 +119,8 @@ export default {
                 this.compositionUnlistener();
             }
 
-            if (this.parentObject) {
-                this.composition = this.openmct.composition.get(this.parentObject);
+            if (this.domainObject) {
+                this.composition = this.openmct.composition.get(this.domainObject);
 
                 if (this.composition) {
                     this.composition.load();
@@ -152,7 +154,7 @@ export default {
         },
         applySearch(input) {
             this.currentSearch = input;
-            this.elements = this.parentObject.composition.map((id) =>
+            this.elements = this.domainObject.composition.map((id) =>
                 this.elementsCache[this.openmct.objects.makeKeyString(id)]
             ).filter((element) => {
                 return element !== undefined
