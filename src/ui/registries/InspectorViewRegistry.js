@@ -20,16 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-
-    /**
-     * A InspectorViewRegistry maintains the definitions for views
-     * that may occur in the inspector.
-     *
-     * @interface InspectorViewRegistry
-     * @memberof module:openmct
-     */
-    function InspectorViewRegistry() {
+/**
+ * A InspectorViewRegistry maintains the definitions for views
+ * that may occur in the inspector.
+ *
+ * @interface InspectorViewRegistry
+ * @memberof module:openmct
+ */
+export default class InspectorViewRegistry {
+    constructor() {
         this.providers = {};
     }
 
@@ -40,18 +39,16 @@ define([], function () {
      *          which can provide views of this object
      * @private for platform-internal use
      */
-    InspectorViewRegistry.prototype.get = function (selection) {
-        return this.getAllProviders().filter(function (provider) {
-            return provider.canView(selection);
-        }).map(provider => provider.view(selection));
-    };
+    get(selection) {
+        return this.#getAllProviders()
+            .filter(provider => provider.canView(selection))
+            .map(provider => {
+                const view = provider.view(selection);
+                view.name = provider.name;
 
-    /**
-     * @private
-     */
-    InspectorViewRegistry.prototype.getAllProviders = function () {
-        return Object.values(this.providers);
-    };
+                return view;
+            });
+    }
 
     /**
      * Registers a new type of view.
@@ -60,7 +57,7 @@ define([], function () {
      * @method addProvider
      * @memberof module:openmct.InspectorViewRegistry#
      */
-    InspectorViewRegistry.prototype.addProvider = function (provider) {
+    addProvider(provider) {
         const key = provider.key;
 
         if (key === undefined) {
@@ -68,82 +65,81 @@ define([], function () {
         }
 
         if (this.providers[key] !== undefined) {
-            console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
+            console.warn(`Provider already defined for key '${key}'. Provider keys must be unique.`);
         }
 
         this.providers[key] = provider;
-    };
+    }
 
-    /**
-     * @private
-     */
-    InspectorViewRegistry.prototype.getByProviderKey = function (key) {
+    getByProviderKey(key) {
         return this.providers[key];
-    };
+    }
 
-    /**
-     * A View is used to provide displayable content, and to react to
-     * associated life cycle events.
-     *
-     * @name View
-     * @interface
-     * @memberof module:openmct
-     */
+    #getAllProviders() {
+        return Object.values(this.providers);
+    }
+}
 
-    /**
-     * Populate the supplied DOM element with the contents of this view.
-     *
-     * View implementations should use this method to attach any
-     * listeners or acquire other resources that are necessary to keep
-     * the contents of this view up-to-date.
-     *
-     * @param {HTMLElement} container the DOM element to populate
-     * @method show
-     * @memberof module:openmct.View#
-     */
+/**
+ * A View is used to provide displayable content, and to react to
+ * associated life cycle events.
+ *
+ * @name View
+ * @interface
+ * @memberof module:openmct
+ */
 
-    /**
-     * Release any resources associated with this view.
-     *
-     * View implementations should use this method to detach any
-     * listeners or release other resources that are no longer necessary
-     * once a view is no longer used.
-     *
-     * @method destroy
-     * @memberof module:openmct.View#
-     */
+/**
+ * Populate the supplied DOM element with the contents of this view.
+ *
+ * View implementations should use this method to attach any
+ * listeners or acquire other resources that are necessary to keep
+ * the contents of this view up-to-date.
+ *
+ * @param {HTMLElement} container the DOM element to populate
+ * @method show
+ * @memberof module:openmct.View#
+ */
 
-    /**
-     * Exposes types of views in inspector.
-     *
-     * @interface InspectorViewProvider
-     * @property {string} key a unique identifier for this view
-     * @property {string} name the human-readable name of this view
-     * @property {string} [description] a longer-form description (typically
-     *           a single sentence or short paragraph) of this kind of view
-     * @property {string} [cssClass] the CSS class to apply to labels for this
-     *           view (to add icons, for instance)
-     * @memberof module:openmct
-     */
+/**
+ * Release any resources associated with this view.
+ *
+ * View implementations should use this method to detach any
+ * listeners or release other resources that are no longer necessary
+ * once a view is no longer used.
+ *
+ * @method destroy
+ * @memberof module:openmct.View#
+ */
 
-    /**
-     * Checks if this provider can supply views for a selection.
-     *
-     * @method canView
-     * @memberof module:openmct.InspectorViewProvider#
-     * @param {module:openmct.selection} selection
-     * @returns {boolean} 'true' if the view applies to the provided selection,
-     *          otherwise 'false'.
-     */
+/**
+ * Exposes types of views in inspector.
+ *
+ * @interface InspectorViewProvider
+ * @property {string} key a unique identifier for this view
+ * @property {string} name the human-readable name of this view
+ * @property {string} [description] a longer-form description (typically
+ *           a single sentence or short paragraph) of this kind of view
+ * @property {string} [cssClass] the CSS class to apply to labels for this
+ *           view (to add icons, for instance)
+ * @memberof module:openmct
+ */
 
-    /**
-     * Provides a view of the selection object in the inspector.
-     *
-     * @method view
-     * @memberof module:openmct.InspectorViewProvider#
-     * @param {module:openmct.selection} selection the selection object
-     * @returns {module:openmct.View} a view of this selection
-     */
+/**
+ * Checks if this provider can supply views for a selection.
+ *
+ * @method canView
+ * @memberof module:openmct.InspectorViewProvider#
+ * @param {module:openmct.selection} selection
+ * @returns {boolean} 'true' if the view applies to the provided selection,
+ *          otherwise 'false'.
+ */
 
-    return InspectorViewRegistry;
-});
+/**
+ * Provides a view of the selection object in the inspector.
+ *
+ * @method view
+ * @memberof module:openmct.InspectorViewProvider#
+ * @param {module:openmct.selection} selection the selection object
+ * @returns {module:openmct.View} a view of this selection
+ */

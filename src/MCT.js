@@ -143,7 +143,7 @@ define([
              * @memberof module:openmct.MCT#
              * @name inspectorViews
              */
-            ['inspectorViews', () => new InspectorViewRegistry()],
+            ['inspectorViews', () => new InspectorViewRegistry.default()],
 
             /**
              * Registry for views which should appear in Edit Properties
@@ -286,6 +286,7 @@ define([
         this.install(this.plugins.DeviceClassifier());
         this.install(this.plugins.UserIndicator());
         this.install(this.plugins.Gauge());
+        this.install(this.plugins.InspectorViews());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
