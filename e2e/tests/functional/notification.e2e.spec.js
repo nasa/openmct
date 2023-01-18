@@ -26,6 +26,7 @@ This test suite is dedicated to tests which verify Open MCT's Notification funct
 
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
+const { createDomainObjectWithDefaults } = require('../../appActions');
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Notifications List', () => {
@@ -35,5 +36,44 @@ test.describe('Notifications List', () => {
         // Dismiss one of the notifications
         // Verify that it is no longer present in the notifications list
         // Verify that the other notifications are still present in the notifications list
+    });
+});
+
+test.describe('Notification Overlay Regression Test', () => {
+    test('Closing notification list after notification banner disappeared does not cause it to open automatically', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6130'
+        });
+
+        // Go to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create a new Display Layout object
+        await createDomainObjectWithDefaults(page, { type: 'Display Layout' });
+
+        // Click on the button "Review 1 Notification"
+        await page.click('button[aria-label="Review 1 Notification"]');
+
+        // Verify that Notification List is open
+        expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
+
+        // Wait until there is no Notification Banner
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+
+        // Click on the "Close" button of the Notification List
+        await page.click('button[aria-label="Close"]');
+
+        // On the Display Layout object, click on the "Edit" button
+        await page.click('button[title="Edit"]');
+
+        // Click on the "Save" button
+        await page.click('button[title="Save"]');
+
+        // Click on the "Save and Finish Editing" option
+        await page.click('li[title="Save and Finish Editing"]');
+
+        // Verify that Notification List is NOT open
+        expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);
     });
 });
