@@ -27,12 +27,13 @@
 import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
 import conditionalStylesMixin from "./mixins/objectStyles-mixin";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import configStore from "@/plugins/plot/configuration/ConfigStore";
 import PlotConfigurationModel from "@/plugins/plot/configuration/PlotConfigurationModel";
 import ProgressBar from "../../../ui/components/ProgressBar.vue";
 
 export default {
-    mixins: [conditionalStylesMixin],
+    mixins: [conditionalStylesMixin, stalenessMixin],
     inject: ['openmct', 'domainObject', 'path'],
     props: {
         childObject: {
@@ -78,11 +79,6 @@ export default {
             }
         }
     },
-    data() {
-        return {
-            isStale: false
-        };
-    },
     watch: {
         gridLines(newGridLines) {
             this.updateComponentProp('gridLines', newGridLines);
@@ -111,10 +107,6 @@ export default {
         if (this.component) {
             this.component.$destroy();
         }
-
-        if (this.unsubscribeFromStaleness) {
-            this.unsubscribeFromStaleness();
-        }
     },
     methods: {
         updateComponentProp(prop, value) {
@@ -125,9 +117,7 @@ export default {
         updateView() {
             this.isStale = false;
 
-            if (this.unsubscribeFromStaleness) {
-                this.unsubscribeFromStaleness();
-            }
+            this.triggerUnsubscribeFromStaleness();
 
             if (this.component) {
                 this.component.$destroy();
@@ -153,7 +143,7 @@ export default {
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
 
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(object, (isStale) => {
+            this.subscribeToStaleness(object, (isStale) => {
                 this.updateComponentProp('isStale', isStale);
             });
 

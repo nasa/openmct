@@ -8,9 +8,13 @@ export default {
         this.triggerUnsubscribeFromStaleness();
     },
     methods: {
-        subscribeToStaleness(domainObject) {
+        subscribeToStaleness(domainObject, callback) {
             this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
-                this.isStale = isStale;
+                if (callback && typeof callback === 'function') {
+                    callback(isStale);
+                } else {
+                    this.isStale = isStale;
+                }
             });
         },
         triggerUnsubscribeFromStaleness() {
