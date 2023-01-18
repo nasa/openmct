@@ -26,12 +26,12 @@
 >
     <div
         v-for="tab in visibleTabs"
-        :key="tab"
+        :key="tabKey(tab)"
         class="c-inspector__tab c-tab"
         :class="{'is-current': isSelected(tab)}"
         @click="selectTab(tab)"
     >
-        {{ tab }}
+        {{ tab.name }}
     </div>
 
 </div>
@@ -67,21 +67,20 @@ export default {
             return this.tabs
                 .filter(tab => {
                     return tab.showTab === undefined || tab.showTab(this.isEditing);
-                })
-                .map(tab => tab.name);
+                });
+        },
+        selectionKey() {
+            const domainObject = this.selection?.[0]?.[0]?.context?.item;
+            const layoutObject = this.selection?.[0]?.[0]?.context?.layoutItem;
+            const identifier = domainObject?.identifier ?? layoutObject?.id;
+
+            return this.openmct.objects.makeKeyString(identifier);
         }
     },
     watch: {
-        selection(selection) {
+        selection() {
             this.updateSelection();
         }
-    },
-    mounted() {
-        // this.openmct.selection.on('change', this.updateSelection);
-        // this.updateSelection(this.openmct.selection.get());
-    },
-    destroyed() {
-        // this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
         updateSelection() {
@@ -91,6 +90,7 @@ export default {
 
             this.tabs = inspectorViews.map(view => {
                 return {
+                    key: this.selectionKey,
                     name: view.name,
                     showTab: view.showTab
                 };
@@ -99,15 +99,14 @@ export default {
             this.selectTab(this.visibleTabs[0]);
         },
         isSelected(tab) {
-            return this.selectedTab === tab;
+            return this.selectedTab.name === tab.name;
         },
-        // deSelectTab() {
-        //     this.selectedTab = undefined;
-        //     this.$emit('de-select-tab');
-        // },
         selectTab(tab) {
             this.selectedTab = tab;
             this.$emit('select-tab', tab);
+        },
+        tabKey(tab) {
+            return `${tab.name}:${tab.key}`;
         }
     }
 };

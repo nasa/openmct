@@ -31,8 +31,8 @@ export default {
     inject: ['openmct'],
     props: {
         selectedTab: {
-            type: String,
-            default: ''
+            type: Object,
+            default: undefined
         },
         selection: {
             type: Array,
@@ -41,11 +41,6 @@ export default {
             }
         }
     },
-    data() {
-        return {
-            // selection: []
-        };
-    },
     watch: {
         selection() {
             this.updateSelectionViews();
@@ -53,11 +48,6 @@ export default {
         selectedTab() {
             this.showViewsForTab();
         }
-    },
-    mounted() {
-        // this.updateSelectionViews(this.openmct.selection.get());
-    },
-    beforeDestroy() {
     },
     methods: {
         updateSelectionViews(selection) {
@@ -77,7 +67,7 @@ export default {
         showViewsForTab() {
             this.clearViews();
             this.visibleViews = this.selectedViews
-                .filter(view => view.name === this.selectedTab);
+                .filter(view => view.name === this.selectedTab.name);
 
             this.visibleViews.forEach(visibleView => {
                 let viewContainer = document.createElement('div');
