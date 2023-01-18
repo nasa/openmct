@@ -84,8 +84,6 @@ export default {
     },
     methods: {
         updateSelection() {
-            this.selectedTab = undefined;
-
             const inspectorViews = this.openmct.inspectorViews.get(this.selection);
 
             this.tabs = inspectorViews.map(view => {
