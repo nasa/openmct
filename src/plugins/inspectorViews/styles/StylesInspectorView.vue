@@ -21,51 +21,53 @@
 *****************************************************************************/
 
 <template>
-<div class="u-contents"></div>
+<multipane
+    type="vertical"
+>
+    <pane class="c-inspector__styles">
+        <div class="u-contents">
+            <StylesView />
+        </div>
+    </pane>
+    <pane
+        v-if="isEditing"
+        class="c-inspector__saved-styles"
+        handle="before"
+        label="Saved Styles"
+    >
+        <SavedStylesInspectorView />
+    </pane>
+</multipane>
 </template>
 
 <script>
+import multipane from '../../../ui/layout/multipane.vue';
+import pane from '../../../ui/layout/pane.vue';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
-import Vue from 'vue';
+import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
 
 export default {
-    inject: ['openmct', 'stylesManager'],
+    components: {
+        multipane,
+        pane,
+        StylesView,
+        SavedStylesInspectorView
+    },
+    inject: ['openmct'],
     data() {
         return {
-            selection: []
+            isEditing: this.openmct.editor.isEditing()
         };
     },
     mounted() {
-        this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
+        this.openmct.editor.on('isEditing', this.setEditMode);
     },
-    destroyed() {
-        this.openmct.selection.off('change', this.updateSelection);
+    beforeDestroyed() {
+        this.openmct.editor.off('isEditing', this.setEditMode);
     },
     methods: {
-        updateSelection(selection) {
-            if (selection.length > 0 && selection[0].length > 0) {
-                if (this.component) {
-                    this.component.$destroy();
-                    this.component = undefined;
-                    this.$el.innerHTML = '';
-                }
-
-                let viewContainer = document.createElement('div');
-                this.$el.append(viewContainer);
-                this.component = new Vue({
-                    el: viewContainer,
-                    components: {
-                        StylesView
-                    },
-                    provide: {
-                        openmct: this.openmct,
-                        selection: selection,
-                        stylesManager: this.stylesManager
-                    },
-                    template: '<styles-view/>'
-                });
-            }
+        setEditMode(isEditing) {
+            this.isEditing = isEditing;
         }
     }
 };
