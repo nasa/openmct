@@ -108,6 +108,10 @@
                 color: $colorItemTreeSelectedFg;
             }
         }
+        &.is-targeted-item {
+            // To be updated with CSS magic
+            background: $colorItemTreeSelectedBg;
+        }
 
         &.is-new {
             animation-name: animTemporaryHighlight;

@@ -270,6 +270,7 @@ export default {
         },
         openAndScrollTo(navigationPath) {
             this.$refs.mctTree.openAndScrollTo(navigationPath);
+            this.$refs.mctTree.targetedPath = navigationPath;
         },
         setActionCollection(actionCollection) {
             this.actionCollection = actionCollection;

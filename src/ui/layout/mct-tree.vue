@@ -88,6 +88,7 @@
                     :item-height="itemHeight"
                     :open-items="openTreeItems"
                     :loading-items="treeItemLoading"
+                    :targeted-path="targetedPath"
                     @tree-item-mounted="scrollToCheck($event)"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @tree-item-action="treeItemAction(treeItem, $event)"
@@ -174,7 +175,8 @@ export default {
             itemOffset: 0,
             activeSearch: false,
             mainTreeTopMargin: undefined,
-            selectedItem: {}
+            selectedItem: {},
+            targetedPath: null
         };
     },
     computed: {
@@ -481,6 +483,7 @@ export default {
             } else if (this.scrollToPath) {
                 this.scrollToPath = null;
             }
+
         },
         scrollEndEvent() {
             if (!this.$refs.scrollable) {
