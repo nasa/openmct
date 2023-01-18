@@ -59,7 +59,7 @@ test.describe('Notification Overlay Regression Test', () => {
         expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
 
         // Wait until there is no Notification Banner
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+        await page.waitForSelector('div[role="alert"]', { state: 'detached'});
 
         // Click on the "Close" button of the Notification List
         await page.click('button[aria-label="Close"]');
