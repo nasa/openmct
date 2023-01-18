@@ -31,13 +31,9 @@ define([
     function FiltersInspectorViewProvider(openmct, supportedObjectTypesArray) {
         return {
             key: 'filters-inspector',
-            name: 'Filters Inspector View',
+            name: 'Filters',
             canView: function (selection) {
-                if (selection.length === 0 || selection[0].length === 0) {
-                    return false;
-                }
-
-                let object = selection[0][0].context.item;
+                const object = selection?.[0]?.[0]?.context?.item;
 
                 return object && supportedObjectTypesArray.some(type => object.type === type);
             },
