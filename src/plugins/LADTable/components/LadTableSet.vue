@@ -117,6 +117,8 @@ export default {
         this.composition.on('remove', this.removeLadTable);
         this.composition.on('reorder', this.reorderLadTables);
         this.composition.load();
+
+        this.unsubscribeFromStaleness = {};
     },
     destroyed() {
         this.composition.off('add', this.addLadTable);
@@ -127,9 +129,7 @@ export default {
             c.composition.off('remove', c.removeCallback);
         });
 
-        for (const id of Object.keys(this.unsubscribes)) {
-            this.unsubscribes[id]();
-        }
+        Object.values(this.unsubscribeFromStaleness).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
     },
     methods: {
         addLadTable(domainObject) {
@@ -180,17 +180,15 @@ export default {
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
 
                 // if tracking already, possibly in another table, return
-                if (this.unsubscribes?.[telemetryObject.key]) {
+                if (this.unsubscribeFromStaleness[telemetryObject.key]) {
                     return;
-                } else if (!this.unsubscribes) {
-                    this.unsubscribes = {};
                 }
 
                 const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
                     this.handleStaleness(telemetryObject.key, isStale);
                 });
 
-                this.unsubscribes[telemetryObject.key] = unsubscribeFromStaleness;
+                this.unsubscribeFromStaleness[telemetryObject.key] = unsubscribeFromStaleness;
             };
         },
         removeTelemetryObject(ladTable) {
@@ -203,7 +201,7 @@ export default {
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
 
-                this.unsubscribes[keystring]();
+                this.unsubscribeFromStaleness[keystring]();
                 this.handleStaleness(keystring, false);
             };
         },
