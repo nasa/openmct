@@ -109,8 +109,8 @@
             }
         }
         &.is-targeted-item {
-            // To be updated with CSS magic
-            background: $colorItemTreeSelectedBg;
+           $c: $colorBodyFg;
+           @include pulseProp($animName: flashTarget, $dur: 500ms, $iter: 8, $prop: background, $valStart: rgba($c, 0.4), $valEnd: rgba($c, 0));
         }
 
         &.is-new {
