@@ -156,7 +156,7 @@
 
 <script>
 
-import FontStyleEditor from '@/ui/inspector/styles/FontStyleEditor.vue';
+import FontStyleEditor from '../../../inspectorViews/styles/FontStyleEditor.vue';
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionSetIdentifierForItem } from "@/plugins/condition/utils/styleUtils";
