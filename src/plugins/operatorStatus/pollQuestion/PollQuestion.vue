@@ -182,7 +182,7 @@ export default {
             let pollQuestionText = pollQuestion.question;
             if (!pollQuestionText || pollQuestionText === '') {
                 pollQuestionText = '--';
-                this.indicator.text('Poll Question');
+                this.indicator.text('No Poll Question');
             } else {
                 this.indicator.text(pollQuestionText);
             }
