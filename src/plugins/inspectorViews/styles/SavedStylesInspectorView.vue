@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
+import SavedStylesView from './SavedStylesView.vue';
 import Vue from 'vue';
 
 export default {
