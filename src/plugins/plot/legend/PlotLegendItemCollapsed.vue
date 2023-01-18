@@ -118,13 +118,13 @@ export default {
     },
     beforeDestroy() {
         this.stopListening();
-        this.unsubscribeFromStalenes();
+        this.unsubscribeFromStaleness();
     },
     methods: {
         initialize(highlightedObject) {
             const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
 
-            this.unsubscribeFromStalenes = this.openmct.telemetry.subscribeToStaleness(seriesObject.domainObject, (isStale) => {
+            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(seriesObject.domainObject, (isStale) => {
                 this.isStale = isStale;
             });
 
