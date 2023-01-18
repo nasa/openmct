@@ -152,6 +152,7 @@ export default {
         this.listenTo(this.seriesObject, 'change:name', () => {
             this.updateName();
         }, this);
+        this.subscribeToStaleness(this.seriesObject.domainObject);
         this.initialize();
     },
     beforeDestroy() {
@@ -160,8 +161,6 @@ export default {
     methods: {
         initialize(highlightedObject) {
             const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
-
-            this.subscribeToStaleness(seriesObject.domainObject);
 
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();

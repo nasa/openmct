@@ -42,6 +42,7 @@ export default {
         triggerUnsubscribeFromStaleness() {
             if (this.unsubscribeFromStaleness) {
                 this.unsubscribeFromStaleness();
+                delete this.unsubscribeFromStaleness;
             }
         }
     }
