@@ -86,8 +86,8 @@ describe("The Fault Management Plugin", () => {
                 }
             ]];
             const applicableInspectorViews = openmct.inspectorViews.get(faultDomainObjectSelection);
-
-            expect(applicableInspectorViews.length).toEqual(1);
+            const faultManagementInspectorView = applicableInspectorViews.filter(view => view.name === 'Fault Management');
+            expect(faultManagementInspectorView.length).toEqual(1);
         });
 
         it('creates a root object for fault management', async () => {

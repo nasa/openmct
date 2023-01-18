@@ -579,7 +579,7 @@ describe("the plugin", function () {
             child.append(viewContainer);
 
             const applicableViews = openmct.inspectorViews.get(selection);
-            plotInspectorView = applicableViews[0];
+            plotInspectorView = applicableViews.filter(view => view.name === 'Bar Graph Inspector View')[0];
             plotInspectorView.show(viewContainer);
 
             await Vue.nextTick();
