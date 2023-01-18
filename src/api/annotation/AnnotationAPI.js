@@ -112,7 +112,9 @@ export default class AnnotationAPI extends EventEmitter {
     * @property {ANNOTATION_TYPES} annotationType the type of annotation to create (e.g., PLOT_SPATIAL)
     * @property {Tag[]} tags tags to add to the annotation, e.g., SCIENCE for science related annotations
     * @property {String} contentText Some text to add to the annotation, e.g. ("This annotation is about science")
-    * @property {Object<string, Object>} targets the targets ID keystrings and their specific properties (e.g., a bounding box for a plot)
+    * @property {Object<string, Object>} targets The targets ID keystrings and their specific properties.
+    * For plots, this will be a bounding box, e.g.: {maxY: 100, minY: 0, maxX: 100, minX: 0}
+    * For notebooks, this will be an entry ID, e.g.: {entryId: "entry-ecb158f5-d23c-45e1-a704-649b382622ba"}
     * @property {DomainObject>} targetDomainObjects the targets ID keystrings and the domain objects this annotation points to (e.g., telemetry objects for a plot)
     */
     /**
@@ -191,7 +193,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method isAnnotation
-    * @param {DomainObject} domainObject domainObject the domainObject in question
+    * @param {DomainObject} domainObject the domainObject in question
     * @returns {Boolean} Returns true if the domain object is an annotation
     */
     isAnnotation(domainObject) {
@@ -219,8 +221,8 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method getAnnotations
-    * @param {Identifier} domainObjectIdentifier - The domain object identifier to use to search for annotations
-    * @returns {DomainObject[]} Returns an array of domain objects that match the search query
+    * @param {Identifier} domainObjectIdentifier - The domain object identifier to use to search for annotations. For example, a telemetry object identifier.
+    * @returns {DomainObject[]} Returns an array of annotations that match the search query
     */
     async getAnnotations(domainObjectIdentifier) {
         const keyStringQuery = this.openmct.objects.makeKeyString(domainObjectIdentifier);
@@ -247,7 +249,7 @@ export default class AnnotationAPI extends EventEmitter {
 
     /**
     * @method deleteAnnotations
-    * @param {DomainObject} existingAnnotation - An annotations to undelete (set _deleted to false)
+    * @param {DomainObject} annotation - An annotation to undelete (set _deleted to false)
     */
     unDeleteAnnotation(annotation) {
         if (!annotation) {
@@ -271,8 +273,8 @@ export default class AnnotationAPI extends EventEmitter {
         });
 
         if (filterDuplicates) {
-            tagsFromAnnotations = tagsFromAnnotations.filter((tag, index, array) => {
-                return array.indexOf(tag) === index;
+            tagsFromAnnotations = tagsFromAnnotations.filter((tag, index, tagArray) => {
+                return tagArray.indexOf(tag) === index;
             });
         }
 
@@ -358,6 +360,11 @@ export default class AnnotationAPI extends EventEmitter {
         return combinedResults;
     }
 
+    /**
+    * @method #breakApartSeparateTargets
+    * @param {Array} results A set of search results that could have the multiple targets for the same result
+    * @returns {Array} The same set of results, but with each target separated out into its own result
+    */
     #breakApartSeparateTargets(results) {
         const separateResults = [];
         results.forEach(result => {
