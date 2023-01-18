@@ -14,6 +14,7 @@
             'is-context-clicked': contextClickActive,
             'is-new': isNewItem
         }"
+        @animationend="targetedPathAnimationEnd($event)"
         @click.capture="itemClick"
         @contextmenu.capture="handleContextMenu"
     >
@@ -172,6 +173,10 @@ export default {
         this.$emit('tree-item-destoyed', this.navigationPath);
     },
     methods: {
+        targetedPathAnimationEnd($event) {
+            $event.target.classList.remove('is-targeted-item');
+            this.$emit('targeted-path-animation-end');
+        },
         itemAction() {
             this.$emit('tree-item-action', this.isOpen || this.isLoading ? 'close' : 'open');
         },

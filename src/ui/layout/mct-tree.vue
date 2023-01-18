@@ -93,6 +93,7 @@
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @tree-item-action="treeItemAction(treeItem, $event)"
                     @tree-item-selection="treeItemSelection(treeItem)"
+                    @targeted-path-animation-end="targetedPathAnimationEnd()"
                 />
                 <!-- main loading -->
                 <div
@@ -309,6 +310,9 @@ export default {
                 this.openTreeItem(parentItem);
             }
         },
+        targetedPathAnimationEnd() {
+            this.targetedPath = undefined;
+        },
         treeItemSelection(item) {
             this.selectedItem = item;
             this.$emit('tree-item-selection', item);
@@ -499,6 +503,9 @@ export default {
                     }
                 }
             });
+        },
+        setTargetedItem(navigationPath) {
+            this.targetedItem = navigationPath;
         },
         isItemInView(navigationPath) {
             const indexOfScroll = this.treeItems.findIndex(item => item.navigationPath === navigationPath);
