@@ -21,40 +21,58 @@
  *****************************************************************************/
 
 <template>
-<div></div>
+<div
+    class="c-inspector__content"
+></div>
 </template>
 
 <script>
 export default {
     inject: ['openmct'],
-    data() {
-        return {
-            selection: []
-        };
+    props: {
+        selectedTab: {
+            type: Object,
+            default: undefined
+        },
+        selection: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        }
     },
-    mounted() {
-        this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
-    },
-    destroyed() {
-        this.openmct.selection.off('change', this.updateSelection);
+    watch: {
+        selection() {
+            this.updateSelectionViews();
+        },
+        selectedTab() {
+            this.showViewsForTab();
+        }
     },
     methods: {
-        updateSelection(selection) {
-            this.selection = selection;
-
-            if (this.selectedViews) {
-                this.selectedViews.forEach(selectedView => {
-                    selectedView.destroy();
+        updateSelectionViews(selection) {
+            this.clearViews();
+            this.selectedViews = this.openmct.inspectorViews.get(this.selection);
+        },
+        clearViews() {
+            if (this.visibleViews) {
+                this.visibleViews.forEach(visibleView => {
+                    visibleView.destroy();
                 });
+
+                this.visibleViews = [];
                 this.$el.innerHTML = '';
             }
+        },
+        showViewsForTab() {
+            this.clearViews();
+            this.visibleViews = this.selectedViews
+                .filter(view => view.name === this.selectedTab.name);
 
-            this.selectedViews = this.openmct.inspectorViews.get(selection);
-            this.selectedViews.forEach(selectedView => {
+            this.visibleViews.forEach(visibleView => {
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
-                selectedView.show(viewContainer);
+                visibleView.show(viewContainer);
             });
         }
     }
