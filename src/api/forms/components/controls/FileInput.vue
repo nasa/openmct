@@ -30,7 +30,7 @@
             id="fileElem"
             ref="fileInput"
             type="file"
-            accept=".json"
+            :accept="acceptableFileTypes"
             style="display:none"
         >
         <button
@@ -72,6 +72,13 @@ export default {
         },
         removable() {
             return (this.fileInfo || this.model.value) && this.model.removable;
+        },
+        acceptableFileTypes() {
+            if (this.model.type) {
+                return this.model.type;
+            }
+
+            return 'application/json';
         }
     },
     mounted() {
@@ -80,7 +87,13 @@ export default {
     methods: {
         handleFiles() {
             const fileList = this.$refs.fileInput.files;
-            this.readFile(fileList[0]);
+            const file = fileList[0];
+
+            if (this.acceptableFileTypes === 'application/json') {
+                this.readFile(file);
+            } else {
+                this.handleRawFile(file);
+            }
         },
         readFile(file) {
             const self = this;
@@ -103,6 +116,21 @@ export default {
             };
 
             fileReader.readAsText(file);
+        },
+        handleRawFile(file) {
+            const fileInfo = {
+                name: file.name,
+                body: file
+            };
+
+            this.fileInfo = Object.assign({}, fileInfo);
+
+            const data = {
+                model: this.model,
+                value: fileInfo
+            };
+
+            this.$emit('onChange', data);
         },
         selectFile() {
             this.$refs.fileInput.click();

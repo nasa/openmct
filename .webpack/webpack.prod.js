@@ -4,17 +4,18 @@
 This configuration should be used for production installs.
 It is the default webpack configuration.
 */
-const { merge } = require('webpack-merge');
-const common = require('./webpack.common');
+const path = require("path");
+const webpack = require("webpack");
+const { merge } = require("webpack-merge");
 
-const path = require('path');
-const webpack = require('webpack');
+const common = require("./webpack.common");
+const projectRootDir = path.resolve(__dirname, "..");
 
 module.exports = merge(common, {
-    mode: 'production',
+    mode: "production",
     resolve: {
         alias: {
-            "vue": path.join(__dirname, "node_modules/vue/dist/vue.min.js")
+            vue: path.join(projectRootDir, "node_modules/vue/dist/vue.min.js")
         }
     },
     plugins: [
@@ -22,5 +23,5 @@ module.exports = merge(common, {
             __OPENMCT_ROOT_RELATIVE__: '""'
         })
     ],
-    devtool: 'source-map'
+    devtool: "source-map"
 });
