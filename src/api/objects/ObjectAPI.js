@@ -761,17 +761,17 @@ export default class ObjectAPI {
         }
 
         // Remove any query params and split on '/'
-        const identifiers = navigationPath.split('?')?.[0].split('/');
+        const keyStrings = navigationPath.split('?')?.[0].split('/');
 
-        if (identifiers[0] !== 'ROOT') {
-            identifiers.unshift('ROOT');
+        if (keyStrings[0] !== 'ROOT') {
+            keyStrings.unshift('ROOT');
         }
 
         const objectPath = (await Promise.all(
-            identifiers.map(
-                identifier => this.supportsMutation(identifier)
-                    ? this.getMutable(utils.parseKeyString(identifier))
-                    : this.get(utils.parseKeyString(identifier))
+            keyStrings.map(
+                keyString => this.supportsMutation(keyString)
+                    ? this.getMutable(utils.parseKeyString(keyString))
+                    : this.get(utils.parseKeyString(keyString))
             )
         )).reverse();
 
