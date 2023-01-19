@@ -75,7 +75,6 @@ export default {
         return {
             elements: [],
             isEditing: this.openmct.editor.isEditing(),
-            parentObject: undefined,
             currentSearch: '',
             selection: [],
             contextClickTracker: {},
@@ -113,7 +112,6 @@ export default {
             this.elements = [];
             this.elementsCache = {};
             this.listeners = [];
-            this.parentObject = selection && selection[0] && selection[0][0].context.item;
 
             if (this.compositionUnlistener) {
                 this.compositionUnlistener();
