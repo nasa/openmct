@@ -64,16 +64,16 @@
                     class="c-cr__edge"
                     width="100"
                     height="100"
-                    fill="url(#paint0_radial)"
+                    fill="url(#gradient_edge)"
                 />
                 <rect
                     v-if="hasSunHeading"
                     class="c-cr__sun"
                     width="100"
                     height="100"
-                    fill="url(#paint1_radial)"
+                    fill="url(#gradient_sun)"
                     :style="sunHeadingStyle"
-                />
+                /><!-- TODO: CHANGE NAME TO #gradient_sun -->
 
                 <!-- Camera FOV -->
                 <mask
@@ -107,6 +107,23 @@
                         height="100"
                     />
                 </mask>
+
+                <!-- Equipment (spacecraft) body holder. Transforms relative to the camera position. -->
+                <g
+                    v-if="hasHeading"
+                    class="cr-vrover"
+                    :style="camAngleAndPositionStyle"
+                >
+                    <!-- Equipment body. Rotates relative to the camera gimbal value for cams that gimbal. -->
+                    <path
+                        class="cr-vrover__body"
+                        :style="camGimbalAngleStyle"
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M5 0C2.23858 0 0 2.23858 0 5V95C0 97.7614 2.23858 100 5 100H95C97.7614 100 100 97.7614 100 95V5C100 2.23858 97.7614 0 95 0H5ZM85 59L50 24L15 59H33V75H67.0455V59H85Z"
+                    />
+                </g>
+
                 <g
                     class="c-cr__cam-fov"
                     :style="cameraPanStyle"
@@ -128,18 +145,12 @@
                             :style="cameraFOVStyleLeftHalf"
                         />
                     </g>
+                    <polygon
+                        class="c-cr__cam"
+                        points="0,0 100,0 70,40 70,100 30,100 30,40"
+                    />
                 </g>
             </g>
-
-            <!-- Spacecraft body -->
-            <path
-                v-if="hasHeading"
-                class="c-cr__spacecraft-body"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M37 49C35.3431 49 34 50.3431 34 52V82C34 83.6569 35.3431 85 37 85H63C64.6569 85 66 83.6569 66 82V52C66 50.3431 64.6569 49 63 49H37ZM50 52L58 60H55V67H45V60H42L50 52Z"
-                :style="headingStyle"
-            />
 
             <!-- NSEW and ticks -->
             <g
@@ -193,7 +204,7 @@
         </g>
         <defs>
             <radialGradient
-                id="paint0_radial"
+                id="gradient_edge"
                 cx="0"
                 cy="0"
                 r="1"
@@ -201,7 +212,7 @@
                 gradientTransform="translate(50 50) rotate(90) scale(50)"
             >
                 <stop
-                    offset="0.751387"
+                    offset="0.6"
                     stop-opacity="0"
                 />
                 <stop
@@ -210,7 +221,7 @@
                 />
             </radialGradient>
             <radialGradient
-                id="paint1_radial"
+                id="gradient_sun"
                 cx="0"
                 cy="0"
                 r="1"
@@ -218,12 +229,17 @@
                 gradientTransform="translate(50 -7) rotate(-90) scale(18.5)"
             >
                 <stop
-                    offset="0.716377"
+                    offset="0.7"
                     stop-color="#FFCC00"
                 />
                 <stop
+                    offset="0.7"
+                    stop-color="#FFCC00"
+                    stop-opacity="0.6"
+                />
+                <stop
                     offset="1"
-                    stop-color="#FF9900"
+                    stop-color="#FF6600"
                     stop-opacity="0"
                 />
             </radialGradient>
@@ -275,6 +291,30 @@ export default {
         };
     },
     computed: {
+        camAngleAndPositionStyle() {
+            /*
+                camera	        translate	rotate deg	scale
+                aft	            0%, 21%	    180	        0.3
+                haz-port-aft	13%, 18%	90	        0.3
+                haz-port-fwd	-13%, 18%	90	        0.3
+                haz-stbd-aft	-13%, 18%	270	        0.3
+                haz-stbd-fwd	13%, 18%	270	        0.3
+                nav	            0%, 18%	 	0           0.3
+             */
+            const scale = 0.3; // Get this from config
+            let transX = 0;
+            let transY = 18;
+            let rotate = 0;
+
+            return { transform: `translate(${transX}%, ${transY}%) rotate(${rotate}deg) scale(${scale})` };
+        },
+        camGimbalAngleStyle() {
+            const rotation = rotate(this.north, this.heading);
+
+            return {
+                transform: `rotate(${ rotation }deg)`
+            };
+        },
         compassRoseStyle() {
             return { transform: `rotate(${ this.north }deg)` };
         },
@@ -297,6 +337,7 @@ export default {
             return this.heading !== undefined;
         },
         headingStyle() {
+            /* Replaced with computed camGimbalStyle, but left here just in case. */
             const rotation = rotate(this.north, this.heading);
 
             return {
