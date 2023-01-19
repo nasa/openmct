@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+import StalenessUtils from '@/utils/staleness';
 import { IS_OLD_KEY, IS_STALE_KEY } from '../utils/constants';
 import { OPERATIONS, getOperatorText } from '../utils/operations';
 import { checkIfOld } from "../utils/time";
@@ -47,6 +48,7 @@ export default class TelemetryCriterion extends EventEmitter {
         this.result = undefined;
         this.ageCheck = undefined;
         this.unsubscribeFromStaleness = undefined;
+        this.stalenessUtils = new StalenessUtils(this.openmct);
 
         this.initialize();
         this.emitEvent('criterionUpdated', this);
@@ -91,15 +93,18 @@ export default class TelemetryCriterion extends EventEmitter {
             this.unsubscribeFromStaleness();
         }
 
+        this.openmct.telemetry.isStale(this.telemetryObject).then(this.handleStaleTelemetry.bind(this));
         this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(
             this.telemetryObject,
-            (isStale) => this.handleStaleTelemetry(isStale)
+            this.handleStaleTelemetry.bind(this)
         );
     }
 
-    handleStaleTelemetry(isStale) {
-        this.result = isStale;
-        this.emitEvent('telemetryStaleness');
+    handleStaleTelemetry(stalenessResponse) {
+        if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+            this.result = stalenessResponse.isStale;
+            this.emitEvent('telemetryStaleness');
+        }
     }
 
     isValid() {
@@ -307,6 +312,8 @@ export default class TelemetryCriterion extends EventEmitter {
         if (this.ageCheck) {
             delete this.ageCheck;
         }
+
+        this.stalenessUtils.destroy();
 
         if (this.unsubscribeFromStaleness) {
             this.unsubscribeFromStaleness();

@@ -31,33 +31,46 @@ export default class SinewaveLimitProvider extends EventEmitter {
         this.observingStaleness = {};
         this.watchingTheClock = false;
         this.isRealTime = undefined;
-
-        this.subscribeToStaleness = this.subscribeToStaleness.bind(this);
-        this.handleClockUpdate = this.handleClockUpdate.bind(this);
-        this.updateRealTime = this.updateRealTime.bind(this);
-        this.updateStaleness = this.updateStaleness.bind(this);
     }
 
     supportsStaleness(domainObject) {
         return domainObject.type === 'generator';
     }
 
+    isStale(domainObject, options) {
+        if (!this.providingStaleness(domainObject)) {
+            return Promise.resolve({
+                isStale: false,
+                utc: 0
+            });
+        }
+
+        const id = this.getObjectKeyString(domainObject);
+
+        if (!this.observerExists(id)) {
+            this.createObserver(id);
+        }
+
+        return Promise.resolve(this.observingStaleness[id].isStale);
+    }
+
     subscribeToStaleness(domainObject, callback) {
-        const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+        const id = this.getObjectKeyString(domainObject);
 
         if (this.isRealTime === undefined) {
             this.updateRealTime(this.openmct.time.clock());
         }
 
-        this.observingStaleness[id] = {
-            isStale: false,
-            callback
-        };
-
         this.handleClockUpdate();
 
+        if (this.observerExists(id)) {
+            this.addCallbackToObserver(id, callback);
+        } else {
+            this.createObserver(id, callback);
+        }
+
         const intervalId = setInterval(() => {
-            if (domainObject.telemetry?.staleness === true && this.isRealTime) {
+            if (this.providingStaleness(domainObject)) {
                 this.updateStaleness(id, !this.observingStaleness[id].isStale);
             }
         }, 10000);
@@ -66,7 +79,7 @@ export default class SinewaveLimitProvider extends EventEmitter {
             clearInterval(intervalId);
             this.updateStaleness(id, false);
             this.handleClockUpdate();
-            delete this.observingStaleness[id];
+            this.destroyObserver(id);
         };
     }
 
@@ -94,10 +107,45 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
     updateStaleness(id, isStale) {
         this.observingStaleness[id].isStale = isStale;
-        this.observingStaleness[id].callback(this.observingStaleness[id].isStale);
+        this.observingStaleness[id].utc = Date.now();
+        this.observingStaleness[id].callback({
+            isStale: this.observingStaleness[id].isStale,
+            utc: this.observingStaleness[id].utc
+        });
         this.emit('stalenessEvent', {
             id,
             isStale: this.observingStaleness[id].isStale
         });
+    }
+
+    createObserver(id, callback) {
+        this.observingStaleness[id] = {
+            isStale: false,
+            utc: Date.now()
+        };
+
+        if (typeof callback === 'function') {
+            this.addCallbackToObserver(id, callback);
+        }
+    }
+
+    destroyObserver(id) {
+        delete this.observingStaleness[id];
+    }
+
+    providingStaleness(domainObject) {
+        return domainObject.telemetry?.staleness === true && this.isRealTime;
+    }
+
+    getObjectKeyString(object) {
+        return this.openmct.objects.makeKeyString(object.identifier);
+    }
+
+    addCallbackToObserver(id, callback) {
+        this.observingStaleness[id].callback = callback;
+    }
+
+    observerExists(id) {
+        return this.observingStaleness?.[id];
     }
 }

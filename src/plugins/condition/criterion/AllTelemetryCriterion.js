@@ -82,21 +82,23 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
             if (!this.stalenessSubscription[id]) {
                 this.stalenessSubscription[id] = this.openmct.telemetry.subscribeToStaleness(
                     telemetryObject,
-                    (isStale) => {
-                        this.handleStaleTelemetry(id, isStale);
+                    (stalenessResponse) => {
+                        this.handleStaleTelemetry(id, stalenessResponse);
                     }
                 );
             }
         });
     }
 
-    handleStaleTelemetry(id, isStale) {
+    handleStaleTelemetry(id, stalenessResponse) {
         if (this.telemetryDataCache) {
-            this.telemetryDataCache[id] = isStale;
-            this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
-        }
+            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                this.telemetryDataCache[id] = stalenessResponse.isStale;
+                this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
 
-        this.emitEvent('telemetryStaleness');
+                this.emitEvent('telemetryStaleness');
+            }
+        }
     }
 
     isValid() {

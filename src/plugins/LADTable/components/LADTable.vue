@@ -50,7 +50,9 @@
 </template>
 
 <script>
+
 import LadRow from './LADRow.vue';
+import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
@@ -95,6 +97,8 @@ export default {
         }
     },
     mounted() {
+        this.stalenessUtils = new StalenessUtils(this.openmct);
+
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
         this.composition.on('remove', this.removeItem);
@@ -107,6 +111,7 @@ export default {
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
 
+        this.stalenessUtils.destroy();
         Object.values(this.unsubscribeFromStaleness).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
     },
     methods: {
@@ -117,8 +122,11 @@ export default {
 
             this.items.push(item);
 
-            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
-                this.handleStaleness(item.key, isStale);
+            this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
+                this.handleStaleness(item.key, stalenessResponse);
+            });
+            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                this.handleStaleness(item.key, stalenessResponse);
             });
 
             this.unsubscribeFromStaleness[item.key] = unsubscribeFromStaleness;
@@ -143,15 +151,17 @@ export default {
 
             return metadataWithUnits.length > 0;
         },
-        handleStaleness(id, isStale) {
-            const index = this.staleObjects.indexOf(id);
-            if (isStale) {
-                if (index === -1) {
-                    this.staleObjects.push(id);
-                }
-            } else {
-                if (index !== -1) {
-                    this.staleObjects.splice(index, 1);
+        handleStaleness(id, stalenessResponse) {
+            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)) {
+                const index = this.staleObjects.indexOf(id);
+                if (stalenessResponse.isStale) {
+                    if (index === -1) {
+                        this.staleObjects.push(id);
+                    }
+                } else {
+                    if (index !== -1) {
+                        this.staleObjects.splice(index, 1);
+                    }
                 }
             }
         },

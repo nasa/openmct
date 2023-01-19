@@ -28,7 +28,8 @@ define([
     './TelemetryTableNameColumn',
     './TelemetryTableColumn',
     './TelemetryTableUnitColumn',
-    './TelemetryTableConfiguration'
+    './TelemetryTableConfiguration',
+    '@/utils/staleness'
 ], function (
     EventEmitter,
     _,
@@ -37,7 +38,8 @@ define([
     TelemetryTableNameColumn,
     TelemetryTableColumn,
     TelemetryTableUnitColumn,
-    TelemetryTableConfiguration
+    TelemetryTableConfiguration,
+    StalenessUtils
 ) {
     class TelemetryTable extends EventEmitter {
         constructor(domainObject, openmct) {
@@ -68,6 +70,8 @@ define([
             this.updateFilters = this.updateFilters.bind(this);
             this.clearData = this.clearData.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
+
+            this.stalenessUtils = new StalenessUtils.default(this.openmct);
 
             this.filterObserver = undefined;
 
@@ -156,11 +160,11 @@ define([
             this.telemetryCollections[keyString].on('clear', this.clearData);
             this.telemetryCollections[keyString].load();
 
-            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(telemetryObject, (isStale) => {
-                this.emit('telemetry-staleness', {
-                    keyString,
-                    isStale
-                });
+            this.openmct.telemetry.isStale(telemetryObject).then(stalenessResponse => {
+                this.handleStaleness(keyString, stalenessResponse);
+            });
+            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(telemetryObject, (stalenessResponse) => {
+                this.handleStaleness(keyString, stalenessResponse);
             });
 
             this.unsubscribeFromStaleness[keyString] = unsubscribeFromStaleness;
@@ -174,6 +178,15 @@ define([
             };
 
             this.emit('object-added', telemetryObject);
+        }
+
+        handleStaleness(keyString, stalenessResponse) {
+            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse, keyString)) {
+                this.emit('telemetry-staleness', {
+                    keyString,
+                    isStale: stalenessResponse.isStale
+                });
+            }
         }
 
         getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
@@ -384,6 +397,7 @@ define([
                 this.filterObserver();
             }
 
+            this.stalenessUtils.destroy();
             Object.values(this.unsubscribeFromStaleness).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
 
             if (this.tableComposition !== undefined) {

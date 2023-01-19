@@ -130,16 +130,7 @@ export default class TelemetryAPI {
             return provider.supportsSubscribe.apply(provider, args);
         }
 
-        return this.subscriptionProviders.filter(supportsDomainObject)[0];
-    }
-
-    /**
-     * @private
-     */
-    #findStalenessProvider(domainObject) {
-        return this.stalenessProviders.filter(function (p) {
-            return p.supportsStaleness(domainObject);
-        })[0];
+        return this.subscriptionProviders.find(supportsDomainObject);
     }
 
     /**
@@ -152,25 +143,25 @@ export default class TelemetryAPI {
             return provider.supportsRequest.apply(provider, args);
         }
 
-        return this.requestProviders.filter(supportsDomainObject)[0];
+        return this.requestProviders.find(supportsDomainObject);
     }
 
     /**
      * @private
      */
     #findMetadataProvider(domainObject) {
-        return this.metadataProviders.filter(function (p) {
-            return p.supportsMetadata(domainObject);
-        })[0];
+        return this.metadataProviders.find((provider) => {
+            return provider.supportsMetadata(domainObject);
+        });
     }
 
     /**
      * @private
      */
     #findLimitEvaluator(domainObject) {
-        return this.limitProviders.filter(function (p) {
-            return p.supportsLimits(domainObject);
-        })[0];
+        return this.limitProviders.find((provider) => {
+            return provider.supportsLimits(domainObject);
+        });
     }
 
     /**
@@ -313,61 +304,6 @@ export default class TelemetryAPI {
     }
 
     /**
-     * Subscribe to staleness updates for a specific domain object.
-     * The callback will be called whenever staleness changes.
-     *
-     * @method subscribeToStaleness
-     * @memberof module:openmct.TelemetryAPI~StalenessProvider#
-     * @param {module:openmct.DomainObject} domainObject the object
-     *          to watch for staleness updates
-     * @param {Function} callback the callback to invoke with staleness
-     *          updates
-     * @returns {Function} a function which may be called to terminate
-     *          the subscription to staleness updates
-     */
-    subscribeToStaleness(domainObject, callback) {
-        const provider = this.#findStalenessProvider(domainObject);
-
-        if (!this.stalenessSubscriberCache) {
-            this.stalenessSubscriberCache = {};
-        }
-
-        const keyString = objectUtils.makeKeyString(domainObject.identifier);
-        let stalenessSubscriber = this.stalenessSubscriberCache[keyString];
-
-        if (!stalenessSubscriber) {
-            stalenessSubscriber = this.stalenessSubscriberCache[keyString] = {
-                isStale: false,
-                callbacks: [callback]
-            };
-            if (provider) {
-                stalenessSubscriber.unsubscribe = provider
-                    .subscribeToStaleness(domainObject, function (isStale) {
-                        stalenessSubscriber.isStale = isStale;
-                        stalenessSubscriber.callbacks.forEach(function (cb) {
-                            cb(isStale);
-                        });
-                    });
-            } else {
-                stalenessSubscriber.unsubscribe = function () {};
-            }
-        } else {
-            callback(stalenessSubscriber.isStale);
-            stalenessSubscriber.callbacks.push(callback);
-        }
-
-        return function unsubscribe() {
-            stalenessSubscriber.callbacks = stalenessSubscriber.callbacks.filter(function (cb) {
-                return cb !== callback;
-            });
-            if (stalenessSubscriber.callbacks.length === 0) {
-                stalenessSubscriber.unsubscribe();
-                delete this.stalenessSubscriberCache[keyString];
-            }
-        }.bind(this);
-    }
-
-    /**
      * Subscribe to realtime telemetry for a specific domain object.
      * The callback will be called whenever data is received from a
      * realtime provider.
@@ -418,6 +354,111 @@ export default class TelemetryAPI {
                 delete this.subscribeCache[keyString];
             }
         }.bind(this);
+    }
+
+    /**
+     * Subscribe to staleness updates for a specific domain object.
+     * The callback will be called whenever staleness changes.
+     *
+     * @method subscribeToStaleness
+     * @memberof module:openmct.TelemetryAPI~StalenessProvider#
+     * @param {module:openmct.DomainObject} domainObject the object
+     *          to watch for staleness updates
+     * @param {Function} callback the callback to invoke with staleness data,
+     *  as it is received: ex.
+     *  {
+     *      isStale: <Boolean>,
+     *      timestamp: <timestamp>
+     *  }
+     * @returns {Function} a function which may be called to terminate
+     *          the subscription to staleness updates
+     */
+    subscribeToStaleness(domainObject, callback) {
+        const provider = this.#findStalenessProvider(domainObject);
+
+        if (!this.stalenessSubscriberCache) {
+            this.stalenessSubscriberCache = {};
+        }
+
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let stalenessSubscriber = this.stalenessSubscriberCache[keyString];
+
+        if (!stalenessSubscriber) {
+            stalenessSubscriber = this.stalenessSubscriberCache[keyString] = {
+                callbacks: [callback]
+            };
+            if (provider) {
+                stalenessSubscriber.unsubscribe = provider
+                    .subscribeToStaleness(domainObject, (isStale) => {
+                        stalenessSubscriber.callbacks.forEach((cb) => {
+                            cb(isStale);
+                        });
+                    });
+            } else {
+                stalenessSubscriber.unsubscribe = () => {};
+            }
+        } else {
+            stalenessSubscriber.callbacks.push(callback);
+        }
+
+        return function unsubscribe() {
+            stalenessSubscriber.callbacks = stalenessSubscriber.callbacks.filter((cb) => {
+                return cb !== callback;
+            });
+            if (stalenessSubscriber.callbacks.length === 0) {
+                stalenessSubscriber.unsubscribe();
+                delete this.stalenessSubscriberCache[keyString];
+            }
+        }.bind(this);
+    }
+
+    /**
+     * Request telemetry staleness for a domain object.
+     *
+     * @method isStale
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     * @param {module:openmct.DomainObject} domainObject the object
+     *        which has associated telemetry staleness
+     * @returns {Promise.<object[]>} a promise for a staleness data
+     *  object: ex.
+     *  {
+     *      isStale: <Boolean>,
+     *      timestamp: <timestamp>
+     *  }
+     */
+    async isStale(domainObject) {
+        const abortController = new AbortController();
+        const options = { signal: abortController.signal };
+
+        this.requestAbortControllers.add(abortController);
+
+        const provider = this.#findStalenessProvider(domainObject);
+        if (!provider) {
+            this.requestAbortControllers.delete(abortController);
+            const timeSystem = this.openmct.time.timeSystem();
+
+            return {
+                [timeSystem.key]: 0,
+                isStale: false
+            };
+        }
+
+        try {
+            const staleness = await provider.isStale(domainObject, options);
+
+            return staleness;
+        } finally {
+            this.requestAbortControllers.delete(abortController);
+        }
+    }
+
+    /**
+     * @private
+     */
+    #findStalenessProvider(domainObject) {
+        return this.stalenessProviders.find((provider) => {
+            return provider.supportsStaleness(domainObject);
+        });
     }
 
     /**
@@ -727,6 +768,15 @@ export default class TelemetryAPI {
  * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
  *
  * @interface TelemetryProvider
+ * @memberof module:openmct.TelemetryAPI~
+ */
+
+/**
+ * Provides telemetry staleness data. To subscribe to telemetry stalenes,
+ * new StalenessProvider implementations should be
+ * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
+ *
+ * @interface StalenessProvider
  * @memberof module:openmct.TelemetryAPI~
  */
 

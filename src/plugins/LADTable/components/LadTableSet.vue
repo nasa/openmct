@@ -62,7 +62,9 @@
 </template>
 
 <script>
+
 import LadRow from './LADRow.vue';
+import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
@@ -112,6 +114,7 @@ export default {
         }
     },
     mounted() {
+        this.stalenessUtils = new StalenessUtils(this.openmct);
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addLadTable);
         this.composition.on('remove', this.removeLadTable);
@@ -129,6 +132,7 @@ export default {
             c.composition.off('remove', c.removeCallback);
         });
 
+        this.stalenessUtils.destroy();
         Object.values(this.unsubscribeFromStaleness).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
     },
     methods: {
@@ -184,8 +188,11 @@ export default {
                     return;
                 }
 
-                const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
-                    this.handleStaleness(telemetryObject.key, isStale);
+                this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
+                    this.handleStaleness(telemetryObject.key, stalenessResponse);
+                });
+                const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                    this.handleStaleness(telemetryObject.key, stalenessResponse);
                 });
 
                 this.unsubscribeFromStaleness[telemetryObject.key] = unsubscribeFromStaleness;
@@ -205,15 +212,17 @@ export default {
                 this.handleStaleness(keystring, false);
             };
         },
-        handleStaleness(id, isStale) {
-            const index = this.staleObjects.indexOf(id);
-            if (isStale) {
-                if (index === -1) {
-                    this.staleObjects.push(id);
-                }
-            } else {
-                if (index !== -1) {
-                    this.staleObjects.splice(index, 1);
+        handleStaleness(id, stalenessResponse) {
+            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)) {
+                const index = this.staleObjects.indexOf(id);
+                if (stalenessResponse.isStale) {
+                    if (index === -1) {
+                        this.staleObjects.push(id);
+                    }
+                } else {
+                    if (index !== -1) {
+                        this.staleObjects.splice(index, 1);
+                    }
                 }
             }
         },
