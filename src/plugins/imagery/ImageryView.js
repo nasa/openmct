@@ -57,7 +57,7 @@ export default class ImageryView {
         const imageContext = this.getViewContext();
         // persist previous pause value to return to after unpausing
         this.previouslyPaused = imageContext.isPaused;
-        imageContext.thumbnailClicked(imageContext.imageHistory.length - 1);
+        imageContext.thumbnailClicked(imageContext.focusedImageIndex);
     }
     unpause() {
         const pausedStateBefore = this.previouslyPaused;
