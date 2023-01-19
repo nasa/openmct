@@ -33,14 +33,14 @@ define([
             key: 'filters-inspector',
             name: 'Filters',
             canView: function (selection) {
-                const object = selection?.[0]?.[0]?.context?.item;
+                const domainObject = selection?.[0]?.[0]?.context?.item;
 
-                return object && supportedObjectTypesArray.some(type => object.type === type);
+                return domainObject && supportedObjectTypesArray.some(type => domainObject.type === type);
             },
             view: function (selection) {
                 let component;
 
-                const object = selection?.[0]?.[0]?.context?.item;
+                const domainObject = selection?.[0]?.[0]?.context?.item;
 
                 return {
                     show: function (element) {
@@ -56,8 +56,8 @@ define([
                         });
                     },
                     showTab: function (isEditing) {
-                        const hasPersistedFilters = Boolean(object?.configuration?.filters);
-                        const hasGlobalFilters = Boolean(object?.configuration?.globalFilters);
+                        const hasPersistedFilters = Boolean(domainObject?.configuration?.filters);
+                        const hasGlobalFilters = Boolean(domainObject?.configuration?.globalFilters);
 
                         return hasPersistedFilters || hasGlobalFilters;
                     },
