@@ -68,13 +68,22 @@ export default class InspectorViewRegistry {
      */
     addProvider(provider) {
         const key = provider.key;
+        const name = provider.name;
 
         if (key === undefined) {
             throw "View providers must have a unique 'key' property defined";
         }
 
+        if (name === undefined) {
+            throw "View providers must have a unique 'name' property defined";
+        }
+
         if (this.providers[key] !== undefined) {
             console.warn(`Provider already defined for key '${key}'. Provider keys must be unique.`);
+        }
+
+        if (this.providers[name] !== undefined) {
+            console.warn(`Provider already defined for name '${name}'. Provider names must be unique.`);
         }
 
         this.providers[key] = provider;
