@@ -20,24 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import StalenessUtils from '@/utils/staleness';
+
 export default {
     data() {
         return {
             isStale: false
         };
     },
+    mounted() {
+        this.stalenessUtils = new StalenessUtils(this.openmct);
+    },
     beforeDestroy() {
         this.triggerUnsubscribeFromStaleness();
+        this.stalenessUtils.destroy();
     },
     methods: {
         subscribeToStaleness(domainObject, callback) {
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
-                if (callback && typeof callback === 'function') {
-                    callback(isStale);
-                } else {
-                    this.isStale = isStale;
-                }
+            this.requestStaleness(domainObject);
+            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                this.handleStalenessResponse(stalenessResponse, callback);
             });
+        },
+        async requestStaleness(domainObject) {
+            const stalenesResponse = await this.openmct.telemetry.isStale(domainObject);
+
+            this.handleStalenessResponse(stalenesResponse);
+        },
+        handleStalenessResponse(stalenessResponse, callback) {
+            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                if (typeof callback === 'function') {
+                    callback(stalenessResponse.isStale);
+                } else {
+                    this.isStale = stalenessResponse.isStale;
+                }
+            }
         },
         triggerUnsubscribeFromStaleness() {
             if (this.unsubscribeFromStaleness) {

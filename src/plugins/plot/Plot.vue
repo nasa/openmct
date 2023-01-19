@@ -51,6 +51,7 @@ import eventHelpers from './lib/eventHelpers';
 import ImageExporter from '../../exporters/ImageExporter';
 import MctPlot from './MctPlot.vue';
 import ProgressBar from "../../ui/components/ProgressBar.vue";
+import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
@@ -90,6 +91,7 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
+        this.stalenessUtils = new StalenessUtils(this.openmct);
         this.imageExporter = new ImageExporter(this.openmct);
         this.loadComposition();
     },
@@ -114,8 +116,11 @@ export default {
                 this.unsubscribes = {};
             }
 
-            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(object, (isStale) => {
-                this.handleStaleness(keystring, isStale);
+            this.openmct.telemetry.isStale(object).then((stalenessResponse) => {
+                this.handleStaleness(keystring, stalenessResponse);
+            });
+            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(object, (stalenessResponse) => {
+                this.handleStaleness(keystring, stalenessResponse);
             });
 
             this.unsubscribes[keystring] = unsubscribeFromStaleness;
@@ -125,15 +130,17 @@ export default {
             this.unsubscribes[keystring]();
             this.handleStaleness(keystring, false);
         },
-        handleStaleness(id, isStale) {
-            const index = this.staleObjects.indexOf(id);
-            if (isStale) {
-                if (index === -1) {
-                    this.staleObjects.push(id);
-                }
-            } else {
-                if (index !== -1) {
-                    this.staleObjects.splice(index, 1);
+        handleStaleness(id, stalenessResponse) {
+            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)) {
+                const index = this.staleObjects.indexOf(id);
+                if (stalenessResponse.isStale) {
+                    if (index === -1) {
+                        this.staleObjects.push(id);
+                    }
+                } else {
+                    if (index !== -1) {
+                        this.staleObjects.splice(index, 1);
+                    }
                 }
             }
         },
