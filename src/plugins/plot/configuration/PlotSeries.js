@@ -83,6 +83,10 @@ export default class PlotSeries extends Model {
         // Model.apply(this, arguments);
         this.onXKeyChange(this.get('xKey'));
         this.onYKeyChange(this.get('yKey'));
+        this.xRangeMin = Number.MIN_SAFE_INTEGER;
+        this.yRangeMin = Number.MIN_SAFE_INTEGER;
+        this.xRangeMax = Number.MAX_SAFE_INTEGER;
+        this.yRangeMax = Number.MAX_SAFE_INTEGER;
 
         this.unPlottableValues = [undefined, Infinity, -Infinity];
     }
@@ -378,6 +382,14 @@ export default class PlotSeries extends Model {
             });
         }
     }
+
+    setViewportRange(xRange, yRange) {
+        this.xRangeMin = xRange.min;
+        this.xRangeMax = xRange.max;
+        this.yRangeMin = yRange.min;
+        this.yRangeMax = yRange.max;
+    }
+
     /**
      * Add a point to the data array while maintaining the sort order of
      * the array and preventing insertion of points with a duplicate x
@@ -394,6 +406,7 @@ export default class PlotSeries extends Model {
         let data = this.getSeriesData();
         let insertIndex = data.length;
         const currentYVal = this.getYVal(point);
+        const currentXVal = this.getXVal(point);
         const lastYVal = this.getYVal(data[insertIndex - 1]);
 
         if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
@@ -417,7 +430,11 @@ export default class PlotSeries extends Model {
         point.mctLimitState = this.evaluate(point);
         data.splice(insertIndex, 0, point);
         this.updateSeriesData(data);
-        this.emit('add', point, insertIndex, this);
+        // if user is not looking at data within the current bounds, don't notify chart of added point
+        if ((currentXVal > this.xRangeMin) && (currentXVal < this.xRangeMax)
+            && (currentYVal > this.yRangeMin) && (currentYVal < this.yRangeMax)) {
+            this.emit('add', point, insertIndex, this);
+        }
     }
 
     /**

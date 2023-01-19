@@ -470,6 +470,10 @@ export default {
                 return;
             }
 
+            this.config.series.models.forEach(series => {
+                series.setViewportRange(xRange, yRange);
+            });
+
             const dimensions = [
                 xRange.max - xRange.min,
                 yRange.max - yRange.min
@@ -605,21 +609,34 @@ export default {
                 disconnected
             );
         },
+        annotatedPointWithinRange(annotatedPoint, xRange, yRange) {
+            const xValue = annotatedPoint.series.getXVal(annotatedPoint.point);
+            const yValue = annotatedPoint.series.getYVal(annotatedPoint.point);
+
+            return ((xValue > xRange.min) && (xValue < xRange.max)
+                        && (yValue > yRange.min) && (yValue < yRange.max));
+        },
         drawAnnotatedPoints() {
+            const xRange = this.config.xAxis.get('displayRange');
+            const yRange = this.config.yAxis.get('displayRange');
+
             // we should do this by series, and then plot all the points at once instead
             // of doing it one by one
             if (this.annotatedPoints && this.annotatedPoints.length) {
                 const uniquePointsToDraw = [];
                 this.annotatedPoints.forEach((annotatedPoint) => {
-                    const xValue = this.offset.xVal(annotatedPoint.point, annotatedPoint.series);
-                    const yValue = this.offset.yVal(annotatedPoint.point, annotatedPoint.series);
-                    const pointToDraw = new Float32Array([xValue, yValue]);
-                    const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
-                        return rawPoint[0] === pointToDraw[0] && rawPoint[1] === pointToDraw[1];
-                    });
-                    if (!drawnPoint) {
-                        uniquePointsToDraw.push(pointToDraw);
-                        this.drawAnnotatedPoint(annotatedPoint, pointToDraw);
+                    // if the annotation is outside the range, don't draw it
+                    if (this.annotatedPointWithinRange(annotatedPoint, xRange, yRange)) {
+                        const canvasXValue = this.offset.xVal(annotatedPoint.point, annotatedPoint.series);
+                        const canvasYValue = this.offset.yVal(annotatedPoint.point, annotatedPoint.series);
+                        const pointToDraw = new Float32Array([canvasXValue, canvasYValue]);
+                        const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
+                            return rawPoint[0] === pointToDraw[0] && rawPoint[1] === pointToDraw[1];
+                        });
+                        if (!drawnPoint) {
+                            uniquePointsToDraw.push(pointToDraw);
+                            this.drawAnnotatedPoint(annotatedPoint, pointToDraw);
+                        }
                     }
                 });
             }
