@@ -26,7 +26,9 @@
     }
 
     &.is-stale {
-        border: 1px solid cyan!important;
+        .c-telemetry-view__value {
+            @include isStaleElement();
+        }
     }
 
     .c-frame & {

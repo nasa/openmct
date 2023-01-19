@@ -153,6 +153,37 @@
     }
 }
 
+@mixin isStaleGlyph() {
+    content: $glyph-icon-stale;
+    display: block;
+    font-family: symbolsfont;
+    font-style: normal;
+    pointer-events: none;
+}
+
+@mixin isStaleHolder() {
+    // Applied to objects that frame content, like Display Layout frames, plots, etc.
+    border-radius: 3px;
+    border: 1px dotted $colorTelemStale !important;
+
+    &:before {
+        @include isStaleGlyph();
+        color: $colorTelemStale;
+        position: absolute;
+        bottom: 5px;
+        left: 3px;
+        width: 12px;
+        z-index: 10;
+    }
+}
+
+@mixin isStaleElement() {
+    // Applied directly to values, like LAD Table cells, alphanumerics, plot legend items
+    background: $colorTelemStale !important;
+    color: $colorTelemStaleFg !important;
+    font-style: italic;
+}
+
 @mixin isLimit() {
     &[class*='is-limit'] {
         &:before {

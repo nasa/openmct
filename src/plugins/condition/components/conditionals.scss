@@ -55,7 +55,7 @@
     overflow: hidden;
 
     &.is-stale {
-        border: 1px solid cyan;
+        @include isStaleHolder();
     }
 
     /************************** CONDITION SET LAYOUT */

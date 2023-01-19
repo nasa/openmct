@@ -91,9 +91,9 @@ div.c-table {
     }
 
     &.is-stale {
-        border: 1px solid cyan;
+        @include isStaleHolder();
     }
-    
+
     .--width-less-than-600 & {
         &:not(.is-paused) {
             .c-table-control-bar {
@@ -185,7 +185,7 @@ div.c-table {
     padding: $mainViewPad;
 
     &.is-stale {
-        border: 1px solid cyan;
+        @include isStaleHolder();
     }
 }
 
@@ -196,8 +196,7 @@ div.c-table {
 
     td {
         &.is-stale {
-            background: cyan!important;
-            color: darkblue!important;
+            @include isStaleElement();
         }
     }
 }

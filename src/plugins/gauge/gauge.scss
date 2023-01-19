@@ -34,10 +34,11 @@ $meterNeedleBorderRadius: 5px;
     overflow: hidden;
 
     &.is-stale {
-      border: 1px solid cyan;
+      @include isStaleHolder();
 
       [class*=__current-value-text] {
-        fill: cyan!important;
+        fill: $colorTelemStale;
+        font-style: italic;
       }
     }
   }

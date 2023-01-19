@@ -82,7 +82,7 @@ mct-plot {
     }
 
     &.is-stale {
-        border: 1px solid cyan;
+        @include isStaleHolder();
     }
 
     .c-plot--stacked-container {
@@ -94,7 +94,7 @@ mct-plot {
         overflow: hidden;
 
         .is-stale {
-            border: 1px solid cyan;
+            @include isStaleHolder();
         }
 
         &[s-selected] {
@@ -567,8 +567,7 @@ mct-plot {
     }
 
     &.is-stale {
-        background: cyan;
-        color: darkblue;
+        @include isStaleElement();
     }
 
     .plot-series-color-swatch {
@@ -624,8 +623,10 @@ mct-plot {
         // .plot-legend-item is a span of spans.
 
         .plot-legend-item {
+            border-radius: $smallCr;
             display: flex;
             justify-content: stretch;
+            padding: 1px;
 
             .plot-series-swatch-and-name,
             .plot-series-value {

@@ -322,7 +322,7 @@
     overflow: auto;
 
     &.is-stale {
-        border: 1px solid cyan;
+        @include isStaleHolder();
     }
 }
 
