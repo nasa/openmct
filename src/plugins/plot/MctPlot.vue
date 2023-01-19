@@ -811,6 +811,7 @@ export default {
 
             const yLocationForPositionOverPlot = this.yScale.map((yAxis) => yAxis.scale.invert(this.positionOverElement.y));
             const yAxisIds = this.yScale.map((yAxis) => yAxis.id);
+            // Also store the order of yAxisIds so that we can associate the y location to the yAxis
             this.positionOverPlot = {
                 x: this.xScale.invert(this.positionOverElement.x),
                 y: yLocationForPositionOverPlot,
