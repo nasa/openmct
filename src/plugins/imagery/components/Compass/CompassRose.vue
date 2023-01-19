@@ -304,9 +304,9 @@ export default {
             const scale = 0.3; // Get this from config
             let transX = 0;
             let transY = 18;
-            let rotate = 0;
+            let rotation = 0;
 
-            return { transform: `translate(${transX}%, ${transY}%) rotate(${rotate}deg) scale(${scale})` };
+            return { transform: `translate(${transX}%, ${transY}%) rotate(${rotation}deg) scale(${scale})` };
         },
         camGimbalAngleStyle() {
             const rotation = rotate(this.north, this.heading);
