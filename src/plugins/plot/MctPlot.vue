@@ -1006,9 +1006,16 @@ export default {
         zoom(zoomDirection, zoomFactor) {
             const currentXaxis = this.config.xAxis.get('displayRange');
 
+            let doesYAxisHaveRange = false;
+            this.yAxisListWithRange.forEach((yAxisModel) => {
+                if (yAxisModel.get('displayRange')) {
+                    doesYAxisHaveRange = true;
+                }
+            });
+
             // when there is no plot data, the ranges can be undefined
             // in which case we should not perform zoom
-            if (!currentXaxis || !this.yAxisListWithRange[0].get('displayRange')) {
+            if (!currentXaxis || !doesYAxisHaveRange) {
                 return;
             }
 
@@ -1069,9 +1076,16 @@ export default {
 
             let xDisplayRange = this.config.xAxis.get('displayRange');
 
+            let doesYAxisHaveRange = false;
+            this.yAxisListWithRange.forEach((yAxisModel) => {
+                if (yAxisModel.get('displayRange')) {
+                    doesYAxisHaveRange = true;
+                }
+            });
+
             // when there is no plot data, the ranges can be undefined
             // in which case we should not perform zoom
-            if (!xDisplayRange || !this.yAxisListWithRange[0].get('displayRange')) {
+            if (!xDisplayRange || !doesYAxisHaveRange) {
                 return;
             }
 
