@@ -199,6 +199,10 @@ export default {
         setViewFromClock(newClock) {
             this.filterValue = this.domainObject.configuration.filter;
             this.isRealTime = newClock !== undefined;
+            if (!this.isRealTime) {
+                this.hideAll = false;
+                this.showAll = true;
+            }
 
             this.setSort();
             this.setViewBounds();
