@@ -40,6 +40,8 @@ define([
             view: function (selection) {
                 let component;
 
+                const object = selection?.[0]?.[0]?.context?.item;
+
                 return {
                     show: function (element) {
                         component = new Vue({
@@ -52,6 +54,12 @@ define([
                             },
                             template: '<filters-view></filters-view>'
                         });
+                    },
+                    showTab: function (isEditing) {
+                        const hasPersistedFilters = Boolean(object?.configuration?.filters);
+                        const hasGlobalFilters = Boolean(object?.configuration?.globalFilters);
+
+                        return hasPersistedFilters || hasGlobalFilters;
                     },
                     destroy: function () {
                         if (component) {
