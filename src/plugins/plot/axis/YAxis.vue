@@ -147,7 +147,7 @@ export default {
             } else {
                 const thisIsTheSecondLeftAxis = (this.id - 1) > 0;
                 if (this.multipleLeftAxes && thisIsTheSecondLeftAxis) {
-                    style.left = `${ this.plotLeftTickWidth - this.tickWidth - multipleAxesPadding}px`;
+                    style.left = 0;
                     style['border-right'] = `1px solid`;
                 } else {
                     style.left = `${ this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;

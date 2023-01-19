@@ -268,6 +268,22 @@ mct-plot {
         }
     }
 
+    .plot-yaxis-right {
+        &.gl-plot-y { margin-left: 100%; }
+
+        .gl-plot-label {
+            &.gl-plot-y-label {
+                left: auto;
+                right: 0;
+            }
+        }
+
+        .gl-plot-y-label__select {
+            left: 0;
+            right: auto;
+        }
+    }
+
     .gl-plot-x-label__select {
         position: absolute;
         left: 50%;
@@ -282,11 +298,6 @@ mct-plot {
         transform: translateY(-50%);
         left: 0;
         z-index: 10;
-    }
-
-    .plot-yaxis-right .gl-plot-y-label__select {
-        left: auto;
-        right: 0;
     }
 
     .gl-plot-x-options,
@@ -428,6 +439,14 @@ mct-plot {
     }
 }
 
+.plot-yaxis-right {
+    .gl-plot-tick {
+        &.gl-plot-y-tick-label {
+            left: $interiorMarginSm;
+            right: auto;
+        }
+    }
+}
 .tick-label {
     &.tick-label-x {
         top: 0;
@@ -611,8 +630,6 @@ mct-plot {
 .plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
 .plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
 .plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
-
-.gl-plot .plot-yaxis-right.gl-plot-y { margin-left: 100%; }
 
 .gl-plot,
 .c-plot {
