@@ -517,7 +517,6 @@ export default {
             );
         },
         matchByYAxisId(id, item) {
-            console.log('matchByYAxisId');
             const mainYAxisId = this.config.yAxis.get('id');
             let matchesId = false;
 
@@ -687,23 +686,25 @@ export default {
         },
         drawRectangles(yAxisId) {
             if (this.rectangles) {
-                const rectangles = this.rectangles.filter(this.matchByYAxisId.bind(this, yAxisId));
-                rectangles.forEach(this.drawRectangle.bind(this, yAxisId), this);
+                this.rectangles.forEach(this.drawRectangle.bind(this, yAxisId), this);
             }
         },
         drawRectangle(yAxisId, rect) {
-            console.log('drawRectangle');
-            this.drawAPI.drawSquare(
-                [
-                    this.offset[yAxisId].x(rect.start.x),
-                    this.offset[yAxisId].y(rect.start.y)
-                ],
-                [
-                    this.offset[yAxisId].x(rect.end.x),
-                    this.offset[yAxisId].y(rect.end.y)
-                ],
-                rect.color
-            );
+            const startYIndex = rect.start.yAxisIds.findIndex(id => id === yAxisId);
+            const endYIndex = rect.end.yAxisIds.findIndex(id => id === yAxisId);
+            if (rect.start.y[startYIndex] && rect.end.y[endYIndex]) {
+                this.drawAPI.drawSquare(
+                    [
+                        this.offset[yAxisId].x(rect.start.x),
+                        this.offset[yAxisId].y(rect.start.y[startYIndex])
+                    ],
+                    [
+                        this.offset[yAxisId].x(rect.end.x),
+                        this.offset[yAxisId].y(rect.end.y[endYIndex])
+                    ],
+                    rect.color
+                );
+            }
         }
     }
 };

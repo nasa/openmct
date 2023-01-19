@@ -810,9 +810,11 @@ export default {
             };
 
             const yLocationForPositionOverPlot = this.yScale.map((yAxis) => yAxis.scale.invert(this.positionOverElement.y));
+            const yAxisIds = this.yScale.map((yAxis) => yAxis.id);
             this.positionOverPlot = {
                 x: this.xScale.invert(this.positionOverElement.x),
-                y: yLocationForPositionOverPlot
+                y: yLocationForPositionOverPlot,
+                yAxisIds
             };
 
             if (this.cursorGuide) {
@@ -929,12 +931,12 @@ export default {
             }
 
             const { start, end } = this.marquee;
+            const someYPositionOverPlot = start.y.some(y => y);
 
-            return start.x === end.x && start.y[0] === end.y[0];
+            return start.x === end.x && someYPositionOverPlot;
         },
 
         updateMarquee() {
-            console.log('updateMarqee');
             if (!this.marquee) {
                 return;
             }
@@ -950,10 +952,6 @@ export default {
             this.trackMousePosition(event);
             if (this.positionOverPlot) {
                 this.freeze();
-                const positionOverPlot = {
-                    x: this.positionOverPlot.x,
-                    y: this.positionOverPlot.y[0]
-                };
                 this.marquee = {
                     startPixels: this.positionOverElement,
                     endPixels: this.positionOverElement,
@@ -961,18 +959,12 @@ export default {
                     end: this.positionOverPlot,
                     color: [1, 1, 1, 0.5]
                 };
-                const marquee = {
-                    ...this.marquee,
-                    start: positionOverPlot,
-                    end: positionOverPlot
-                };
-                this.rectangles.push(marquee);
+                this.rectangles.push(this.marquee);
                 this.trackHistory();
             }
         },
 
         endMarquee() {
-            console.log('endMarquee');
             const startPixels = this.marquee.startPixels;
             const endPixels = this.marquee.endPixels;
             const marqueeDistance = Math.sqrt(
@@ -985,10 +977,12 @@ export default {
                     min: Math.min(this.marquee.start.x, this.marquee.end.x),
                     max: Math.max(this.marquee.start.x, this.marquee.end.x)
                 });
-                this.yAxisListWithRange.forEach((yAxis, index) => {
+                this.yAxisListWithRange.forEach((yAxis) => {
+                    const yStartIndex = this.marquee.start.yAxisIds.findIndex(yAxisId => yAxisId === yAxis.get('id'));
+                    const yEndIndex = this.marquee.end.yAxisIds.findIndex(yAxisId => yAxisId === yAxis.get('id'));
                     yAxis.set('displayRange', {
-                        min: Math.min(this.marquee.start.y[index], this.marquee.end.y[index]),
-                        max: Math.max(this.marquee.start.y[index], this.marquee.end.y[index])
+                        min: Math.min(this.marquee.start.y[yStartIndex], this.marquee.end.y[yStartIndex]),
+                        max: Math.max(this.marquee.start.y[yEndIndex], this.marquee.end.y[yEndIndex])
                     });
                 });
                 this.userViewportChangeEnd();
@@ -1101,15 +1095,16 @@ export default {
                     max: xDisplayRange.max - ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
                 });
 
-                this.yAxisListWithRange.forEach((yAxisModel, index) => {
+                this.yAxisListWithRange.forEach((yAxisModel) => {
                     const yDisplayRange = yAxisModel.get('displayRange');
                     if (!yDisplayRange) {
                         return;
                     }
 
+                    const yIndex = this.positionOverPlot.yAxisIds.findIndex(yAxisId => yAxisId === yAxisModel.get('id'));
                     let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
-                    let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y[index];
-                    let yDistMouseToMin = this.positionOverPlot.y[index] - yDisplayRange.min;
+                    let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y[yIndex];
+                    let yDistMouseToMin = this.positionOverPlot.y[yIndex] - yDisplayRange.min;
                     let yAxisMaxDist = yDistMouseToMax / yAxisDist;
                     let yAxisMinDist = yDistMouseToMin / yAxisDist;
 
@@ -1124,15 +1119,16 @@ export default {
                     max: xDisplayRange.max + ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
                 });
 
-                this.yAxisListWithRange.forEach((yAxisModel, index) => {
+                this.yAxisListWithRange.forEach((yAxisModel) => {
                     const yDisplayRange = yAxisModel.get('displayRange');
                     if (!yDisplayRange) {
                         return;
                     }
 
+                    const yIndex = this.positionOverPlot.yAxisIds.findIndex(yAxisId => yAxisId === yAxisModel.get('id'));
                     let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
-                    let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y[index];
-                    let yDistMouseToMin = this.positionOverPlot.y[index] - yDisplayRange.min;
+                    let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y[yIndex];
+                    let yDistMouseToMin = this.positionOverPlot.y[yIndex] - yDisplayRange.min;
                     let yAxisMaxDist = yDistMouseToMax / yAxisDist;
                     let yAxisMinDist = yDistMouseToMin / yAxisDist;
 
@@ -1172,10 +1168,6 @@ export default {
             }
 
             const dX = this.pan.start.x - this.positionOverPlot.x;
-            const dY = [];
-            this.positionOverPlot.y.forEach((yAxisPosition, index) => {
-                dY.push(this.pan.start.y[index] - yAxisPosition);
-            });
             const xRange = this.config.xAxis.get('displayRange');
 
             this.config.xAxis.set('displayRange', {
@@ -1183,25 +1175,41 @@ export default {
                 max: xRange.max + dX
             });
 
-            this.yAxisListWithRange.forEach((yAxis, index) => {
+            const dY = [];
+            this.positionOverPlot.y.forEach((yAxisPosition, index) => {
+                const yAxisId = this.positionOverPlot.yAxisIds[index];
+                dY.push({
+                    yAxisId: yAxisId,
+                    y: this.pan.start.y[index] - yAxisPosition
+                });
+            });
+
+            this.yAxisListWithRange.forEach((yAxis) => {
                 const yRange = yAxis.get('displayRange');
                 if (!yRange) {
                     return;
                 }
 
+                const yIndex = dY.findIndex(y => y.yAxisId === yAxis.id);
+
                 yAxis.set('displayRange', {
-                    min: yRange.min + dY[index],
-                    max: yRange.max + dY[index]
+                    min: yRange.min + dY[yIndex].y,
+                    max: yRange.max + dY[yIndex].y
                 });
             });
         },
 
         trackHistory() {
             const yRangeList = [];
-            this.yAxisListWithRange.map((yAxis) => yRangeList.push(yAxis.get('displayRange')));
+            const yAxisIds = [];
+            this.yAxisListWithRange.forEach((yAxis) => {
+                yRangeList.push(yAxis.get('displayRange'));
+                yAxisIds.push(yAxis.get('id'));
+            });
             this.plotHistory.push({
                 x: this.config.xAxis.get('displayRange'),
-                y: yRangeList
+                y: yRangeList,
+                yAxisIds
             });
         },
 
@@ -1241,8 +1249,9 @@ export default {
             }
 
             this.config.xAxis.set('displayRange', previousAxisRanges.x);
-            this.yAxisListWithRange.forEach((yAxis, index) => {
-                yAxis.set('displayRange', previousAxisRanges.y[index]);
+            this.yAxisListWithRange.forEach((yAxis) => {
+                const yIndex = previousAxisRanges.yAxisIds.findIndex(yAxisId => yAxisId === yAxis.get('id'));
+                yAxis.set('displayRange', previousAxisRanges.y[yIndex]);
             });
 
             this.userViewportChangeEnd();
