@@ -35,6 +35,10 @@ const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
 const REFRESH_CSS_MS = 500;
 
+function formatThumbnail(datum) {
+    return datum.url.replace('logo-openmct.svg', 'logo-nasa.svg');
+}
+
 function getImageInfo(doc) {
     let imageElement = doc.querySelectorAll(MAIN_IMAGE_CLASS)[0];
     let timestamp = imageElement.dataset.openmctImageTimestamp;
@@ -56,15 +60,15 @@ function isNew(doc) {
 
 function generateTelemetry(start, count) {
     let telemetry = [];
+    const logo = 'images/logo-openmct.svg';
 
     for (let i = 1, l = count + 1; i < l; i++) {
         let stringRep = i + 'minute';
-        let logo = 'images/logo-openmct.svg';
 
         telemetry.push({
-            "name": stringRep + " Imagery",
-            "utc": start + (i * ONE_MINUTE),
-            "url": location.host + '/' + logo + '?time=' + stringRep,
+            "name": `${stringRep} Imagery`,
+            "utc": `${start}${(i * ONE_MINUTE)}`,
+            "url": `${location.host}/${logo}?time=${stringRep}`,
             "timeId": stringRep,
             "value": 100
         });
@@ -73,7 +77,7 @@ function generateTelemetry(start, count) {
     return telemetry;
 }
 
-describe("The Imagery View Layouts", () => {
+fdescribe("The Imagery View Layouts", () => {
     const imageryKey = 'example.imagery';
     const imageryForTimeStripKey = 'example.imagery.time-strip.view';
     const START = Date.now();
@@ -123,6 +127,16 @@ describe("The Imagery View Layouts", () => {
                         "priority": 3
                     },
                     "source": "url"
+                },
+                {
+                    "name": "Image Thumbnail",
+                    "key": "thumbnail-url",
+                    "format": "thumbnail",
+                    "hints": {
+                        "thumbnail": 1,
+                        "priority": 3
+                    },
+                    "source": "thumbnail-url"
                 },
                 {
                     "name": "Name",
@@ -199,6 +213,11 @@ describe("The Imagery View Layouts", () => {
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
 
         originalRouterPath = openmct.router.path;
+
+        openmct.telemetry.addFormat({
+            key: 'thumbnail',
+            format: formatThumbnail
+        });
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -384,7 +403,6 @@ describe("The Imagery View Layouts", () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             await Vue.nextTick();
             const layerEls = parent.querySelectorAll('.js-layer-image');
-            console.log(layerEls);
             expect(layerEls.length).toEqual(1);
         });
 
@@ -397,6 +415,14 @@ describe("The Imagery View Layouts", () => {
             const imageInfo = getImageInfo(parent);
 
             expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
+        });
+
+        it("should use the image thumbnailUrl if it is available", async () => {
+            await Vue.nextTick();
+            const target = imageTelemetry[5].url.replace('logo-openmct.svg', 'logo-nasa.svg');
+            const elements = parent.querySelectorAll(`img[src='${target}']`);
+            await Vue.nextTick();
+            expect(elements.length).toBeGreaterThan(0);
         });
 
         xit("should show that an image is new", (done) => {
