@@ -164,7 +164,7 @@
 @mixin isStaleHolder() {
     // Applied to objects that frame content, like Display Layout frames, plots, etc.
     border-radius: 3px;
-    border: 1px dotted $colorTelemStale !important;
+    border: 2px solid rgba($colorTelemStale, 0.8) !important;
 
     &:before {
         @include isStaleGlyph();
