@@ -80,6 +80,13 @@ export default {
     watch: {
         selection() {
             this.updateSelection();
+        },
+        visibleTabs() {
+            const selectedTabIsVisible = this.visibleTabs.some(tab => this.isSelected(tab));
+
+            if (!selectedTabIsVisible) {
+                this.selectTab(this.visibleTabs[0]);
+            }
         }
     },
     methods: {
