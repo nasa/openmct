@@ -1,6 +1,6 @@
 <template>
 <div
-    v-if="notifications.length > 0"
+    v-if="notifications.length === 0 ? showNotificationsOverlay : notifications.length > 0"
     class="c-indicator c-indicator--clickable icon-bell"
     :class="[severityClass]"
 >
