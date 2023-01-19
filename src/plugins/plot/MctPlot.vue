@@ -828,6 +828,12 @@ export default {
             event.preventDefault();
         },
 
+        getYPositionForYAxis(object, yAxis) {
+            const index = object.yAxisIds.findIndex(yAxisId => yAxisId === yAxis.get('id'));
+
+            return object.y[index];
+        },
+
         updateCrosshairs(event) {
             this.cursorGuideVertical.style.left = (event.clientX - this.chartElementBounds.x) + 'px';
             this.cursorGuideHorizontal.style.top = (event.clientY - this.chartElementBounds.y) + 'px';
@@ -979,11 +985,11 @@ export default {
                     max: Math.max(this.marquee.start.x, this.marquee.end.x)
                 });
                 this.yAxisListWithRange.forEach((yAxis) => {
-                    const yStartIndex = this.marquee.start.yAxisIds.findIndex(yAxisId => yAxisId === yAxis.get('id'));
-                    const yEndIndex = this.marquee.end.yAxisIds.findIndex(yAxisId => yAxisId === yAxis.get('id'));
+                    const yStartPosition = this.getYPositionForYAxis(this.marquee.start, yAxis);
+                    const yEndPosition = this.getYPositionForYAxis(this.marquee.end, yAxis);
                     yAxis.set('displayRange', {
-                        min: Math.min(this.marquee.start.y[yStartIndex], this.marquee.end.y[yStartIndex]),
-                        max: Math.max(this.marquee.start.y[yEndIndex], this.marquee.end.y[yEndIndex])
+                        min: Math.min(yStartPosition, yEndPosition),
+                        max: Math.max(yStartPosition, yEndPosition)
                     });
                 });
                 this.userViewportChangeEnd();
@@ -1102,10 +1108,10 @@ export default {
                         return;
                     }
 
-                    const yIndex = this.positionOverPlot.yAxisIds.findIndex(yAxisId => yAxisId === yAxisModel.get('id'));
+                    const yPosition = this.getYPositionForYAxis(this.positionOverPlot, yAxisModel);
                     let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
-                    let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y[yIndex];
-                    let yDistMouseToMin = this.positionOverPlot.y[yIndex] - yDisplayRange.min;
+                    let yDistMouseToMax = yDisplayRange.max - yPosition;
+                    let yDistMouseToMin = yPosition - yDisplayRange.min;
                     let yAxisMaxDist = yDistMouseToMax / yAxisDist;
                     let yAxisMinDist = yDistMouseToMin / yAxisDist;
 
@@ -1126,10 +1132,10 @@ export default {
                         return;
                     }
 
-                    const yIndex = this.positionOverPlot.yAxisIds.findIndex(yAxisId => yAxisId === yAxisModel.get('id'));
+                    const yPosition = this.getYPositionForYAxis(this.positionOverPlot, yAxisModel);
                     let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
-                    let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y[yIndex];
-                    let yDistMouseToMin = this.positionOverPlot.y[yIndex] - yDisplayRange.min;
+                    let yDistMouseToMax = yDisplayRange.max - yPosition;
+                    let yDistMouseToMin = yPosition - yDisplayRange.min;
                     let yAxisMaxDist = yDistMouseToMax / yAxisDist;
                     let yAxisMinDist = yDistMouseToMin / yAxisDist;
 
@@ -1191,7 +1197,7 @@ export default {
                     return;
                 }
 
-                const yIndex = dY.findIndex(y => y.yAxisId === yAxis.id);
+                const yIndex = dY.findIndex(y => y.yAxisId === yAxis.get('id'));
 
                 yAxis.set('displayRange', {
                     min: yRange.min + dY[yIndex].y,
@@ -1251,8 +1257,8 @@ export default {
 
             this.config.xAxis.set('displayRange', previousAxisRanges.x);
             this.yAxisListWithRange.forEach((yAxis) => {
-                const yIndex = previousAxisRanges.yAxisIds.findIndex(yAxisId => yAxisId === yAxis.get('id'));
-                yAxis.set('displayRange', previousAxisRanges.y[yIndex]);
+                const yPosition = this.getYPositionForYAxis(previousAxisRanges, yAxis);
+                yAxis.set('displayRange', yPosition);
             });
 
             this.userViewportChangeEnd();
