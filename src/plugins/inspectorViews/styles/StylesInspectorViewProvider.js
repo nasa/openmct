@@ -82,7 +82,7 @@ export default function StylesInspectorViewProvider(openmct) {
             };
         },
         priority: function () {
-            return this.openmct.priority.LOW;
+            return this.openmct.priority.DEFAULT;
         }
     };
 }
