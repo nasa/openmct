@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const DEFAULT_VIEW_PRIORITY = 0;
+
 /**
  * A InspectorViewRegistry maintains the definitions for views
  * that may occur in the inspector.
@@ -40,6 +42,13 @@ export default class InspectorViewRegistry {
      * @private for platform-internal use
      */
     get(selection) {
+        function byPriority(providerA, providerB) {
+            const priorityA = providerA.priority?.() ?? DEFAULT_VIEW_PRIORITY;
+            const priorityB = providerB.priority?.() ?? DEFAULT_VIEW_PRIORITY;
+
+            return priorityB - priorityA;
+        }
+
         return this.#getAllProviders()
             .filter(provider => provider.canView(selection))
             .map(provider => {
@@ -47,7 +56,7 @@ export default class InspectorViewRegistry {
                 view.name = provider.name;
 
                 return view;
-            });
+            }).sort(byPriority);
     }
 
     /**
