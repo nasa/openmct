@@ -166,7 +166,7 @@ test.describe('Move & link item tests', () => {
 
         // Attempt to link parent to its own grandparent
         await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-        await page.locator('.c-disclosure-triangle >> nth=0').click();
+        // await page.locator('.c-disclosure-triangle >> nth=0').click();
 
         await page.locator(`a:has-text("Parent Folder") >> nth=0`).click({
             button: 'right'
@@ -187,7 +187,7 @@ test.describe('Move & link item tests', () => {
         await page.locator('[aria-label="Cancel"]').click();
 
         // Link Child Folder from Parent Folder to My Items
-        await page.locator('.c-disclosure-triangle >> nth=0').click();
+        // await page.locator('.c-disclosure-triangle >> nth=0').click();
         await page.locator('.c-disclosure-triangle >> nth=1').click();
 
         await page.locator(`a:has-text("Child Folder") >> nth=0`).click({
