@@ -74,24 +74,15 @@ export default {
     props: {
         domainObject: {
             type: Object,
-            required: true,
-            default() {
-                return {};
-            }
+            required: true
         },
         navigationPath: {
             type: String,
-            required: true,
-            default() {
-                return '';
-            }
+            required: true
         },
         objectPath: {
             type: Array,
-            required: true,
-            default() {
-                return [];
-            }
+            required: true
         }
     },
     computed: {

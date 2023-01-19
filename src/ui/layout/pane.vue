@@ -56,7 +56,6 @@ export default {
         },
         persistPosition: {
             type: Boolean,
-            required: false,
             default: false
         }
     },

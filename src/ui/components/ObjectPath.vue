@@ -68,7 +68,6 @@ export default {
         },
         objectPath: {
             type: Array,
-            required: false,
             default() {
                 return null;
             }
