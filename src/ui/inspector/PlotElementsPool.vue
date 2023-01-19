@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="c-elements-pool">
+<div class="c-elements-pool is-object-type-telemetry-plot-overlay">
     <Search
         class="c-elements-pool__search"
         :value="currentSearch"
