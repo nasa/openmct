@@ -73,6 +73,10 @@ export default class Editor extends EventEmitter {
 
         return new Promise((resolve, reject) => {
             const transaction = this.openmct.objects.getActiveTransaction();
+            if (!transaction) {
+                return resolve();
+            }
+
             transaction.cancel()
                 .then(resolve)
                 .catch(reject)

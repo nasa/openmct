@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults } = require('../../appActions.js');
+const { createDomainObjectWithDefaults, createNotification } = require('../../appActions.js');
 
 test.describe('AppActions', () => {
     test('createDomainObjectsWithDefaults', async ({ page }) => {
@@ -49,11 +49,11 @@ test.describe('AppActions', () => {
                 parent: e2eFolder.uuid
             });
 
-            await page.goto(timer1.url, { waitUntil: 'networkidle' });
+            await page.goto(timer1.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer1.name);
-            await page.goto(timer2.url, { waitUntil: 'networkidle' });
+            await page.goto(timer2.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer2.name);
-            await page.goto(timer3.url, { waitUntil: 'networkidle' });
+            await page.goto(timer3.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer3.name);
         });
 
@@ -73,16 +73,40 @@ test.describe('AppActions', () => {
                 name: 'Folder Baz',
                 parent: folder2.uuid
             });
-            await page.goto(folder1.url, { waitUntil: 'networkidle' });
+            await page.goto(folder1.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder1.name);
-            await page.goto(folder2.url, { waitUntil: 'networkidle' });
+            await page.goto(folder2.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder2.name);
-            await page.goto(folder3.url, { waitUntil: 'networkidle' });
+            await page.goto(folder3.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder3.name);
 
             expect(folder1.url).toBe(`${e2eFolder.url}/${folder1.uuid}`);
             expect(folder2.url).toBe(`${e2eFolder.url}/${folder1.uuid}/${folder2.uuid}`);
             expect(folder3.url).toBe(`${e2eFolder.url}/${folder1.uuid}/${folder2.uuid}/${folder3.uuid}`);
         });
+    });
+    test("createNotification", async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+        await createNotification(page, {
+            message: 'Test info notification',
+            severity: 'info'
+        });
+        await expect(page.locator('.c-message-banner__message')).toHaveText('Test info notification');
+        await expect(page.locator('.c-message-banner')).toHaveClass(/info/);
+        await page.locator('[aria-label="Dismiss"]').click();
+        await createNotification(page, {
+            message: 'Test alert notification',
+            severity: 'alert'
+        });
+        await expect(page.locator('.c-message-banner__message')).toHaveText('Test alert notification');
+        await expect(page.locator('.c-message-banner')).toHaveClass(/alert/);
+        await page.locator('[aria-label="Dismiss"]').click();
+        await createNotification(page, {
+            message: 'Test error notification',
+            severity: 'error'
+        });
+        await expect(page.locator('.c-message-banner__message')).toHaveText('Test error notification');
+        await expect(page.locator('.c-message-banner')).toHaveClass(/error/);
+        await page.locator('[aria-label="Dismiss"]').click();
     });
 });

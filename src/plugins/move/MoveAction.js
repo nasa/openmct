@@ -29,6 +29,7 @@ export default class MoveAction {
         this.priority = 7;
 
         this.openmct = openmct;
+        this.transaction = null;
     }
 
     invoke(objectPath) {
@@ -60,6 +61,8 @@ export default class MoveAction {
     }
 
     async onSave(changes) {
+        this.startTransaction();
+
         let inNavigationPath = this.inNavigationPath(this.object);
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
@@ -98,6 +101,8 @@ export default class MoveAction {
                 newObjectPath.pop(); // remove ROOT
             }
         }
+
+        await this.saveTransaction();
 
         this.navigateTo(newObjectPath);
     }
@@ -188,5 +193,21 @@ export default class MoveAction {
             && childType
             && childType.definition.creatable
             && Array.isArray(parent.composition);
+    }
+
+    startTransaction() {
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.transaction = this.openmct.objects.startTransaction();
+        }
+    }
+
+    async saveTransaction() {
+        if (!this.transaction) {
+            return;
+        }
+
+        await this.transaction.commit();
+        this.openmct.objects.endTransaction();
+        this.transaction = null;
     }
 }
