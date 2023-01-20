@@ -430,11 +430,7 @@ export default class PlotSeries extends Model {
         point.mctLimitState = this.evaluate(point);
         data.splice(insertIndex, 0, point);
         this.updateSeriesData(data);
-        // if user is not looking at data within the current bounds, don't notify chart of added point
-        if ((currentXVal > this.xRangeMin) && (currentXVal < this.xRangeMax)
-            && (currentYVal > this.yRangeMin) && (currentYVal < this.yRangeMax)) {
-            this.emit('add', point, insertIndex, this);
-        }
+        this.emit('add', point, insertIndex, this);
     }
 
     /**

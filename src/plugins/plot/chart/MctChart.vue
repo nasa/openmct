@@ -167,9 +167,21 @@ export default {
             this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
             this.listenTo(series, 'change:limitLines', this.changeLimitLines, this);
             this.listenTo(series, 'change', this.scheduleDraw);
-            this.listenTo(series, 'add', this.scheduleDraw);
+            this.listenTo(series, 'add', this.onAddPoint);
             this.makeChartElement(series);
             this.makeLimitLines(series);
+        },
+        onAddPoint(point, insertIndex, series) {
+            const xRange = this.config.xAxis.get('displayRange');
+            const yRange = this.config.yAxis.get('displayRange');
+            const xValue = series.getXVal(point);
+            const yValue = series.getYVal(point);
+
+            // if user is not looking at data within the current bounds, don't draw the point
+            if ((xValue > xRange.min) && (xValue < xRange.max)
+            && (yValue > yRange.min) && (yValue < yRange.max)) {
+                this.scheduleDraw();
+            }
         },
         changeInterpolate(mode, o, series) {
             if (mode === o) {
@@ -469,10 +481,6 @@ export default {
             if (!xRange || !yRange) {
                 return;
             }
-
-            this.config.series.models.forEach(series => {
-                series.setViewportRange(xRange, yRange);
-            });
 
             const dimensions = [
                 xRange.max - xRange.min,
