@@ -23,10 +23,12 @@
 <template>
 <div
     class="c-inspector__tabs c-tabs"
+    aria-role="tablist"
 >
     <div
         v-for="tab in visibleTabs"
         :key="tabKey(tab)"
+        aria-role="tab"
         class="c-inspector__tab c-tab"
         :class="{'is-current': isSelected(tab)}"
         @click="selectTab(tab)"

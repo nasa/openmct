@@ -23,6 +23,7 @@
 <template>
 <div
     class="c-inspector__content"
+    aria-role="tabpanel"
 ></div>
 </template>
 
