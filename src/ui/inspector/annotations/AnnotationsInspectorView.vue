@@ -133,6 +133,7 @@ export default {
         }
     },
     async mounted() {
+        this.openmct.annotation.on('targetDomainObjectAnnotated', this.loadAnnotationForTargetObject);
         this.openmct.selection.on('change', this.updateSelection);
         await this.updateSelection(this.openmct.selection.get());
     },
@@ -190,18 +191,22 @@ export default {
             const lastLocalAnnotationCreation = this.lastLocalAnnotationCreations[targetID] ?? 0;
             if (lastLocalAnnotationCreation < target.annotationLastCreated) {
                 this.lastLocalAnnotationCreations[targetID] = target.annotationLastCreated;
-                const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(target.identifier);
-                const filteredAnnotationsForSelection = allAnnotationsForTarget.filter(annotation => {
-                    const matchingTargetID = Object.keys(annotation.targets).filter(loadedTargetID => {
-                        return targetID === loadedTargetID;
-                    });
-                    const fetchedTargetDetails = annotation.targets[matchingTargetID];
-                    const selectedTargetDetails = this.targetDetails[matchingTargetID];
-
-                    return _.isEqual(fetchedTargetDetails, selectedTargetDetails);
-                });
-                this.loadNewAnnotations(filteredAnnotationsForSelection);
+                await this.loadAnnotationForTargetObject(target);
             }
+        },
+        async loadAnnotationForTargetObject(target) {
+            const targetID = this.openmct.objects.makeKeyString(target.identifier);
+            const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(target.identifier);
+            const filteredAnnotationsForSelection = allAnnotationsForTarget.filter(annotation => {
+                const matchingTargetID = Object.keys(annotation.targets).filter(loadedTargetID => {
+                    return targetID === loadedTargetID;
+                });
+                const fetchedTargetDetails = annotation.targets[matchingTargetID];
+                const selectedTargetDetails = this.targetDetails[matchingTargetID];
+
+                return _.isEqual(fetchedTargetDetails, selectedTargetDetails);
+            });
+            this.loadNewAnnotations(filteredAnnotationsForSelection);
         }
     }
 };

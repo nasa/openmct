@@ -184,6 +184,8 @@ export default class AnnotationAPI extends EventEmitter {
         // TODO: This should be removed once we have a better way to handle immutable telemetry objects
         if (targetDomainObject.isMutable) {
             this.openmct.objects.mutate(targetDomainObject, this.ANNOTATION_LAST_CREATED, Date.now());
+        } else {
+            this.emit('targetDomainObjectAnnotated', targetDomainObject);
         }
     }
 
