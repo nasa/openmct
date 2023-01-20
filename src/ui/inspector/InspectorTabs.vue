@@ -27,7 +27,7 @@
 >
     <div
         v-for="tab in visibleTabs"
-        :key="tabKey(tab)"
+        :key="tab.key"
         aria-role="tab"
         class="c-inspector__tab c-tab"
         :class="{'is-current': isSelected(tab)}"
@@ -70,13 +70,6 @@ export default {
                 .filter(tab => {
                     return tab.showTab === undefined || tab.showTab(this.isEditing);
                 });
-        },
-        selectionKey() {
-            const domainObject = this.selection?.[0]?.[0]?.context?.item;
-            const layoutObject = this.selection?.[0]?.[0]?.context?.layoutItem;
-            const identifier = domainObject?.identifier ?? layoutObject?.id;
-
-            return this.openmct.objects.makeKeyString(identifier);
         }
     },
     watch: {
@@ -97,7 +90,7 @@ export default {
 
             this.tabs = inspectorViews.map(view => {
                 return {
-                    key: this.selectionKey,
+                    key: view.key,
                     name: view.name,
                     showTab: view.showTab
                 };
@@ -106,14 +99,11 @@ export default {
             this.selectTab(this.visibleTabs[0]);
         },
         isSelected(tab) {
-            return this.selectedTab.name === tab.name;
+            return this.selectedTab.key === tab.key;
         },
         selectTab(tab) {
             this.selectedTab = tab;
             this.$emit('select-tab', tab);
-        },
-        tabKey(tab) {
-            return `${tab.name}:${tab.key}`;
         }
     }
 };
