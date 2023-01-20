@@ -72,6 +72,12 @@ export default {
             default() {
                 return {};
             }
+        },
+        hiddenYAxisIds: {
+            type: Array,
+            default() {
+                return [];
+            }
         }
     },
     data() {
@@ -88,6 +94,12 @@ export default {
         },
         showLimitLineLabels() {
             this.drawLimitLines();
+        },
+        hiddenYAxisIds() {
+            this.hiddenYAxisIds.forEach(id => {
+                this.resetOffsetAndSeriesDataForYAxis(id);
+            });
+            this.scheduleDraw();
         }
     },
     mounted() {
@@ -245,15 +257,15 @@ export default {
             delete this.offset[yAxisId].xKey;
             delete this.offset[yAxisId].yKey;
 
-            const lines = this.lines.filter(this.matchByYAxisId.bind(this, yAxisId));
+            const lines = this.lines.filter(this.matchByYAxisIdExcludingVisibility.bind(this, yAxisId));
             lines.forEach(function (line) {
                 line.reset();
             });
-            const limitLines = this.limitLines.filter(this.matchByYAxisId.bind(this, yAxisId));
+            const limitLines = this.limitLines.filter(this.matchByYAxisIdExcludingVisibility.bind(this, yAxisId));
             limitLines.forEach(function (line) {
                 line.reset();
             });
-            const pointSets = this.pointSets.filter(this.matchByYAxisId.bind(this, yAxisId));
+            const pointSets = this.pointSets.filter(this.matchByYAxisIdExcludingVisibility.bind(this, yAxisId));
             pointSets.forEach(function (pointSet) {
                 pointSet.reset();
             });
@@ -516,14 +528,17 @@ export default {
                 origin
             );
         },
-        matchByYAxisId(id, item) {
+        matchByYAxisIdExcludingVisibility() {
+            const args = Array.from(arguments).slice(0, 2);
+            this.matchByYAxisId(...args, true);
+        },
+        matchByYAxisId(id, item, index, items, excludeVisibility = false) {
             const mainYAxisId = this.config.yAxis.get('id');
             let matchesId = false;
-
+            const axisSeriesAreVisible = excludeVisibility || this.hiddenYAxisIds.indexOf(id) < 0;
             const series = item.series;
-            if (series) {
+            if (axisSeriesAreVisible && series) {
                 const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
-
                 matchesId = seriesYAxisId === id;
             }
 

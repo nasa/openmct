@@ -244,13 +244,43 @@ mct-plot {
 
         &.gl-plot-y-label {
             display: block;
-            left: 0; top: 0; right: auto; bottom: 0;
+            left: 0; right: auto; bottom: 0;
             text-orientation: mixed;
             writing-mode: vertical-lr;
-            &:before {
+            //z-index allows clicking on visibility icon
+            z-index: 2;
+
+            .icon-gear-after:after {
                 // Icon denoting configurability
+                margin-top: $interiorMargin; // Uses margin-top due to writing-mode
+            }
+
+            .icon-eye-open:before, .icon-eye-disabled:before {
+                padding-top: 5px;
+            }
+
+            .plot-series-color-swatch {
+                @include colorSwatch();
+                display: inline-block;
+                flex: 0 0 auto;
                 margin-bottom: $interiorMargin; // Uses margin-bottom due to writing-mode
             }
+        }
+    }
+
+    .plot-yaxis-right {
+        &.gl-plot-y { margin-left: 100%; }
+
+        .gl-plot-label {
+            &.gl-plot-y-label {
+                left: auto;
+                right: 0;
+            }
+        }
+
+        .gl-plot-y-label__select {
+            left: 0;
+            right: auto;
         }
     }
 
@@ -264,7 +294,7 @@ mct-plot {
 
     .gl-plot-y-label__select {
         position: absolute;
-        top: 50%;
+        bottom: 2%;
         transform: translateY(-50%);
         left: 0;
         z-index: 10;
@@ -409,6 +439,14 @@ mct-plot {
     }
 }
 
+.plot-yaxis-right {
+    .gl-plot-tick {
+        &.gl-plot-y-tick-label {
+            left: $interiorMarginSm;
+            right: auto;
+        }
+    }
+}
 .tick-label {
     &.tick-label-x {
         top: 0;
@@ -592,8 +630,6 @@ mct-plot {
 .plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
 .plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
 .plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
-
-.gl-plot .plot-yaxis-right.gl-plot-y { margin-left: 100%; }
 
 .gl-plot,
 .c-plot {

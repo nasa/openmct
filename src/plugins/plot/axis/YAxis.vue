@@ -25,14 +25,25 @@
     class="gl-plot-axis-area gl-plot-y has-local-controls js-plot-y-axis"
     :style="yAxisStyle"
 >
-
     <div
-        v-if="canShowYAxisLabel"
         class="gl-plot-label gl-plot-y-label"
-        :class="{'icon-gear': (yKeyOptions.length > 1 && singleSeries)}"
-    >{{ yAxisLabel }}
+    >
+        <span
+            v-for="(colorAsHexString, index) in seriesColors"
+            :key="`${colorAsHexString}-${index}`"
+            class="plot-series-color-swatch"
+            :style="{ 'background-color': colorAsHexString }"
+        >
+        </span>
+        <span
+            :class="{'icon-gear-after': (yKeyOptions.length > 1 && singleSeries)}"
+        >{{ canShowYAxisLabel ? yAxisLabel : `Y Axis ${id}` }}</span>
+        <span
+            v-if="showVisibilityToggle"
+            :class="{ 'icon-eye-open': visible, 'icon-eye-disabled': !visible}"
+            @click="toggleSeriesVisibility"
+        ></span>
     </div>
-
     <select
         v-if="yKeyOptions.length > 1 && singleSeries"
         v-model="yAxisLabel"
@@ -65,7 +76,6 @@ import configStore from "../configuration/ConfigStore";
 import eventHelpers from "../lib/eventHelpers";
 
 const AXIS_PADDING = 20;
-const AXIS_OFFSET = 5;
 
 export default {
     components: {
@@ -114,10 +124,15 @@ export default {
             hasSameRangeValue: true,
             singleSeries: true,
             mainYAxisId: null,
-            hasAdditionalYAxes: false
+            hasAdditionalYAxes: false,
+            seriesColors: [],
+            visible: true
         };
     },
     computed: {
+        showVisibilityToggle() {
+            return this.domainObject.type === 'telemetry.plot.overlay';
+        },
         canShowYAxisLabel() {
             return this.singleSeries === true || this.hasSameRangeValue === true;
         },
@@ -132,10 +147,10 @@ export default {
             } else {
                 const thisIsTheSecondLeftAxis = (this.id - 1) > 0;
                 if (this.multipleLeftAxes && thisIsTheSecondLeftAxis) {
-                    style.left = `${ this.plotLeftTickWidth - this.tickWidth - multipleAxesPadding - AXIS_OFFSET }px`;
+                    style.left = 0;
                     style['border-right'] = `1px solid`;
                 } else {
-                    style.left = `${this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;
+                    style.left = `${ this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;
                 }
             }
 
@@ -183,7 +198,7 @@ export default {
 
             if (yAxisId === this.id && seriesIndex < 0) {
                 this.seriesModels.push(series);
-                this.checkRangeValueAndSingleSeries();
+                this.processSeries();
                 this.setUpYAxisOptions();
             }
         },
@@ -191,15 +206,18 @@ export default {
             const seriesIndex = this.seriesModels.findIndex(model => this.openmct.objects.areIdsEqual(model.get('identifier'), plotSeries.get('identifier')));
             if (seriesIndex > -1) {
                 this.seriesModels.splice(seriesIndex, 1);
-                this.checkRangeValueAndSingleSeries();
+                this.processSeries();
                 this.setUpYAxisOptions();
             }
         },
-        checkRangeValueAndSingleSeries() {
+        processSeries() {
             this.hasSameRangeValue = this.seriesModels.every((model) => {
                 return model.get('yKey') === this.seriesModels[0].get('yKey');
             });
             this.singleSeries = this.seriesModels.length === 1;
+            this.seriesColors = this.seriesModels.map(model => {
+                return model.get('color').asHexString();
+            });
         },
         setUpYAxisOptions() {
             this.yKeyOptions = [];
@@ -236,6 +254,13 @@ export default {
             this.$emit('tickWidthChanged', {
                 width: data.width,
                 yAxisId: this.id
+            });
+        },
+        toggleSeriesVisibility() {
+            this.visible = !this.visible;
+            this.$emit('toggleAxisVisibility', {
+                id: this.id,
+                visible: this.visible
             });
         }
     }
