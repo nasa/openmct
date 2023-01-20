@@ -126,7 +126,7 @@
 
                 <g
                     class="c-cr__cam-fov"
-                    :style="cameraPanStyle"
+                    :style="cameraHeadingStyle"
                 >
                     <g mask="url(#mask2)">
                         <rect
@@ -265,16 +265,13 @@ export default {
             type: Number,
             default: undefined
         },
-        cameraAngleOfView: {
+        cameraPan: {
             type: Number,
             default: undefined
         },
-        cameraPan: {
-            type: Number,
-            required: true,
-            default() {
-                return 0;
-            }
+        transformations: {
+            type: Object,
+            default: undefined
         },
         sizedImageDimensions: {
             type: Object,
@@ -287,6 +284,18 @@ export default {
         };
     },
     computed: {
+        cameraHeading() {
+            return this.cameraPan ?? this.heading;
+        },
+        cameraAngleOfView() {
+            const cameraAngleOfView = this.transformations?.cameraAngleOfView;
+
+            if (!cameraAngleOfView) {
+                console.warn('No Camera Angle of View provided');
+            }
+
+            return cameraAngleOfView;
+        },
         camAngleAndPositionStyle() {
             /*
                 camera	        translate	rotate deg	scale
@@ -297,12 +306,13 @@ export default {
                 haz-stbd-fwd	13%, 18%	270	        0.3
                 nav	            0%, 18%	 	0           0.3
              */
-            const scale = 0.3; // Get this from config
-            let transX = 0;
-            let transY = 18;
-            let rotation = 0;
 
-            return { transform: `translate(${transX}%, ${transY}%) rotate(${rotation}deg) scale(${scale})` };
+            const translateX = this.transformations?.translateX;
+            const translateY = this.transformations?.translateY;
+            const rotation = this.transformations?.rotation;
+            const scale = this.transformations?.scale;
+
+            return { transform: `translate(${translateX}%, ${translateY}%) rotate(${rotation}deg) scale(${scale})` };
         },
         camGimbalAngleStyle() {
             const rotation = rotate(this.north, this.heading);
@@ -315,7 +325,7 @@ export default {
             return { transform: `rotate(${ this.north }deg)` };
         },
         north() {
-            return this.lockCompass ? rotate(-this.cameraPan) : 0;
+            return this.lockCompass ? rotate(-this.cameraHeading) : 0;
         },
         cardinalTextRotateN() {
             return { transform: `translateY(-27%) rotate(${ -this.north }deg)` };
@@ -350,8 +360,8 @@ export default {
                 transform: `rotate(${ rotation }deg)`
             };
         },
-        cameraPanStyle() {
-            const rotation = rotate(this.north, this.cameraPan);
+        cameraHeadingStyle() {
+            const rotation = rotate(this.north, this.cameraHeading);
 
             return {
                 transform: `rotate(${ rotation }deg)`

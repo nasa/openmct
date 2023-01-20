@@ -33,11 +33,11 @@
     />
     <CompassRose
         v-if="showCompassRose"
-        :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
         :heading="heading"
         :sized-image-dimensions="sizedImageDimensions"
         :sun-heading="sunHeading"
+        :transformations="transformations"
     />
 </div>
 </template>
@@ -45,8 +45,6 @@
 <script>
 import CompassHUD from './CompassHUD.vue';
 import CompassRose from './CompassRose.vue';
-
-const CAMERA_ANGLE_OF_VIEW = 70;
 
 export default {
     components: {
@@ -89,7 +87,10 @@ export default {
             return this.cameraPan !== undefined;
         },
         cameraAngleOfView() {
-            return CAMERA_ANGLE_OF_VIEW;
+            return this.transformations?.cameraAngleOfView;
+        },
+        transformations() {
+            return this.image.transformations;
         }
     },
     methods: {

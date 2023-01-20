@@ -419,7 +419,6 @@ export default {
         shouldDisplayCompass() {
             const imageHeightAndWidth = this.sizedImageHeight !== 0
                 && this.sizedImageWidth !== 0;
-
             const display = this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
@@ -427,8 +426,9 @@ export default {
                 && imageHeightAndWidth
                 && this.zoomFactor === 1
                 && this.imagePanned !== true;
+            const hasCameraConfigurations = this.focusedImage?.transformations !== undefined;
 
-            return display;
+            return display && hasCameraConfigurations;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;
