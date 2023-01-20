@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import TelemetryCriterion from './TelemetryCriterion';
+import StalenessUtils from '@/utils/staleness';
 import { evaluateResults } from "../utils/evaluator";
 import { getLatestTimestamp, checkIfOld } from '../utils/time';
 import { getOperatorText } from "@/plugins/condition/utils/operations";
@@ -80,7 +81,9 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         Object.values(telemetryObjects).forEach((telemetryObject) => {
             const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             if (!this.stalenessSubscription[id]) {
-                this.stalenessSubscription[id] = this.openmct.telemetry.subscribeToStaleness(
+                this.stalenessSubscription[id] = {};
+                this.stalenessSubscription[id].stalenessUtils = new StalenessUtils(this.openmct, telemetryObject);
+                this.stalenessSubscription[id].unsubscribe = this.openmct.telemetry.subscribeToStaleness(
                     telemetryObject,
                     (stalenessResponse) => {
                         this.handleStaleTelemetry(id, stalenessResponse);
@@ -92,7 +95,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
 
     handleStaleTelemetry(id, stalenessResponse) {
         if (this.telemetryDataCache) {
-            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+            if (this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
                 this.telemetryDataCache[id] = stalenessResponse.isStale;
                 this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
 
@@ -130,6 +133,8 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         telemetryCacheIds.forEach(id => {
             delete (this.telemetryDataCache[id]);
             delete (this.ageCheck[id]);
+            this.stalenessSubscription[id].unsubscribe();
+            this.stalenessSubscription[id].stalenessUtils.destroy();
             delete (this.stalenessSubscription[id]);
         });
     }
@@ -272,7 +277,10 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         }
 
         if (this.stalenessSubscription) {
-            Object.values(this.stalenessSubscription).forEach(unsubscribe => unsubscribe());
+            Object.values(this.stalenessSubscription).forEach(subscription => {
+                subscription.unsubscribe();
+                subscription.stalenessUtils.destroy();
+            });
         }
     }
 }

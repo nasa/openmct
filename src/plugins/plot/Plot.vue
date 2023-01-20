@@ -91,9 +91,9 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
-        this.stalenessUtils = new StalenessUtils(this.openmct);
         this.imageExporter = new ImageExporter(this.openmct);
         this.loadComposition();
+        this.stalenessSubscription = {};
     },
     beforeDestroy() {
         this.destroy();
@@ -112,8 +112,9 @@ export default {
         addItem(object) {
             const keystring = this.openmct.objects.makeKeyString(object.identifier);
 
-            if (!this.unsubscribes) {
-                this.unsubscribes = {};
+            if (!this.stalenessSubscription[keystring]) {
+                this.stalenessSubscription[keystring] = {};
+                this.stalenessSubscription[keystring].stalenessUtils = new StalenessUtils(this.openmct, object);
             }
 
             this.openmct.telemetry.isStale(object).then((stalenessResponse) => {
@@ -123,15 +124,17 @@ export default {
                 this.handleStaleness(keystring, stalenessResponse);
             });
 
-            this.unsubscribes[keystring] = unsubscribeFromStaleness;
+            this.stalenessSubscription[keystring].unsubscribe = unsubscribeFromStaleness;
         },
         removeItem(object) {
+            const SKIP_CHECK = true;
             const keystring = this.openmct.objects.makeKeyString(object);
-            this.unsubscribes[keystring]();
-            this.handleStaleness(keystring, false);
+            this.stalenessSubscription[keystring].unsubscribe();
+            this.stalenessSubscription[keystring].stalenessUtils.destroy();
+            this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
         },
-        handleStaleness(id, stalenessResponse) {
-            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)) {
+        handleStaleness(id, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)) {
                 const index = this.staleObjects.indexOf(id);
                 if (stalenessResponse.isStale) {
                     if (index === -1) {
@@ -148,8 +151,11 @@ export default {
             this.loading = loading;
         },
         destroy() {
-            if (this.unsubscribes) {
-                Object.values(this.unsubscribes).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
+            if (this.stalenessSubscription) {
+                Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+                    stalenessSubscription.unsubscribe();
+                    stalenessSubscription.stalenessUtils.destroy();
+                });
             }
 
             if (this.compositionCollection) {

@@ -114,14 +114,13 @@ export default {
         }
     },
     mounted() {
-        this.stalenessUtils = new StalenessUtils(this.openmct);
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addLadTable);
         this.composition.on('remove', this.removeLadTable);
         this.composition.on('reorder', this.reorderLadTables);
         this.composition.load();
 
-        this.unsubscribeFromStaleness = {};
+        this.stalenessSubscription = {};
     },
     destroyed() {
         this.composition.off('add', this.addLadTable);
@@ -132,8 +131,10 @@ export default {
             c.composition.off('remove', c.removeCallback);
         });
 
-        this.stalenessUtils.destroy();
-        Object.values(this.unsubscribeFromStaleness).forEach(unsubscribeFromStaleness => unsubscribeFromStaleness());
+        Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+            stalenessSubscription.unsubscribe();
+            stalenessSubscription.stalenessUtils.destroy();
+        });
     },
     methods: {
         addLadTable(domainObject) {
@@ -184,22 +185,26 @@ export default {
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
 
                 // if tracking already, possibly in another table, return
-                if (this.unsubscribeFromStaleness[telemetryObject.key]) {
+                if (this.stalenessSubscription[telemetryObject.key]) {
                     return;
+                } else {
+                    this.stalenessSubscription[telemetryObject.key] = {};
+                    this.stalenessSubscription[telemetryObject.key].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
                 }
 
                 this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
                     this.handleStaleness(telemetryObject.key, stalenessResponse);
                 });
-                const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
                     this.handleStaleness(telemetryObject.key, stalenessResponse);
                 });
 
-                this.unsubscribeFromStaleness[telemetryObject.key] = unsubscribeFromStaleness;
+                this.stalenessSubscription[telemetryObject.key].unsubscribe = stalenessSubscription;
             };
         },
         removeTelemetryObject(ladTable) {
             return (identifier) => {
+                const SKIP_CHECK = true;
                 const keystring = this.openmct.objects.makeKeyString(identifier);
                 let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
                 let index = telemetryObjects.findIndex(telemetryObject => keystring === telemetryObject.key);
@@ -208,12 +213,13 @@ export default {
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
 
-                this.unsubscribeFromStaleness[keystring]();
-                this.handleStaleness(keystring, false);
+                this.stalenessSubscription[keystring].unsubscribe();
+                this.stalenessSubscription[keystring].stalenessUtils.destroy();
+                this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
             };
         },
-        handleStaleness(id, stalenessResponse) {
-            if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)) {
+        handleStaleness(id, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
                 const index = this.staleObjects.indexOf(id);
                 if (stalenessResponse.isStale) {
                     if (index === -1) {

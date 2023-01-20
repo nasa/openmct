@@ -30,7 +30,6 @@ export default {
     },
     beforeDestroy() {
         this.triggerUnsubscribeFromStaleness();
-        this.stalenessUtils.destroy();
     },
     methods: {
         subscribeToStaleness(domainObject, callback) {
@@ -61,6 +60,7 @@ export default {
             if (this.unsubscribeFromStaleness) {
                 this.unsubscribeFromStaleness();
                 delete this.unsubscribeFromStaleness;
+                this.stalenessUtils.destroy();
             }
         }
     }

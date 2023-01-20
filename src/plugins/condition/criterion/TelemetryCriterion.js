@@ -48,7 +48,6 @@ export default class TelemetryCriterion extends EventEmitter {
         this.result = undefined;
         this.ageCheck = undefined;
         this.unsubscribeFromStaleness = undefined;
-        this.stalenessUtils = new StalenessUtils(this.openmct);
 
         this.initialize();
         this.emitEvent('criterionUpdated', this);
@@ -91,6 +90,10 @@ export default class TelemetryCriterion extends EventEmitter {
     subscribeToStaleness() {
         if (this.unsubscribeFromStaleness) {
             this.unsubscribeFromStaleness();
+        }
+
+        if (!this.stalenessUtils) {
+            this.stalenessUtils = new StalenessUtils(this.openmct, this.telemetryObject);
         }
 
         this.openmct.telemetry.isStale(this.telemetryObject).then(this.handleStaleTelemetry.bind(this));
@@ -313,7 +316,9 @@ export default class TelemetryCriterion extends EventEmitter {
             delete this.ageCheck;
         }
 
-        this.stalenessUtils.destroy();
+        if (this.stalenessUtils) {
+            this.stalenessUtils.destroy();
+        }
 
         if (this.unsubscribeFromStaleness) {
             this.unsubscribeFromStaleness();
