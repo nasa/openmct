@@ -419,18 +419,14 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~StalenessProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry staleness
-     * @returns {Promise.<StalenessResponseObject>} a promise for a staleness response
+     * @returns {Promise.<StalenessResponseObject>} a promise for a StalenessResponseObject
+     *        or undefined if no provider exists
      */
     async isStale(domainObject) {
         const provider = this.#findStalenessProvider(domainObject);
 
         if (!provider) {
-            const timeSystem = this.openmct.time.timeSystem();
-
-            return {
-                [timeSystem.key]: 0,
-                isStale: false
-            };
+            return;
         }
 
         const abortController = new AbortController();

@@ -43,9 +43,10 @@ export default {
             });
         },
         async requestStaleness(domainObject) {
-            const stalenesResponse = await this.openmct.telemetry.isStale(domainObject);
-
-            this.handleStalenessResponse(stalenesResponse);
+            const stalenessResponse = await this.openmct.telemetry.isStale(domainObject);
+            if (stalenessResponse !== undefined) {
+                this.handleStalenessResponse(stalenessResponse);
+            }
         },
         handleStalenessResponse(stalenessResponse, callback) {
             if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {

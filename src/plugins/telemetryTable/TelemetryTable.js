@@ -161,7 +161,9 @@ define([
             this.stalenessSubscription[keyString] = {};
             this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils.default(this.openmct, telemetryObject);
             this.openmct.telemetry.isStale(telemetryObject).then(stalenessResponse => {
-                this.handleStaleness(keyString, stalenessResponse);
+                if (stalenessResponse !== undefined) {
+                    this.handleStaleness(keyString, stalenessResponse);
+                }
             });
             const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(telemetryObject, (stalenessResponse) => {
                 this.handleStaleness(keyString, stalenessResponse);

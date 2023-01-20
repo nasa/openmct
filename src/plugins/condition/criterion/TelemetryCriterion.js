@@ -104,7 +104,7 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     handleStaleTelemetry(stalenessResponse) {
-        if (this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+        if (stalenessResponse !== undefined && this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
             this.result = stalenessResponse.isStale;
             this.emitEvent('telemetryStaleness');
         }
