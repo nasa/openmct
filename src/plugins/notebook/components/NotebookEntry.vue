@@ -147,16 +147,13 @@ import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
 import sanitizeHtml from 'sanitize-html';
-import { v4 as uuid } from 'uuid';
 import Moment from 'moment';
 
 const SANITIZATION_SCHEMA = {
-    allowedTags: ['a'],
-    allowedAttributes: {
-        'a': ['target', 'class', 'href']
-    }
+    allowedTags: [],
+    allowedAttributes: {}
 };
-const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
 const UNKNOWN_USER = 'Unknown';
 
 export default {
@@ -165,7 +162,7 @@ export default {
         TextHighlight,
         TagEditor
     },
-    inject: ['openmct', 'snapshotContainer'],
+    inject: ['openmct', 'snapshotContainer', 'entryUrlWhitelist'],
     props: {
         domainObject: {
             type: Object,
@@ -230,30 +227,26 @@ export default {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
         },
         formattedText() {
-            let text = this.entry.text;
+            // remove ANY tags
+            let text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
 
-            if (this.editMode) {
-                return sanitizeHtml(text);
+            if (this.editMode || !this.urlWhitelist) {
+                return text;
             }
 
-            let urlsExist = false;
-            let urlMap = {};
+            text = text.replace(URL_REGEX, (match) => {
+                const url = new URL(match);
+                const domain = url.hostname;
+                let result = match;
 
-            while (text.match(URL_REGEX)) {
-                let id = uuid();
-
-                urlsExist = true;
-                urlMap[id] = text.match(URL_REGEX)[0];
-                text = text.replace(urlMap[id], id);
-            }
-
-            if (urlsExist) {
-                for (const [id, url] of Object.entries(urlMap)) {
-                    text = text.replace(id, `<a class="c-hyperlink" target="_blank" href="${url}">${url}</a>`);
+                if (this.urlWhitelist.includes(domain)) {
+                    result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
                 }
-            }
 
-            return sanitizeHtml(text, SANITIZATION_SCHEMA);
+                return result;
+            });
+
+            return text;
         },
         entryText() {
             let text = this.entry.text;
@@ -276,6 +269,9 @@ export default {
     },
     mounted() {
         this.dropOnEntry = this.dropOnEntry.bind(this);
+        if (this.entryUrlWhitelist?.length > 0) {
+            this.urlWhitelist = this.entryUrlWhitelist;
+        }
     },
     methods: {
         async addNewEmbed(objectPath) {
