@@ -93,7 +93,6 @@
                 ></div>
                 <Compass
                     v-if="shouldDisplayCompass"
-                    :compass-rose-sizing-classes="compassRoseSizingClasses"
                     :image="focusedImage"
                     :natural-aspect-ratio="focusedImageNaturalAspectRatio"
                     :sized-image-dimensions="sizedImageDimensions"
@@ -298,18 +297,6 @@ export default {
         };
     },
     computed: {
-        compassRoseSizingClasses() {
-            let compassRoseSizingClasses = '';
-            if (this.sizedImageWidth < 300) {
-                compassRoseSizingClasses = '--rose-small --rose-min';
-            } else if (this.sizedImageWidth < 500) {
-                compassRoseSizingClasses = '--rose-small';
-            } else if (this.sizedImageWidth > 1000) {
-                compassRoseSizingClasses = '--rose-max';
-            }
-
-            return compassRoseSizingClasses;
-        },
         displayThumbnails() {
             return (
                 this.forceShowThumbnails

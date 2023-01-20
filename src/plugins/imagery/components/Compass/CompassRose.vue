@@ -254,10 +254,6 @@ import { throttle } from 'lodash';
 
 export default {
     props: {
-        compassRoseSizingClasses: {
-            type: String,
-            required: true
-        },
         heading: {
             type: Number,
             required: true,
@@ -374,6 +370,24 @@ export default {
             return {
                 transform: `rotate(${ -this.cameraAngleOfView / 2 }deg)`
             };
+        },
+        compassRoseSizingClasses() {
+            let compassRoseSizingClasses = '';
+            if (this.sizedImageWidth < 300) {
+                compassRoseSizingClasses = '--rose-small --rose-min';
+            } else if (this.sizedImageWidth < 500) {
+                compassRoseSizingClasses = '--rose-small';
+            } else if (this.sizedImageWidth > 1000) {
+                compassRoseSizingClasses = '--rose-max';
+            }
+
+            return compassRoseSizingClasses;
+        },
+        sizedImageWidth() {
+            return this.sizedImageDimensions.width;
+        },
+        sizedImageHeight() {
+            return this.sizedImageDimensions.height;
         }
     },
     watch: {

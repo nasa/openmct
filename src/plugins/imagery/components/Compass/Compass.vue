@@ -35,7 +35,6 @@
         v-if="hasCameraFieldOfView"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
-        :compass-rose-sizing-classes="compassRoseSizingClasses"
         :heading="heading"
         :sized-image-dimensions="sizedImageDimensions"
         :sun-heading="sunHeading"
@@ -55,10 +54,6 @@ export default {
         CompassRose
     },
     props: {
-        compassRoseSizingClasses: {
-            type: String,
-            required: true
-        },
         image: {
             type: Object,
             required: true
