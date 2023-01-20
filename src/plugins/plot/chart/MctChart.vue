@@ -50,10 +50,11 @@ import Vue from 'vue';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
+const ANNOTATION_SIZE = MARKER_SIZE * 3.0;
 const CLEARANCE = 15;
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         rectangles: {
             type: Array,
@@ -67,11 +68,27 @@ export default {
                 return [];
             }
         },
+        annotatedPoints: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
+        annotationSelections: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         showLimitLineLabels: {
             type: Object,
             default() {
                 return {};
             }
+        },
+        annotationViewingAndEditingAllowed: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -81,6 +98,12 @@ export default {
     },
     watch: {
         highlights() {
+            this.scheduleDraw();
+        },
+        annotatedPoints() {
+            this.scheduleDraw();
+        },
+        annotationSelections() {
             this.scheduleDraw();
         },
         rectangles() {
@@ -148,9 +171,21 @@ export default {
             this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
             this.listenTo(series, 'change:limitLines', this.changeLimitLines, this);
             this.listenTo(series, 'change', this.scheduleDraw);
-            this.listenTo(series, 'add', this.scheduleDraw);
+            this.listenTo(series, 'add', this.onAddPoint);
             this.makeChartElement(series);
             this.makeLimitLines(series);
+        },
+        onAddPoint(point, insertIndex, series) {
+            const xRange = this.config.xAxis.get('displayRange');
+            const yRange = this.config.yAxis.get('displayRange');
+            const xValue = series.getXVal(point);
+            const yValue = series.getYVal(point);
+
+            // if user is not looking at data within the current bounds, don't draw the point
+            if ((xValue > xRange.min) && (xValue < xRange.max)
+            && (yValue > yRange.min) && (yValue < yRange.max)) {
+                this.scheduleDraw();
+            }
         },
         changeInterpolate(mode, o, series) {
             if (mode === o) {
@@ -439,6 +474,12 @@ export default {
                 this.drawSeries();
                 this.drawRectangles();
                 this.drawHighlights();
+
+                // only draw these in fixed time mode or plot is paused
+                if (this.annotationViewingAndEditingAllowed) {
+                    this.drawAnnotatedPoints();
+                    this.drawAnnotationSelections();
+                }
             }
         },
         updateViewport() {
@@ -583,6 +624,65 @@ export default {
                 chartElement.count,
                 disconnected
             );
+        },
+        annotatedPointWithinRange(annotatedPoint, xRange, yRange) {
+            const xValue = annotatedPoint.series.getXVal(annotatedPoint.point);
+            const yValue = annotatedPoint.series.getYVal(annotatedPoint.point);
+
+            return ((xValue > xRange.min) && (xValue < xRange.max)
+                        && (yValue > yRange.min) && (yValue < yRange.max));
+        },
+        drawAnnotatedPoints() {
+            // we should do this by series, and then plot all the points at once instead
+            // of doing it one by one
+            if (this.annotatedPoints && this.annotatedPoints.length) {
+                const uniquePointsToDraw = [];
+                const xRange = this.config.xAxis.get('displayRange');
+                const yRange = this.config.yAxis.get('displayRange');
+                this.annotatedPoints.forEach((annotatedPoint) => {
+                    // if the annotation is outside the range, don't draw it
+                    if (this.annotatedPointWithinRange(annotatedPoint, xRange, yRange)) {
+                        const canvasXValue = this.offset.xVal(annotatedPoint.point, annotatedPoint.series);
+                        const canvasYValue = this.offset.yVal(annotatedPoint.point, annotatedPoint.series);
+                        const pointToDraw = new Float32Array([canvasXValue, canvasYValue]);
+                        const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
+                            return rawPoint[0] === pointToDraw[0] && rawPoint[1] === pointToDraw[1];
+                        });
+                        if (!drawnPoint) {
+                            uniquePointsToDraw.push(pointToDraw);
+                            this.drawAnnotatedPoint(annotatedPoint, pointToDraw);
+                        }
+                    }
+                });
+            }
+        },
+        drawAnnotatedPoint(annotatedPoint, pointToDraw) {
+            if (annotatedPoint.point && annotatedPoint.series) {
+                const color = annotatedPoint.series.get('color').asRGBAArray();
+                // set transparency
+                color[3] = 0.15;
+                const pointCount = 1;
+                const shape = annotatedPoint.series.get('markerShape');
+
+                this.drawAPI.drawPoints(pointToDraw, color, pointCount, ANNOTATION_SIZE, shape);
+            }
+        },
+        drawAnnotationSelections() {
+            if (this.annotationSelections && this.annotationSelections.length) {
+                this.annotationSelections.forEach(this.drawAnnotationSelection, this);
+            }
+        },
+        drawAnnotationSelection(annotationSelection) {
+            const points = new Float32Array([
+                this.offset.xVal(annotationSelection.point, annotationSelection.series),
+                this.offset.yVal(annotationSelection.point, annotationSelection.series)
+            ]);
+
+            const color = [255, 255, 255, 1]; // white
+            const pointCount = 1;
+            const shape = annotationSelection.series.get('markerShape');
+
+            this.drawAPI.drawPoints(points, color, pointCount, ANNOTATION_SIZE, shape);
         },
         drawHighlights() {
             if (this.highlights && this.highlights.length) {
