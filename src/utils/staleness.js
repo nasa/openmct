@@ -21,25 +21,21 @@
  *****************************************************************************/
 
 export default class StalenessUtils {
-    constructor(openmct) {
+    constructor(openmct, domainObject) {
         this.openmct = openmct;
+        this.domainObject = domainObject;
+        this.metadata = this.openmct.telemetry.getMetadata(domainObject);
         this.lastStalenessResponseTime = 0;
-        this.lastStalenessResponseTimeObject = {};
 
         this.setTimeSystem(this.openmct.time.timeSystem());
         this.watchTimeSystem();
     }
 
     shouldUpdateStaleness(stalenessResponse, id) {
-        if (!this.lastStalenessResponseTimeObject[id]) {
-            this.lastStalenessResponseTimeObject[id] = 0;
-        }
-
-        let lastStalenessResponseTime = this.lastStalenessResponseTimeObject[id] ?? this.lastStalenessResponseTime;
         const stalenessResponseTime = this.parseTime(stalenessResponse);
 
-        if (stalenessResponseTime > lastStalenessResponseTime) {
-            lastStalenessResponseTime = stalenessResponseTime;
+        if (stalenessResponseTime > this.lastStalenessResponseTime) {
+            this.lastStalenessResponseTime = stalenessResponseTime;
 
             return true;
         } else {
@@ -56,10 +52,12 @@ export default class StalenessUtils {
     }
 
     setTimeSystem(timeSystem) {
-        const metadataValue = {
-            format: timeSystem.key,
-            source: timeSystem.key
-        };
+        let metadataValue = { format: timeSystem.key };
+
+        if (this.metadata) {
+            metadataValue = this.metadata.value(timeSystem.key) ?? metadataValue;
+        }
+
         const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (stalenessResponse) => {

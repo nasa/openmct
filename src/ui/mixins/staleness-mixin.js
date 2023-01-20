@@ -28,15 +28,16 @@ export default {
             isStale: false
         };
     },
-    mounted() {
-        this.stalenessUtils = new StalenessUtils(this.openmct);
-    },
     beforeDestroy() {
         this.triggerUnsubscribeFromStaleness();
         this.stalenessUtils.destroy();
     },
     methods: {
         subscribeToStaleness(domainObject, callback) {
+            if (!this.stalenessUtils) {
+                this.stalenessUtils = new StalenessUtils(this.openmct, domainObject);
+            }
+
             this.requestStaleness(domainObject);
             this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
                 this.handleStalenessResponse(stalenessResponse, callback);
