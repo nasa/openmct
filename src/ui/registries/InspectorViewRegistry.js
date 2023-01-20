@@ -53,7 +53,9 @@ export default class InspectorViewRegistry {
             .filter(provider => provider.canView(selection))
             .map(provider => {
                 const view = provider.view(selection);
+                view.key = provider.key;
                 view.name = provider.name;
+                view.glyph = provider.glyph;
 
                 return view;
             }).sort(byPriority);
@@ -75,15 +77,11 @@ export default class InspectorViewRegistry {
         }
 
         if (name === undefined) {
-            throw "View providers must have a unique 'name' property defined";
+            throw "View providers must have a 'name' property defined";
         }
 
         if (this.providers[key] !== undefined) {
             console.warn(`Provider already defined for key '${key}'. Provider keys must be unique.`);
-        }
-
-        if (this.providers[name] !== undefined) {
-            console.warn(`Provider already defined for name '${name}'. Provider names must be unique.`);
         }
 
         this.providers[key] = provider;
