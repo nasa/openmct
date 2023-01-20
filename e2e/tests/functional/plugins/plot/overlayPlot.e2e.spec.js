@@ -97,20 +97,28 @@ test.describe('Overlay Plot', () => {
         await page.mouse.move(0, 100);
         await page.mouse.up();
 
-        await page.locator('#inspector-elements-tree >> text=swg a').dragTo(page.locator('[aria-label="Element Item Group"]').nth(1));
-        await page.locator('#inspector-elements-tree >> text=swg c').dragTo(page.locator('[aria-label="Element Item Group"]').nth(1));
-        await page.locator('#inspector-elements-tree >> text=swg e').dragTo(page.locator('[aria-label="Element Item Group"]').nth(1));
-        await page.locator('#inspector-elements-tree >> text=swg b').dragTo(page.locator('[aria-label="Element Item Group"]').nth(2));
-        const elementsTree = await page.locator('#inspector-elements-tree').allInnerTexts();
-        expect(elementsTree.join('').split('\n')).toEqual([
-            "Y Axis 1",
-            "swg d",
-            "Y Axis 2",
-            "swg e",
-            "swg c",
-            "swg a",
-            "Y Axis 3",
-            "swg b"
-        ]);
+        // Drag swg a, c, e into Y Axis 2
+        await page.locator('#inspector-elements-tree >> text=swg a').dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+        await page.locator('#inspector-elements-tree >> text=swg c').dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+        await page.locator('#inspector-elements-tree >> text=swg e').dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+
+        // Drag swg b into Y Axis 3
+        await page.locator('#inspector-elements-tree >> text=swg b').dragTo(page.locator('[aria-label="Element Item Group Y Axis 3"]'));
+
+        const yAxis1Group = page.getByLabel("Y Axis 1");
+        const yAxis2Group = page.getByLabel("Y Axis 2");
+        const yAxis3Group = page.getByLabel("Y Axis 3");
+
+        // Verify that the elements are in the correct buckets and in the correct order
+        expect(yAxis1Group.getByRole('listitem', { name: 'swg d' })).toBeTruthy();
+        expect(yAxis1Group.getByRole('listitem').nth(0).getByText('swg d')).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem', { name: 'swg e' })).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem').nth(0).getByText('swg e')).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem', { name: 'swg c' })).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem').nth(1).getByText('swg c')).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem', { name: 'swg a' })).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem').nth(2).getByText('swg a')).toBeTruthy();
+        expect(yAxis3Group.getByRole('listitem', { name: 'swg b' })).toBeTruthy();
+        expect(yAxis3Group.getByRole('listitem').nth(0).getByText('swg b')).toBeTruthy();
     });
 });

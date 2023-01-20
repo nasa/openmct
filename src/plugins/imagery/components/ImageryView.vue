@@ -721,7 +721,7 @@ export default {
                 && visibleActions.find(action => action.key === 'large.view');
 
             if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
-                viewLargeAction.onItemClicked();
+                viewLargeAction.invoke(this.objectPath, this.currentView);
             }
         },
         async initializeRelatedTelemetry() {
@@ -788,7 +788,7 @@ export default {
             }
         },
         persistVisibleLayers() {
-            if (this.domainObject.configuration) {
+            if (this.domainObject.configuration && this.openmct.objects.supportsMutation(this.domainObject.identifier)) {
                 this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
             }
 

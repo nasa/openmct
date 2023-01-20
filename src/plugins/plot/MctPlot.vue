@@ -49,6 +49,7 @@
                 :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
+                @toggleAxisVisibility="toggleSeriesForYAxis"
             />
         </div>
         <div
@@ -92,6 +93,7 @@
                         :rectangles="rectangles"
                         :highlights="highlights"
                         :show-limit-line-labels="showLimitLineLabels"
+                        :hidden-y-axis-ids="hiddenYAxisIds"
                         @plotReinitializeCanvas="initCanvas"
                         @chartLoaded="initialize"
                     />
@@ -272,6 +274,8 @@ export default {
         }
     },
     data() {
+        this.yAxisIdVisibility = {};
+
         return {
             altPressed: false,
             highlights: [],
@@ -293,6 +297,7 @@ export default {
             cursorGuide: this.initCursorGuide,
             gridLines: this.initGridLines,
             yAxes: [],
+            hiddenYAxisIds: [],
             yAxisListWithRange: []
         };
     },
@@ -794,6 +799,19 @@ export default {
                 const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
                 this.$emit('plotTickWidth', this.yAxes[index].tickWidth, id);
             }
+        },
+
+        toggleSeriesForYAxis({ id, visible}) {
+            //if toggling to visible, re-fetch the data for the series that are part of this y Axis
+            if (visible === true) {
+                this.config.series.models.filter(model => model.get('yAxisId') === id)
+                    .forEach(this.loadSeriesData, this);
+            }
+
+            this.yAxisIdVisibility[id] = visible;
+            this.hiddenYAxisIds = Object.keys(this.yAxisIdVisibility).map(Number).filter(key => {
+                return this.yAxisIdVisibility[key] === false;
+            });
         },
 
         trackMousePosition(event) {
