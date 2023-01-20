@@ -40,8 +40,9 @@ test.describe('Scatter Plot', () => {
     });
 
     test('Can add and remove telemetry sources', async ({ page }) => {
-        const editButtonLocator = page.locator('button[title="Edit"]');
-        const saveButtonLocator = page.locator('button[title="Save"]');
+        const editButton = page.locator('button[title="Edit"]');
+        const saveButton = page.locator('button[title="Save"]');
+        const inspectorElementsTab = page.locator('[aria-role="tab"] >> text=Elements');
 
         // Create a sine wave generator within the scatter plot
         const swg1 = await createDomainObjectWithDefaults(page, {
@@ -53,9 +54,10 @@ test.describe('Scatter Plot', () => {
         // Navigate to the scatter plot and verify that
         // the SWG appears in the elements pool
         await page.goto(scatterPlot.url);
-        await editButtonLocator.click();
+        await editButton.click();
+        await inspectorElementsTab.click();
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
-        await saveButtonLocator.click();
+        await saveButton.click();
         await page.locator('li[title="Save and Finish Editing"]').click();
 
         // Create another sine wave generator within the scatter plot
@@ -72,10 +74,13 @@ test.describe('Scatter Plot', () => {
         // Navigate to the scatter plot and verify that the new SWG
         // appears in the elements pool and the old one is gone
         await page.goto(scatterPlot.url);
-        await editButtonLocator.click();
+        await editButton.click();
+
+        // Click the "Elements" tab
+        await inspectorElementsTab.click();
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
-        await saveButtonLocator.click();
+        await saveButton.click();
 
         // Right click on the new SWG in the elements pool and delete it
         await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({
