@@ -44,7 +44,7 @@
             </div>
             <div
                 class="c-tree__item__name c-object-label__name"
-                aria-label="Element Item Group"
+                :aria-label="`Element Item Group ${label}`"
             >
                 {{ label }}
             </div>
