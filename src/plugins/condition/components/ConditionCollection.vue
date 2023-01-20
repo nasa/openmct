@@ -85,6 +85,7 @@
 
 import Condition from './Condition.vue';
 import ConditionManager from '../ConditionManager';
+import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
@@ -141,8 +142,11 @@ export default {
             this.stopObservingForChanges();
         }
 
-        if (this.unsubscribeFromStaleness) {
-            Object.values(this.unsubscribeFromStaleness).forEach(unsubscribe => unsubscribe());
+        if (this.stalenessSubscription) {
+            Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+                stalenessSubscription.unsubscribe();
+                stalenessSubscription.stalenessUtils.destroy();
+            });
         }
     },
     mounted() {
@@ -155,6 +159,7 @@ export default {
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
         this.updateDefaultCondition();
+        this.stalenessSubscription = {};
     },
     methods: {
         handleConditionSetResultUpdated(data) {
@@ -220,18 +225,22 @@ export default {
             this.telemetryObjs.push(domainObject);
             this.$emit('telemetryUpdated', this.telemetryObjs);
 
-            if (!this.unsubscribeFromStaleness) {
-                this.unsubscribeFromStaleness = {};
+            if (!this.stalenessSubscription[keyString]) {
+                this.stalenessSubscription[keyString] = {};
             }
 
-            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (isStale) => {
-                this.emitStaleness({
-                    keyString,
-                    isStale
-                });
+            this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
+
+            const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                if (this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                    this.emitStaleness({
+                        keyString,
+                        isStale: stalenessResponse.isStale
+                    });
+                }
             });
 
-            this.unsubscribeFromStaleness[keyString] = unsubscribeFromStaleness;
+            this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
         },
         removeTelemetryObject(identifier) {
             const keyString = this.openmct.objects.makeKeyString(identifier);
@@ -245,8 +254,9 @@ export default {
                 this.telemetryObjs.splice(index, 1);
             }
 
-            if (this.unsubscribeFromStaleness[keyString]) {
-                this.unsubscribeFromStaleness[keyString]();
+            if (this.stalenessSubscription[keyString]) {
+                this.stalenessSubscription[keyString].unsubscribe();
+                this.stalenessSubscription[keyString].stalenessUtils.destroy();
                 this.emitStaleness({
                     keyString,
                     isStale: false
