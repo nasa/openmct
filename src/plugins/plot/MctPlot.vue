@@ -88,6 +88,7 @@
                         :annotated-points="annotatedPoints"
                         :annotation-selections="annotationSelections"
                         :show-limit-line-labels="showLimitLineLabels"
+                        :is-real-time="isRealTime"
                         @plotReinitializeCanvas="initCanvas"
                         @chartLoaded="initialize"
                     />
@@ -975,7 +976,7 @@ export default {
 
             if (event.altKey && !event.shiftKey) {
                 return this.startPan(event);
-            } else if (event.altKey && event.shiftKey) {
+            } else if (!this.isRealTime && event.altKey && event.shiftKey) {
                 return this.startMarquee(event, true);
             } else {
                 return this.startMarquee(event, false);
@@ -1054,7 +1055,7 @@ export default {
         selectNearbyAnnotations(event) {
             event.stopPropagation();
 
-            if (this.annotationSelections.length) {
+            if (this.isRealTime || this.annotationSelections.length) {
                 return;
             }
 

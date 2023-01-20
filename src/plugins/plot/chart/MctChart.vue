@@ -54,7 +54,7 @@ const ANNOTATION_SIZE = MARKER_SIZE * 3.0;
 const CLEARANCE = 15;
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         rectangles: {
             type: Array,
@@ -85,6 +85,10 @@ export default {
             default() {
                 return {};
             }
+        },
+        isRealTime: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -470,8 +474,12 @@ export default {
                 this.drawSeries();
                 this.drawRectangles();
                 this.drawHighlights();
-                this.drawAnnotatedPoints();
-                this.drawAnnotationSelections();
+
+                // only draw these in fixed time mode
+                if (!this.isRealTime) {
+                    this.drawAnnotatedPoints();
+                    this.drawAnnotationSelections();
+                }
             }
         },
         updateViewport() {
@@ -625,13 +633,12 @@ export default {
                         && (yValue > yRange.min) && (yValue < yRange.max));
         },
         drawAnnotatedPoints() {
-            const xRange = this.config.xAxis.get('displayRange');
-            const yRange = this.config.yAxis.get('displayRange');
-
             // we should do this by series, and then plot all the points at once instead
             // of doing it one by one
             if (this.annotatedPoints && this.annotatedPoints.length) {
                 const uniquePointsToDraw = [];
+                const xRange = this.config.xAxis.get('displayRange');
+                const yRange = this.config.yAxis.get('displayRange');
                 this.annotatedPoints.forEach((annotatedPoint) => {
                     // if the annotation is outside the range, don't draw it
                     if (this.annotatedPointWithinRange(annotatedPoint, xRange, yRange)) {
