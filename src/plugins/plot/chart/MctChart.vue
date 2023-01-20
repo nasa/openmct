@@ -239,6 +239,10 @@ export default {
             this.updateLimitsAndDraw();
         },
         resetAxisAndRedraw(newYAxisId, oldYAxisId, series) {
+            if (!oldYAxisId) {
+                return;
+            }
+
             //Remove the old chart elements for the series since their offsets are pointing to the old y axis
             this.removeChartElement(series);
             this.resetYOffsetAndSeriesDataForYAxis(oldYAxisId);
@@ -262,7 +266,6 @@ export default {
             DrawLoader.releaseDrawAPI(this.drawAPI);
         },
         resetYOffsetAndSeriesDataForYAxis(yAxisId) {
-            //do not delete the this.offset[yAxisId].x value as this is required when we reset chart elements
             delete this.offset[yAxisId].y;
             delete this.offset[yAxisId].xVal;
             delete this.offset[yAxisId].yVal;
