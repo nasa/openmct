@@ -26,7 +26,7 @@
   align-items: flex-start;
 
   > * + * {
-      margin-left: $interiorMarginLg;
+      margin-left: $interiorMargin;
   }
 
   + .c-recentobjects-listitem {
@@ -44,7 +44,7 @@
   }
 
   &__object-path {
-   // background: red;
+   padding: 0 $interiorMarginSm;
   }
 
   &__target-button{
@@ -104,8 +104,7 @@
       border-radius: $basicCr;
       color: pullForward($colorBodyFg, 30%);
       cursor: pointer;
-      font-size: 1.15em;
-      padding: 3px $interiorMarginSm;
+      padding: $interiorMarginSm;
 
       &:hover {
           background-color: $colorItemTreeHoverBg;
