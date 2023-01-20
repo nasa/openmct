@@ -21,70 +21,75 @@
  *****************************************************************************/
 
 <template>
-<div
-    class="c-gsearch-result c-gsearch-result--object"
-    aria-label="Search Result"
-    role="presentation"
+<li
+    class="c-recentobjects-listitem c-recentobjects-listitem--object"
+    :class="isAlias"
+    :aria-label="`${domainObject.name}`"
 >
     <div
-        class="c-gsearch-result__type-icon"
+        class="c-recentobjects-listitem__type-icon recent-object-icon"
         :class="resultTypeIcon"
     ></div>
     <div
-        class="c-gsearch-result__body"
-        role="option"
-        :aria-label="`${resultName} ${resultType} result`"
+        class="c-recentobjects-listitem__body"
     >
-        <div
-            class="c-gsearch-result__title"
-            :name="resultName"
+        <span
+            class="c-recentobjects-listitem__title"
+            :name="domainObject.name"
             draggable="true"
             @dragstart="dragStart"
-            @click="clickedResult"
+            @click.prevent="clickedRecent"
         >
-            {{ resultName }}
-        </div>
+            {{ domainObject.name }}
+        </span>
 
         <ObjectPath
+            class="c-recentobjects-listitem__object-path"
             :read-only="false"
-            :domain-object="result"
+            :domain-object="domainObject"
+            :show-original-path="false"
+            :object-path="objectPath"
         />
     </div>
-    <div class="c-gsearch-result__more-options-button">
-        <button class="c-icon-button icon-3-dots"></button>
+    <div class="c-recentobjects-listitem__target-button">
+        <button
+            class="c-icon-button icon-target"
+            @click="openAndScrollTo(navigationPath)"
+        ></button>
     </div>
-</div>
+</li>
 </template>
 
 <script>
-import ObjectPath from '../../components/ObjectPath.vue';
-import identifierToString from '../../../tools/url';
-import PreviewAction from '../../preview/PreviewAction';
+import ObjectPath from '../components/ObjectPath.vue';
+import PreviewAction from '../preview/PreviewAction';
 
 export default {
-    name: 'ObjectSearchResult',
+    name: 'RecentObjectsListItem',
     components: {
         ObjectPath
     },
     inject: ['openmct'],
     props: {
-        result: {
+        domainObject: {
             type: Object,
-            required: true,
-            default() {
-                return {};
-            }
+            required: true
+        },
+        navigationPath: {
+            type: String,
+            required: true
+        },
+        objectPath: {
+            type: Array,
+            required: true
         }
     },
     computed: {
-        resultName() {
-            return this.result.name;
+        isAlias() {
+            return this.openmct.objects.isObjectPathToALink(this.domainObject, this.objectPath) ? { 'is-alias': true } : undefined;
         },
         resultTypeIcon() {
-            return this.openmct.types.get(this.result.type).definition.cssClass;
-        },
-        resultType() {
-            return this.result.type;
+            return this.openmct.types.get(this.domainObject.type).definition.cssClass;
         }
     },
     mounted() {
@@ -95,42 +100,34 @@ export default {
         this.previewAction.off('isVisible', this.togglePreviewState);
     },
     methods: {
-        clickedResult(event) {
+        clickedRecent(_event) {
             if (this.openmct.editor.isEditing()) {
-                event.preventDefault();
                 this.preview();
             } else {
-                const { objectPath } = this.result;
-                let resultUrl = identifierToString(this.openmct, objectPath);
-
-                // Remove the vestigial 'ROOT' identifier from url if it exists
-                if (resultUrl.includes('/ROOT')) {
-                    resultUrl = resultUrl.split('/ROOT').join('');
-                }
-
-                this.openmct.router.navigate(resultUrl);
+                this.openmct.router.navigate(`#${this.navigationPath}`);
             }
         },
         togglePreviewState(previewState) {
             this.$emit('preview-changed', previewState);
         },
         preview() {
-            const { objectPath } = this.result;
-            if (this.previewAction.appliesTo(objectPath)) {
-                this.previewAction.invoke(objectPath);
+            if (this.previewAction.appliesTo(this.objectPath)) {
+                this.previewAction.invoke(this.objectPath);
             }
         },
         dragStart(event) {
             const navigatedObject = this.openmct.router.path[0];
-            const { objectPath } = this.result;
-            const serializedPath = JSON.stringify(objectPath);
-            const keyString = this.openmct.objects.makeKeyString(this.result.identifier);
-            if (this.openmct.composition.checkPolicy(navigatedObject, this.result)) {
-                event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.result));
+            const serializedPath = JSON.stringify(this.objectPath);
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            if (this.openmct.composition.checkPolicy(navigatedObject, this.domainObject)) {
+                event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
 
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
-            event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.result);
+            event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
+        },
+        openAndScrollTo(navigationPath) {
+            this.$emit('openAndScrollTo', navigationPath);
         }
     }
 };

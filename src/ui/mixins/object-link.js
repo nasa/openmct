@@ -3,7 +3,7 @@ import objectPathToUrl from '../../tools/url';
 export default {
     inject: ['openmct'],
     props: {
-        'objectPath': {
+        objectPath: {
             type: Array,
             default() {
                 return [];
@@ -20,7 +20,7 @@ export default {
                 return '#' + this.navigateToPath;
             }
 
-            let url = objectPathToUrl(this.openmct, this.objectPath);
+            const url = objectPathToUrl(this.openmct, this.objectPath);
 
             return url;
         }

@@ -49,11 +49,11 @@ test.describe('AppActions', () => {
                 parent: e2eFolder.uuid
             });
 
-            await page.goto(timer1.url, { waitUntil: 'networkidle' });
+            await page.goto(timer1.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer1.name);
-            await page.goto(timer2.url, { waitUntil: 'networkidle' });
+            await page.goto(timer2.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer2.name);
-            await page.goto(timer3.url, { waitUntil: 'networkidle' });
+            await page.goto(timer3.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer3.name);
         });
 
@@ -73,11 +73,11 @@ test.describe('AppActions', () => {
                 name: 'Folder Baz',
                 parent: folder2.uuid
             });
-            await page.goto(folder1.url, { waitUntil: 'networkidle' });
+            await page.goto(folder1.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder1.name);
-            await page.goto(folder2.url, { waitUntil: 'networkidle' });
+            await page.goto(folder2.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder2.name);
-            await page.goto(folder3.url, { waitUntil: 'networkidle' });
+            await page.goto(folder3.url);
             await expect(page.locator('.l-browse-bar__object-name')).toHaveText(folder3.name);
 
             expect(folder1.url).toBe(`${e2eFolder.url}/${folder1.uuid}`);
