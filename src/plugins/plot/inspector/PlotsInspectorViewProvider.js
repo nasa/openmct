@@ -52,7 +52,7 @@ export default function PlotsInspectorViewProvider(openmct) {
             };
         },
         priority: function () {
-            return 1;
+            return openmct.priority.HIGH + 1;
         }
     };
 }

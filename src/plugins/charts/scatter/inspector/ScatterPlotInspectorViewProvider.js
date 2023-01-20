@@ -42,7 +42,7 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
             };
         },
         priority: function () {
-            return 1;
+            return openmct.priority.HIGH + 1;
         }
     };
 }
