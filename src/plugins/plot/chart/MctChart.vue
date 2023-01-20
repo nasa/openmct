@@ -532,11 +532,10 @@ export default {
             const args = Array.from(arguments).slice(0, 2);
             this.matchByYAxisId(...args, true);
         },
-        matchByYAxisId(id, item, excludeVisibility = false) {
+        matchByYAxisId(id, item, index, items, excludeVisibility = false) {
             const mainYAxisId = this.config.yAxis.get('id');
             let matchesId = false;
             const axisSeriesAreVisible = excludeVisibility || this.hiddenYAxisIds.indexOf(id) < 0;
-
             const series = item.series;
             if (axisSeriesAreVisible && series) {
                 const seriesYAxisId = series.get('yAxisId') || mainYAxisId;
