@@ -185,7 +185,7 @@ export default {
             }
         },
         addOrRemoveSeries(series) {
-            const yAxisId = this.series.get('yAxisId');
+            const yAxisId = series.get('yAxisId');
             if (yAxisId === this.id) {
                 this.addSeries(series);
             } else {
