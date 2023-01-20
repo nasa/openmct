@@ -177,36 +177,38 @@ export default {
             this.config = configStore.get(configId);
             this.yAxes.push({
                 id: this.config.yAxis.id,
-                elements: []
+                elements: this.parentObject.configuration.series.filter(
+                    series => series.yAxisId === this.config.yAxis.id
+                )
             });
             if (this.config.additionalYAxes) {
                 this.config.additionalYAxes.forEach(yAxis => {
                     this.yAxes.push({
                         id: yAxis.id,
-                        elements: []
+                        elements: this.parentObject.configuration.series.filter(
+                            series => series.yAxisId === yAxis.id
+                        )
                     });
                 });
             }
         },
         addElement(element) {
             // Get the index of the corresponding element in the series list
-            const index = this.parentObject.configuration.series.findIndex(
+            const seriesIndex = this.parentObject.configuration.series.findIndex(
                 series => this.openmct.objects.areIdsEqual(series.identifier, element.identifier)
             );
-            let yAxisId = this.parentObject.configuration.series[index].yAxisId;
-            if (yAxisId === undefined) {
-                yAxisId = Y_AXIS_1;
-
-                // Insert the element at the end of the YAxis1 bucket
-                let insertIndex = 0;
-                while (insertIndex < this.yAxes.length && this.yAxes[insertIndex].id === yAxisId) {
-                    insertIndex++;
-                }
-
-                this.composition.reorder(index, insertIndex + 1);
-            }
-
             const keyString = this.openmct.objects.makeKeyString(element.identifier);
+
+            const wasDraggedOntoPlot = this.parentObject.configuration.series[seriesIndex].yAxisId === undefined;
+            const yAxisId = wasDraggedOntoPlot
+                ? Y_AXIS_1
+                : this.parentObject.configuration.series[seriesIndex].yAxisId;
+
+            if (wasDraggedOntoPlot) {
+                const insertIndex = this.yAxes[0].elements.length;
+                // Insert the element at the end of the first YAxis bucket
+                this.composition.reorder(seriesIndex, insertIndex);
+            }
 
             // Store the element in the cache and set its yAxisId
             this.elementsCache[keyString] = JSON.parse(JSON.stringify(element));
@@ -262,10 +264,22 @@ export default {
             this.moveAndReorderElement(moveFromIndex, moveToIndex, moveToYAxisId);
         },
         updateCacheAndMutate(domainObject, yAxisId) {
+            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             const index = this.parentObject.configuration.series.findIndex(
                 series => series.identifier.key === domainObject.identifier.key
             );
-            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+            // Handle the case of dragging an element directly into the Elements Pool
+            if (!this.elementsCache[keyString]) {
+                // Update the series list locally so our CompositionAdd handler can
+                // take care of the rest.
+                this.parentObject.configuration.series.push({
+                    identifier: domainObject.identifier,
+                    yAxisId
+                });
+                this.composition.add(domainObject);
+                this.elementsCache[keyString] = JSON.parse(JSON.stringify(domainObject));
+            }
 
             this.elementsCache[keyString].yAxisId = yAxisId;
             const shouldMutate = this.parentObject.configuration.series?.[index]?.yAxisId !== yAxisId;

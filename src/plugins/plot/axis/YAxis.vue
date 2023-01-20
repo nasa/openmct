@@ -239,10 +239,7 @@ export default {
 
             //  set yAxisLabel if none is set yet
             if (this.yAxisLabel === 'none') {
-                let yKey = seriesModel.model.yKey;
-                let yKeyModel = this.yKeyOptions.filter(o => o.key === yKey)[0];
-
-                this.yAxisLabel = yKeyModel ? yKeyModel.name : '';
+                this.yAxisLabel = this.yAxis.get('label');
             }
         },
         toggleYAxisLabel() {
