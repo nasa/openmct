@@ -383,13 +383,6 @@ export default class PlotSeries extends Model {
         }
     }
 
-    setViewportRange(xRange, yRange) {
-        this.xRangeMin = xRange.min;
-        this.xRangeMax = xRange.max;
-        this.yRangeMin = yRange.min;
-        this.yRangeMax = yRange.max;
-    }
-
     /**
      * Add a point to the data array while maintaining the sort order of
      * the array and preventing insertion of points with a duplicate x
@@ -406,7 +399,6 @@ export default class PlotSeries extends Model {
         let data = this.getSeriesData();
         let insertIndex = data.length;
         const currentYVal = this.getYVal(point);
-        const currentXVal = this.getXVal(point);
         const lastYVal = this.getYVal(data[insertIndex - 1]);
 
         if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
