@@ -77,10 +77,10 @@ if (document.currentScript) {
 const MCT = require('./src/MCT');
 
 /** @type {OpenMCT} */
-const openmct = new MCT();
+const openmct = new MCT('./src/MCT');
 
-module.exports = openmct;
-/*****************************************************************************
+module.exports = openmct;'./src/MCT'
+/****************************************************************************
 
  * Open MCT, Copyright (c) 2014-2022, United States Government
 
