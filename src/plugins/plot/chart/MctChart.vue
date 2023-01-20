@@ -86,7 +86,7 @@ export default {
                 return {};
             }
         },
-        isRealTime: {
+        annotationViewingAndEditingAllowed: {
             type: Boolean,
             required: true
         }
@@ -475,8 +475,8 @@ export default {
                 this.drawRectangles();
                 this.drawHighlights();
 
-                // only draw these in fixed time mode
-                if (!this.isRealTime) {
+                // only draw these in fixed time mode or plot is paused
+                if (this.annotationViewingAndEditingAllowed) {
                     this.drawAnnotatedPoints();
                     this.drawAnnotationSelections();
                 }

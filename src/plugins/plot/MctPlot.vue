@@ -88,7 +88,7 @@
                         :annotated-points="annotatedPoints"
                         :annotation-selections="annotationSelections"
                         :show-limit-line-labels="showLimitLineLabels"
-                        :is-real-time="isRealTime"
+                        :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
                         @plotReinitializeCanvas="initCanvas"
                         @chartLoaded="initialize"
                     />
@@ -303,6 +303,10 @@ export default {
         },
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+        },
+        annotationViewingAndEditingAllowed() {
+            // only allow annotations viewing/editing if plot is paused or in fixed time mode
+            return this.isFrozen || !this.isRealTime;
         },
         plotLegendPositionClass() {
             return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
@@ -976,7 +980,7 @@ export default {
 
             if (event.altKey && !event.shiftKey) {
                 return this.startPan(event);
-            } else if (!this.isRealTime && event.altKey && event.shiftKey) {
+            } else if (this.annotationViewingAndEditingAllowed && event.altKey && event.shiftKey) {
                 return this.startMarquee(event, true);
             } else {
                 return this.startMarquee(event, false);
@@ -1055,7 +1059,7 @@ export default {
         selectNearbyAnnotations(event) {
             event.stopPropagation();
 
-            if (this.isRealTime || this.annotationSelections.length) {
+            if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
                 return;
             }
 
