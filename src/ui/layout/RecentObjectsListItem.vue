@@ -62,7 +62,6 @@
 
 <script>
 import ObjectPath from '../components/ObjectPath.vue';
-import objectPathToUrl from '../../tools/url';
 import PreviewAction from '../preview/PreviewAction';
 
 export default {
@@ -105,13 +104,7 @@ export default {
             if (this.openmct.editor.isEditing()) {
                 this.preview();
             } else {
-                let resultUrl = objectPathToUrl(this.openmct, this.objectPath);
-                // get rid of ROOT if extant
-                if (resultUrl.includes('/ROOT')) {
-                    resultUrl = resultUrl.split('/ROOT').join('');
-                }
-
-                this.openmct.router.navigate(resultUrl);
+                this.openmct.router.navigate(`#${this.navigationPath}`);
             }
         },
         togglePreviewState(previewState) {

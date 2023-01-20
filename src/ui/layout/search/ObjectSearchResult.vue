@@ -58,7 +58,7 @@
 
 <script>
 import ObjectPath from '../../components/ObjectPath.vue';
-import objectPathToUrl from '../../../tools/url';
+import identifierToString from '../../../tools/url';
 import PreviewAction from '../../preview/PreviewAction';
 
 export default {
@@ -101,8 +101,9 @@ export default {
                 this.preview();
             } else {
                 const { objectPath } = this.result;
-                let resultUrl = objectPathToUrl(this.openmct, objectPath);
-                // get rid of ROOT if extant
+                let resultUrl = identifierToString(this.openmct, objectPath);
+
+                // Remove the vestigial 'ROOT' identifier from url if it exists
                 if (resultUrl.includes('/ROOT')) {
                     resultUrl = resultUrl.split('/ROOT').join('');
                 }

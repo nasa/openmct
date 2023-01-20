@@ -69,11 +69,6 @@ export function identifierToString(openmct, objectPath) {
 export default function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
     let url = identifierToString(openmct, objectPath);
 
-    // Remove the vestigial 'ROOT' identifier from url if it exists
-    if (url.includes('/ROOT')) {
-        url = url.split('/ROOT').join('');
-    }
-
     let urlParams = paramsToArray(openmct, customUrlParams);
     if (urlParams.length) {
         url += '?' + urlParams.join('&');
