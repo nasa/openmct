@@ -85,7 +85,10 @@
                     <mct-chart
                         :rectangles="rectangles"
                         :highlights="highlights"
+                        :annotated-points="annotatedPoints"
+                        :annotation-selections="annotationSelections"
                         :show-limit-line-labels="showLimitLineLabels"
+                        :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
                         @plotReinitializeCanvas="initCanvas"
                         @chartLoaded="initialize"
                     />
@@ -211,6 +214,7 @@ import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
+import KDBush from 'kdbush';
 import _ from "lodash";
 
 const OFFSET_THRESHOLD = 10;
@@ -268,6 +272,8 @@ export default {
         return {
             altPressed: false,
             highlights: [],
+            annotatedPoints: [],
+            annotationSelections: [],
             lockHighlightPoint: false,
             tickWidth: 0,
             yKeyOptions: [],
@@ -297,6 +303,10 @@ export default {
         },
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+        },
+        annotationViewingAndEditingAllowed() {
+            // only allow annotations viewing/editing if plot is paused or in fixed time mode
+            return this.isFrozen || !this.isRealTime;
         },
         plotLegendPositionClass() {
             return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
@@ -361,16 +371,81 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
+        this.$on('loadingUpdated', this.loadAnnotations);
+        this.openmct.selection.on('change', this.updateSelection);
         this.setTimeContext();
 
         this.loaded = true;
     },
     beforeDestroy() {
+        this.openmct.selection.off('change', this.updateSelection);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
         this.destroy();
     },
     methods: {
+        updateSelection(selection) {
+            const selectionContext = selection?.[0]?.[0]?.context?.item;
+            if (!selectionContext
+                || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
+                // Selection changed, but it's us, so ignoring it
+                return;
+            }
+
+            const selectionType = selection?.[0]?.[1]?.context?.type;
+            if (selectionType !== 'plot-points-selection') {
+                // wrong type of selection
+                return;
+            }
+
+            const currentXaxis = this.config.xAxis.get('displayRange');
+            const currentYaxis = this.config.yAxis.get('displayRange');
+
+            // when there is no plot data, the ranges can be undefined
+            // in which case we should not perform selection
+            if (!currentXaxis || !currentYaxis) {
+                return;
+            }
+
+            const selectedAnnotations = selection?.[0]?.[1]?.context?.annotations;
+            if (selectedAnnotations?.length) {
+                // just use first annotation
+                const boundingBoxes = Object.values(selectedAnnotations[0].targets);
+                let minX = Number.MAX_SAFE_INTEGER;
+                let minY = Number.MAX_SAFE_INTEGER;
+                let maxX = Number.MIN_SAFE_INTEGER;
+                let maxY = Number.MIN_SAFE_INTEGER;
+                boundingBoxes.forEach(boundingBox => {
+                    if (boundingBox.minX < minX) {
+                        minX = boundingBox.minX;
+                    }
+
+                    if (boundingBox.maxX > maxX) {
+                        maxX = boundingBox.maxX;
+                    }
+
+                    if (boundingBox.maxY > maxY) {
+                        maxY = boundingBox.maxY;
+                    }
+
+                    if (boundingBox.minY < minY) {
+                        minY = boundingBox.minY;
+                    }
+                });
+
+                this.config.xAxis.set('displayRange', {
+                    min: minX,
+                    max: maxX
+                });
+                this.config.yAxis.set('displayRange', {
+                    min: minY,
+                    max: maxY
+                });
+                this.zoom('out', 0.2);
+            }
+
+            this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
                 this.altPressed = true;
@@ -445,7 +520,21 @@ export default {
             this.checkSameRangeValue();
             this.stopListening(plotSeries);
         },
+        async loadAnnotations() {
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother loading annotations if there are no tags
+                return;
+            }
 
+            const rawAnnotationsForPlot = [];
+            await Promise.all(this.seriesModels.map(async (seriesModel) => {
+                const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.model.identifier);
+                rawAnnotationsForPlot.push(...seriesAnnotations);
+            }));
+            if (rawAnnotationsForPlot) {
+                this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
+            }
+        },
         loadSeriesData(series) {
             //this check ensures that duplicate requests don't happen on load
             if (!this.timeContext) {
@@ -469,8 +558,7 @@ export default {
                 end: bounds.end
             };
 
-            series.load(options)
-                .then(this.stopLoading.bind(this));
+            series.load(options).then(this.stopLoading.bind(this));
         },
 
         loadMoreData(range, purge) {
@@ -662,10 +750,83 @@ export default {
                 this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
                 this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
                 this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
+                this.listenTo(this.canvas, 'click', this.selectNearbyAnnotations, this);
                 this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
             }
         },
 
+        marqueeAnnotations(annotationsToSelect) {
+            annotationsToSelect.forEach(annotationToSelect => {
+                const firstTargetKeyString = Object.keys(annotationToSelect.targets)[0];
+                const firstTarget = annotationToSelect.targets[firstTargetKeyString];
+                const rectangle = {
+                    start: {
+                        x: firstTarget.minX,
+                        y: firstTarget.minY
+                    },
+                    end: {
+                        x: firstTarget.maxX,
+                        y: firstTarget.maxY
+                    },
+                    color: [1, 1, 1, 0.10]
+                };
+                this.rectangles.push(rectangle);
+
+            });
+        },
+        gatherNearbyAnnotations() {
+            const nearbyAnnotations = [];
+            this.config.series.models.forEach(series => {
+                if (series.closest.annotationsById) {
+                    Object.values(series.closest.annotationsById).forEach(closeAnnotation => {
+                        const addedAnnotationAlready = nearbyAnnotations.some(annotation => {
+                            return _.isEqual(annotation.targets, closeAnnotation.targets)
+                            && _.isEqual(annotation.tags, closeAnnotation.tags);
+                        });
+                        if (!addedAnnotationAlready) {
+                            nearbyAnnotations.push(closeAnnotation);
+                        }
+                    });
+                }
+            });
+
+            return nearbyAnnotations;
+        },
+
+        prepareExistingAnnotationSelection(annotations) {
+            const targetDomainObjects = {};
+            this.config.series.models.forEach(series => {
+                targetDomainObjects[series.keyString] = series.domainObject;
+            });
+
+            const targetDetails = {};
+            const uniqueBoundsAnnotations = [];
+            annotations.forEach(annotation => {
+                Object.entries(annotation.targets).forEach(([key, value]) => {
+                    targetDetails[key] = value;
+                });
+
+                const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some(existingAnnotation => {
+                    const existingBoundingBox = Object.values(existingAnnotation.targets)[0];
+                    const newBoundingBox = Object.values(annotation.targets)[0];
+
+                    return (existingBoundingBox.minX === newBoundingBox.minX
+                        && existingBoundingBox.minY === newBoundingBox.minY
+                        && existingBoundingBox.maxX === newBoundingBox.maxX
+                        && existingBoundingBox.maxY === newBoundingBox.maxY);
+
+                });
+                if (!boundingBoxAlreadyAdded) {
+                    uniqueBoundsAnnotations.push(annotation);
+                }
+            });
+            this.marqueeAnnotations(uniqueBoundsAnnotations);
+
+            return {
+                targetDomainObjects,
+                targetDetails
+            };
+        },
         initialize() {
             this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
@@ -805,7 +966,7 @@ export default {
         },
 
         onMouseDown(event) {
-        // do not monitor drag events on browser context click
+            // do not monitor drag events on browser context click
             if (event.ctrlKey) {
                 return;
             }
@@ -817,10 +978,12 @@ export default {
             const isFrozen = this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
             this.isFrozenOnMouseDown = isFrozen;
 
-            if (event.altKey) {
+            if (event.altKey && !event.shiftKey) {
                 return this.startPan(event);
+            } else if (this.annotationViewingAndEditingAllowed && event.altKey && event.shiftKey) {
+                return this.startMarquee(event, true);
             } else {
-                return this.startMarquee(event);
+                return this.startMarquee(event, false);
             }
         },
 
@@ -828,7 +991,7 @@ export default {
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
 
-            if (this.isMouseClick()) {
+            if (this.isMouseClick() && event.shiftKey) {
                 this.lockHighlightPoint = !this.lockHighlightPoint;
                 this.$emit('lockHighlightPoint', this.lockHighlightPoint);
             }
@@ -869,7 +1032,9 @@ export default {
             this.marquee.endPixels = this.positionOverElement;
         },
 
-        startMarquee(event) {
+        startMarquee(event, annotationEvent) {
+            this.rectangles = [];
+            this.annotationSelections = [];
             this.canvas.classList.remove('plot-drag');
             this.canvas.classList.add('plot-marquee');
 
@@ -883,12 +1048,153 @@ export default {
                     end: this.positionOverPlot,
                     color: [1, 1, 1, 0.5]
                 };
+                if (annotationEvent) {
+                    this.marquee.annotationEvent = true;
+                }
+
                 this.rectangles.push(this.marquee);
                 this.trackHistory();
             }
         },
+        selectNearbyAnnotations(event) {
+            event.stopPropagation();
 
-        endMarquee() {
+            if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
+                return;
+            }
+
+            const nearbyAnnotations = this.gatherNearbyAnnotations();
+            const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
+            this.selectPlotAnnotations({
+                targetDetails,
+                targetDomainObjects,
+                annotations: nearbyAnnotations
+            });
+        },
+        selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
+            const selection =
+                    [
+                        {
+                            element: this.openmct.layout.$refs.browseObject.$el,
+                            context: {
+                                item: this.domainObject
+                            }
+                        },
+                        {
+                            element: this.$el,
+                            context: {
+                                type: 'plot-points-selection',
+                                targetDetails,
+                                targetDomainObjects,
+                                annotations,
+                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                                onAnnotationChange: this.onAnnotationChange
+                            }
+                        }
+                    ];
+            this.openmct.selection.select(selection, true);
+        },
+        selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event) {
+            const boundingBox = {
+                minX,
+                minY,
+                maxX,
+                maxY
+            };
+            let targetDomainObjects = {};
+            let targetDetails = {};
+            let annotations = {};
+            pointsInBox.forEach(pointInBox => {
+                if (pointInBox.length) {
+                    const seriesID = pointInBox[0].series.keyString;
+                    targetDetails[seriesID] = boundingBox;
+                    targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
+                }
+            });
+            this.selectPlotAnnotations({
+                targetDetails,
+                targetDomainObjects,
+                annotations
+            });
+        },
+        findAnnotationPoints(rawAnnotations) {
+            const annotationsByPoints = [];
+            rawAnnotations.forEach(rawAnnotation => {
+                if (rawAnnotation.targets) {
+                    const targetValues = Object.values(rawAnnotation.targets);
+                    if (targetValues && targetValues.length) {
+                        // just get the first one
+                        const boundingBox = Object.values(targetValues)?.[0];
+                        const pointsInBox = this.getPointsInBox(boundingBox, rawAnnotation);
+                        if (pointsInBox && pointsInBox.length) {
+                            annotationsByPoints.push(pointsInBox.flat());
+                        }
+                    }
+                }
+            });
+
+            return annotationsByPoints.flat();
+        },
+        getPointsInBox(boundingBox, rawAnnotation) {
+            // load series models in KD-Trees
+            const seriesKDTrees = [];
+            this.seriesModels.forEach(seriesModel => {
+                const seriesData = seriesModel.getSeriesData();
+                if (seriesData && seriesData.length) {
+                    const kdTree = new KDBush(seriesData,
+                        (point) => {
+                            return seriesModel.getXVal(point);
+                        },
+                        (point) => {
+                            return seriesModel.getYVal(point);
+                        }
+                    );
+                    const searchResults = [];
+                    const rangeResults = kdTree.range(boundingBox.minX, boundingBox.minY, boundingBox.maxX, boundingBox.maxY);
+                    rangeResults.forEach(id => {
+                        const seriesDatum = seriesData[id];
+                        if (seriesDatum) {
+                            const result = {
+                                series: seriesModel,
+                                point: seriesDatum
+                            };
+                            searchResults.push(result);
+                        }
+
+                        if (rawAnnotation) {
+                            if (!seriesDatum.annotationsById) {
+                                seriesDatum.annotationsById = {};
+                            }
+
+                            const annotationKeyString = this.openmct.objects.makeKeyString(rawAnnotation.identifier);
+                            seriesDatum.annotationsById[annotationKeyString] = rawAnnotation;
+                        }
+
+                    });
+                    if (searchResults.length) {
+                        seriesKDTrees.push(searchResults);
+                    }
+                }
+            });
+
+            return seriesKDTrees;
+        },
+        endAnnotationMarquee(event) {
+            const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
+            const minY = Math.min(this.marquee.start.y, this.marquee.end.y);
+            const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
+            const maxY = Math.max(this.marquee.start.y, this.marquee.end.y);
+            const boundingBox = {
+                minX,
+                minY,
+                maxX,
+                maxY
+            };
+            const pointsInBox = this.getPointsInBox(boundingBox);
+            this.annotationSelections = pointsInBox.flat();
+            this.selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event);
+        },
+        endZoomMarquee() {
             const startPixels = this.marquee.startPixels;
             const endPixels = this.marquee.endPixels;
             const marqueeDistance = Math.sqrt(
@@ -911,9 +1217,25 @@ export default {
                 // if marquee zoom doesn't occur.
                 this.plotHistory.pop();
             }
+        },
+        endMarquee(event) {
+            if (this.marquee.annotationEvent) {
+                this.endAnnotationMarquee(event);
+            } else {
+                this.endZoomMarquee();
+                this.rectangles = [];
+            }
 
-            this.rectangles = [];
-            this.marquee = undefined;
+            this.marquee = null;
+        },
+
+        onAnnotationChange(annotations) {
+            if (this.marquee) {
+                this.marquee.annotationEvent = false;
+                this.endMarquee();
+            }
+
+            this.loadAnnotations();
         },
 
         zoom(zoomDirection, zoomFactor) {
