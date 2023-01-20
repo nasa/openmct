@@ -242,6 +242,13 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
     const url = imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
     const urlItems = url.split('/');
     const imageDownloadName = `example.imagery.${urlItems[urlItems.length - 1]}`;
+    const navCamTransformations = {
+        "translateX": 0,
+        "translateY": 18,
+        "rotation": 0,
+        "scale": 0.3,
+        "cameraAngleOfView": 70
+    };
 
     return {
         name,
@@ -251,6 +258,7 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
         sunOrientation: getCompassValues(0, 360),
         cameraPan: getCompassValues(0, 360),
         heading: getCompassValues(0, 360),
+        transformations: navCamTransformations,
         imageDownloadName
     };
 }
