@@ -389,9 +389,9 @@ export default class TelemetryAPI {
             };
             if (provider) {
                 stalenessSubscriber.unsubscribe = provider
-                    .subscribeToStaleness(domainObject, (isStale) => {
+                    .subscribeToStaleness(domainObject, (stalenessResponse) => {
                         stalenessSubscriber.callbacks.forEach((cb) => {
-                            cb(isStale);
+                            cb(stalenessResponse);
                         });
                     });
             } else {
@@ -416,25 +416,15 @@ export default class TelemetryAPI {
      * Request telemetry staleness for a domain object.
      *
      * @method isStale
-     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     * @memberof module:openmct.TelemetryAPI~StalenessProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry staleness
-     * @returns {Promise.<object[]>} a promise for a staleness data
-     *  object: ex.
-     *  {
-     *      isStale: <Boolean>,
-     *      timestamp: <timestamp>
-     *  }
+     * @returns {Promise.<StalenessResponseObject>} a promise for a staleness response
      */
     async isStale(domainObject) {
-        const abortController = new AbortController();
-        const options = { signal: abortController.signal };
-
-        this.requestAbortControllers.add(abortController);
-
         const provider = this.#findStalenessProvider(domainObject);
+
         if (!provider) {
-            this.requestAbortControllers.delete(abortController);
             const timeSystem = this.openmct.time.timeSystem();
 
             return {
@@ -442,6 +432,10 @@ export default class TelemetryAPI {
                 isStale: false
             };
         }
+
+        const abortController = new AbortController();
+        const options = { signal: abortController.signal };
+        this.requestAbortControllers.add(abortController);
 
         try {
             const staleness = await provider.isStale(domainObject, options);
@@ -778,6 +772,12 @@ export default class TelemetryAPI {
  *
  * @interface StalenessProvider
  * @memberof module:openmct.TelemetryAPI~
+ */
+
+/**
+ * @typedef {object} StalenessResponseObject
+ * @property {Boolean} isStale boolean representing the staleness state
+ * @property {Number} timestamp Unix timestamp in milliseconds
  */
 
 /**
