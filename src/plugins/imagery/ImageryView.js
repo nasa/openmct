@@ -45,6 +45,35 @@ export default class ImageryView {
         });
     }
 
+    getViewContext() {
+        if (!this.component) {
+            return {};
+        }
+
+        return this.component.$refs.ImageryContainer;
+    }
+
+    pause() {
+        const imageContext = this.getViewContext();
+        // persist previous pause value to return to after unpausing
+        this.previouslyPaused = imageContext.isPaused;
+        imageContext.thumbnailClicked(imageContext.focusedImageIndex);
+    }
+    unpause() {
+        const pausedStateBefore = this.previouslyPaused;
+        this.previouslyPaused = undefined; // clear value
+        const imageContext = this.getViewContext();
+        imageContext.paused(pausedStateBefore);
+    }
+
+    onPreviewModeChange({ isPreviewing } = {}) {
+        if (isPreviewing) {
+            this.pause();
+        } else {
+            this.unpause();
+        }
+    }
+
     destroy() {
         this.component.$destroy();
         this.component = undefined;
