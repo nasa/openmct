@@ -708,7 +708,7 @@ export default {
                 && visibleActions.find(action => action.key === 'large.view');
 
             if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
-                viewLargeAction.onItemClicked();
+                viewLargeAction.invoke(this.objectPath, this.currentView);
             }
         },
         async initializeRelatedTelemetry() {

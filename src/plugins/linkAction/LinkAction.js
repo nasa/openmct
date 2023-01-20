@@ -30,6 +30,7 @@ export default class LinkAction {
         this.priority = 7;
 
         this.openmct = openmct;
+        this.transaction = null;
     }
 
     appliesTo(objectPath) {
@@ -48,7 +49,9 @@ export default class LinkAction {
     }
 
     onSave(changes) {
-        let inNavigationPath = this.inNavigationPath();
+        this.startTransaction();
+
+        const inNavigationPath = this.inNavigationPath();
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
@@ -57,6 +60,8 @@ export default class LinkAction {
         const parent = parentDomainObjectpath[0];
 
         this.linkInNewParent(this.object, parent);
+
+        return this.saveTransaction();
     }
 
     linkInNewParent(child, newParent) {
@@ -127,5 +132,20 @@ export default class LinkAction {
 
             return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
         };
+    }
+    startTransaction() {
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.transaction = this.openmct.objects.startTransaction();
+        }
+    }
+
+    async saveTransaction() {
+        if (!this.transaction) {
+            return;
+        }
+
+        await this.transaction.commit();
+        this.openmct.objects.endTransaction();
+        this.transaction = null;
     }
 }

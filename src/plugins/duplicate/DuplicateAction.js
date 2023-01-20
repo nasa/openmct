@@ -31,6 +31,7 @@ export default class DuplicateAction {
         this.priority = 7;
 
         this.openmct = openmct;
+        this.transaction = null;
     }
 
     invoke(objectPath) {
@@ -45,7 +46,9 @@ export default class DuplicateAction {
             .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
     }
 
-    onSave(changes) {
+    async onSave(changes) {
+        this.startTransaction();
+
         let inNavigationPath = this.inNavigationPath();
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
@@ -59,7 +62,9 @@ export default class DuplicateAction {
         const parentDomainObjectpath = changes.location || [this.parent];
         const parent = parentDomainObjectpath[0];
 
-        return duplicationTask.duplicate(this.object, parent);
+        await duplicationTask.duplicate(this.object, parent);
+
+        return this.saveTransaction();
     }
 
     showForm(domainObject, parentDomainObject) {
@@ -141,5 +146,21 @@ export default class DuplicateAction {
             && parentType
             && parentType.definition.creatable
             && Array.isArray(parent.composition);
+    }
+
+    startTransaction() {
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.transaction = this.openmct.objects.startTransaction();
+        }
+    }
+
+    async saveTransaction() {
+        if (!this.transaction) {
+            return;
+        }
+
+        await this.transaction.commit();
+        this.openmct.objects.endTransaction();
+        this.transaction = null;
     }
 }

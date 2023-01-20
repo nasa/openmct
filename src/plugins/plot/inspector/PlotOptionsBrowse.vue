@@ -178,10 +178,10 @@ export default {
     },
     computed: {
         isNestedWithinAStackedPlot() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject?.type === 'telemetry.plot.stacked');
         },
         isStackedPlotObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject?.type === 'telemetry.plot.stacked');
         }
     },
     mounted() {

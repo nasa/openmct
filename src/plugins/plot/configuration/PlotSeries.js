@@ -83,6 +83,10 @@ export default class PlotSeries extends Model {
         // Model.apply(this, arguments);
         this.onXKeyChange(this.get('xKey'));
         this.onYKeyChange(this.get('yKey'));
+        this.xRangeMin = Number.MIN_SAFE_INTEGER;
+        this.yRangeMin = Number.MIN_SAFE_INTEGER;
+        this.xRangeMax = Number.MAX_SAFE_INTEGER;
+        this.yRangeMax = Number.MAX_SAFE_INTEGER;
 
         this.unPlottableValues = [undefined, Infinity, -Infinity];
     }
@@ -378,6 +382,7 @@ export default class PlotSeries extends Model {
             });
         }
     }
+
     /**
      * Add a point to the data array while maintaining the sort order of
      * the array and preventing insertion of points with a duplicate x
