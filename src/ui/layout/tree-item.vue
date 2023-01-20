@@ -9,10 +9,12 @@
         class="c-tree__item"
         :class="{
             'is-alias': isAlias,
-            'is-navigated-object': shouldHightlight,
+            'is-navigated-object': shouldHighlight,
+            'is-targeted-item': isTargetedItem,
             'is-context-clicked': contextClickActive,
             'is-new': isNewItem
         }"
+        @animationend="targetedPathAnimationEnd($event)"
         @click.capture="itemClick"
         @contextmenu.capture="handleContextMenu"
     >
@@ -56,6 +58,10 @@ export default {
         },
         isSelectorTree: {
             type: Boolean,
+            required: true
+        },
+        targetedPath: {
+            type: String,
             required: true
         },
         selectedItem: {
@@ -122,6 +128,9 @@ export default {
         isSelectedItem() {
             return this.selectedItem.objectPath === this.node.objectPath;
         },
+        isTargetedItem() {
+            return this.targetedPath === this.navigationPath;
+        },
         isNewItem() {
             return this.isNew;
         },
@@ -131,7 +140,7 @@ export default {
         isOpen() {
             return this.openItems.includes(this.navigationPath);
         },
-        shouldHightlight() {
+        shouldHighlight() {
             if (this.isSelectorTree) {
                 return this.isSelectedItem;
             } else {
@@ -164,6 +173,10 @@ export default {
         this.$emit('tree-item-destoyed', this.navigationPath);
     },
     methods: {
+        targetedPathAnimationEnd($event) {
+            $event.target.classList.remove('is-targeted-item');
+            this.$emit('targeted-path-animation-end');
+        },
         itemAction() {
             this.$emit('tree-item-action', this.isOpen || this.isLoading ? 'close' : 'open');
         },

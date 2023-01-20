@@ -67,7 +67,7 @@
 
 <script>
 import ObjectPath from '../../components/ObjectPath.vue';
-import objectPathToUrl from '../../../tools/url';
+import { identifierToString } from '../../../../src/tools/url';
 
 export default {
     name: 'AnnotationSearchResult',
@@ -128,11 +128,7 @@ export default {
     methods: {
         clickedResult() {
             const objectPath = this.domainObject.originalPath;
-            let resultUrl = objectPathToUrl(this.openmct, objectPath);
-            // get rid of ROOT if extant
-            if (resultUrl.includes('/ROOT')) {
-                resultUrl = resultUrl.split('/ROOT').join('');
-            }
+            let resultUrl = identifierToString(this.openmct, objectPath);
 
             this.openmct.router.navigate(resultUrl);
             if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
