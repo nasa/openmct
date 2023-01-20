@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults } = require('../../appActions.js');
+const { createDomainObjectWithDefaults, createNotification } = require('../../appActions.js');
 
 test.describe('AppActions', () => {
     test('createDomainObjectsWithDefaults', async ({ page }) => {
@@ -84,5 +84,29 @@ test.describe('AppActions', () => {
             expect(folder2.url).toBe(`${e2eFolder.url}/${folder1.uuid}/${folder2.uuid}`);
             expect(folder3.url).toBe(`${e2eFolder.url}/${folder1.uuid}/${folder2.uuid}/${folder3.uuid}`);
         });
+    });
+    test("createNotification", async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+        await createNotification(page, {
+            message: 'Test info notification',
+            severity: 'info'
+        });
+        await expect(page.locator('.c-message-banner__message')).toHaveText('Test info notification');
+        await expect(page.locator('.c-message-banner')).toHaveClass(/info/);
+        await page.locator('[aria-label="Dismiss"]').click();
+        await createNotification(page, {
+            message: 'Test alert notification',
+            severity: 'alert'
+        });
+        await expect(page.locator('.c-message-banner__message')).toHaveText('Test alert notification');
+        await expect(page.locator('.c-message-banner')).toHaveClass(/alert/);
+        await page.locator('[aria-label="Dismiss"]').click();
+        await createNotification(page, {
+            message: 'Test error notification',
+            severity: 'error'
+        });
+        await expect(page.locator('.c-message-banner__message')).toHaveText('Test error notification');
+        await expect(page.locator('.c-message-banner')).toHaveClass(/error/);
+        await page.locator('[aria-label="Dismiss"]').click();
     });
 });
