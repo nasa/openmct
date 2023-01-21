@@ -93,7 +93,6 @@
                 ></div>
                 <Compass
                     v-if="shouldDisplayCompass"
-                    :compass-rose-sizing-classes="compassRoseSizingClasses"
                     :image="focusedImage"
                     :natural-aspect-ratio="focusedImageNaturalAspectRatio"
                     :sized-image-dimensions="sizedImageDimensions"
@@ -298,18 +297,6 @@ export default {
         };
     },
     computed: {
-        compassRoseSizingClasses() {
-            let compassRoseSizingClasses = '';
-            if (this.sizedImageWidth < 300) {
-                compassRoseSizingClasses = '--rose-small --rose-min';
-            } else if (this.sizedImageWidth < 500) {
-                compassRoseSizingClasses = '--rose-small';
-            } else if (this.sizedImageWidth > 1000) {
-                compassRoseSizingClasses = '--rose-max';
-            }
-
-            return compassRoseSizingClasses;
-        },
         displayThumbnails() {
             return (
                 this.forceShowThumbnails
@@ -432,7 +419,6 @@ export default {
         shouldDisplayCompass() {
             const imageHeightAndWidth = this.sizedImageHeight !== 0
                 && this.sizedImageWidth !== 0;
-
             const display = this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
@@ -440,8 +426,9 @@ export default {
                 && imageHeightAndWidth
                 && this.zoomFactor === 1
                 && this.imagePanned !== true;
+            const hasCameraConfigurations = this.focusedImage?.transformations !== undefined;
 
-            return display;
+            return display && hasCameraConfigurations;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;
@@ -626,6 +613,7 @@ export default {
         this.spacecraftOrientationKeys = ['heading'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
+        this.transformationsKeys = ['transformations'];
 
         // related telemetry
         await this.initializeRelatedTelemetry();
@@ -728,7 +716,13 @@ export default {
             this.relatedTelemetry = new RelatedTelemetry(
                 this.openmct,
                 this.domainObject,
-                [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys]
+                [
+                    ...this.spacecraftPositionKeys,
+                    ...this.spacecraftOrientationKeys,
+                    ...this.cameraKeys,
+                    ...this.sunKeys,
+                    ...this.transformationsKeys
+                ]
             );
 
             if (this.relatedTelemetry.hasRelatedTelemetry) {
@@ -837,6 +831,15 @@ export default {
                     this.$set(this.focusedImageRelatedTelemetry, key, value);
                 }
             }
+
+            // set configuration for compass
+            this.transformationsKeys.forEach(key => {
+                const transformations = this.relatedTelemetry[key];
+
+                if (transformations !== undefined) {
+                    this.$set(this.imageHistory[this.focusedImageIndex], key, transformations);
+                }
+            });
         },
         trackLatestRelatedTelemetry() {
             [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
