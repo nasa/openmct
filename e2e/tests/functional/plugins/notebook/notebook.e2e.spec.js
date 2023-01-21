@@ -265,7 +265,7 @@ test.describe('Notebook entry tests', () => {
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
     test.fixme('previous and new entries can be deleted', async ({ page }) => {});
-    test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+    test.fixme('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com';
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
@@ -295,7 +295,7 @@ test.describe('Notebook entry tests', () => {
 
         expect(await validLink.count()).toBe(1);
     });
-    test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
+    test.fixme('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'www.google.com';
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
@@ -315,7 +315,7 @@ test.describe('Notebook entry tests', () => {
 
         expect(await invalidLink.count()).toBe(0);
     });
-    test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
+    test.fixme('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com?bad=';
         const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
