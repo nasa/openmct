@@ -25,13 +25,14 @@ import Notebook from './components/Notebook.vue';
 import Agent from '@/utils/agent/Agent';
 
 export default class NotebookViewProvider {
-    constructor(openmct, name, key, type, cssClass, snapshotContainer) {
+    constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {
         this.openmct = openmct;
         this.key = key;
         this.name = `${name} View`;
         this.type = type;
         this.cssClass = cssClass;
         this.snapshotContainer = snapshotContainer;
+        this.entryUrlWhitelist = entryUrlWhitelist;
     }
 
     canView(domainObject) {
@@ -43,6 +44,7 @@ export default class NotebookViewProvider {
         let openmct = this.openmct;
         let snapshotContainer = this.snapshotContainer;
         let agent = new Agent(window);
+        let entryUrlWhitelist = this.entryUrlWhitelist;
 
         return {
             show(container) {
@@ -54,7 +56,8 @@ export default class NotebookViewProvider {
                     provide: {
                         openmct,
                         snapshotContainer,
-                        agent
+                        agent,
+                        entryUrlWhitelist
                     },
                     data() {
                         return {
