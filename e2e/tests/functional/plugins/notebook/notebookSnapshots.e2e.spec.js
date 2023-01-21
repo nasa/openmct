@@ -25,8 +25,8 @@ This test suite is dedicated to tests which verify the basic operations surround
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../../../appActions');
-const nbUtils = require('../../../../helper/notebookUtils');
+// const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../../../appActions');
+// const nbUtils = require('../../../../helper/notebookUtils');
 
 test.describe('Snapshot Menu tests', () => {
     test.fixme('When no default notebook is selected, Snapshot Menu dropdown should only have a single option', async ({ page }) => {
@@ -69,15 +69,15 @@ test.describe('Snapshot Container tests', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create Notebook
-        const notebook = await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Test Notebook"
-        });
-        // Create Overlay Plot
-        const snapShotObject = await createDomainObjectWithDefaults(page, {
-            type: 'Overlay Plot',
-            name: "Dropped Overlay Plot"
-        });
+        // const notebook = await createDomainObjectWithDefaults(page, {
+        //     type: 'Notebook',
+        //     name: "Test Notebook"
+        // });
+        // // Create Overlay Plot
+        // const snapShotObject = await createDomainObjectWithDefaults(page, {
+        //     type: 'Overlay Plot',
+        //     name: "Dropped Overlay Plot"
+        // });
 
         await page.getByRole('button', { name: ' Snapshot ' }).click();
         await page.getByRole('menuitem', { name: ' Save to Notebook Snapshots' }).click();

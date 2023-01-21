@@ -106,7 +106,7 @@
                     {{ tag.label }}
                 </div>
             </div>
-            
+
             <div
                 :class="{'c-scrollcontainer': enableEmbedsWrapperScroll }"
             >
