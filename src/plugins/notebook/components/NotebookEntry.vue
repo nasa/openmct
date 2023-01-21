@@ -244,8 +244,11 @@ export default {
                 const url = new URL(match);
                 const domain = url.hostname;
                 let result = match;
+                let isMatch = this.urlWhitelist.find((partialDomain) => {
+                    return domain.endsWith(partialDomain);
+                });
 
-                if (this.urlWhitelist.includes(domain)) {
+                if (isMatch) {
                     result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
                 }
 
