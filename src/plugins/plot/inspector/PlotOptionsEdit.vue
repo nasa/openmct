@@ -28,7 +28,10 @@
         v-if="!isStackedPlotObject"
         class="c-tree"
     >
-        <h2 title="Display properties for this object">Plot Series</h2>
+        <h2
+            class="--first"
+            title="Display properties for this object"
+        >Plot Series</h2>
         <li
             v-for="series in plotSeries"
             :key="series.key"
@@ -49,7 +52,10 @@
         v-if="isStackedPlotObject || !isStackedPlotNestedObject"
         class="l-inspector-part"
     >
-        <h2 title="Legend options">Legend</h2>
+        <h2
+            class="--first"
+            title="Legend options"
+        >Legend</h2>
         <legend-form
             v-if="plotSeries.length"
             class="grid-properties"
