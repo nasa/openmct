@@ -24,8 +24,6 @@ import StalenessUtils from '@/utils/staleness';
 
 export default {
     data() {
-        window.mixincreated = window.mixincreated ? window.mixincreated + 1 : 1;
-        console.log('created', window.mixincreated);
         return {
             isStale: false
         };
@@ -47,10 +45,7 @@ export default {
         async requestStaleness(domainObject) {
             const stalenessResponse = await this.openmct.telemetry.isStale(domainObject);
             if (stalenessResponse !== undefined) {
-                console.log('successful isStale req', domainObject.name);
                 this.handleStalenessResponse(stalenessResponse);
-            } else {
-                console.log('undefined', domainObject.name);
             }
         },
         handleStalenessResponse(stalenessResponse, callback) {
@@ -67,8 +62,6 @@ export default {
                 this.unsubscribeFromStaleness();
                 delete this.unsubscribeFromStaleness;
                 this.stalenessUtils.destroy();
-                window.mixincreated--;
-                console.log('destroyed', window.mixincreated);
             }
         }
     }

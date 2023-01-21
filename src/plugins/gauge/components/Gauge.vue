@@ -624,11 +624,7 @@ export default {
                 this.unsubscribe = null;
             }
 
-            if (this.unsubscribeFromStaleness) {
-                this.unsubscribeFromStaleness();
-                this.unsubscribeFromStaleness = null;
-                this.isStale = false;
-            }
+            this.triggerUnsubscribeFromStaleness();
 
             this.curVal = DEFAULT_CURRENT_VALUE;
             this.formats = null;
