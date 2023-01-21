@@ -41,7 +41,7 @@
             <y-axis
                 v-for="(yAxis, index) in yAxesIds"
                 :id="yAxis.id"
-                :key="`yAxis-${index}`"
+                :key="`yAxis-${yAxis.id}-${index}`"
                 :multiple-left-axes="multipleLeftAxes"
                 :position="yAxis.id > 2 ? 'right' : 'left'"
                 :class="{'plot-yaxis-right': yAxis.id > 2}"
@@ -488,6 +488,7 @@ export default {
             this.listenTo(series, 'change:interpolate', () => {
                 this.loadSeriesData(series);
             }, this);
+            this.listenTo(series, 'change:yAxisId', this.updateTicksAndSeriesForYAxis, this);
 
             this.loadSeriesData(series);
         },
@@ -497,6 +498,11 @@ export default {
             this.updateAxisUsageCount(yAxisId, -1);
             this.seriesModels.splice(index, 1);
             this.stopListening(plotSeries);
+        },
+
+        updateTicksAndSeriesForYAxis(newAxisId, oldAxisId) {
+            this.updateAxisUsageCount(oldAxisId, -1);
+            this.updateAxisUsageCount(newAxisId, 1);
         },
 
         updateAxisUsageCount(yAxisId, updateCountBy) {

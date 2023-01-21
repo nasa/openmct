@@ -185,7 +185,7 @@ export default {
             }
         },
         addOrRemoveSeries(series) {
-            const yAxisId = this.series.get('yAxisId');
+            const yAxisId = series.get('yAxisId');
             if (yAxisId === this.id) {
                 this.addSeries(series);
             } else {
@@ -201,6 +201,8 @@ export default {
                 this.processSeries();
                 this.setUpYAxisOptions();
             }
+
+            this.listenTo(series, 'change:yAxisId', this.addOrRemoveSeries.bind(this, series), this);
         },
         removeSeries(plotSeries) {
             const seriesIndex = this.seriesModels.findIndex(model => this.openmct.objects.areIdsEqual(model.get('identifier'), plotSeries.get('identifier')));

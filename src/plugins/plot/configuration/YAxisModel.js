@@ -186,6 +186,18 @@ export default class YAxisModel extends Model {
 
             this.updateFromSeries(this.seriesCollection);
         });
+
+        this.listenTo(series, 'change:yAxisId', (newYAxisId, oldYAxisId) => {
+            if (oldYAxisId && this.id === oldYAxisId) {
+                this.resetStats();
+                this.updateFromSeries(this.seriesCollection);
+            }
+
+            if (series.get('yAxisId') === this.id) {
+                this.resetStats();
+                this.updateFromSeries(this.seriesCollection);
+            }
+        });
     }
     untrackSeries(series) {
         this.stopListening(series);

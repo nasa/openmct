@@ -97,7 +97,7 @@ export default {
         },
         hiddenYAxisIds() {
             this.hiddenYAxisIds.forEach(id => {
-                this.resetOffsetAndSeriesDataForYAxis(id);
+                this.resetYOffsetAndSeriesDataForYAxis(id);
             });
             this.scheduleDraw();
         }
@@ -114,14 +114,14 @@ export default {
         this.offset = {
             [yAxisId]: {}
         };
-        this.listenTo(this.config.yAxis, 'change:key', this.resetOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
+        this.listenTo(this.config.yAxis, 'change:key', this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
         this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
         if (this.config.additionalYAxes.length) {
             this.config.additionalYAxes.forEach(yAxis => {
                 const id = yAxis.get('id');
                 this.offset[id] = {};
                 this.listenTo(yAxis, 'change', this.updateLimitsAndDraw);
-                this.listenTo(yAxis, 'change:key', this.resetOffsetAndSeriesDataForYAxis.bind(this, id), this);
+                this.listenTo(yAxis, 'change:key', this.resetYOffsetAndSeriesDataForYAxis.bind(this, id), this);
             });
         }
 
@@ -172,6 +172,7 @@ export default {
             this.listenTo(series, 'change:markers', this.changeMarkers, this);
             this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
             this.listenTo(series, 'change:limitLines', this.changeLimitLines, this);
+            this.listenTo(series, 'change:yAxisId', this.resetAxisAndRedraw, this);
             this.listenTo(series, 'change', this.scheduleDraw);
             this.listenTo(series, 'add', this.scheduleDraw);
             this.makeChartElement(series);
@@ -237,6 +238,21 @@ export default {
             this.makeLimitLines(series);
             this.updateLimitsAndDraw();
         },
+        resetAxisAndRedraw(newYAxisId, oldYAxisId, series) {
+            if (!oldYAxisId) {
+                return;
+            }
+
+            //Remove the old chart elements for the series since their offsets are pointing to the old y axis
+            this.removeChartElement(series);
+            this.resetYOffsetAndSeriesDataForYAxis(oldYAxisId);
+
+            //Make the chart elements again for the new y-axis and offset
+            this.makeChartElement(series);
+            this.makeLimitLines(series);
+
+            this.scheduleDraw();
+        },
         onSeriesRemove(series) {
             this.stopListening(series);
             this.removeChartElement(series);
@@ -249,14 +265,16 @@ export default {
             this.limitLines.forEach(line => line.destroy());
             DrawLoader.releaseDrawAPI(this.drawAPI);
         },
-        resetOffsetAndSeriesDataForYAxis(yAxisId) {
-            delete this.offset[yAxisId].x;
+        resetYOffsetAndSeriesDataForYAxis(yAxisId) {
             delete this.offset[yAxisId].y;
             delete this.offset[yAxisId].xVal;
             delete this.offset[yAxisId].yVal;
             delete this.offset[yAxisId].xKey;
             delete this.offset[yAxisId].yKey;
 
+            this.resetResetChartElements(yAxisId);
+        },
+        resetResetChartElements(yAxisId) {
             const lines = this.lines.filter(this.matchByYAxisIdExcludingVisibility.bind(this, yAxisId));
             lines.forEach(function (line) {
                 line.reset();
@@ -528,9 +546,11 @@ export default {
                 origin
             );
         },
+        // match items by their yAxisId, but don't care if the series is hidden or not.
         matchByYAxisIdExcludingVisibility() {
-            const args = Array.from(arguments).slice(0, 2);
-            this.matchByYAxisId(...args, true);
+            const args = Array.from(arguments).slice(0, 4);
+
+            return this.matchByYAxisId(...args, true);
         },
         matchByYAxisId(id, item, index, items, excludeVisibility = false) {
             const mainYAxisId = this.config.yAxis.get('id');
