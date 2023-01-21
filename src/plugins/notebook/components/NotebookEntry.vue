@@ -22,12 +22,13 @@
 
 <template>
 <div
-    class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
-    :class="{ 'locked': isLocked }"
+    :class="{ 'locked': isLocked, 'is-selected': isSelectedEntry }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
+    @click="selectEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time-and-creator">
@@ -82,13 +83,16 @@
                 </div>
             </template>
 
-            <TagEditor
-                :domain-object="domainObject"
-                :annotations="notebookAnnotations"
-                :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
-                :target-specific-details="{entryId: entry.id}"
-                @tags-updated="timestampAndUpdate"
-            />
+            <div>
+                <div
+                    v-for="(tag, index) in entryTags"
+                    :key="index"
+                    class="c-tag"
+                    :style="{ backgroundColor: tag.backgroundColor, color: tag.foregroundColor }"
+                >
+                    {{ tag.label }}
+                </div>
+            </div>
 
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed
@@ -139,7 +143,6 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
-import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
@@ -151,8 +154,7 @@ const UNKNOWN_USER = 'Unknown';
 export default {
     components: {
         NotebookEmbed,
-        TextHighlight,
-        TagEditor
+        TextHighlight
     },
     inject: ['openmct', 'snapshotContainer'],
     props: {
@@ -203,6 +205,10 @@ export default {
             default() {
                 return false;
             }
+        },
+        selectedEntryId: {
+            type: String,
+            required: true
         }
     },
     computed: {
@@ -211,6 +217,14 @@ export default {
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
+        },
+        isSelectedEntry() {
+            return this.selectedEntryId === this.entry.id;
+        },
+        entryTags() {
+            const tagsFromAnnotations = this.openmct.annotation.getTagsFromAnnotations(this.notebookAnnotations);
+
+            return tagsFromAnnotations;
         },
         entryText() {
             let text = this.entry.text;
@@ -357,6 +371,38 @@ export default {
             } else {
                 this.$emit('cancelEdit');
             }
+        },
+        selectEntry(event, entry) {
+            const targetDetails = {};
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            targetDetails[keyString] = {
+                entryId: entry.id
+            };
+            const targetDomainObjects = {};
+            targetDomainObjects[keyString] = this.domainObject;
+            this.openmct.selection.select(
+                [
+                    {
+                        element: this.openmct.layout.$refs.browseObject.$el,
+                        context: {
+                            item: this.domainObject
+                        }
+                    },
+                    {
+                        element: event.currentTarget,
+                        context: {
+                            type: 'notebook-entry-selection',
+                            targetDetails,
+                            targetDomainObjects,
+                            annotations: this.notebookAnnotations,
+                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                            onAnnotationChange: this.timestampAndUpdate
+                        }
+                    }
+                ],
+                false);
+            event.stopPropagation();
+            this.$emit('entry-selection', this.entry);
         }
     }
 };

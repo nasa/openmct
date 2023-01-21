@@ -379,6 +379,7 @@ export default class PlotSeries extends Model {
             });
         }
     }
+
     /**
      * Add a point to the data array while maintaining the sort order of
      * the array and preventing insertion of points with a duplicate x
