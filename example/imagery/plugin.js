@@ -108,6 +108,15 @@ export default function () {
                             ]
                         },
                         {
+                            name: 'Image Thumbnail',
+                            key: 'thumbnail-url',
+                            format: 'thumbnail',
+                            hints: {
+                                thumbnail: 1
+                            },
+                            source: 'url'
+                        },
+                        {
                             name: 'Image Download Name',
                             key: 'imageDownloadName',
                             format: 'imageDownloadName',
@@ -143,6 +152,16 @@ export default function () {
             ]
         });
 
+        const formatThumbnail = {
+            format: function (url) {
+                return `${url}?w=100&h=100`;
+            }
+        };
+
+        openmct.telemetry.addFormat({
+            key: 'thumbnail',
+            ...formatThumbnail
+        });
         openmct.telemetry.addProvider(getRealtimeProvider());
         openmct.telemetry.addProvider(getHistoricalProvider());
         openmct.telemetry.addProvider(getLadProvider());
