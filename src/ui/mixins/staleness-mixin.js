@@ -47,9 +47,10 @@ export default {
         async requestStaleness(domainObject) {
             const stalenessResponse = await this.openmct.telemetry.isStale(domainObject);
             if (stalenessResponse !== undefined) {
+                console.log('successful isStale req', domainObject.name);
                 this.handleStalenessResponse(stalenessResponse);
             } else {
-                console.log('undefined');
+                console.log('undefined', domainObject.name);
             }
         },
         handleStalenessResponse(stalenessResponse, callback) {
