@@ -1,7 +1,7 @@
 <template>
 <div v-if="loaded">
     <ul class="l-inspector-part">
-        <h2>Y Axis {{ id }}</h2>
+        <h2>Y Axis {{ id > 1 ? id : '' }}</h2>
         <li class="grid-row">
             <div
                 class="grid-cell label"

@@ -44,7 +44,7 @@
             :key="`yAxis-${index}`"
             class="l-inspector-part js-yaxis-properties"
         >
-            <h2 title="Y axis settings for this object">Y Axis {{ yAxis.id }}</h2>
+            <h2 title="Y axis settings for this object">Y Axis {{ yAxesWithSeries.length > 1 ? yAxis.id : '' }}</h2>
             <li class="grid-row">
                 <div
                     class="grid-cell label"
