@@ -203,6 +203,7 @@ export default {
         },
         onAddPoint(point, insertIndex, series) {
             const xRange = this.config.xAxis.get('displayRange');
+            //TODO: get the yAxis of this series
             const yRange = this.config.yAxis.get('displayRange');
             const xValue = series.getXVal(point);
             const yValue = series.getYVal(point);
@@ -733,7 +734,6 @@ export default {
             );
         },
         drawLine(chartElement, disconnected) {
-<<<<<<< HEAD
             if (chartElement) {
                 this.drawAPI.drawLine(
                     chartElement.getBuffer(),
@@ -741,7 +741,7 @@ export default {
                     chartElement.count,
                     disconnected
                 );
-=======
+            }
         },
         annotatedPointWithinRange(annotatedPoint, xRange, yRange) {
             const xValue = annotatedPoint.series.getXVal(annotatedPoint.point);
@@ -756,12 +756,20 @@ export default {
             if (this.annotatedPoints && this.annotatedPoints.length) {
                 const uniquePointsToDraw = [];
                 const xRange = this.config.xAxis.get('displayRange');
-                const yRange = this.config.yAxis.get('displayRange');
-                this.annotatedPoints.forEach((annotatedPoint) => {
+                let yRange;
+                if (yAxisId === this.config.yAxis.get('id')) {
+                    yRange = this.config.yAxis.get('displayRange');
+                } else if (this.config.additionalYAxes.length) {
+                    const yAxisForId = this.config.additionalYAxes.find(yAxis => yAxis.get('id') === yAxisId);
+                    yRange = yAxisForId.get('displayRange');
+                }
+
+                const annotatedPoints = this.annotatedPoints.filter(this.matchByYAxisId.bind(this, yAxisId));
+                annotatedPoints.forEach((annotatedPoint) => {
                     // if the annotation is outside the range, don't draw it
                     if (this.annotatedPointWithinRange(annotatedPoint, xRange, yRange)) {
-                        const canvasXValue = this.offset.xVal(annotatedPoint.point, annotatedPoint.series);
-                        const canvasYValue = this.offset.yVal(annotatedPoint.point, annotatedPoint.series);
+                        const canvasXValue = this.offset[yAxisId].xVal(annotatedPoint.point, annotatedPoint.series);
+                        const canvasYValue = this.offset[yAxisId].yVal(annotatedPoint.point, annotatedPoint.series);
                         const pointToDraw = new Float32Array([canvasXValue, canvasYValue]);
                         const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
                             return rawPoint[0] === pointToDraw[0] && rawPoint[1] === pointToDraw[1];
@@ -785,15 +793,16 @@ export default {
                 this.drawAPI.drawPoints(pointToDraw, color, pointCount, ANNOTATION_SIZE, shape);
             }
         },
-        drawAnnotationSelections() {
+        drawAnnotationSelections(yAxisId) {
             if (this.annotationSelections && this.annotationSelections.length) {
-                this.annotationSelections.forEach(this.drawAnnotationSelection, this);
+                const annotationSelections = this.annotationSelections.filter(this.matchByYAxisId.bind(this, yAxisId));
+                annotationSelections.forEach(this.drawAnnotationSelection.bind(this, yAxisId), this);
             }
         },
-        drawAnnotationSelection(annotationSelection) {
+        drawAnnotationSelection(yAxisId, annotationSelection) {
             const points = new Float32Array([
-                this.offset.xVal(annotationSelection.point, annotationSelection.series),
-                this.offset.yVal(annotationSelection.point, annotationSelection.series)
+                this.offset[yAxisId].xVal(annotationSelection.point, annotationSelection.series),
+                this.offset[yAxisId].yVal(annotationSelection.point, annotationSelection.series)
             ]);
 
             const color = [255, 255, 255, 1]; // white
@@ -802,7 +811,6 @@ export default {
 
             this.drawAPI.drawPoints(points, color, pointCount, ANNOTATION_SIZE, shape);
         },
->>>>>>> master
         drawHighlights(yAxisId) {
             if (this.highlights && this.highlights.length) {
                 const highlights = this.highlights.filter(this.matchByYAxisId.bind(this, yAxisId));
@@ -827,6 +835,10 @@ export default {
             }
         },
         drawRectangle(yAxisId, rect) {
+            if (!rect.start.yAxisIds || !rect.end.yAxisIds) {
+                return;
+            }
+
             const startYIndex = rect.start.yAxisIds.findIndex(id => id === yAxisId);
             const endYIndex = rect.end.yAxisIds.findIndex(id => id === yAxisId);
             if (rect.start.y[startYIndex] && rect.end.y[endYIndex]) {

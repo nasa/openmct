@@ -901,7 +901,6 @@ export default {
             // Setup canvas etc.
             this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
             this.yScale = [];
-            //TODO: handle yScale, zoom/pan for all yAxes
             this.yAxisListWithRange.forEach((yAxis) => {
                 this.yScale.push({
                     id: yAxis.id,
@@ -1288,9 +1287,16 @@ export default {
         },
         endAnnotationMarquee(event) {
             const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
-            const minY = Math.min(this.marquee.start.y, this.marquee.end.y);
+            const startMinY = this.marquee.start.y.reduce((previousY, currentY) => {
+                return Math.min(previousY, currentY);
+            }, this.marquee.start.y[0]);
+            const endMinY = this.marquee.end.y.reduce((previousY, currentY) => {
+                return Math.min(previousY, currentY);
+            }, this.marquee.end.y[0]);
+            console.log(startMinY, endMinY);
+            const minY = Math.min(startMinY, endMinY);
             const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
-            const maxY = Math.max(this.marquee.start.y, this.marquee.end.y);
+            const maxY = Math.max(startMinY, endMinY);
             const boundingBox = {
                 minX,
                 minY,
