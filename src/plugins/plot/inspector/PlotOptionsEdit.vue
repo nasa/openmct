@@ -85,10 +85,10 @@ export default {
     },
     computed: {
         isStackedPlotNestedObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject?.type === 'telemetry.plot.stacked');
         },
         isStackedPlotObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject?.type === 'telemetry.plot.stacked');
         },
         yAxesIds() {
             return !this.isStackedPlotObject && this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
