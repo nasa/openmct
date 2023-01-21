@@ -160,7 +160,7 @@ export default {
                         onGridLinesChange,
                         setStatus,
                         isMissing,
-                        loading: true
+                        loading: false
                     };
                 },
                 methods: {

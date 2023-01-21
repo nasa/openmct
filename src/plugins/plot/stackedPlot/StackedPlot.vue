@@ -246,6 +246,7 @@ export default {
             this.highlights = data;
         },
         addSeriesListeners() {
+            //For each item in the stacked plot, listen for changes in series
             this.listenTo(this.config.series, 'add', this.addSeries, this);
             this.listenTo(this.config.series, 'remove', this.removeSeries, this);
 
@@ -256,7 +257,8 @@ export default {
             this.seriesConfig[configId] = config;
             const childObject = config.get('domainObject');
 
-            if (childObject.configuration && childObject.configuration.series) {
+            //TODO differentiate between objects with composition and those without
+            if (childObject.type === 'telemetry.plot.overlay') {
                 this.listenTo(config.series, 'add', this.addSeries, this);
                 this.listenTo(config.series, 'remove', this.removeSeries, this);
 
@@ -265,7 +267,8 @@ export default {
         },
         addSeries(series) {
             const childObject = series.domainObject;
-            if (!childObject.configuration || !childObject.configuration.series) {
+            //don't add the series if it can have child series this will happen in registerSeriesListeners
+            if (childObject.type !== 'telemetry.plot.overlay') {
                 const index = this.seriesModels.length;
                 this.$set(this.seriesModels, index, series);
             }
