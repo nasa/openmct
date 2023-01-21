@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -75,12 +76,14 @@
                     class="c-ne__text c-ne__input"
                     aria-label="Notebook Entry Input"
                     tabindex="0"
-                    contenteditable="true"
+                    :contenteditable="canEdit"
+                    @mouseover="checkEditability($event)"
+                    @mouseleave="canEdit = true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
-                    v-text="entry.text"
+                    v-html="formattedText"
                 >
                 </div>
             </template>
@@ -91,7 +94,7 @@
                     class="c-ne__text"
                     contenteditable="false"
                     tabindex="0"
-                    v-text="entry.text"
+                    v-html="formattedText"
                 >
                 </div>
             </template>
@@ -156,10 +159,16 @@ import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
+import sanitizeHtml from 'sanitize-html';
 import _ from 'lodash';
 
 import Moment from 'moment';
 
+const SANITIZATION_SCHEMA = {
+    allowedTags: [],
+    allowedAttributes: {}
+};
+const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
 const UNKNOWN_USER = 'Unknown';
 
 export default {
@@ -167,7 +176,7 @@ export default {
         NotebookEmbed,
         TextHighlight
     },
-    inject: ['openmct', 'snapshotContainer'],
+    inject: ['openmct', 'snapshotContainer', 'entryUrlWhitelist'],
     props: {
         domainObject: {
             type: Object,
@@ -224,6 +233,8 @@ export default {
     },
     data() {
         return {
+            editMode: false,
+            canEdit: true,
             enableEmbedsWrapperScroll: false
         };
     },
@@ -233,6 +244,31 @@ export default {
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
+        },
+        formattedText() {
+            // remove ANY tags
+            let text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
+
+            if (this.editMode || !this.urlWhitelist) {
+                return text;
+            }
+
+            text = text.replace(URL_REGEX, (match) => {
+                const url = new URL(match);
+                const domain = url.hostname;
+                let result = match;
+                let isMatch = this.urlWhitelist.find((partialDomain) => {
+                    return domain.endsWith(partialDomain);
+                });
+
+                if (isMatch) {
+                    result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
+                }
+
+                return result;
+            });
+
+            return text;
         },
         isSelectedEntry() {
             return this.selectedEntryId === this.entry.id;
@@ -271,6 +307,9 @@ export default {
 
         this.manageEmbedLayout();
         this.dropOnEntry = this.dropOnEntry.bind(this);
+        if (this.entryUrlWhitelist?.length > 0) {
+            this.urlWhitelist = this.entryUrlWhitelist;
+        }
     },
     beforeDestroy() {
         if (this.embedsWrapperResizeObserver) {
@@ -305,6 +344,11 @@ export default {
             } else {
                 event.dataTransfer.dropEffect = 'none';
                 event.dataTransfer.effectAllowed = 'none';
+            }
+        },
+        checkEditability($event) {
+            if ($event.target.nodeName === 'A') {
+                this.canEdit = false;
             }
         },
         deleteEntry() {
@@ -405,9 +449,11 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
+            this.editMode = true;
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {
+            this.editMode = false;
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
                 this.entry.text = value;
