@@ -31,15 +31,28 @@
     @click="selectEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
-        <div class="c-ne__time-and-creator">
-            <span class="c-ne__created-date">{{ createdOnDate }}</span>
-            <span class="c-ne__created-time">{{ createdOnTime }}</span>
-
+        <div class="c-ne__time-and-creator-and-delete">
+            <div class="c-ne__time-and-creator">
+                <span class="c-ne__created-date">{{ createdOnDate }}</span>
+                <span class="c-ne__created-time">{{ createdOnTime }}</span>
+                <span
+                    v-if="entry.createdBy"
+                    class="c-ne__creator"
+                >
+                    <span class="icon-person"></span> {{ entry.createdBy }}
+                </span>
+            </div>
             <span
-                v-if="entry.createdBy"
-                class="c-ne__creator"
+                v-if="!readOnly && !isLocked"
+                class="c-ne__local-controls--hidden"
             >
-                <span class="icon-person"></span> {{ entry.createdBy }}
+                <button
+                    class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
+                    title="Delete this entry"
+                    tabindex="-1"
+                    @click="deleteEntry"
+                >
+                </button>
             </span>
         </div>
         <div class="c-ne__content">
@@ -96,29 +109,25 @@
                 </div>
             </div>
 
-            <div class="c-snapshots c-ne__embeds">
-                <NotebookEmbed
-                    v-for="embed in entry.embeds"
-                    :key="embed.id"
-                    :embed="embed"
-                    :is-locked="isLocked"
-                    @removeEmbed="removeEmbed"
-                    @updateEmbed="updateEmbed"
-                />
+            <div
+                :class="{'c-scrollcontainer': enableEmbedsWrapperScroll }"
+            >
+                <div
+                    ref="embedsWrapper"
+                    class="c-snapshots c-ne__embeds-wrapper"
+                >
+                    <NotebookEmbed
+                        v-for="embed in entry.embeds"
+                        ref="embeds"
+                        :key="embed.id"
+                        :embed="embed"
+                        :is-locked="isLocked"
+                        @removeEmbed="removeEmbed"
+                        @updateEmbed="updateEmbed"
+                    />
+                </div>
             </div>
         </div>
-    </div>
-    <div
-        v-if="!readOnly && !isLocked"
-        class="c-ne__local-controls--hidden"
-    >
-        <button
-            class="c-icon-button c-icon-button--major icon-trash"
-            title="Delete this entry"
-            tabindex="-1"
-            @click="deleteEntry"
-        >
-        </button>
     </div>
     <div
         v-if="readOnly"
@@ -150,6 +159,8 @@ import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
 import sanitizeHtml from 'sanitize-html';
+import _ from 'lodash';
+
 import Moment from 'moment';
 
 const SANITIZATION_SCHEMA = {
@@ -222,7 +233,8 @@ export default {
     data() {
         return {
             editMode: false,
-            canEdit: true
+            canEdit: true,
+            enableEmbedsWrapperScroll: false
         };
     },
     computed: {
@@ -282,9 +294,22 @@ export default {
         }
     },
     mounted() {
+        this.manageEmbedLayout = _.debounce(this.manageEmbedLayout, 400);
+
+        if (this.$refs.embedsWrapper) {
+            this.embedsWrapperResizeObserver = new ResizeObserver(this.manageEmbedLayout);
+            this.embedsWrapperResizeObserver.observe(this.$refs.embedsWrapper);
+        }
+
+        this.manageEmbedLayout();
         this.dropOnEntry = this.dropOnEntry.bind(this);
         if (this.entryUrlWhitelist?.length > 0) {
             this.urlWhitelist = this.entryUrlWhitelist;
+        }
+    },
+    beforeDestroy() {
+        if (this.embedsWrapperResizeObserver) {
+            this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
         }
     },
     methods: {
@@ -298,6 +323,8 @@ export default {
             };
             const newEmbed = await createNewEmbed(snapshotMeta);
             this.entry.embeds.push(newEmbed);
+
+            this.manageEmbedLayout();
         },
         cancelEditMode(event) {
             const isEditing = this.openmct.editor.isEditing();
@@ -322,6 +349,17 @@ export default {
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
+        },
+        manageEmbedLayout() {
+            if (this.$refs.embeds) {
+                const embedsWrapperLength = this.$refs.embedsWrapper.clientWidth;
+                const embedsTotalWidth = this.$refs.embeds.reduce((total, embed) => {
+                    return embed.$el.clientWidth + total;
+                }, 0);
+
+                this.enableEmbedsWrapperScroll = embedsTotalWidth > embedsWrapperLength;
+            }
+
         },
         async dropOnEntry($event) {
             $event.stopImmediatePropagation();
@@ -380,6 +418,8 @@ export default {
             this.entry.embeds.splice(embedPosition, 1);
 
             this.timestampAndUpdate();
+
+            this.manageEmbedLayout();
         },
         updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {

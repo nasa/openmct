@@ -463,6 +463,7 @@ $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg,0.1);
 $colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
+$scrollContainer: rgba(102, 102, 102, 0.1);
 
 @mixin discreteItem() {
     background: $colorDiscreteItemBg;
