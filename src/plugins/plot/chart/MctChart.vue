@@ -546,6 +546,7 @@ export default {
                 origin
             );
         },
+        // match items by their yAxisId, but don't care if the series is hidden or not.
         matchByYAxisIdExcludingVisibility() {
             const args = Array.from(arguments).slice(0, 4);
 
