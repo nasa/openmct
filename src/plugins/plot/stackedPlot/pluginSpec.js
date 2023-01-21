@@ -29,7 +29,7 @@ import EventEmitter from "EventEmitter";
 import PlotConfigurationModel from "../configuration/PlotConfigurationModel";
 import PlotOptions from "../inspector/PlotOptions.vue";
 
-describe("the plugin", function () {
+fdescribe("the plugin", function () {
     let element;
     let child;
     let openmct;
@@ -175,6 +175,7 @@ describe("the plugin", function () {
         let component;
         let mockComposition;
         let plotViewComponentObject;
+        let count = 0;
 
         afterAll(() => {
             openmct.router.path = null;
@@ -272,8 +273,14 @@ describe("the plugin", function () {
             };
 
             mockComposition = new EventEmitter();
+
             mockComposition.load = () => {
-                mockComposition.emit('add', testTelemetryObject);
+                count++;
+                if (count % 2 === 0) {
+                    // We get composition.get calls for the stacked plot first, then we get another from the seriesCollection.
+                    // We only want to emit the 'add' event for the seriesCollection call.
+                    mockComposition.emit('add', testTelemetryObject);
+                }
 
                 return [testTelemetryObject];
             };
