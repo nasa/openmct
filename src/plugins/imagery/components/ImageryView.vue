@@ -837,7 +837,7 @@ export default {
                 const transformations = this.relatedTelemetry[key];
 
                 if (transformations !== undefined) {
-                    this.$set(this.imageHistor[this.focusedImageIndex], key, transformations);
+                    this.$set(this.imageHistory[this.focusedImageIndex], key, transformations);
                 }
             });
         },
