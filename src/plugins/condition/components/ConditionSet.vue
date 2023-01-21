@@ -117,7 +117,7 @@ export default {
                     this.staleObjects.splice(index, 1);
                 }
             }
-        },
+        }
     }
 };
 </script>
