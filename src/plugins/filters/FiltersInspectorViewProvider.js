@@ -70,7 +70,7 @@ define([
                 };
             },
             priority: function () {
-                return 1;
+                return openmct.priority.DEFAULT;
             }
         };
     }

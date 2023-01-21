@@ -64,8 +64,8 @@ export default function FaultManagementInspectorViewProvider(openmct) {
                 }
             };
         },
-        priority: () => {
-            return 1;
+        priority: function () {
+            return openmct.priority.HIGH + 1;
         }
     };
 }
