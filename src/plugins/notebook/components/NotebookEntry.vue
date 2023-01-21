@@ -253,6 +253,7 @@ export default {
             });
 
             return text;
+        },
         isSelectedEntry() {
             return this.selectedEntryId === this.entry.id;
         },
