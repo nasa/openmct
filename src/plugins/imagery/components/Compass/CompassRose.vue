@@ -73,7 +73,7 @@
                     height="100"
                     fill="url(#gradient_sun)"
                     :style="sunHeadingStyle"
-                /><!-- TODO: CHANGE NAME TO #gradient_sun -->
+                />
 
                 <!-- Camera FOV -->
                 <mask
@@ -297,16 +297,6 @@ export default {
             return cameraAngleOfView;
         },
         camAngleAndPositionStyle() {
-            /*
-                camera	        translate	rotate deg	scale
-                aft	            0%, 21%	    180	        0.3
-                haz-port-aft	13%, 18%	90	        0.3
-                haz-port-fwd	-13%, 18%	90	        0.3
-                haz-stbd-aft	-13%, 18%	270	        0.3
-                haz-stbd-fwd	13%, 18%	270	        0.3
-                nav	            0%, 18%	 	0           0.3
-             */
-
             const translateX = this.transformations?.translateX;
             const translateY = this.transformations?.translateY;
             const rotation = this.transformations?.rotation;
