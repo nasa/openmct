@@ -293,6 +293,13 @@ $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
 $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
+// Tabs
+$colorTabBg: pullForward($colorBodyBg, 5%);
+$colorTabFg: pullForward($colorBtnFg, 10%);
+$colorTabCurrentBg: pullForward($colorTabBg, 10%);
+$colorTabCurrentFg: pullForward($colorTabFg, 10%);
+$colorTabsBaseline: $colorTabCurrentBg;
+
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
 $overlayCr: $interiorMarginLg;

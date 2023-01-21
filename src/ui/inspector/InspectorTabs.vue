@@ -31,9 +31,12 @@
         aria-role="tab"
         class="c-inspector__tab c-tab"
         :class="{'is-current': isSelected(tab)}"
+        :title="tab.name"
         @click="selectTab(tab)"
     >
-        {{ tab.name }}
+        <span
+            class="c-inspector__tab-name c-tab__name"
+        >{{ tab.name }}</span>
     </div>
 
 </div>
