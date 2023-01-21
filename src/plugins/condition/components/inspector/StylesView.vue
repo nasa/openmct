@@ -29,9 +29,6 @@
         Your selection includes one or more items that use Conditional Styling. Applying a static style below will replace any Conditional Styling with the new choice.
     </div>
     <template v-if="!conditionSetDomainObject">
-        <div class="c-inspect-styles__header">
-            Object Style
-        </div>
         <FontStyleEditor
             v-if="canStyleFont"
             :font-style="consolidatedFontStyle"
@@ -63,9 +60,6 @@
         </div>
     </template>
     <template v-else>
-        <div class="c-inspect-styles__header">
-            Conditional Object Styles
-        </div>
         <div class="c-inspect-styles__content c-inspect-styles__condition-set c-inspect-styles__elem">
             <a
                 v-if="conditionSetDomainObject"

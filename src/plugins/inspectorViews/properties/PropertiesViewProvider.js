@@ -27,6 +27,7 @@ export default function PropertiesViewProvider(openmct) {
     return {
         key: 'propertiesView',
         name: 'Properties',
+        glyph: 'icon-info',
         canView: function (selection) {
             return selection.length > 0;
         },

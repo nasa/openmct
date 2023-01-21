@@ -50,14 +50,13 @@
         .c-tab {
             background: $colorTabBg;
             color: $colorTabFg;
+            padding: $interiorMargin;
 
             &:not(.is-current) {
                 overflow: hidden;
 
                 &:after {
-                    background-image: linear-gradient(90deg,
-                            transparent 0%, rgba($colorTabBg, 1) 50%
-                    );
+                    background-image: linear-gradient(90deg, transparent 0%, rgba($colorTabBg, 1) 70%);
                     content: '';
                     display: block;
                     position: absolute;
@@ -71,8 +70,8 @@
             &.is-current {
                 background: $colorTabCurrentBg;
                 color: $colorTabCurrentFg;
+                padding-right: $interiorMargin + 3;
             }
-            padding: $interiorMargin ($interiorMargin + 3) $interiorMargin $interiorMargin;
 
             &__name {
                 overflow: hidden;

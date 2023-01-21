@@ -95,6 +95,7 @@ export default {
                 return {
                     key: view.key,
                     name: view.name,
+                    glyph: view.glyph ?? 'icon-object',
                     showTab: view.showTab
                 };
             });

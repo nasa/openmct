@@ -40,6 +40,7 @@ export default function StylesInspectorViewProvider(openmct) {
     return {
         key: 'stylesInspectorView',
         name: 'Styles',
+        glyph: 'icon-paint-bucket',
         canView: function (selection) {
             const objectSelection = selection?.[0];
             const layoutItem = objectSelection?.[0]?.context?.layoutItem;

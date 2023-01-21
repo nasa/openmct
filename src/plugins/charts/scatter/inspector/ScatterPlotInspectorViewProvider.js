@@ -5,7 +5,7 @@ import PlotOptions from "./PlotOptions.vue";
 export default function ScatterPlotInspectorViewProvider(openmct) {
     return {
         key: SCATTER_PLOT_INSPECTOR_KEY,
-        name: 'Bar Graph Inspector View',
+        name: 'Config',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;

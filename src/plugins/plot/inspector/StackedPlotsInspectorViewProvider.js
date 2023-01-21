@@ -5,7 +5,7 @@ import Vue from 'vue';
 export default function StackedPlotsInspectorViewProvider(openmct) {
     return {
         key: 'stacked-plots-inspector',
-        name: 'Stacked Plots Inspector View',
+        name: 'Config',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;

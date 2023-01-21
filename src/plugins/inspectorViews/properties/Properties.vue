@@ -22,9 +22,6 @@
 
 <template>
 <div class="c-inspector__properties c-inspect-properties">
-    <div class="c-inspect-properties__header">
-        Details
-    </div>
     <ul
         v-if="hasDetails"
         class="c-inspect-properties__section"

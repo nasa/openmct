@@ -35,7 +35,7 @@ define([
     function TableConfigurationViewProvider(openmct) {
         return {
             key: 'table-configuration',
-            name: 'Telemetry Table Configuration',
+            name: 'Configuration',
             canView: function (selection) {
                 if (selection.length !== 1 || selection[0].length === 0) {
                     return false;

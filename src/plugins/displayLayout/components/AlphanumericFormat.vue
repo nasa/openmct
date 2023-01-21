@@ -25,9 +25,6 @@
     v-if="isEditing"
     class="c-inspect-properties"
 >
-    <div class="c-inspect-properties__header">
-        Alphanumeric Format
-    </div>
     <ul class="c-inspect-properties__section">
         <li class="c-inspect-properties__row">
             <div
