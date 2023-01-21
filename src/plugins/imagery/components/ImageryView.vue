@@ -831,6 +831,15 @@ export default {
                     this.$set(this.focusedImageRelatedTelemetry, key, value);
                 }
             }
+
+            // set configuration for compass
+            this.transformationsKeys.forEach(key => {
+                const transformations = this.relatedTelemetry[key];
+
+                if (transformations !== undefined) {
+                    this.$set(this.imageHistor[this.focusedImageIndex], key, transformations);
+                }
+            });
         },
         trackLatestRelatedTelemetry() {
             [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
