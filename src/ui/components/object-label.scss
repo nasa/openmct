@@ -23,6 +23,7 @@
     &__name {
         @include ellipsize();
         display: inline;
+        padding: 1px 0;
     }
 
     &__type-icon {

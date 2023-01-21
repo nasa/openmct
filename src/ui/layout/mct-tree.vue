@@ -88,10 +88,12 @@
                     :item-height="itemHeight"
                     :open-items="openTreeItems"
                     :loading-items="treeItemLoading"
+                    :targeted-path="targetedPath"
                     @tree-item-mounted="scrollToCheck($event)"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @tree-item-action="treeItemAction(treeItem, $event)"
                     @tree-item-selection="treeItemSelection(treeItem)"
+                    @targeted-path-animation-end="targetedPathAnimationEnd()"
                 />
                 <!-- main loading -->
                 <div
@@ -174,19 +176,18 @@ export default {
             itemOffset: 0,
             activeSearch: false,
             mainTreeTopMargin: undefined,
-            selectedItem: {}
+            selectedItem: {},
+            targetedPath: ''
         };
     },
     computed: {
         childrenHeight() {
-            let childrenCount = this.focusedItems.length || 1;
+            const childrenCount = this.focusedItems.length || 1;
 
             return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
         },
         childrenHeightStyles() {
-            let height = this.childrenHeight + 'px';
-
-            return { height };
+            return { height: `${this.childrenHeight}px` };
         },
         focusedItems() {
             return this.activeSearch ? this.searchResultItems : this.treeItems;
@@ -195,9 +196,7 @@ export default {
             return Math.ceil(this.mainTreeHeight / this.itemHeight) + ITEM_BUFFER;
         },
         scrollableStyles() {
-            let height = this.mainTreeHeight + 'px';
-
-            return { height };
+            return { height: `${this.mainTreeHeight}px` };
         },
         showNoItems() {
             return this.visibleItems.length === 0 && !this.activeSearch && this.searchValue === '' && !this.isLoading;
@@ -209,7 +208,7 @@ export default {
             if (!this.isSelectorTree) {
                 return {};
             } else {
-                return { 'min-height': this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
+                return { minHeight: `${this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT}px`};
             }
         }
     },
@@ -310,6 +309,9 @@ export default {
             } else {
                 this.openTreeItem(parentItem);
             }
+        },
+        targetedPathAnimationEnd() {
+            this.targetedPath = undefined;
         },
         treeItemSelection(item) {
             this.selectedItem = item;
@@ -457,6 +459,9 @@ export default {
 
                     this.treeItemSelection(item);
                 }
+
+                this.scrollToCheck(navigationPath);
+                this.scrollToPath = null;
             });
         },
         scrollToCheck(navigationPath) {
@@ -480,9 +485,9 @@ export default {
                     behavior: 'smooth'
                 });
             } else if (this.scrollToPath) {
-                this.scrollToPath = undefined;
-                delete this.scrollToPath;
+                this.scrollToPath = null;
             }
+
         },
         scrollEndEvent() {
             if (!this.$refs.scrollable) {
@@ -494,11 +499,13 @@ export default {
                     if (!this.isItemInView(this.scrollToPath)) {
                         this.scrollTo(this.scrollToPath);
                     } else {
-                        this.scrollToPath = undefined;
-                        delete this.scrollToPath;
+                        this.scrollToPath = null;
                     }
                 }
             });
+        },
+        setTargetedItem(navigationPath) {
+            this.targetedItem = navigationPath;
         },
         isItemInView(navigationPath) {
             const indexOfScroll = this.treeItems.findIndex(item => item.navigationPath === navigationPath);

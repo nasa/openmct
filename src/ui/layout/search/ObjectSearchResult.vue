@@ -58,7 +58,7 @@
 
 <script>
 import ObjectPath from '../../components/ObjectPath.vue';
-import objectPathToUrl from '../../../tools/url';
+import identifierToString from '../../../tools/url';
 import PreviewAction from '../../preview/PreviewAction';
 
 export default {
@@ -100,9 +100,10 @@ export default {
                 event.preventDefault();
                 this.preview();
             } else {
-                const objectPath = this.result.originalPath;
-                let resultUrl = objectPathToUrl(this.openmct, objectPath);
-                // get rid of ROOT if extant
+                const { objectPath } = this.result;
+                let resultUrl = identifierToString(this.openmct, objectPath);
+
+                // Remove the vestigial 'ROOT' identifier from url if it exists
                 if (resultUrl.includes('/ROOT')) {
                     resultUrl = resultUrl.split('/ROOT').join('');
                 }
@@ -114,14 +115,14 @@ export default {
             this.$emit('preview-changed', previewState);
         },
         preview() {
-            const objectPath = this.result.originalPath;
+            const { objectPath } = this.result;
             if (this.previewAction.appliesTo(objectPath)) {
                 this.previewAction.invoke(objectPath);
             }
         },
         dragStart(event) {
             const navigatedObject = this.openmct.router.path[0];
-            const objectPath = this.result.originalPath;
+            const { objectPath } = this.result;
             const serializedPath = JSON.stringify(objectPath);
             const keyString = this.openmct.objects.makeKeyString(this.result.identifier);
             if (this.openmct.composition.checkPolicy(navigatedObject, this.result)) {

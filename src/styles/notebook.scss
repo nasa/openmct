@@ -137,7 +137,7 @@
         }
 
         &:hover {
-            background: rgba($colorKey, 0.2);
+            background: rgba($colorBodyFg, 0.1); //$colorInteriorBorder;
             //color: $colorBodyFg;
         }
 
@@ -283,6 +283,14 @@
     @include discreteItem();
     display: flex;
     padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
+    
+    &:hover {
+        background: rgba($colorBodyFg, 0.2);
+    }
+    
+    &.is-selected {
+        background: rgba($colorKey, 0.3);
+    }
 
     &__text,
     &__local-controls {
