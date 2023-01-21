@@ -613,6 +613,7 @@ export default {
         this.spacecraftOrientationKeys = ['heading'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
+        this.transformationsKeys = ['transformations'];
 
         // related telemetry
         await this.initializeRelatedTelemetry();
@@ -715,7 +716,13 @@ export default {
             this.relatedTelemetry = new RelatedTelemetry(
                 this.openmct,
                 this.domainObject,
-                [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys]
+                [
+                    ...this.spacecraftPositionKeys,
+                    ...this.spacecraftOrientationKeys,
+                    ...this.cameraKeys,
+                    ...this.sunKeys,
+                    ...this.transformationsKeys
+                ]
             );
 
             if (this.relatedTelemetry.hasRelatedTelemetry) {
