@@ -188,13 +188,15 @@ export default class YAxisModel extends Model {
         });
 
         this.listenTo(series, 'change:yAxisId', (newYAxisId, oldYAxisId) => {
-            if (series.get('yAxisId') !== this.id) {
-                return;
+            if (oldYAxisId && this.id === oldYAxisId) {
+                this.resetStats();
+                this.updateFromSeries(this.seriesCollection);
             }
 
-            //TODO: Do we need to change the yKey as well if the first series in the list doesn't match the current one?
-            this.resetStats();
-            this.updateFromSeries(this.seriesCollection);
+            if (series.get('yAxisId') === this.id) {
+                this.resetStats();
+                this.updateFromSeries(this.seriesCollection);
+            }
         });
     }
     untrackSeries(series) {
