@@ -31,9 +31,11 @@ try {
     console.warn(err);
 }
 
+const projectRootDir = path.resolve(__dirname, "..");
+
 /** @type {import('webpack').Configuration} */
 const config = {
-    context: path.join(__dirname, ".."),
+    context: projectRootDir,
     entry: {
         openmct: "./openmct.js",
         generatorWorker: "./example/generator/generatorWorker.js",
@@ -46,7 +48,7 @@ const config = {
     output: {
         globalObject: "this",
         filename: "[name].js",
-        path: path.resolve(__dirname, "..", "dist"),
+        path: path.resolve(projectRootDir, "dist"),
         library: "openmct",
         libraryTarget: "umd",
         publicPath: "",
@@ -55,8 +57,8 @@ const config = {
     },
     resolve: {
         alias: {
-            "@": path.join(__dirname, "..", "src"),
-            legacyRegistry: path.join(__dirname, "..", "src/legacyRegistry"),
+            "@": path.join(projectRootDir, "src"),
+            legacyRegistry: path.join(projectRootDir, "src/legacyRegistry"),
             saveAs: "file-saver/src/FileSaver.js",
             csv: "comma-separated-values",
             EventEmitter: "eventemitter3",
@@ -64,24 +66,22 @@ const config = {
             "plotly-basic": "plotly.js-basic-dist",
             "plotly-gl2d": "plotly.js-gl2d-dist",
             "d3-scale": path.join(
-                __dirname,
-                "..",
+                projectRootDir,
                 "node_modules/d3-scale/dist/d3-scale.min.js"
             ),
             printj: path.join(
-                __dirname,
-                "..",
+                projectRootDir,
                 "node_modules/printj/dist/printj.min.js"
             ),
-            styles: path.join(__dirname, "..", "src/styles"),
-            MCT: path.join(__dirname, "..", "src/MCT"),
-            testUtils: path.join(__dirname, "..", "src/utils/testUtils.js"),
+            styles: path.join(projectRootDir, "src/styles"),
+            MCT: path.join(projectRootDir, "src/MCT"),
+            testUtils: path.join(projectRootDir, "src/utils/testUtils.js"),
             objectUtils: path.join(
-                __dirname,
-                "..",
+                projectRootDir,
                 "src/api/objects/object-utils.js"
             ),
-            utils: path.join(__dirname, "..", "src/utils")
+            "kdbush": path.join(projectRootDir, "node_modules/kdbush/kdbush.min.js"),
+            utils: path.join(projectRootDir, "src/utils")
         }
     },
     plugins: [
@@ -168,8 +168,8 @@ const config = {
     performance: {
         // We should eventually consider chunking to decrease
         // these values
-        maxEntrypointSize: 25000000,
-        maxAssetSize: 25000000
+        maxEntrypointSize: 27000000,
+        maxAssetSize: 27000000
     }
 };
 

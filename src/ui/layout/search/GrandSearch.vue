@@ -104,7 +104,7 @@ export default {
                 const originalPathObjects = await this.openmct.objects.getOriginalPath(keyStringForObject);
 
                 return {
-                    originalPath: originalPathObjects,
+                    objectPath: originalPathObjects,
                     ...domainObject
                 };
             }));
@@ -126,7 +126,7 @@ export default {
                         return false;
                     }
 
-                    return this.openmct.objects.isReachable(result?.originalPath);
+                    return this.openmct.objects.isReachable(result?.objectPath);
                 });
                 this.objectSearchResults = filterAnnotationsAndValidPaths;
                 this.searchLoading = false;
