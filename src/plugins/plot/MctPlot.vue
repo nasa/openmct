@@ -1293,7 +1293,6 @@ export default {
             const endMinY = this.marquee.end.y.reduce((previousY, currentY) => {
                 return Math.min(previousY, currentY);
             }, this.marquee.end.y[0]);
-            console.log(startMinY, endMinY);
             const minY = Math.min(startMinY, endMinY);
             const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
             const maxY = Math.max(startMinY, endMinY);
