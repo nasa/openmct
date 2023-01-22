@@ -291,5 +291,6 @@ export default class StatusAPI extends EventEmitter {
  * The Status type
  * @typedef {Object} Status
  * @property {String} key - A unique identifier for this status
- * @property {Number} label - A human readable label for this status
+ * @property {String} label - A human readable label for this status
+ * @property {Number} timestamp - The time that the status was set.
  */

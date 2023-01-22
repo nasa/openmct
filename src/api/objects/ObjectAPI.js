@@ -189,13 +189,11 @@ export default class ObjectAPI {
     /**
      * Get a domain object.
      *
-     * @method get
-     * @memberof module:openmct.ObjectProvider#
      * @param {string} key the key for the domain object to load
-     * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
-     * @param {boolean} forceRemote defaults to false. If true, will skip cached and
+     * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
+     * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
      *          dirty/in-transaction objects use and the provider.get method
-     * @returns {Promise} a promise which will resolve when the domain object
+     * @returns {Promise<DomainObject>} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
     get(identifier, abortSignal, forceRemote = false) {
@@ -220,7 +218,7 @@ export default class ObjectAPI {
         const provider = this.getProvider(identifier);
 
         if (!provider) {
-            throw new Error('No Provider Matched');
+            throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
         }
 
         if (!provider.get) {
@@ -738,6 +736,46 @@ export default class ObjectAPI {
         } else {
             return path;
         }
+    }
+
+    /**
+     * Parse and construct an `objectPath` from a `navigationPath`.
+     *
+     * A `navigationPath` is a string of the form `"/browse/<keyString>/<keyString>/..."` that is used
+     * by the Open MCT router to navigate to a specific object.
+     *
+     * Throws an error if the `navigationPath` is malformed.
+     *
+     * @param {string} navigationPath
+     * @returns {DomainObject[]} objectPath
+     */
+    async getRelativeObjectPath(navigationPath) {
+        if (!navigationPath.startsWith('/browse/')) {
+            throw new Error(`Malformed navigation path: "${navigationPath}"`);
+        }
+
+        navigationPath = navigationPath.replace('/browse/', '');
+
+        if (!navigationPath || navigationPath === '/') {
+            return [];
+        }
+
+        // Remove any query params and split on '/'
+        const keyStrings = navigationPath.split('?')?.[0].split('/');
+
+        if (keyStrings[0] !== 'ROOT') {
+            keyStrings.unshift('ROOT');
+        }
+
+        const objectPath = (await Promise.all(
+            keyStrings.map(
+                keyString => this.supportsMutation(keyString)
+                    ? this.getMutable(utils.parseKeyString(keyString))
+                    : this.get(utils.parseKeyString(keyString))
+            )
+        )).reverse();
+
+        return objectPath;
     }
 
     isObjectPathToALink(domainObject, objectPath) {

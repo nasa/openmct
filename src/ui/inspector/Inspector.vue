@@ -36,7 +36,6 @@
         >
             {{ tabbedView.name }}
         </div>
-
     </div>
     <div class="c-inspector__content">
         <multipane
@@ -44,10 +43,12 @@
             type="vertical"
         >
             <pane class="c-inspector__properties">
-                <Properties
-                    v-if="!activity"
-                />
-                <location />
+                <Properties v-if="!activity" />
+                <div
+                    v-if="!multiSelect"
+                    class="c-inspect-properties c-inspect-properties--location"
+                >
+                </div>
                 <inspector-views />
             </pane>
             <pane
@@ -75,39 +76,49 @@
                 <SavedStylesInspectorView :is-editing="isEditing" />
             </pane>
         </multipane>
+        <multipane
+            v-show="currentTabbedView.key === '__annotations'"
+            type="vertical"
+        >
+            <pane class="c-inspector__annotations">
+                <AnnotationsInspectorView
+                    @annotationCreated="updateCurrentTab(tabbedViews[2])"
+                />
+            </pane>
+        </multipane>
     </div>
 </div>
 </template>
 
 <script>
-import multipane from '../layout/multipane.vue';
-import pane from '../layout/pane.vue';
-import ElementsPool from './ElementsPool.vue';
-import Location from './Location.vue';
-import Properties from './details/Properties.vue';
-import ObjectName from './ObjectName.vue';
-import InspectorViews from './InspectorViews.vue';
+import multipane from "../layout/multipane.vue";
+import pane from "../layout/pane.vue";
+import ElementsPool from "./ElementsPool.vue";
+import Properties from "./details/Properties.vue";
+import ObjectName from "./ObjectName.vue";
+import InspectorViews from "./InspectorViews.vue";
 import _ from "lodash";
-import stylesManager from '@/ui/inspector/styles/StylesManager';
-import StylesInspectorView from '@/ui/inspector/styles/StylesInspectorView.vue';
-import SavedStylesInspectorView from '@/ui/inspector/styles/SavedStylesInspectorView.vue';
+import stylesManager from "@/ui/inspector/styles/StylesManager";
+import StylesInspectorView from "@/ui/inspector/styles/StylesInspectorView.vue";
+import SavedStylesInspectorView from "@/ui/inspector/styles/SavedStylesInspectorView.vue";
+import AnnotationsInspectorView from "./annotations/AnnotationsInspectorView.vue";
 
 export default {
     components: {
         StylesInspectorView,
         SavedStylesInspectorView,
+        AnnotationsInspectorView,
         multipane,
         pane,
         ElementsPool,
         Properties,
         ObjectName,
-        Location,
         InspectorViews
     },
     provide: {
         stylesManager: stylesManager
     },
-    inject: ['openmct'],
+    inject: ["openmct"],
     props: {
         isEditing: {
             type: Boolean,
@@ -117,31 +128,53 @@ export default {
     data() {
         return {
             hasComposition: false,
+            multiSelect: false,
             showStyles: false,
-            tabbedViews: [{
-                key: '__properties',
-                name: 'Properties'
-            }, {
-                key: '__styles',
-                name: 'Styles'
-            }],
+            tabbedViews: [
+                {
+                    key: "__properties",
+                    name: "Properties"
+                },
+                {
+                    key: "__styles",
+                    name: "Styles"
+                },
+                {
+                    key: "__annotations",
+                    name: "Annotations"
+                }
+            ],
             currentTabbedView: {},
             activity: undefined
         };
     },
     mounted() {
-        this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
-        this.openmct.selection.on('change', this.updateInspectorViews);
+        this.excludeObjectTypes = [
+            "folder",
+            "webPage",
+            "conditionSet",
+            "summary-widget",
+            "hyperlink"
+        ];
+        this.openmct.selection.on("change", this.updateInspectorViews);
     },
     destroyed() {
-        this.openmct.selection.off('change', this.updateInspectorViews);
+        this.openmct.selection.off("change", this.updateInspectorViews);
     },
     methods: {
         updateInspectorViews(selection) {
             this.refreshComposition(selection);
 
-            if (this.openmct.types.get('conditionSet')) {
+            if (this.openmct.types.get("conditionSet")) {
                 this.refreshTabs(selection);
+            }
+
+            if (selection.length > 1) {
+                this.multiSelect = true;
+
+                // return;
+            } else {
+                this.multiSelect = false;
             }
 
             this.setActivity(selection);
@@ -150,7 +183,9 @@ export default {
             if (selection.length > 0 && selection[0].length > 0) {
                 let parentObject = selection[0][0].context.item;
 
-                this.hasComposition = Boolean(parentObject && this.openmct.composition.get(parentObject));
+                this.hasComposition = Boolean(
+                    parentObject && this.openmct.composition.get(parentObject)
+                );
             }
         },
         refreshTabs(selection) {
@@ -160,21 +195,33 @@ export default {
                 let object = selection[0][0].context.item;
                 if (object) {
                     let type = this.openmct.types.get(object.type);
-                    this.showStyles = this.isLayoutObject(selection[0], object.type) || this.isCreatableObject(object, type);
+                    this.showStyles =
+            this.isLayoutObject(selection[0], object.type)
+            || this.isCreatableObject(object, type);
                 }
 
-                if (!this.currentTabbedView.key || (!this.showStyles && this.currentTabbedView.key === this.tabbedViews[1].key)) {
+                if (
+                    !this.currentTabbedView.key
+          || (!this.showStyles
+            && this.currentTabbedView.key === this.tabbedViews[1].key)
+                ) {
                     this.updateCurrentTab(this.tabbedViews[0]);
                 }
             }
         },
         isLayoutObject(selection, objectType) {
             //we allow conditionSets to be styled if they're part of a layout
-            return selection.length > 1
-                && ((objectType === 'conditionSet') || (this.excludeObjectTypes.indexOf(objectType) < 0));
+            return (
+                selection.length > 1
+        && (objectType === "conditionSet"
+          || this.excludeObjectTypes.indexOf(objectType) < 0)
+            );
         },
         isCreatableObject(object, type) {
-            return (this.excludeObjectTypes.indexOf(object.type) < 0) && type.definition.creatable;
+            return (
+                this.excludeObjectTypes.indexOf(object.type) < 0
+        && type.definition.creatable
+            );
         },
         updateCurrentTab(view) {
             this.currentTabbedView = view;
@@ -183,10 +230,11 @@ export default {
             return _.isEqual(this.currentTabbedView, view);
         },
         setActivity(selection) {
-            this.activity = selection
-                && selection.length
-                && selection[0].length
-                && selection[0][0].activity;
+            this.activity =
+        selection
+        && selection.length
+        && selection[0].length
+        && selection[0][0].activity;
         }
     }
 };

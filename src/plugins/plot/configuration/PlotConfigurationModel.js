@@ -29,7 +29,7 @@ import LegendModel from "./LegendModel";
 
 /**
  * PlotConfiguration model stores the configuration of a plot and some
- * limited state.  The indiidual parts of the plot configuration model
+ * limited state.  The individual parts of the plot configuration model
  * handle setting defaults and updating in response to various changes.
  *
  * @extends {Model<PlotConfigModelType, PlotConfigModelOptions>}

@@ -60,8 +60,15 @@ export function identifierToString(openmct, objectPath) {
     return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
+/**
+ * @param {import('../../openmct').OpenMCT} openmct
+ * @param {Array<import('../api/objects/ObjectAPI').DomainObject>} objectPath
+ * @param {any} customUrlParams
+ * @returns {string} url
+ */
 export default function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
     let url = identifierToString(openmct, objectPath);
+
     let urlParams = paramsToArray(openmct, customUrlParams);
     if (urlParams.length) {
         url += '?' + urlParams.join('&');

@@ -93,7 +93,6 @@
                 ></div>
                 <Compass
                     v-if="shouldDisplayCompass"
-                    :compass-rose-sizing-classes="compassRoseSizingClasses"
                     :image="focusedImage"
                     :natural-aspect-ratio="focusedImageNaturalAspectRatio"
                     :sized-image-dimensions="sizedImageDimensions"
@@ -172,7 +171,7 @@
         >
             <ImageThumbnail
                 v-for="(image, index) in imageHistory"
-                :key="image.url + image.time"
+                :key="`${image.thumbnailUrl || image.url}${image.time}`"
                 :image="image"
                 :active="focusedImageIndex === index"
                 :selected="focusedImageIndex === index && isPaused"
@@ -225,6 +224,9 @@ const SHOW_THUMBS_THRESHOLD_HEIGHT = 200;
 const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 
 const IMAGE_CONTAINER_BORDER_WIDTH = 1;
+
+const DEFAULT_IMAGE_PAN_ALT_TEXT = "Alt drag to pan";
+const LINUX_IMAGE_PAN_ALT_TEXT = `Ctrl+${DEFAULT_IMAGE_PAN_ALT_TEXT}`;
 
 export default {
     name: 'ImageryView',
@@ -298,18 +300,6 @@ export default {
         };
     },
     computed: {
-        compassRoseSizingClasses() {
-            let compassRoseSizingClasses = '';
-            if (this.sizedImageWidth < 300) {
-                compassRoseSizingClasses = '--rose-small --rose-min';
-            } else if (this.sizedImageWidth < 500) {
-                compassRoseSizingClasses = '--rose-small';
-            } else if (this.sizedImageWidth > 1000) {
-                compassRoseSizingClasses = '--rose-max';
-            }
-
-            return compassRoseSizingClasses;
-        },
         displayThumbnails() {
             return (
                 this.forceShowThumbnails
@@ -321,8 +311,8 @@ export default {
         },
         focusImageStyles() {
             return {
-                'filter': `brightness(${this.filters.brightness}%) contrast(${this.filters.contrast}%)`,
-                'background-image':
+                filter: `brightness(${this.filters.brightness}%) contrast(${this.filters.contrast}%)`,
+                backgroundImage:
                     `${this.imageUrl ? (
                         `url(${this.imageUrl}),
                             repeating-linear-gradient(
@@ -333,10 +323,10 @@ export default {
                                 rgba(125,125,125,.2) 8px
                             )`
                     ) : ''}`,
-                'transform': `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
-                'transition': `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
-                'width': `${this.sizedImageWidth}px`,
-                'height': `${this.sizedImageHeight}px`
+                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
+                width: `${this.sizedImageWidth}px`,
+                height: `${this.sizedImageHeight}px`
             };
         },
         time() {
@@ -347,11 +337,12 @@ export default {
         },
         imageWrapperStyle() {
             return {
-                'cursor-zoom-in': this.cursorStates.showCursorZoomIn,
-                'cursor-zoom-out': this.cursorStates.showCursorZoomOut,
-                'pannable': this.cursorStates.isPannable,
-                'paused unnsynced': this.isPaused && !this.isFixed,
-                'stale': false
+                cursorZoomIn: this.cursorStates.showCursorZoomIn,
+                cursorZoomOut: this.cursorStates.showCursorZoomOut,
+                pannable: this.cursorStates.isPannable,
+                paused: this.isPaused && !this.isFixed,
+                unsynced: this.isPaused && !this.isFixed,
+                stale: false
             };
         },
         isImageNew() {
@@ -432,7 +423,6 @@ export default {
         shouldDisplayCompass() {
             const imageHeightAndWidth = this.sizedImageHeight !== 0
                 && this.sizedImageWidth !== 0;
-
             const display = this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
@@ -440,8 +430,9 @@ export default {
                 && imageHeightAndWidth
                 && this.zoomFactor === 1
                 && this.imagePanned !== true;
+            const hasCameraConfigurations = this.focusedImage?.transformations !== undefined;
 
-            return display;
+            return display && hasCameraConfigurations;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;
@@ -528,10 +519,10 @@ export default {
             const navigator = window.navigator.userAgent;
 
             if (regexLinux.test(navigator)) {
-                return 'Ctrl+Alt drag to pan';
+                return LINUX_IMAGE_PAN_ALT_TEXT;
             }
 
-            return 'Alt drag to pan';
+            return DEFAULT_IMAGE_PAN_ALT_TEXT;
         },
         viewableArea() {
             if (this.zoomFactor === 1) {
@@ -626,6 +617,7 @@ export default {
         this.spacecraftOrientationKeys = ['heading'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
+        this.transformationsKeys = ['transformations'];
 
         // related telemetry
         await this.initializeRelatedTelemetry();
@@ -691,9 +683,9 @@ export default {
         },
         getVisibleLayerStyles(layer) {
             return {
-                'background-image': `url(${layer.source})`,
-                'transform': `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
-                'transition': `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
+                backgroundImage: `url(${layer.source})`,
+                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
             };
         },
         setTimeContext() {
@@ -721,14 +713,20 @@ export default {
                 && visibleActions.find(action => action.key === 'large.view');
 
             if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
-                viewLargeAction.onItemClicked();
+                viewLargeAction.invoke(this.objectPath, this.currentView);
             }
         },
         async initializeRelatedTelemetry() {
             this.relatedTelemetry = new RelatedTelemetry(
                 this.openmct,
                 this.domainObject,
-                [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys]
+                [
+                    ...this.spacecraftPositionKeys,
+                    ...this.spacecraftOrientationKeys,
+                    ...this.cameraKeys,
+                    ...this.sunKeys,
+                    ...this.transformationsKeys
+                ]
             );
 
             if (this.relatedTelemetry.hasRelatedTelemetry) {
@@ -765,26 +763,26 @@ export default {
             return mostRecent[valueKey];
         },
         loadVisibleLayers() {
-            const metaDataValues = this.metadata.valuesForHints(['image'])[0];
-            this.imageFormat = this.openmct.telemetry.getValueFormatter(metaDataValues);
-            let layersMetadata = metaDataValues.layers;
-            if (layersMetadata) {
-                this.layers = layersMetadata;
-                if (this.domainObject.configuration) {
-                    let persistedLayers = this.domainObject.configuration.layers;
-                    layersMetadata.forEach((layer) => {
-                        const persistedLayer = persistedLayers.find(object => object.name === layer.name);
-                        if (persistedLayer) {
-                            layer.visible = persistedLayer.visible === true;
-                        }
-                    });
-                    this.visibleLayers = this.layers.filter(layer => layer.visible);
-                } else {
-                    this.visibleLayers = [];
-                    this.layers.forEach((layer) => {
-                        layer.visible = false;
-                    });
-                }
+            const layersMetadata = this.imageMetadataValue.layers;
+            if (!layersMetadata) {
+                return;
+            }
+
+            this.layers = layersMetadata;
+            if (this.domainObject.configuration) {
+                const persistedLayers = this.domainObject.configuration.layers;
+                layersMetadata.forEach((layer) => {
+                    const persistedLayer = persistedLayers.find(object => object.name === layer.name);
+                    if (persistedLayer) {
+                        layer.visible = persistedLayer.visible === true;
+                    }
+                });
+                this.visibleLayers = this.layers.filter(layer => layer.visible);
+            } else {
+                this.visibleLayers = [];
+                this.layers.forEach((layer) => {
+                    layer.visible = false;
+                });
             }
         },
         persistVisibleLayers() {
@@ -837,6 +835,15 @@ export default {
                     this.$set(this.focusedImageRelatedTelemetry, key, value);
                 }
             }
+
+            // set configuration for compass
+            this.transformationsKeys.forEach(key => {
+                const transformations = this.relatedTelemetry[key];
+
+                if (transformations !== undefined) {
+                    this.$set(this.imageHistory[this.focusedImageIndex], key, transformations);
+                }
+            });
         },
         trackLatestRelatedTelemetry() {
             [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
