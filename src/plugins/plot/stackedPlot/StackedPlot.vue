@@ -83,8 +83,6 @@ export default {
         }
     },
     data() {
-        this.seriesConfig = {};
-
         return {
             hideExportButtons: false,
             cursorGuide: false,
@@ -121,6 +119,7 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
+        this.seriesConfig = {};
 
         const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.config = this.getConfig(configId);

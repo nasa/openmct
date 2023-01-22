@@ -115,8 +115,6 @@ export default {
         }
     },
     data() {
-        this.seriesModels = [];
-
         return {
             yAxisLabel: 'none',
             loaded: false,
@@ -158,6 +156,7 @@ export default {
         }
     },
     mounted() {
+        this.seriesModels = [];
         eventHelpers.extend(this);
         this.initAxisAndSeriesConfig();
         this.loaded = true;

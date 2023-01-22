@@ -278,8 +278,6 @@ export default {
         }
     },
     data() {
-        this.yAxisIdVisibility = {};
-
         return {
             altPressed: false,
             highlights: [],
@@ -381,6 +379,7 @@ export default {
         }
     },
     mounted() {
+        this.yAxisIdVisibility = {};
         this.offsetWidth = 0;
 
         document.addEventListener('keydown', this.handleKeyDown);
