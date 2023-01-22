@@ -124,6 +124,7 @@ export default {
 
         const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.config = this.getConfig(configId);
+
         this.legend = this.config.legend;
 
         this.loaded = true;
@@ -142,6 +143,7 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
+                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -182,6 +184,10 @@ export default {
             if (configIndex > -1) {
                 this.domainObject.configuration.series.splice(configIndex, 1);
             }
+
+            this.removeSeries({
+                keyString: id
+            });
 
             const childObj = this.compositionObjects.filter((c) => {
                 const identifier = this.openmct.objects.makeKeyString(c.identifier);
@@ -244,18 +250,29 @@ export default {
             this.highlights = data;
         },
         registerSeriesListeners(configId) {
-            this.seriesConfig[configId] = this.getConfig(configId);
-            this.listenTo(this.seriesConfig[configId].series, 'add', this.addSeries, this);
-            this.listenTo(this.seriesConfig[configId].series, 'remove', this.removeSeries, this);
+            const config = this.getConfig(configId);
+            this.seriesConfig[configId] = config;
+            const childObject = config.get('domainObject');
 
-            this.seriesConfig[configId].series.models.forEach(this.addSeries, this);
+            //TODO differentiate between objects with composition and those without
+            if (childObject.type === 'telemetry.plot.overlay') {
+                this.listenTo(config.series, 'add', this.addSeries, this);
+                this.listenTo(config.series, 'remove', this.removeSeries, this);
+            }
+
+            config.series.models.forEach(this.addSeries, this);
         },
         addSeries(series) {
-            const index = this.seriesModels.length;
-            this.$set(this.seriesModels, index, series);
+            const childObject = series.domainObject;
+            //don't add the series if it can have child series this will happen in registerSeriesListeners
+            if (childObject.type !== 'telemetry.plot.overlay') {
+                const index = this.seriesModels.length;
+                this.$set(this.seriesModels, index, series);
+            }
+
         },
         removeSeries(plotSeries) {
-            const index = this.seriesModels.findIndex(seriesModel => this.openmct.objects.areIdsEqual(seriesModel.identifier, plotSeries.identifier));
+            const index = this.seriesModels.findIndex(seriesModel => seriesModel.keyString === plotSeries.keyString);
             if (index > -1) {
                 this.$delete(this.seriesModels, index);
             }

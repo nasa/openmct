@@ -353,10 +353,8 @@ export default {
         this.config = this.getConfig();
         this.legend = this.config.legend;
 
-        if (this.isNestedWithinAStackedPlot) {
-            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.$emit('configLoaded', configId);
-        }
+        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.$emit('configLoaded', configId);
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
