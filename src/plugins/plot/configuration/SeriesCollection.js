@@ -60,6 +60,10 @@ export default class SeriesCollection extends Collection {
         }, this);
     }
     watchTelemetryContainer(domainObject) {
+        if (domainObject.type === 'telemetry.plot.stacked') {
+            return;
+        }
+
         const composition = this.openmct.composition.get(domainObject);
         this.listenTo(composition, 'add', this.addTelemetryObject, this);
         this.listenTo(composition, 'remove', this.removeTelemetryObject, this);
@@ -105,7 +109,7 @@ export default class SeriesCollection extends Collection {
     }
     removeTelemetryObject(identifier) {
         const plotObject = this.plot.get('domainObject');
-        if (plotObject.type === 'telemetry.plot.overlay' || plotObject.type === 'telemetry.plot.stacked') {
+        if (plotObject.type === 'telemetry.plot.overlay') {
 
             const persistedIndex = plotObject.configuration.series.findIndex(s => {
                 return _.isEqual(identifier, s.identifier);

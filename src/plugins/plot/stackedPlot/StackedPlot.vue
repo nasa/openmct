@@ -124,7 +124,6 @@ export default {
 
         const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.config = this.getConfig(configId);
-        this.addSeriesListeners();
 
         this.legend = this.config.legend;
 
@@ -144,6 +143,7 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
+                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -184,6 +184,10 @@ export default {
             if (configIndex > -1) {
                 this.domainObject.configuration.series.splice(configIndex, 1);
             }
+
+            this.removeSeries({
+                keyString: id
+            });
 
             const childObj = this.compositionObjects.filter((c) => {
                 const identifier = this.openmct.objects.makeKeyString(c.identifier);
@@ -245,13 +249,6 @@ export default {
         highlightsUpdated(data) {
             this.highlights = data;
         },
-        addSeriesListeners() {
-            //For each item in the stacked plot, listen for changes in series
-            this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.removeSeries, this);
-
-            this.config.series.models.forEach(this.addSeries, this);
-        },
         registerSeriesListeners(configId) {
             const config = this.getConfig(configId);
             this.seriesConfig[configId] = config;
@@ -261,9 +258,9 @@ export default {
             if (childObject.type === 'telemetry.plot.overlay') {
                 this.listenTo(config.series, 'add', this.addSeries, this);
                 this.listenTo(config.series, 'remove', this.removeSeries, this);
-
-                config.series.models.forEach(this.addSeries, this);
             }
+
+            config.series.models.forEach(this.addSeries, this);
         },
         addSeries(series) {
             const childObject = series.domainObject;
