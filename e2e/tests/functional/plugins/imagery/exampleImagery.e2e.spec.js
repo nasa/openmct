@@ -25,13 +25,13 @@ This test suite is dedicated to tests which verify the basic operations surround
 but only assume that example imagery is present.
 */
 /* globals process */
-const { v4: uuid } = require('uuid');
 const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
@@ -397,13 +397,11 @@ test.describe('Example Imagery in Time Strip', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
         timeStripObject = await createDomainObjectWithDefaults(page, {
-            type: 'Time Strip',
-            name: 'Time Strip'.concat(' ', uuid())
+            type: 'Time Strip'
         });
 
         await createDomainObjectWithDefaults(page, {
             type: 'Example Imagery',
-            name: 'Example Imagery'.concat(' ', uuid()),
             parent: timeStripObject.uuid
         });
         // Navigate to timestrip
@@ -414,17 +412,28 @@ test.describe('Example Imagery in Time Strip', () => {
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5632'
         });
+
+        // Hover over the timestrip to reveal a thumbnail image
         await page.locator('.c-imagery-tsv-container').hover();
-        // get url of the hovered image
-        const hoveredImg = page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
-        const hoveredImgSrc = await hoveredImg.getAttribute('src');
-        expect(hoveredImgSrc).toBeTruthy();
+
+        // Get the img src of the hovered image thumbnail
+        const hoveredThumbnailImg = page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
+        const hoveredThumbnailImgSrc = await hoveredThumbnailImg.getAttribute('src');
+
+        // Verify that imagery timestrip view uses the thumbnailUrl as img src for thumbnails
+        expect(hoveredThumbnailImgSrc).toBeTruthy();
+        expect(hoveredThumbnailImgSrc).toMatch(thumbnailUrlParamsRegexp);
+
+        // Click on the hovered thumbnail to open "View Large" view
         await page.locator('.c-imagery-tsv-container').click();
-        // get image of view large container
+
+        // Get the img src of the large view image
         const viewLargeImg = page.locator('img.c-imagery__main-image__image');
         const viewLargeImgSrc = await viewLargeImg.getAttribute('src');
         expect(viewLargeImgSrc).toBeTruthy();
-        expect(viewLargeImgSrc).toEqual(hoveredImgSrc);
+
+        // Verify that the image in the large view is the same as the hovered thumbnail
+        expect(viewLargeImgSrc).toEqual(hoveredThumbnailImgSrc.split('?')[0]);
     });
 });
 
@@ -441,6 +450,12 @@ test.describe('Example Imagery in Time Strip', () => {
  * @param {import('@playwright/test').Page} page
  */
 async function performImageryViewOperationsAndAssert(page) {
+    // Verify that imagery thumbnails use a thumbnail url
+    const thumbnailImages = page.locator('.c-thumb__image');
+    const mainImage = page.locator('.c-imagery__main-image__image');
+    await expect(thumbnailImages.first()).toHaveAttribute('src', thumbnailUrlParamsRegexp);
+    await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
+
     // Click previous image button
     const previousImageButton = page.locator('.c-nav--prev');
     await previousImageButton.click();
