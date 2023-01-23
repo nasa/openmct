@@ -309,8 +309,8 @@ $colorIndicatorMenuFg: $colorHeadFg;
 $colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
 // Staleness
-$colorTelemFresh: pullForward($colorBodyFg, 20%);
-$colorTelemStale: pushBack($colorBodyFg, 20%);
+$colorTelemStale: cyan;
+$colorTelemStaleFg: #002A2A;
 $styleTelemStale: italic;
 
 // Limits

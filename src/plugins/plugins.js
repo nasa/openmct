@@ -155,7 +155,7 @@ define([
     plugins.example.ExampleFaultSource = ExampleFaultSource.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
     plugins.example.ExampleTags = ExampleTags.default;
-    plugins.example.Generator = () => GeneratorPlugin;
+    plugins.example.Generator = () => GeneratorPlugin.default;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;

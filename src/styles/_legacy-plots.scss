@@ -81,6 +81,10 @@ mct-plot {
         overflow-x: hidden;
     }
 
+    &.is-stale {
+        @include isStaleHolder();
+    }
+
     .c-plot--stacked-container {
         border: 1px solid transparent;
         display: flex;
@@ -88,6 +92,10 @@ mct-plot {
         flex-direction: column;
         min-height: $plotMinH;
         overflow: hidden;
+
+        .is-stale {
+            @include isStaleHolder();
+        }
 
         &[s-selected] {
             .is-editing & {
@@ -596,6 +604,10 @@ mct-plot {
         margin-left: $interiorMarginSm;
     }
 
+    &.is-stale {
+        @include isStaleElement();
+    }
+
     .plot-series-color-swatch {
         @include colorSwatch();
         display: inline-block;
@@ -649,8 +661,10 @@ mct-plot {
         // .plot-legend-item is a span of spans.
 
         .plot-legend-item {
+            border-radius: $smallCr;
             display: flex;
             justify-content: stretch;
+            padding: 1px;
 
             .plot-series-swatch-and-name,
             .plot-series-value {

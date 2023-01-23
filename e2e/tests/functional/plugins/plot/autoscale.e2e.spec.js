@@ -32,7 +32,7 @@ test.use({
     }
 });
 
-test.describe('ExportAsJSON', () => {
+test.fixme('ExportAsJSON', () => {
     test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 

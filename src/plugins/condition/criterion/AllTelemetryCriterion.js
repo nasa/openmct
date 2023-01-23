@@ -21,8 +21,9 @@
  *****************************************************************************/
 
 import TelemetryCriterion from './TelemetryCriterion';
+import StalenessUtils from '@/utils/staleness';
 import { evaluateResults } from "../utils/evaluator";
-import {getLatestTimestamp, subscribeForStaleness} from '../utils/time';
+import { getLatestTimestamp, checkIfOld } from '../utils/time';
 import { getOperatorText } from "@/plugins/condition/utils/operations";
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
@@ -38,13 +39,41 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     initialize() {
         this.telemetryObjects = { ...this.telemetryDomainObjectDefinition.telemetryObjects };
         this.telemetryDataCache = {};
-        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
-            this.subscribeForStaleData(this.telemetryObjects || {});
+
+        if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
+            this.checkForOldData(this.telemetryObjects || {});
+        }
+
+        if (this.isValid() && this.isStalenessCheck()) {
+            this.subscribeToStaleness(this.telemetryObjects || {});
         }
     }
 
-    subscribeForStaleData(telemetryObjects) {
+    checkForOldData(telemetryObjects) {
+        if (!this.ageCheck) {
+            this.ageCheck = {};
+        }
 
+        Object.values(telemetryObjects).forEach((telemetryObject) => {
+            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            if (!this.ageCheck[id]) {
+                this.ageCheck[id] = checkIfOld((data) => {
+                    this.handleOldTelemetry(id, data);
+                }, this.input[0] * 1000);
+            }
+        });
+    }
+
+    handleOldTelemetry(id, data) {
+        if (this.telemetryDataCache) {
+            this.telemetryDataCache[id] = true;
+            this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
+        }
+
+        this.emitEvent('telemetryIsOld', data);
+    }
+
+    subscribeToStaleness(telemetryObjects) {
         if (!this.stalenessSubscription) {
             this.stalenessSubscription = {};
         }
@@ -52,20 +81,27 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         Object.values(telemetryObjects).forEach((telemetryObject) => {
             const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             if (!this.stalenessSubscription[id]) {
-                this.stalenessSubscription[id] = subscribeForStaleness((data) => {
-                    this.handleStaleTelemetry(id, data);
-                }, this.input[0] * 1000);
+                this.stalenessSubscription[id] = {};
+                this.stalenessSubscription[id].stalenessUtils = new StalenessUtils(this.openmct, telemetryObject);
+                this.stalenessSubscription[id].unsubscribe = this.openmct.telemetry.subscribeToStaleness(
+                    telemetryObject,
+                    (stalenessResponse) => {
+                        this.handleStaleTelemetry(id, stalenessResponse);
+                    }
+                );
             }
         });
     }
 
-    handleStaleTelemetry(id, data) {
+    handleStaleTelemetry(id, stalenessResponse) {
         if (this.telemetryDataCache) {
-            this.telemetryDataCache[id] = true;
-            this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
-        }
+            if (this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                this.telemetryDataCache[id] = stalenessResponse.isStale;
+                this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
 
-        this.emitEvent('telemetryIsStale', data);
+                this.emitEvent('telemetryStaleness');
+            }
+        }
     }
 
     isValid() {
@@ -75,8 +111,13 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     updateTelemetryObjects(telemetryObjects) {
         this.telemetryObjects = { ...telemetryObjects };
         this.removeTelemetryDataCache();
-        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
-            this.subscribeForStaleData(this.telemetryObjects || {});
+
+        if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
+            this.checkForOldData(this.telemetryObjects || {});
+        }
+
+        if (this.isValid() && this.isStalenessCheck()) {
+            this.subscribeToStaleness(this.telemetryObjects || {});
         }
     }
 
@@ -91,6 +132,9 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         });
         telemetryCacheIds.forEach(id => {
             delete (this.telemetryDataCache[id]);
+            delete (this.ageCheck[id]);
+            this.stalenessSubscription[id].unsubscribe();
+            this.stalenessSubscription[id].stalenessUtils.destroy();
             delete (this.stalenessSubscription[id]);
         });
     }
@@ -125,10 +169,10 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     updateResult(data, telemetryObjects) {
         const validatedData = this.isValid() ? data : {};
 
-        if (validatedData) {
-            if (this.isStalenessCheck()) {
-                if (this.stalenessSubscription && this.stalenessSubscription[validatedData.id]) {
-                    this.stalenessSubscription[validatedData.id].update(validatedData);
+        if (validatedData && !this.isStalenessCheck()) {
+            if (this.isOldCheck()) {
+                if (this.ageCheck?.[validatedData.id]) {
+                    this.ageCheck[validatedData.id].update(validatedData);
                 }
 
                 this.telemetryDataCache[validatedData.id] = false;
@@ -226,9 +270,17 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     destroy() {
         delete this.telemetryObjects;
         delete this.telemetryDataCache;
+
+        if (this.ageCheck) {
+            Object.values(this.ageCheck).forEach((subscription) => subscription.clear);
+            delete this.ageCheck;
+        }
+
         if (this.stalenessSubscription) {
-            Object.values(this.stalenessSubscription).forEach((subscription) => subscription.clear);
-            delete this.stalenessSubscription;
+            Object.values(this.stalenessSubscription).forEach(subscription => {
+                subscription.unsubscribe();
+                subscription.stalenessUtils.destroy();
+            });
         }
     }
 }
