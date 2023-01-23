@@ -35,14 +35,14 @@
 @import "../ui/components/progress-bar.scss";
 @import "../ui/components/search.scss";
 @import "../ui/components/swim-lane/swimlane.scss";
-@import "../ui/components/tags/tags.scss";
+@import "../plugins/inspectorViews/annotations/tags/tags.scss";
 @import "../ui/components/toggle-switch.scss";
 @import "../ui/components/timesystem-axis.scss";
 @import "../ui/components/List/list-view.scss";
 @import "../plugins/inspectorViews/elements/elements.scss";
 @import "../ui/inspector/inspector.scss";
 @import "../plugins/inspectorViews/location/location.scss";
-@import "../ui/inspector/annotations/annotation-inspector.scss";
+@import "../plugins/inspectorViews/annotations/annotation-inspector.scss";
 @import "../ui/layout/app-logo.scss";
 @import "../ui/layout/create-button.scss";
 @import "../ui/layout/layout.scss";
