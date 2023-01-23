@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-cs">
+<div
+    class="c-cs"
+    :class="{'is-stale': isStale }"
+>
     <section class="c-cs__current-output c-section">
         <div class="c-cs__content c-cs__current-output-value">
             <span class="c-cs__current-output-value__label">Current Output</span>
@@ -50,6 +53,7 @@
             @conditionSetResultUpdated="updateCurrentOutput"
             @updateDefaultOutput="updateDefaultOutput"
             @telemetryUpdated="updateTelemetry"
+            @telemetryStaleness="handleStaleness"
         />
     </div>
 </div>
@@ -73,8 +77,14 @@ export default {
             currentConditionOutput: '',
             defaultConditionOutput: '',
             telemetryObjs: [],
-            testData: {}
+            testData: {},
+            staleObjects: []
         };
+    },
+    computed: {
+        isStale() {
+            return this.staleObjects.length !== 0;
+        }
     },
     mounted() {
         this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -95,6 +105,18 @@ export default {
         },
         updateTestData(testData) {
             this.testData = testData;
+        },
+        handleStaleness({ keyString, isStale }) {
+            const index = this.staleObjects.indexOf(keyString);
+            if (isStale) {
+                if (index === -1) {
+                    this.staleObjects.push(keyString);
+                }
+            } else {
+                if (index !== -1) {
+                    this.staleObjects.splice(index, 1);
+                }
+            }
         }
     }
 };

@@ -23,6 +23,7 @@
 <tr
     class="plot-legend-item"
     :class="{
+        'is-stale': isStale,
         'is-status--missing': isMissing
     }"
     @mouseover="toggleHover(true)"
@@ -81,8 +82,10 @@
 <script>
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
 import eventHelpers from "@/plugins/plot/lib/eventHelpers";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
+    mixins: [stalenessMixin],
     inject: ['openmct', 'domainObject'],
     props: {
         seriesObject: {
@@ -149,6 +152,7 @@ export default {
         this.listenTo(this.seriesObject, 'change:name', () => {
             this.updateName();
         }, this);
+        this.subscribeToStaleness(this.seriesObject.domainObject);
         this.initialize();
     },
     beforeDestroy() {

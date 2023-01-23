@@ -23,6 +23,7 @@
 <div
     class="plot-legend-item"
     :class="{
+        'is-stale': isStale,
         'is-status--missing': isMissing
     }"
     @mouseover="toggleHover(true)"
@@ -55,8 +56,10 @@
 
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
 import eventHelpers from "../lib/eventHelpers";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
+    mixins: [stalenessMixin],
     inject: ['openmct', 'domainObject'],
     props: {
         valueToShowWhenCollapsed: {
@@ -112,6 +115,7 @@ export default {
         this.listenTo(this.seriesObject, 'change:name', () => {
             this.updateName();
         }, this);
+        this.subscribeToStaleness(this.seriesObject.domainObject);
         this.initialize();
     },
     beforeDestroy() {
@@ -120,6 +124,7 @@ export default {
     methods: {
         initialize(highlightedObject) {
             const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
+
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();
             this.nameWithUnit = seriesObject.nameWithUnit();

@@ -32,6 +32,15 @@ $meterNeedleBorderRadius: 5px;
   &__wrapper {
     @include abs();
     overflow: hidden;
+
+    &.is-stale {
+      @include isStaleHolder();
+
+      [class*=__current-value-text] {
+        fill: $colorTelemStale;
+        font-style: italic;
+      }
+    }
   }
 
   &__current-value-text-wrapper {

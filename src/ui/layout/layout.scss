@@ -320,6 +320,10 @@
     display: block;
     height: 100%;
     overflow: auto;
+
+    &.is-stale {
+        @include isStaleHolder();
+    }
 }
 
 .is-editing {
