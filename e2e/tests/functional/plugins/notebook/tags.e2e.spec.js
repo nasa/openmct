@@ -197,11 +197,16 @@ test.describe('Tagging in Notebooks @addInit', () => {
             page.goto('./#/browse/mine?hideTree=false'),
             page.click('.c-disclosure-triangle')
         ]);
-        // Click Clock
-        await page.click(`text=${clock.name}`);
 
+        const treePane = page.locator('#tree-pane');
+        // Click Clock
+        await treePane.getByRole('treeitem', {
+            name: clock.name
+        }).click();
         // Click Notebook
-        await page.click(`text=${notebook.name}`);
+        await page.getByRole('treeitem', {
+            name: notebook.name
+        }).click();
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
