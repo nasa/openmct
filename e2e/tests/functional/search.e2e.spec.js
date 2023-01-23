@@ -73,7 +73,7 @@ test.describe('Grand Search', () => {
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Cl');
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=Clock A').click()
+            page.locator('[aria-label="Clock A clock result"] >> text=Clock A').click()
         ]);
         await expect(page.locator('.is-object-type-clock')).toBeVisible();
 

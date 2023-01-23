@@ -28,6 +28,8 @@ import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
 
+const TEST_KEY_ID = 'test-key';
+
 describe("the plugin", function () {
     let element;
     let child;
@@ -404,6 +406,20 @@ describe("the plugin", function () {
             expect(options.length).toBe(2);
             expect(options[0].value).toBe("Some attribute");
             expect(options[1].value).toBe("Another attribute");
+        });
+
+        it("Updates the Y-axis label when changed", () => {
+            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+            const config = configStore.get(configId);
+            const yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y")[0].__vue__;
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe('some-key');
+            });
+
+            yAxisElement.$emit('yKeyChanged', TEST_KEY_ID, 1);
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe(TEST_KEY_ID);
+            });
         });
 
         it('hides the pause and play controls', () => {

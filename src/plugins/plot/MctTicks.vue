@@ -103,6 +103,12 @@ export default {
                 return 6;
             }
         },
+        axisId: {
+            type: Number,
+            default() {
+                return null;
+            }
+        },
         position: {
             required: true,
             type: String,
@@ -145,7 +151,15 @@ export default {
                 throw new Error('config is missing');
             }
 
-            return config[this.axisType];
+            if (this.axisType === 'yAxis') {
+                if (this.axisId && this.axisId !== config.yAxis.id) {
+                    return config.additionalYAxes.find(axis => axis.id === this.axisId);
+                } else {
+                    return config.yAxis;
+                }
+            } else {
+                return config[this.axisType];
+            }
         },
         /**
        * Determine whether ticks should be regenerated for a given range.
@@ -258,7 +272,10 @@ export default {
                     }, 0));
 
                     this.tickWidth = tickWidth;
-                    this.$emit('plotTickWidth', tickWidth);
+                    this.$emit('plotTickWidth', {
+                        width: tickWidth,
+                        yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
+                    });
                     this.shouldCheckWidth = false;
                 }
             }

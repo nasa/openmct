@@ -256,6 +256,15 @@ define([
             });
         });
 
+        /**
+         * MCT's annotation API that enables
+         * human-created comments and categorization linked to data products
+         * @type {module:openmct.AnnotationAPI}
+         * @memberof module:openmct.MCT#
+         * @name annotation
+         */
+        this.annotation = new api.AnnotationAPI(this);
+
         // Plugins that are installed by default
         this.install(this.plugins.Plot());
         this.install(this.plugins.TelemetryTable.default());

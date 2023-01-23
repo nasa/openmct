@@ -38,7 +38,7 @@ export default {
         PlotOptionsBrowse,
         PlotOptionsEdit
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     data() {
         return {
             isEditing: this.openmct.editor.isEditing()

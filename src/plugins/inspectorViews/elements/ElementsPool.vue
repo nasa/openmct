@@ -64,8 +64,8 @@ import ElementItem from './ElementItem.vue';
 
 export default {
     components: {
-        'Search': Search,
-        'ElementItem': ElementItem
+        Search,
+        ElementItem
     },
     inject: [
         'openmct',

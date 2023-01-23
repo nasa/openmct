@@ -24,8 +24,6 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-// FIXME: Remove this eslint exception once tests are implemented
-// eslint-disable-next-line no-unused-vars
 const { test, expect } = require('../../../../pluginFixtures');
 const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../../../appActions');
 const nbUtils = require('../../../../helper/notebookUtils');
@@ -265,71 +263,77 @@ test.describe('Notebook entry tests', () => {
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
     test.fixme('previous and new entries can be deleted', async ({ page }) => {});
-});
+    test.fixme('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.google.com';
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
-test.describe('Snapshot Menu tests', () => {
-    test.fixme('When no default notebook is selected, Snapshot Menu dropdown should only have a single option', async ({ page }) => {
-        // There should be no default notebook
-        // Clear default notebook if exists using `localStorage.setItem('notebook-storage', null);`
-        // refresh page
-        // Click on 'Notebook Snaphot Menu'
-        // 'save to Notebook Snapshots' should be only option there
-    });
-    test.fixme('When default notebook is updated selected, Snapshot Menu dropdown should list it as the newest option', async ({ page }) => {
-        // Create 2a notebooks
-        // Set Notebook A as Default
-        // Open Snapshot Menu and note that Notebook A is listed
-        // Close Snapshot Menu
-        // Set Default Notebook to Notebook B
-        // Open Snapshot Notebook and note that Notebook B is listed
-        // Select Default Notebook Option and verify that Snapshot is added to Notebook B
-    });
-    test.fixme('Can add Snapshots via Snapshot Menu and details are correct', async ({ page }) => {
-        //Note this should be a visual test, too
-        // Create Telemetry object
-        // Create A notebook with many pages and sections.
-        // Set page and section defaults to be between first and last of many. i.e. 3 of 5
-        // Navigate to Telemetry object
-        // Select Default Notebook Option and verify that Snapshot is added to Notebook A
-        // Verify Snapshot Details appear correctly
-    });
-    test.fixme('Snapshots adjust time conductor', async ({ page }) => {
-        // Create Telemetry object
-        // Set Telemetry object's timeconductor to Fixed time with Start and Endtimes are recorded
-        // Embed Telemetry object into notebook
-        // Set Time Conductor to Local clock
-        // Click into embedded telemetry object and verify object appears with same fixed time from record
-    });
-});
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Entry Link Test"
+        });
 
-test.describe('Snapshot Container tests', () => {
-    test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
-    test.fixme('5 Snapshots can be added to a container and Deleted with Delete All action', async ({ page }) => {});
-    test.fixme('A snapshot can be Deleted from Container', async ({ page }) => {});
-    test.fixme('A snapshot can be Previewed from Container', async ({ page }) => {});
-    test.fixme('A snapshot Container can be open and closed', async ({ page }) => {});
-    test.fixme('Can add object to Snapshot container and pull into notebook and create a new entry', async ({ page }) => {
-        //Create Notebook
-        //Create Telemetry Object
-        //From Telemetry Object, use 'save to Notebook Snapshots'
-        //Snapshots indicator should blink, click on it to view snapshots
-        //Navigate to Notebook
-        //Drag and Drop onto droppable area for new entry
-        //New Entry created with given snapshot added
-        //Snapshot removed from container?
+        await expandTreePaneItemByName(page, 'My Items');
+
+        await page.goto(notebook.url);
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        // Start waiting for popup before clicking. Note no await.
+        const popupPromise = page.waitForEvent('popup');
+
+        await validLink.click();
+        const popup = await popupPromise;
+
+        // Wait for the popup to load.
+        await popup.waitForLoadState();
+        expect.soft(popup.url()).toContain('www.google.com');
+
+        expect(await validLink.count()).toBe(1);
     });
-    test.fixme('Can add object to Snapshot container and pull into notebook and existing entry', async ({ page }) => {
-        //Create Notebook
-        //Create Telemetry Object
-        //From Telemetry Object, use 'save to Notebook Snapshots'
-        //Snapshots indicator should blink, click on it to view snapshots
-        //Navigate to Notebook
-        //Drag and Drop into exiting entry
-        //Existing Entry updated with given snapshot
-        //Snapshot removed from container?
+    test.fixme('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'www.google.com';
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Entry Link Test"
+        });
+
+        await expandTreePaneItemByName(page, 'My Items');
+
+        await page.goto(notebook.url);
+
+        await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
+
+        const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        expect(await invalidLink.count()).toBe(0);
     });
-    test.fixme('Verify Embedded options for PNG, JPG, and Annotate work correctly', async ({ page }) => {
-        //Add snapshot to container
-        //Verify PNG, JPG, and Annotate buttons work correctly
+    test.fixme('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.google.com?bad=';
+        const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        const notebook = await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Entry Link Test"
+        });
+
+        await expandTreePaneItemByName(page, 'My Items');
+
+        await page.goto(notebook.url);
+
+        await nbUtils.enterTextEntry(page, `This should be a link, BUT not a bad link: ${TEST_LINK_BAD} is it?`);
+
+        const sanitizedLink = page.locator(`a[href="${TEST_LINK}"]`);
+        const unsanitizedLink = page.locator(`a[href="${TEST_LINK_BAD}"]`);
+
+        expect.soft(await sanitizedLink.count()).toBe(1);
+        expect(await unsanitizedLink.count()).toBe(0);
     });
 });
