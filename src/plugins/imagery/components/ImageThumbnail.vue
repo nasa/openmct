@@ -39,7 +39,7 @@
         <img
             ref="img"
             class="c-thumb__image"
-            :src="image.url"
+            :src="`${image.thumbnailUrl || image.url}`"
             fetchpriority="low"
             @load="imageLoadCompleted"
         >

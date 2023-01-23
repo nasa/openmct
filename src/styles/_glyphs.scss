@@ -59,6 +59,7 @@
 .icon-database-in-brackets {  @include glyphBefore($glyph-icon-database-in-brackets); }
 .icon-eye-open {  @include glyphBefore($glyph-icon-eye-open); }
 .icon-gear {  @include glyphBefore($glyph-icon-gear); }
+.icon-gear-after {  @include glyphAfter($glyph-icon-gear); }
 .icon-hourglass {  @include glyphBefore($glyph-icon-hourglass); }
 .icon-info {  @include glyphBefore($glyph-icon-info); }
 .icon-link {  @include glyphBefore($glyph-icon-link); }
@@ -266,3 +267,6 @@
 .bg-icon-plot-scatter { @include glyphBg($bg-icon-plot-scatter); }
 .bg-icon-notebook-shift-log { @include glyphBg($bg-icon-notebook-shift-log); }
 .bg-icon-telemetry-aggregate { @include glyphBg($bg-icon-telemetry-aggregate); }
+.bg-icon-trash { @include glyphBg($bg-icon-trash); }
+.bg-icon-eye-open { @include glyphBg($bg-icon-eye-open); }
+.bg-icon-camera { @include glyphBg($bg-icon-camera); }

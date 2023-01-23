@@ -76,6 +76,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
         await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
         await page.waitForLoadState('networkidle');
         expect(addingNotebookElementsRequests.length).toBeLessThanOrEqual(2);
 
@@ -148,14 +149,17 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
         await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
 
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').fill(`Second Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').press('Enter');
 
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').fill(`Third Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').press('Enter');
 
         // Add three tags
         await page.hover(`button:has-text("Add Tag") >> nth=2`);

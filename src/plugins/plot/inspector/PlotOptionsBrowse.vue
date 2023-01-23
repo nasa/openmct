@@ -36,20 +36,21 @@
         />
     </ul>
     <div
-        v-if="plotSeries.length"
+        v-if="plotSeries.length && !isStackedPlotObject"
         class="grid-properties"
     >
         <ul
-            v-if="!isStackedPlotObject"
+            v-for="(yAxis, index) in yAxesWithSeries"
+            :key="`yAxis-${index}`"
             class="l-inspector-part js-yaxis-properties"
         >
-            <h2 title="Y axis settings for this object">Y Axis</h2>
+            <h2 title="Y axis settings for this object">Y Axis {{ yAxesWithSeries.length > 1 ? yAxis.id : '' }}</h2>
             <li class="grid-row">
                 <div
                     class="grid-cell label"
                     title="Manually override how the Y axis is labeled."
                 >Label</div>
-                <div class="grid-cell value">{{ label ? label : "Not defined" }}</div>
+                <div class="grid-cell value">{{ yAxis.label ? yAxis.label : "Not defined" }}</div>
             </li>
             <li class="grid-row">
                 <div
@@ -57,7 +58,7 @@
                     title="Enable log mode."
                 >Log mode</div>
                 <div class="grid-cell value">
-                    {{ logMode ? "Enabled" : "Disabled" }}
+                    {{ yAxis.logMode ? "Enabled" : "Disabled" }}
                 </div>
             </li>
             <li class="grid-row">
@@ -66,32 +67,36 @@
                     title="Automatically scale the Y axis to keep all values in view."
                 >Auto scale</div>
                 <div class="grid-cell value">
-                    {{ autoscale ? "Enabled: " + autoscalePadding : "Disabled" }}
+                    {{ yAxis.autoscale ? "Enabled: " + yAxis.autoscalePadding : "Disabled" }}
                 </div>
             </li>
             <li
-                v-if="!autoscale && rangeMin"
+                v-if="!yAxis.autoscale && yAxis.rangeMin"
                 class="grid-row"
             >
                 <div
                     class="grid-cell label"
                     title="Minimum Y axis value."
                 >Minimum value</div>
-                <div class="grid-cell value">{{ rangeMin }}</div>
+                <div class="grid-cell value">{{ yAxis.rangeMin }}</div>
             </li>
             <li
-                v-if="!autoscale && rangeMax"
+                v-if="!yAxis.autoscale && yAxis.rangeMax"
                 class="grid-row"
             >
                 <div
                     class="grid-cell label"
                     title="Maximum Y axis value."
                 >Maximum value</div>
-                <div class="grid-cell value">{{ rangeMax }}</div>
+                <div class="grid-cell value">{{ yAxis.rangeMax }}</div>
             </li>
         </ul>
+    </div>
+    <div
+        v-if="plotSeries.length && (isStackedPlotObject || !isNestedWithinAStackedPlot)"
+        class="grid-properties"
+    >
         <ul
-            v-if="isStackedPlotObject || !isNestedWithinAStackedPlot"
             class="l-inspector-part js-legend-properties"
         >
             <h2 title="Legend settings for this object">Legend</h2>
@@ -157,12 +162,6 @@ export default {
     data() {
         return {
             config: {},
-            label: '',
-            autoscale: '',
-            logMode: false,
-            autoscalePadding: '',
-            rangeMin: '',
-            rangeMax: '',
             position: '',
             hideLegendWhenSmall: '',
             expandByDefault: '',
@@ -173,22 +172,28 @@ export default {
             showMaximumWhenExpanded: '',
             showUnitsWhenExpanded: '',
             loaded: false,
-            plotSeries: []
+            plotSeries: [],
+            yAxes: []
         };
     },
     computed: {
         isNestedWithinAStackedPlot() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject?.type === 'telemetry.plot.stacked');
         },
         isStackedPlotObject() {
             return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+        },
+        yAxesWithSeries() {
+            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         }
     },
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
+        this.initYAxesConfiguration();
+
         this.registerListeners();
-        this.initConfiguration();
+        this.initLegendConfiguration();
         this.loaded = true;
 
     },
@@ -196,18 +201,38 @@ export default {
         this.stopListening();
     },
     methods: {
-        initConfiguration() {
+        initYAxesConfiguration() {
             if (this.config) {
-                this.label = this.config.yAxis.get('label');
-                this.autoscale = this.config.yAxis.get('autoscale');
-                this.logMode = this.config.yAxis.get('logMode');
-                this.autoscalePadding = this.config.yAxis.get('autoscalePadding');
-                const range = this.config.yAxis.get('range');
-                if (range) {
-                    this.rangeMin = range.min;
-                    this.rangeMax = range.max;
-                }
+                let range = this.config.yAxis.get('range');
 
+                this.yAxes.push({
+                    id: this.config.yAxis.id,
+                    seriesCount: 0,
+                    label: this.config.yAxis.get('label'),
+                    autoscale: this.config.yAxis.get('autoscale'),
+                    logMode: this.config.yAxis.get('logMode'),
+                    autoscalePadding: this.config.yAxis.get('autoscalePadding'),
+                    rangeMin: range ? range.min : '',
+                    rangeMax: range ? range.max : ''
+                });
+                this.config.additionalYAxes.forEach(yAxis => {
+                    range = yAxis.get('range');
+
+                    this.yAxes.push({
+                        id: yAxis.id,
+                        seriesCount: 0,
+                        label: yAxis.get('label'),
+                        autoscale: yAxis.get('autoscale'),
+                        logMode: yAxis.get('logMode'),
+                        autoscalePadding: yAxis.get('autoscalePadding'),
+                        rangeMin: range ? range.min : '',
+                        rangeMax: range ? range.max : ''
+                    });
+                });
+            }
+        },
+        initLegendConfiguration() {
+            if (this.config) {
                 this.position = this.config.legend.get('position');
                 this.hideLegendWhenSmall = this.config.legend.get('hideLegendWhenSmall');
                 this.expandByDefault = this.config.legend.get('expandByDefault');
@@ -229,18 +254,44 @@ export default {
                 this.config.series.forEach(this.addSeries, this);
 
                 this.listenTo(this.config.series, 'add', this.addSeries, this);
-                this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+                this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+            }
+        },
+
+        setYAxisLabel(yAxisId) {
+            const found = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            if (found && found.seriesCount > 0) {
+                const mainYAxisId = this.config.yAxis.id;
+                if (mainYAxisId === yAxisId) {
+                    found.label = this.config.yAxis.get('label');
+                } else {
+                    const additionalYAxis = this.config.additionalYAxes.find(axis => axis.id === yAxisId);
+                    if (additionalYAxis) {
+                        found.label = additionalYAxis.get('label');
+                    }
+                }
             }
         },
 
         addSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.updateAxisUsageCount(yAxisId, 1);
             this.$set(this.plotSeries, index, series);
-            this.initConfiguration();
+            this.setYAxisLabel(yAxisId);
         },
 
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
+        removeSeries(plotSeries, index) {
+            const yAxisId = plotSeries.get('yAxisId');
+            this.updateAxisUsageCount(yAxisId, -1);
+            this.plotSeries.splice(index, 1);
+            this.setYAxisLabel(yAxisId);
+        },
+
+        updateAxisUsageCount(yAxisId, updateCount) {
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            if (foundYAxis) {
+                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
+            }
         }
     }
 };

@@ -118,7 +118,8 @@ export default class PlotSeries extends Model {
             markerShape: 'point',
             markerSize: 2.0,
             alarmMarkers: true,
-            limitLines: false
+            limitLines: false,
+            yAxisId: options.model.yAxisId || 1
         };
     }
 
@@ -378,6 +379,7 @@ export default class PlotSeries extends Model {
             });
         }
     }
+
     /**
      * Add a point to the data array while maintaining the sort order of
      * the array and preventing insertion of points with a duplicate x

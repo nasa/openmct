@@ -57,12 +57,14 @@ async function createNotebookAndEntry(page, iterations = 1) {
   */
 async function createNotebookEntryAndTags(page, iterations = 1) {
     const notebook = await createNotebookAndEntry(page, iterations);
+    await page.locator('text=Annotations').click();
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Hover and click "Add Tag" button
         // Hover is needed here to "slow down" the actions while running in headless mode
-        await page.hover(`button:has-text("Add Tag") >> nth = ${iteration}`);
-        await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
+        await page.locator(`[aria-label="Notebook Entry"] >> nth = ${iteration}`).click();
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
 
         // Click inside the tag search input
         await page.locator('[placeholder="Type to select tag"]').click();
@@ -71,8 +73,8 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 
         // Hover and click "Add Tag" button
         // Hover is needed here to "slow down" the actions while running in headless mode
-        await page.hover(`button:has-text("Add Tag") >> nth = ${iteration}`);
-        await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
         // Click inside the tag search input
         await page.locator('[placeholder="Type to select tag"]').click();
         // Select the "Science" tag
@@ -84,8 +86,10 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 
 test.describe('Tagging in Notebooks @addInit', () => {
     test('Can load tags', async ({ page }) => {
-
         await createNotebookAndEntry(page);
+
+        await page.locator('text=Annotations').click();
+
         await page.locator('button:has-text("Add Tag")').click();
 
         await page.locator('[placeholder="Type to select tag"]').click();
@@ -126,13 +130,12 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
     test('Can delete tags', async ({ page }) => {
         await createNotebookEntryAndTags(page);
-        await page.locator('[aria-label="Notebook Entries"]').click();
         // Delete Driving
         await page.hover('[aria-label="Tag"]:has-text("Driving")');
         await page.locator('[aria-label="Tag"]:has-text("Driving") ~ .c-completed-tag-deletion').click();
 
-        await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
-        await expect(page.locator('[aria-label="Notebook Entry"]')).not.toContainText("Driving");
+        await expect(page.locator('[aria-label="Tags Inspector"]')).toContainText("Science");
+        await expect(page.locator('[aria-label="Tags Inspector"]')).not.toContainText("Driving");
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");

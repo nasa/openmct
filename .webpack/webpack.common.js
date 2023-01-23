@@ -80,6 +80,7 @@ const config = {
                 projectRootDir,
                 "src/api/objects/object-utils.js"
             ),
+            "kdbush": path.join(projectRootDir, "node_modules/kdbush/kdbush.min.js"),
             utils: path.join(projectRootDir, "src/utils")
         }
     },
@@ -167,8 +168,8 @@ const config = {
     performance: {
         // We should eventually consider chunking to decrease
         // these values
-        maxEntrypointSize: 25000000,
-        maxAssetSize: 25000000
+        maxEntrypointSize: 27000000,
+        maxAssetSize: 27000000
     }
 };
 

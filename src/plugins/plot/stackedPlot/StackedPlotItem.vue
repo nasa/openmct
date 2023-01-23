@@ -138,6 +138,7 @@ export default {
 
             //If this object is not persistable, then package it with it's parent
             const object = this.getPlotObject();
+
             const getProps = this.getProps;
             const isMissing = openmct.objects.isMissing(object);
             let viewContainer = document.createElement('div');
@@ -169,7 +170,7 @@ export default {
                         onGridLinesChange,
                         setStatus,
                         isMissing,
-                        loading: true
+                        loading: false
                     };
                 },
                 methods: {

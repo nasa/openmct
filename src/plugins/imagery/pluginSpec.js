@@ -35,6 +35,10 @@ const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
 const REFRESH_CSS_MS = 500;
 
+function formatThumbnail(url) {
+    return url.replace('logo-openmct.svg', 'logo-nasa.svg');
+}
+
 function getImageInfo(doc) {
     let imageElement = doc.querySelectorAll(MAIN_IMAGE_CLASS)[0];
     let timestamp = imageElement.dataset.openmctImageTimestamp;
@@ -125,6 +129,16 @@ describe("The Imagery View Layouts", () => {
                     "source": "url"
                 },
                 {
+                    "name": "Image Thumbnail",
+                    "key": "thumbnail-url",
+                    "format": "thumbnail",
+                    "hints": {
+                        "thumbnail": 1,
+                        "priority": 3
+                    },
+                    "source": "url"
+                },
+                {
                     "name": "Name",
                     "key": "name",
                     "source": "name",
@@ -199,6 +213,11 @@ describe("The Imagery View Layouts", () => {
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
 
         originalRouterPath = openmct.router.path;
+
+        openmct.telemetry.addFormat({
+            key: 'thumbnail',
+            format: formatThumbnail
+        });
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -384,15 +403,32 @@ describe("The Imagery View Layouts", () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             await Vue.nextTick();
             const layerEls = parent.querySelectorAll('.js-layer-image');
-            console.log(layerEls);
             expect(layerEls.length).toEqual(1);
+        });
+
+        it("should use the image thumbnailUrl for thumbnails", async () => {
+            await Vue.nextTick();
+            const fullSizeImageUrl = imageTelemetry[5].url;
+            const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
+
+            // Ensure thumbnails are shown w/ thumbnail Urls
+            const thumbnails = parent.querySelectorAll(`img[src='${thumbnailUrl}']`);
+            expect(thumbnails.length).toBeGreaterThan(0);
+
+            // Click a thumbnail
+            parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
+            await Vue.nextTick();
+
+            // Ensure full size image is shown w/ full size url
+            const fullSizeImages = parent.querySelectorAll(`img[src='${fullSizeImageUrl}']`);
+            expect(fullSizeImages.length).toBeGreaterThan(0);
         });
 
         it("should show the clicked thumbnail as the main image", async () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             await Vue.nextTick();
-            const target = imageTelemetry[5].url;
-            parent.querySelectorAll(`img[src='${target}']`)[0].click();
+            const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
+            parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
             await Vue.nextTick();
             const imageInfo = getImageInfo(parent);
 
@@ -417,7 +453,7 @@ describe("The Imagery View Layouts", () => {
 
         it("should show that an image is not new", async () => {
             await Vue.nextTick();
-            const target = imageTelemetry[4].url;
+            const target = formatThumbnail(imageTelemetry[4].url);
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
             await Vue.nextTick();
