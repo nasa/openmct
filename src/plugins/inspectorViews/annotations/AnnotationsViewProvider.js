@@ -20,18 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PropertiesViewProvider from './properties/PropertiesViewProvider';
-import LocationViewProvider from './location/LocationViewProvider';
-import ElementsViewProvider from './elements/ElementsViewProvider';
-import StylesInspectorViewProvider from './styles/StylesInspectorViewProvider';
-import AnnotationsViewProvider from './annotations/AnnotationsViewProvider';
+import Annotations from './AnnotationsInspectorView.vue';
+import Vue from 'vue';
 
-export default function InspectorViewsPlugin() {
-    return function install(openmct) {
-        openmct.inspectorViews.addProvider(new PropertiesViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new LocationViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new ElementsViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new StylesInspectorViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new AnnotationsViewProvider(openmct));
+export default function ElementsViewProvider(openmct) {
+    return {
+        key: 'annotationsView',
+        name: 'Annotations',
+        canView: function (selection) {
+            return selection.length;
+        },
+        view: function (selection) {
+            let component;
+
+            const domainObject = selection?.[0]?.[0]?.context?.item;
+
+            return {
+                show: function (el) {
+                    component = new Vue({
+                        el,
+                        components: {
+                            Annotations
+                        },
+                        provide: {
+                            openmct,
+                            domainObject
+                        },
+                        template: `<Annotations />`
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        },
+        priority: function () {
+            return this.openmct.priority.DEFAULT;
+        }
     };
 }
