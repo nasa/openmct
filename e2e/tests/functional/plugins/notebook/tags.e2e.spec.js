@@ -197,11 +197,12 @@ test.describe('Tagging in Notebooks @addInit', () => {
             page.goto('./#/browse/mine?hideTree=false'),
             page.click('.c-disclosure-triangle')
         ]);
+
+        const treePane = page.locator('#tree-pane');
         // Click Clock
-        await page.getByRole('treeitem', {
+        await treePane.getByRole('treeitem', {
             name: clock.name
         }).click();
-
         // Click Notebook
         await page.getByRole('treeitem', {
             name: notebook.name
