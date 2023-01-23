@@ -20,18 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ElementsPool from './ElementsPool.vue';
+import PlotElementsPool from './PlotElementsPool.vue';
 import Vue from 'vue';
 
-export default function ElementsViewProvider(openmct) {
+export default function PlotElementsViewProvider(openmct) {
     return {
-        key: 'elementsView',
+        key: 'plotElementsView',
         name: 'Elements',
         canView: function (selection) {
-            const hasValidSelection = selection?.length;
-            const isOverlayPlot = selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
-
-            return hasValidSelection && !isOverlayPlot;
+            return selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
         },
         view: function (selection) {
             let component;
@@ -43,13 +40,13 @@ export default function ElementsViewProvider(openmct) {
                     component = new Vue({
                         el,
                         components: {
-                            ElementsPool
+                            PlotElementsPool
                         },
                         provide: {
                             openmct,
                             domainObject
                         },
-                        template: `<ElementsPool />`
+                        template: `<PlotElementsPool />`
                     });
                 },
                 showTab: function (isEditing) {
