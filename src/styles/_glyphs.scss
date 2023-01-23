@@ -59,6 +59,7 @@
 .icon-database-in-brackets {  @include glyphBefore($glyph-icon-database-in-brackets); }
 .icon-eye-open {  @include glyphBefore($glyph-icon-eye-open); }
 .icon-gear {  @include glyphBefore($glyph-icon-gear); }
+.icon-gear-after {  @include glyphAfter($glyph-icon-gear); }
 .icon-hourglass {  @include glyphBefore($glyph-icon-hourglass); }
 .icon-info {  @include glyphBefore($glyph-icon-info); }
 .icon-link {  @include glyphBefore($glyph-icon-link); }

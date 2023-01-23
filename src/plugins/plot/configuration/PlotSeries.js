@@ -83,10 +83,6 @@ export default class PlotSeries extends Model {
         // Model.apply(this, arguments);
         this.onXKeyChange(this.get('xKey'));
         this.onYKeyChange(this.get('yKey'));
-        this.xRangeMin = Number.MIN_SAFE_INTEGER;
-        this.yRangeMin = Number.MIN_SAFE_INTEGER;
-        this.xRangeMax = Number.MAX_SAFE_INTEGER;
-        this.yRangeMax = Number.MAX_SAFE_INTEGER;
 
         this.unPlottableValues = [undefined, Infinity, -Infinity];
     }
@@ -122,7 +118,8 @@ export default class PlotSeries extends Model {
             markerShape: 'point',
             markerSize: 2.0,
             alarmMarkers: true,
-            limitLines: false
+            limitLines: false,
+            yAxisId: options.model.yAxisId || 1
         };
     }
 

@@ -57,7 +57,12 @@
                 handle="before"
                 label="Elements"
             >
-                <elements-pool />
+                <plot-elements-pool
+                    v-if="isOverlayPlot"
+                />
+                <elements-pool
+                    v-else
+                />
             </pane>
         </multipane>
         <multipane
@@ -91,12 +96,13 @@
 </template>
 
 <script>
-import multipane from "../layout/multipane.vue";
-import pane from "../layout/pane.vue";
-import ElementsPool from "./ElementsPool.vue";
-import Properties from "./details/Properties.vue";
-import ObjectName from "./ObjectName.vue";
-import InspectorViews from "./InspectorViews.vue";
+import multipane from '../layout/multipane.vue';
+import pane from '../layout/pane.vue';
+import ElementsPool from './ElementsPool.vue';
+import PlotElementsPool from './PlotElementsPool.vue';
+import Properties from './details/Properties.vue';
+import ObjectName from './ObjectName.vue';
+import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
 import stylesManager from "@/ui/inspector/styles/StylesManager";
 import StylesInspectorView from "@/ui/inspector/styles/StylesInspectorView.vue";
@@ -111,6 +117,7 @@ export default {
         multipane,
         pane,
         ElementsPool,
+        PlotElementsPool,
         Properties,
         ObjectName,
         InspectorViews
@@ -130,6 +137,7 @@ export default {
             hasComposition: false,
             multiSelect: false,
             showStyles: false,
+            isOverlayPlot: false,
             tabbedViews: [
                 {
                     key: "__properties",
@@ -186,6 +194,7 @@ export default {
                 this.hasComposition = Boolean(
                     parentObject && this.openmct.composition.get(parentObject)
                 );
+                this.isOverlayPlot = selection[0][0].context.item.type === 'telemetry.plot.overlay';
             }
         },
         refreshTabs(selection) {
