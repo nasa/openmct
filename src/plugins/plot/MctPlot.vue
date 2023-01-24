@@ -820,21 +820,29 @@ export default {
 
         marqueeAnnotations(annotationsToSelect) {
             annotationsToSelect.forEach(annotationToSelect => {
-                const firstTargetKeyString = Object.keys(annotationToSelect.targets)[0];
-                const firstTarget = annotationToSelect.targets[firstTargetKeyString];
-                const rectangle = {
-                    start: {
-                        x: firstTarget.minX,
-                        y: firstTarget.minY
-                    },
-                    end: {
-                        x: firstTarget.maxX,
-                        y: firstTarget.maxY
-                    },
-                    color: [1, 1, 1, 0.10]
-                };
-                this.rectangles.push(rectangle);
+                Object.keys(annotationToSelect.targets).forEach(targetKeyString => {
+                    const target = annotationToSelect.targets[targetKeyString];
+                    const series = this.seriesModels.find(seriesModel => seriesModel.keyString === targetKeyString);
+                    if (!series) {
+                        return;
+                    }
 
+                    const yAxisId = series.get('yAxisId');
+                    const rectangle = {
+                        start: {
+                            x: target.minX,
+                            y: [target.minY],
+                            yAxisIds: [yAxisId]
+                        },
+                        end: {
+                            x: target.maxX,
+                            y: [target.maxY],
+                            yAxisIds: [yAxisId]
+                        },
+                        color: [1, 1, 1, 0.10]
+                    };
+                    this.rectangles.push(rectangle);
+                });
             });
         },
         gatherNearbyAnnotations() {
@@ -1197,20 +1205,16 @@ export default {
                     ];
             this.openmct.selection.select(selection, true);
         },
-        selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event) {
-            const boundingBox = {
-                minX,
-                minY,
-                maxX,
-                maxY
-            };
+        selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
             let targetDetails = {};
             let annotations = {};
             pointsInBox.forEach(pointInBox => {
                 if (pointInBox.length) {
                     const seriesID = pointInBox[0].series.keyString;
-                    targetDetails[seriesID] = boundingBox;
+                    const boundingBoxWithId = boundingBoxPerYAxis.find(box => box.id === pointInBox[0].series.get('yAxisId'));
+                    targetDetails[seriesID] = boundingBoxWithId?.boundingBox;
+
                     targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
                 }
             });
@@ -1225,10 +1229,23 @@ export default {
             rawAnnotations.forEach(rawAnnotation => {
                 if (rawAnnotation.targets) {
                     const targetValues = Object.values(rawAnnotation.targets);
+                    const targetKeys = Object.keys(rawAnnotation.targets);
                     if (targetValues && targetValues.length) {
-                        // just get the first one
-                        const boundingBox = Object.values(targetValues)?.[0];
-                        const pointsInBox = this.getPointsInBox(boundingBox, rawAnnotation);
+                        let boundingBoxPerYAxis = [];
+                        targetValues.forEach((boundingBox, index) => {
+                            const seriesId = targetKeys[index];
+                            const series = this.seriesModels.find(seriesModel => seriesModel.keyString === seriesId);
+                            if (!series) {
+                                return;
+                            }
+
+                            boundingBoxPerYAxis.push({
+                                id: series.get('yAxisId'),
+                                boundingBox
+                            });
+                        });
+
+                        const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis, rawAnnotation);
                         if (pointsInBox && pointsInBox.length) {
                             annotationsByPoints.push(pointsInBox.flat());
                         }
@@ -1238,10 +1255,17 @@ export default {
 
             return annotationsByPoints.flat();
         },
-        getPointsInBox(boundingBox, rawAnnotation) {
+        getPointsInBox(boundingBoxPerYAxis, rawAnnotation) {
             // load series models in KD-Trees
             const seriesKDTrees = [];
             this.seriesModels.forEach(seriesModel => {
+                const boundingBoxWithId = boundingBoxPerYAxis.find(box => box.id === seriesModel.get('yAxisId'));
+                const boundingBox = boundingBoxWithId?.boundingBox;
+                //Series was probably added after the last annotations were saved
+                if (!boundingBox) {
+                    return;
+                }
+
                 const seriesData = seriesModel.getSeriesData();
                 if (seriesData && seriesData.length) {
                     const kdTree = new KDBush(seriesData,
@@ -1283,25 +1307,31 @@ export default {
             return seriesKDTrees;
         },
         endAnnotationMarquee(event) {
-            const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
-            const startMinY = this.marquee.start.y.reduce((previousY, currentY) => {
-                return Math.min(previousY, currentY);
-            }, this.marquee.start.y[0]);
-            const endMinY = this.marquee.end.y.reduce((previousY, currentY) => {
-                return Math.min(previousY, currentY);
-            }, this.marquee.end.y[0]);
-            const minY = Math.min(startMinY, endMinY);
-            const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
-            const maxY = Math.max(startMinY, endMinY);
-            const boundingBox = {
-                minX,
-                minY,
-                maxX,
-                maxY
-            };
-            const pointsInBox = this.getPointsInBox(boundingBox);
+            const boundingBoxPerYAxis = [];
+            this.yAxisListWithRange.forEach((yAxis, yIndex) => {
+                const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
+                const minY = Math.min(this.marquee.start.y[yIndex], this.marquee.end.y[yIndex]);
+                const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
+                const maxY = Math.max(this.marquee.start.y[yIndex], this.marquee.end.y[yIndex]);
+                const boundingBox = {
+                    minX,
+                    minY,
+                    maxX,
+                    maxY
+                };
+                boundingBoxPerYAxis.push({
+                    id: yAxis.get('id'),
+                    boundingBox
+                });
+            });
+
+            const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis);
+            if (!pointsInBox) {
+                return;
+            }
+
             this.annotationSelections = pointsInBox.flat();
-            this.selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event);
+            this.selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event);
         },
         endZoomMarquee() {
             const startPixels = this.marquee.startPixels;
