@@ -42,7 +42,8 @@ test.describe('Scatter Plot', () => {
     test('Can add and remove telemetry sources', async ({ page }) => {
         const editButton = page.locator('button[title="Edit"]');
         const saveButton = page.locator('button[title="Save"]');
-        const inspectorElementsTab = page.locator('[aria-role="tab"] >> text=Elements');
+        const inspectorTabs = page.getByRole('tablist');
+        const inspectorElementsTab = inspectorTabs.getByTitle('Elements');
 
         // Create a sine wave generator within the scatter plot
         const swg1 = await createDomainObjectWithDefaults(page, {

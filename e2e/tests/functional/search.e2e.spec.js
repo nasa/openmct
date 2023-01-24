@@ -29,7 +29,8 @@ const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
-        const inspectorElementsTab = page.locator('[aria-role="tab"] >> text=Elements');
+        const inspectorTabs = page.getByRole('tablist');
+        const inspectorElementsTab = inspectorTabs.getByTitle('Elements');
         const { myItemsFolderName } = openmctConfig;
 
         const createdObjects = await createObjectsForSearch(page);

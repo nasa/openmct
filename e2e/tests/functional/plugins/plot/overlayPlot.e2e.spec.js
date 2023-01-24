@@ -29,8 +29,10 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Overlay Plot', () => {
-    test('Plot legend color is in sync with plot series color', async ({ page }) => {
+    test.beforeEach(async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
+    });
+    test('Plot legend color is in sync with plot series color', async ({ page }) => {
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
@@ -57,7 +59,9 @@ test.describe('Overlay Plot', () => {
         expect(color).toBe('rgb(255, 166, 61)');
     });
     test('The elements pool supports dragging series into multiple y-axis buckets', async ({ page }) => {
-        await page.goto('/', { waitUntil: 'networkidle' });
+        const inspectorTabs = page.getByRole('tablist');
+        const inspectorElementsTab = inspectorTabs.getByTitle('Elements');
+
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
@@ -91,11 +95,7 @@ test.describe('Overlay Plot', () => {
         await page.goto(overlayPlot.url);
         await page.click('button[title="Edit"]');
 
-        // Expand the elements pool vertically
-        await page.locator('.l-pane__handle').nth(2).hover({ trial: true });
-        await page.mouse.down();
-        await page.mouse.move(0, 100);
-        await page.mouse.up();
+        inspectorElementsTab.click();
 
         // Drag swg a, c, e into Y Axis 2
         await page.locator('#inspector-elements-tree >> text=swg a').dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
