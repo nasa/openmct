@@ -1231,7 +1231,6 @@ export default {
                     const targetValues = Object.values(rawAnnotation.targets);
                     const targetKeys = Object.keys(rawAnnotation.targets);
                     if (targetValues && targetValues.length) {
-                        // just get the first one
                         let boundingBoxPerYAxis = [];
                         targetValues.forEach((boundingBox, index) => {
                             const seriesId = targetKeys[index];
