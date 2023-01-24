@@ -744,6 +744,10 @@ export default {
             }
         },
         annotatedPointWithinRange(annotatedPoint, xRange, yRange) {
+            if (!yRange) {
+                return false;
+            }
+
             const xValue = annotatedPoint.series.getXVal(annotatedPoint.point);
             const yValue = annotatedPoint.series.getYVal(annotatedPoint.point);
 
