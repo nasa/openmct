@@ -820,21 +820,29 @@ export default {
 
         marqueeAnnotations(annotationsToSelect) {
             annotationsToSelect.forEach(annotationToSelect => {
-                const firstTargetKeyString = Object.keys(annotationToSelect.targets)[0];
-                const firstTarget = annotationToSelect.targets[firstTargetKeyString];
-                const rectangle = {
-                    start: {
-                        x: firstTarget.minX,
-                        y: firstTarget.minY
-                    },
-                    end: {
-                        x: firstTarget.maxX,
-                        y: firstTarget.maxY
-                    },
-                    color: [1, 1, 1, 0.10]
-                };
-                this.rectangles.push(rectangle);
+                Object.keys(annotationToSelect.targets).forEach(targetKeyString => {
+                    const target = annotationToSelect.targets[targetKeyString];
+                    const series = this.seriesModels.find(seriesModel => seriesModel.keyString === targetKeyString);
+                    if (!series) {
+                        return;
+                    }
 
+                    const yAxisId = series.get('yAxisId');
+                    const rectangle = {
+                        start: {
+                            x: target.minX,
+                            y: [target.minY],
+                            yAxisIds: [yAxisId]
+                        },
+                        end: {
+                            x: target.maxX,
+                            y: [target.maxY],
+                            yAxisIds: [yAxisId]
+                        },
+                        color: [1, 1, 1, 0.10]
+                    };
+                    this.rectangles.push(rectangle);
+                });
             });
         },
         gatherNearbyAnnotations() {
