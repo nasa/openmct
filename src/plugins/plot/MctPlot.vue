@@ -1197,20 +1197,16 @@ export default {
                     ];
             this.openmct.selection.select(selection, true);
         },
-        selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event) {
-            const boundingBox = {
-                minX,
-                minY,
-                maxX,
-                maxY
-            };
+        selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
             let targetDetails = {};
             let annotations = {};
             pointsInBox.forEach(pointInBox => {
                 if (pointInBox.length) {
                     const seriesID = pointInBox[0].series.keyString;
-                    targetDetails[seriesID] = boundingBox;
+                    const boundingBoxWithId = boundingBoxPerYAxis.find(box => box.id === pointInBox[0].series.get('yAxisId'));
+                    targetDetails[seriesID] = boundingBoxWithId?.boundingBox;
+
                     targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
                 }
             });
@@ -1256,7 +1252,13 @@ export default {
             // load series models in KD-Trees
             const seriesKDTrees = [];
             this.seriesModels.forEach(seriesModel => {
-                const boundingBox = boundingBoxPerYAxis.find(box => box.id === seriesModel.get('yAxisId')).boundingBox;
+                const boundingBoxWithId = boundingBoxPerYAxis.find(box => box.id === seriesModel.get('yAxisId'));
+                const boundingBox = boundingBoxWithId?.boundingBox;
+                //Series was probably added after the last annotations were saved
+                if (!boundingBox) {
+                    return;
+                }
+
                 const seriesData = seriesModel.getSeriesData();
                 if (seriesData && seriesData.length) {
                     const kdTree = new KDBush(seriesData,
@@ -1299,7 +1301,7 @@ export default {
         },
         endAnnotationMarquee(event) {
             const boundingBoxPerYAxis = [];
-            const yIndex = this.yAxisListWithRange.forEach(yAxis => {
+            this.yAxisListWithRange.forEach((yAxis, yIndex) => {
                 const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
                 const minY = Math.min(this.marquee.start.y[yIndex], this.marquee.end.y[yIndex]);
                 const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
@@ -1317,8 +1319,12 @@ export default {
             });
 
             const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis);
+            if (!pointsInBox) {
+                return;
+            }
+
             this.annotationSelections = pointsInBox.flat();
-            this.selectNewPlotAnnotations(pointsInBox, event);
+            this.selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event);
         },
         endZoomMarquee() {
             const startPixels = this.marquee.startPixels;
