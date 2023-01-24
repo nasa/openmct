@@ -202,13 +202,16 @@ export default {
             this.makeLimitLines(series);
         },
         onAddPoint(point, insertIndex, series) {
+            const mainYAxisId = this.config.yAxis.get('id');
+            const seriesYAxisId = series.get('yAxisId');
             const xRange = this.config.xAxis.get('displayRange');
+
             let yRange;
-            if (series.model.yAxisId === this.config.yAxis.get('id')) {
+            if (seriesYAxisId === mainYAxisId) {
                 yRange = this.config.yAxis.get('displayRange');
             } else {
                 yRange = this.config.additionalYAxes.find(
-                    yAxis => yAxis.get('id') === series.model.yAxisId
+                    yAxis => yAxis.get('id') === seriesYAxisId
                 ).get('displayRange');
             }
 
