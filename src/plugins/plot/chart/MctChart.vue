@@ -203,8 +203,15 @@ export default {
         },
         onAddPoint(point, insertIndex, series) {
             const xRange = this.config.xAxis.get('displayRange');
-            //TODO: get the yAxis of this series
-            const yRange = this.config.yAxis.get('displayRange');
+            let yRange;
+            if (series.model.yAxisId === this.config.yAxis.get('id')) {
+                yRange = this.config.yAxis.get('displayRange');
+            } else {
+                yRange = this.config.additionalYAxes.find(
+                    yAxis => yAxis.get('id') === series.model.yAxisId
+                ).get('displayRange');
+            }
+
             const xValue = series.getXVal(point);
             const yValue = series.getYVal(point);
 
