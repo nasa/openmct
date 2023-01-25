@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// This should be used to install the non-default Restricted Notebook plugin since it is not installed by default.
+// This should be used to install the re-instal default Notebook plugin with a simple url whitelist.
 // e.g.
-// await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
+// await page.addInitScript({ path: path.join(__dirname, 'addInitNotebookWithUrls.js') });
 const NOTEBOOK_NAME = 'Notebook';
 const URL_WHITELIST = ['google.com'];
 
