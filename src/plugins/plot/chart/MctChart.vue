@@ -204,9 +204,19 @@ export default {
             this.makeLimitLines(series);
         },
         onAddPoint(point, insertIndex, series) {
+            const mainYAxisId = this.config.yAxis.get('id');
+            const seriesYAxisId = series.get('yAxisId');
             const xRange = this.config.xAxis.get('displayRange');
-            //TODO: get the yAxis of this series
-            const yRange = this.config.yAxis.get('displayRange');
+
+            let yRange;
+            if (seriesYAxisId === mainYAxisId) {
+                yRange = this.config.yAxis.get('displayRange');
+            } else {
+                yRange = this.config.additionalYAxes.find(
+                    yAxis => yAxis.get('id') === seriesYAxisId
+                ).get('displayRange');
+            }
+
             const xValue = series.getXVal(point);
             const yValue = series.getYVal(point);
 
