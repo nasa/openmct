@@ -773,8 +773,8 @@ without any parameters, it will return the current application-wide time bounds.
 
 ``` javascript
 const ONE_HOUR = 60 * 60 * 1000;
-let now = Date.now();
-openmct.time.bounds({start: now - ONE_HOUR, now);
+const now = Date.now();
+openmct.time.bounds({ start: now - ONE_HOUR, end: now });
 ```
 
 To respond to bounds change events, listen for the [`'bounds'`](#time-events)
