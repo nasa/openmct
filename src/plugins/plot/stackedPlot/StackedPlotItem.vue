@@ -230,7 +230,7 @@ export default {
         },
         getPlotObject() {
             if (this.childObject.configuration && this.childObject.configuration.series) {
-                //If the object has a configuration, allow initialization of the config from it's persisted config
+                //If the object has a configuration (like an overlay plot), allow initialization of the config from it's persisted config
                 return this.childObject;
             } else {
                 //If object is missing, warn and return object

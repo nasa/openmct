@@ -23,16 +23,8 @@
 <div
     v-if="loaded"
     class="gl-plot"
-    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <plot-legend
-        v-if="!isNestedWithinAStackedPlot"
-        :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
-        :highlights="highlights"
-        :legend="legend"
-        @legendHoverChanged="legendHoverChanged"
-    />
+    <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <div
             v-if="seriesModels.length"
@@ -94,7 +86,6 @@
                         :highlights="highlights"
                         :annotated-points="annotatedPoints"
                         :annotation-selections="annotationSelections"
-                        :show-limit-line-labels="showLimitLineLabels"
                         :hidden-y-axis-ids="hiddenYAxisIds"
                         :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
                         @plotReinitializeCanvas="initCanvas"
@@ -217,7 +208,6 @@ import LinearScale from "./LinearScale";
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
 import configStore from './configuration/ConfigStore';
 
-import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
@@ -232,7 +222,6 @@ export default {
     components: {
         XAxis,
         YAxis,
-        PlotLegend,
         MctTicks,
         MctChart
     },
@@ -296,7 +285,6 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
             cursorGuide: this.initCursorGuide,
             gridLines: this.initGridLines,
@@ -334,22 +322,8 @@ export default {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         annotationViewingAndEditingAllowed() {
-            // only allow annotations viewing/editing if plot is paused or in fixed time mode
+        // only allow annotations viewing/editing if plot is paused or in fixed time mode
             return this.isFrozen || !this.isRealTime;
-        },
-        plotLegendPositionClass() {
-            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
-        },
-        plotLegendExpandedStateClass() {
-            if (this.isNestedWithinAStackedPlot) {
-                return '';
-            }
-
-            if (this.config.legend.get('expanded')) {
-                return 'plot-legend-expanded';
-            } else {
-                return 'plot-legend-collapsed';
-            }
         },
         plotLeftTickWidth() {
             let leftTickWidth = 0;
@@ -365,12 +339,6 @@ export default {
         }
     },
     watch: {
-        limitLineLabels: {
-            handler(limitLineLabels) {
-                this.legendHoverChanged(limitLineLabels);
-            },
-            deep: true
-        },
         initGridLines(newGridLines) {
             this.gridLines = newGridLines;
         },
@@ -406,8 +374,7 @@ export default {
             }));
         }
 
-        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.$emit('configLoaded', configId);
+        this.$emit('configLoaded', true);
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -1044,8 +1011,6 @@ export default {
 
         highlightValues(point) {
             this.highlightPoint = point;
-            // TODO: used in StackedPlotController
-            this.$emit('plotHighlightUpdate', point);
             if (this.lockHighlightPoint) {
                 return;
             }
@@ -1751,9 +1716,6 @@ export default {
                 this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
-        },
-        legendHoverChanged(data) {
-            this.showLimitLineLabels = data;
         },
         toggleCursorGuide() {
             this.cursorGuide = !this.cursorGuide;

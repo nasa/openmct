@@ -83,30 +83,27 @@
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
 import eventHelpers from "@/plugins/plot/lib/eventHelpers";
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import configStore from "../configuration/ConfigStore";
 
 export default {
     mixins: [stalenessMixin],
     inject: ['openmct', 'domainObject'],
     props: {
-        seriesObject: {
-            type: Object,
-            required: true,
-            default() {
-                return {};
-            }
+        seriesObjectKey: {
+            type: String,
+            required: true
         },
         highlights: {
             type: Array,
             default() {
                 return [];
             }
-        },
-        legend: {
-            type: Object,
-            required: true
         }
     },
     data() {
+        this.seriesObject = undefined;
+        this.seriesModels = [];
+
         return {
             isMissing: false,
             colorAsHexString: '',
@@ -116,24 +113,25 @@ export default {
             formattedXValue: '',
             formattedMinY: '',
             formattedMaxY: '',
-            mctLimitStateClass: ''
+            mctLimitStateClass: '',
+            loaded: false
         };
     },
     computed: {
         showUnitsWhenExpanded() {
-            return this.legend.get('showUnitsWhenExpanded') === true;
+            return this.loaded && this.legend.get('showUnitsWhenExpanded') === true;
         },
         showMinimumWhenExpanded() {
-            return this.legend.get('showMinimumWhenExpanded') === true;
+            return this.loaded && this.legend.get('showMinimumWhenExpanded') === true;
         },
         showMaximumWhenExpanded() {
-            return this.legend.get('showMaximumWhenExpanded') === true;
+            return this.loaded && this.legend.get('showMaximumWhenExpanded') === true;
         },
         showValueWhenExpanded() {
-            return this.legend.get('showValueWhenExpanded') === true;
+            return this.loaded && this.legend.get('showValueWhenExpanded') === true;
         },
         showTimestampWhenExpanded() {
-            return this.legend.get('showTimestampWhenExpanded') === true;
+            return this.loaded && this.legend.get('showTimestampWhenExpanded') === true;
         }
     },
     watch: {
@@ -146,12 +144,15 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
-        this.listenTo(this.seriesObject, 'change:color', (newColor) => {
-            this.updateColor(newColor);
-        }, this);
-        this.listenTo(this.seriesObject, 'change:name', () => {
-            this.updateName();
-        }, this);
+        this.config = this.getConfig();
+        this.legend = this.config.legend;
+        this.loaded = true;
+
+        this.listenTo(this.config.series, 'add', this.addSeries, this);
+        this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+
+        this.config.series.models.forEach(this.addSeries, this);
+
         this.subscribeToStaleness(this.seriesObject.domainObject);
         this.initialize();
     },
@@ -159,8 +160,51 @@ export default {
         this.stopListening();
     },
     methods: {
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return configStore.get(configId);
+        },
+        addSeries(series) {
+            if (series.domainObject.configuration && series.domainObject.configuration.series) {
+                //get config for sub-plot
+                const config = configStore.get(series.keyString);
+                //listen to sub plots
+                this.listenTo(config.series, 'add', this.addSeries, this);
+                this.listenTo(config.series, 'remove', this.removeSeries, this);
+                config.series.models.forEach(this.addSeries, this);
+            } else {
+                this.$set(this.seriesModels, this.seriesModels.length, series);
+                this.setSeriesObject();
+            }
+        },
+
+        removeSeries(plotSeries) {
+            if (plotSeries.domainObject.configuration && plotSeries.domainObject.configuration.series) {
+                this.stopListening(plotSeries);
+            }
+
+            const seriesIndex = this.seriesModels.findIndex(series => series.keyString === plotSeries.keyString);
+            this.seriesModels.splice(seriesIndex, 1);
+            this.setSeriesObject();
+        },
+        setSeriesObject() {
+            if (this.seriesObject) {
+                this.stopListening(this.seriesObject);
+            }
+
+            this.seriesObject = this.seriesModels.find(series => series.keyString === this.seriesObjectKey);
+            if (this.seriesObject) {
+                this.listenTo(this.seriesObject, 'change:color', (newColor) => {
+                    this.updateColor(newColor);
+                }, this);
+                this.listenTo(this.seriesObject, 'change:name', () => {
+                    this.updateName();
+                }, this);
+            }
+        },
         initialize(highlightedObject) {
-            const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
+            const seriesObject = highlightedObject?.series || this.seriesObject;
 
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();

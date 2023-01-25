@@ -27,16 +27,17 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend
+        v-if="compositionObjectsConfigLoaded"
         :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
         :highlights="highlights"
-        :legend="legend"
         @legendHoverChanged="legendHoverChanged"
+        @expanded="updateExpanded"
+        @position="updatePosition"
     />
     <div class="l-view-section">
         <stacked-plot-item
             v-for="object in compositionObjects"
-            :key="object.id"
+            :key="`${object.identifier.namespace}-${object.identifier.key}`"
             class="c-plot--stacked-container"
             :child-object="object"
             :options="options"
@@ -51,7 +52,7 @@
             @gridLines="onGridLinesChange"
             @lockHighlightPoint="lockHighlightPointUpdated"
             @highlights="highlightsUpdated"
-            @configLoaded="registerSeriesListeners"
+            @configLoaded="configLoadedForObject(object.identifier)"
         />
     </div>
 </div>
@@ -87,16 +88,16 @@ export default {
             hideExportButtons: false,
             cursorGuide: false,
             gridLines: true,
-            loading: false,
+            configLoaded: {},
             compositionObjects: [],
             tickWidthMap: {},
             legend: {},
             loaded: false,
             lockHighlightPoint: false,
             highlights: [],
-            seriesModels: [],
             showLimitLineLabels: undefined,
-            colorPalette: new ColorPalette()
+            colorPalette: new ColorPalette(),
+            compositionObjectsConfigLoaded: false
         };
     },
     computed: {
@@ -154,6 +155,16 @@ export default {
         },
         loadingUpdated(loaded) {
             this.loading = loaded;
+        },
+        configLoadedForObject(childObjIdentifier) {
+            const childObjId = this.openmct.objects.makeKeyString(childObjIdentifier);
+            this.configLoaded[childObjId] = true;
+
+            this.compositionObjectsConfigLoaded = this.compositionObjects.length && this.compositionObjects.every(childObject => {
+                const id = this.openmct.objects.makeKeyString(childObject.identifier);
+
+                return this.configLoaded[id] === true;
+            });
         },
         destroy() {
             this.stopListening();
@@ -245,38 +256,17 @@ export default {
         lockHighlightPointUpdated(data) {
             this.lockHighlightPoint = data;
         },
+        updateExpanded(expanded) {
+            this.expanded = expanded;
+        },
+        updatePosition(position) {
+            this.position = position;
+        },
+        updateReady(ready) {
+            this.configReady = ready;
+        },
         highlightsUpdated(data) {
             this.highlights = data;
-        },
-        registerSeriesListeners(configId) {
-            const config = this.getConfig(configId);
-            this.seriesConfig[configId] = config;
-            const childObject = config.get('domainObject');
-
-            //TODO differentiate between objects with composition and those without
-            if (childObject.type === 'telemetry.plot.overlay') {
-                this.listenTo(config.series, 'add', this.addSeries, this);
-                this.listenTo(config.series, 'remove', this.removeSeries, this);
-            }
-
-            config.series.models.forEach(this.addSeries, this);
-        },
-        addSeries(series) {
-            const childObject = series.domainObject;
-            //don't add the series if it can have child series this will happen in registerSeriesListeners
-            if (childObject.type !== 'telemetry.plot.overlay') {
-                const index = this.seriesModels.length;
-                this.$set(this.seriesModels, index, series);
-            }
-
-        },
-        removeSeries(plotSeries) {
-            const index = this.seriesModels.findIndex(seriesModel => seriesModel.keyString === plotSeries.keyString);
-            if (index > -1) {
-                this.$delete(this.seriesModels, index);
-            }
-
-            this.stopListening(plotSeries);
         },
         onCursorGuideChange(cursorGuide) {
             this.cursorGuide = cursorGuide === true;

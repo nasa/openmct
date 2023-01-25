@@ -108,7 +108,9 @@ export default class SeriesCollection extends Collection {
     }
     removeTelemetryObject(identifier) {
         const plotObject = this.plot.get('domainObject');
-        if (plotObject.type === 'telemetry.plot.overlay') {
+        // if (plotObject.type === 'telemetry.plot.overlay') {
+
+        if (plotObject.type === 'telemetry.plot.overlay' || plotObject.type === 'telemetry.plot.stacked') {
 
             const persistedIndex = plotObject.configuration.series.findIndex(s => {
                 return _.isEqual(identifier, s.identifier);
