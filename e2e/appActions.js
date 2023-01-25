@@ -144,7 +144,9 @@ async function createNotification(page, createNotificationOptions) {
  * @param {string} name
  */
 async function expandTreePaneItemByName(page, name) {
-    const treePane = page.locator('#tree-pane');
+    const treePane = page.getByRole('tree', {
+        name: 'Main Tree'
+    });
     const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
@@ -221,17 +223,18 @@ async function openObjectTreeContextMenu(page, url) {
 /**
  * Expands the entire object tree (every expandable tree item).
  * @param {import('@playwright/test').Page} page
+ * @param {"Main Tree" | "Create Modal Tree"} [treeName="Main Tree"]
  */
-async function expandEntireTree(page) {
-    const treePane = page.locator('#tree-pane');
-    const collapsedTreeItems = treePane.locator('role=treeitem[expanded=false]');
-    let count = await collapsedTreeItems.count();
-    while (count > 0) {
-        await collapsedTreeItems.locator('.c-disclosure-triangle.is-enabled').first().click();
-        // Wait for the loading indicator to appear then disappear
-        await page.locator('.is-loading').isVisible();
-        await page.locator('.is-loading').isHidden();
-        count = await collapsedTreeItems.count();
+async function expandEntireTree(page, treeName = "Main Tree") {
+    const treeLocator = page.getByRole('tree', {
+        name: treeName
+    });
+    const collapsedTreeItems = treeLocator.getByRole('treeitem', {
+        expanded: false
+    }).locator('span.c-disclosure-triangle.is-enabled');
+
+    while (await collapsedTreeItems.count() > 0) {
+        await collapsedTreeItems.nth(0).click();
     }
 }
 

@@ -48,7 +48,9 @@ test.describe('Display Layout', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
             name: new RegExp(sineWaveObject.name)
         });
@@ -80,7 +82,9 @@ test.describe('Display Layout', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
             name: new RegExp(sineWaveObject.name)
         });
@@ -116,7 +120,9 @@ test.describe('Display Layout', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
             name: new RegExp(sineWaveObject.name)
         });
@@ -155,7 +161,9 @@ test.describe('Display Layout', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
             name: new RegExp(sineWaveObject.name)
         });
