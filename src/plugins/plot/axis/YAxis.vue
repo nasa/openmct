@@ -24,6 +24,7 @@
     v-if="loaded"
     class="gl-plot-axis-area gl-plot-y has-local-controls js-plot-y-axis"
     :style="yAxisStyle"
+    :class="yAxisClass"
 >
     <div
         class="gl-plot-label gl-plot-y-label"
@@ -40,6 +41,7 @@
         >{{ canShowYAxisLabel ? yAxisLabel : `Y Axis ${id}` }}</span>
         <span
             v-if="showVisibilityToggle"
+            class="gl-plot-y__axis-visibility"
             :class="{ 'icon-eye-open': visible, 'icon-eye-disabled': !visible}"
             @click="toggleSeriesVisibility"
         ></span>
@@ -146,13 +148,17 @@ export default {
                 const thisIsTheSecondLeftAxis = (this.id - 1) > 0;
                 if (this.multipleLeftAxes && thisIsTheSecondLeftAxis) {
                     style.left = 0;
-                    style['border-right'] = `1px solid`;
                 } else {
                     style.left = `${ this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;
                 }
             }
 
             return style;
+        },
+        yAxisClass() {
+            const thisIsTheSecondLeftAxis = (this.id - 1) > 0;
+
+            return (thisIsTheSecondLeftAxis) ? '--plot-axis-border-right' : '';
         }
     },
     mounted() {

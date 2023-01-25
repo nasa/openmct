@@ -204,6 +204,10 @@ mct-plot {
                     display: block;
                 }
             }
+
+            &.--plot-axis-border-right {
+                border-right: 1px solid $colorPlotAreaBorder;
+            }
         }
 
         &.gl-plot-x {
@@ -263,8 +267,12 @@ mct-plot {
                 margin-top: $interiorMargin; // Uses margin-top due to writing-mode
             }
 
-            .icon-eye-open:before, .icon-eye-disabled:before {
-                padding-top: 5px;
+            .gl-plot-y__axis-visibility {
+                margin-top: $interiorMargin;
+
+                .is-editing & {
+                    visibility: hidden;
+                }
             }
 
             .plot-series-color-swatch {
