@@ -53,7 +53,7 @@
                 :key="`${seriesObject.keyString}-${seriesIndex}-collapsed`"
                 :highlights="highlights"
                 :value-to-show-when-collapsed="valueToShowWhenCollapsed"
-                :series-object-key="seriesObject.keyString"
+                :series-object="seriesObject"
                 @legendHoverChanged="legendHoverChanged"
             />
         </div>
@@ -97,7 +97,7 @@
                     <plot-legend-item-expanded
                         v-for="(seriesObject, seriesIndex) in seriesModels"
                         :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
-                        :series-object-key="seriesObject.keyString"
+                        :series-object="seriesObject"
                         :highlights="highlights"
                         @legendHoverChanged="legendHoverChanged"
                     />
@@ -169,40 +169,60 @@ export default {
         this.legend = this.config.legend;
         this.loaded = true;
         this.isLegendExpanded = this.legend.get('expanded') === true;
-
-        this.listenTo(this.config.series, 'add', this.addSeries, this);
-        this.listenTo(this.config.series, 'remove', this.removeSeries, this);
         this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
         this.updatePosition();
 
-        this.config.series.models.forEach(this.addSeries, this);
+        this.initialize();
     },
     beforeDestroy() {
+        if (this.objectComposition) {
+            this.objectComposition.off('add', this.addTelemetryObject);
+            this.objectComposition.off('remove', this.removeTelemetryObject);
+        // this.objectComposition.off('reorder', this.reorderTelemetryObject);
+        }
+
         this.stopListening();
     },
     methods: {
+        initialize() {
+            if (this.domainObject.type === 'telemetry.plot.stacked') {
+                this.objectComposition = this.openmct.composition.get(this.domainObject);
+                this.objectComposition.on('add', this.addTelemetryObject);
+                this.objectComposition.on('remove', this.removeTelemetryObject);
+                // this.composition.on('reorder', this.reorderTelemetryObject);
+                this.objectComposition.load();
+            } else {
+                this.registerListeners(this.config);
+            }
+        },
         getConfig() {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             return configStore.get(configId);
         },
-        addSeries(series) {
-            if (series.domainObject.configuration && series.domainObject.configuration.series) {
-                //get config for sub-plot
-                const config = configStore.get(series.keyString);
-                //listen to sub plots
-                this.listenTo(config.series, 'add', this.addSeries, this);
-                this.listenTo(config.series, 'remove', this.removeSeries, this);
-                config.series.models.forEach(this.addSeries, this);
-            } else {
-                this.$set(this.seriesModels, this.seriesModels.length, series);
+        addTelemetryObject(object) {
+            //get the config for each child
+            const configId = this.openmct.objects.makeKeyString(object.identifier);
+            const config = configStore.get(configId);
+            if (config) {
+                this.registerListeners(config);
             }
+        },
+        removeTelemetryObject(identifier) {
+        // do nothing?
+        },
+        registerListeners(config) {
+        //listen to any changes to the telemetry endpoints that are associated with the child
+            this.listenTo(config.series, 'add', this.addSeries, this);
+            this.listenTo(config.series, 'remove', this.removeSeries, this);
+            config.series.forEach(this.addSeries, this);
+        },
+        addSeries(series) {
+            this.$set(this.seriesModels, this.seriesModels.length, series);
         },
 
         removeSeries(plotSeries) {
-            if (plotSeries.domainObject.configuration && plotSeries.domainObject.configuration.series) {
-                this.stopListening(plotSeries);
-            }
+            this.stopListening(plotSeries);
 
             const seriesIndex = this.seriesModels.findIndex(series => series.keyString === plotSeries.keyString);
             this.seriesModels.splice(seriesIndex, 1);

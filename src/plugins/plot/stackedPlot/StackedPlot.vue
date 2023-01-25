@@ -67,14 +67,13 @@ import ColorPalette from "@/ui/color/ColorPalette";
 import PlotLegend from "../legend/PlotLegend.vue";
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
-import eventHelpers from "@/plugins/plot/lib/eventHelpers";
 
 export default {
     components: {
         StackedPlotItem,
         PlotLegend
     },
-    inject: ['openmct', 'domainObject', 'composition', 'path'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         options: {
             type: Object,
@@ -91,21 +90,22 @@ export default {
             configLoaded: {},
             compositionObjects: [],
             tickWidthMap: {},
-            legend: {},
             loaded: false,
             lockHighlightPoint: false,
             highlights: [],
             showLimitLineLabels: undefined,
             colorPalette: new ColorPalette(),
-            compositionObjectsConfigLoaded: false
+            compositionObjectsConfigLoaded: false,
+            position: 'top',
+            expanded: false
         };
     },
     computed: {
         plotLegendPositionClass() {
-            return `plot-legend-${this.config.legend.get('position')}`;
+            return `plot-legend-${this.position}`;
         },
         plotLegendExpandedStateClass() {
-            if (this.config.legend.get('expanded')) {
+            if (this.expanded) {
                 return 'plot-legend-expanded';
             } else {
                 return 'plot-legend-collapsed';
@@ -119,17 +119,14 @@ export default {
         this.destroy();
     },
     mounted() {
-        eventHelpers.extend(this);
-        this.seriesConfig = {};
-
+        //We only need to initialize the stacked plot config for legend properties
         const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.config = this.getConfig(configId);
-
-        this.legend = this.config.legend;
 
         this.loaded = true;
         this.imageExporter = new ImageExporter(this.openmct);
 
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
         this.composition.on('reorder', this.compositionReorder);
@@ -143,7 +140,6 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
-                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -159,7 +155,9 @@ export default {
         configLoadedForObject(childObjIdentifier) {
             const childObjId = this.openmct.objects.makeKeyString(childObjIdentifier);
             this.configLoaded[childObjId] = true;
-
+            this.setConfigLoadedForComposition();
+        },
+        setConfigLoadedForComposition() {
             this.compositionObjectsConfigLoaded = this.compositionObjects.length && this.compositionObjects.every(childObject => {
                 const id = this.openmct.objects.makeKeyString(childObject.identifier);
 
@@ -167,9 +165,6 @@ export default {
             });
         },
         destroy() {
-            this.stopListening();
-            configStore.deleteStore(this.config.id);
-
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.composition.off('reorder', this.compositionReorder);
@@ -181,6 +176,7 @@ export default {
             this.$set(this.tickWidthMap, id, 0);
 
             this.compositionObjects.push(child);
+            this.setConfigLoadedForComposition();
         },
 
         removeChild(childIdentifier) {
@@ -194,10 +190,6 @@ export default {
             if (configIndex > -1) {
                 this.domainObject.configuration.series.splice(configIndex, 1);
             }
-
-            this.removeSeries({
-                keyString: id
-            });
 
             const childObj = this.compositionObjects.filter((c) => {
                 const identifier = this.openmct.objects.makeKeyString(c.identifier);

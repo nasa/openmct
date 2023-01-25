@@ -53,7 +53,6 @@
     >
         <h2 title="Legend options">Legend</h2>
         <legend-form
-            v-if="plotSeries.length"
             class="grid-properties"
             :legend="config.legend"
         />
@@ -97,20 +96,23 @@ export default {
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
-        this.yAxes = [{
-            id: this.config.yAxis.id,
-            seriesCount: 0
-        }];
-        if (this.config.additionalYAxes) {
-            this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
-                return {
-                    id: yAxis.id,
-                    seriesCount: 0
-                };
-            }));
+        if (!this.isStackedPlotObject) {
+            this.yAxes = [{
+                id: this.config.yAxis.id,
+                seriesCount: 0
+            }];
+            if (this.config.additionalYAxes) {
+                this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
+                    return {
+                        id: yAxis.id,
+                        seriesCount: 0
+                    };
+                }));
+            }
+
+            this.registerListeners();
         }
 
-        this.registerListeners();
         this.loaded = true;
     },
     beforeDestroy() {

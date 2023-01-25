@@ -1133,13 +1133,17 @@ export default {
             }
         },
         selectNearbyAnnotations(event) {
-            event.stopPropagation();
-
             if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
                 return;
             }
 
             const nearbyAnnotations = this.gatherNearbyAnnotations();
+            if (!nearbyAnnotations.length) {
+                return;
+            }
+
+            event.stopPropagation();
+
             const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
             this.selectPlotAnnotations({
                 targetDetails,
@@ -1150,12 +1154,7 @@ export default {
         selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
             const selection =
                     [
-                        {
-                            element: this.openmct.layout.$refs.browseObject.$el,
-                            context: {
-                                item: this.domainObject
-                            }
-                        },
+                        ...this.path,
                         {
                             element: this.$el,
                             context: {

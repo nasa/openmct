@@ -98,7 +98,8 @@ export default {
             lockHighlightPoint: false,
             highlights: [],
             expanded: false,
-            position: undefined
+            position: undefined,
+            configReady: false
         };
     },
     computed: {
