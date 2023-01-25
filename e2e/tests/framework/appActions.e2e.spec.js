@@ -128,7 +128,7 @@ test.describe('AppActions', () => {
             type: 'Folder',
             parent: folder1.uuid
         });
-        const folder3 = await createDomainObjectWithDefaults(page, {
+        await createDomainObjectWithDefaults(page, {
             type: 'Folder',
             parent: folder1.uuid
         });
