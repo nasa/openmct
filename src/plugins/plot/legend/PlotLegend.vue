@@ -164,6 +164,7 @@ export default {
         }
     },
     mounted() {
+        this.seriesModels = [];
         eventHelpers.extend(this);
         this.config = this.getConfig();
         this.legend = this.config.legend;
