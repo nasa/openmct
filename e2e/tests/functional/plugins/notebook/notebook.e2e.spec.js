@@ -207,7 +207,7 @@ test.describe('Notebook search tests', () => {
     test.fixme('Can search for entry text', async ({ page }) => {});
 });
 
-test.describe.only('Notebook entry tests', () => {
+test.describe('Notebook entry tests', () => {
     // Create Notebook with URL Whitelist
     let notebookObject;
     test.beforeEach(async ({ page }) => {
