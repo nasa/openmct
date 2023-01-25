@@ -32,11 +32,7 @@ export default class StalenessUtils {
     }
 
     shouldUpdateStaleness(stalenessResponse, id) {
-        if (stalenessResponse?.timestamp === undefined) {
-            console.log('break here');
-        }
         const stalenessResponseTime = this.parseTime(stalenessResponse);
-        console.log('for', this.domainObject.name, stalenessResponse, 'should update? (incoming time, last time)', stalenessResponseTime, this.lastStalenessResponseTime, stalenessResponseTime > this.lastStalenessResponseTime);
         if (stalenessResponseTime >= this.lastStalenessResponseTime) {
             this.lastStalenessResponseTime = stalenessResponseTime;
 
