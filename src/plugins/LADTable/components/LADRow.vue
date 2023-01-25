@@ -29,7 +29,7 @@
     <td class="js-second-data">{{ formattedTimestamp }}</td>
     <td
         class="js-third-data"
-        :class="valueClass"
+        :class="valueClasses"
     >{{ value }}</td>
     <td
         v-if="hasUnits"
@@ -63,6 +63,12 @@ export default {
         hasUnits: {
             type: Boolean,
             requred: true
+        },
+        isStale: {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     data() {
@@ -81,14 +87,22 @@ export default {
 
             return this.formats[this.valueKey].format(this.datum);
         },
-        valueClass() {
-            if (!this.datum) {
-                return '';
+        valueClasses() {
+            let classes = [];
+
+            if (this.isStale) {
+                classes.push('is-stale');
             }
 
-            const limit = this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+            if (this.datum) {
+                const limit = this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
 
-            return limit ? limit.cssClass : '';
+                if (limit) {
+                    classes.push(limit.cssClass);
+                }
+            }
+
+            return classes;
 
         },
         formattedTimestamp() {

@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-lad-table-wrapper u-style-receiver js-style-receiver">
+<div
+    class="c-lad-table-wrapper u-style-receiver js-style-receiver"
+    :class="staleClass"
+>
     <table class="c-table c-lad-table">
         <thead>
             <tr>
@@ -38,6 +41,7 @@
                 :domain-object="ladRow.domainObject"
                 :path-to-table="objectPath"
                 :has-units="hasUnits"
+                :is-stale="staleObjects.includes(ladRow.key)"
                 @rowContextClick="updateViewContext"
             />
         </tbody>
@@ -46,7 +50,9 @@
 </template>
 
 <script>
+
 import LadRow from './LADRow.vue';
+import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
@@ -66,7 +72,8 @@ export default {
     data() {
         return {
             items: [],
-            viewContext: {}
+            viewContext: {},
+            staleObjects: []
         };
     },
     computed: {
@@ -80,6 +87,13 @@ export default {
             });
 
             return itemsWithUnits.length !== 0;
+        },
+        staleClass() {
+            if (this.staleObjects.length !== 0) {
+                return 'is-stale';
+            }
+
+            return '';
         }
     },
     mounted() {
@@ -88,11 +102,17 @@ export default {
         this.composition.on('remove', this.removeItem);
         this.composition.on('reorder', this.reorder);
         this.composition.load();
+        this.stalenessSubscription = {};
     },
     destroyed() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
+
+        Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+            stalenessSubscription.unsubscribe();
+            stalenessSubscription.stalenessUtils.destroy();
+        });
     },
     methods: {
         addItem(domainObject) {
@@ -101,22 +121,54 @@ export default {
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
             this.items.push(item);
+
+            this.stalenessSubscription[item.key] = {};
+            this.stalenessSubscription[item.key].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
+            this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
+                if (stalenessResponse !== undefined) {
+                    this.handleStaleness(item.key, stalenessResponse);
+                }
+            });
+            const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                this.handleStaleness(item.key, stalenessResponse);
+            });
+
+            this.stalenessSubscription[item.key].unsubscribe = stalenessSubscription;
         },
         removeItem(identifier) {
-            let index = this.items.findIndex(item => this.openmct.objects.makeKeyString(identifier) === item.key);
+            const SKIP_CHECK = true;
+            const keystring = this.openmct.objects.makeKeyString(identifier);
+            const index = this.items.findIndex(item => keystring === item.key);
 
             this.items.splice(index, 1);
+
+            this.stalenessSubscription[keystring].unsubscribe();
+            this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
         },
         reorder(reorderPlan) {
-            let oldItems = this.items.slice();
+            const oldItems = this.items.slice();
             reorderPlan.forEach((reorderEvent) => {
                 this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
             });
         },
         metadataHasUnits(valueMetadatas) {
-            let metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
+            const metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
 
             return metadataWithUnits.length > 0;
+        },
+        handleStaleness(id, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                const index = this.staleObjects.indexOf(id);
+                if (stalenessResponse.isStale) {
+                    if (index === -1) {
+                        this.staleObjects.push(id);
+                    }
+                } else {
+                    if (index !== -1) {
+                        this.staleObjects.splice(index, 1);
+                    }
+                }
+            }
         },
         updateViewContext(rowContext) {
             this.viewContext.row = rowContext;

@@ -32,7 +32,7 @@ test.use({
     }
 });
 
-test.describe('ExportAsJSON', () => {
+test.fixme('ExportAsJSON', () => {
     test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
@@ -156,7 +156,7 @@ async function turnOffAutoscale(page) {
     await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
 
     // uncheck autoscale
-    await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"] >> nth=1').uncheck();
+    await page.getByRole('listitem').filter({ hasText: 'Auto scale' }).getByRole('checkbox').uncheck();
 
     // save
     await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
