@@ -99,8 +99,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
             objectListeners = this.listeningTo[keyString] = {
                 add: [],
                 remove: [],
-                reorder: [],
-                composition: structuredClone(domainObject.composition)
+                reorder: []
             };
         }
 

@@ -248,8 +248,6 @@ export default class CompositionProvider {
             };
         }
 
-        listeners.composition = structuredClone(newComposition);
-
         added.forEach(function (addedChild) {
             listeners.add.forEach(notify(addedChild));
         });
