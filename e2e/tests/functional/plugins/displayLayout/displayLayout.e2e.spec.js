@@ -32,8 +32,7 @@ test.describe('Display Layout', () => {
 
         // Create Sine Wave Generator
         sineWaveObject = await createDomainObjectWithDefaults(page, {
-            type: 'Sine Wave Generator',
-            name: "Test Sine Wave Generator"
+            type: 'Sine Wave Generator'
         });
     });
     test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in real time', async ({ page }) => {
@@ -137,7 +136,7 @@ test.describe('Display Layout', () => {
         await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
 
         // Bring up context menu and remove
-        await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').first().click({ button: 'right' });
+        await sineWaveGeneratorTreeItem.nth(1).click({ button: 'right' });
         await page.locator('li[role="menuitem"]:has-text("Remove")').click();
         await page.locator('button:has-text("OK")').click();
 
@@ -152,8 +151,7 @@ test.describe('Display Layout', () => {
         });
         // Create a Display Layout
         const displayLayout = await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
-            name: "Test Display Layout"
+            type: 'Display Layout'
         });
         // Edit Display Layout
         await page.locator('[title="Edit"]').click();
@@ -181,7 +179,7 @@ test.describe('Display Layout', () => {
         await page.goto(sineWaveObject.url);
 
         // Bring up context menu and remove
-        await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').click({ button: 'right' });
+        await sineWaveGeneratorTreeItem.first().click({ button: 'right' });
         await page.locator('li[role="menuitem"]:has-text("Remove")').click();
         await page.locator('button:has-text("OK")').click();
 
