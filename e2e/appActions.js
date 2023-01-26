@@ -144,7 +144,9 @@ async function createNotification(page, createNotificationOptions) {
  * @param {string} name
  */
 async function expandTreePaneItemByName(page, name) {
-    const treePane = page.locator('#tree-pane');
+    const treePane = page.getByRole('tree', {
+        name: 'Main Tree'
+    });
     const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
@@ -216,6 +218,24 @@ async function openObjectTreeContextMenu(page, url) {
     await page.locator('.is-navigated-object').click({
         button: 'right'
     });
+}
+
+/**
+ * Expands the entire object tree (every expandable tree item).
+ * @param {import('@playwright/test').Page} page
+ * @param {"Main Tree" | "Create Modal Tree"} [treeName="Main Tree"]
+ */
+async function expandEntireTree(page, treeName = "Main Tree") {
+    const treeLocator = page.getByRole('tree', {
+        name: treeName
+    });
+    const collapsedTreeItems = treeLocator.getByRole('treeitem', {
+        expanded: false
+    }).locator('span.c-disclosure-triangle.is-enabled');
+
+    while (await collapsedTreeItems.count() > 0) {
+        await collapsedTreeItems.nth(0).click();
+    }
 }
 
 /**
@@ -362,6 +382,7 @@ module.exports = {
     createDomainObjectWithDefaults,
     createNotification,
     expandTreePaneItemByName,
+    expandEntireTree,
     createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
