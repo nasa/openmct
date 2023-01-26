@@ -41,6 +41,7 @@
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
         role="tree"
+        :aria-label="getAriaLabel"
         aria-expanded="true"
     >
 
@@ -191,6 +192,9 @@ export default {
         },
         focusedItems() {
             return this.activeSearch ? this.searchResultItems : this.treeItems;
+        },
+        getAriaLabel() {
+            return this.isSelectorTree ? "Create Modal Tree" : "Main Tree";
         },
         pageThreshold() {
             return Math.ceil(this.mainTreeHeight / this.itemHeight) + ITEM_BUFFER;
