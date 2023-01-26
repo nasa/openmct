@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults, createNotification } = require('../../appActions.js');
+const { createDomainObjectWithDefaults, createNotification, expandEntireTree } = require('../../appActions.js');
 
 test.describe('AppActions', () => {
     test('createDomainObjectsWithDefaults', async ({ page }) => {
@@ -108,5 +108,58 @@ test.describe('AppActions', () => {
         await expect(page.locator('.c-message-banner__message')).toHaveText('Test error notification');
         await expect(page.locator('.c-message-banner')).toHaveClass(/error/);
         await page.locator('[aria-label="Dismiss"]').click();
+    });
+    test('expandEntireTree', async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        const rootFolder = await createDomainObjectWithDefaults(page, {
+            type: 'Folder'
+        });
+        const folder1 = await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            parent: rootFolder.uuid
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: 'Clock',
+            parent: folder1.uuid
+        });
+        const folder2 = await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            parent: folder1.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            parent: folder1.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout',
+            parent: folder2.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            parent: folder2.uuid
+        });
+
+        await page.goto('./#/browse/mine');
+        await expandEntireTree(page);
+        const treePane = page.getByRole('tree', {
+            name: "Main Tree"
+        });
+        const treePaneCollapsedItems = treePane.getByRole('treeitem', { expanded: false });
+        expect(await treePaneCollapsedItems.count()).toBe(0);
+
+        await page.goto('./#/browse/mine');
+        //Click the Create button
+        await page.click('button:has-text("Create")');
+
+        // Click the object specified by 'type'
+        await page.click(`li[role='menuitem']:text("Clock")`);
+        await expandEntireTree(page, "Create Modal Tree");
+        const locatorTree = page.getByRole("tree", {
+            name: "Create Modal Tree"
+        });
+        const locatorTreeCollapsedItems = locatorTree.locator('role=treeitem[expanded=false]');
+        expect(await locatorTreeCollapsedItems.count()).toBe(0);
     });
 });

@@ -40,7 +40,9 @@ test.describe('Flexible Layout', () => {
         });
     });
     test('panes have the appropriate draggable attribute while in Edit and Browse modes', async ({ page }) => {
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
             name: new RegExp(sineWaveObject.name)
         });
@@ -70,7 +72,9 @@ test.describe('Flexible Layout', () => {
         await expect(dragWrapper).toHaveAttribute('draggable', 'false');
     });
     test('items in a flexible layout can be removed with object tree context menu when viewing the flexible layout', async ({ page }) => {
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
             name: new RegExp(sineWaveObject.name)
         });
@@ -106,7 +110,9 @@ test.describe('Flexible Layout', () => {
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/3117'
         });
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
             name: new RegExp(sineWaveObject.name)
         });
