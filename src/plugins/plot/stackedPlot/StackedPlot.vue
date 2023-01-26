@@ -36,7 +36,7 @@
     <div class="l-view-section">
         <stacked-plot-item
             v-for="object in compositionObjects"
-            :key="object.id"
+            :key="object.identifier.key"
             class="c-plot--stacked-container"
             :child-object="object"
             :options="options"

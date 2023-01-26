@@ -170,6 +170,10 @@ define([
     }
 
     function refresh(oldObject, newObject) {
+        if (newObject.modified < oldObject.modified) {
+            throw new Error("Attempt to refresh object with older version");
+        }
+
         let deleted = _.difference(Object.keys(oldObject), Object.keys(newObject));
         deleted.forEach((propertyName) => delete oldObject[propertyName]);
         Object.assign(oldObject, newObject);

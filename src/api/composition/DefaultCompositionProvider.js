@@ -100,7 +100,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
                 add: [],
                 remove: [],
                 reorder: [],
-                composition: [].slice.apply(domainObject.composition)
+                composition: structuredClone(domainObject.composition)
             };
         }
 
@@ -172,8 +172,9 @@ export default class DefaultCompositionProvider extends CompositionProvider {
      */
     add(parent, childId) {
         if (!this.includes(parent, childId)) {
-            parent.composition.push(childId);
-            this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
+            const composition = structuredClone(parent.composition);
+            composition.push(childId);
+            this.publicAPI.objects.mutate(parent, 'composition', composition);
         }
     }
 

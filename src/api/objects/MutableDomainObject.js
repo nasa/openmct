@@ -24,6 +24,7 @@ import utils from './object-utils.js';
 import EventEmitter from 'EventEmitter';
 
 const ANY_OBJECT_EVENT = 'mutation';
+const latestModifications = {};
 
 /**
  * Wraps a domain object to keep its model synchronized with other instances of the same object.
@@ -75,21 +76,23 @@ class MutableDomainObject {
         return eventOff;
     }
     $set(path, value) {
+        const oldModel = structuredClone(this);
+        const oldValue = _.get(oldModel, path);
         MutableDomainObject.mutateObject(this, path, value);
 
         //Emit secret synchronization event first, so that all objects are in sync before subsequent events fired.
         this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);
 
         //Emit a general "any object" event
-        this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this);
+        this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this, oldModel);
         //Emit wildcard event, with path so that callback knows what changed
-        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value);
+        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value, oldModel, oldValue);
 
         //Emit events specific to properties affected
         let parentPropertiesList = path.split('.');
         for (let index = parentPropertiesList.length; index > 0; index--) {
             let parentPropertyPath = parentPropertiesList.slice(0, index).join('.');
-            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath));
+            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath), oldValue);
         }
 
         //TODO: Emit events for listeners of child properties when parent changes.
@@ -120,6 +123,7 @@ class MutableDomainObject {
     }
 
     static createMutable(object, mutationTopic) {
+        latestModifications[object.identifier.key] = object.modified;
         let mutable = Object.create(new MutableDomainObject(mutationTopic));
         Object.assign(mutable, object);
 
@@ -132,8 +136,16 @@ class MutableDomainObject {
     }
 
     static mutateObject(object, path, value) {
+        if (object.modified < (latestModifications[object.identifier.key] || Number.NEGATIVE_INFINITY)) {
+            throw new Error("Attempt to mutate stale model");
+        }
+
         if (path !== 'persisted') {
-            _.set(object, 'modified', Date.now());
+            const modified = Date.now();
+
+            latestModifications[object.identifier.key] = modified;
+
+            _.set(object, 'modified', modified);
         }
 
         _.set(object, path, value);
