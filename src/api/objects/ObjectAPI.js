@@ -544,7 +544,6 @@ export default class ObjectAPI {
         if (domainObject.isMutable) {
             domainObject.$set(path, value);
         } else {
-            throw new Error("Trying to mutate a non-mutable object");
             //Creating a temporary mutable domain object allows other mutable instances of the
             //object to be kept in sync.
             let mutableDomainObject = this.toMutable(domainObject);
