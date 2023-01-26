@@ -24,7 +24,6 @@ import utils from './object-utils.js';
 import EventEmitter from 'EventEmitter';
 
 const ANY_OBJECT_EVENT = 'mutation';
-const latestModifications = {};
 
 /**
  * Wraps a domain object to keep its model synchronized with other instances of the same object.
@@ -123,12 +122,11 @@ class MutableDomainObject {
     }
 
     static createMutable(object, mutationTopic) {
-        latestModifications[object.identifier.key] = object.modified;
         let mutable = Object.create(new MutableDomainObject(mutationTopic));
         Object.assign(mutable, object);
 
         mutable.$observe('$_synchronize_model', (updatedObject) => {
-            let clone = JSON.parse(JSON.stringify(updatedObject));
+            let clone = structuredClone(updatedObject);
             utils.refresh(mutable, clone);
         });
 
@@ -136,16 +134,8 @@ class MutableDomainObject {
     }
 
     static mutateObject(object, path, value) {
-        if (object.modified < (latestModifications[object.identifier.key] || Number.NEGATIVE_INFINITY)) {
-            throw new Error("Attempt to mutate stale model");
-        }
-
         if (path !== 'persisted') {
-            const modified = Date.now();
-
-            latestModifications[object.identifier.key] = modified;
-
-            _.set(object, 'modified', modified);
+            _.set(object, 'modified', Date.now());
         }
 
         _.set(object, path, value);
