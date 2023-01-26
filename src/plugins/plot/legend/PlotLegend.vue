@@ -210,7 +210,7 @@ export default {
             }
         },
         removeTelemetryObject(identifier) {
-        // do nothing?
+            //find all the series in this object and remove them
         },
         registerListeners(config) {
         //listen to any changes to the telemetry endpoints that are associated with the child

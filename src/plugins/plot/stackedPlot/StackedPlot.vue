@@ -184,13 +184,6 @@ export default {
 
             this.$delete(this.tickWidthMap, id);
 
-            const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
-                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, childIdentifier);
-            });
-            if (configIndex > -1) {
-                this.domainObject.configuration.series.splice(configIndex, 1);
-            }
-
             const childObj = this.compositionObjects.filter((c) => {
                 const identifier = this.openmct.objects.makeKeyString(c.identifier);
 
@@ -199,6 +192,22 @@ export default {
             if (childObj) {
                 const index = this.compositionObjects.indexOf(childObj);
                 this.compositionObjects.splice(index, 1);
+            }
+
+            const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
+                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, childIdentifier);
+            });
+            if (configIndex > -1) {
+                const cSeries = this.domainObject.configuration.series.slice();
+                const series = cSeries.splice(configIndex, 1)[0];
+                this.openmct.objects.mutate(this.domainObject, 'configuration.series', cSeries);
+
+                if (childObj.type !== 'telemetry.plot.overlay') {
+                    const config = this.getConfig(this.openmct.objects.makeKeyString(series.identifier));
+                    if (config) {
+                        config.series.remove(config.series.at(0));
+                    }
+                }
             }
         },
 
