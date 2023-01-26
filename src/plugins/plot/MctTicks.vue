@@ -205,7 +205,7 @@ export default {
             }
 
             if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
-                return getLogTicks(range.min, range.max, number, 4);
+                return getLogTicks(range.min, range.max, number, 2);
             } else {
                 return ticks(range.min, range.max, number);
             }

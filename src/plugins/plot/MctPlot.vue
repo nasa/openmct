@@ -48,7 +48,7 @@
                 :tick-width="yAxis.tickWidth"
                 :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
                 @yKeyChanged="setYAxisKey"
-                @tickWidthChanged="onTickWidthChange"
+                @plotYTickWidth="onYTickWidthChange"
                 @toggleAxisVisibility="toggleSeriesForYAxis"
             />
         </div>
@@ -69,7 +69,6 @@
                     v-show="gridLines && !options.compact"
                     :axis-type="'xAxis'"
                     :position="'right'"
-                    @plotTickWidth="onTickWidthChange"
                 />
 
                 <mct-ticks
@@ -79,7 +78,7 @@
                     :axis-type="'yAxis'"
                     :position="'bottom'"
                     :axis-id="yAxis.id"
-                    @plotTickWidth="onTickWidthChange"
+                    @plotTickWidth="onYTickWidthChange"
                 />
 
                 <div
@@ -258,10 +257,13 @@ export default {
                 return false;
             }
         },
-        plotTickWidth: {
-            type: Number,
+        parentYTickWidth: {
+            type: Object,
             default() {
-                return 0;
+                return {
+                    leftTickWidth: 0,
+                    rightTickWidth: 0
+                };
             }
         },
         limitLineLabels: {
@@ -312,9 +314,10 @@ export default {
             let style = {
                 left: `${this.plotLeftTickWidth + leftOffset}px`
             };
+            const parentRightAxisWidth = this.parentYTickWidth.rightTickWidth;
 
-            if (rightAxis) {
-                style.right = `${rightAxis.tickWidth + AXES_PADDING}px`;
+            if (rightAxis || parentRightAxisWidth) {
+                style.right = `${(parentRightAxisWidth || rightAxis.tickWidth) + AXES_PADDING}px`;
             }
 
             return style;
@@ -323,7 +326,7 @@ export default {
             return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         },
         multipleLeftAxes() {
-            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
+            return this.parentYTickWidth.multipleLeftAxes || this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
         },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
@@ -360,8 +363,9 @@ export default {
 
                 leftTickWidth = leftTickWidth + yAxis.tickWidth;
             });
+            const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
 
-            return this.plotTickWidth || leftTickWidth;
+            return parentLeftTickWidth || leftTickWidth;
         }
     },
     watch: {
@@ -946,7 +950,7 @@ export default {
             }
         },
 
-        onTickWidthChange(data, fromDifferentObject) {
+        onYTickWidthChange(data, fromDifferentObject) {
             const {width, yAxisId} = data;
             if (yAxisId) {
                 const index = this.yAxes.findIndex(yAxis => yAxis.id === yAxisId);
@@ -954,15 +958,26 @@ export default {
                 // Always accept tick width if it comes from a different object.
                     this.yAxes[index].tickWidth = width;
                 } else {
+                //Commenting out below cuz If we never make the ticks smaller, then we can't adjust ticks for logMode
                 // Otherwise, only accept tick with if it's larger.
-                    const newWidth = Math.max(width, this.yAxes[index].tickWidth);
-                    if (newWidth !== this.yAxes[index].tickWidth) {
-                        this.yAxes[index].tickWidth = newWidth;
+                //     const newWidth = Math.max(width, this.yAxes[index].tickWidth);
+                    if (width !== this.yAxes[index].tickWidth) {
+                        this.yAxes[index].tickWidth = width;
                     }
                 }
 
                 const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                this.$emit('plotTickWidth', this.yAxes[index].tickWidth, id);
+                const leftTickWidth = this.yAxes.filter(yAxis => yAxis.id < 3).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                const rightTickWidth = this.yAxes.filter(yAxis => yAxis.id > 2).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                this.$emit('plotYTickWidth', {
+                    multipleLeftAxes: this.multipleLeftAxes,
+                    leftTickWidth,
+                    rightTickWidth
+                }, id);
             }
         },
 

@@ -252,7 +252,7 @@ export default {
             }
         },
         onTickWidthChange(data) {
-            this.$emit('tickWidthChanged', {
+            this.$emit('plotYTickWidth', {
                 width: data.width,
                 yAxisId: this.id
             });

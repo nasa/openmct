@@ -44,8 +44,8 @@
             :color-palette="colorPalette"
             :cursor-guide="cursorGuide"
             :show-limit-line-labels="showLimitLineLabels"
-            :plot-tick-width="maxTickWidth"
-            @plotTickWidth="onTickWidthChange"
+            :parent-y-tick-width="maxTickWidth"
+            @plotYTickWidth="onYTickWidthChange"
             @loadingUpdated="loadingUpdated"
             @cursorGuide="onCursorGuideChange"
             @gridLines="onGridLinesChange"
@@ -111,7 +111,16 @@ export default {
             }
         },
         maxTickWidth() {
-            return Math.max(...Object.values(this.tickWidthMap));
+            const tickWidthValues = Object.values(this.tickWidthMap);
+            const maxLeftTickWidth = Math.max(...tickWidthValues.map(tickWidthItem => tickWidthItem.leftTickWidth));
+            const maxRightTickWidth = Math.max(...tickWidthValues.map(tickWidthItem => tickWidthItem.rightTickWidth));
+            const multipleLeftAxes = tickWidthValues.some(tickWidthItem => tickWidthItem.multipleLeftAxes === true);
+
+            return {
+                leftTickWidth: maxLeftTickWidth,
+                rightTickWidth: maxRightTickWidth,
+                multipleLeftAxes
+            };
         }
     },
     beforeDestroy() {
@@ -167,7 +176,10 @@ export default {
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
 
-            this.$set(this.tickWidthMap, id, 0);
+            this.$set(this.tickWidthMap, id, {
+                leftTickWidth: 0,
+                rightTickWidth: 0
+            });
 
             this.compositionObjects.push(child);
         },
@@ -209,7 +221,10 @@ export default {
 
         resetTelemetryAndTicks(domainObject) {
             this.compositionObjects = [];
-            this.tickWidthMap = {};
+            this.tickWidthMap = {
+                leftTickWidth: 0,
+                rightTickWidth: 0
+            };
         },
 
         exportJPG() {
@@ -232,12 +247,12 @@ export default {
                     this.hideExportButtons = false;
                 }.bind(this));
         },
-        onTickWidthChange(width, plotId) {
+        onYTickWidthChange(data, plotId) {
             if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
                 return;
             }
 
-            this.$set(this.tickWidthMap, plotId, width);
+            this.$set(this.tickWidthMap, plotId, data);
         },
         legendHoverChanged(data) {
             this.showLimitLineLabels = data;
