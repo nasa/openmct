@@ -89,7 +89,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
         event,
         callback,
         context) {
-        this.establishTopicListener();
+        //this.establishTopicListener();
 
         /** @type {string} */
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
@@ -157,6 +157,8 @@ export default class DefaultCompositionProvider extends CompositionProvider {
         });
 
         this.publicAPI.objects.mutate(domainObject, 'composition', composition);
+
+        this.objectListeners.remove?.forEach(listener => listener.callback.apply(listener.context, childId));
     }
     /**
      * Add a domain object to another domain object's composition.
@@ -174,6 +176,8 @@ export default class DefaultCompositionProvider extends CompositionProvider {
         if (!this.includes(parent, childId)) {
             parent.composition.push(childId);
             this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
+
+            this.objectListeners.add?.forEach(listener => listener.callback.apply(listener.context, childId));
         }
     }
 

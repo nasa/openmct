@@ -71,10 +71,6 @@ export default class CompositionProvider {
         return this.#listeningTo;
     }
 
-    get establishTopicListener() {
-        return this.#establishTopicListener.bind(this);
-    }
-
     get publicAPI() {
         return this.#publicAPI;
     }
@@ -182,22 +178,6 @@ export default class CompositionProvider {
     }
 
     /**
-      * Listens on general mutation topic, using injector to fetch to avoid
-      * circular dependencies.
-      * @private
-      */
-    #establishTopicListener() {
-        if (this.topicListener) {
-            return;
-        }
-
-        this.#publicAPI.objects.eventEmitter.on('mutation', this.#onMutation.bind(this));
-        this.topicListener = () => {
-            this.#publicAPI.objects.eventEmitter.off('mutation', this.#onMutation.bind(this));
-        };
-    }
-
-    /**
       * @private
       * @param {DomainObject} parent
       * @param {DomainObject} child
@@ -215,48 +195,6 @@ export default class CompositionProvider {
       */
     #supportsComposition(parent, _child) {
         return this.#publicAPI.composition.supportsComposition(parent);
-    }
-
-    /**
-      * Handles mutation events.  If there are active listeners for the mutated
-      * object, detects changes to composition and triggers necessary events.
-      *
-      * @private
-      * @param {DomainObject} oldDomainObject
-      */
-    #onMutation(oldDomainObject) {
-        const id = objectUtils.makeKeyString(oldDomainObject.identifier);
-        const listeners = this.#listeningTo[id];
-
-        if (!listeners) {
-            return;
-        }
-
-        const oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        const newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
-
-        const added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
-        const removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
-
-        function notify(value) {
-            return function (listener) {
-                if (listener.context) {
-                    listener.callback.call(listener.context, value);
-                } else {
-                    listener.callback(value);
-                }
-            };
-        }
-
-        listeners.composition = newComposition.map(objectUtils.parseKeyString);
-
-        added.forEach(function (addedChild) {
-            listeners.add.forEach(notify(addedChild));
-        });
-
-        removed.forEach(function (removedChild) {
-            listeners.remove.forEach(notify(removedChild));
-        });
     }
 }
 

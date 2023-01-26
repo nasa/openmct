@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import EventEmitter from 'EventEmitter';
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
  */
@@ -60,6 +61,10 @@ export default class CompositionCollection {
     #publicAPI;
     #listeners;
     #mutables;
+    #onGlobalAdd;
+    #onGlobalRemove;
+    static #globalEvents = new EventEmitter();
+
     /**
      * @constructor
      * @param {DomainObject} domainObject the domain object
@@ -95,6 +100,21 @@ export default class CompositionCollection {
                 unobserve();
             });
         }
+
+        const keyString = publicAPI.objects.makeKeyString(domainObject.identifier);
+        this.#onGlobalAdd = this._onGlobalAdd.bind(this);
+        this.#onGlobalRemove = this._onGlobalRemove.bind(this);
+
+        CompositionCollection.#globalEvents.on(`add:${keyString}`, this.#onGlobalAdd);
+        CompositionCollection.#globalEvents.on(`remove:${keyString}`, this.#onGlobalRemove);
+    }
+
+    _onGlobalAdd(object) {
+        this.#emit('add', object);
+    }
+
+    _onGlobalRemove(identifier) {
+        this.#emit('remove', identifier);
     }
     /**
      * Listen for changes to this composition.  Supports 'add', 'remove', and
@@ -209,23 +229,21 @@ export default class CompositionCollection {
      * **Intended for internal use ONLY.**
      * true if the underlying provider should not be updated.
      */
-    add(child, skipMutate) {
-        if (!skipMutate) {
-            if (!this.#publicAPI.composition.checkPolicy(this.domainObject, child)) {
-                throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
-            }
-
-            this.#provider.add(this.domainObject, child.identifier);
-        } else {
-            if (this.returnMutables && this.#publicAPI.objects.supportsMutation(child.identifier)) {
-                let keyString = this.#publicAPI.objects.makeKeyString(child.identifier);
-
-                child = this.#publicAPI.objects.toMutable(child);
-                this.#mutables[keyString] = child;
-            }
-
-            this.#emit('add', child);
+    add(child) {
+        if (!this.#publicAPI.composition.checkPolicy(this.domainObject, child)) {
+            throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
         }
+
+        this.#provider.add(this.domainObject, child.identifier);
+        if (this.returnMutables && this.#publicAPI.objects.supportsMutation(child.identifier)) {
+            let keyString = this.#publicAPI.objects.makeKeyString(child.identifier);
+
+            child = this.#publicAPI.objects.toMutable(child);
+            this.#mutables[keyString] = child;
+        }
+
+        // const keyString = this.#publicAPI.objects.makeKeyString(this.domainObject.identifier);
+        // CompositionCollection.#globalEvents.emit(`add:${keyString}`, child);
     }
     /**
      * Load the domain objects in this composition.
@@ -240,7 +258,12 @@ export default class CompositionCollection {
         this.#cleanUpMutables();
         const children = await this.#provider.load(this.domainObject);
         const childObjects = await Promise.all(children.map((c) => this.#publicAPI.objects.get(c, abortSignal)));
-        childObjects.forEach(c => this.add(c, true));
+        childObjects.forEach(c => {
+            this.add(c);
+
+            const keyString = this.#publicAPI.objects.makeKeyString(this.domainObject.identifier);
+            CompositionCollection.#globalEvents.emit(`add:${keyString}`, c);
+        });
         this.#emit('load');
 
         return childObjects;
@@ -259,20 +282,18 @@ export default class CompositionCollection {
      * true if the underlying provider should not be updated.
      * @name remove
      */
-    remove(child, skipMutate) {
-        if (!skipMutate) {
-            this.#provider.remove(this.domainObject, child.identifier);
-        } else {
-            if (this.returnMutables) {
-                let keyString = this.#publicAPI.objects.makeKeyString(child);
-                if (this.#mutables[keyString] !== undefined && this.#mutables[keyString].isMutable) {
-                    this.#publicAPI.objects.destroyMutable(this.#mutables[keyString]);
-                    delete this.#mutables[keyString];
-                }
+    remove(child) {
+        this.#provider.remove(this.domainObject, child.identifier);
+        if (this.returnMutables) {
+            let keyString = this.#publicAPI.objects.makeKeyString(child);
+            if (this.#mutables[keyString] !== undefined && this.#mutables[keyString].isMutable) {
+                this.#publicAPI.objects.destroyMutable(this.#mutables[keyString]);
+                delete this.#mutables[keyString];
             }
-
-            this.#emit('remove', child);
         }
+
+        // const keyString = this.#publicAPI.objects.makeKeyString(this.domainObject.identifier);
+        // CompositionCollection.#globalEvents.emit(`remove:${keyString}`, child.identifier);
     }
     /**
      * Reorder the domain objects in this composition.
@@ -295,6 +316,10 @@ export default class CompositionCollection {
             this.mutationListener();
             delete this.mutationListener;
         }
+
+        const keyString = this.#publicAPI.objects.makeKeyString(this.domainObject.identifier);
+        CompositionCollection.#globalEvents.off(`add:${keyString}`, this.#onGlobalAdd);
+        CompositionCollection.#globalEvents.off(`remove:${keyString}`, this.#onGlobalRemove);
     }
     /**
      * Handle reorder from provider.
