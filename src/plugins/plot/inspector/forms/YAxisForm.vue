@@ -227,8 +227,8 @@ export default {
             let prefix = 'yAxis';
             if (this.isAdditionalYAxis) {
                 let index = -1;
-                if (this.additionalYAxes) {
-                    index = this.additionalYAxes.findIndex((yAxis) => {
+                if (this.domainObject?.configuration?.additionalYAxes) {
+                    index = this.domainObject?.configuration?.additionalYAxes.findIndex((yAxis) => {
                         return yAxis.id === this.id;
                     });
                 }
