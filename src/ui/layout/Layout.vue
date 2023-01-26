@@ -79,9 +79,7 @@
             <multipane
                 type="vertical"
             >
-                <pane
-                    id="tree-pane"
-                >
+                <pane>
                     <mct-tree
                         ref="mctTree"
                         :sync-tree-navigation="triggerSync"
