@@ -100,8 +100,7 @@
     "cov:e2e:full:publish": "codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e-full",
     "cov:e2e:stable:publish": "codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e-stable",
     "cov:unit:publish": "codecov --disable=gcov -f ./coverage/unit/lcov.info -F unit",
-    "prepare": "npm run build:prod && npx tsc",
-    "preinstall": "git rev-parse HEAD >> version.info; git rev-parse --abbrev-ref HEAD >> version.info"
+    "prepare": "npm run build:prod && npx tsc"
   },
   "repository": {
     "type": "git",

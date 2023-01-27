@@ -22,13 +22,19 @@ let gitBranch = "error-retrieving-branch";
 try {
     gitRevision = require("child_process")
         .execSync("git rev-parse HEAD", {
-            cwd: __dirname
+            env: {
+                ...process.env,
+                GIT_DIR: undefined
+            }
         })
         .toString()
         .trim();
-    gitBranch = require("child_process")
+        gitBranch = require("child_process")
         .execSync("git rev-parse --abbrev-ref HEAD", {
-            cwd: __dirname
+            env: {
+                ...process.env,
+                GIT_DIR: undefined
+            }
         })
         .toString()
         .trim();
@@ -169,7 +175,6 @@ const config = {
             }
         ]
     },
-    stats: "errors-warnings",
     performance: {
         // We should eventually consider chunking to decrease
         // these values
