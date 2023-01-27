@@ -22,18 +22,19 @@ let gitBranch = "error-retrieving-branch";
 try {
     gitRevision = require("child_process")
         .execSync("git rev-parse HEAD", {
-            cwd: projectRootDir
+            cwd: __dirname
         })
         .toString()
         .trim();
     gitBranch = require("child_process")
         .execSync("git rev-parse --abbrev-ref HEAD", {
-            cwd: projectRootDir
+            cwd: __dirname
         })
         .toString()
         .trim();
 } catch (err) {
-    console.warn(err);
+    console.error(err);
+    // console.warn(err);
 }
 
 
