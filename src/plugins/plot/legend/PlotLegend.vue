@@ -178,8 +178,6 @@ export default {
     beforeDestroy() {
         if (this.objectComposition) {
             this.objectComposition.off('add', this.addTelemetryObject);
-            this.objectComposition.off('remove', this.removeTelemetryObject);
-        // this.objectComposition.off('reorder', this.reorderTelemetryObject);
         }
 
         this.stopListening();
@@ -189,8 +187,6 @@ export default {
             if (this.domainObject.type === 'telemetry.plot.stacked') {
                 this.objectComposition = this.openmct.composition.get(this.domainObject);
                 this.objectComposition.on('add', this.addTelemetryObject);
-                this.objectComposition.on('remove', this.removeTelemetryObject);
-                // this.composition.on('reorder', this.reorderTelemetryObject);
                 this.objectComposition.load();
             } else {
                 this.registerListeners(this.config);
@@ -208,9 +204,6 @@ export default {
             if (config) {
                 this.registerListeners(config);
             }
-        },
-        removeTelemetryObject(identifier) {
-            //find all the series in this object and remove them
         },
         registerListeners(config) {
         //listen to any changes to the telemetry endpoints that are associated with the child

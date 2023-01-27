@@ -34,9 +34,11 @@
         @expanded="updateExpanded"
         @position="updatePosition"
     />
-    <div class="l-view-section">
+    <div
+        class="l-view-section"
+    >
         <stacked-plot-item
-            v-for="object in compositionObjects"
+            v-for="(object) in compositionObjects"
             :key="`${object.identifier.namespace}-${object.identifier.key}`"
             class="c-plot--stacked-container"
             :child-object="object"

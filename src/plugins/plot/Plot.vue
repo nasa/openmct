@@ -49,7 +49,7 @@
         >
             <plot-legend
                 v-if="configReady"
-                :cursor-locked="!!lockHighlightPoint"
+                :cursor-locked="lockHighlightPoint"
                 :highlights="highlights"
                 @legendHoverChanged="legendHoverChanged"
                 @expanded="updateExpanded"
