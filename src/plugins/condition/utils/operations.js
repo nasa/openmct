@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { IS_OLD_KEY, IS_STALE_KEY } from "./constants";
+
 function convertToNumbers(input) {
     let numberInputs = [];
     input.forEach(inputValue => numberInputs.push(Number(inputValue)));
@@ -295,7 +297,7 @@ export const OPERATIONS = [
         }
     },
     {
-        name: 'isStale',
+        name: IS_OLD_KEY,
         operation: function () {
             return false;
         },
@@ -304,6 +306,18 @@ export const OPERATIONS = [
         inputCount: 1,
         getDescription: function (values) {
             return ` is older than ${values[0] || ''} seconds`;
+        }
+    },
+    {
+        name: IS_STALE_KEY,
+        operation: function () {
+            return false;
+        },
+        text: 'is stale',
+        appliesTo: ["number"],
+        inputCount: 0,
+        getDescription: function () {
+            return ' is stale';
         }
     }
 ];
@@ -316,5 +330,5 @@ export const INPUT_TYPES = {
 export function getOperatorText(operationName, values) {
     const found = OPERATIONS.find((operation) => operation.name === operationName);
 
-    return found ? found.getDescription(values) : '';
+    return found?.getDescription(values) ?? '';
 }

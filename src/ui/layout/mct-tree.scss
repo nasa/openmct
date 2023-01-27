@@ -108,6 +108,10 @@
                 color: $colorItemTreeSelectedFg;
             }
         }
+        &.is-targeted-item {
+           $c: $colorBodyFg;
+           @include pulseProp($animName: flashTarget, $dur: 500ms, $iter: 8, $prop: background, $valStart: rgba($c, 0.4), $valEnd: rgba($c, 0));
+        }
 
         &.is-new {
             animation-name: animTemporaryHighlight;

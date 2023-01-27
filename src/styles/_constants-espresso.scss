@@ -305,8 +305,8 @@ $colorIndicatorMenuFg: $colorHeadFg;
 $colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
 // Staleness
-$colorTelemFresh: pullForward($colorBodyFg, 20%);
-$colorTelemStale: pushBack($colorBodyFg, 20%);
+$colorTelemStale: cyan;
+$colorTelemStaleFg: #002A2A;
 $styleTelemStale: italic;
 
 // Limits
@@ -463,6 +463,8 @@ $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg,0.1);
 $colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
+$scrollContainer: $colorBodyBg;
+;
 
 @mixin discreteItem() {
     background: $colorDiscreteItemBg;

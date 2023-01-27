@@ -26,7 +26,7 @@ describe('the url tool', function () {
         ];
         openmct = createOpenMct();
         openmct.on('start', () => {
-            openmct.router.setPath(' http://localhost:8020/foobar?testParam1=testValue1');
+            openmct.router.setPath('/browse/mine?testParam1=testValue1');
             done();
         });
         openmct.startHeadless();

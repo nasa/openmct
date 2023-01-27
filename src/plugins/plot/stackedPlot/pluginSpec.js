@@ -468,14 +468,20 @@ describe("the plugin", function () {
         });
 
         it("updates the yscale", (done) => {
-            config.yAxis.set('displayRange', {
-                min: 10,
-                max: 20
-            });
-            Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[1].component.$children[1].yScale.domain()).toEqual({
+            const yAxisList = [config.yAxis, ...config.additionalYAxes];
+            yAxisList.forEach((yAxis) => {
+                yAxis.set('displayRange', {
                     min: 10,
                     max: 20
+                });
+            });
+            Vue.nextTick(() => {
+                const yAxesScales = plotViewComponentObject.$children[1].component.$children[1].yScale;
+                yAxesScales.forEach((yAxisScale) => {
+                    expect(yAxisScale.scale.domain()).toEqual({
+                        min: 10,
+                        max: 20
+                    });
                 });
                 done();
             });

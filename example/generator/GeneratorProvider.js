@@ -37,8 +37,9 @@ define([
         infinityValues: false
     };
 
-    function GeneratorProvider(openmct) {
-        this.workerInterface = new WorkerInterface(openmct);
+    function GeneratorProvider(openmct, StalenessProvider) {
+        this.openmct = openmct;
+        this.workerInterface = new WorkerInterface(openmct, StalenessProvider);
     }
 
     GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
@@ -81,6 +82,7 @@ define([
             workerRequest[prop] = Number(workerRequest[prop]);
         });
 
+        workerRequest.id = this.openmct.objects.makeKeyString(domainObject.identifier);
         workerRequest.name = domainObject.name;
 
         return workerRequest;
