@@ -15,23 +15,27 @@ const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const { VueLoaderPlugin } = require("vue-loader");
+const projectRootDir = path.resolve(__dirname, "..");
 let gitRevision = "error-retrieving-revision";
 let gitBranch = "error-retrieving-branch";
 
 try {
     gitRevision = require("child_process")
-        .execSync("git rev-parse HEAD")
+        .execSync("git rev-parse HEAD", {
+            cwd: projectRootDir
+        })
         .toString()
         .trim();
     gitBranch = require("child_process")
-        .execSync("git rev-parse --abbrev-ref HEAD")
+        .execSync("git rev-parse --abbrev-ref HEAD", {
+            cwd: projectRootDir
+        })
         .toString()
         .trim();
 } catch (err) {
     console.warn(err);
 }
 
-const projectRootDir = path.resolve(__dirname, "..");
 
 /** @type {import('webpack').Configuration} */
 const config = {
