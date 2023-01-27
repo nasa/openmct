@@ -1122,7 +1122,7 @@ export default {
                     endPixels: this.positionOverElement,
                     start: this.positionOverPlot,
                     end: this.positionOverPlot,
-                    color: [1, 1, 1, 0.5]
+                    color: [1, 1, 1, 0.25]
                 };
                 if (annotationEvent) {
                     this.marquee.annotationEvent = true;
@@ -1133,6 +1133,8 @@ export default {
             }
         },
         selectNearbyAnnotations(event) {
+            // need to stop propagation right away to prevent selecting the plot itself
+            event.stopPropagation();
             if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
                 return;
             }
@@ -1141,8 +1143,6 @@ export default {
             if (!nearbyAnnotations.length) {
                 return;
             }
-
-            event.stopPropagation();
 
             const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
             this.selectPlotAnnotations({
@@ -1153,19 +1153,23 @@ export default {
         },
         selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
             const selection =
-                    [
-                        ...this.path,
-                        {
-                            element: this.$el,
-                            context: {
-                                type: 'plot-points-selection',
-                                targetDetails,
-                                targetDomainObjects,
-                                annotations,
-                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                                onAnnotationChange: this.onAnnotationChange
-                            }
+                    [{
+                        element: this.openmct.layout.$refs.browseObject.$el,
+                        context: {
+                            item: this.domainObject
                         }
+                    },
+                    {
+                        element: this.$el,
+                        context: {
+                            type: 'plot-points-selection',
+                            targetDetails,
+                            targetDomainObjects,
+                            annotations,
+                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                            onAnnotationChange: this.onAnnotationChange
+                        }
+                    }
                     ];
             this.openmct.selection.select(selection, true);
         },
