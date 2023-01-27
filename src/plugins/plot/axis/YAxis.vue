@@ -101,6 +101,12 @@ export default {
                 return 0;
             }
         },
+        usedTickWidth: {
+            type: Number,
+            default() {
+                return 0;
+            }
+        },
         multipleLeftAxes: {
             type: Boolean,
             default() {
@@ -145,7 +151,7 @@ export default {
             } else {
                 const thisIsTheSecondLeftAxis = (this.id - 1) > 0;
                 if (this.multipleLeftAxes && thisIsTheSecondLeftAxis) {
-                    style.left = 0;
+                    style.left = `${this.plotLeftTickWidth - this.usedTickWidth - this.tickWidth}px`;
                     style['border-right'] = `1px solid`;
                 } else {
                     style.left = `${ this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;

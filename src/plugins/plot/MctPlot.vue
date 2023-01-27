@@ -46,6 +46,7 @@
                 :position="yAxis.id > 2 ? 'right' : 'left'"
                 :class="{'plot-yaxis-right': yAxis.id > 2}"
                 :tick-width="yAxis.tickWidth"
+                :used-tick-width="plotFirstLeftTickWidth"
                 :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
                 @yKeyChanged="setYAxisKey"
                 @plotYTickWidth="onYTickWidthChange"
@@ -354,6 +355,11 @@ export default {
                 return 'plot-legend-collapsed';
             }
         },
+        plotFirstLeftTickWidth() {
+            const firstYAxis = this.yAxes.find(yAxis => yAxis.id === 1);
+
+            return firstYAxis ? firstYAxis.tickWidth : 0;
+        },
         plotLeftTickWidth() {
             let leftTickWidth = 0;
             this.yAxes.forEach((yAxis) => {
@@ -579,6 +585,14 @@ export default {
         updateTicksAndSeriesForYAxis(newAxisId, oldAxisId) {
             this.updateAxisUsageCount(oldAxisId, -1);
             this.updateAxisUsageCount(newAxisId, 1);
+
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === oldAxisId);
+            if (foundYAxis.seriesCount === 0) {
+                this.onYTickWidthChange({
+                    width: foundYAxis.tickWidth,
+                    yAxisId: foundYAxis.id
+                });
+            }
         },
 
         updateAxisUsageCount(yAxisId, updateCountBy) {
@@ -958,11 +972,10 @@ export default {
                 // Always accept tick width if it comes from a different object.
                     this.yAxes[index].tickWidth = width;
                 } else {
-                //Commenting out below cuz If we never make the ticks smaller, then we can't adjust ticks for logMode
                 // Otherwise, only accept tick with if it's larger.
-                //     const newWidth = Math.max(width, this.yAxes[index].tickWidth);
+                    const newWidth = Math.max(width, this.yAxes[index].tickWidth);
                     if (width !== this.yAxes[index].tickWidth) {
-                        this.yAxes[index].tickWidth = width;
+                        this.yAxes[index].tickWidth = newWidth;
                     }
                 }
 
