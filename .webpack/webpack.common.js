@@ -13,36 +13,10 @@ const packageDefinition = require("../package.json");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
 const { VueLoaderPlugin } = require("vue-loader");
 const projectRootDir = path.resolve(__dirname, "..");
-let gitRevision = "error-retrieving-revision";
-let gitBranch = "error-retrieving-branch";
-
-try {
-    gitRevision = require("child_process")
-        .execSync("git rev-parse HEAD", {
-            env: {
-                ...process.env,
-                GIT_DIR: undefined
-            }
-        })
-        .toString()
-        .trim();
-        gitBranch = require("child_process")
-        .execSync("git rev-parse --abbrev-ref HEAD", {
-            env: {
-                ...process.env,
-                GIT_DIR: undefined
-            }
-        })
-        .toString()
-        .trim();
-} catch (err) {
-    console.error(err);
-    // console.warn(err);
-}
-
+const { GitRevisionPlugin } = require('git-revision-webpack-plugin')
+const gitRevisionPlugin = new GitRevisionPlugin()
 
 /** @type {import('webpack').Configuration} */
 const config = {
@@ -99,8 +73,8 @@ const config = {
         new webpack.DefinePlugin({
             __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
             __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
-            __OPENMCT_REVISION__: `'${gitRevision}'`,
-            __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
+            __OPENMCT_REVISION__: `'${JSON.stringify(gitRevisionPlugin.commithash())}'`,
+            __OPENMCT_BUILD_BRANCH__: `'${JSON.stringify(gitRevisionPlugin.branch())}'`
         }),
         new VueLoaderPlugin(),
         new CopyWebpackPlugin({
