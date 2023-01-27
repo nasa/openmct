@@ -104,7 +104,36 @@ Each commit is analyzed for known security vulnerabilities using [CodeQL](https:
 
 Each test suite generates a report in CircleCI. For a complete overview of testing functionality, please see our [Circle CI Test Insights Dashboard](https://app.circleci.com/insights/github/nasa/openmct/workflows/the-nightly/overview?branch=master&reporting-window=last-30-days)
 
-Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/)
+Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/) 
+# Authorization
+
+To access Codecov's API as an authenticated user please create an access token in Codecov. To create an access token please follow these directions:
+
+Navigate to your personal (not org) account page by clicking on your avatar (top right corner) then Settings
+
+Click on Access on the left side menu
+
+Click on Generate Token button
+
+Type in a token name and click Generate
+
+Use this token in your API requests as stated below.
+
+You can pass the token in the query params or in the request headers as seen in the two examples below.
+
+Using the query string (not as secure, due to visible token)
+
+Shell
+
+GET https://codecov.io/api/pub/{gh|gl|bb}/{owner}/{repo}/settings?access_token=<token>
+
+Using the headers (recomended method)
+
+Shell
+
+curl -X GET https://codecov.io/api/pub/{gh|gl|bb}/{owner}/{repo}/settings \
+
+     -H 'Authorization: {token}'
 
 # Glossary
 
