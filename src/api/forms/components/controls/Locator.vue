@@ -22,7 +22,6 @@
 
 <template>
 <mct-tree
-    id="locator-tree"
     :is-selector-tree="true"
     :initial-selection="model.parent"
     @tree-item-selection="handleItemSelection"
