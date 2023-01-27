@@ -104,7 +104,7 @@ Each commit is analyzed for known security vulnerabilities using [CodeQL](https:
 
 Each test suite generates a report in CircleCI. For a complete overview of testing functionality, please see our [Circle CI Test Insights Dashboard](https://app.circleci.com/insights/github/nasa/openmct/workflows/the-nightly/overview?branch=master&reporting-window=last-30-days)
 
-Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/) 
+Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/)  -H 'Authorization: {token}'
 # Authorization
 
 To access Codecov's API as an authenticated user please create an access token in Codecov. To create an access token please follow these directions:
