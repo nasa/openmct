@@ -410,6 +410,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     createNormalizedDatum(telemetryDatum, endpoint) {
+        // need to check bounds here
         const id = this.openmct.objects.makeKeyString(endpoint.identifier);
         const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
 
@@ -417,6 +418,9 @@ export default class ConditionManager extends EventEmitter {
             const testValue = this.getTestData(metadatum);
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
             datum[metadatum.key] = testValue !== undefined ? formatter.parse(testValue) : formatter.parse(telemetryDatum[metadatum.source]);
+            console.debug(`👖 set value to `, datum[metadatum.key]);
+            const parsedValue = formatter.parse(telemetryDatum);
+            console.debug(`👖 parsedValue `, parsedValue);
 
             return datum;
         }, {});
