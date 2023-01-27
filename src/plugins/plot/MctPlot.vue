@@ -837,6 +837,10 @@ export default {
         },
 
         prepareExistingAnnotationSelection(annotations) {
+            if (!annotations.length) {
+                return;
+            }
+
             const targetDomainObjects = {};
             this.config.series.models.forEach(series => {
                 targetDomainObjects[series.keyString] = series.domainObject;
@@ -1150,6 +1154,10 @@ export default {
             }
 
             const nearbyAnnotations = this.gatherNearbyAnnotations();
+
+            if (!nearbyAnnotations.length) {
+                return;
+            }
 
             const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
             this.selectPlotAnnotations({
