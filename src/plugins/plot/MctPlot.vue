@@ -453,11 +453,6 @@ export default {
                     }
                 });
 
-                // don't zoom if in a stacked plot
-                if (this.isNestedWithinAStackedPlot) {
-                    return;
-                }
-
                 this.config.xAxis.set('displayRange', {
                     min: minX,
                     max: maxX
@@ -1138,18 +1133,16 @@ export default {
             }
         },
         selectNearbyAnnotations(event) {
-            if (!this.annotationViewingAndEditingAllowed) {
-                return;
-            }
-
             // need to stop propagation right away to prevent selecting the plot itself
             event.stopPropagation();
-
-            if (this.annotationSelections.length) {
+            if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
                 return;
             }
 
             const nearbyAnnotations = this.gatherNearbyAnnotations();
+            if (!nearbyAnnotations.length) {
+                return;
+            }
 
             const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
             this.selectPlotAnnotations({
