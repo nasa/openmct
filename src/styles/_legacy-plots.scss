@@ -251,7 +251,7 @@ mct-plot {
         }
 
         &.gl-plot-y-label {
-            display: block;
+            display: flex;
             left: 0; right: auto; bottom: 0;
             text-orientation: mixed;
             writing-mode: vertical-lr;
@@ -275,7 +275,11 @@ mct-plot {
             }
         }
     }
-
+.gl-plot-y-label-swatch-container{
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+}
     .plot-yaxis-right {
         &.gl-plot-y { margin-left: 100%; }
 

@@ -28,13 +28,15 @@
     <div
         class="gl-plot-label gl-plot-y-label"
     >
-        <span
-            v-for="(colorAsHexString, index) in seriesColors"
-            :key="`${colorAsHexString}-${index}`"
-            class="plot-series-color-swatch"
-            :style="{ 'background-color': colorAsHexString }"
-        >
-        </span>
+        <div class="gl-plot-y-label-swatch-container">
+            <span
+                v-for="(colorAsHexString, index) in seriesColors"
+                :key="`${colorAsHexString}-${index}`"
+                class="plot-series-color-swatch"
+                :style="{ 'background-color': colorAsHexString }"
+            >
+            </span>
+        </div>
         <span
             :class="{'icon-gear-after': (yKeyOptions.length > 1 && singleSeries)}"
         >{{ canShowYAxisLabel ? yAxisLabel : `Y Axis ${id}` }}</span>
