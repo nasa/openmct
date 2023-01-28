@@ -87,8 +87,8 @@ const config = {
         new webpack.DefinePlugin({
             __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
             __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
-            __OPENMCT_REVISION__: `'${JSON.stringify(gitRevisionPlugin.commithash())}'`,
-            __OPENMCT_BUILD_BRANCH__: `'${JSON.stringify(gitRevisionPlugin.branch())}'`
+            __OPENMCT_REVISION__: `'${gitRevision}'`,
+            __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
         }),
         new VueLoaderPlugin(),
         new CopyWebpackPlugin({
