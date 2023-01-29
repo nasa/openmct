@@ -270,9 +270,11 @@ button {
     flex: 0 0 auto;
     width: $d;
     position: relative;
+    visibility: hidden;
 
     &.is-enabled {
         cursor: pointer;
+        visibility: visible;
 
         &:hover {
             color: $colorDisclosureCtrlHov;
