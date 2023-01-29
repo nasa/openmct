@@ -28,7 +28,7 @@ necessarily be used for reference when writing new tests in this area.
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-test.describe.only('Overlay Plot', () => {
+test.describe('Overlay Plot', () => {
     test('Plot legend color is in sync with plot series color', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
         const overlayPlot = await createDomainObjectWithDefaults(page, {

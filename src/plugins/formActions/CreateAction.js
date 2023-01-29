@@ -146,7 +146,7 @@ export default class CreateAction extends PropertiesAction {
         this.domainObject = this.openmct.objects.toMutable(domainObject);
 
         if (definition.initialize) {
-            definition.initialize(domainObject);
+            definition.initialize(this.domainObject);
         }
 
         const createWizard = new CreateWizard(this.openmct, this.domainObject, this.parentDomainObject);

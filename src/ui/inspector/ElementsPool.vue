@@ -34,7 +34,7 @@
         <ul
             v-if="elements.length > 0"
             id="inspector-elements-tree"
-            class="c-tree c-elements-pool__tree js-elements-pool__tree"
+            class="c-tree c-elements-pool__tree"
         >
             <element-item
                 v-for="(element, index) in elements"

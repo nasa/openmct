@@ -1,5 +1,5 @@
 <template>
-<div class="c-overlay">
+<div class="c-overlay js-overlay">
     <div
         class="c-overlay__blocker"
         @click="destroy"
@@ -26,7 +26,7 @@
                 v-for="(button, index) in buttons"
                 ref="buttons"
                 :key="index"
-                class="c-button"
+                class="c-button js-overlay__button"
                 tabindex="0"
                 :class="{'c-button--major': focusIndex===index}"
                 @focus="focusIndex=index"

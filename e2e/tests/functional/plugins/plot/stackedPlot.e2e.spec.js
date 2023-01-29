@@ -61,15 +61,19 @@ test.describe('Stacked Plot', () => {
         await page.mouse.up();
 
         await page.locator('.js-elements-pool__tree >> text=swg b').click({ button: 'right' });
-        await page.locator('.c-overlay .c-button >> text=OK').click();
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+        await page.locator('.js-overlay .js-overlay__button >> text=OK').click();
 
         // Wait until the number of elements in the elements pool has changed, and then confirm that the correct children were retained
-        await page.waitForFunction(() => {
-            return Array.from(document.querySelectorAll('.js-elements-pool__tree .js-elements-pool__item')).length === 2;
-        });
+        // await page.waitForFunction(() => {
+        //     return Array.from(document.querySelectorAll('.js-elements-pool__tree .js-elements-pool__item')).length === 2;
+        // });
+        // Wait until there are only two items in the elements pool (ie the remove action has completed)
+        await expect(page.locator('.js-elements-pool__tree .js-elements-pool__item')).toHaveCount(2);
 
-        expect(page.locator('.js-elements-pool__tree >> text=swg a')).toBeTruthy();
-        expect(page.locator('.js-elements-pool__tree >> text=swg b')).toBeFalsy();
-        expect(page.locator('.js-elements-pool__tree >> text=swg c')).toBeTruthy();
+        // Confirm that the elements pool contains the items we expect
+        await expect(page.locator('.js-elements-pool__tree >> text=swg a')).toHaveCount(1);
+        await expect(page.locator('.js-elements-pool__tree >> text=swg b')).toHaveCount(0);
+        await expect(page.locator('.js-elements-pool__tree >> text=swg c')).toHaveCount(1);
     });
 });
