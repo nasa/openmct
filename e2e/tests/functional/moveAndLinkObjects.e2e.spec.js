@@ -52,7 +52,9 @@ test.describe('Move & link item tests', () => {
         // Attempt to move parent to its own grandparent
         await page.locator('button[title="Show selected item in tree"]').click();
 
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         await treePane.getByRole('treeitem', {
             name: 'Parent Folder'
         }).click({
@@ -63,28 +65,30 @@ test.describe('Move & link item tests', () => {
             name: /Move/
         }).click();
 
-        const locatorTree = page.locator('#locator-tree');
-        const myItemsLocatorTreeItem = locatorTree.getByRole('treeitem', {
+        const createModalTree = page.getByRole('tree', {
+            name: "Create Modal Tree"
+        });
+        const myItemsLocatorTreeItem = createModalTree.getByRole('treeitem', {
             name: myItemsFolderName
         });
         await myItemsLocatorTreeItem.locator('.c-disclosure-triangle').click();
         await myItemsLocatorTreeItem.click();
 
-        const parentFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+        const parentFolderLocatorTreeItem = createModalTree.getByRole('treeitem', {
             name: parentFolder.name
         });
         await parentFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
         await parentFolderLocatorTreeItem.click();
         await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
 
-        const childFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+        const childFolderLocatorTreeItem = createModalTree.getByRole('treeitem', {
             name: new RegExp(childFolder.name)
         });
         await childFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
         await childFolderLocatorTreeItem.click();
         await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
 
-        const grandchildFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+        const grandchildFolderLocatorTreeItem = createModalTree.getByRole('treeitem', {
             name: grandchildFolder.name
         });
         await grandchildFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
@@ -195,7 +199,9 @@ test.describe('Move & link item tests', () => {
         // Attempt to move parent to its own grandparent
         await page.locator('button[title="Show selected item in tree"]').click();
 
-        const treePane = page.locator('#tree-pane');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
         await treePane.getByRole('treeitem', {
             name: 'Parent Folder'
         }).click({
@@ -206,28 +212,30 @@ test.describe('Move & link item tests', () => {
             name: /Move/
         }).click();
 
-        const locatorTree = page.locator('#locator-tree');
-        const myItemsLocatorTreeItem = locatorTree.getByRole('treeitem', {
+        const createModalTree = page.getByRole('tree', {
+            name: "Create Modal Tree"
+        });
+        const myItemsLocatorTreeItem = createModalTree.getByRole('treeitem', {
             name: myItemsFolderName
         });
         await myItemsLocatorTreeItem.locator('.c-disclosure-triangle').click();
         await myItemsLocatorTreeItem.click();
 
-        const parentFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+        const parentFolderLocatorTreeItem = createModalTree.getByRole('treeitem', {
             name: parentFolder.name
         });
         await parentFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
         await parentFolderLocatorTreeItem.click();
         await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
 
-        const childFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+        const childFolderLocatorTreeItem = createModalTree.getByRole('treeitem', {
             name: new RegExp(childFolder.name)
         });
         await childFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
         await childFolderLocatorTreeItem.click();
         await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
 
-        const grandchildFolderLocatorTreeItem = locatorTree.getByRole('treeitem', {
+        const grandchildFolderLocatorTreeItem = createModalTree.getByRole('treeitem', {
             name: grandchildFolder.name
         });
         await grandchildFolderLocatorTreeItem.locator('.c-disclosure-triangle').click();
