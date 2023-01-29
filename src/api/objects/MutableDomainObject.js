@@ -91,7 +91,7 @@ class MutableDomainObject {
         let parentPropertiesList = path.split('.');
         for (let index = parentPropertiesList.length; index > 0; index--) {
             let parentPropertyPath = parentPropertiesList.slice(0, index).join('.');
-            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath), oldValue);
+            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath), _.get(oldModel, parentPropertyPath));
         }
 
         //TODO: Emit events for listeners of child properties when parent changes.
