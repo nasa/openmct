@@ -105,6 +105,9 @@ export default class MCTChartAlarmLineSet {
 
     reset() {
         this.limits = [];
+        if (this.series.limits) {
+            this.getLimitPoints(this.series);
+        }
     }
 
     destroy() {

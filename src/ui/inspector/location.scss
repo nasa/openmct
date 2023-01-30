@@ -11,7 +11,7 @@
 
         &:not(:last-child) {
             &:after {
-                color: $colorInspectorPropName;
+                // color: $colorInspectorPropName;
                 content: $glyph-icon-arrow-right;
                 font-family: symbolsfont;
                 font-size: 0.7em;
@@ -37,6 +37,7 @@
             &__type-icon {
                 width: auto;
                 font-size: 1em;
+                min-width: auto;
             }
 
             @include hover() {

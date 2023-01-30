@@ -25,6 +25,12 @@
         margin-right: $interiorMargin;
     }
 
+    &.is-stale {
+        .c-telemetry-view__value {
+            @include isStaleElement();
+        }
+    }
+
     .c-frame & {
         @include abs();
         border: 1px solid transparent;

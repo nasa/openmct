@@ -26,7 +26,7 @@ import TelemetryCriterion from "./criterion/TelemetryCriterion";
 import { evaluateResults } from './utils/evaluator';
 import { getLatestTimestamp } from './utils/time';
 import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
-import {TRIGGER_CONJUNCTION, TRIGGER_LABEL} from "./utils/constants";
+import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from "./utils/constants";
 
 /*
 * conditionConfiguration = {
@@ -160,7 +160,8 @@ export default class Condition extends EventEmitter {
         }
 
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-        criterion.on('telemetryIsStale', (obj) => this.handleStaleCriterion(obj));
+        criterion.on('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
+        criterion.on('telemetryStaleness', () => this.handleTelemetryStaleness());
         if (!this.criteria) {
             this.criteria = [];
         }
@@ -191,12 +192,14 @@ export default class Condition extends EventEmitter {
             const newCriterionConfiguration = this.generateCriterion(criterionConfiguration);
             let newCriterion = new TelemetryCriterion(newCriterionConfiguration, this.openmct);
             newCriterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-            newCriterion.on('telemetryIsStale', (obj) => this.handleStaleCriterion(obj));
+            newCriterion.on('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
+            newCriterion.on('telemetryStaleness', () => this.handleTelemetryStaleness());
 
             let criterion = found.item;
             criterion.unsubscribe();
             criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-            criterion.off('telemetryIsStale', (obj) => this.handleStaleCriterion(obj));
+            criterion.off('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
+            newCriterion.off('telemetryStaleness', () => this.handleTelemetryStaleness());
             this.criteria.splice(found.index, 1, newCriterion);
         }
     }
@@ -205,12 +208,9 @@ export default class Condition extends EventEmitter {
         let found = this.findCriterion(id);
         if (found) {
             let criterion = found.item;
-            criterion.off('criterionUpdated', (obj) => {
-                this.handleCriterionUpdated(obj);
-            });
-            criterion.off('telemetryIsStale', (obj) => {
-                this.handleStaleCriterion(obj);
-            });
+            criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
+            criterion.off('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
+            criterion.off('telemetryStaleness', () => this.handleTelemetryStaleness());
             criterion.destroy();
             this.criteria.splice(found.index, 1);
 
@@ -227,7 +227,7 @@ export default class Condition extends EventEmitter {
         }
     }
 
-    handleStaleCriterion(updatedCriterion) {
+    handleOldTelemetryCriterion(updatedCriterion) {
         this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
         let latestTimestamp = {};
         latestTimestamp = getLatestTimestamp(
@@ -237,6 +237,11 @@ export default class Condition extends EventEmitter {
             this.openmct.time.timeSystem()
         );
         this.conditionManager.updateCurrentCondition(latestTimestamp);
+    }
+
+    handleTelemetryStaleness() {
+        this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
+        this.conditionManager.updateCurrentCondition();
     }
 
     updateDescription() {

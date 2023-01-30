@@ -26,19 +26,18 @@
     :style="`width: 100%; height: 100%`"
 >
     <CompassHUD
-        v-if="hasCameraFieldOfView"
+        v-if="showCompassHUD"
         :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
     />
     <CompassRose
-        v-if="hasCameraFieldOfView"
-        :camera-angle-of-view="cameraAngleOfView"
+        v-if="showCompassRose"
         :camera-pan="cameraPan"
-        :compass-rose-sizing-classes="compassRoseSizingClasses"
         :heading="heading"
         :sized-image-dimensions="sizedImageDimensions"
         :sun-heading="sunHeading"
+        :transformations="transformations"
     />
 </div>
 </template>
@@ -47,18 +46,12 @@
 import CompassHUD from './CompassHUD.vue';
 import CompassRose from './CompassRose.vue';
 
-const CAMERA_ANGLE_OF_VIEW = 70;
-
 export default {
     components: {
         CompassHUD,
         CompassRose
     },
     props: {
-        compassRoseSizingClasses: {
-            type: String,
-            required: true
-        },
         image: {
             type: Object,
             required: true
@@ -69,12 +62,18 @@ export default {
         }
     },
     computed: {
-        hasCameraFieldOfView() {
-            return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
+        showCompassHUD() {
+            return this.hasCameraPan && this.cameraAngleOfView > 0;
+        },
+        showCompassRose() {
+            return (this.hasCameraPan || this.hasHeading) && this.cameraAngleOfView > 0;
         },
         // horizontal rotation from north in degrees
         heading() {
             return this.image.heading;
+        },
+        hasHeading() {
+            return this.heading !== undefined;
         },
         // horizontal rotation from north in degrees
         sunHeading() {
@@ -84,8 +83,14 @@ export default {
         cameraPan() {
             return this.image.cameraPan;
         },
+        hasCameraPan() {
+            return this.cameraPan !== undefined;
+        },
         cameraAngleOfView() {
-            return CAMERA_ANGLE_OF_VIEW;
+            return this.transformations?.cameraAngleOfView;
+        },
+        transformations() {
+            return this.image.transformations;
         }
     },
     methods: {

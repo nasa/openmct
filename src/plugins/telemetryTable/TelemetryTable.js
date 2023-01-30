@@ -28,7 +28,8 @@ define([
     './TelemetryTableNameColumn',
     './TelemetryTableColumn',
     './TelemetryTableUnitColumn',
-    './TelemetryTableConfiguration'
+    './TelemetryTableConfiguration',
+    '@/utils/staleness'
 ], function (
     EventEmitter,
     _,
@@ -37,7 +38,8 @@ define([
     TelemetryTableNameColumn,
     TelemetryTableColumn,
     TelemetryTableUnitColumn,
-    TelemetryTableConfiguration
+    TelemetryTableConfiguration,
+    StalenessUtils
 ) {
     class TelemetryTable extends EventEmitter {
         constructor(domainObject, openmct) {
@@ -56,6 +58,7 @@ define([
             this.telemetryCollections = {};
             this.delayedActions = [];
             this.outstandingRequests = 0;
+            this.stalenessSubscription = {};
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
@@ -155,6 +158,19 @@ define([
             this.telemetryCollections[keyString].on('clear', this.clearData);
             this.telemetryCollections[keyString].load();
 
+            this.stalenessSubscription[keyString] = {};
+            this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils.default(this.openmct, telemetryObject);
+            this.openmct.telemetry.isStale(telemetryObject).then(stalenessResponse => {
+                if (stalenessResponse !== undefined) {
+                    this.handleStaleness(keyString, stalenessResponse);
+                }
+            });
+            const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(telemetryObject, (stalenessResponse) => {
+                this.handleStaleness(keyString, stalenessResponse);
+            });
+
+            this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
+
             this.telemetryObjects[keyString] = {
                 telemetryObject,
                 keyString,
@@ -164,6 +180,15 @@ define([
             };
 
             this.emit('object-added', telemetryObject);
+        }
+
+        handleStaleness(keyString, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse, keyString)) {
+                this.emit('telemetry-staleness', {
+                    keyString,
+                    isStale: stalenessResponse.isStale
+                });
+            }
         }
 
         getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
@@ -255,6 +280,7 @@ define([
 
         removeTelemetryObject(objectIdentifier) {
             const keyString = this.openmct.objects.makeKeyString(objectIdentifier);
+            const SKIP_CHECK = true;
 
             this.configuration.removeColumnsForObject(objectIdentifier, true);
             this.tableRows.removeRowsByObject(keyString);
@@ -263,6 +289,10 @@ define([
             delete this.telemetryObjects[keyString];
 
             this.emit('object-removed', objectIdentifier);
+
+            this.stalenessSubscription[keyString].unsubscribe();
+            this.stalenessSubscription[keyString].stalenessUtils.destroy();
+            this.handleStaleness(keyString, { isStale: false }, SKIP_CHECK);
         }
 
         clearData() {
@@ -367,6 +397,11 @@ define([
             if (this.filterObserver) {
                 this.filterObserver();
             }
+
+            Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+                stalenessSubscription.unsubscribe();
+                stalenessSubscription.stalenessUtils.destroy();
+            });
 
             if (this.tableComposition !== undefined) {
                 this.tableComposition.off('add', this.addTelemetryObject);

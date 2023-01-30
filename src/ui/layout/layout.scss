@@ -312,7 +312,7 @@
         }
 
         &__pane-tree {
-            width: 300px;
+            width: 100%;
             padding-left: nth($shellPanePad, 2);
         }
 
@@ -343,6 +343,10 @@
     display: block;
     height: 100%;
     overflow: auto;
+
+    &.is-stale {
+        @include isStaleHolder();
+    }
 }
 
 .is-editing {

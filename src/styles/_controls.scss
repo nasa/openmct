@@ -194,6 +194,7 @@ button {
 .c-icon-button {
     [class*='label'] {
         opacity: 0.8;
+        padding: 1px 0;
     }
 
     &--mixed {
@@ -269,9 +270,11 @@ button {
     flex: 0 0 auto;
     width: $d;
     position: relative;
+    visibility: hidden;
 
     &.is-enabled {
         cursor: pointer;
+        visibility: visible;
 
         &:hover {
             color: $colorDisclosureCtrlHov;
@@ -459,6 +462,15 @@ input[type=number].c-input-number--no-spinners {
     input {
         margin-left: $interiorMarginSm;
     }
+}
+
+.c-scrollcontainer{
+    @include nice-input();
+    margin-top: $interiorMargin;
+    background: $scrollContainer;
+    border-radius: $controlCr;
+    overflow: auto;
+    padding: $interiorMarginSm;
 }
 
 // SELECTS

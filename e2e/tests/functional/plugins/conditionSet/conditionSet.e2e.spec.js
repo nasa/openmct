@@ -98,8 +98,8 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         await page.locator('text=Conditions View Snapshot >> button').nth(3).click();
 
         //Edit Condition Set Name from main view
-        await page.locator('text=Unnamed Condition Set').first().fill('Renamed Condition Set');
-        await page.locator('text=Renamed Condition Set').first().press('Enter');
+        await page.locator('.l-browse-bar__object-name').filter({ hasText: 'Unnamed Condition Set' }).first().fill('Renamed Condition Set');
+        await page.locator('.l-browse-bar__object-name').filter({ hasText: 'Renamed Condition Set' }).first().press('Enter');
         // Click Save Button
         await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
         // Click Save and Finish Editing Option

@@ -56,6 +56,10 @@
     }
 }
 
+.c-tag-btn__label {
+  overflow: visible!important;
+}
+
 /******************************* HOVERS */
 .has-tag-applier {
     $p: opacity, width;

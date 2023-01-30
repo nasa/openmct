@@ -22,7 +22,7 @@
 <template>
 <div
     class="c-gauge__wrapper js-gauge-wrapper"
-    :class="`c-gauge--${gaugeType}`"
+    :class="gaugeClasses"
     :title="gaugeTitle"
 >
     <template v-if="typeDial">
@@ -347,12 +347,14 @@
 
 <script>
 import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
     name: 'Gauge',
+    mixins: [stalenessMixin],
     inject: ['openmct', 'domainObject', 'composition'],
     data() {
         let gaugeController = this.domainObject.configuration.gaugeController;
@@ -402,6 +404,15 @@ export default {
             const VIEWBOX_STR = '0 0 X 10';
 
             return VIEWBOX_STR.replace('X', this.digits * DIGITS_RATIO);
+        },
+        gaugeClasses() {
+            let classes = [`c-gauge--${this.gaugeType}`];
+
+            if (this.isStale) {
+                classes.push('is-stale');
+            }
+
+            return classes;
         },
         rangeFontSize() {
             const CHAR_THRESHOLD = 3;
@@ -553,6 +564,8 @@ export default {
             this.telemetryObject = domainObject;
             this.request();
             this.subscribe();
+
+            this.subscribeToStaleness(domainObject);
         },
         addedToComposition(domainObject) {
             if (this.telemetryObject) {
@@ -610,6 +623,8 @@ export default {
                 this.unsubscribe();
                 this.unsubscribe = null;
             }
+
+            this.triggerUnsubscribeFromStaleness();
 
             this.curVal = DEFAULT_CURRENT_VALUE;
             this.formats = null;

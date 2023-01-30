@@ -22,7 +22,7 @@
 <template>
 <div
     class="c-table-wrapper"
-    :class="{ 'is-paused': paused }"
+    :class="tableClasses"
 >
     <div
         v-if="enableLegacyToolbar"
@@ -381,7 +381,8 @@ export default {
             enableRegexSearch: {},
             hideHeaders: configuration.hideHeaders,
             totalNumberOfRows: 0,
-            rowContext: {}
+            rowContext: {},
+            staleObjects: []
         };
     },
     computed: {
@@ -416,6 +417,19 @@ export default {
             }
 
             return style;
+        },
+        tableClasses() {
+            let classes = [];
+
+            if (this.paused) {
+                classes.push('is-paused');
+            }
+
+            if (this.staleObjects.length !== 0) {
+                classes.push('is-stale');
+            }
+
+            return classes;
         }
     },
     watch: {
@@ -488,6 +502,7 @@ export default {
         this.table.on('refresh', this.clearRowsAndRerender);
         this.table.on('historical-rows-processed', this.checkForMarkedRows);
         this.table.on('outstanding-requests', this.outstandingRequests);
+        this.table.on('telemetry-staleness', this.handleStaleness);
 
         this.table.tableRows.on('add', this.rowsAdded);
         this.table.tableRows.on('remove', this.rowsRemoved);
@@ -516,6 +531,7 @@ export default {
         this.table.off('historical-rows-processed', this.checkForMarkedRows);
         this.table.off('refresh', this.clearRowsAndRerender);
         this.table.off('outstanding-requests', this.outstandingRequests);
+        this.table.off('telemetry-staleness', this.handleStaleness);
 
         this.table.tableRows.off('add', this.rowsAdded);
         this.table.tableRows.off('remove', this.rowsRemoved);
@@ -725,6 +741,18 @@ export default {
         },
         outstandingRequests(loading) {
             this.loading = loading;
+        },
+        handleStaleness({ keyString, isStale }) {
+            const index = this.staleObjects.indexOf(keyString);
+            if (isStale) {
+                if (index === -1) {
+                    this.staleObjects.push(keyString);
+                }
+            } else {
+                if (index !== -1) {
+                    this.staleObjects.splice(index, 1);
+                }
+            }
         },
         calculateTableSize() {
             this.$nextTick().then(this.calculateColumnWidths);

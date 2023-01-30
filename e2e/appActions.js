@@ -45,6 +45,14 @@
  * @property {string} url the relative url to the object (for use with `page.goto()`)
  */
 
+/**
+ * Defines parameters to be used in the creation of a notification.
+ * @typedef {Object} CreateNotificationOptions
+ * @property {string} message the message
+ * @property {'info' | 'alert' | 'error'} severity the severity
+ * @property {import('../src/api/notifications/NotificationAPI').NotificationOptions} [notificationOptions] additional options
+ */
+
 const Buffer = require('buffer').Buffer;
 const genUuid = require('uuid').v4;
 
@@ -113,11 +121,32 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 }
 
 /**
+ * Generate a notification with the given options.
+ * @param {import('@playwright/test').Page} page
+ * @param {CreateNotificationOptions} createNotificationOptions
+ */
+async function createNotification(page, createNotificationOptions) {
+    await page.evaluate((_createNotificationOptions) => {
+        const { message, severity, options } = _createNotificationOptions;
+        const notificationApi = window.openmct.notifications;
+        if (severity === 'info') {
+            notificationApi.info(message, options);
+        } else if (severity === 'alert') {
+            notificationApi.alert(message, options);
+        } else {
+            notificationApi.error(message, options);
+        }
+    }, createNotificationOptions);
+}
+
+/**
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  */
 async function expandTreePaneItemByName(page, name) {
-    const treePane = page.locator('#tree-pane');
+    const treePane = page.getByRole('tree', {
+        name: 'Main Tree'
+    });
     const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
@@ -189,6 +218,30 @@ async function openObjectTreeContextMenu(page, url) {
     await page.locator('.is-navigated-object').click({
         button: 'right'
     });
+}
+
+/**
+ * Expands the entire object tree (every expandable tree item).
+ * @param {import('@playwright/test').Page} page
+ * @param {"Main Tree" | "Create Modal Tree"} [treeName="Main Tree"]
+ */
+async function expandEntireTree(page, treeName = "Main Tree") {
+    const treeLocator = page.getByRole('tree', {
+        name: treeName
+    });
+    const collapsedTreeItems = treeLocator.getByRole('treeitem', {
+        expanded: false
+    }).locator('span.c-disclosure-triangle.is-enabled');
+
+    while (await collapsedTreeItems.count() > 0) {
+        await collapsedTreeItems.nth(0).click();
+
+        // FIXME: Replace hard wait with something event-driven.
+        // Without the wait, this fails periodically due to a race condition
+        // with Vue rendering (loop exits prematurely).
+        // eslint-disable-next-line playwright/no-wait-for-timeout
+        await page.waitForTimeout(200);
+    }
 }
 
 /**
@@ -333,7 +386,9 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    createNotification,
     expandTreePaneItemByName,
+    expandEntireTree,
     createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,

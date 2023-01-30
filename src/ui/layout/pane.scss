@@ -83,6 +83,8 @@
     &[class*="--vertical"] {
         padding-top: $interiorMargin;
         padding-bottom: $interiorMargin;
+        min-height: 30px; // For Recents holder
+
         &.l-pane--collapsed {
             padding-top: 0 !important;
             padding-bottom: 0 !important;

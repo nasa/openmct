@@ -1,0 +1,18 @@
+.c-inspect-annotations {
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__content{
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+
