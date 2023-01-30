@@ -73,7 +73,7 @@ export default class PlotSeries extends Model {
 
         super(options);
 
-        this.logMode = options.collection.plot.model.yAxis.logMode;
+        this.logMode = this.getLogMode(options);
 
         this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
         this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
@@ -85,6 +85,16 @@ export default class PlotSeries extends Model {
         this.onYKeyChange(this.get('yKey'));
 
         this.unPlottableValues = [undefined, Infinity, -Infinity];
+    }
+
+    getLogMode(options) {
+        if (this.yAxisId === 1) {
+            return options.collection.plot.model.yAxis.logMode;
+        } else {
+            const foundYAxis = options.collection.plot.model.additionalYAxes.find(yAxis => yAxis.id === this.yAxisId);
+
+            return foundYAxis ? foundYAxis.logMode : false;
+        }
     }
 
     /**
