@@ -77,13 +77,13 @@
                     aria-label="Notebook Entry Input"
                     tabindex="0"
                     :contenteditable="canEdit"
+                    v-bind.prop="formattedText"
                     @mouseover="checkEditability($event)"
                     @mouseleave="canEdit = true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
-                    v-html="formattedText"
                 >
                 </div>
             </template>
@@ -250,7 +250,7 @@ export default {
             let text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
 
             if (this.editMode || !this.urlWhitelist) {
-                return text;
+                return { innerText: text };
             }
 
             text = text.replace(URL_REGEX, (match) => {
@@ -268,7 +268,7 @@ export default {
                 return result;
             });
 
-            return text;
+            return { innerHTML: text };
         },
         isSelectedEntry() {
             return this.selectedEntryId === this.entry.id;
