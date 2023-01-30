@@ -14,7 +14,6 @@
 
 <script>
 import CreateAction from '@/plugins/formActions/CreateAction';
-import objectUtils from 'objectUtils';
 
 export default {
     inject: ['openmct'],
