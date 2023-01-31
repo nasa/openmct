@@ -151,20 +151,21 @@ export default {
             const selection =
                     [
                         {
-                            element: this.openmct.layout.$refs.browseObject.$el,
-                            context: {
-                                item: this.result
-                            }
-                        },
-                        {
                             element: this.$el,
                             context: {
+                                item: this.result.targetModels[0],
                                 type: 'plot-points-selection',
                                 targetDetails,
                                 targetDomainObjects,
                                 annotations: [this.result],
                                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
                                 onAnnotationChange: () => {}
+                            }
+                        },
+                        {
+                            element: this.openmct.layout.$refs.browseObject.$el,
+                            context: {
+                                item: this.result
                             }
                         }
                     ];

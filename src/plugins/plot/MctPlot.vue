@@ -405,7 +405,7 @@ export default {
     },
     methods: {
         updateSelection(selection) {
-            const selectionContext = selection?.[0]?.[0]?.context?.item;
+            const selectionContext = selection?.[0]?.[1]?.context?.item;
             if (!selectionContext
                 || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
                 // Selection changed, but it's us, so ignoring it
@@ -427,7 +427,7 @@ export default {
                 return;
             }
 
-            const selectedAnnotations = selection?.[0]?.[1]?.context?.annotations;
+            const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
             if (selectedAnnotations?.length) {
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
