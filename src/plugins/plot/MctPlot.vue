@@ -1141,6 +1141,10 @@ export default {
 
             const nearbyAnnotations = this.gatherNearbyAnnotations();
             if (!nearbyAnnotations.length) {
+                const emptySelection = this.createPathSelection();
+                this.openmct.selection.select(emptySelection, true);
+                // should show plot itself if we didn't find any annotations
+
                 return;
             }
 
@@ -1151,15 +1155,7 @@ export default {
                 annotations: nearbyAnnotations
             });
         },
-        selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
-            const annotationContext = {
-                type: 'plot-points-selection',
-                targetDetails,
-                targetDomainObjects,
-                annotations,
-                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                onAnnotationChange: this.onAnnotationChange
-            };
+        createPathSelection() {
             let selection = [];
             this.path.forEach((pathObject, index) => {
                 selection.push({
@@ -1169,6 +1165,19 @@ export default {
                     }
                 });
             });
+
+            return selection;
+        },
+        selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
+            const annotationContext = {
+                type: 'plot-points-selection',
+                targetDetails,
+                targetDomainObjects,
+                annotations,
+                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                onAnnotationChange: this.onAnnotationChange
+            };
+            const selection = this.createPathSelection();
             selection.unshift({
                 element: this.$el,
                 context: {
