@@ -224,7 +224,7 @@ export default class CompositionProvider {
       * @private
       * @param {DomainObject} oldDomainObject
       */
-    #onMutation(oldDomainObject) {
+    #onMutation(newDomainObject, oldDomainObject) {
         const id = objectUtils.makeKeyString(oldDomainObject.identifier);
         const listeners = this.#listeningTo[id];
 
@@ -232,8 +232,8 @@ export default class CompositionProvider {
             return;
         }
 
-        const oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        const newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
+        const oldComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
+        const newComposition = newDomainObject.composition.map(objectUtils.makeKeyString);
 
         const added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
         const removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
@@ -247,8 +247,6 @@ export default class CompositionProvider {
                 }
             };
         }
-
-        listeners.composition = newComposition.map(objectUtils.parseKeyString);
 
         added.forEach(function (addedChild) {
             listeners.add.forEach(notify(addedChild));

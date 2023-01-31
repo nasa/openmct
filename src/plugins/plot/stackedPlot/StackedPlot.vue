@@ -35,10 +35,10 @@
     />
     <div class="l-view-section">
         <stacked-plot-item
-            v-for="object in compositionObjects"
-            :key="object.id"
+            v-for="objectWrapper in compositionObjects"
+            :key="objectWrapper.keyString"
             class="c-plot--stacked-container"
-            :child-object="object"
+            :child-object="objectWrapper.object"
             :options="options"
             :grid-lines="gridLines"
             :color-palette="colorPalette"
@@ -181,7 +181,10 @@ export default {
                 rightTickWidth: 0
             });
 
-            this.compositionObjects.push(child);
+            this.compositionObjects.push({
+                object: child,
+                keyString: id
+            });
         },
 
         removeChild(childIdentifier) {
@@ -192,6 +195,7 @@ export default {
             const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
                 return this.openmct.objects.areIdsEqual(seriesConfig.identifier, childIdentifier);
             });
+
             if (configIndex > -1) {
                 this.domainObject.configuration.series.splice(configIndex, 1);
             }
@@ -200,15 +204,11 @@ export default {
                 keyString: id
             });
 
-            const childObj = this.compositionObjects.filter((c) => {
-                const identifier = this.openmct.objects.makeKeyString(c.identifier);
+            this.compositionObjects = this.compositionObjects.filter((c) => {
+                const identifier = c.keyString;
 
-                return identifier === id;
-            })[0];
-            if (childObj) {
-                const index = this.compositionObjects.indexOf(childObj);
-                this.compositionObjects.splice(index, 1);
-            }
+                return identifier !== id;
+            });
         },
 
         compositionReorder(reorderPlan) {
