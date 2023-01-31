@@ -114,7 +114,17 @@ export default {
             return this?.selection?.[0]?.[0]?.context?.targetDetails ?? {};
         },
         shouldShowTagsEditor() {
-            return Object.keys(this.targetDetails).length > 0;
+            const showingTagsEditor = Object.keys(this.targetDetails).length > 0;
+
+            if (showingTagsEditor) {
+                console.debug(`🧦 Showing tags editor`, this?.selection);
+
+                return true;
+            }
+
+            console.debug(`⛑️ NOT showing tags editor`, this?.selection);
+
+            return false;
         },
         targetDomainObjects() {
             return this?.selection?.[0]?.[0]?.context?.targetDomainObjects ?? {};
@@ -195,6 +205,7 @@ export default {
             }
         },
         async loadAnnotationForTargetObject(target) {
+            console.debug(`📝 Loading annotations for target`, target);
             const targetID = this.openmct.objects.makeKeyString(target.identifier);
             const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(target.identifier);
             const filteredAnnotationsForSelection = allAnnotationsForTarget.filter(annotation => {
