@@ -408,7 +408,8 @@ export default {
             const selectionContext = selection?.[0]?.[1]?.context?.item;
             if (!selectionContext
                 || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)
-                || this.compositionPathContainsId(selectionContext)) {
+                || this.compositionPathContainsId(selectionContext)
+                || this.shareCommonParent(selectionContext)) {
                 // Selection changed, but we're already showing the selected object
                 return;
             }
@@ -655,6 +656,9 @@ export default {
             this.config.series.forEach(function (series) {
                 series.reset();
             });
+        },
+        shareCommonParent(domainObjectToFind) {
+            return false;
         },
         compositionPathContainsId(domainObjectToFind) {
             if (!domainObjectToFind.composition) {
