@@ -405,7 +405,7 @@ export default {
     },
     methods: {
         updateSelection(selection) {
-            const selectionContext = selection?.[0]?.[1]?.context?.item;
+            const selectionContext = selection?.[0]?.[0]?.context?.item;
             if (!selectionContext
                 || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)
                 || this.compositionPathContainsId(selectionContext)

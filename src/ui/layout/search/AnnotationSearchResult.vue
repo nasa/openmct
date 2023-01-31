@@ -161,12 +161,6 @@ export default {
                                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
                                 onAnnotationChange: () => {}
                             }
-                        },
-                        {
-                            element: this.openmct.layout.$refs.browseObject.$el,
-                            context: {
-                                item: this.result
-                            }
                         }
                     ];
             this.openmct.selection.select(selection, true);

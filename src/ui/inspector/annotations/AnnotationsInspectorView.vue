@@ -117,12 +117,8 @@ export default {
             const showingTagsEditor = Object.keys(this.targetDetails).length > 0;
 
             if (showingTagsEditor) {
-                console.debug(`🧦 Showing tags editor`, this?.selection);
-
                 return true;
             }
-
-            console.debug(`⛑️ NOT showing tags editor`, this?.selection);
 
             return false;
         },

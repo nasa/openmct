@@ -483,12 +483,6 @@ export default {
                             annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                             onAnnotationChange: this.timestampAndUpdate
                         }
-                    },
-                    {
-                        element: this.openmct.layout.$refs.browseObject.$el,
-                        context: {
-                            item: this.domainObject
-                        }
                     }
                 ],
                 false);
