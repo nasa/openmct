@@ -14,7 +14,6 @@
 
 <script>
 import CreateAction from '@/plugins/formActions/CreateAction';
-import objectUtils from 'objectUtils';
 
 export default {
     inject: ['openmct'],
@@ -74,23 +73,9 @@ export default {
             this.openmct.menus.showSuperMenu(x, y, this.sortedItems, menuOptions);
         },
         create(key) {
-            // Hack for support.  TODO: rewrite create action.
-            // 1. Get contextual object from navigation
-            // 2. Get legacy type from legacy api
-            // 3. Instantiate create action with type, parent, context
-            // 4. perform action.
-            return this.openmct.objects.get(this.openmct.router.path[0].identifier)
-                .then((currentObject) => {
-                    const createAction = new CreateAction(this.openmct, key, currentObject);
+            const createAction = new CreateAction(this.openmct, key, this.openmct.router.path[0]);
 
-                    createAction.invoke();
-                });
-        },
-        convertToLegacy(domainObject) {
-            let keyString = objectUtils.makeKeyString(domainObject.identifier);
-            let oldModel = objectUtils.toOldFormat(domainObject);
-
-            return this.openmct.$injector.get('instantiate')(oldModel, keyString);
+            createAction.invoke();
         }
     }
 };
