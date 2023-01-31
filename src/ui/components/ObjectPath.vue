@@ -24,6 +24,8 @@
 <ul
     v-if="orderedPath.length"
     class="c-location"
+    :aria-label="`${domainObject.name} Breadcrumb`"
+    role="navigation"
 >
     <li
         v-for="pathObject in orderedPath"
