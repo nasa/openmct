@@ -88,10 +88,11 @@ export default class PlotSeries extends Model {
     }
 
     getLogMode(options) {
-        if (this.yAxisId === 1) {
+        const yAxisId = this.get('yAxisId');
+        if (yAxisId === 1) {
             return options.collection.plot.model.yAxis.logMode;
         } else {
-            const foundYAxis = options.collection.plot.model.additionalYAxes.find(yAxis => yAxis.id === this.yAxisId);
+            const foundYAxis = options.collection.plot.model.additionalYAxes.find(yAxis => yAxis.id === yAxisId);
 
             return foundYAxis ? foundYAxis.logMode : false;
         }
