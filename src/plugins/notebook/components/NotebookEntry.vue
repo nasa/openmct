@@ -473,20 +473,21 @@ export default {
             this.openmct.selection.select(
                 [
                     {
-                        element: this.openmct.layout.$refs.browseObject.$el,
-                        context: {
-                            item: this.domainObject
-                        }
-                    },
-                    {
                         element: event.currentTarget,
                         context: {
                             type: 'notebook-entry-selection',
+                            item: this.domainObject,
                             targetDetails,
                             targetDomainObjects,
                             annotations: this.notebookAnnotations,
                             annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                             onAnnotationChange: this.timestampAndUpdate
+                        }
+                    },
+                    {
+                        element: this.openmct.layout.$refs.browseObject.$el,
+                        context: {
+                            item: this.domainObject
                         }
                     }
                 ],
