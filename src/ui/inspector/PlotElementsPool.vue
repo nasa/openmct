@@ -34,7 +34,7 @@
         <ul
             v-if="hasElements"
             id="inspector-elements-tree"
-            class="c-tree c-elements-pool__tree"
+            class="c-tree c-elements-pool__tree js-elements-pool__tree"
         >
             <div class="c-elements-pool__instructions"> Select and drag an element to move it into a different axis. </div>
             <element-item-group

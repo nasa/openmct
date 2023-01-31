@@ -648,7 +648,7 @@ export default class ObjectAPI {
      * @param {module:openmct.DomainObject} object the object to observe
      * @param {string} path the property to observe
      * @param {Function} callback a callback to invoke when new values for
-     *        this property are observed
+     *        this property are observed.
      * @method observe
      * @memberof module:openmct.ObjectAPI#
      */

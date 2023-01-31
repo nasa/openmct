@@ -1,47 +1,35 @@
-import CompositionAPI from './CompositionAPI';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import CompositionCollection from './CompositionCollection';
 
 describe('The Composition API', function () {
     let publicAPI;
     let compositionAPI;
-    let topicService;
-    let mutationTopic;
 
-    beforeEach(function () {
+    beforeEach(function (done) {
+        publicAPI = createOpenMct();
+        compositionAPI = publicAPI.composition;
 
-        mutationTopic = jasmine.createSpyObj('mutationTopic', [
-            'listen'
-        ]);
-        topicService = jasmine.createSpy('topicService');
-        topicService.and.returnValue(mutationTopic);
-        publicAPI = {};
-        publicAPI.objects = jasmine.createSpyObj('ObjectAPI', [
-            'get',
-            'mutate',
-            'observe',
-            'areIdsEqual'
+        const mockObjectProvider = jasmine.createSpyObj("mock provider", [
+            "create",
+            "update",
+            "get"
         ]);
 
-        publicAPI.objects.areIdsEqual.and.callFake(function (id1, id2) {
-            return id1.namespace === id2.namespace && id1.key === id2.key;
+        mockObjectProvider.create.and.returnValue(Promise.resolve(true));
+        mockObjectProvider.update.and.returnValue(Promise.resolve(true));
+        mockObjectProvider.get.and.callFake((identifier) => {
+            return Promise.resolve({identifier});
         });
 
-        publicAPI.composition = jasmine.createSpyObj('CompositionAPI', [
-            'checkPolicy'
-        ]);
-        publicAPI.composition.checkPolicy.and.returnValue(true);
+        publicAPI.objects.addProvider('test', mockObjectProvider);
+        publicAPI.objects.addProvider('custom', mockObjectProvider);
 
-        publicAPI.objects.eventEmitter = jasmine.createSpyObj('eventemitter', [
-            'on'
-        ]);
-        publicAPI.objects.get.and.callFake(function (identifier) {
-            return Promise.resolve({identifier: identifier});
-        });
-        publicAPI.$injector = jasmine.createSpyObj('$injector', [
-            'get'
-        ]);
-        publicAPI.$injector.get.and.returnValue(topicService);
-        compositionAPI = new CompositionAPI(publicAPI);
+        publicAPI.on('start', done);
+        publicAPI.startHeadless();
+    });
+
+    afterEach(() => {
+        return resetApplicationState(publicAPI);
     });
 
     it('returns falsy if an object does not support composition', function () {
@@ -106,6 +94,9 @@ describe('The Composition API', function () {
             let listener;
             beforeEach(function () {
                 listener = jasmine.createSpy('reorderListener');
+                spyOn(publicAPI.objects, 'mutate');
+                publicAPI.objects.mutate.and.callThrough();
+
                 composition.on('reorder', listener);
 
                 return composition.load();
@@ -136,18 +127,20 @@ describe('The Composition API', function () {
             });
         });
         it('supports adding an object to composition', function () {
-            let addListener = jasmine.createSpy('addListener');
             let mockChildObject = {
                 identifier: {
                     key: 'mock-key',
                     namespace: ''
                 }
             };
-            composition.on('add', addListener);
-            composition.add(mockChildObject);
 
-            expect(domainObject.composition.length).toBe(4);
-            expect(domainObject.composition[3]).toEqual(mockChildObject.identifier);
+            return new Promise((resolve) => {
+                composition.on('add', resolve);
+                composition.add(mockChildObject);
+            }).then(() => {
+                expect(domainObject.composition.length).toBe(4);
+                expect(domainObject.composition[3]).toEqual(mockChildObject.identifier);
+            });
         });
     });
 

@@ -38,10 +38,10 @@
         class="l-view-section"
     >
         <stacked-plot-item
-            v-for="(object) in compositionObjects"
-            :key="`${object.identifier.namespace}-${object.identifier.key}`"
+            v-for="objectWrapper in compositionObjects"
+            :key="objectWrapper.keyString"
             class="c-plot--stacked-container"
-            :child-object="object"
+            :child-object="objectWrapper.object"
             :options="options"
             :grid-lines="gridLines"
             :color-palette="colorPalette"
@@ -54,7 +54,7 @@
             @gridLines="onGridLinesChange"
             @lockHighlightPoint="lockHighlightPointUpdated"
             @highlights="highlightsUpdated"
-            @configLoaded="configLoadedForObject(object.identifier)"
+            @configLoaded="configLoadedForObject(objectWrapper.keyString)"
         />
     </div>
 </div>
@@ -177,7 +177,10 @@ export default {
 
             this.$set(this.tickWidthMap, id, 0);
 
-            this.compositionObjects.push(child);
+            this.compositionObjects.push({
+                object: child,
+                keyString: id
+            });
             this.setConfigLoadedForComposition();
         },
 
@@ -187,22 +190,25 @@ export default {
             this.$delete(this.tickWidthMap, id);
 
             const childObj = this.compositionObjects.filter((c) => {
-                const identifier = this.openmct.objects.makeKeyString(c.identifier);
+                const identifier = c.keyString;
 
                 return identifier === id;
             })[0];
 
             if (childObj) {
-                const index = this.compositionObjects.indexOf(childObj);
-                this.compositionObjects.splice(index, 1);
-
-                if (childObj.type !== 'telemetry.plot.overlay') {
-                    const config = this.getConfig(this.openmct.objects.makeKeyString(childObj.identifier));
+                if (childObj.object.type !== 'telemetry.plot.overlay') {
+                    const config = this.getConfig(childObj.keyString);
                     if (config) {
                         config.series.remove(config.series.at(0));
                     }
                 }
             }
+
+            this.compositionObjects = this.compositionObjects.filter((c) => {
+                const identifier = c.keyString;
+
+                return identifier !== id;
+            });
 
             const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
                 return this.openmct.objects.areIdsEqual(seriesConfig.identifier, childIdentifier);
