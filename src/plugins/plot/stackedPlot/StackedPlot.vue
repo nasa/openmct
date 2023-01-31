@@ -161,7 +161,7 @@ export default {
         },
         setConfigLoadedForComposition() {
             this.compositionObjectsConfigLoaded = this.compositionObjects.length && this.compositionObjects.every(childObject => {
-                const id = this.openmct.objects.makeKeyString(childObject.identifier);
+                const id = childObject.keyString;
 
                 return this.configLoaded[id] === true;
             });
