@@ -159,6 +159,7 @@ export default {
                                 targetDomainObjects,
                                 annotations: [this.result],
                                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                                isAnnotationSearchResult: true,
                                 onAnnotationChange: () => {}
                             }
                         }

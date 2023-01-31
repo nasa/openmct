@@ -406,11 +406,13 @@ export default {
     methods: {
         updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
-            if (!selectionContext
-                || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)
-                || this.compositionPathContainsId(selectionContext)
-                || this.shareCommonParent(selectionContext)) {
-                // Selection changed, but we're already showing the selected object
+            // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
+            // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
+            const isAnnotationSearchResult = selection?.[0]?.[0]?.context?.isAnnotationSearchResult;
+
+            if (selectionContext
+                && !isAnnotationSearchResult
+                && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
                 return;
             }
 
@@ -430,6 +432,17 @@ export default {
             }
 
             const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
+            //This section is only for the annotations search results entry to displaying annotations
+            if (isAnnotationSearchResult) {
+                this.showAnnotationsFromSearchResults(selectedAnnotations);
+            }
+
+            //This section is common to all entry points for annotation display
+            this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
+        showAnnotationsFromSearchResults(selectedAnnotations) {
+        //Start section
+
             if (selectedAnnotations?.length) {
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
@@ -463,10 +476,9 @@ export default {
                     min: minY,
                     max: maxY
                 });
+                //Zoom out just a touch so that the highlighted section for annotations doesn't take over the whole view - which is not a nice look.
                 this.zoom('out', 0.2);
             }
-
-            this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
@@ -1186,19 +1198,27 @@ export default {
                 onAnnotationChange: this.onAnnotationChange
             };
             const selection = this.createPathSelection();
-            selection.unshift({
-                element: this.$el,
-                context: {
-                    item: this.domainObject,
+            if (selection.length && this.openmct.objects.areIdsEqual(selection[0].context.item.identifier, this.domainObject.identifier)) {
+                selection[0].context = {
+                    ...selection[0].context,
                     ...annotationContext
-                }
-            });
+                };
+            } else {
+                selection.unshift({
+                    element: this.$el,
+                    context: {
+                        item: this.domainObject,
+                        ...annotationContext
+                    }
+                });
+            }
+
             this.openmct.selection.select(selection, true);
         },
         selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
             let targetDetails = {};
-            let annotations = {};
+            let annotations = [];
             pointsInBox.forEach(pointInBox => {
                 if (pointInBox.length) {
                     const seriesID = pointInBox[0].series.keyString;
