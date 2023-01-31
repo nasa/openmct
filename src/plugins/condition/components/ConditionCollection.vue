@@ -261,6 +261,7 @@ export default {
                     keyString,
                     isStale: false
                 });
+                delete this.stalenessSubscription[keyString];
             }
         },
         hanldeStaleness(keyString, stalenessResponse) {

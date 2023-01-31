@@ -33,7 +33,7 @@ export default class StalenessUtils {
 
     shouldUpdateStaleness(stalenessResponse, id) {
         const stalenessResponseTime = this.parseTime(stalenessResponse);
-        if (stalenessResponseTime >= this.lastStalenessResponseTime) {
+        if (stalenessResponseTime > this.lastStalenessResponseTime) {
             this.lastStalenessResponseTime = stalenessResponseTime;
 
             return true;
