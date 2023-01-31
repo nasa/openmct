@@ -399,7 +399,7 @@ describe("The Object API", () => {
                     unlisten = objectAPI.observe(mutableSecondInstance, 'otherAttribute', mutationCallback);
                     objectAPI.mutate(mutable, 'otherAttribute', 'some-new-value');
                 }).then(function () {
-                    expect(mutationCallback).toHaveBeenCalledWith('some-new-value');
+                    expect(mutationCallback).toHaveBeenCalledWith('some-new-value', 'other-attribute-value');
                     unlisten();
                 });
             });
@@ -419,13 +419,19 @@ describe("The Object API", () => {
 
                     objectAPI.mutate(mutable, 'objectAttribute.embeddedObject.embeddedKey', 'updated-embedded-value');
                 }).then(function () {
-                    expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value');
+                    expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value', 'embedded-value');
                     expect(embeddedObjectCallback).toHaveBeenCalledWith({
                         embeddedKey: 'updated-embedded-value'
+                    }, {
+                        embeddedKey: 'embedded-value'
                     });
                     expect(objectAttributeCallback).toHaveBeenCalledWith({
                         embeddedObject: {
                             embeddedKey: 'updated-embedded-value'
+                        }
+                    }, {
+                        embeddedObject: {
+                            embeddedKey: 'embedded-value'
                         }
                     });
 
