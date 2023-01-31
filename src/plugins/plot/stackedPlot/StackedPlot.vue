@@ -110,16 +110,20 @@ export default {
                 return 'plot-legend-collapsed';
             }
         },
+        /**
+       * Returns the maximum width of the left and right y axes ticks of this stacked plots children
+       * @returns {{rightTickWidth: number, leftTickWidth: number, hasMultipleLeftAxes: boolean}}
+       */
         maxTickWidth() {
             const tickWidthValues = Object.values(this.tickWidthMap);
             const maxLeftTickWidth = Math.max(...tickWidthValues.map(tickWidthItem => tickWidthItem.leftTickWidth));
             const maxRightTickWidth = Math.max(...tickWidthValues.map(tickWidthItem => tickWidthItem.rightTickWidth));
-            const multipleLeftAxes = tickWidthValues.some(tickWidthItem => tickWidthItem.multipleLeftAxes === true);
+            const hasMultipleLeftAxes = tickWidthValues.some(tickWidthItem => tickWidthItem.hasMultipleLeftAxes === true);
 
             return {
                 leftTickWidth: maxLeftTickWidth,
                 rightTickWidth: maxRightTickWidth,
-                multipleLeftAxes
+                hasMultipleLeftAxes
             };
         }
     },
@@ -247,6 +251,12 @@ export default {
                     this.hideExportButtons = false;
                 }.bind(this));
         },
+        /**
+         * @typedef {Object} PlotYTickData
+         * @property {Number} leftTickWidth the width of the ticks for all the y axes on the left of the plot.
+         * @property {Number} rightTickWidth the width of the ticks for all the y axes on the right of the plot.
+         * @property {Boolean} hasMultipleLeftAxes whether or not there is more than one left y axis.
+         */
         onYTickWidthChange(data, plotId) {
             if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
                 return;
@@ -268,7 +278,6 @@ export default {
             this.seriesConfig[configId] = config;
             const childObject = config.get('domainObject');
 
-            //TODO differentiate between objects with composition and those without
             if (childObject.type === 'telemetry.plot.overlay') {
                 this.listenTo(config.series, 'add', this.addSeries, this);
                 this.listenTo(config.series, 'remove', this.removeSeries, this);

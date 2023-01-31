@@ -77,7 +77,8 @@ export default {
             default() {
                 return {
                     leftTickWidth: 0,
-                    rightTickWidth: 0
+                    rightTickWidth: 0,
+                    hasMultipleLeftAxes: false
                 };
             }
         }
@@ -181,25 +182,30 @@ export default {
                         this.loading = loaded;
                     }
                 },
-                template: '<div v-if="!isMissing" ref="plotWrapper" '
-                    + 'class="l-view-section u-style-receiver js-style-receiver" '
-                    + ':class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\', \'is-stale\': isStale}">'
-                    + '<progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" />'
-                    + '<mct-plot :init-grid-lines="gridLines" '
-                    + ':init-cursor-guide="cursorGuide" '
-                    + ':parent-y-tick-width="parentYTickWidth" '
-                    + ':limit-line-labels="limitLineLabels" '
-                    + ':color-palette="colorPalette" '
-                    + ':options="options" '
-                    + '@plotYTickWidth="onYTickWidthChange" '
-                    + '@lockHighlightPoint="onLockHighlightPointUpdated" '
-                    + '@highlights="onHighlightsUpdated" '
-                    + '@configLoaded="onConfigLoaded" '
-                    + '@cursorGuide="onCursorGuideChange" '
-                    + '@gridLines="onGridLinesChange" '
-                    + '@statusUpdated="setStatus" '
-                    + '@loadingUpdated="loadingUpdated"/>'
-                    + '</div>'
+                template: `
+                  <div v-if="!isMissing" ref="plotWrapper"
+                      class="l-view-section u-style-receiver js-style-receiver"
+                      :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced', 'is-stale': isStale}">
+                      <progress-bar
+                          v-show="loading !== false"
+                          class="c-telemetry-table__progress-bar"
+                          :model="{progressPerc: undefined}" />
+                      <mct-plot
+                          :init-grid-lines="gridLines"
+                          :init-cursor-guide="cursorGuide"
+                          :parent-y-tick-width="parentYTickWidth"
+                          :limit-line-labels="limitLineLabels"
+                          :color-palette="colorPalette"
+                          :options="options"
+                          @plotYTickWidth="onYTickWidthChange"
+                          @lockHighlightPoint="onLockHighlightPointUpdated"
+                          @highlights="onHighlightsUpdated"
+                          @configLoaded="onConfigLoaded"
+                          @cursorGuide="onCursorGuideChange"
+                          @gridLines="onGridLinesChange"
+                          @statusUpdated="setStatus"
+                          @loadingUpdated="loadingUpdated"/>
+                  </div>`
             });
 
             this.setSelection();

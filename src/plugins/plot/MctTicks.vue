@@ -86,6 +86,8 @@ import eventHelpers from "./lib/eventHelpers";
 import { ticks, getLogTicks, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
 
+const SECONDARY_TICK_NUMBER = 2;
+
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
@@ -205,7 +207,7 @@ export default {
             }
 
             if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
-                return getLogTicks(range.min, range.max, number, 2);
+                return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
             } else {
                 return ticks(range.min, range.max, number);
             }
