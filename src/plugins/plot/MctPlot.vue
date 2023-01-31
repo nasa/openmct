@@ -407,8 +407,9 @@ export default {
         updateSelection(selection) {
             const selectionContext = selection?.[0]?.[1]?.context?.item;
             if (!selectionContext
-                || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
-                // Selection changed, but it's us, so ignoring it
+                || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)
+                || this.compositionPathContainsId(selectionContext)) {
+                // Selection changed, but we're already showing the selected object
                 return;
             }
 
@@ -655,9 +656,12 @@ export default {
                 series.reset();
             });
         },
+        compositionPathContainsId(domainObjectToFind) {
+            if (!domainObjectToFind.composition) {
+                return false;
+            }
 
-        compositionPathContainsId(domainObjectToClear) {
-            return domainObjectToClear.composition.some((compositionIdentifier) => {
+            return domainObjectToFind.composition.some((compositionIdentifier) => {
                 return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
             });
         },
