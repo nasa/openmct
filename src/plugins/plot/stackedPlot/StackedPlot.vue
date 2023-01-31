@@ -191,9 +191,17 @@ export default {
 
                 return identifier === id;
             })[0];
+
             if (childObj) {
                 const index = this.compositionObjects.indexOf(childObj);
                 this.compositionObjects.splice(index, 1);
+
+                if (childObj.type !== 'telemetry.plot.overlay') {
+                    const config = this.getConfig(this.openmct.objects.makeKeyString(childObj.identifier));
+                    if (config) {
+                        config.series.remove(config.series.at(0));
+                    }
+                }
             }
 
             const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
@@ -201,16 +209,10 @@ export default {
             });
             if (configIndex > -1) {
                 const cSeries = this.domainObject.configuration.series.slice();
-                const series = cSeries.splice(configIndex, 1)[0];
                 this.openmct.objects.mutate(this.domainObject, 'configuration.series', cSeries);
-
-                if (childObj.type !== 'telemetry.plot.overlay') {
-                    const config = this.getConfig(this.openmct.objects.makeKeyString(series.identifier));
-                    if (config) {
-                        config.series.remove(config.series.at(0));
-                    }
-                }
             }
+
+            this.setConfigLoadedForComposition();
         },
 
         compositionReorder(reorderPlan) {
