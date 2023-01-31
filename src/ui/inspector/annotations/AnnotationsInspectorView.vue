@@ -111,25 +111,25 @@ export default {
             return this?.selection?.[0]?.[0]?.context?.item;
         },
         targetDetails() {
-            return this?.selection?.[0]?.[1]?.context?.targetDetails ?? {};
+            return this?.selection?.[0]?.[0]?.context?.targetDetails ?? {};
         },
         shouldShowTagsEditor() {
             return Object.keys(this.targetDetails).length > 0;
         },
         targetDomainObjects() {
-            return this?.selection?.[0]?.[1]?.context?.targetDomainObjects ?? {};
+            return this?.selection?.[0]?.[0]?.context?.targetDomainObjects ?? {};
         },
         selectedAnnotations() {
-            return this?.selection?.[0]?.[1]?.context?.annotations;
+            return this?.selection?.[0]?.[0]?.context?.annotations;
         },
         annotationType() {
-            return this?.selection?.[0]?.[1]?.context?.annotationType;
+            return this?.selection?.[0]?.[0]?.context?.annotationType;
         },
         annotationFilter() {
-            return this?.selection?.[0]?.[1]?.context?.annotationFilter;
+            return this?.selection?.[0]?.[0]?.context?.annotationFilter;
         },
         onAnnotationChange() {
-            return this?.selection?.[0]?.[1]?.context?.onAnnotationChange;
+            return this?.selection?.[0]?.[0]?.context?.onAnnotationChange;
         }
     },
     async mounted() {

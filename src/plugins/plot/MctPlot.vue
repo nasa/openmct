@@ -412,7 +412,7 @@ export default {
                 return;
             }
 
-            const selectionType = selection?.[0]?.[1]?.context?.type;
+            const selectionType = selection?.[0]?.[0]?.context?.type;
             if (selectionType !== 'plot-points-selection') {
                 // wrong type of selection
                 return;
@@ -1152,25 +1152,30 @@ export default {
             });
         },
         selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
-            const selection =
-                    [{
-                        element: this.openmct.layout.$refs.browseObject.$el,
-                        context: {
-                            item: this.domainObject
-                        }
-                    },
-                    {
-                        element: this.$el,
-                        context: {
-                            type: 'plot-points-selection',
-                            targetDetails,
-                            targetDomainObjects,
-                            annotations,
-                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                            onAnnotationChange: this.onAnnotationChange
-                        }
+            const annotationContext = {
+                type: 'plot-points-selection',
+                targetDetails,
+                targetDomainObjects,
+                annotations,
+                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                onAnnotationChange: this.onAnnotationChange
+            };
+            let selection = [];
+            this.path.forEach((pathObject, index) => {
+                selection.push({
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: pathObject
                     }
-                    ];
+                });
+            });
+            selection.unshift({
+                element: this.$el,
+                context: {
+                    item: this.domainObject,
+                    ...annotationContext
+                }
+            });
             this.openmct.selection.select(selection, true);
         },
         selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
