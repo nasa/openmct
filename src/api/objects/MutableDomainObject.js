@@ -75,21 +75,23 @@ class MutableDomainObject {
         return eventOff;
     }
     $set(path, value) {
+        const oldModel = structuredClone(this);
+        const oldValue = _.get(oldModel, path);
         MutableDomainObject.mutateObject(this, path, value);
 
         //Emit secret synchronization event first, so that all objects are in sync before subsequent events fired.
         this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);
 
         //Emit a general "any object" event
-        this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this);
+        this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this, oldModel);
         //Emit wildcard event, with path so that callback knows what changed
-        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value);
+        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value, oldModel, oldValue);
 
         //Emit events specific to properties affected
         let parentPropertiesList = path.split('.');
         for (let index = parentPropertiesList.length; index > 0; index--) {
             let parentPropertyPath = parentPropertiesList.slice(0, index).join('.');
-            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath));
+            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath), _.get(oldModel, parentPropertyPath));
         }
 
         //TODO: Emit events for listeners of child properties when parent changes.
@@ -124,7 +126,7 @@ class MutableDomainObject {
         Object.assign(mutable, object);
 
         mutable.$observe('$_synchronize_model', (updatedObject) => {
-            let clone = JSON.parse(JSON.stringify(updatedObject));
+            let clone = structuredClone(updatedObject);
             utils.refresh(mutable, clone);
         });
 

@@ -84,6 +84,8 @@ export default class MoveAction {
         this.addToNewParent(this.object, parent);
         this.removeFromOldParent(this.object);
 
+        await this.saveTransaction();
+
         if (!inNavigationPath) {
             return;
         }
@@ -101,8 +103,6 @@ export default class MoveAction {
                 newObjectPath.pop(); // remove ROOT
             }
         }
-
-        await this.saveTransaction();
 
         this.navigateTo(newObjectPath);
     }

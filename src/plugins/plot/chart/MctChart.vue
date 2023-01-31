@@ -121,6 +121,7 @@ export default {
         hiddenYAxisIds() {
             this.hiddenYAxisIds.forEach(id => {
                 this.resetYOffsetAndSeriesDataForYAxis(id);
+                this.drawLimitLines();
             });
             this.scheduleDraw();
         }
@@ -196,15 +197,26 @@ export default {
             this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
             this.listenTo(series, 'change:limitLines', this.changeLimitLines, this);
             this.listenTo(series, 'change:yAxisId', this.resetAxisAndRedraw, this);
+            // TODO: Which other changes is the listener below reacting to?
             this.listenTo(series, 'change', this.scheduleDraw);
             this.listenTo(series, 'add', this.onAddPoint);
             this.makeChartElement(series);
             this.makeLimitLines(series);
         },
         onAddPoint(point, insertIndex, series) {
+            const mainYAxisId = this.config.yAxis.get('id');
+            const seriesYAxisId = series.get('yAxisId');
             const xRange = this.config.xAxis.get('displayRange');
-            //TODO: get the yAxis of this series
-            const yRange = this.config.yAxis.get('displayRange');
+
+            let yRange;
+            if (seriesYAxisId === mainYAxisId) {
+                yRange = this.config.yAxis.get('displayRange');
+            } else {
+                yRange = this.config.additionalYAxes.find(
+                    yAxis => yAxis.get('id') === seriesYAxisId
+                ).get('displayRange');
+            }
+
             const xValue = series.getXVal(point);
             const yValue = series.getYVal(point);
 
@@ -615,9 +627,13 @@ export default {
             alarmSets.forEach(this.drawAlarmPoints, this);
         },
         drawLimitLines() {
+            Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
             this.config.series.models.forEach(series => {
                 const yAxisId = series.get('yAxisId');
-                this.drawLimitLinesForSeries(yAxisId, series);
+
+                if (this.hiddenYAxisIds.indexOf(yAxisId) < 0) {
+                    this.drawLimitLinesForSeries(yAxisId, series);
+                }
             });
         },
         drawLimitLinesForSeries(yAxisId, series) {
@@ -631,12 +647,11 @@ export default {
                 return;
             }
 
-            Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
             let limitPointOverlap = [];
             this.limitLines.forEach((limitLine) => {
                 let limitContainerEl = this.$refs.limitArea;
                 limitLine.limits.forEach((limit) => {
-                    if (!series.includes(limit.seriesKey)) {
+                    if (series.keyString !== limit.seriesKey) {
                         return;
                     }
 
@@ -744,6 +759,10 @@ export default {
             }
         },
         annotatedPointWithinRange(annotatedPoint, xRange, yRange) {
+            if (!yRange) {
+                return false;
+            }
+
             const xValue = annotatedPoint.series.getXVal(annotatedPoint.point);
             const yValue = annotatedPoint.series.getYVal(annotatedPoint.point);
 
