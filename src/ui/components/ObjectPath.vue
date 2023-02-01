@@ -24,7 +24,7 @@
 <ul
     v-if="orderedPath.length"
     class="c-location"
-    :aria-label="`${domainObject.name} Breadcrumb`"
+    :aria-label="`${domainObject.name}`"
     role="navigation"
 >
     <li

@@ -22,6 +22,7 @@
 
 const { test, expect } = require('../../pluginFixtures.js');
 const { createDomainObjectWithDefaults } = require('../../appActions.js');
+const { waitForAnimations } = require('../../baseFixtures.js');
 
 test.describe('Recent Objects', () => {
     let recentObjectsList;
@@ -72,7 +73,7 @@ test.describe('Recent Objects', () => {
 
         // Verify rename has been applied in recent objects list item and objects paths
         expect(await page.getByRole('navigation', {
-            name: `${clock.name} Breadcrumb`
+            name: clock.name
         }).locator('a').filter({
             hasText: folderA.name
         }).count()).toBeGreaterThan(0);
@@ -102,7 +103,7 @@ test.describe('Recent Objects', () => {
         // Navigate to the folder by clicking on its entry in the Clock's breadcrumb
         const waitForFolderNavigation = page.waitForURL(`**/${folderA.uuid}?*`);
         await page.getByRole('navigation', {
-            name: `${clock.name} Breadcrumb`
+            name: clock.name
         }).locator('a').filter({
             hasText: folderA.name
         }).click();
@@ -110,12 +111,12 @@ test.describe('Recent Objects', () => {
         // Verify that the hash URL updates correctly
         await waitForFolderNavigation;
         // eslint-disable-next-line no-useless-escape
-        expect(page.url()).toMatch(new RegExp(`.*${folderA.uuid}\?.*`));
+        expect(page.url()).toMatch(new RegExp(`.*${folderA.uuid}?.*`));
 
         // Navigate to My Items by clicking on its entry in the Clock's breadcrumb
         const waitForMyItemsNavigation = page.waitForURL(`**/mine?*`);
         await page.getByRole('navigation', {
-            name: `${clock.name} Breadcrumb`
+            name: clock.name
         }).locator('a').filter({
             hasText: myItemsFolderName
         }).click();
@@ -123,9 +124,31 @@ test.describe('Recent Objects', () => {
         // Verify that the hash URL updates correctly
         await waitForMyItemsNavigation;
         // eslint-disable-next-line no-useless-escape
-        expect(page.url()).toMatch(new RegExp(`.*mine\?.*`));
+        expect(page.url()).toMatch(new RegExp(`.*mine?.*`));
     });
-    test.fixme("Clicking on the 'target button' scrolls the object into view in the tree and highlights it", async ({ page }) => {
+    test("Clicking on the 'target button' scrolls the object into view in the tree and highlights it", async ({ page }) => {
+        const clockTreeItem = page.getByRole('tree', { name: 'Main Tree'}).getByRole('treeitem', { name: clock.name });
+        const folderTreeItem = page.getByRole('tree', { name: 'Main Tree'})
+            .getByRole('treeitem', {
+                name: folderA.name,
+                expanded: true
+            });
+
+        // Click the "Target" button for the Clock which is nested in a folder
+        await page.getByRole('button', { name: `Open and scroll to ${clock.name}`}).click();
+
+        // Assert that the Clock parent folder has expanded and the Clock is visible)
+        await expect(folderTreeItem.locator('.c-disclosure-triangle')).toHaveClass(/--expanded/);
+        await expect(clockTreeItem).toBeVisible();
+
+        // Assert that the Clock treeitem is highlighted
+        await expect(clockTreeItem.locator('.c-tree__item')).toHaveClass(/is-targeted-item/);
+
+        // Wait for highlight animation to end
+        await waitForAnimations(clockTreeItem.locator('.c-tree__item'));
+
+        // Assert that the Clock treeitem is no longer highlighted
+        await expect(clockTreeItem.locator('.c-tree__item')).not.toHaveClass(/is-targeted-item/);
     });
     test.fixme("Tests for context menu actions from recent objects", async ({ page }) => {
     });
