@@ -408,17 +408,18 @@ export default {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
             // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
             // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
-            const isAnnotationSearchResult = selection?.[0]?.[0]?.context?.isAnnotationSearchResult;
+            const selectionType = selection?.[0]?.[0]?.context?.type;
+            const validSelectionTypes = ['clicked-on-plot-selection', 'plot-annotation-search-result'];
+            const isAnnotationSearchResult = selectionType === 'plot-annotation-search-result';
 
-            if (selectionContext
-                && !isAnnotationSearchResult
-                && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
+            if (!validSelectionTypes.includes(selectionType)) {
+                // wrong type of selection
                 return;
             }
 
-            const selectionType = selection?.[0]?.[0]?.context?.type;
-            if (selectionType !== 'plot-points-selection') {
-                // wrong type of selection
+            if (selectionContext
+                && (!isAnnotationSearchResult)
+                && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
                 return;
             }
 
@@ -1190,7 +1191,7 @@ export default {
         },
         selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
             const annotationContext = {
-                type: 'plot-points-selection',
+                type: 'clicked-on-plot-selection',
                 targetDetails,
                 targetDomainObjects,
                 annotations,
