@@ -208,6 +208,7 @@ export default {
             }
 
             this.listenTo(series, 'change:yAxisId', this.addOrRemoveSeries.bind(this, series), this);
+            this.listenTo(series, 'change:color', this.updateSeriesColors.bind(this, series), this);
         },
         removeSeries(plotSeries) {
             const seriesIndex = this.seriesModels.findIndex(model => this.openmct.objects.areIdsEqual(model.get('identifier'), plotSeries.get('identifier')));
@@ -222,6 +223,9 @@ export default {
                 return model.get('yKey') === this.seriesModels[0].get('yKey');
             });
             this.singleSeries = this.seriesModels.length === 1;
+            this.updateSeriesColors();
+        },
+        updateSeriesColors() {
             this.seriesColors = this.seriesModels.map(model => {
                 return model.get('color').asHexString();
             });

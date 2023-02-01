@@ -23,16 +23,8 @@
 <div
     v-if="loaded"
     class="gl-plot"
-    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <plot-legend
-        v-if="!isNestedWithinAStackedPlot"
-        :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
-        :highlights="highlights"
-        :legend="legend"
-        @legendHoverChanged="legendHoverChanged"
-    />
+    <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <div
             v-if="seriesModels.length"
@@ -94,7 +86,6 @@
                         :highlights="highlights"
                         :annotated-points="annotatedPoints"
                         :annotation-selections="annotationSelections"
-                        :show-limit-line-labels="showLimitLineLabels"
                         :hidden-y-axis-ids="hiddenYAxisIds"
                         :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
                         @plotReinitializeCanvas="initCanvas"
@@ -217,7 +208,6 @@ import LinearScale from "./LinearScale";
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
 import configStore from './configuration/ConfigStore';
 
-import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
@@ -232,7 +222,6 @@ export default {
     components: {
         XAxis,
         YAxis,
-        PlotLegend,
         MctTicks,
         MctChart
     },
@@ -300,7 +289,6 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
             cursorGuide: this.initCursorGuide,
             gridLines: this.initGridLines,
@@ -339,22 +327,8 @@ export default {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         annotationViewingAndEditingAllowed() {
-            // only allow annotations viewing/editing if plot is paused or in fixed time mode
+        // only allow annotations viewing/editing if plot is paused or in fixed time mode
             return this.isFrozen || !this.isRealTime;
-        },
-        plotLegendPositionClass() {
-            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
-        },
-        plotLegendExpandedStateClass() {
-            if (this.isNestedWithinAStackedPlot) {
-                return '';
-            }
-
-            if (this.config.legend.get('expanded')) {
-                return 'plot-legend-expanded';
-            } else {
-                return 'plot-legend-collapsed';
-            }
         },
         plotFirstLeftTickWidth() {
             const firstYAxis = this.yAxes.find(yAxis => yAxis.id === 1);
@@ -376,12 +350,6 @@ export default {
         }
     },
     watch: {
-        limitLineLabels: {
-            handler(limitLineLabels) {
-                this.legendHoverChanged(limitLineLabels);
-            },
-            deep: true
-        },
         initGridLines(newGridLines) {
             this.gridLines = newGridLines;
         },
@@ -417,8 +385,7 @@ export default {
             }));
         }
 
-        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.$emit('configLoaded', configId);
+        this.$emit('configLoaded', true);
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -450,15 +417,20 @@ export default {
     methods: {
         updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
-            if (!selectionContext
-                || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
-                // Selection changed, but it's us, so ignoring it
+            // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
+            // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
+            const selectionType = selection?.[0]?.[0]?.context?.type;
+            const validSelectionTypes = ['clicked-on-plot-selection', 'plot-annotation-search-result'];
+            const isAnnotationSearchResult = selectionType === 'plot-annotation-search-result';
+
+            if (!validSelectionTypes.includes(selectionType)) {
+                // wrong type of selection
                 return;
             }
 
-            const selectionType = selection?.[0]?.[1]?.context?.type;
-            if (selectionType !== 'plot-points-selection') {
-                // wrong type of selection
+            if (selectionContext
+                && (!isAnnotationSearchResult)
+                && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
                 return;
             }
 
@@ -471,7 +443,18 @@ export default {
                 return;
             }
 
-            const selectedAnnotations = selection?.[0]?.[1]?.context?.annotations;
+            const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
+            //This section is only for the annotations search results entry to displaying annotations
+            if (isAnnotationSearchResult) {
+                this.showAnnotationsFromSearchResults(selectedAnnotations);
+            }
+
+            //This section is common to all entry points for annotation display
+            this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
+        showAnnotationsFromSearchResults(selectedAnnotations) {
+        //Start section
+
             if (selectedAnnotations?.length) {
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
@@ -505,10 +488,9 @@ export default {
                     min: minY,
                     max: maxY
                 });
+                //Zoom out just a touch so that the highlighted section for annotations doesn't take over the whole view - which is not a nice look.
                 this.zoom('out', 0.2);
             }
-
-            this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
@@ -707,9 +689,15 @@ export default {
                 series.reset();
             });
         },
+        shareCommonParent(domainObjectToFind) {
+            return false;
+        },
+        compositionPathContainsId(domainObjectToFind) {
+            if (!domainObjectToFind.composition) {
+                return false;
+            }
 
-        compositionPathContainsId(domainObjectToClear) {
-            return domainObjectToClear.composition.some((compositionIdentifier) => {
+            return domainObjectToFind.composition.some((compositionIdentifier) => {
                 return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
             });
         },
@@ -1078,8 +1066,6 @@ export default {
 
         highlightValues(point) {
             this.highlightPoint = point;
-            // TODO: used in StackedPlotController
-            this.$emit('plotHighlightUpdate', point);
             if (this.lockHighlightPoint) {
                 return;
             }
@@ -1191,7 +1177,7 @@ export default {
                     endPixels: this.positionOverElement,
                     start: this.positionOverPlot,
                     end: this.positionOverPlot,
-                    color: [1, 1, 1, 0.5]
+                    color: [1, 1, 1, 0.25]
                 };
                 if (annotationEvent) {
                     this.marquee.annotationEvent = true;
@@ -1202,13 +1188,21 @@ export default {
             }
         },
         selectNearbyAnnotations(event) {
+            // need to stop propagation right away to prevent selecting the plot itself
             event.stopPropagation();
-
             if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
                 return;
             }
 
             const nearbyAnnotations = this.gatherNearbyAnnotations();
+            if (!nearbyAnnotations.length) {
+                const emptySelection = this.createPathSelection();
+                this.openmct.selection.select(emptySelection, true);
+                // should show plot itself if we didn't find any annotations
+
+                return;
+            }
+
             const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
             this.selectPlotAnnotations({
                 targetDetails,
@@ -1216,33 +1210,50 @@ export default {
                 annotations: nearbyAnnotations
             });
         },
+        createPathSelection() {
+            let selection = [];
+            this.path.forEach((pathObject, index) => {
+                selection.push({
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: pathObject
+                    }
+                });
+            });
+
+            return selection;
+        },
         selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
-            const selection =
-                    [
-                        {
-                            element: this.openmct.layout.$refs.browseObject.$el,
-                            context: {
-                                item: this.domainObject
-                            }
-                        },
-                        {
-                            element: this.$el,
-                            context: {
-                                type: 'plot-points-selection',
-                                targetDetails,
-                                targetDomainObjects,
-                                annotations,
-                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                                onAnnotationChange: this.onAnnotationChange
-                            }
-                        }
-                    ];
+            const annotationContext = {
+                type: 'clicked-on-plot-selection',
+                targetDetails,
+                targetDomainObjects,
+                annotations,
+                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                onAnnotationChange: this.onAnnotationChange
+            };
+            const selection = this.createPathSelection();
+            if (selection.length && this.openmct.objects.areIdsEqual(selection[0].context.item.identifier, this.domainObject.identifier)) {
+                selection[0].context = {
+                    ...selection[0].context,
+                    ...annotationContext
+                };
+            } else {
+                selection.unshift({
+                    element: this.$el,
+                    context: {
+                        item: this.domainObject,
+                        ...annotationContext
+                    }
+                });
+            }
+
             this.openmct.selection.select(selection, true);
         },
         selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
             let targetDetails = {};
-            let annotations = {};
+            let annotations = [];
             pointsInBox.forEach(pointInBox => {
                 if (pointInBox.length) {
                     const seriesID = pointInBox[0].series.keyString;
@@ -1785,9 +1796,6 @@ export default {
                 this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
-        },
-        legendHoverChanged(data) {
-            this.showLimitLineLabels = data;
         },
         toggleCursorGuide() {
             this.cursorGuide = !this.cursorGuide;
