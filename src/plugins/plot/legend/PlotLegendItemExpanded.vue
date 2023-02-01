@@ -83,6 +83,7 @@
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
 import eventHelpers from "@/plugins/plot/lib/eventHelpers";
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import configStore from "../configuration/ConfigStore";
 
 export default {
     mixins: [stalenessMixin],
@@ -100,10 +101,6 @@ export default {
             default() {
                 return [];
             }
-        },
-        legend: {
-            type: Object,
-            required: true
         }
     },
     data() {
@@ -116,24 +113,25 @@ export default {
             formattedXValue: '',
             formattedMinY: '',
             formattedMaxY: '',
-            mctLimitStateClass: ''
+            mctLimitStateClass: '',
+            loaded: false
         };
     },
     computed: {
         showUnitsWhenExpanded() {
-            return this.legend.get('showUnitsWhenExpanded') === true;
+            return this.loaded && this.legend.get('showUnitsWhenExpanded') === true;
         },
         showMinimumWhenExpanded() {
-            return this.legend.get('showMinimumWhenExpanded') === true;
+            return this.loaded && this.legend.get('showMinimumWhenExpanded') === true;
         },
         showMaximumWhenExpanded() {
-            return this.legend.get('showMaximumWhenExpanded') === true;
+            return this.loaded && this.legend.get('showMaximumWhenExpanded') === true;
         },
         showValueWhenExpanded() {
-            return this.legend.get('showValueWhenExpanded') === true;
+            return this.loaded && this.legend.get('showValueWhenExpanded') === true;
         },
         showTimestampWhenExpanded() {
-            return this.legend.get('showTimestampWhenExpanded') === true;
+            return this.loaded && this.legend.get('showTimestampWhenExpanded') === true;
         }
     },
     watch: {
@@ -146,6 +144,9 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
+        this.config = this.getConfig();
+        this.legend = this.config.legend;
+        this.loaded = true;
         this.listenTo(this.seriesObject, 'change:color', (newColor) => {
             this.updateColor(newColor);
         }, this);
@@ -159,8 +160,13 @@ export default {
         this.stopListening();
     },
     methods: {
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return configStore.get(configId);
+        },
         initialize(highlightedObject) {
-            const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
+            const seriesObject = highlightedObject?.series || this.seriesObject;
 
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();
