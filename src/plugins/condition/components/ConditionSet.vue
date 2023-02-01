@@ -33,7 +33,7 @@
                     {{ currentConditionOutput }}
                 </template>
                 <template v-else>
-                    {{ defaultConditionOutput }}
+                    ---
                 </template>
             </span>
         </div>
@@ -51,7 +51,6 @@
             :is-editing="isEditing"
             :test-data="testData"
             @conditionSetResultUpdated="updateCurrentOutput"
-            @updateDefaultOutput="updateDefaultOutput"
             @telemetryUpdated="updateTelemetry"
             @telemetryStaleness="handleStaleness"
         />
@@ -75,7 +74,6 @@ export default {
     data() {
         return {
             currentConditionOutput: '',
-            defaultConditionOutput: '',
             telemetryObjs: [],
             testData: {},
             staleObjects: []

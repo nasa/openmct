@@ -114,15 +114,11 @@ export default {
             telemetryObjs: [],
             moveIndex: undefined,
             isDragging: false,
-            defaultOutput: undefined,
             dragCounter: 0,
             currentConditionId: ''
         };
     },
     watch: {
-        defaultOutput(newOutput, oldOutput) {
-            this.$emit('updateDefaultOutput', newOutput);
-        },
         testData: {
             handler() {
                 this.updateTestData();
@@ -158,7 +154,6 @@ export default {
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
-        this.updateDefaultCondition();
         this.stalenessSubscription = {};
     },
     methods: {
@@ -170,13 +165,7 @@ export default {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
                 //this forces children to re-render
                 this.conditionCollection = newConditionCollection.map(condition => condition);
-                this.updateDefaultCondition();
             });
-        },
-        updateDefaultCondition() {
-            const defaultCondition = this.domainObject.configuration.conditionCollection
-                .find(conditionConfiguration => conditionConfiguration.isDefault);
-            this.defaultOutput = defaultCondition.configuration.output;
         },
         setMoveIndex(index) {
             this.moveIndex = index;
@@ -262,7 +251,7 @@ export default {
             }
         },
         hanldeStaleness(keyString, stalenessResponse) {
-            if (this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+            if (stalenessResponse && this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
                 this.emitStaleness({
                     keyString,
                     isStale: stalenessResponse.isStale
