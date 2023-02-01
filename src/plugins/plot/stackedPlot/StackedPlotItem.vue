@@ -72,10 +72,14 @@ export default {
                 return undefined;
             }
         },
-        plotTickWidth: {
-            type: Number,
+        parentYTickWidth: {
+            type: Object,
             default() {
-                return 0;
+                return {
+                    leftTickWidth: 0,
+                    rightTickWidth: 0,
+                    hasMultipleLeftAxes: false
+                };
             }
         }
     },
@@ -86,8 +90,8 @@ export default {
         cursorGuide(newCursorGuide) {
             this.updateComponentProp('cursorGuide', newCursorGuide);
         },
-        plotTickWidth(width) {
-            this.updateComponentProp('plotTickWidth', width);
+        parentYTickWidth(width) {
+            this.updateComponentProp('parentYTickWidth', width);
         },
         showLimitLineLabels: {
             handler(data) {
@@ -121,7 +125,7 @@ export default {
                 this.$el.innerHTML = '';
             }
 
-            const onTickWidthChange = this.onTickWidthChange;
+            const onYTickWidthChange = this.onYTickWidthChange;
             const onLockHighlightPointUpdated = this.onLockHighlightPointUpdated;
             const onHighlightsUpdated = this.onHighlightsUpdated;
             const onConfigLoaded = this.onConfigLoaded;
@@ -158,7 +162,7 @@ export default {
                 data() {
                     return {
                         ...getProps(),
-                        onTickWidthChange,
+                        onYTickWidthChange,
                         onLockHighlightPointUpdated,
                         onHighlightsUpdated,
                         onConfigLoaded,
@@ -174,7 +178,30 @@ export default {
                         this.loading = loaded;
                     }
                 },
-                template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\', \'is-stale\': isStale}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: `
+                  <div v-if="!isMissing" ref="plotWrapper"
+                      class="l-view-section u-style-receiver js-style-receiver"
+                      :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced', 'is-stale': isStale}">
+                      <progress-bar
+                          v-show="loading !== false"
+                          class="c-telemetry-table__progress-bar"
+                          :model="{progressPerc: undefined}" />
+                      <mct-plot
+                          :init-grid-lines="gridLines"
+                          :init-cursor-guide="cursorGuide"
+                          :parent-y-tick-width="parentYTickWidth"
+                          :limit-line-labels="limitLineLabels"
+                          :color-palette="colorPalette"
+                          :options="options"
+                          @plotYTickWidth="onYTickWidthChange"
+                          @lockHighlightPoint="onLockHighlightPointUpdated"
+                          @highlights="onHighlightsUpdated"
+                          @configLoaded="onConfigLoaded"
+                          @cursorGuide="onCursorGuideChange"
+                          @gridLines="onGridLinesChange"
+                          @statusUpdated="setStatus"
+                          @loadingUpdated="loadingUpdated"/>
+                  </div>`
             });
         },
         onLockHighlightPointUpdated() {
@@ -186,8 +213,8 @@ export default {
         onConfigLoaded() {
             this.$emit('configLoaded', ...arguments);
         },
-        onTickWidthChange() {
-            this.$emit('plotTickWidth', ...arguments);
+        onYTickWidthChange() {
+            this.$emit('plotYTickWidth', ...arguments);
         },
         onCursorGuideChange() {
             this.$emit('cursorGuide', ...arguments);
@@ -204,7 +231,7 @@ export default {
                 limitLineLabels: this.showLimitLineLabels,
                 gridLines: this.gridLines,
                 cursorGuide: this.cursorGuide,
-                plotTickWidth: this.plotTickWidth,
+                parentYTickWidth: this.parentYTickWidth,
                 options: this.options,
                 status: this.status,
                 colorPalette: this.colorPalette,
