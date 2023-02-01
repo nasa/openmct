@@ -99,7 +99,7 @@
                 </div>
             </template>
 
-            <div>
+            <div class="c-ne__tags c-tag-holder">
                 <div
                     v-for="(tag, index) in entryTags"
                     :key="index"
