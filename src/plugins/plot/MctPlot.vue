@@ -34,13 +34,14 @@
                 v-for="(yAxis, index) in yAxesIds"
                 :id="yAxis.id"
                 :key="`yAxis-${yAxis.id}-${index}`"
-                :multiple-left-axes="multipleLeftAxes"
+                :has-multiple-left-axes="hasMultipleLeftAxes"
                 :position="yAxis.id > 2 ? 'right' : 'left'"
                 :class="{'plot-yaxis-right': yAxis.id > 2}"
                 :tick-width="yAxis.tickWidth"
+                :used-tick-width="plotFirstLeftTickWidth"
                 :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
                 @yKeyChanged="setYAxisKey"
-                @tickWidthChanged="onTickWidthChange"
+                @plotYTickWidth="onYTickWidthChange"
                 @toggleAxisVisibility="toggleSeriesForYAxis"
             />
         </div>
@@ -61,7 +62,6 @@
                     v-show="gridLines && !options.compact"
                     :axis-type="'xAxis'"
                     :position="'right'"
-                    @plotTickWidth="onTickWidthChange"
                 />
 
                 <mct-ticks
@@ -71,7 +71,7 @@
                     :axis-type="'yAxis'"
                     :position="'bottom'"
                     :axis-id="yAxis.id"
-                    @plotTickWidth="onTickWidthChange"
+                    @plotTickWidth="onYTickWidthChange"
                 />
 
                 <div
@@ -247,10 +247,14 @@ export default {
                 return false;
             }
         },
-        plotTickWidth: {
-            type: Number,
+        parentYTickWidth: {
+            type: Object,
             default() {
-                return 0;
+                return {
+                    leftTickWidth: 0,
+                    rightTickWidth: 0,
+                    hasMultipleLeftAxes: false
+                };
             }
         },
         limitLineLabels: {
@@ -296,13 +300,14 @@ export default {
     computed: {
         xAxisStyle() {
             const rightAxis = this.yAxesIds.find(yAxis => yAxis.id > 2);
-            const leftOffset = this.multipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
+            const leftOffset = this.hasMultipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
             let style = {
                 left: `${this.plotLeftTickWidth + leftOffset}px`
             };
+            const parentRightAxisWidth = this.parentYTickWidth.rightTickWidth;
 
-            if (rightAxis) {
-                style.right = `${rightAxis.tickWidth + AXES_PADDING}px`;
+            if (parentRightAxisWidth || rightAxis) {
+                style.right = `${(parentRightAxisWidth || rightAxis.tickWidth) + AXES_PADDING}px`;
             }
 
             return style;
@@ -310,8 +315,8 @@ export default {
         yAxesIds() {
             return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         },
-        multipleLeftAxes() {
-            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
+        hasMultipleLeftAxes() {
+            return this.parentYTickWidth.hasMultipleLeftAxes || this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
         },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
@@ -325,6 +330,11 @@ export default {
         // only allow annotations viewing/editing if plot is paused or in fixed time mode
             return this.isFrozen || !this.isRealTime;
         },
+        plotFirstLeftTickWidth() {
+            const firstYAxis = this.yAxes.find(yAxis => yAxis.id === 1);
+
+            return firstYAxis ? firstYAxis.tickWidth : 0;
+        },
         plotLeftTickWidth() {
             let leftTickWidth = 0;
             this.yAxes.forEach((yAxis) => {
@@ -334,8 +344,9 @@ export default {
 
                 leftTickWidth = leftTickWidth + yAxis.tickWidth;
             });
+            const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
 
-            return this.plotTickWidth || leftTickWidth;
+            return parentLeftTickWidth || leftTickWidth;
         }
     },
     watch: {
@@ -557,6 +568,14 @@ export default {
         updateTicksAndSeriesForYAxis(newAxisId, oldAxisId) {
             this.updateAxisUsageCount(oldAxisId, -1);
             this.updateAxisUsageCount(newAxisId, 1);
+
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === oldAxisId);
+            if (foundYAxis.seriesCount === 0) {
+                this.onYTickWidthChange({
+                    width: foundYAxis.tickWidth,
+                    yAxisId: foundYAxis.id
+                });
+            }
         },
 
         updateAxisUsageCount(yAxisId, updateCountBy) {
@@ -934,8 +953,13 @@ export default {
             }
         },
 
-        onTickWidthChange(data, fromDifferentObject) {
-            const {width, yAxisId} = data;
+        /**
+       * Aggregate widths of all left and right y axes and send them up to any parent plots
+       * @param {Object} tickWidthWithYAxisId - the width and yAxisId of the tick bar
+       * @param fromDifferentObject
+       */
+        onYTickWidthChange(tickWidthWithYAxisId, fromDifferentObject) {
+            const {width, yAxisId} = tickWidthWithYAxisId;
             if (yAxisId) {
                 const index = this.yAxes.findIndex(yAxis => yAxis.id === yAxisId);
                 if (fromDifferentObject) {
@@ -944,13 +968,23 @@ export default {
                 } else {
                 // Otherwise, only accept tick with if it's larger.
                     const newWidth = Math.max(width, this.yAxes[index].tickWidth);
-                    if (newWidth !== this.yAxes[index].tickWidth) {
+                    if (width !== this.yAxes[index].tickWidth) {
                         this.yAxes[index].tickWidth = newWidth;
                     }
                 }
 
                 const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                this.$emit('plotTickWidth', this.yAxes[index].tickWidth, id);
+                const leftTickWidth = this.yAxes.filter(yAxis => yAxis.id < 3).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                const rightTickWidth = this.yAxes.filter(yAxis => yAxis.id > 2).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                this.$emit('plotYTickWidth', {
+                    hasMultipleLeftAxes: this.hasMultipleLeftAxes,
+                    leftTickWidth,
+                    rightTickWidth
+                }, id);
             }
         },
 
@@ -1722,7 +1756,9 @@ export default {
         },
 
         destroy() {
-            configStore.deleteStore(this.config.id);
+            if (this.config) {
+                configStore.deleteStore(this.config.id);
+            }
 
             this.stopListening();
 

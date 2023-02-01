@@ -207,6 +207,13 @@ export default {
                 this.registerListeners(config);
             }
         },
+        removeTelemetryObject(identifier) {
+            const configId = this.openmct.objects.makeKeyString(identifier);
+            const config = configStore.get(configId);
+            if (config) {
+                config.series.forEach(this.removeSeries, this);
+            }
+        },
         registerListeners(config) {
         //listen to any changes to the telemetry endpoints that are associated with the child
             this.listenTo(config.series, 'add', this.addSeries, this);
