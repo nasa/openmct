@@ -101,7 +101,13 @@ export default {
                 return 0;
             }
         },
-        multipleLeftAxes: {
+        usedTickWidth: {
+            type: Number,
+            default() {
+                return 0;
+            }
+        },
+        hasMultipleLeftAxes: {
             type: Boolean,
             default() {
                 return false;
@@ -138,14 +144,14 @@ export default {
             let style = {
                 width: `${this.tickWidth + AXIS_PADDING}px`
             };
-            const multipleAxesPadding = this.multipleLeftAxes ? AXIS_PADDING : 0;
+            const multipleAxesPadding = this.hasMultipleLeftAxes ? AXIS_PADDING : 0;
 
             if (this.position === 'right') {
                 style.left = `-${this.tickWidth + AXIS_PADDING}px`;
             } else {
                 const thisIsTheSecondLeftAxis = (this.id - 1) > 0;
-                if (this.multipleLeftAxes && thisIsTheSecondLeftAxis) {
-                    style.left = 0;
+                if (this.hasMultipleLeftAxes && thisIsTheSecondLeftAxis) {
+                    style.left = `${this.plotLeftTickWidth - this.usedTickWidth - this.tickWidth}px`;
                     style['border-right'] = `1px solid`;
                 } else {
                     style.left = `${ this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;
@@ -256,7 +262,7 @@ export default {
             }
         },
         onTickWidthChange(data) {
-            this.$emit('tickWidthChanged', {
+            this.$emit('plotYTickWidth', {
                 width: data.width,
                 yAxisId: this.id
             });
