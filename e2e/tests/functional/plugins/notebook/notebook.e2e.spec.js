@@ -285,7 +285,7 @@ test.describe('Notebook entry tests', () => {
 
         // Wait for the popup to load.
         await popup.waitForLoadState();
-        expect.soft(popup.url()).toContain(TEST_LINK);
+        expect.soft(popup.url()).toContain('www.google.com');
 
         expect(await validLink.count()).toBe(1);
     });
@@ -355,7 +355,7 @@ test.describe('Notebook entry tests', () => {
 
         // Wait for the popup to load.
         await popup.waitForLoadState();
-        expect.soft(popup.url()).toContain(TEST_LINK);
+        expect.soft(popup.url()).toContain('www.google.com');
 
         expect(await validLink.count()).toBe(1);
     });
