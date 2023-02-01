@@ -22,7 +22,7 @@
 
 <template>
 <div
-    class="c-inspector__properties c-inspect-properties has-tag-applier"
+    class="c-inspector__properties c-inspect-properties"
     aria-label="Tags Inspector"
 >
     <div
