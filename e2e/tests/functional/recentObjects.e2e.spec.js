@@ -24,15 +24,22 @@ const { test, expect } = require('../../pluginFixtures.js');
 const { createDomainObjectWithDefaults } = require('../../appActions.js');
 
 test.describe('Recent Objects', () => {
-    test('Recent Objects CRUD operations', async ({ page }) => {
+    let recentObjectsList;
+    let clock;
+    let folderA;
+    test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
+        // Set Recent Objects List locator for subsequent tests
+        recentObjectsList = page.getByRole('list', {
+            name: 'Recent Objects'
+        });
+
         // Create a folder and nest a Clock within it
-        const recentObjectsList = page.locator('[aria-label="Recent Objects"]');
-        const folderA = await createDomainObjectWithDefaults(page, {
+        folderA = await createDomainObjectWithDefaults(page, {
             type: 'Folder'
         });
-        const clock = await createDomainObjectWithDefaults(page, {
+        clock = await createDomainObjectWithDefaults(page, {
             type: 'Clock',
             parent: folderA.uuid
         });
@@ -42,7 +49,8 @@ test.describe('Recent Objects', () => {
         await page.mouse.down();
         await page.mouse.move(0, 100);
         await page.mouse.up();
-
+    });
+    test('Recent Objects CRUD operations', async ({ page }) => {
         // Verify that both created objects appear in the list and are in the correct order
         expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeTruthy();
         expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
@@ -52,7 +60,7 @@ test.describe('Recent Objects', () => {
         expect(recentObjectsList.getByRole('listitem').nth(1).getByText(folderA.name)).toBeTruthy();
 
         // Navigate to the folder by clicking on the main object name in the recent objects list item
-        await recentObjectsList.getByRole('listitem', { name: folderA.name }).getByText(folderA.name).click();
+        await page.getByRole('listitem', { name: folderA.name }).getByText(folderA.name).click();
         await page.waitForURL(`**/${folderA.uuid}?*`);
         expect(recentObjectsList.getByRole('listitem').nth(0).getByText(folderA.name)).toBeTruthy();
 
@@ -63,7 +71,11 @@ test.describe('Recent Objects', () => {
         await page.keyboard.press('Enter');
 
         // Verify rename has been applied in recent objects list item and objects paths
-        expect(page.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
+        expect(await page.getByRole('navigation', {
+            name: `${clock.name} Breadcrumb`
+        }).locator('a').filter({
+            hasText: folderA.name
+        }).count()).toBeGreaterThan(0);
         expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
 
         // Delete
@@ -79,7 +91,42 @@ test.describe('Recent Objects', () => {
         await expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeHidden();
         await expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeHidden();
     });
-    test.fixme("Clicking on the 'target button' scrolls the object into view in the tree and highlights it");
-    test.fixme("Clicking on an object in the path of a recent object navigates to the object");
-    test.fixme("Tests for context menu actions from recent objects");
+    test("Clicking on an object in the path of a recent object navigates to the object", async ({ page, openmctConfig }) => {
+        const { myItemsFolderName } = openmctConfig;
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6151'
+        });
+        await page.goto('./#/browse/mine');
+
+        // Navigate to the folder by clicking on its entry in the Clock's breadcrumb
+        const waitForFolderNavigation = page.waitForURL(`**/${folderA.uuid}?*`);
+        await page.getByRole('navigation', {
+            name: `${clock.name} Breadcrumb`
+        }).locator('a').filter({
+            hasText: folderA.name
+        }).click();
+
+        // Verify that the hash URL updates correctly
+        await waitForFolderNavigation;
+        // eslint-disable-next-line no-useless-escape
+        expect(page.url()).toMatch(new RegExp(`.*${folderA.uuid}\?.*`));
+
+        // Navigate to My Items by clicking on its entry in the Clock's breadcrumb
+        const waitForMyItemsNavigation = page.waitForURL(`**/mine?*`);
+        await page.getByRole('navigation', {
+            name: `${clock.name} Breadcrumb`
+        }).locator('a').filter({
+            hasText: myItemsFolderName
+        }).click();
+
+        // Verify that the hash URL updates correctly
+        await waitForMyItemsNavigation;
+        // eslint-disable-next-line no-useless-escape
+        expect(page.url()).toMatch(new RegExp(`.*mine\?.*`));
+    });
+    test.fixme("Clicking on the 'target button' scrolls the object into view in the tree and highlights it", async ({ page }) => {
+    });
+    test.fixme("Tests for context menu actions from recent objects", async ({ page }) => {
+    });
 });
