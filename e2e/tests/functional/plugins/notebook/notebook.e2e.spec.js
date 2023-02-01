@@ -320,7 +320,7 @@ test.describe('Notebook entry tests', () => {
         expect(await invalidLink.count()).toBe(0);
     });
     test('when a valid link with a subdomain and a valid domain in the whitelisted urls is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
-        const TEST_LINK = 'http://bing.google.com';
+        const INVALID_TEST_LINK = 'http://bing.google.com';
 
         // Navigate to the notebook object
         await page.goto(notebookObject.url);
@@ -328,9 +328,9 @@ test.describe('Notebook entry tests', () => {
         // Reveal the notebook in the tree
         await page.getByTitle('Show selected item in tree').click();
 
-        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+        await nbUtils.enterTextEntry(page, `This should be a link: ${INVALID_TEST_LINK} is it?`);
 
-        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+        const validLink = page.locator(`a[href="${INVALID_TEST_LINK}"]`);
 
         expect(await validLink.count()).toBe(1);
     });
