@@ -226,13 +226,11 @@ test.describe('Notebook entry tests', () => {
             type: 'Overlay Plot'
         });
 
-        const showSelectedItemButton = page.getByTitle('Show selected item in tree');
-
         // Navigate to the notebook object
         await page.goto(notebookObject.url);
 
         // Reveal the notebook in the tree
-        await showSelectedItemButton.click();
+        await page.getByTitle('Show selected item in tree').click();
 
         await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
 
@@ -248,13 +246,11 @@ test.describe('Notebook entry tests', () => {
             type: 'Overlay Plot'
         });
 
-        const showSelectedItemButton = page.getByTitle('Show selected item in tree');
-
         // Navigate to the notebook object
         await page.goto(notebookObject.url);
 
         // Reveal the notebook in the tree
-        await showSelectedItemButton.click();
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, 'Entry to drop into');
         await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', 'text=Entry to drop into');
@@ -271,13 +267,11 @@ test.describe('Notebook entry tests', () => {
     test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com';
 
-        const showSelectedItemButton = page.getByTitle('Show selected item in tree');
-
         // Navigate to the notebook object
         await page.goto(notebookObject.url);
 
         // Reveal the notebook in the tree
-        await showSelectedItemButton.click();
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
 
@@ -291,20 +285,18 @@ test.describe('Notebook entry tests', () => {
 
         // Wait for the popup to load.
         await popup.waitForLoadState();
-        expect.soft(popup.url()).toContain('www.google.com');
+        expect.soft(popup.url()).toContain(TEST_LINK);
 
         expect(await validLink.count()).toBe(1);
     });
     test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'www.google.com';
 
-        const showSelectedItemButton = page.getByTitle('Show selected item in tree');
-
         // Navigate to the notebook object
         await page.goto(notebookObject.url);
 
         // Reveal the notebook in the tree
-        await showSelectedItemButton.click();
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
 
@@ -315,13 +307,11 @@ test.describe('Notebook entry tests', () => {
     test('when a link is entered, but it is not in the whitelisted urls, it does not become clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.bing.com';
 
-        const showSelectedItemButton = page.getByTitle('Show selected item in tree');
-
         // Navigate to the notebook object
         await page.goto(notebookObject.url);
 
         // Reveal the notebook in the tree
-        await showSelectedItemButton.click();
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
 
@@ -329,17 +319,55 @@ test.describe('Notebook entry tests', () => {
 
         expect(await invalidLink.count()).toBe(0);
     });
-    test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
-        const TEST_LINK = 'http://www.google.com?bad=';
-        const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
-
-        const showSelectedItemButton = page.getByTitle('Show selected item in tree');
+    test('when a valid link with a subdomain and a valid domain in the whitelisted urls is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://bing.google.com';
 
         // Navigate to the notebook object
         await page.goto(notebookObject.url);
 
         // Reveal the notebook in the tree
-        await showSelectedItemButton.click();
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when a valid secure link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'https://www.google.com';
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        // Start waiting for popup before clicking. Note no await.
+        const popupPromise = page.waitForEvent('popup');
+
+        await validLink.click();
+        const popup = await popupPromise;
+
+        // Wait for the popup to load.
+        await popup.waitForLoadState();
+        expect.soft(popup.url()).toContain(TEST_LINK);
+
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.google.com?bad=';
+        const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, `This should be a link, BUT not a bad link: ${TEST_LINK_BAD} is it?`);
 
