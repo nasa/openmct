@@ -67,6 +67,10 @@ export default class SeriesCollection extends Collection {
         }, this);
     }
     watchTelemetryContainer(domainObject) {
+        if (domainObject.type === 'telemetry.plot.stacked') {
+            return;
+        }
+
         const composition = this.openmct.composition.get(domainObject);
         this.listenTo(composition, 'add', this.addTelemetryObject, this);
         this.listenTo(composition, 'remove', this.removeTelemetryObject, this);
