@@ -25,8 +25,11 @@ This test suite is dedicated to tests which verify the basic operations surround
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const nbUtils = require('../../../../helper/notebookUtils');
+const path = require('path');
+
+const NOTEBOOK_NAME = 'Notebook';
 
 test.describe('Notebook CRUD Operations', () => {
     test.fixme('Can create a Notebook Object', async ({ page }) => {
@@ -73,8 +76,7 @@ test.describe('Notebook section tests', () => {
 
         // Create Notebook
         await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Test Notebook"
+            type: NOTEBOOK_NAME
         });
     });
     test('Default and new sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
@@ -135,8 +137,7 @@ test.describe('Notebook page tests', () => {
 
         // Create Notebook
         await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Test Notebook"
+            type: NOTEBOOK_NAME
         });
     });
     //Test will need to be implemented after a refactor in #5713
@@ -207,24 +208,30 @@ test.describe('Notebook search tests', () => {
 });
 
 test.describe('Notebook entry tests', () => {
+    // Create Notebook with URL Whitelist
+    let notebookObject;
+    test.beforeEach(async ({ page }) => {
+        // eslint-disable-next-line no-undef
+        await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js') });
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        notebookObject = await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
+    });
     test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
     test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({ page }) => {
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
-
-        // Create Notebook
-        const notebook = await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Embed Test Notebook"
-        });
         // Create Overlay Plot
         await createDomainObjectWithDefaults(page, {
-            type: 'Overlay Plot',
-            name: "Dropped Overlay Plot"
+            type: 'Overlay Plot'
         });
 
-        await expandTreePaneItemByName(page, 'My Items');
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-        await page.goto(notebook.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
         await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
 
         const embed = page.locator('.c-ne__embed__link');
@@ -234,22 +241,16 @@ test.describe('Notebook entry tests', () => {
         expect(embedName).toBe('Dropped Overlay Plot');
     });
     test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({ page }) => {
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
-
-        // Create Notebook
-        const notebook = await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Embed Test Notebook"
-        });
         // Create Overlay Plot
         await createDomainObjectWithDefaults(page, {
-            type: 'Overlay Plot',
-            name: "Dropped Overlay Plot"
+            type: 'Overlay Plot'
         });
 
-        await expandTreePaneItemByName(page, 'My Items');
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-        await page.goto(notebook.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, 'Entry to drop into');
         await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', 'text=Entry to drop into');
@@ -263,19 +264,14 @@ test.describe('Notebook entry tests', () => {
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
     test.fixme('previous and new entries can be deleted', async ({ page }) => {});
-    test.fixme('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+    test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com';
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
-        // Create Notebook
-        const notebook = await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Entry Link Test"
-        });
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-        await expandTreePaneItemByName(page, 'My Items');
-
-        await page.goto(notebook.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
 
@@ -293,19 +289,14 @@ test.describe('Notebook entry tests', () => {
 
         expect(await validLink.count()).toBe(1);
     });
-    test.fixme('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
+    test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'www.google.com';
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
-        // Create Notebook
-        const notebook = await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Entry Link Test"
-        });
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-        await expandTreePaneItemByName(page, 'My Items');
-
-        await page.goto(notebook.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
 
@@ -313,20 +304,70 @@ test.describe('Notebook entry tests', () => {
 
         expect(await invalidLink.count()).toBe(0);
     });
-    test.fixme('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
+    test('when a link is entered, but it is not in the whitelisted urls, it does not become clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.bing.com';
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
+
+        const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        expect(await invalidLink.count()).toBe(0);
+    });
+    test('when a valid link with a subdomain and a valid domain in the whitelisted urls is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const INVALID_TEST_LINK = 'http://bing.google.com';
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${INVALID_TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${INVALID_TEST_LINK}"]`);
+
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when a valid secure link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'https://www.google.com';
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        // Start waiting for popup before clicking. Note no await.
+        const popupPromise = page.waitForEvent('popup');
+
+        await validLink.click();
+        const popup = await popupPromise;
+
+        // Wait for the popup to load.
+        await popup.waitForLoadState();
+        expect.soft(popup.url()).toContain('www.google.com');
+
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com?bad=';
         const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
-        // Create Notebook
-        const notebook = await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Entry Link Test"
-        });
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-        await expandTreePaneItemByName(page, 'My Items');
-
-        await page.goto(notebook.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, `This should be a link, BUT not a bad link: ${TEST_LINK_BAD} is it?`);
 
