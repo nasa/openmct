@@ -100,10 +100,6 @@ export default {
         this.updateView();
     },
     beforeDestroy() {
-        if (this.removeSelectable) {
-            this.removeSelectable();
-        }
-
         if (this.component) {
             this.component.$destroy();
         }
@@ -180,8 +176,6 @@ export default {
                 },
                 template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\', \'is-stale\': isStale}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
-
-            this.setSelection();
         },
         onLockHighlightPointUpdated() {
             this.$emit('lockHighlightPoint', ...arguments);
@@ -205,17 +199,6 @@ export default {
             this.status = status;
             this.updateComponentProp('status', status);
         },
-        setSelection() {
-            let childContext = {};
-            childContext.item = this.childObject;
-            this.context = childContext;
-            if (this.removeSelectable) {
-                this.removeSelectable();
-            }
-
-            this.removeSelectable = this.openmct.selection.selectable(
-                this.$el, this.context);
-        },
         getProps() {
             return {
                 limitLineLabels: this.showLimitLineLabels,
@@ -230,7 +213,7 @@ export default {
         },
         getPlotObject() {
             if (this.childObject.configuration && this.childObject.configuration.series) {
-                //If the object has a configuration, allow initialization of the config from it's persisted config
+                //If the object has a configuration (like an overlay plot), allow initialization of the config from it's persisted config
                 return this.childObject;
             } else {
                 //If object is missing, warn and return object
