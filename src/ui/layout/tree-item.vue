@@ -62,7 +62,7 @@ export default {
         },
         targetedPath: {
             type: String,
-            required: true
+            default: null
         },
         selectedItem: {
             type: Object,

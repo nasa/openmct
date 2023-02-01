@@ -57,7 +57,7 @@ test.describe('Visual - Tree Pane', () => {
             name: 'Z Clock'
         });
 
-        const treePane = "#tree-pane";
+        const treePane = "[role=tree][aria-label='Main Tree']";
 
         await percySnapshot(page, `Tree Pane w/ collapsed tree (theme: ${theme})`, {
             scope: treePane
@@ -94,7 +94,7 @@ test.describe('Visual - Tree Pane', () => {
  * @param {string} name
  */
 async function expandTreePaneItemByName(page, name) {
-    const treePane = page.locator('#tree-pane');
+    const treePane = page.getByTestId('tree-pane');
     const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
