@@ -93,7 +93,7 @@
         </ul>
     </div>
     <div
-        v-if="plotSeries.length && (isStackedPlotObject || !isNestedWithinAStackedPlot)"
+        v-if="isStackedPlotObject || !isNestedWithinAStackedPlot"
         class="grid-properties"
     >
         <ul
@@ -190,10 +190,13 @@ export default {
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
-        this.initYAxesConfiguration();
+        if (!this.isStackedPlotObject) {
+            this.initYAxesConfiguration();
+            this.registerListeners();
+        } else {
+            this.initLegendConfiguration();
+        }
 
-        this.registerListeners();
-        this.initLegendConfiguration();
         this.loaded = true;
 
     },
@@ -245,9 +248,9 @@ export default {
             }
         },
         getConfig() {
-            this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
-            return configStore.get(this.configId);
+            return configStore.get(configId);
         },
         registerListeners() {
             if (this.config) {
