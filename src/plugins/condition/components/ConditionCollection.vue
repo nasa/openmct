@@ -265,6 +265,10 @@ export default {
             }
         },
         hanldeStaleness(keyString, stalenessResponse) {
+            if (stalenessResponse === undefined) {
+                return;
+            }
+
             if (this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
                 this.emitStaleness({
                     keyString,
