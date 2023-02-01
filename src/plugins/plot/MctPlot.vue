@@ -1756,7 +1756,9 @@ export default {
         },
 
         destroy() {
-            configStore.deleteStore(this.config.id);
+            if (this.config) {
+                configStore.deleteStore(this.config.id);
+            }
 
             this.stopListening();
 
