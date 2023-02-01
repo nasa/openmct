@@ -162,14 +162,14 @@ async function testLogTicks(page) {
     const yTicks = await page.locator('.gl-plot-y-tick-label');
     expect(await yTicks.count()).toBe(9);
     await expect(yTicks.nth(0)).toHaveText('-2.98');
-    await expect(yTicks.nth(3)).toHaveText('-1.51');
-    await expect(yTicks.nth(7)).toHaveText('-0.58');
-    await expect(yTicks.nth(10)).toHaveText('-0.00');
-    await expect(yTicks.nth(13)).toHaveText('0.58');
-    await expect(yTicks.nth(17)).toHaveText('1.51');
-    await expect(yTicks.nth(20)).toHaveText('2.98');
-    await expect(yTicks.nth(24)).toHaveText('5.31');
-    await expect(yTicks.nth(27)).toHaveText('9.00');
+    await expect(yTicks.nth(1)).toHaveText('-1.51');
+    await expect(yTicks.nth(2)).toHaveText('-0.58');
+    await expect(yTicks.nth(3)).toHaveText('-0.00');
+    await expect(yTicks.nth(4)).toHaveText('0.58');
+    await expect(yTicks.nth(5)).toHaveText('1.51');
+    await expect(yTicks.nth(6)).toHaveText('2.98');
+    await expect(yTicks.nth(7)).toHaveText('5.31');
+    await expect(yTicks.nth(8)).toHaveText('9.00');
 }
 
 /**
