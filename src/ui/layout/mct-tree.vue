@@ -315,7 +315,7 @@ export default {
             }
         },
         targetedPathAnimationEnd() {
-            this.targetedPath = undefined;
+            this.targetedPath = null;
         },
         treeItemSelection(item) {
             this.selectedItem = item;
