@@ -105,10 +105,6 @@ function installBaseNotebookFunctionality(openmct) {
 
 function NotebookPlugin(name = 'Notebook', entryUrlWhitelist = []) {
     return function install(openmct) {
-        if (openmct[NOTEBOOK_INSTALLED_KEY]) {
-            return;
-        }
-
         const icon = 'icon-notebook';
         const description = 'Create and save timestamped notes with embedded object snapshots.';
         const snapshotContainer = getSnapshotContainer(openmct);
@@ -122,8 +118,6 @@ function NotebookPlugin(name = 'Notebook', entryUrlWhitelist = []) {
         openmct.objectViews.addProvider(notebookView, entryUrlWhitelist);
 
         installBaseNotebookFunctionality(openmct);
-
-        openmct[NOTEBOOK_INSTALLED_KEY] = true;
     };
 }
 
