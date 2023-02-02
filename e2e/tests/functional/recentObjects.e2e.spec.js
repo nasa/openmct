@@ -191,6 +191,20 @@ test.describe('Recent Objects', () => {
         expect(await clockBreadcrumbs.count()).toBe(2);
         expect(await clockBreadcrumbs.nth(0).innerText()).not.toEqual(await clockBreadcrumbs.nth(1).innerText());
     });
+    test("Enforces a limit of 20 recent objects", async ({ page }) => {
+        // Creating 21 objects takes a while, so increase the timeout
+        test.slow();
+
+        // Create 19 more objects (2 in beforeEach() + 19 new = 21 total)
+        for (let i = 0; i < 19; i++) {
+            await createDomainObjectWithDefaults(page, {
+                type: "Clock"
+            });
+        }
+
+        // Assert that the list contains 20 objects
+        expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(20);
+    });
 
     function assertInitialRecentObjectsListState() {
         expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeTruthy();
