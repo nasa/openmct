@@ -229,12 +229,10 @@ export default class ObjectAPI {
             delete this.cache[keystring];
 
             result = this.applyGetInterceptors(identifier, result);
-            if (result.isMutable) {
-                result.$refresh(result);
-            } else {
-                let mutableDomainObject = this.toMutable(result);
-                mutableDomainObject.$refresh(result);
-            }
+
+            const mutableDomainObject = this.toMutable(result);
+            mutableDomainObject.$refresh(result);
+            this.destroyMutable(mutableDomainObject);
 
             return result;
         }).catch((result) => {
