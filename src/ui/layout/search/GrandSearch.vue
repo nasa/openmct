@@ -46,6 +46,9 @@
 <script>
 import search from '../../components/search.vue';
 import SearchResultsDropDown from './SearchResultsDropDown.vue';
+import _ from 'lodash';
+
+const SEARCH_THROTTLE_TIME = 1000;
 
 export default {
     name: 'GrandSearch',
@@ -63,6 +66,9 @@ export default {
             annotationSearchResults: [],
             objectSearchResults: []
         };
+    },
+    mounted() {
+        this.getSearchResults = _.throttle(this.getSearchResults, SEARCH_THROTTLE_TIME);
     },
     destroyed() {
         document.body.removeEventListener('click', this.handleOutsideClick);
