@@ -25,8 +25,11 @@ const { createDomainObjectWithDefaults } = require('../../appActions.js');
 const { waitForAnimations } = require('../../baseFixtures.js');
 
 test.describe('Recent Objects', () => {
+    /** @type {import('@playwright/test').Locator} */
     let recentObjectsList;
+    /** @type {import('@playwright/test').Locator} */
     let clock;
+    /** @type {import('@playwright/test').Locator} */
     let folderA;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -51,14 +54,9 @@ test.describe('Recent Objects', () => {
         await page.mouse.move(0, 100);
         await page.mouse.up();
     });
-    test('Recent Objects CRUD operations', async ({ page }) => {
+    test('Navigated objects show up in recents, object renames and deletions are reflected', async ({ page }) => {
         // Verify that both created objects appear in the list and are in the correct order
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem').nth(0).getByText(clock.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem').nth(1).getByText(folderA.name)).toBeTruthy();
+        assertInitialRecentObjectsListState();
 
         // Navigate to the folder by clicking on the main object name in the recent objects list item
         await page.getByRole('listitem', { name: folderA.name }).getByText(folderA.name).click();
@@ -110,7 +108,6 @@ test.describe('Recent Objects', () => {
 
         // Verify that the hash URL updates correctly
         await waitForFolderNavigation;
-        // eslint-disable-next-line no-useless-escape
         expect(page.url()).toMatch(new RegExp(`.*${folderA.uuid}?.*`));
 
         // Navigate to My Items by clicking on its entry in the Clock's breadcrumb
@@ -123,7 +120,6 @@ test.describe('Recent Objects', () => {
 
         // Verify that the hash URL updates correctly
         await waitForMyItemsNavigation;
-        // eslint-disable-next-line no-useless-escape
         expect(page.url()).toMatch(new RegExp(`.*mine?.*`));
     });
     test("Clicking on the 'target button' scrolls the object into view in the tree and highlights it", async ({ page }) => {
@@ -150,6 +146,58 @@ test.describe('Recent Objects', () => {
         // Assert that the Clock treeitem is no longer highlighted
         await expect(clockTreeItem.locator('.c-tree__item')).not.toHaveClass(/is-targeted-item/);
     });
-    test.fixme("Tests for context menu actions from recent objects", async ({ page }) => {
+    test("Persists on refresh", async ({ page }) => {
+        assertInitialRecentObjectsListState();
+        await page.reload();
+        assertInitialRecentObjectsListState();
     });
+    test("Displays objects and aliases uniquely", async ({ page }) => {
+        const mainTree = page.getByRole('tree', { name: 'Main Tree'});
+
+        // Navigate to the clock and reveal it in the tree
+        await page.goto(clock.url);
+        await page.getByTitle('Show selected item in tree').click();
+
+        // Right click the clock and create an alias using the "link" context menu action
+        const clockTreeItem = page.getByRole('tree', {
+            name: 'Main Tree'
+        }).getByRole('treeitem', {
+            name: clock.name
+        });
+        await clockTreeItem.click({
+            button: 'right'
+        });
+        await page.getByRole('menuitem', {
+            name: /Create Link/
+        }).click();
+        await page.getByRole('tree', { name: 'Create Modal Tree'}).getByRole('treeitem').first().click();
+        await page.getByRole('button', {
+            name: 'Save'
+        }).click();
+
+        // Click the newly created object alias in the tree
+        await mainTree.getByRole('treeitem', {
+            name: new RegExp(clock.name)
+        }).filter({
+            has: page.locator('.is-alias')
+        }).click();
+
+        // Assert that two recent objects are displayed and one of them is an alias
+        expect(await recentObjectsList.getByRole('listitem', { name: clock.name }).count()).toBe(2);
+        expect(await recentObjectsList.locator('.is-alias').count()).toBe(1);
+
+        // Assert that the alias and the original's breadcrumbs are different
+        const clockBreadcrumbs = recentObjectsList.getByRole('listitem', {name: clock.name}).getByRole('navigation');
+        expect(await clockBreadcrumbs.count()).toBe(2);
+        expect(await clockBreadcrumbs.nth(0).innerText()).not.toEqual(await clockBreadcrumbs.nth(1).innerText());
+    });
+
+    function assertInitialRecentObjectsListState() {
+        expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeTruthy();
+        expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
+        expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
+        expect(recentObjectsList.getByRole('listitem').nth(0).getByText(clock.name)).toBeTruthy();
+        expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
+        expect(recentObjectsList.getByRole('listitem').nth(1).getByText(folderA.name)).toBeTruthy();
+    }
 });
