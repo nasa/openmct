@@ -83,6 +83,11 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
             if (!this.stalenessSubscription[id]) {
                 this.stalenessSubscription[id] = {};
                 this.stalenessSubscription[id].stalenessUtils = new StalenessUtils(this.openmct, telemetryObject);
+                this.openmct.telemetry.isStale(telemetryObject).then((stalenessResponse) => {
+                    if (stalenessResponse !== undefined) {
+                        this.handleStaleTelemetry(id, stalenessResponse);
+                    }
+                });
                 this.stalenessSubscription[id].unsubscribe = this.openmct.telemetry.subscribeToStaleness(
                     telemetryObject,
                     (stalenessResponse) => {
