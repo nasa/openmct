@@ -78,7 +78,7 @@
             >Minimum Value</div>
             <div class="grid-cell value">
                 <input
-                    v-model="rangeMin"
+                    v-model.lazy="rangeMin"
                     class="c-input--flex"
                     type="number"
                     @change="updateForm('range')"
@@ -91,7 +91,7 @@
                 title="Maximum Y axis value."
             >Maximum Value</div>
             <div class="grid-cell value"><input
-                v-model="rangeMax"
+                v-model.lazy="rangeMax"
                 class="c-input--flex"
                 type="number"
                 @change="updateForm('range')"
@@ -169,7 +169,7 @@ export default {
                     objectPath: `${prefix}.logMode`
                 },
                 range: {
-                    objectPath: `${prefix}.range'`,
+                    objectPath: `${prefix}.range`,
                     coerce: function coerceRange(range) {
                         const newRange = {
                             min: -1,
@@ -219,9 +219,11 @@ export default {
             this.autoscale = this.yAxis.get('autoscale');
             this.logMode = this.yAxis.get('logMode');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
-            const range = this.yAxis.get('range') ?? this.yAxis.get('displayRange');
-            this.rangeMin = range?.min;
-            this.rangeMax = range?.max;
+            const range = this.yAxis.get('range');
+            if (range) {
+                this.rangeMin = range?.min;
+                this.rangeMax = range?.max;
+            }
         },
         getPrefix() {
             let prefix = 'yAxis';
@@ -307,6 +309,15 @@ export default {
                                 value: newVal
                             });
                         }
+                    }
+
+                    //If autoscale is turned off, we must know what the min and max ranges are
+                    if (formKey === 'autoscale') {
+                        const rangeFormField = this.fields.range;
+                        this.validationErrors.range = rangeFormField.validate?.({
+                            min: this.rangeMin,
+                            max: this.rangeMax
+                        }, this.yAxis);
                     }
                 }
             }

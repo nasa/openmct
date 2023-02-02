@@ -377,11 +377,8 @@ export default class YAxisModel extends Model {
             autoscale: true,
             logMode: options.model?.logMode ?? false,
             autoscalePadding: 0.1,
-            id: options.id
-
-            // 'range' is not specified here, it is undefined at first. When the
-            // user turns off autoscale, the current 'displayRange' is used for
-            // the initial value of 'range'.
+            id: options.id,
+            range: options.model?.range
         };
     }
 }
