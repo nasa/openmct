@@ -293,6 +293,7 @@ define([
             this.stalenessSubscription[keyString].unsubscribe();
             this.stalenessSubscription[keyString].stalenessUtils.destroy();
             this.handleStaleness(keyString, { isStale: false }, SKIP_CHECK);
+            delete this.stalenessSubscription[keyString];
         }
 
         clearData() {

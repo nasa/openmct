@@ -99,7 +99,7 @@
                 </div>
             </template>
 
-            <div>
+            <div class="c-ne__tags c-tag-holder">
                 <div
                     v-for="(tag, index) in entryTags"
                     :key="index"
@@ -473,15 +473,10 @@ export default {
             this.openmct.selection.select(
                 [
                     {
-                        element: this.openmct.layout.$refs.browseObject.$el,
-                        context: {
-                            item: this.domainObject
-                        }
-                    },
-                    {
                         element: event.currentTarget,
                         context: {
                             type: 'notebook-entry-selection',
+                            item: this.domainObject,
                             targetDetails,
                             targetDomainObjects,
                             annotations: this.notebookAnnotations,

@@ -27,31 +27,34 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend
+        v-if="compositionObjectsConfigLoaded"
         :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
         :highlights="highlights"
-        :legend="legend"
         @legendHoverChanged="legendHoverChanged"
+        @expanded="updateExpanded"
+        @position="updatePosition"
     />
-    <div class="l-view-section">
+    <div
+        class="l-view-section"
+    >
         <stacked-plot-item
-            v-for="object in compositionObjects"
-            :key="object.id"
+            v-for="objectWrapper in compositionObjects"
+            :key="objectWrapper.keyString"
             class="c-plot--stacked-container"
-            :child-object="object"
+            :child-object="objectWrapper.object"
             :options="options"
             :grid-lines="gridLines"
             :color-palette="colorPalette"
             :cursor-guide="cursorGuide"
             :show-limit-line-labels="showLimitLineLabels"
-            :plot-tick-width="maxTickWidth"
-            @plotTickWidth="onTickWidthChange"
+            :parent-y-tick-width="maxTickWidth"
+            @plotYTickWidth="onYTickWidthChange"
             @loadingUpdated="loadingUpdated"
             @cursorGuide="onCursorGuideChange"
             @gridLines="onGridLinesChange"
             @lockHighlightPoint="lockHighlightPointUpdated"
             @highlights="highlightsUpdated"
-            @configLoaded="registerSeriesListeners"
+            @configLoaded="configLoadedForObject(objectWrapper.keyString)"
         />
     </div>
 </div>
@@ -66,14 +69,13 @@ import ColorPalette from "@/ui/color/ColorPalette";
 import PlotLegend from "../legend/PlotLegend.vue";
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
-import eventHelpers from "@/plugins/plot/lib/eventHelpers";
 
 export default {
     components: {
         StackedPlotItem,
         PlotLegend
     },
-    inject: ['openmct', 'domainObject', 'composition', 'path'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         options: {
             type: Object,
@@ -87,48 +89,59 @@ export default {
             hideExportButtons: false,
             cursorGuide: false,
             gridLines: true,
-            loading: false,
+            configLoaded: {},
             compositionObjects: [],
             tickWidthMap: {},
-            legend: {},
             loaded: false,
             lockHighlightPoint: false,
             highlights: [],
-            seriesModels: [],
             showLimitLineLabels: undefined,
-            colorPalette: new ColorPalette()
+            colorPalette: new ColorPalette(),
+            compositionObjectsConfigLoaded: false,
+            position: 'top',
+            expanded: false
         };
     },
     computed: {
         plotLegendPositionClass() {
-            return `plot-legend-${this.config.legend.get('position')}`;
+            return `plot-legend-${this.position}`;
         },
         plotLegendExpandedStateClass() {
-            if (this.config.legend.get('expanded')) {
+            if (this.expanded) {
                 return 'plot-legend-expanded';
             } else {
                 return 'plot-legend-collapsed';
             }
         },
+        /**
+       * Returns the maximum width of the left and right y axes ticks of this stacked plots children
+       * @returns {{rightTickWidth: number, leftTickWidth: number, hasMultipleLeftAxes: boolean}}
+       */
         maxTickWidth() {
-            return Math.max(...Object.values(this.tickWidthMap));
+            const tickWidthValues = Object.values(this.tickWidthMap);
+            const maxLeftTickWidth = Math.max(...tickWidthValues.map(tickWidthItem => tickWidthItem.leftTickWidth));
+            const maxRightTickWidth = Math.max(...tickWidthValues.map(tickWidthItem => tickWidthItem.rightTickWidth));
+            const hasMultipleLeftAxes = tickWidthValues.some(tickWidthItem => tickWidthItem.hasMultipleLeftAxes === true);
+
+            return {
+                leftTickWidth: maxLeftTickWidth,
+                rightTickWidth: maxRightTickWidth,
+                hasMultipleLeftAxes
+            };
         }
     },
     beforeDestroy() {
         this.destroy();
     },
     mounted() {
-        eventHelpers.extend(this);
-        this.seriesConfig = {};
-
+        //We only need to initialize the stacked plot config for legend properties
         const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.config = this.getConfig(configId);
-
-        this.legend = this.config.legend;
 
         this.loaded = true;
         this.imageExporter = new ImageExporter(this.openmct);
 
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
         this.composition.on('reorder', this.compositionReorder);
@@ -142,7 +155,6 @@ export default {
                     id: configId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
-                    palette: this.colorPalette,
                     callback: (data) => {
                         this.data = data;
                     }
@@ -155,10 +167,19 @@ export default {
         loadingUpdated(loaded) {
             this.loading = loaded;
         },
-        destroy() {
-            this.stopListening();
-            configStore.deleteStore(this.config.id);
+        configLoadedForObject(childObjIdentifier) {
+            const childObjId = this.openmct.objects.makeKeyString(childObjIdentifier);
+            this.configLoaded[childObjId] = true;
+            this.setConfigLoadedForComposition();
+        },
+        setConfigLoadedForComposition() {
+            this.compositionObjectsConfigLoaded = this.compositionObjects.length && this.compositionObjects.every(childObject => {
+                const id = childObject.keyString;
 
+                return this.configLoaded[id] === true;
+            });
+        },
+        destroy() {
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.composition.off('reorder', this.compositionReorder);
@@ -167,9 +188,16 @@ export default {
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
 
-            this.$set(this.tickWidthMap, id, 0);
+            this.$set(this.tickWidthMap, id, {
+                leftTickWidth: 0,
+                rightTickWidth: 0
+            });
 
-            this.compositionObjects.push(child);
+            this.compositionObjects.push({
+                object: child,
+                keyString: id
+            });
+            this.setConfigLoadedForComposition();
         },
 
         removeChild(childIdentifier) {
@@ -177,26 +205,36 @@ export default {
 
             this.$delete(this.tickWidthMap, id);
 
+            const childObj = this.compositionObjects.filter((c) => {
+                const identifier = c.keyString;
+
+                return identifier === id;
+            })[0];
+
+            if (childObj) {
+                if (childObj.object.type !== 'telemetry.plot.overlay') {
+                    const config = this.getConfig(childObj.keyString);
+                    if (config) {
+                        config.series.remove(config.series.at(0));
+                    }
+                }
+            }
+
+            this.compositionObjects = this.compositionObjects.filter((c) => {
+                const identifier = c.keyString;
+
+                return identifier !== id;
+            });
+
             const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
                 return this.openmct.objects.areIdsEqual(seriesConfig.identifier, childIdentifier);
             });
             if (configIndex > -1) {
-                this.domainObject.configuration.series.splice(configIndex, 1);
+                const cSeries = this.domainObject.configuration.series.slice();
+                this.openmct.objects.mutate(this.domainObject, 'configuration.series', cSeries);
             }
 
-            this.removeSeries({
-                keyString: id
-            });
-
-            const childObj = this.compositionObjects.filter((c) => {
-                const identifier = this.openmct.objects.makeKeyString(c.identifier);
-
-                return identifier === id;
-            })[0];
-            if (childObj) {
-                const index = this.compositionObjects.indexOf(childObj);
-                this.compositionObjects.splice(index, 1);
-            }
+            this.setConfigLoadedForComposition();
         },
 
         compositionReorder(reorderPlan) {
@@ -209,7 +247,10 @@ export default {
 
         resetTelemetryAndTicks(domainObject) {
             this.compositionObjects = [];
-            this.tickWidthMap = {};
+            this.tickWidthMap = {
+                leftTickWidth: 0,
+                rightTickWidth: 0
+            };
         },
 
         exportJPG() {
@@ -232,12 +273,18 @@ export default {
                     this.hideExportButtons = false;
                 }.bind(this));
         },
-        onTickWidthChange(width, plotId) {
+        /**
+         * @typedef {Object} PlotYTickData
+         * @property {Number} leftTickWidth the width of the ticks for all the y axes on the left of the plot.
+         * @property {Number} rightTickWidth the width of the ticks for all the y axes on the right of the plot.
+         * @property {Boolean} hasMultipleLeftAxes whether or not there is more than one left y axis.
+         */
+        onYTickWidthChange(data, plotId) {
             if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
                 return;
             }
 
-            this.$set(this.tickWidthMap, plotId, width);
+            this.$set(this.tickWidthMap, plotId, data);
         },
         legendHoverChanged(data) {
             this.showLimitLineLabels = data;
@@ -245,38 +292,17 @@ export default {
         lockHighlightPointUpdated(data) {
             this.lockHighlightPoint = data;
         },
+        updateExpanded(expanded) {
+            this.expanded = expanded;
+        },
+        updatePosition(position) {
+            this.position = position;
+        },
+        updateReady(ready) {
+            this.configReady = ready;
+        },
         highlightsUpdated(data) {
             this.highlights = data;
-        },
-        registerSeriesListeners(configId) {
-            const config = this.getConfig(configId);
-            this.seriesConfig[configId] = config;
-            const childObject = config.get('domainObject');
-
-            //TODO differentiate between objects with composition and those without
-            if (childObject.type === 'telemetry.plot.overlay') {
-                this.listenTo(config.series, 'add', this.addSeries, this);
-                this.listenTo(config.series, 'remove', this.removeSeries, this);
-            }
-
-            config.series.models.forEach(this.addSeries, this);
-        },
-        addSeries(series) {
-            const childObject = series.domainObject;
-            //don't add the series if it can have child series this will happen in registerSeriesListeners
-            if (childObject.type !== 'telemetry.plot.overlay') {
-                const index = this.seriesModels.length;
-                this.$set(this.seriesModels, index, series);
-            }
-
-        },
-        removeSeries(plotSeries) {
-            const index = this.seriesModels.findIndex(seriesModel => seriesModel.keyString === plotSeries.keyString);
-            if (index > -1) {
-                this.$delete(this.seriesModels, index);
-            }
-
-            this.stopListening(plotSeries);
         },
         onCursorGuideChange(cursorGuide) {
             this.cursorGuide = cursorGuide === true;
