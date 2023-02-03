@@ -31,6 +31,7 @@
             class="c-tag-selection"
             :item-css-class="'icon-circle'"
             @onChange="tagSelected"
+            @autoCompleteBlur="autoCompleteBlur"
         />
         <div
             v-else
@@ -157,6 +158,9 @@ export default {
             if (tagAdded) {
                 this.$emit('tagAdded', tagAdded.id);
             }
+        },
+        autoCompleteBlur() {
+            this.$emit('tagBlurred');
         }
     }
 };
