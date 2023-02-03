@@ -231,4 +231,25 @@ test.describe('Tagging in Notebooks @addInit', () => {
             await expect(page.locator(entryLocator)).toContainText("Driving");
         }
     });
+    test('Can cancel adding a tag', async ({ page }) => {
+        await createNotebookAndEntry(page);
+
+        // Click on Annotations tab
+        await page.locator('text=Annotations').click();
+
+        // Click on the "Add Tag" button
+        await page.locator('button:has-text("Add Tag")').click();
+
+        // Click inside the AutoComplete field
+        await page.locator('[placeholder="Type to select tag"]').click();
+
+        // Click on the "Tags" header (simulating a click outside the autocomplete)
+        await page.locator('div.c-inspect-properties__header:has-text("Tags")').click();
+
+        // Verify there is a button with text "Add Tag"
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
+
+        // Verify the AutoComplete field is hidden
+        await expect(page.locator('[placeholder="Type to select tag"]')).toBeHidden();
+    });
 });
