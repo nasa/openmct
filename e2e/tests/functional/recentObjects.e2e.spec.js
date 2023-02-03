@@ -171,9 +171,7 @@ test.describe('Recent Objects', () => {
             name: /Create Link/
         }).click();
         await page.getByRole('tree', { name: 'Create Modal Tree'}).getByRole('treeitem').first().click();
-        await page.getByRole('button', {
-            name: 'Save'
-        }).click();
+        await page.getByRole('button', { name: 'Save' }).click();
 
         // Click the newly created object alias in the tree
         await mainTree.getByRole('treeitem', {
