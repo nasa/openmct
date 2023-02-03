@@ -28,6 +28,7 @@ import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
 import conditionalStylesMixin from "./mixins/objectStyles-mixin";
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import StalenessUtils from '@/utils/staleness';
 import configStore from "@/plugins/plot/configuration/ConfigStore";
 import PlotConfigurationModel from "@/plugins/plot/configuration/PlotConfigurationModel";
 import ProgressBar from "../../../ui/components/ProgressBar.vue";
@@ -83,6 +84,11 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            staleObjects: []
+        };
+    },
     watch: {
         gridLines(newGridLines) {
             this.updateComponentProp('gridLines', newGridLines);
@@ -98,15 +104,27 @@ export default {
                 this.updateComponentProp('limitLineLabels', data);
             },
             deep: true
+        },
+        staleObjects() {
+            if (this.staleObjects.length > 0) {
+                this.isStale = true;
+            } else {
+                this.isStale = false;
+            }
+
+            this.updateComponentProp('isStale', this.isStale);
         }
     },
     mounted() {
+        this.stalenessSubscription = {};
         this.updateView();
     },
     beforeDestroy() {
         if (this.component) {
             this.component.$destroy();
         }
+
+        this.destroyStalenessListeners();
     },
     methods: {
         updateComponentProp(prop, value) {
@@ -117,7 +135,7 @@ export default {
         updateView() {
             this.isStale = false;
 
-            this.triggerUnsubscribeFromStaleness();
+            this.destroyStalenessListeners();
 
             if (this.component) {
                 this.component.$destroy();
@@ -144,9 +162,18 @@ export default {
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
 
-            this.subscribeToStaleness(object, (isStale) => {
-                this.updateComponentProp('isStale', isStale);
-            });
+            if (this.openmct.telemetry.isTelemetryObject(object)) {
+                this.subscribeToStaleness(object, (isStale) => {
+                    this.updateComponentProp('isStale', isStale);
+                });
+            } else {
+                // possibly overlay or other composition based plot
+                this.composition = this.openmct.composition.get(object);
+
+                this.composition.on('add', this.watchStaleness);
+                this.composition.on('remove', this.unwatchStaleness);
+                this.composition.load();
+            }
 
             this.component = new Vue({
                 el: viewContainer,
@@ -203,6 +230,46 @@ export default {
                           @loadingUpdated="loadingUpdated"/>
                   </div>`
             });
+        },
+        watchStaleness(object) {
+            const keyString = this.openmct.objects.makeKeyString(object.identifier);
+            this.stalenessSubscription[keyString] = {};
+            this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(this.openmct, object);
+
+            this.openmct.telemetry.isStale(object).then((stalenessResponse) => {
+                if (stalenessResponse !== undefined) {
+                    this.handleStaleness(keyString, stalenessResponse);
+                }
+            });
+            const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(object, (stalenessResponse) => {
+                this.handleStaleness(keyString, stalenessResponse);
+            });
+
+            this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
+        },
+        unwatchStaleness(object) {
+            const SKIP_CHECK = true;
+            const keyString = this.openmct.objects.makeKeyString(object.identifier);
+
+            this.stalenessSubscription[keyString].unsubscribe();
+            this.stalenessSubscription[keyString].stalenessUtils.destroy();
+            this.handleStaleness(keyString, { isStale: false }, SKIP_CHECK);
+
+            delete this.stalenessSubscription[keyString];
+        },
+        handleStaleness(id, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                const index = this.staleObjects.indexOf(id);
+                if (stalenessResponse.isStale) {
+                    if (index === -1) {
+                        this.staleObjects.push(id);
+                    }
+                } else {
+                    if (index !== -1) {
+                        this.staleObjects.splice(index, 1);
+                    }
+                }
+            }
         },
         onLockHighlightPointUpdated() {
             this.$emit('lockHighlightPoint', ...arguments);
@@ -291,6 +358,20 @@ export default {
 
                 return this.childObject;
             }
+        },
+        destroyStalenessListeners() {
+            this.triggerUnsubscribeFromStaleness();
+
+            if (this.composition) {
+                this.composition.off('add', this.watchStaleness);
+                this.composition.off('remove', this.unwatchStaleness);
+                this.component = null;
+            }
+
+            Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+                stalenessSubscription.unsubscribe();
+                stalenessSubscription.stalenessUtils.destroy();
+            });
         }
     }
 };
