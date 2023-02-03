@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div></div>
+<div aria-label="Inspector Views"></div>
 </template>
 
 <script>
