@@ -23,8 +23,12 @@ import availableTags from './tags.json';
 /**
  * @returns {function} The plugin install function
  */
-export default function exampleTagsPlugin() {
+export default function exampleTagsPlugin(namespaceToSaveAnnotations) {
     return function install(openmct) {
+        if (namespaceToSaveAnnotations) {
+            openmct.annotation.setNamespaceToSaveAnnotations(namespaceToSaveAnnotations);
+        }
+
         Object.keys(availableTags.tags).forEach(tagKey => {
             const tagDefinition = availableTags.tags[tagKey];
             openmct.annotation.defineTag(tagKey, tagDefinition);
