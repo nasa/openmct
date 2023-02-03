@@ -157,7 +157,7 @@ describe("The Annotation API", () => {
                 expect(error).toBeDefined();
             }
         });
-        it("fails if annotation if given a immutable namespace to save to", async () => {
+        it("fails if annotation if given an immutable namespace to save to", async () => {
             try {
                 const annotationCreationArguments = {
                     name: 'Test Annotation',
