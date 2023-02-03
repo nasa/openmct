@@ -287,7 +287,8 @@ export default class YAxisModel extends Model {
         this.resetSeries();
     }
     resetSeries() {
-        this.plot.series.forEach((plotSeries) => {
+        const series = this.getSeriesForYAxis(this.seriesCollection);
+        series.forEach((plotSeries) => {
             plotSeries.logMode = this.get('logMode');
             plotSeries.reset(plotSeries.getSeriesData());
         });

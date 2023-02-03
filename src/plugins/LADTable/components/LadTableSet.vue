@@ -218,6 +218,7 @@ export default {
                 this.stalenessSubscription[keystring].unsubscribe();
                 this.stalenessSubscription[keystring].stalenessUtils.destroy();
                 this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
+                delete this.stalenessSubscription[keystring];
             };
         },
         handleStaleness(id, stalenessResponse, skipCheck = false) {
