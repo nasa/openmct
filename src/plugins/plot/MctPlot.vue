@@ -1193,21 +1193,21 @@ export default {
 
             const nearbyAnnotations = this.gatherNearbyAnnotations();
 
-            if (this.annotationViewingAndEditingAllowed || this.annotationSelections.length || nearbyAnnotations.length) {
-                //show annotations if some were found
-                if (nearbyAnnotations.length) {
-                    const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
-                    this.selectPlotAnnotations({
-                        targetDetails,
-                        targetDomainObjects,
-                        annotations: nearbyAnnotations
-                    });
+            if (this.annotationViewingAndEditingAllowed && this.annotationSelections.length) {
+                //no annotations were found, but we are adding some now
+                return;
+            }
 
-                    return;
-                } else if (this.annotationSelections.length) {
-                    //no annotations were found, but we are adding some now
-                    return;
-                }
+            if (this.annotationViewingAndEditingAllowed && nearbyAnnotations.length) {
+                //show annotations if some were found
+                const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
+                this.selectPlotAnnotations({
+                    targetDetails,
+                    targetDomainObjects,
+                    annotations: nearbyAnnotations
+                });
+
+                return;
             }
 
             //Fall through to here if either there is no new selection add tags or no existing annotations were retrieved
