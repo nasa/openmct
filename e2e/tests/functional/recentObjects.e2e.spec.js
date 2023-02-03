@@ -49,7 +49,9 @@ test.describe('Recent Objects', () => {
         });
 
         // Drag the Recent Objects panel up a bit
-        await page.locator('div:nth-child(2) > .l-pane__handle').hover();
+        await page.locator('.l-pane.l-pane--vertical-handle-before', {
+            hasText: 'Recently Viewed'
+        }).locator('.l-pane__handle').hover();
         await page.mouse.down();
         await page.mouse.move(0, 100);
         await page.mouse.up();
