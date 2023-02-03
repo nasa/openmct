@@ -43,7 +43,7 @@
         <ul
             v-for="(yAxis, index) in yAxesWithSeries"
             :key="`yAxis-${index}`"
-            class="l-inspector-part"
+            class="l-inspector-part js-yaxis-properties"
             :aria-label="yAxesWithSeries.length > 1 ? `Y Axis ${yAxis.id} Properties` : 'Y Axis Properties'"
         >
             <h2 title="Y axis settings for this object">Y Axis {{ yAxesWithSeries.length > 1 ? yAxis.id : '' }}</h2>
