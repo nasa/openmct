@@ -106,7 +106,6 @@ describe("The Annotation API", () => {
             }
         };
 
-
         openmct.objects.addProvider('immutableProvider', mockImmutableObjectProvider);
         openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
         openmct.on('start', done);
