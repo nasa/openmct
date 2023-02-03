@@ -193,15 +193,53 @@ test.describe('Recent Objects', () => {
         // Creating 21 objects takes a while, so increase the timeout
         test.slow();
 
-        // Create 19 more objects (2 in beforeEach() + 19 new = 21 total)
-        for (let i = 0; i < 19; i++) {
-            await createDomainObjectWithDefaults(page, {
-                type: "Clock"
+        // Assert that the list initially contains 3 objects (clock, folder, my items)
+        expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
+
+        let lastFolder;
+        let lastClock;
+        // Create 19 more objects (3 in beforeEach() + 18 new = 21 total)
+        for (let i = 0; i < 9; i++) {
+            lastFolder = await createDomainObjectWithDefaults(page, {
+                type: "Folder",
+                parent: lastFolder?.uuid
+            });
+            lastClock = await createDomainObjectWithDefaults(page, {
+                type: "Clock",
+                parent: lastFolder?.uuid
             });
         }
 
         // Assert that the list contains 20 objects
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(20);
+
+        // Collapse the tree
+        await page.getByTitle("Collapse all tree items").click();
+        const lastFolderTreeItem = page.getByRole('tree', { name: 'Main Tree'})
+            .getByRole('treeitem', {
+                name: lastFolder.name,
+                expanded: true
+            });
+        const lastClockTreeItem = page.getByRole('tree', { name: 'Main Tree'})
+            .getByRole('treeitem', {
+                name: lastClock.name
+            });
+
+        // Test "Open and Scroll To" in a deeply nested tree, while we're here
+        await page.getByRole('button', { name: `Open and scroll to ${lastClock.name}`}).click();
+
+        // Assert that the Clock parent folder has expanded and the Clock is visible)
+        await expect(lastFolderTreeItem.locator('.c-disclosure-triangle')).toHaveClass(/--expanded/);
+        await expect(lastClockTreeItem).toBeVisible();
+
+        // Assert that the Clock treeitem is highlighted
+        await expect(lastClockTreeItem.locator('.c-tree__item')).toHaveClass(/is-targeted-item/);
+
+        // Wait for highlight animation to end
+        await waitForAnimations(lastClockTreeItem.locator('.c-tree__item'));
+
+        // Assert that the Clock treeitem is no longer highlighted
+        await expect(lastClockTreeItem.locator('.c-tree__item')).not.toHaveClass(/is-targeted-item/);
     });
 
     function assertInitialRecentObjectsListState() {
