@@ -41,7 +41,6 @@
             v-for="objectWrapper in compositionObjects"
             :key="objectWrapper.keyString"
             class="c-plot--stacked-container"
-            :aria-label="`Stacked Plot Item - ${objectWrapper.object.name}`"
             :child-object="objectWrapper.object"
             :options="options"
             :grid-lines="gridLines"
