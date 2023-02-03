@@ -26,7 +26,7 @@
 >
     <ul
         v-if="!isStackedPlotObject"
-        class="c-tree"
+        class="c-tree js-series-properties"
     >
         <h2 title="Plot series display properties in this object">Plot Series</h2>
         <plot-options-item

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div></div>
+<div class="js-inspector-views"></div>
 </template>
 
 <script>

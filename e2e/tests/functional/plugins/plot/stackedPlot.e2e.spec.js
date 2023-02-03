@@ -29,29 +29,36 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Stacked Plot', () => {
+    let stackedPlot;
 
-    test('Using the remove action removes the correct plot', async ({ page }) => {
+    test.beforeEach(async ({ page }) => {
+        //Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('/', { waitUntil: 'networkidle' });
-        const overlayPlot = await createDomainObjectWithDefaults(page, {
-            type: "Overlay Plot"
+        stackedPlot = await createDomainObjectWithDefaults(page, {
+            type: "Stacked Plot"
         });
 
         await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator",
             name: 'swg a',
-            parent: overlayPlot.uuid
+            parent: stackedPlot.uuid
         });
         await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator",
             name: 'swg b',
-            parent: overlayPlot.uuid
+            parent: stackedPlot.uuid
         });
         await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator",
             name: 'swg c',
-            parent: overlayPlot.uuid
+            parent: stackedPlot.uuid
         });
-        await page.goto(overlayPlot.url);
+    });
+
+    test('Using the remove action removes the correct plot', async ({ page }) => {
+
+        await page.goto(stackedPlot.url);
+
         await page.click('button[title="Edit"]');
 
         // Expand the elements pool vertically
@@ -75,5 +82,21 @@ test.describe('Stacked Plot', () => {
         await expect(page.locator('.js-elements-pool__tree >> text=swg a')).toHaveCount(1);
         await expect(page.locator('.js-elements-pool__tree >> text=swg b')).toHaveCount(0);
         await expect(page.locator('.js-elements-pool__tree >> text=swg c')).toHaveCount(1);
+    });
+
+    test('Selecting a child plot shows it\'s properties in the inspector.', async ({ page }) => {
+
+        await page.goto(stackedPlot.url);
+
+        //Click on the 2nd plot canvas - There will be 2 canvases for each swg, so we click on the 3rd canvas
+        await page.locator('canvas').nth(3).click();
+
+        // Expand the elements pool vertically
+        const propertiesInspector = await page.locator('.js-inspector-views');
+        await expect(propertiesInspector.locator('.js-series-properties >> h2')).toContainText("Plot Series");
+        await expect(propertiesInspector.locator('.js-yaxis-properties >> h2')).toContainText("Y Axis");
+
+        const plotSeriesItems = await propertiesInspector.locator('.js-series-properties .c-object-label');
+        await expect(plotSeriesItems).toContainText("swg b");
     });
 });
