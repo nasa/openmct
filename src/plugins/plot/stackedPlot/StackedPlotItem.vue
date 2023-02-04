@@ -20,7 +20,9 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div></div>
+<div
+    :aria-label="`Stacked Plot Item ${childObject.name}`"
+></div>
 </template>
 <script>
 
@@ -118,8 +120,16 @@ export default {
     mounted() {
         this.stalenessSubscription = {};
         this.updateView();
+        this.isEditing = this.openmct.editor.isEditing();
+        this.openmct.editor.on('isEditing', this.setEditState);
     },
     beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.setEditState);
+
+        if (this.removeSelectable) {
+            this.removeSelectable();
+        }
+
         if (this.component) {
             this.component.$destroy();
         }
@@ -127,6 +137,18 @@ export default {
         this.destroyStalenessListeners();
     },
     methods: {
+        setEditState(isEditing) {
+            this.isEditing = isEditing;
+
+            if (this.isEditing) {
+                this.setSelection();
+            } else {
+                if (this.removeSelectable) {
+                    this.removeSelectable();
+                }
+            }
+        },
+
         updateComponentProp(prop, value) {
             if (this.component) {
                 this.component[prop] = value;
@@ -230,6 +252,10 @@ export default {
                           @loadingUpdated="loadingUpdated"/>
                   </div>`
             });
+
+            if (this.isEditing) {
+                this.setSelection();
+            }
         },
         watchStaleness(object) {
             const keyString = this.openmct.objects.makeKeyString(object.identifier);
@@ -292,6 +318,17 @@ export default {
         setStatus(status) {
             this.status = status;
             this.updateComponentProp('status', status);
+        },
+        setSelection() {
+            let childContext = {};
+            childContext.item = this.childObject;
+            this.context = childContext;
+            if (this.removeSelectable) {
+                this.removeSelectable();
+            }
+
+            this.removeSelectable = this.openmct.selection.selectable(
+                this.$el, this.context);
         },
         getProps() {
             return {
