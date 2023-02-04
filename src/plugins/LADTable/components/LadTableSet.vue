@@ -48,7 +48,7 @@
                 </tr>
                 <lad-row
                     v-for="ladRow in ladTelemetryObjects[ladTable.key]"
-                    :key="ladRow.key"
+                    :key="combineKeys(ladTable.key, ladRow.key)"
                     :domain-object="ladRow.domainObject"
                     :path-to-table="ladTable.objectPath"
                     :has-units="hasUnits"
@@ -160,9 +160,17 @@ export default {
                 removeCallback
             });
         },
+        combineKeys(ladKey, telemetryObjectKey) {
+            return `${ladKey}-${telemetryObjectKey}`;
+        },
         removeLadTable(identifier) {
             let index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.key);
             let ladTable = this.ladTableObjects[index];
+
+            this.ladTelemetryObjects[ladTable.key].forEach(telemetryObject => {
+                let combinedKey = this.combineKeys(ladTable.key, telemetryObject.key);
+                this.unwatchStaleness(combinedKey);
+            });
 
             this.$delete(this.ladTelemetryObjects, ladTable.key);
             this.ladTableObjects.splice(index, 1);
@@ -178,55 +186,56 @@ export default {
                 let telemetryObject = {};
                 telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 telemetryObject.domainObject = domainObject;
+                let combinedKey = this.combineKeys(ladTable.key, telemetryObject.key);
 
                 let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
                 telemetryObjects.push(telemetryObject);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
 
-                // if tracking already, possibly in another table, return
-                if (this.stalenessSubscription[telemetryObject.key]) {
-                    return;
-                } else {
-                    this.stalenessSubscription[telemetryObject.key] = {};
-                    this.stalenessSubscription[telemetryObject.key].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
-                }
+                this.stalenessSubscription[combinedKey] = {};
+                this.stalenessSubscription[combinedKey].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
 
                 this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
                     if (stalenessResponse !== undefined) {
-                        this.handleStaleness(telemetryObject.key, stalenessResponse);
+                        this.handleStaleness(combinedKey, stalenessResponse);
                     }
                 });
                 const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
-                    this.handleStaleness(telemetryObject.key, stalenessResponse);
+                    this.handleStaleness(combinedKey, stalenessResponse);
                 });
 
-                this.stalenessSubscription[telemetryObject.key].unsubscribe = stalenessSubscription;
+                this.stalenessSubscription[combinedKey].unsubscribe = stalenessSubscription;
             };
         },
         removeTelemetryObject(ladTable) {
             return (identifier) => {
-                const SKIP_CHECK = true;
                 const keystring = this.openmct.objects.makeKeyString(identifier);
                 let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                let combinedKey = this.combineKeys(ladTable.key, keystring);
                 let index = telemetryObjects.findIndex(telemetryObject => keystring === telemetryObject.key);
 
+                this.unwatchStaleness(combinedKey);
+
                 telemetryObjects.splice(index, 1);
-
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
-
-                this.stalenessSubscription[keystring].unsubscribe();
-                this.stalenessSubscription[keystring].stalenessUtils.destroy();
-                this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
-                delete this.stalenessSubscription[keystring];
             };
         },
-        handleStaleness(id, stalenessResponse, skipCheck = false) {
-            if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
-                const index = this.staleObjects.indexOf(id);
+        unwatchStaleness(combinedKey) {
+            const SKIP_CHECK = true;
+
+            this.stalenessSubscription[combinedKey].unsubscribe();
+            this.stalenessSubscription[combinedKey].stalenessUtils.destroy();
+            this.handleStaleness(combinedKey, { isStale: false }, SKIP_CHECK);
+
+            delete this.stalenessSubscription[combinedKey];
+        },
+        handleStaleness(combinedKey, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[combinedKey].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                const index = this.staleObjects.indexOf(combinedKey);
                 if (stalenessResponse.isStale) {
                     if (index === -1) {
-                        this.staleObjects.push(id);
+                        this.staleObjects.push(combinedKey);
                     }
                 } else {
                     if (index !== -1) {
