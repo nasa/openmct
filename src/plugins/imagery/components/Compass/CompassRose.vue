@@ -107,48 +107,53 @@
                         height="100"
                     />
                 </mask>
-
-                <!-- Equipment (spacecraft) body holder. Transforms relative to the camera position. -->
                 <g
-                    v-if="hasHeading"
-                    class="cr-vrover"
-                    :style="camAngleAndPositionStyle"
-                >
-                    <!-- Equipment body. Rotates relative to the camera gimbal value for cams that gimbal. -->
-                    <path
-                        class="cr-vrover__body"
-                        :style="camGimbalAngleStyle"
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M5 0C2.23858 0 0 2.23858 0 5V95C0 97.7614 2.23858 100 5 100H95C97.7614 100 100 97.7614 100 95V5C100 2.23858 97.7614 0 95 0H5ZM85 59L50 24L15 59H33V75H67.0455V59H85Z"
-                    />
-                </g>
-
-                <g
-                    class="c-cr__cam-fov"
+                    class="c-cr-cam-and-body"
                     :style="cameraHeadingStyle"
                 >
-                    <g mask="url(#mask2)">
-                        <rect
-                            class="c-cr__cam-fov-r"
-                            x="49"
-                            width="51"
-                            height="100"
-                            :style="cameraFOVStyleRightHalf"
+                    <!-- Equipment (spacecraft) body holder. Transforms relative to the camera position. -->
+                    <g
+                        v-if="hasHeading"
+                        class="cr-vrover"
+                        :style="camAngleAndPositionStyle"
+                    >
+                        <!-- Equipment body. Rotates relative to the camera pan value for cams that gimbal. -->
+                        <path
+                            class="cr-vrover__body"
+                            :style="camGimbalAngleStyle"
+                            x
+                            fill-rule="evenodd"
+                            clip-rule="evenodd"
+                            d="M5 0C2.23858 0 0 2.23858 0 5V95C0 97.7614 2.23858 100 5 100H95C97.7614 100 100 97.7614 100 95V5C100 2.23858 97.7614 0 95 0H5ZM85 59L50 24L15 59H33V75H67.0455V59H85Z"
                         />
                     </g>
-                    <g mask="url(#mask1)">
-                        <rect
-                            class="c-cr__cam-fov-l"
-                            width="51"
-                            height="100"
-                            :style="cameraFOVStyleLeftHalf"
+
+                    <g
+                        class="c-cr__cam-fov"
+                    >
+                        <g mask="url(#mask2)">
+                            <rect
+                                class="c-cr__cam-fov-r"
+                                x="49"
+                                width="51"
+                                height="100"
+                                :style="cameraFOVStyleRightHalf"
+                            />
+                        </g>
+                        <g mask="url(#mask1)">
+                            <rect
+                                class="c-cr__cam-fov-l"
+                                width="51"
+                                height="100"
+                                :style="cameraFOVStyleLeftHalf"
+                            />
+                        </g>
+                        <polygon
+                            class="c-cr__cam"
+                            points="0,0 100,0 70,40 70,100 30,100 30,40"
                         />
                     </g>
-                    <polygon
-                        class="c-cr__cam"
-                        points="0,0 100,0 70,40 70,100 30,100 30,40"
-                    />
+
                 </g>
             </g>
 
@@ -305,7 +310,7 @@ export default {
             return { transform: `translate(${translateX}%, ${translateY}%) rotate(${rotation}deg) scale(${scale})` };
         },
         camGimbalAngleStyle() {
-            const rotation = rotate(this.north, this.heading);
+            const rotation = rotate(this.heading);
 
             return {
                 transform: `rotate(${ rotation }deg)`
@@ -331,14 +336,6 @@ export default {
         },
         hasHeading() {
             return this.heading !== undefined;
-        },
-        headingStyle() {
-            /* Replaced with computed camGimbalStyle, but left here just in case. */
-            const rotation = rotate(this.north, this.heading);
-
-            return {
-                transform: `rotate(${ rotation }deg)`
-            };
         },
         hasSunHeading() {
             return this.sunHeading !== undefined;
