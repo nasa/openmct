@@ -121,6 +121,29 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 }
 
 /**
+  * Creates a notebook object and adds an entry.
+  * @param {import('@playwright/test').Page} - page to load
+  * @param {number} [iterations = 1] - the number of entries to create
+  */
+async function createNotebookAndEntry(page, iterations = 1) {
+    //Go to baseURL
+    await page.goto('./', { waitUntil: 'networkidle' });
+
+    const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
+
+    for (let iteration = 0; iteration < iterations; iteration++) {
+        // Create an entry
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = ${iteration}`;
+        await page.locator(entryLocator).click();
+        await page.locator(entryLocator).fill(`Entry ${iteration}`);
+        await page.locator(entryLocator).press('Enter');
+    }
+
+    return notebook;
+}
+
+/**
  * Generate a notification with the given options.
  * @param {import('@playwright/test').Page} page
  * @param {CreateNotificationOptions} createNotificationOptions
@@ -380,6 +403,7 @@ async function setEndOffset(page, offset) {
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    createNotebookAndEntry,
     createNotification,
     expandTreePaneItemByName,
     expandEntireTree,
