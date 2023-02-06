@@ -108,12 +108,7 @@ export default {
             deep: true
         },
         staleObjects() {
-            if (this.staleObjects.length > 0) {
-                this.isStale = true;
-            } else {
-                this.isStale = false;
-            }
-
+            this.isStale = this.staleObjects.length > 0;
             this.updateComponentProp('isStale', this.isStale);
         }
     },
@@ -161,7 +156,7 @@ export default {
 
             if (this.component) {
                 this.component.$destroy();
-                this.component = undefined;
+                this.component = null;
                 this.$el.innerHTML = '';
             }
 
@@ -257,25 +252,25 @@ export default {
                 this.setSelection();
             }
         },
-        watchStaleness(object) {
-            const keyString = this.openmct.objects.makeKeyString(object.identifier);
+        watchStaleness(domainObject) {
+            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.stalenessSubscription[keyString] = {};
-            this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(this.openmct, object);
+            this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
 
-            this.openmct.telemetry.isStale(object).then((stalenessResponse) => {
+            this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
                 if (stalenessResponse !== undefined) {
                     this.handleStaleness(keyString, stalenessResponse);
                 }
             });
-            const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(object, (stalenessResponse) => {
+            const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
                 this.handleStaleness(keyString, stalenessResponse);
             });
 
             this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
         },
-        unwatchStaleness(object) {
+        unwatchStaleness(domainObject) {
             const SKIP_CHECK = true;
-            const keyString = this.openmct.objects.makeKeyString(object.identifier);
+            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
 
             this.stalenessSubscription[keyString].unsubscribe();
             this.stalenessSubscription[keyString].stalenessUtils.destroy();
@@ -283,17 +278,14 @@ export default {
 
             delete this.stalenessSubscription[keyString];
         },
-        handleStaleness(id, stalenessResponse, skipCheck = false) {
-            if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
-                const index = this.staleObjects.indexOf(id);
-                if (stalenessResponse.isStale) {
-                    if (index === -1) {
-                        this.staleObjects.push(id);
-                    }
-                } else {
-                    if (index !== -1) {
-                        this.staleObjects.splice(index, 1);
-                    }
+        handleStaleness(keyString, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                const index = this.staleObjects.indexOf(keyString);
+                const foundStaleObject = index > -1;
+                if (stalenessResponse.isStale && !foundStaleObject) {
+                    this.staleObjects.push(keyString);
+                } else if (!stalenessResponse.isStale && foundStaleObject) {
+                    this.staleObjects.splice(index, 1);
                 }
             }
         },
@@ -402,7 +394,7 @@ export default {
             if (this.composition) {
                 this.composition.off('add', this.watchStaleness);
                 this.composition.off('remove', this.unwatchStaleness);
-                this.component = null;
+                this.composition = null;
             }
 
             Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
