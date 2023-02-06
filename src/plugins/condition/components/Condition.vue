@@ -132,6 +132,7 @@
                 <span class="c-cdef__controls">
                     <select
                         v-model="condition.configuration.trigger"
+                        aria-label="Condition Trigger"
                         @change="persist"
                     >
                         <option

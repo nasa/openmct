@@ -29,6 +29,7 @@
             <select
                 ref="telemetrySelect"
                 v-model="criterion.telemetry"
+                aria-label="Criterion Telemetry Selection"
                 @change="updateMetadataOptions"
             >
                 <option value="">- Select Telemetry -</option>
@@ -50,6 +51,7 @@
             <select
                 ref="metadataSelect"
                 v-model="criterion.metadata"
+                aria-label="Criterion Metadata Selection"
                 @change="updateOperations"
             >
                 <option value="">- Select Field -</option>
@@ -69,6 +71,7 @@
         >
             <select
                 v-model="criterion.operation"
+                aria-label="Criterion Comparison Selection"
                 @change="updateInputVisibilityAndValues"
             >
                 <option value="">- Select Comparison -</option>
@@ -89,6 +92,7 @@
                     <input
                         v-model="criterion.input[inputIndex]"
                         class="c-cdef__control__input"
+                        aria-label="Criterion Input"
                         :type="setInputType"
                         @change="persist"
                     >
@@ -103,6 +107,7 @@
                 >
                     <select
                         v-model="criterion.input[0]"
+                        aria-label="Criterion Else Selection"
                         @change="persist"
                     >
                         <option
