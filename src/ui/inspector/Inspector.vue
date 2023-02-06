@@ -109,6 +109,8 @@ import StylesInspectorView from "@/ui/inspector/styles/StylesInspectorView.vue";
 import SavedStylesInspectorView from "@/ui/inspector/styles/SavedStylesInspectorView.vue";
 import AnnotationsInspectorView from "./annotations/AnnotationsInspectorView.vue";
 
+const OVERLAY_PLOT_TYPE = "telemetry.plot.overlay";
+
 export default {
     components: {
         StylesInspectorView,
@@ -189,12 +191,12 @@ export default {
         },
         refreshComposition(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
-                let parentObject = selection[0][0].context.item;
+                const parentObject = selection[0][0].context.item;
 
                 this.hasComposition = Boolean(
                     parentObject && this.openmct.composition.get(parentObject)
                 );
-                this.isOverlayPlot = selection[0][0].context.item.type === 'telemetry.plot.overlay';
+                this.isOverlayPlot = parentObject?.type === OVERLAY_PLOT_TYPE;
             }
         },
         refreshTabs(selection) {
