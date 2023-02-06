@@ -57,7 +57,6 @@ export default function StackedPlotViewProvider(openmct) {
                         provide: {
                             openmct,
                             domainObject,
-                            composition: openmct.composition.get(domainObject),
                             path: objectPath
                         },
                         data() {

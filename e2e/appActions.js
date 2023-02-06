@@ -235,6 +235,12 @@ async function expandEntireTree(page, treeName = "Main Tree") {
 
     while (await collapsedTreeItems.count() > 0) {
         await collapsedTreeItems.nth(0).click();
+
+        // FIXME: Replace hard wait with something event-driven.
+        // Without the wait, this fails periodically due to a race condition
+        // with Vue rendering (loop exits prematurely).
+        // eslint-disable-next-line playwright/no-wait-for-timeout
+        await page.waitForTimeout(200);
     }
 }
 

@@ -24,6 +24,8 @@
 <ul
     v-if="orderedPath.length"
     class="c-location"
+    :aria-label="`${domainObject.name}`"
+    role="navigation"
 >
     <li
         v-for="pathObject in orderedPath"
@@ -34,6 +36,7 @@
             :domain-object="pathObject.domainObject"
             :object-path="pathObject.objectPath"
             :read-only="readOnly"
+            :navigate-to-path="navigateToPath(pathObject.objectPath)"
         />
     </li>
 </ul>
@@ -109,6 +112,18 @@ export default {
                 // remove ROOT and object itself from path
                 this.orderedPath = pathWithDomainObject.slice(1, pathWithDomainObject.length - 1).reverse();
             }
+        }
+    },
+    methods: {
+        /**
+         * Generate the hash url for the given object path, removing the '/ROOT' prefix if present.
+         * @param {import('../../api/objects/ObjectAPI').DomainObject[]} objectPath
+         */
+        navigateToPath(objectPath) {
+            /** @type {String} */
+            const path = `/browse/${this.openmct.objects.getRelativePath(objectPath)}`;
+
+            return path.replace('ROOT/', '');
         }
     }
 };

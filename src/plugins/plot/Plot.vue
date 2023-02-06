@@ -36,12 +36,26 @@
             :model="{progressPerc: undefined}"
         />
         <mct-plot
+            :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
             :init-grid-lines="gridLines"
             :init-cursor-guide="cursorGuide"
             :options="options"
+            :limit-line-labels="limitLineLabels"
             @loadingUpdated="loadingUpdated"
             @statusUpdated="setStatus"
-        />
+            @configLoaded="updateReady"
+            @lockHighlightPoint="lockHighlightPointUpdated"
+            @highlights="highlightsUpdated"
+        >
+            <plot-legend
+                v-if="configReady"
+                :cursor-locked="lockHighlightPoint"
+                :highlights="highlights"
+                @legendHoverChanged="legendHoverChanged"
+                @expanded="updateExpanded"
+                @position="updatePosition"
+            />
+        </mct-plot>
     </div>
 </div>
 </template>
@@ -50,13 +64,15 @@
 import eventHelpers from './lib/eventHelpers';
 import ImageExporter from '../../exporters/ImageExporter';
 import MctPlot from './MctPlot.vue';
+import PlotLegend from "./legend/PlotLegend.vue";
 import ProgressBar from "../../ui/components/ProgressBar.vue";
 import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
         MctPlot,
-        ProgressBar
+        ProgressBar,
+        PlotLegend
     },
     inject: ['openmct', 'domainObject', 'path'],
     props: {
@@ -77,7 +93,13 @@ export default {
             gridLines: !this.options.compact,
             loading: false,
             status: '',
-            staleObjects: []
+            staleObjects: [],
+            limitLineLabels: undefined,
+            lockHighlightPoint: false,
+            highlights: [],
+            expanded: false,
+            position: undefined,
+            configReady: false
         };
     },
     computed: {
@@ -87,6 +109,16 @@ export default {
             }
 
             return '';
+        },
+        plotLegendPositionClass() {
+            return this.position ? `plot-legend-${this.position}` : '';
+        },
+        plotLegendExpandedStateClass() {
+            if (this.expanded) {
+                return 'plot-legend-expanded';
+            } else {
+                return 'plot-legend-collapsed';
+            }
         }
     },
     mounted() {
@@ -134,6 +166,7 @@ export default {
             this.stalenessSubscription[keystring].unsubscribe();
             this.stalenessSubscription[keystring].stalenessUtils.destroy();
             this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
+            delete this.stalenessSubscription[keystring];
         },
         handleStaleness(id, stalenessResponse, skipCheck = false) {
             if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)) {
@@ -183,6 +216,24 @@ export default {
                 exportPNG: this.exportPNG,
                 exportJPG: this.exportJPG
             };
+        },
+        lockHighlightPointUpdated(data) {
+            this.lockHighlightPoint = data;
+        },
+        highlightsUpdated(data) {
+            this.highlights = data;
+        },
+        legendHoverChanged(data) {
+            this.limitLineLabels = data;
+        },
+        updateExpanded(expanded) {
+            this.expanded = expanded;
+        },
+        updatePosition(position) {
+            this.position = position;
+        },
+        updateReady(ready) {
+            this.configReady = ready;
         }
     }
 };

@@ -34,7 +34,7 @@
         <ul
             v-if="hasElements"
             id="inspector-elements-tree"
-            class="c-tree c-elements-pool__tree"
+            class="c-tree c-elements-pool__tree js-elements-pool__tree"
         >
             <div class="c-elements-pool__instructions"> Select and drag an element to move it into a different axis. </div>
             <element-item-group
@@ -145,7 +145,7 @@ export default {
 
             this.unlistenComposition();
 
-            if (this.parentObject) {
+            if (this.parentObject && this.parentObject.type === 'telemetry.plot.overlay') {
                 this.setYAxisIds();
                 this.composition = this.openmct.composition.get(this.parentObject);
 
@@ -175,6 +175,7 @@ export default {
         setYAxisIds() {
             const configId = this.openmct.objects.makeKeyString(this.parentObject.identifier);
             this.config = configStore.get(configId);
+            this.yAxes = [];
             this.yAxes.push({
                 id: this.config.yAxis.id,
                 elements: this.parentObject.configuration.series.filter(

@@ -20,43 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-<template>
-<div aria-label="Inspector Views"></div>
-</template>
+// This should be used to install the re-instal default Notebook plugin with a simple url whitelist.
+// e.g.
+// await page.addInitScript({ path: path.join(__dirname, 'addInitNotebookWithUrls.js') });
+const NOTEBOOK_NAME = 'Notebook';
+const URL_WHITELIST = ['google.com'];
 
-<script>
-export default {
-    inject: ['openmct'],
-    data() {
-        return {
-            selection: []
-        };
-    },
-    mounted() {
-        this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
-    },
-    destroyed() {
-        this.openmct.selection.off('change', this.updateSelection);
-    },
-    methods: {
-        updateSelection(selection) {
-            this.selection = selection;
-
-            if (this.selectedViews) {
-                this.selectedViews.forEach(selectedView => {
-                    selectedView.destroy();
-                });
-                this.$el.innerHTML = '';
-            }
-
-            this.selectedViews = this.openmct.inspectorViews.get(selection);
-            this.selectedViews.forEach(selectedView => {
-                let viewContainer = document.createElement('div');
-                this.$el.append(viewContainer);
-                selectedView.show(viewContainer);
-            });
-        }
-    }
-};
-</script>
+document.addEventListener('DOMContentLoaded', () => {
+    const openmct = window.openmct;
+    openmct.install(openmct.plugins.Notebook(NOTEBOOK_NAME, URL_WHITELIST));
+});

@@ -533,7 +533,6 @@ export default {
         },
         updateLimitsAndDraw() {
             this.drawLimitLines();
-            this.scheduleDraw();
         },
         scheduleDraw() {
             if (!this.drawScheduled) {

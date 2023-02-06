@@ -232,7 +232,9 @@ export default {
             this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
 
             this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
-                this.hanldeStaleness(keyString, stalenessResponse);
+                if (stalenessResponse !== undefined) {
+                    this.hanldeStaleness(keyString, stalenessResponse);
+                }
             });
             const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
                 this.hanldeStaleness(keyString, stalenessResponse);
@@ -259,6 +261,7 @@ export default {
                     keyString,
                     isStale: false
                 });
+                delete this.stalenessSubscription[keyString];
             }
         },
         hanldeStaleness(keyString, stalenessResponse) {

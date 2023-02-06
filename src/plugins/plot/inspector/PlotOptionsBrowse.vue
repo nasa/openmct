@@ -27,6 +27,7 @@
     <ul
         v-if="!isStackedPlotObject"
         class="c-tree"
+        aria-label="Plot Series Properties"
     >
         <h2 title="Plot series display properties in this object">Plot Series</h2>
         <plot-options-item
@@ -43,6 +44,7 @@
             v-for="(yAxis, index) in yAxesWithSeries"
             :key="`yAxis-${index}`"
             class="l-inspector-part js-yaxis-properties"
+            :aria-label="yAxesWithSeries.length > 1 ? `Y Axis ${yAxis.id} Properties` : 'Y Axis Properties'"
         >
             <h2 title="Y axis settings for this object">Y Axis {{ yAxesWithSeries.length > 1 ? yAxis.id : '' }}</h2>
             <li class="grid-row">
@@ -93,7 +95,7 @@
         </ul>
     </div>
     <div
-        v-if="plotSeries.length && (isStackedPlotObject || !isNestedWithinAStackedPlot)"
+        v-if="isStackedPlotObject || !isNestedWithinAStackedPlot"
         class="grid-properties"
     >
         <ul
@@ -190,10 +192,13 @@ export default {
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
-        this.initYAxesConfiguration();
+        if (!this.isStackedPlotObject) {
+            this.initYAxesConfiguration();
+            this.registerListeners();
+        } else {
+            this.initLegendConfiguration();
+        }
 
-        this.registerListeners();
-        this.initLegendConfiguration();
         this.loaded = true;
 
     },
@@ -245,9 +250,9 @@ export default {
             }
         },
         getConfig() {
-            this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
-            return configStore.get(this.configId);
+            return configStore.get(configId);
         },
         registerListeners() {
             if (this.config) {
