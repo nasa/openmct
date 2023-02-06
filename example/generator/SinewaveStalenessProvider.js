@@ -43,10 +43,7 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
     isStale(domainObject, options) {
         if (!this.#providingStaleness(domainObject)) {
-            return Promise.resolve({
-                isStale: false,
-                utc: 0
-            });
+            return;
         }
 
         const id = this.#getObjectKeyString(domainObject);
@@ -55,7 +52,10 @@ export default class SinewaveLimitProvider extends EventEmitter {
             this.#createObserver(id);
         }
 
-        return Promise.resolve(this.#observingStaleness[id].isStale);
+        return Promise.resolve({
+            isStale: this.#observingStaleness[id].isStale,
+            utc: Date.now()
+        });
     }
 
     subscribeToStaleness(domainObject, callback) {
