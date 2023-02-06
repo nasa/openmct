@@ -263,10 +263,17 @@ test.describe('Basic Condition Set Use', () => {
         const secondCriterionComparison = await page.locator('[aria-label="Criterion Comparison Selection"] >> nth=1');
         secondCriterionComparison.selectOption({ label: 'is less than' });
 
-        const secondCriterionInput = await page.locator('[aria-label="Criterion Input"] >> nth=1');
-        secondCriterionInput.fill("0");
-
         const firstCriterionInput = await page.locator('[aria-label="Criterion Input"] >> nth=0');
-        firstCriterionInput.fill("0");
+        await firstCriterionInput.fill("0");
+
+        const secondCriterionInput = await page.locator('[aria-label="Criterion Input"] >> nth=1');
+        await secondCriterionInput.fill("0");
+
+        const saveButtonLocator = page.locator('button[title="Save"]');
+        await saveButtonLocator.click();
+        await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+        const outputValue = await page.locator('[aria-label="Current Output Value"]');
+        await expect(outputValue).toHaveText('---');
     });
 });

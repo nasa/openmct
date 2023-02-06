@@ -28,7 +28,10 @@
     <section class="c-cs__current-output c-section">
         <div class="c-cs__content c-cs__current-output-value">
             <span class="c-cs__current-output-value__label">Current Output</span>
-            <span class="c-cs__current-output-value__value">
+            <span
+                class="c-cs__current-output-value__value"
+                aria-label="Current Output Value"
+            >
                 <template v-if="currentConditionOutput">
                     {{ currentConditionOutput }}
                 </template>
