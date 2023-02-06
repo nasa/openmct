@@ -52,7 +52,7 @@
                     :domain-object="ladRow.domainObject"
                     :path-to-table="ladTable.objectPath"
                     :has-units="hasUnits"
-                    :is-stale="staleObjects.includes(ladRow.key)"
+                    :is-stale="staleObjects.includes(combineKeys(ladTable.key, ladRow.key))"
                     @rowContextClick="updateViewContext"
                 />
             </template>
