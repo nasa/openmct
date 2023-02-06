@@ -225,22 +225,21 @@ export default class ObjectAPI {
             throw new Error('Provider does not support get!');
         }
 
-        let objectPromise = provider.get(identifier, abortSignal).then(result => {
+        let objectPromise = provider.get(identifier, abortSignal).then(domainObject => {
             delete this.cache[keystring];
+            domainObject = this.applyGetInterceptors(identifier, domainObject);
 
-            result = this.applyGetInterceptors(identifier, result);
+            if (this.supportsMutation(identifier)) {
+                const mutableDomainObject = this.toMutable(domainObject);
+                mutableDomainObject.$refresh(domainObject);
+                this.destroyMutable(mutableDomainObject);
+            }
 
-            const mutableDomainObject = this.toMutable(result);
-            mutableDomainObject.$refresh(result);
-            this.destroyMutable(mutableDomainObject);
-
-            return result;
-        }).catch((result) => {
-            console.warn(`Failed to retrieve ${keystring}:`, result);
-
+            return domainObject;
+        }).catch((error) => {
+            console.warn(`Failed to retrieve ${keystring}:`, error);
             delete this.cache[keystring];
-
-            result = this.applyGetInterceptors(identifier);
+            const result = this.applyGetInterceptors(identifier);
 
             return result;
         });
