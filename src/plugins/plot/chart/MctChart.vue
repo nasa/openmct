@@ -52,13 +52,34 @@ const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
 const ANNOTATION_SIZE = MARKER_SIZE * 3.0;
 const CLEARANCE = 15;
+const NO_HANDLING_NEEDED_ATTRIBUTES = {
+    label: 'label',
+    values: 'values',
+    format: 'format',
+    color: 'color',
+    name: 'name',
+    unit: 'unit'
+};
+const IMPLICIT_HANDLED_ATTRIBUTES = {
+    range: 'range',
+    //series stats update y axis stats
+    stats: 'stats',
+    frozen: 'frozen',
+    autoscale: 'autoscale',
+    autoscalePadding: 'autoscalePadding',
+    logMode: 'logMode',
+    yKey: 'yKey'
+};
 const HANDLED_ATTRIBUTES = {
+    //X and Y Axis attributes
     key: 'key',
     displayRange: 'displayRange',
-    stats: 'stats',
+    //series attributes
     xKey: 'xKey',
     interpolate: 'interpolate',
     markers: 'markers',
+    markerShape: 'markerShape',
+    markerSize: 'markerSize',
     alarmMarkers: 'alarmMarkers',
     limitLines: 'limitLines',
     yAxisId: 'yAxisId'
@@ -150,7 +171,6 @@ export default {
             [yAxisId]: {}
         };
         this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
-        this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.stats}`, this.scheduleDraw);
         this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.key}`, this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
         this.listenTo(this.config.yAxis, 'change', this.redrawIfNotAlreadyHandled);
         if (this.config.additionalYAxes.length) {
@@ -158,7 +178,6 @@ export default {
                 const id = yAxis.get('id');
                 this.offset[id] = {};
                 this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
-                this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.stats}`, this.scheduleDraw);
                 this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.key}`, this.resetYOffsetAndSeriesDataForYAxis.bind(this, id), this);
                 this.listenTo(yAxis, 'change', this.redrawIfNotAlreadyHandled);
             });
@@ -177,6 +196,7 @@ export default {
         this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
 
+        this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
         this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
         this.config.series.forEach(this.onSeriesAdd, this);
         this.$emit('chartLoaded');
@@ -212,6 +232,8 @@ export default {
             this.listenTo(series, `change:${HANDLED_ATTRIBUTES.alarmMarkers}`, this.changeAlarmMarkers, this);
             this.listenTo(series, `change:${HANDLED_ATTRIBUTES.limitLines}`, this.changeLimitLines, this);
             this.listenTo(series, `change:${HANDLED_ATTRIBUTES.yAxisId}`, this.resetAxisAndRedraw, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.markerShape}`, this.scheduleDraw, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.markerSize}`, this.scheduleDraw, this);
             this.listenTo(series, 'change', this.redrawIfNotAlreadyHandled);
             this.listenTo(series, 'add', this.onAddPoint);
             this.makeChartElement(series);
@@ -547,6 +569,14 @@ export default {
         },
         redrawIfNotAlreadyHandled(attribute, value, oldValue) {
             if (Object.keys(HANDLED_ATTRIBUTES).includes(attribute) && oldValue) {
+                return;
+            }
+
+            if (Object.keys(IMPLICIT_HANDLED_ATTRIBUTES).includes(attribute) && oldValue) {
+                return;
+            }
+
+            if (Object.keys(NO_HANDLING_NEEDED_ATTRIBUTES).includes(attribute) && oldValue) {
                 return;
             }
 
