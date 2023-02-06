@@ -20,13 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import availableTags from './tags.json';
+
 /**
+@typedef {{
+    namespaceToSaveAnnotations: string
+}} TagsPluginOptions
+*/
+
+/**
+ * @typedef {TagsPluginOptions} options
  * @returns {function} The plugin install function
  */
-export default function exampleTagsPlugin(namespaceToSaveAnnotations) {
+export default function exampleTagsPlugin(options) {
     return function install(openmct) {
-        if (namespaceToSaveAnnotations) {
-            openmct.annotation.setNamespaceToSaveAnnotations(namespaceToSaveAnnotations);
+        if (options?.namespaceToSaveAnnotations) {
+            openmct.annotation.setNamespaceToSaveAnnotations(options?.namespaceToSaveAnnotations);
         }
 
         Object.keys(availableTags.tags).forEach(tagKey => {
