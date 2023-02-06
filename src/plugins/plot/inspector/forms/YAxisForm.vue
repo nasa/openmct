@@ -1,6 +1,9 @@
 <template>
 <div v-if="loaded">
-    <ul class="l-inspector-part">
+    <ul
+        class="l-inspector-part"
+        :aria-label="id > 1 ? `Y Axis ${id} Properties` : 'Y Axis Properties'"
+    >
         <h2>Y Axis {{ id > 1 ? id : '' }}</h2>
         <li class="grid-row">
             <div
