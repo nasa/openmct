@@ -29,39 +29,29 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Stacked Plot', () => {
-    let stackedPlot;
-    let swgA;
-    let swgB;
-    let swgC;
-
-    test.beforeEach(async ({ page }) => {
-        //Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('/', { waitUntil: 'networkidle' });
-        stackedPlot = await createDomainObjectWithDefaults(page, {
-            type: "Stacked Plot"
-        });
-
-        swgA = await createDomainObjectWithDefaults(page, {
-            type: "Sine Wave Generator",
-            parent: stackedPlot.uuid
-        });
-        swgB = await createDomainObjectWithDefaults(page, {
-            type: "Sine Wave Generator",
-            parent: stackedPlot.uuid
-        });
-        swgC = await createDomainObjectWithDefaults(page, {
-            type: "Sine Wave Generator",
-            parent: stackedPlot.uuid
-        });
-    });
 
     test('Using the remove action removes the correct plot', async ({ page }) => {
-        const swgAElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgA.name });
-        const swgBElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgB.name });
-        const swgCElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgC.name });
+        await page.goto('/', { waitUntil: 'networkidle' });
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
+            type: "Overlay Plot"
+        });
 
-        await page.goto(stackedPlot.url);
-
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: 'swg a',
+            parent: overlayPlot.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: 'swg b',
+            parent: overlayPlot.uuid
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: 'swg c',
+            parent: overlayPlot.uuid
+        });
+        await page.goto(overlayPlot.url);
         await page.click('button[title="Edit"]');
 
         // Expand the elements pool vertically
@@ -70,70 +60,20 @@ test.describe('Stacked Plot', () => {
         await page.mouse.move(0, 100);
         await page.mouse.up();
 
-        await swgBElementsPoolItem.click({ button: 'right' });
-        await page.getByRole('menuitem').filter({ hasText: /Remove/ }).click();
-        await page.getByRole('button').filter({ hasText: "OK" }).click();
+        await page.locator('.js-elements-pool__tree >> text=swg b').click({ button: 'right' });
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+        await page.locator('.js-overlay .js-overlay__button >> text=OK').click();
 
-        await expect(page.locator('#inspector-elements-tree .js-elements-pool__item')).toHaveCount(2);
+        // Wait until the number of elements in the elements pool has changed, and then confirm that the correct children were retained
+        // await page.waitForFunction(() => {
+        //     return Array.from(document.querySelectorAll('.js-elements-pool__tree .js-elements-pool__item')).length === 2;
+        // });
+        // Wait until there are only two items in the elements pool (ie the remove action has completed)
+        await expect(page.locator('.js-elements-pool__tree .js-elements-pool__item')).toHaveCount(2);
 
         // Confirm that the elements pool contains the items we expect
-        await expect(swgAElementsPoolItem).toHaveCount(1);
-        await expect(swgBElementsPoolItem).toHaveCount(0);
-        await expect(swgCElementsPoolItem).toHaveCount(1);
-    });
-
-    test('Selecting a child plot while in browse and edit modes shows its properties in the inspector', async ({ page }) => {
-        await page.goto(stackedPlot.url);
-
-        // Click on the 1st plot
-        await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"] canvas`).nth(1).click();
-
-        // Assert that the inspector shows the Y Axis properties for swgA
-        await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
-        await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgA.name);
-
-        // Click on the 2nd plot
-        await page.locator(`[aria-label="Stacked Plot Item ${swgB.name}"] canvas`).nth(1).click();
-
-        // Assert that the inspector shows the Y Axis properties for swgB
-        await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
-        await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgB.name);
-
-        // Click on the 3rd plot
-        await page.locator(`[aria-label="Stacked Plot Item ${swgC.name}"] canvas`).nth(1).click();
-
-        // Assert that the inspector shows the Y Axis properties for swgC
-        await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
-        await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgC.name);
-
-        // Go into edit mode
-        await page.click('button[title="Edit"]');
-
-        // Click on canvas for the 1st plot
-        await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"]`).click();
-
-        // Assert that the inspector shows the Y Axis properties for swgA
-        await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
-        await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgA.name);
-
-        //Click on canvas for the 2nd plot
-        await page.locator(`[aria-label="Stacked Plot Item ${swgB.name}"]`).click();
-
-        // Assert that the inspector shows the Y Axis properties for swgB
-        await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
-        await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgB.name);
-
-        //Click on canvas for the 3rd plot
-        await page.locator(`[aria-label="Stacked Plot Item ${swgC.name}"]`).click();
-
-        // Assert that the inspector shows the Y Axis properties for swgC
-        await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
-        await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgC.name);
+        await expect(page.locator('.js-elements-pool__tree >> text=swg a')).toHaveCount(1);
+        await expect(page.locator('.js-elements-pool__tree >> text=swg b')).toHaveCount(0);
+        await expect(page.locator('.js-elements-pool__tree >> text=swg c')).toHaveCount(1);
     });
 });

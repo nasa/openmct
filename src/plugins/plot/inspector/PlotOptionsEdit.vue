@@ -27,7 +27,6 @@
     <ul
         v-if="!isStackedPlotObject"
         class="c-tree"
-        aria-label="Plot Series Properties"
     >
         <h2 title="Display properties for this object">Plot Series</h2>
         <li
