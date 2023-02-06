@@ -73,7 +73,7 @@ export default class PlotSeries extends Model {
 
         super(options);
 
-        this.logMode = options.collection.plot.model.yAxis.logMode;
+        this.logMode = this.getLogMode(options);
 
         this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
         this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
@@ -85,6 +85,17 @@ export default class PlotSeries extends Model {
         this.onYKeyChange(this.get('yKey'));
 
         this.unPlottableValues = [undefined, Infinity, -Infinity];
+    }
+
+    getLogMode(options) {
+        const yAxisId = this.get('yAxisId');
+        if (yAxisId === 1) {
+            return options.collection.plot.model.yAxis.logMode;
+        } else {
+            const foundYAxis = options.collection.plot.model.additionalYAxes.find(yAxis => yAxis.id === yAxisId);
+
+            return foundYAxis ? foundYAxis.logMode : false;
+        }
     }
 
     /**
@@ -118,7 +129,8 @@ export default class PlotSeries extends Model {
             markerShape: 'point',
             markerSize: 2.0,
             alarmMarkers: true,
-            limitLines: false
+            limitLines: false,
+            yAxisId: options.model.yAxisId || 1
         };
     }
 
@@ -378,6 +390,7 @@ export default class PlotSeries extends Model {
             });
         }
     }
+
     /**
      * Add a point to the data array while maintaining the sort order of
      * the array and preventing insertion of points with a duplicate x

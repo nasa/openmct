@@ -194,6 +194,7 @@ button {
 .c-icon-button {
     [class*='label'] {
         opacity: 0.8;
+        padding: 1px 0;
     }
 
     &--mixed {
@@ -269,9 +270,11 @@ button {
     flex: 0 0 auto;
     width: $d;
     position: relative;
+    visibility: hidden;
 
     &.is-enabled {
         cursor: pointer;
+        visibility: visible;
 
         &:hover {
             color: $colorDisclosureCtrlHov;
@@ -402,16 +405,18 @@ textarea {
 
     &--autocomplete {
         &__wrapper {
-            display: inline-flex;
+            display: flex;
             flex-direction: row;
             align-items: center;
+            overflow: hidden;
+            width: 100%;
         }
 
         &__input {
             min-width: 100px;
+            width: 100%;
 
             // Fend off from afford-arrow
-            min-height: 2em;
             padding-right: 2.5em !important;
         }
 
@@ -434,7 +439,10 @@ textarea {
         }
 
         &__afford-arrow {
+            $p: 2px;
             font-size: 0.8em;
+            padding-bottom: $p;
+            padding-top: $p;
             position: absolute;
             right: 2px;
             z-index: 2;
@@ -459,6 +467,15 @@ input[type=number].c-input-number--no-spinners {
     input {
         margin-left: $interiorMarginSm;
     }
+}
+
+.c-scrollcontainer{
+    @include nice-input();
+    margin-top: $interiorMargin;
+    background: $scrollContainer;
+    border-radius: $controlCr;
+    overflow: auto;
+    padding: $interiorMarginSm;
 }
 
 // SELECTS

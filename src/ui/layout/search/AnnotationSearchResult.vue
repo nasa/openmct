@@ -67,7 +67,7 @@
 
 <script>
 import ObjectPath from '../../components/ObjectPath.vue';
-import objectPathToUrl from '../../../tools/url';
+import { identifierToString } from '../../../../src/tools/url';
 
 export default {
     name: 'AnnotationSearchResult',
@@ -128,13 +128,42 @@ export default {
     methods: {
         clickedResult() {
             const objectPath = this.domainObject.originalPath;
-            let resultUrl = objectPathToUrl(this.openmct, objectPath);
-            // get rid of ROOT if extant
-            if (resultUrl.includes('/ROOT')) {
-                resultUrl = resultUrl.split('/ROOT').join('');
-            }
+            let resultUrl = identifierToString(this.openmct, objectPath);
 
             this.openmct.router.navigate(resultUrl);
+            if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
+                //wait a beat for the navigation
+                setTimeout(() => {
+                    this.clickedPlotAnnotation();
+                }, 100);
+            }
+        },
+        clickedPlotAnnotation() {
+            const targetDetails = {};
+            const targetDomainObjects = {};
+            Object.entries(this.result.targets).forEach(([key, value]) => {
+                targetDetails[key] = value;
+            });
+            this.result.targetModels.forEach((targetModel) => {
+                const keyString = this.openmct.objects.makeKeyString(targetModel.identifier);
+                targetDomainObjects[keyString] = targetModel;
+            });
+            const selection =
+                    [
+                        {
+                            element: this.$el,
+                            context: {
+                                item: this.result.targetModels[0],
+                                type: 'plot-annotation-search-result',
+                                targetDetails,
+                                targetDomainObjects,
+                                annotations: [this.result],
+                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                                onAnnotationChange: () => {}
+                            }
+                        }
+                    ];
+            this.openmct.selection.select(selection, true);
         },
         isSearchMatched(tag) {
             if (this.result.matchingTagKeys) {

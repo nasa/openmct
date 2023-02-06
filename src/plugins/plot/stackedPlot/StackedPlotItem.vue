@@ -20,19 +20,22 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div></div>
+<div
+    :aria-label="`Stacked Plot Item ${childObject.name}`"
+></div>
 </template>
 <script>
 
 import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
 import conditionalStylesMixin from "./mixins/objectStyles-mixin";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import configStore from "@/plugins/plot/configuration/ConfigStore";
 import PlotConfigurationModel from "@/plugins/plot/configuration/PlotConfigurationModel";
 import ProgressBar from "../../../ui/components/ProgressBar.vue";
 
 export default {
-    mixins: [conditionalStylesMixin],
+    mixins: [conditionalStylesMixin, stalenessMixin],
     inject: ['openmct', 'domainObject', 'path'],
     props: {
         childObject: {
@@ -71,10 +74,14 @@ export default {
                 return undefined;
             }
         },
-        plotTickWidth: {
-            type: Number,
+        parentYTickWidth: {
+            type: Object,
             default() {
-                return 0;
+                return {
+                    leftTickWidth: 0,
+                    rightTickWidth: 0,
+                    hasMultipleLeftAxes: false
+                };
             }
         }
     },
@@ -85,8 +92,8 @@ export default {
         cursorGuide(newCursorGuide) {
             this.updateComponentProp('cursorGuide', newCursorGuide);
         },
-        plotTickWidth(width) {
-            this.updateComponentProp('plotTickWidth', width);
+        parentYTickWidth(width) {
+            this.updateComponentProp('parentYTickWidth', width);
         },
         showLimitLineLabels: {
             handler(data) {
@@ -97,8 +104,12 @@ export default {
     },
     mounted() {
         this.updateView();
+        this.isEditing = this.openmct.editor.isEditing();
+        this.openmct.editor.on('isEditing', this.setEditState);
     },
     beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.setEditState);
+
         if (this.removeSelectable) {
             this.removeSelectable();
         }
@@ -108,19 +119,35 @@ export default {
         }
     },
     methods: {
+        setEditState(isEditing) {
+            this.isEditing = isEditing;
+
+            if (this.isEditing) {
+                this.setSelection();
+            } else {
+                if (this.removeSelectable) {
+                    this.removeSelectable();
+                }
+            }
+        },
+
         updateComponentProp(prop, value) {
             if (this.component) {
                 this.component[prop] = value;
             }
         },
         updateView() {
+            this.isStale = false;
+
+            this.triggerUnsubscribeFromStaleness();
+
             if (this.component) {
                 this.component.$destroy();
                 this.component = undefined;
                 this.$el.innerHTML = '';
             }
 
-            const onTickWidthChange = this.onTickWidthChange;
+            const onYTickWidthChange = this.onYTickWidthChange;
             const onLockHighlightPointUpdated = this.onLockHighlightPointUpdated;
             const onHighlightsUpdated = this.onHighlightsUpdated;
             const onConfigLoaded = this.onConfigLoaded;
@@ -133,10 +160,15 @@ export default {
 
             //If this object is not persistable, then package it with it's parent
             const object = this.getPlotObject();
+
             const getProps = this.getProps;
             const isMissing = openmct.objects.isMissing(object);
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
+
+            this.subscribeToStaleness(object, (isStale) => {
+                this.updateComponentProp('isStale', isStale);
+            });
 
             this.component = new Vue({
                 el: viewContainer,
@@ -152,7 +184,7 @@ export default {
                 data() {
                     return {
                         ...getProps(),
-                        onTickWidthChange,
+                        onYTickWidthChange,
                         onLockHighlightPointUpdated,
                         onHighlightsUpdated,
                         onConfigLoaded,
@@ -160,7 +192,7 @@ export default {
                         onGridLinesChange,
                         setStatus,
                         isMissing,
-                        loading: true
+                        loading: false
                     };
                 },
                 methods: {
@@ -168,10 +200,35 @@ export default {
                         this.loading = loaded;
                     }
                 },
-                template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: `
+                  <div v-if="!isMissing" ref="plotWrapper"
+                      class="l-view-section u-style-receiver js-style-receiver"
+                      :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced', 'is-stale': isStale}">
+                      <progress-bar
+                          v-show="loading !== false"
+                          class="c-telemetry-table__progress-bar"
+                          :model="{progressPerc: undefined}" />
+                      <mct-plot
+                          :init-grid-lines="gridLines"
+                          :init-cursor-guide="cursorGuide"
+                          :parent-y-tick-width="parentYTickWidth"
+                          :limit-line-labels="limitLineLabels"
+                          :color-palette="colorPalette"
+                          :options="options"
+                          @plotYTickWidth="onYTickWidthChange"
+                          @lockHighlightPoint="onLockHighlightPointUpdated"
+                          @highlights="onHighlightsUpdated"
+                          @configLoaded="onConfigLoaded"
+                          @cursorGuide="onCursorGuideChange"
+                          @gridLines="onGridLinesChange"
+                          @statusUpdated="setStatus"
+                          @loadingUpdated="loadingUpdated"/>
+                  </div>`
             });
 
-            this.setSelection();
+            if (this.isEditing) {
+                this.setSelection();
+            }
         },
         onLockHighlightPointUpdated() {
             this.$emit('lockHighlightPoint', ...arguments);
@@ -182,8 +239,8 @@ export default {
         onConfigLoaded() {
             this.$emit('configLoaded', ...arguments);
         },
-        onTickWidthChange() {
-            this.$emit('plotTickWidth', ...arguments);
+        onYTickWidthChange() {
+            this.$emit('plotYTickWidth', ...arguments);
         },
         onCursorGuideChange() {
             this.$emit('cursorGuide', ...arguments);
@@ -211,15 +268,16 @@ export default {
                 limitLineLabels: this.showLimitLineLabels,
                 gridLines: this.gridLines,
                 cursorGuide: this.cursorGuide,
-                plotTickWidth: this.plotTickWidth,
+                parentYTickWidth: this.parentYTickWidth,
                 options: this.options,
                 status: this.status,
-                colorPalette: this.colorPalette
+                colorPalette: this.colorPalette,
+                isStale: this.isStale
             };
         },
         getPlotObject() {
             if (this.childObject.configuration && this.childObject.configuration.series) {
-                //If the object has a configuration, allow initialization of the config from it's persisted config
+                //If the object has a configuration (like an overlay plot), allow initialization of the config from it's persisted config
                 return this.childObject;
             } else {
                 //If object is missing, warn and return object

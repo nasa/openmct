@@ -41,6 +41,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     });
 
     test('Inspect Notebook Entry Network Requests', async ({ page }) => {
+        await page.getByText('Annotations').click();
         // Expand sidebar
         await page.locator('.c-notebook__toggle-nav-button').click();
 
@@ -76,6 +77,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
         await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
         await page.waitForLoadState('networkidle');
         expect(addingNotebookElementsRequests.length).toBeLessThanOrEqual(2);
 
@@ -148,30 +150,33 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
         await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
 
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').fill(`Second Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').press('Enter');
 
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').fill(`Third Entry`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').press('Enter');
 
         // Add three tags
-        await page.hover(`button:has-text("Add Tag") >> nth=2`);
-        await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
         await page.waitForSelector('[aria-label="Tag"]:has-text("Science")');
 
-        await page.hover(`button:has-text("Add Tag") >> nth=2`);
-        await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
         await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")');
 
-        await page.hover(`button:has-text("Add Tag") >> nth=2`);
-        await page.locator(`button:has-text("Add Tag") >> nth=2`).click();
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
         await page.locator('[placeholder="Type to select tag"]').click();
         await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
         await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")');
@@ -227,6 +232,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
             type: 'issue',
             description: 'https://github.com/akhenry/openmct-yamcs/issues/69'
         });
+        await page.getByText('Annotations').click();
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
         await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);

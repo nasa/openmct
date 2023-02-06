@@ -152,7 +152,7 @@ export default {
             this.selectedXKeyOptionKey = this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
         },
         onTickWidthChange(width) {
-            this.$emit('tickWidthChanged', width);
+            this.$emit('plotXTickWidth', width);
         }
     }
 };

@@ -90,6 +90,10 @@ div.c-table {
         flex: 1 1 auto;
     }
 
+    &.is-stale {
+        @include isStaleHolder();
+    }
+
     .--width-less-than-600 & {
         &:not(.is-paused) {
             .c-table-control-bar {
@@ -179,11 +183,21 @@ div.c-table {
     width: 100%;
     height: 100%;
     padding: $mainViewPad;
+
+    &.is-stale {
+        @include isStaleHolder();
+    }
 }
 
 .c-lad-table {
     th, td {
         width: 33%; // Needed to prevent size jumping as values dynamically update
+    }
+
+    td {
+        &.is-stale {
+            @include isStaleElement();
+        }
     }
 }
 

@@ -22,11 +22,13 @@
 
 <template>
 <ul
-    v-if="orderedOriginalPath.length"
+    v-if="orderedPath.length"
     class="c-location"
+    :aria-label="`${domainObject.name}`"
+    role="navigation"
 >
     <li
-        v-for="pathObject in orderedOriginalPath"
+        v-for="pathObject in orderedPath"
         :key="pathObject.key"
         class="c-location__item"
     >
@@ -34,6 +36,7 @@
             :domain-object="pathObject.domainObject"
             :object-path="pathObject.objectPath"
             :read-only="readOnly"
+            :navigate-to-path="navigateToPath(pathObject.objectPath)"
         />
     </li>
 </ul>
@@ -65,11 +68,17 @@ export default {
             default() {
                 return false;
             }
+        },
+        objectPath: {
+            type: Array,
+            default() {
+                return null;
+            }
         }
     },
     data() {
         return {
-            orderedOriginalPath: []
+            orderedPath: []
         };
     },
     async mounted() {
@@ -79,9 +88,14 @@ export default {
             this.keyString = keyString;
             this.originalPath = [];
 
-            const rawOriginalPath = await this.openmct.objects.getOriginalPath(keyString);
+            let rawPath = null;
+            if (this.objectPath === null) {
+                rawPath = await this.openmct.objects.getOriginalPath(keyString);
+            } else {
+                rawPath = this.objectPath;
+            }
 
-            const pathWithDomainObject = rawOriginalPath.map((domainObject, index, pathArray) => {
+            const pathWithDomainObject = rawPath.map((domainObject, index, pathArray) => {
                 let key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 const objectPath = pathArray.slice(index);
 
@@ -93,11 +107,23 @@ export default {
             });
             if (this.showObjectItself) {
                 // remove ROOT only
-                this.orderedOriginalPath = pathWithDomainObject.slice(0, pathWithDomainObject.length - 1).reverse();
+                this.orderedPath = pathWithDomainObject.slice(0, pathWithDomainObject.length - 1).reverse();
             } else {
                 // remove ROOT and object itself from path
-                this.orderedOriginalPath = pathWithDomainObject.slice(1, pathWithDomainObject.length - 1).reverse();
+                this.orderedPath = pathWithDomainObject.slice(1, pathWithDomainObject.length - 1).reverse();
             }
+        }
+    },
+    methods: {
+        /**
+         * Generate the hash url for the given object path, removing the '/ROOT' prefix if present.
+         * @param {import('../../api/objects/ObjectAPI').DomainObject[]} objectPath
+         */
+        navigateToPath(objectPath) {
+            /** @type {String} */
+            const path = `/browse/${this.openmct.objects.getRelativePath(objectPath)}`;
+
+            return path.replace('ROOT/', '');
         }
     }
 };

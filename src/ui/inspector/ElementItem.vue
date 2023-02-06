@@ -25,12 +25,12 @@
     draggable="true"
     @dragstart="emitDragStartEvent"
     @dragenter="onDragenter"
-    @dragover="onDragover"
+    @dragover.prevent
     @dragleave="onDragleave"
     @drop="emitDropEvent"
 >
     <div
-        class="c-tree__item c-elements-pool__item"
+        class="c-tree__item c-elements-pool__item js-elements-pool__item"
         :class="{
             'is-context-clicked': contextClickActive,
             'hover': hover,
@@ -93,11 +93,8 @@ export default {
         };
     },
     methods: {
-        onDragover(event) {
-            event.preventDefault();
-        },
         emitDropEvent(event) {
-            this.$emit('drop-custom', this.index);
+            this.$emit('drop-custom', event);
             this.hover = false;
         },
         emitDragStartEvent(event) {

@@ -107,6 +107,15 @@
 }
 
 .c-inspect-properties,
+.c-inspect-tags {
+    [class*="header"] {
+        @include propertiesHeader();
+        flex: 0 0 auto;
+        font-size: .85em;
+    }
+}
+
+.c-inspect-properties,
 .c-inspect-styles {
     [class*="header"] {
         @include propertiesHeader();
@@ -186,6 +195,11 @@
         [class*='label'] {
             line-height: 1.8em;
         }
+    }
+
+    .c-location {
+        // Always make the location element span columns
+        grid-column: 1 / 3;
     }
 }
 

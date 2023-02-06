@@ -56,10 +56,21 @@ export default class SeriesCollection extends Collection {
             const series = this.byIdentifier(seriesConfig.identifier);
             if (series) {
                 series.persistedConfig = seriesConfig;
+                if (!series.persistedConfig.yAxisId) {
+                    return;
+                }
+
+                if (series.get('yAxisId') !== series.persistedConfig.yAxisId) {
+                    series.set('yAxisId', series.persistedConfig.yAxisId);
+                }
             }
         }, this);
     }
     watchTelemetryContainer(domainObject) {
+        if (domainObject.type === 'telemetry.plot.stacked') {
+            return;
+        }
+
         const composition = this.openmct.composition.get(domainObject);
         this.listenTo(composition, 'add', this.addTelemetryObject, this);
         this.listenTo(composition, 'remove', this.removeTelemetryObject, this);

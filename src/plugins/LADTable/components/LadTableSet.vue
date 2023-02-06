@@ -21,42 +21,50 @@
  *****************************************************************************/
 
 <template>
-<table class="c-table c-lad-table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Timestamp</th>
-            <th>Value</th>
-            <th v-if="hasUnits">Unit</th>
-        </tr>
-    </thead>
-    <tbody>
-        <template
-            v-for="ladTable in ladTableObjects"
-        >
-            <tr
-                :key="ladTable.key"
-                class="c-table__group-header js-lad-table-set__table-headers"
-            >
-                <td colspan="10">
-                    {{ ladTable.domainObject.name }}
-                </td>
+<div
+    class="c-lad-table-wrapper u-style-receiver js-style-receiver"
+    :class="staleClass"
+>
+    <table class="c-table c-lad-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Timestamp</th>
+                <th>Value</th>
+                <th v-if="hasUnits">Unit</th>
             </tr>
-            <lad-row
-                v-for="ladRow in ladTelemetryObjects[ladTable.key]"
-                :key="ladRow.key"
-                :domain-object="ladRow.domainObject"
-                :path-to-table="ladTable.objectPath"
-                :has-units="hasUnits"
-                @rowContextClick="updateViewContext"
-            />
-        </template>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <template
+                v-for="ladTable in ladTableObjects"
+            >
+                <tr
+                    :key="ladTable.key"
+                    class="c-table__group-header js-lad-table-set__table-headers"
+                >
+                    <td colspan="10">
+                        {{ ladTable.domainObject.name }}
+                    </td>
+                </tr>
+                <lad-row
+                    v-for="ladRow in ladTelemetryObjects[ladTable.key]"
+                    :key="ladRow.key"
+                    :domain-object="ladRow.domainObject"
+                    :path-to-table="ladTable.objectPath"
+                    :has-units="hasUnits"
+                    :is-stale="staleObjects.includes(ladRow.key)"
+                    @rowContextClick="updateViewContext"
+                />
+            </template>
+        </tbody>
+    </table>
+</div>
 </template>
 
 <script>
+
 import LadRow from './LADRow.vue';
+import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
@@ -74,7 +82,8 @@ export default {
             ladTableObjects: [],
             ladTelemetryObjects: {},
             compositions: [],
-            viewContext: {}
+            viewContext: {},
+            staleObjects: []
         };
     },
     computed: {
@@ -95,6 +104,13 @@ export default {
             }
 
             return false;
+        },
+        staleClass() {
+            if (this.staleObjects.length !== 0) {
+                return 'is-stale';
+            }
+
+            return '';
         }
     },
     mounted() {
@@ -103,6 +119,8 @@ export default {
         this.composition.on('remove', this.removeLadTable);
         this.composition.on('reorder', this.reorderLadTables);
         this.composition.load();
+
+        this.stalenessSubscription = {};
     },
     destroyed() {
         this.composition.off('add', this.addLadTable);
@@ -111,6 +129,11 @@ export default {
         this.compositions.forEach(c => {
             c.composition.off('add', c.addCallback);
             c.composition.off('remove', c.removeCallback);
+        });
+
+        Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+            stalenessSubscription.unsubscribe();
+            stalenessSubscription.stalenessUtils.destroy();
         });
     },
     methods: {
@@ -160,17 +183,57 @@ export default {
                 telemetryObjects.push(telemetryObject);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+
+                // if tracking already, possibly in another table, return
+                if (this.stalenessSubscription[telemetryObject.key]) {
+                    return;
+                } else {
+                    this.stalenessSubscription[telemetryObject.key] = {};
+                    this.stalenessSubscription[telemetryObject.key].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
+                }
+
+                this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
+                    if (stalenessResponse !== undefined) {
+                        this.handleStaleness(telemetryObject.key, stalenessResponse);
+                    }
+                });
+                const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                    this.handleStaleness(telemetryObject.key, stalenessResponse);
+                });
+
+                this.stalenessSubscription[telemetryObject.key].unsubscribe = stalenessSubscription;
             };
         },
         removeTelemetryObject(ladTable) {
             return (identifier) => {
+                const SKIP_CHECK = true;
+                const keystring = this.openmct.objects.makeKeyString(identifier);
                 let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
-                let index = telemetryObjects.findIndex(telemetryObject => this.openmct.objects.makeKeyString(identifier) === telemetryObject.key);
+                let index = telemetryObjects.findIndex(telemetryObject => keystring === telemetryObject.key);
 
                 telemetryObjects.splice(index, 1);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+
+                this.stalenessSubscription[keystring].unsubscribe();
+                this.stalenessSubscription[keystring].stalenessUtils.destroy();
+                this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
+                delete this.stalenessSubscription[keystring];
             };
+        },
+        handleStaleness(id, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                const index = this.staleObjects.indexOf(id);
+                if (stalenessResponse.isStale) {
+                    if (index === -1) {
+                        this.staleObjects.push(id);
+                    }
+                } else {
+                    if (index !== -1) {
+                        this.staleObjects.splice(index, 1);
+                    }
+                }
+            }
         },
         updateViewContext(rowContext) {
             this.viewContext.row = rowContext;

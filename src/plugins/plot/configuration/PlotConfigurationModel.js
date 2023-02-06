@@ -27,9 +27,13 @@ import XAxisModel from "./XAxisModel";
 import YAxisModel from "./YAxisModel";
 import LegendModel from "./LegendModel";
 
+const MAX_Y_AXES = 3;
+const MAIN_Y_AXES_ID = 1;
+const MAX_ADDITIONAL_AXES = MAX_Y_AXES - 1;
+
 /**
  * PlotConfiguration model stores the configuration of a plot and some
- * limited state.  The indiidual parts of the plot configuration model
+ * limited state.  The individual parts of the plot configuration model
  * handle setting defaults and updating in response to various changes.
  *
  * @extends {Model<PlotConfigModelType, PlotConfigModelOptions>}
@@ -58,8 +62,34 @@ export default class PlotConfigurationModel extends Model {
         this.yAxis = new YAxisModel({
             model: options.model.yAxis,
             plot: this,
-            openmct: options.openmct
+            openmct: options.openmct,
+            id: options.model.yAxis.id || MAIN_Y_AXES_ID
         });
+        //Add any axes in addition to the main yAxis above - we must always have at least 1 y-axis
+        //Addition axes ids will be the MAIN_Y_AXES_ID + x where x is between 1 and MAX_ADDITIONAL_AXES
+        this.additionalYAxes = [];
+        const hasAdditionalAxesConfiguration = Array.isArray(options.model.additionalYAxes);
+
+        for (let yAxisCount = 0; yAxisCount < MAX_ADDITIONAL_AXES; yAxisCount++) {
+            const yAxisId = MAIN_Y_AXES_ID + yAxisCount + 1;
+            const yAxis = hasAdditionalAxesConfiguration && options.model.additionalYAxes.find(additionalYAxis => additionalYAxis?.id === yAxisId);
+            if (yAxis) {
+                this.additionalYAxes.push(new YAxisModel({
+                    model: yAxis,
+                    plot: this,
+                    openmct: options.openmct,
+                    id: yAxis.id
+                }));
+            } else {
+                this.additionalYAxes.push(new YAxisModel({
+                    plot: this,
+                    openmct: options.openmct,
+                    id: yAxisId
+                }));
+            }
+        }
+        // end add additional axes
+
         this.legend = new LegendModel({
             model: options.model.legend,
             plot: this,
@@ -81,6 +111,9 @@ export default class PlotConfigurationModel extends Model {
         }
 
         this.yAxis.listenToSeriesCollection(this.series);
+        this.additionalYAxes.forEach(yAxis => {
+            yAxis.listenToSeriesCollection(this.series);
+        });
         this.legend.listenToSeriesCollection(this.series);
 
         this.listenTo(this, 'destroy', this.onDestroy, this);
@@ -145,6 +178,7 @@ export default class PlotConfigurationModel extends Model {
             domainObject: options.domainObject,
             xAxis: {},
             yAxis: _.cloneDeep(options.domainObject.configuration?.yAxis ?? {}),
+            additionalYAxes: _.cloneDeep(options.domainObject.configuration?.additionalYAxes ?? []),
             legend: _.cloneDeep(options.domainObject.configuration?.legend ?? {})
         };
     }

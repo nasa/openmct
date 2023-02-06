@@ -162,10 +162,12 @@
                     :selected-section="selectedSection"
                     :read-only="false"
                     :is-locked="selectedPage.isLocked"
+                    :selected-entry-id="selectedEntryId"
                     @cancelEdit="cancelTransaction"
                     @editingEntry="startTransaction"
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
+                    @entry-selection="entrySelection(entry)"
                 />
             </div>
             <div
@@ -234,6 +236,7 @@ export default {
             sidebarCoversEntries: false,
             filteredAndSortedEntries: [],
             notebookAnnotations: {},
+            selectedEntryId: '',
             activeTransaction: false,
             savingTransaction: false
         };
@@ -321,6 +324,7 @@ export default {
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
+        this.openmct.selection.on('change', this.updateSelection);
         this.transaction = null;
 
         window.addEventListener('orientationchange', this.formatSidebar);
@@ -346,6 +350,7 @@ export default {
 
         window.removeEventListener('orientationchange', this.formatSidebar);
         window.removeEventListener('hashchange', this.setSectionAndPageFromUrl);
+        this.openmct.selection.off('change', this.updateSelection);
     },
     updated: function () {
         this.$nextTick(() => {
@@ -375,15 +380,20 @@ export default {
                 }
             });
         },
+        updateSelection(selection) {
+            if (selection?.[0]?.[0]?.context?.targetDetails?.entryId === undefined) {
+                this.selectedEntryId = '';
+            }
+        },
         async loadAnnotations() {
             if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother loading annotations if there are no tags
                 return;
             }
 
             this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
 
-            const query = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const foundAnnotations = await this.openmct.annotation.getAnnotations(query);
+            const foundAnnotations = await this.openmct.annotation.getAnnotations(this.domainObject.identifier);
             foundAnnotations.forEach((foundAnnotation) => {
                 const targetId = Object.keys(foundAnnotation.targets)[0];
                 const entryId = foundAnnotation.targets[targetId].entryId;
@@ -940,6 +950,9 @@ export default {
                     this.endTransaction();
                 }
             }
+        },
+        entrySelection(entry) {
+            this.selectedEntryId = entry.id;
         },
         endTransaction() {
             this.openmct.objects.endTransaction();

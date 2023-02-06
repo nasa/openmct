@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 <template>
-<div class="c-tag__parent">
-    <div class="c-tag_selection">
+<div class="w-tag-wrapper">
+    <template v-if="newTag">
         <AutoCompleteField
             v-if="newTag"
             ref="tagSelection"
@@ -32,9 +32,11 @@
             :item-css-class="'icon-circle'"
             @onChange="tagSelected"
         />
+    </template>
+    <template v-else>
         <div
-            v-else
             class="c-tag"
+            :class="{'c-tag-edit': !readOnly}"
             :style="{ background: selectedBackgroundColor, color: selectedForegroundColor }"
         >
             <div
@@ -42,11 +44,12 @@
                 aria-label="Tag"
             >{{ selectedTagLabel }} </div>
             <button
+                v-show="!readOnly"
                 class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle"
                 @click="removeTag"
             ></button>
         </div>
-    </div>
+    </template>
 </div>
 </template>
 
@@ -73,6 +76,12 @@ export default {
             }
         },
         newTag: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
+        readOnly: {
             type: Boolean,
             default() {
                 return false;

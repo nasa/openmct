@@ -189,13 +189,11 @@ export default class ObjectAPI {
     /**
      * Get a domain object.
      *
-     * @method get
-     * @memberof module:openmct.ObjectProvider#
      * @param {string} key the key for the domain object to load
-     * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
-     * @param {boolean} forceRemote defaults to false. If true, will skip cached and
+     * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
+     * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
      *          dirty/in-transaction objects use and the provider.get method
-     * @returns {Promise} a promise which will resolve when the domain object
+     * @returns {Promise<DomainObject>} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
     get(identifier, abortSignal, forceRemote = false) {
@@ -220,31 +218,28 @@ export default class ObjectAPI {
         const provider = this.getProvider(identifier);
 
         if (!provider) {
-            throw new Error('No Provider Matched');
+            throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
         }
 
         if (!provider.get) {
             throw new Error('Provider does not support get!');
         }
 
-        let objectPromise = provider.get(identifier, abortSignal).then(result => {
+        let objectPromise = provider.get(identifier, abortSignal).then(domainObject => {
             delete this.cache[keystring];
+            domainObject = this.applyGetInterceptors(identifier, domainObject);
 
-            result = this.applyGetInterceptors(identifier, result);
-            if (result.isMutable) {
-                result.$refresh(result);
-            } else {
-                let mutableDomainObject = this.toMutable(result);
-                mutableDomainObject.$refresh(result);
+            if (this.supportsMutation(identifier)) {
+                const mutableDomainObject = this.toMutable(domainObject);
+                mutableDomainObject.$refresh(domainObject);
+                this.destroyMutable(mutableDomainObject);
             }
 
-            return result;
-        }).catch((result) => {
-            console.warn(`Failed to retrieve ${keystring}:`, result);
-
+            return domainObject;
+        }).catch((error) => {
+            console.warn(`Failed to retrieve ${keystring}:`, error);
             delete this.cache[keystring];
-
-            result = this.applyGetInterceptors(identifier);
+            const result = this.applyGetInterceptors(identifier);
 
             return result;
         });
@@ -650,7 +645,7 @@ export default class ObjectAPI {
      * @param {module:openmct.DomainObject} object the object to observe
      * @param {string} path the property to observe
      * @param {Function} callback a callback to invoke when new values for
-     *        this property are observed
+     *        this property are observed.
      * @method observe
      * @memberof module:openmct.ObjectAPI#
      */
@@ -738,6 +733,46 @@ export default class ObjectAPI {
         } else {
             return path;
         }
+    }
+
+    /**
+     * Parse and construct an `objectPath` from a `navigationPath`.
+     *
+     * A `navigationPath` is a string of the form `"/browse/<keyString>/<keyString>/..."` that is used
+     * by the Open MCT router to navigate to a specific object.
+     *
+     * Throws an error if the `navigationPath` is malformed.
+     *
+     * @param {string} navigationPath
+     * @returns {DomainObject[]} objectPath
+     */
+    async getRelativeObjectPath(navigationPath) {
+        if (!navigationPath.startsWith('/browse/')) {
+            throw new Error(`Malformed navigation path: "${navigationPath}"`);
+        }
+
+        navigationPath = navigationPath.replace('/browse/', '');
+
+        if (!navigationPath || navigationPath === '/') {
+            return [];
+        }
+
+        // Remove any query params and split on '/'
+        const keyStrings = navigationPath.split('?')?.[0].split('/');
+
+        if (keyStrings[0] !== 'ROOT') {
+            keyStrings.unshift('ROOT');
+        }
+
+        const objectPath = (await Promise.all(
+            keyStrings.map(
+                keyString => this.supportsMutation(keyString)
+                    ? this.getMutable(utils.parseKeyString(keyString))
+                    : this.get(utils.parseKeyString(keyString))
+            )
+        )).reverse();
+
+        return objectPath;
     }
 
     isObjectPathToALink(domainObject, objectPath) {

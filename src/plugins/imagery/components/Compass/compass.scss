@@ -1,5 +1,5 @@
 /***************************** THEME/UI CONSTANTS AND MIXINS */
-$interfaceKeyColor: #00B9C5;
+$interfaceKeyColor: #fff;
 $elemBg: rgba(black, 0.7);
 
 @mixin sun($position: 'circle closest-side') {
@@ -100,11 +100,17 @@ $elemBg: rgba(black, 0.7);
         }
 
         &__edge {
-            opacity: 0.1;
+            opacity: 0.2;
         }
 
         &__sun {
             opacity: 0.7;
+        }
+
+        &__cam {
+            fill: $interfaceKeyColor;
+            transform-origin: center;
+            transform: scale(0.15);
         }
 
         &__cam-fov-l,
@@ -115,7 +121,6 @@ $elemBg: rgba(black, 0.7);
         }
 
         &__nsew-text,
-        &__spacecraft-body,
         &__ticks-major,
         &__ticks-minor {
             fill: $color;
@@ -164,5 +169,17 @@ $elemBg: rgba(black, 0.7);
         $s: 100px;
         width: $s;
         padding-top: $s;
+    }
+}
+
+/************************** ROVER */
+.cr-vrover {
+    $scale: 0.4;
+    transform-origin: center;
+
+    &__body {
+        fill: $interfaceKeyColor;
+        opacity: 0.3;
+        transform-origin: center 7% !important; // Places rotation center at mast position
     }
 }

@@ -27,6 +27,7 @@
     <ul
         v-if="!isStackedPlotObject"
         class="c-tree"
+        aria-label="Plot Series Properties"
     >
         <h2 title="Display properties for this object">Plot Series</h2>
         <li
@@ -40,8 +41,10 @@
         </li>
     </ul>
     <y-axis-form
-        v-if="plotSeries.length && !isStackedPlotObject"
-        class="grid-properties"
+        v-for="(yAxisId, index) in yAxesIds"
+        :id="yAxisId.id"
+        :key="`yAxis-${index}`"
+        class="grid-properties js-yaxis-grid-properties"
         :y-axis="config.yAxis"
         @seriesUpdated="updateSeriesConfigForObject"
     />
@@ -51,7 +54,6 @@
     >
         <h2 title="Legend options">Legend</h2>
         <legend-form
-            v-if="plotSeries.length"
             class="grid-properties"
             :legend="config.legend"
         />
@@ -76,22 +78,42 @@ export default {
     data() {
         return {
             config: {},
+            yAxes: [],
             plotSeries: [],
             loaded: false
         };
     },
     computed: {
         isStackedPlotNestedObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject?.type === 'telemetry.plot.stacked');
         },
         isStackedPlotObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject?.type === 'telemetry.plot.stacked');
+        },
+        yAxesIds() {
+            return !this.isStackedPlotObject && this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         }
     },
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
-        this.registerListeners();
+        if (!this.isStackedPlotObject) {
+            this.yAxes = [{
+                id: this.config.yAxis.id,
+                seriesCount: 0
+            }];
+            if (this.config.additionalYAxes) {
+                this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
+                    return {
+                        id: yAxis.id,
+                        seriesCount: 0
+                    };
+                }));
+            }
+
+            this.registerListeners();
+        }
+
         this.loaded = true;
     },
     beforeDestroy() {
@@ -107,16 +129,47 @@ export default {
             this.config.series.forEach(this.addSeries, this);
 
             this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+            this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+        },
+
+        findYAxisForId(yAxisId) {
+            return this.yAxes.find(yAxis => yAxis.id === yAxisId);
+        },
+
+        setYAxisLabel(yAxisId) {
+            const found = this.findYAxisForId(yAxisId);
+            if (found && found.seriesCount > 0) {
+                const mainYAxisId = this.config.yAxis.id;
+                if (mainYAxisId === yAxisId) {
+                    found.label = this.config.yAxis.get('label');
+                } else {
+                    const additionalYAxis = this.config.additionalYAxes.find(axis => axis.id === yAxisId);
+                    if (additionalYAxis) {
+                        found.label = additionalYAxis.get('label');
+                    }
+                }
+            }
         },
 
         addSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.updateAxisUsageCount(yAxisId, 1);
             this.$set(this.plotSeries, index, series);
+            this.setYAxisLabel(yAxisId);
         },
 
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
+        removeSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.updateAxisUsageCount(yAxisId, -1);
+            this.plotSeries.splice(index, 1);
+            this.setYAxisLabel(yAxisId);
+        },
+
+        updateAxisUsageCount(yAxisId, updateCount) {
+            const foundYAxis = this.findYAxisForId(yAxisId);
+            if (foundYAxis) {
+                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
+            }
         },
 
         updateSeriesConfigForObject(config) {

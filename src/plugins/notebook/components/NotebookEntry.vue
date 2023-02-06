@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -22,23 +23,37 @@
 
 <template>
 <div
-    class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
-    :class="{ 'locked': isLocked }"
+    :class="{ 'locked': isLocked, 'is-selected': isSelectedEntry }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
+    @click="selectEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
-        <div class="c-ne__time-and-creator">
-            <span class="c-ne__created-date">{{ createdOnDate }}</span>
-            <span class="c-ne__created-time">{{ createdOnTime }}</span>
-
+        <div class="c-ne__time-and-creator-and-delete">
+            <div class="c-ne__time-and-creator">
+                <span class="c-ne__created-date">{{ createdOnDate }}</span>
+                <span class="c-ne__created-time">{{ createdOnTime }}</span>
+                <span
+                    v-if="entry.createdBy"
+                    class="c-ne__creator"
+                >
+                    <span class="icon-person"></span> {{ entry.createdBy }}
+                </span>
+            </div>
             <span
-                v-if="entry.createdBy"
-                class="c-ne__creator"
+                v-if="!readOnly && !isLocked"
+                class="c-ne__local-controls--hidden"
             >
-                <span class="icon-person"></span> {{ entry.createdBy }}
+                <button
+                    class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
+                    title="Delete this entry"
+                    tabindex="-1"
+                    @click="deleteEntry"
+                >
+                </button>
             </span>
         </div>
         <div class="c-ne__content">
@@ -61,12 +76,14 @@
                     class="c-ne__text c-ne__input"
                     aria-label="Notebook Entry Input"
                     tabindex="0"
-                    contenteditable="true"
+                    :contenteditable="canEdit"
+                    v-bind.prop="formattedText"
+                    @mouseover="checkEditability($event)"
+                    @mouseleave="canEdit = true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                     @keydown.enter.exact.prevent
                     @keyup.enter.exact.prevent="forceBlur($event)"
-                    v-text="entry.text"
                 >
                 </div>
             </template>
@@ -77,42 +94,41 @@
                     class="c-ne__text"
                     contenteditable="false"
                     tabindex="0"
-                    v-text="entry.text"
+                    v-html="formattedText"
                 >
                 </div>
             </template>
 
-            <TagEditor
-                :domain-object="domainObject"
-                :annotations="notebookAnnotations"
-                :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
-                :target-specific-details="{entryId: entry.id}"
-                @tags-updated="timestampAndUpdate"
-            />
+            <div class="c-ne__tags c-tag-holder">
+                <div
+                    v-for="(tag, index) in entryTags"
+                    :key="index"
+                    class="c-tag"
+                    :style="{ backgroundColor: tag.backgroundColor, color: tag.foregroundColor }"
+                >
+                    {{ tag.label }}
+                </div>
+            </div>
 
-            <div class="c-snapshots c-ne__embeds">
-                <NotebookEmbed
-                    v-for="embed in entry.embeds"
-                    :key="embed.id"
-                    :embed="embed"
-                    :is-locked="isLocked"
-                    @removeEmbed="removeEmbed"
-                    @updateEmbed="updateEmbed"
-                />
+            <div
+                :class="{'c-scrollcontainer': enableEmbedsWrapperScroll }"
+            >
+                <div
+                    ref="embedsWrapper"
+                    class="c-snapshots c-ne__embeds-wrapper"
+                >
+                    <NotebookEmbed
+                        v-for="embed in entry.embeds"
+                        ref="embeds"
+                        :key="embed.id"
+                        :embed="embed"
+                        :is-locked="isLocked"
+                        @removeEmbed="removeEmbed"
+                        @updateEmbed="updateEmbed"
+                    />
+                </div>
             </div>
         </div>
-    </div>
-    <div
-        v-if="!readOnly && !isLocked"
-        class="c-ne__local-controls--hidden"
-    >
-        <button
-            class="c-icon-button c-icon-button--major icon-trash"
-            title="Delete this entry"
-            tabindex="-1"
-            @click="deleteEntry"
-        >
-        </button>
     </div>
     <div
         v-if="readOnly"
@@ -139,22 +155,28 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
-import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
+import sanitizeHtml from 'sanitize-html';
+import _ from 'lodash';
+
 import Moment from 'moment';
 
+const SANITIZATION_SCHEMA = {
+    allowedTags: [],
+    allowedAttributes: {}
+};
+const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
 const UNKNOWN_USER = 'Unknown';
 
 export default {
     components: {
         NotebookEmbed,
-        TextHighlight,
-        TagEditor
+        TextHighlight
     },
-    inject: ['openmct', 'snapshotContainer'],
+    inject: ['openmct', 'snapshotContainer', 'entryUrlWhitelist'],
     props: {
         domainObject: {
             type: Object,
@@ -203,7 +225,18 @@ export default {
             default() {
                 return false;
             }
+        },
+        selectedEntryId: {
+            type: String,
+            required: true
         }
+    },
+    data() {
+        return {
+            editMode: false,
+            canEdit: true,
+            enableEmbedsWrapperScroll: false
+        };
     },
     computed: {
         createdOnDate() {
@@ -211,6 +244,39 @@ export default {
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
+        },
+        formattedText() {
+            // remove ANY tags
+            let text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
+
+            if (this.editMode || !this.urlWhitelist) {
+                return { innerText: text };
+            }
+
+            text = text.replace(URL_REGEX, (match) => {
+                const url = new URL(match);
+                const domain = url.hostname;
+                let result = match;
+                let isMatch = this.urlWhitelist.find((partialDomain) => {
+                    return domain.endsWith(partialDomain);
+                });
+
+                if (isMatch) {
+                    result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
+                }
+
+                return result;
+            });
+
+            return { innerHTML: text };
+        },
+        isSelectedEntry() {
+            return this.selectedEntryId === this.entry.id;
+        },
+        entryTags() {
+            const tagsFromAnnotations = this.openmct.annotation.getTagsFromAnnotations(this.notebookAnnotations);
+
+            return tagsFromAnnotations;
         },
         entryText() {
             let text = this.entry.text;
@@ -232,7 +298,23 @@ export default {
         }
     },
     mounted() {
+        this.manageEmbedLayout = _.debounce(this.manageEmbedLayout, 400);
+
+        if (this.$refs.embedsWrapper) {
+            this.embedsWrapperResizeObserver = new ResizeObserver(this.manageEmbedLayout);
+            this.embedsWrapperResizeObserver.observe(this.$refs.embedsWrapper);
+        }
+
+        this.manageEmbedLayout();
         this.dropOnEntry = this.dropOnEntry.bind(this);
+        if (this.entryUrlWhitelist?.length > 0) {
+            this.urlWhitelist = this.entryUrlWhitelist;
+        }
+    },
+    beforeDestroy() {
+        if (this.embedsWrapperResizeObserver) {
+            this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
+        }
     },
     methods: {
         async addNewEmbed(objectPath) {
@@ -245,6 +327,8 @@ export default {
             };
             const newEmbed = await createNewEmbed(snapshotMeta);
             this.entry.embeds.push(newEmbed);
+
+            this.manageEmbedLayout();
         },
         cancelEditMode(event) {
             const isEditing = this.openmct.editor.isEditing();
@@ -262,8 +346,24 @@ export default {
                 event.dataTransfer.effectAllowed = 'none';
             }
         },
+        checkEditability($event) {
+            if ($event.target.nodeName === 'A') {
+                this.canEdit = false;
+            }
+        },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
+        },
+        manageEmbedLayout() {
+            if (this.$refs.embeds) {
+                const embedsWrapperLength = this.$refs.embedsWrapper.clientWidth;
+                const embedsTotalWidth = this.$refs.embeds.reduce((total, embed) => {
+                    return embed.$el.clientWidth + total;
+                }, 0);
+
+                this.enableEmbedsWrapperScroll = embedsTotalWidth > embedsWrapperLength;
+            }
+
         },
         async dropOnEntry($event) {
             $event.stopImmediatePropagation();
@@ -322,6 +422,8 @@ export default {
             this.entry.embeds.splice(embedPosition, 1);
 
             this.timestampAndUpdate();
+
+            this.manageEmbedLayout();
         },
         updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
@@ -347,16 +449,45 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         editingEntry() {
+            this.editMode = true;
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {
+            this.editMode = false;
             const value = $event.target.innerText;
             if (value !== this.entry.text && value.match(/\S/)) {
-                this.entry.text = value;
+                this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
                 this.timestampAndUpdate();
             } else {
                 this.$emit('cancelEdit');
             }
+        },
+        selectEntry(event, entry) {
+            const targetDetails = {};
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            targetDetails[keyString] = {
+                entryId: entry.id
+            };
+            const targetDomainObjects = {};
+            targetDomainObjects[keyString] = this.domainObject;
+            this.openmct.selection.select(
+                [
+                    {
+                        element: event.currentTarget,
+                        context: {
+                            type: 'notebook-entry-selection',
+                            item: this.domainObject,
+                            targetDetails,
+                            targetDomainObjects,
+                            annotations: this.notebookAnnotations,
+                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                            onAnnotationChange: this.timestampAndUpdate
+                        }
+                    }
+                ],
+                false);
+            event.stopPropagation();
+            this.$emit('entry-selection', this.entry);
         }
     }
 };

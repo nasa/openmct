@@ -103,12 +103,8 @@ function installBaseNotebookFunctionality(openmct) {
     monkeyPatchObjectAPIForNotebooks(openmct);
 }
 
-function NotebookPlugin(name = 'Notebook') {
+function NotebookPlugin(name = 'Notebook', entryUrlWhitelist = []) {
     return function install(openmct) {
-        if (openmct[NOTEBOOK_INSTALLED_KEY]) {
-            return;
-        }
-
         const icon = 'icon-notebook';
         const description = 'Create and save timestamped notes with embedded object snapshots.';
         const snapshotContainer = getSnapshotContainer(openmct);
@@ -118,16 +114,14 @@ function NotebookPlugin(name = 'Notebook') {
         const notebookType = new NotebookType(name, description, icon);
         openmct.types.addType(NOTEBOOK_TYPE, notebookType);
 
-        const notebookView = new NotebookViewProvider(openmct, name, NOTEBOOK_VIEW_TYPE, NOTEBOOK_TYPE, icon, snapshotContainer);
-        openmct.objectViews.addProvider(notebookView);
+        const notebookView = new NotebookViewProvider(openmct, name, NOTEBOOK_VIEW_TYPE, NOTEBOOK_TYPE, icon, snapshotContainer, entryUrlWhitelist);
+        openmct.objectViews.addProvider(notebookView, entryUrlWhitelist);
 
         installBaseNotebookFunctionality(openmct);
-
-        openmct[NOTEBOOK_INSTALLED_KEY] = true;
     };
 }
 
-function RestrictedNotebookPlugin(name = 'Notebook Shift Log') {
+function RestrictedNotebookPlugin(name = 'Notebook Shift Log', entryUrlWhitelist = []) {
     return function install(openmct) {
         if (openmct[RESTRICTED_NOTEBOOK_INSTALLED_KEY]) {
             return;
@@ -140,8 +134,8 @@ function RestrictedNotebookPlugin(name = 'Notebook Shift Log') {
         const notebookType = new NotebookType(name, description, icon);
         openmct.types.addType(RESTRICTED_NOTEBOOK_TYPE, notebookType);
 
-        const notebookView = new NotebookViewProvider(openmct, name, RESTRICTED_NOTEBOOK_VIEW_TYPE, RESTRICTED_NOTEBOOK_TYPE, icon, snapshotContainer);
-        openmct.objectViews.addProvider(notebookView);
+        const notebookView = new NotebookViewProvider(openmct, name, RESTRICTED_NOTEBOOK_VIEW_TYPE, RESTRICTED_NOTEBOOK_TYPE, icon, snapshotContainer, entryUrlWhitelist);
+        openmct.objectViews.addProvider(notebookView, entryUrlWhitelist);
 
         installBaseNotebookFunctionality(openmct);
 
