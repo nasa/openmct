@@ -55,6 +55,7 @@ const CLEARANCE = 15;
 const HANDLED_ATTRIBUTES = {
     key: 'key',
     displayRange: 'displayRange',
+    stats: 'stats',
     xKey: 'xKey',
     interpolate: 'interpolate',
     markers: 'markers',
@@ -149,6 +150,7 @@ export default {
             [yAxisId]: {}
         };
         this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
+        this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.stats}`, this.scheduleDraw);
         this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.key}`, this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
         this.listenTo(this.config.yAxis, 'change', this.redrawIfNotAlreadyHandled);
         if (this.config.additionalYAxes.length) {
@@ -156,6 +158,7 @@ export default {
                 const id = yAxis.get('id');
                 this.offset[id] = {};
                 this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
+                this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.stats}`, this.scheduleDraw);
                 this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.key}`, this.resetYOffsetAndSeriesDataForYAxis.bind(this, id), this);
                 this.listenTo(yAxis, 'change', this.redrawIfNotAlreadyHandled);
             });
