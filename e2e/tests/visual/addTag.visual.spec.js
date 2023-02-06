@@ -24,32 +24,33 @@
  * This test is dedicated to test the blur behavior of the add tag button.
  */
 
-const { test, expect } = require("../../pluginFixtures");
+const { test } = require("../../pluginFixtures");
 const { createNotebookAndEntry } = require('../../appActions');
+const percySnapshot = require('@percy/playwright');
 
 test.describe("Visual - Check blur of Add Tag button", () => {
-    test("Blur 'Add tag'", async ({ page }) => {
+    test("Blur 'Add tag'", async ({ page, theme }) => {
         await createNotebookAndEntry(page);
 
         // Click on Annotations tab
         await page.locator('text=Annotations').click();
 
+        // Take snapshot of the notebook with the Annotations tab opened
+        await percySnapshot(page, `Notebook Annotation (theme: '${theme}')`);
+
         // Click on the "Add Tag" button
         await page.locator('button:has-text("Add Tag")').click();
 
-        // Check that the AutoComplete field is visible
-        await expect(page.locator('[placeholder="Type to select tag"]')).toBeVisible();
+        // Take snapshot of the notebook with the AutoComplete field visible
+        await percySnapshot(page, `Notebook Add Tag (theme: '${theme}')`);
 
         // Click inside the AutoComplete field
         await page.locator('[placeholder="Type to select tag"]').click();
 
-        // Click on the "Tags" header (simulating a click outside the autocomplete)
+        // Click on the "Tags" header (simulating a click outside the autocomplete field)
         await page.locator('div.c-inspect-properties__header:has-text("Tags")').click();
 
-        // Verify there is a button with text "Add Tag"
-        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
-
-        // Verify the AutoComplete field is hidden
-        await expect(page.locator('[placeholder="Type to select tag"]')).toBeHidden();
+        // Take snapshot of the notebook with the AutoComplete field hidden and with the "Add Tag" button visible
+        await percySnapshot(page, `Notebook Annotation de-select blur (theme: '${theme}')`);
     });
 });
