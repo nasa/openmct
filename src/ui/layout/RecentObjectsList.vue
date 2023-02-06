@@ -4,6 +4,7 @@
 >
     <ul
         class="c-tree-and-search__tree c-tree c-tree__scrollable"
+        aria-label="Recent Objects"
     >
         <recent-objects-list-item
             v-for="(recentObject) in recentObjects"

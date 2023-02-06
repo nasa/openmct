@@ -1190,28 +1190,42 @@ export default {
         selectNearbyAnnotations(event) {
             // need to stop propagation right away to prevent selecting the plot itself
             event.stopPropagation();
-            if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
-                return;
-            }
 
             const nearbyAnnotations = this.gatherNearbyAnnotations();
-            if (!nearbyAnnotations.length) {
-                const emptySelection = this.createPathSelection();
-                this.openmct.selection.select(emptySelection, true);
-                // should show plot itself if we didn't find any annotations
+
+            if (this.annotationViewingAndEditingAllowed && this.annotationSelections.length) {
+                //no annotations were found, but we are adding some now
+                return;
+            }
+
+            if (this.annotationViewingAndEditingAllowed && nearbyAnnotations.length) {
+                //show annotations if some were found
+                const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
+                this.selectPlotAnnotations({
+                    targetDetails,
+                    targetDomainObjects,
+                    annotations: nearbyAnnotations
+                });
 
                 return;
             }
 
-            const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
-            this.selectPlotAnnotations({
-                targetDetails,
-                targetDomainObjects,
-                annotations: nearbyAnnotations
-            });
+            //Fall through to here if either there is no new selection add tags or no existing annotations were retrieved
+            this.selectPlot();
+        },
+        selectPlot() {
+            // should show plot itself if we didn't find any annotations
+            const selection = this.createPathSelection();
+            this.openmct.selection.select(selection, true);
         },
         createPathSelection() {
             let selection = [];
+            selection.unshift({
+                element: this.$el,
+                context: {
+                    item: this.domainObject
+                }
+            });
             this.path.forEach((pathObject, index) => {
                 selection.push({
                     element: this.openmct.layout.$refs.browseObject.$el,
