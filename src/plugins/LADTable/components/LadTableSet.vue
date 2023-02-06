@@ -186,9 +186,9 @@ export default {
                 let telemetryObject = {};
                 telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 telemetryObject.domainObject = domainObject;
-                let combinedKey = this.combineKeys(ladTable.key, telemetryObject.key);
+                const combinedKey = this.combineKeys(ladTable.key, telemetryObject.key);
 
-                let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
                 telemetryObjects.push(telemetryObject);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
@@ -211,8 +211,8 @@ export default {
         removeTelemetryObject(ladTable) {
             return (identifier) => {
                 const keystring = this.openmct.objects.makeKeyString(identifier);
-                let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
-                let combinedKey = this.combineKeys(ladTable.key, keystring);
+                const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                const combinedKey = this.combineKeys(ladTable.key, keystring);
                 let index = telemetryObjects.findIndex(telemetryObject => keystring === telemetryObject.key);
 
                 this.unwatchStaleness(combinedKey);
@@ -233,14 +233,11 @@ export default {
         handleStaleness(combinedKey, stalenessResponse, skipCheck = false) {
             if (skipCheck || this.stalenessSubscription[combinedKey].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
                 const index = this.staleObjects.indexOf(combinedKey);
-                if (stalenessResponse.isStale) {
-                    if (index === -1) {
-                        this.staleObjects.push(combinedKey);
-                    }
-                } else {
-                    if (index !== -1) {
-                        this.staleObjects.splice(index, 1);
-                    }
+                const foundStaleObject = index > -1;
+                if (stalenessResponse.isStale && !foundStaleObject) {
+                    this.staleObjects.push(combinedKey);
+                } else if (!stalenessResponse.isStale && foundStaleObject) {
+                    this.staleObjects.splice(index, 1);
                 }
             }
         },
