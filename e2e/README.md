@@ -110,10 +110,11 @@ npm run test:e2e:updatesnapshots
 
 Linux/CI
 ```sh
-docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:[GET THIS VERSION FROM OUR CIRCLECI CONFIG FILE]-focal /bin/bash
+// Replace {X.X.X} with the current Playwright version 
+// from our package.json or circleCI configuration file
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
 npm install
 npm run test:e2e:updatesnapshots
-```
 
 ## Performance Testing
 
