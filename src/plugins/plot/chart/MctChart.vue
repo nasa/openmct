@@ -52,6 +52,7 @@ const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
 const ANNOTATION_SIZE = MARKER_SIZE * 3.0;
 const CLEARANCE = 15;
+// These attributes are changed in the plot model, but we don't need to react to the changes.
 const NO_HANDLING_NEEDED_ATTRIBUTES = {
     label: 'label',
     values: 'values',
@@ -60,6 +61,7 @@ const NO_HANDLING_NEEDED_ATTRIBUTES = {
     name: 'name',
     unit: 'unit'
 };
+// These attributes in turn set one of HANDLED_ATTRIBUTES, so we don't need specific listeners for them - this prevents excessive redraws.
 const IMPLICIT_HANDLED_ATTRIBUTES = {
     range: 'range',
     //series stats update y axis stats
@@ -70,6 +72,7 @@ const IMPLICIT_HANDLED_ATTRIBUTES = {
     logMode: 'logMode',
     yKey: 'yKey'
 };
+// Attribute changes that we are specifically handling with listeners
 const HANDLED_ATTRIBUTES = {
     //X and Y Axis attributes
     key: 'key',

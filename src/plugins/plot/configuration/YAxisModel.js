@@ -368,7 +368,7 @@ export default class YAxisModel extends Model {
             logMode: options.model?.logMode ?? false,
             autoscalePadding: 0.1,
             id: options.id,
-            range: options.model?.range ?? false
+            range: options.model?.range
         };
     }
 }

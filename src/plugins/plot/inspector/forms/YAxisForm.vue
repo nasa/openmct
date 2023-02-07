@@ -180,10 +180,7 @@ export default {
                 range: {
                     objectPath: `${prefix}.range`,
                     coerce: function coerceRange(range) {
-                        const newRange = {
-                            min: -1,
-                            max: 1
-                        };
+                        const newRange = {};
 
                         if (range && typeof range.min !== 'undefined' && range.min !== null) {
                             newRange.min = Number(range.min);
@@ -229,7 +226,7 @@ export default {
             this.logMode = this.yAxis.get('logMode');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
             const range = this.yAxis.get('range');
-            if (range && range?.min !== undefined && range?.max !== undefined) {
+            if (range && range.min !== undefined && range.max !== undefined) {
                 this.rangeMin = range.min;
                 this.rangeMax = range.max;
             }
