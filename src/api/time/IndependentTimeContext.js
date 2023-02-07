@@ -202,7 +202,7 @@ class IndependentTimeContext extends TimeContext {
     }
 
     getUpstreamContext() {
-        const objectKey = this.openmct.objects.makeKeyString(this.objectPath[this.objectPath.length - 1].identifier);
+        const objectKey = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
         const doesObjectHaveTimeContext = this.globalTimeContext.independentContexts.get(objectKey);
         if (doesObjectHaveTimeContext) {
             return undefined;
