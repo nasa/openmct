@@ -25,7 +25,30 @@ This test suite is dedicated to tests which verify form functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, createNotebookAndEntry } = require('../../../../appActions');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
+
+/**
+  * Creates a notebook object and adds an entry.
+  * @param {import('@playwright/test').Page} - page to load
+  * @param {number} [iterations = 1] - the number of entries to create
+  */
+async function createNotebookAndEntry(page, iterations = 1) {
+    //Go to baseURL
+    await page.goto('./', { waitUntil: 'networkidle' });
+
+    const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
+
+    for (let iteration = 0; iteration < iterations; iteration++) {
+        // Create an entry
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = ${iteration}`;
+        await page.locator(entryLocator).click();
+        await page.locator(entryLocator).fill(`Entry ${iteration}`);
+        await page.locator(entryLocator).press('Enter');
+    }
+
+    return notebook;
+}
 
 /**
   * Creates a notebook object, adds an entry, and adds a tag.
@@ -212,7 +235,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await createNotebookAndEntry(page);
 
         // Click on Annotations tab
-        await page.locator('text=Annotations').click();
+        await page.locator('.c-inspector__tab', { hasText: "Annotations" }).click();
 
         // Click on the "Add Tag" button
         await page.locator('button:has-text("Add Tag")').click();
