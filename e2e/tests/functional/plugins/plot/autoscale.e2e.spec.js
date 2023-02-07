@@ -57,7 +57,7 @@ test.describe('Autoscale', () => {
         // save
         await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
         await Promise.all([
-            page.locator('text=Save and Finish Editing').click(),
+        page.locator('li[title="Save and Finish Editing"]').click();
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
