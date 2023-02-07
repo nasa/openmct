@@ -115,7 +115,6 @@ Linux/CI
 docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
 npm install
 npm run test:e2e:updatesnapshots
-```
 
 ## Performance Testing
 
