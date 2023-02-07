@@ -233,11 +233,11 @@ export default {
 
             this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
                 if (stalenessResponse !== undefined) {
-                    this.hanldeStaleness(keyString, stalenessResponse);
+                    this.handleStaleness(keyString, stalenessResponse);
                 }
             });
             const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
-                this.hanldeStaleness(keyString, stalenessResponse);
+                this.handleStaleness(keyString, stalenessResponse);
             });
 
             this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
@@ -264,7 +264,7 @@ export default {
                 delete this.stalenessSubscription[keyString];
             }
         },
-        hanldeStaleness(keyString, stalenessResponse) {
+        handleStaleness(keyString, stalenessResponse) {
             if (this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
                 this.emitStaleness({
                     keyString,
