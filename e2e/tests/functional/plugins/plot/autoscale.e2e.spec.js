@@ -92,7 +92,7 @@ test.describe('ExportAsJSON', () => {
         await page.keyboard.up('Alt');
 
         // Ensure the drag worked.
-        await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00']);
+        await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00', '3.50']);
 
         await canvas.hover({trial: true});
 
