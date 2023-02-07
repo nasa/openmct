@@ -99,7 +99,21 @@ npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep
 
 ### Updating Snapshots
 
-When the `@snapshot` tests fail, they will need to be evaluated to see if the failure is an acceptable and desireable or and unintended regression.
+When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desireable or an unintended regression.
+
+To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
+
+MacOS
+```
+npm run test:e2e:updatesnapshots
+```
+
+Linux/CI
+```sh
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:[GET THIS VERSION FROM OUR CIRCLECI CONFIG FILE]-focal /bin/bash
+npm install
+npm run test:e2e:updatesnapshots
+```
 
 ## Performance Testing
 
