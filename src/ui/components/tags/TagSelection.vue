@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 <template>
-<div class="c-tag__parent">
-    <div class="c-tag_selection">
+<div class="w-tag-wrapper">
+    <template v-if="newTag">
         <AutoCompleteField
             v-if="newTag"
             ref="tagSelection"
@@ -33,8 +33,9 @@
             @onChange="tagSelected"
             @autoCompleteBlur="autoCompleteBlur"
         />
+    </template>
+    <template v-else>
         <div
-            v-else
             class="c-tag"
             :class="{'c-tag-edit': !readOnly}"
             :style="{ background: selectedBackgroundColor, color: selectedForegroundColor }"
@@ -49,7 +50,7 @@
                 @click="removeTag"
             ></button>
         </div>
-    </div>
+    </template>
 </div>
 </template>
 
