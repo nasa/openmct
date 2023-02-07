@@ -25,15 +25,27 @@
  */
 
 const { test } = require("../../pluginFixtures");
-const { createNotebookAndEntry } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe("Visual - Check blur of Add Tag button", () => {
+
+    test.beforeEach(async ({ page }) => {
+        // Open a browser, navigate to the main page, and wait until all network events to resolve
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
+
     test("Blur 'Add tag'", async ({ page, theme }) => {
-        await createNotebookAndEntry(page);
+        createDomainObjectWithDefaults(page, { type: 'Notebook' });
+
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 0`;
+        await page.locator(entryLocator).click();
+        await page.locator(entryLocator).fill(`Entry 0`);
+        await page.locator(entryLocator).press('Enter');
 
         // Click on Annotations tab
-        await page.locator('text=Annotations').click();
+        await page.locator('.c-inspector__tab', { hasText: "Annotations" }).click();
 
         // Take snapshot of the notebook with the Annotations tab opened
         await percySnapshot(page, `Notebook Annotation (theme: '${theme}')`);
