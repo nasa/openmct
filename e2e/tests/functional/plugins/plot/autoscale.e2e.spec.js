@@ -32,7 +32,7 @@ test.use({
     }
 });
 
-test.describe('ExportAsJSON', () => {
+test.describe('Autoscale', () => {
     test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
@@ -72,7 +72,7 @@ test.describe('ExportAsJSON', () => {
 
         await canvas.hover({trial: true});
 
-        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan.png', { animations: 'disabled' });
+        expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan.png', { animations: 'disabled' });
 
         //Alt Drag Start
         await page.keyboard.down('Alt');
@@ -94,9 +94,10 @@ test.describe('ExportAsJSON', () => {
         // Ensure the drag worked.
         await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00', '3.50']);
 
+        //Wait for canvas to stablize.
         await canvas.hover({trial: true});
 
-        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
+        expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
     });
 });
 
@@ -198,7 +199,7 @@ async function testYTicks(page, values) {
     let promises = [yTicks.count().then(c => expect(c).toBe(values.length))];
 
     for (let i = 0, l = values.length; i < l; i += 1) {
-        promises.push(expect(yTicks.nth(i)).toHaveText(values[i])); // eslint-disable-line
+        promises.push(expect.soft(yTicks.nth(i)).toHaveText(values[i])); // eslint-disable-line
     }
 
     await Promise.all(promises);
