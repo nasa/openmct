@@ -48,16 +48,16 @@ test.describe('Autoscale', () => {
         await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
 
         // enter edit mode
-        await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
+        await page.click('button[title="Edit"]');
 
         await turnOffAutoscale(page);
 
         await setUserDefinedMinAndMax(page, '-2', '2');
 
         // save
-        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+        await page.click('button[title="Save"]');
         await Promise.all([
-            page.locator('text=Save and Finish Editing').click(),
+            page.locator('li[title = "Save and Finish Editing"]').click(),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
