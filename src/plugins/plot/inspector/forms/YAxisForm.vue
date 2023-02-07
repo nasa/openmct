@@ -131,6 +131,12 @@ export default {
             loaded: false
         };
     },
+    beforeDestroy() {
+        if (this.autoscale === false && this.validationErrors.range) {
+            this.autoscale = true;
+            this.updateForm('autoscale');
+        }
+    },
     mounted() {
         eventHelpers.extend(this);
         this.getConfig();
@@ -223,9 +229,9 @@ export default {
             this.logMode = this.yAxis.get('logMode');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
             const range = this.yAxis.get('range');
-            if (range) {
-                this.rangeMin = range?.min;
-                this.rangeMax = range?.max;
+            if (range && range?.min !== undefined && range?.max !== undefined) {
+                this.rangeMin = range.min;
+                this.rangeMax = range.max;
             }
         },
         getPrefix() {
@@ -314,8 +320,8 @@ export default {
                         }
                     }
 
-                    //If autoscale is turned off, we must know what the min and max ranges are
-                    if (formKey === 'autoscale') {
+                    //If autoscale is turned off, we must know what the user defined min and max ranges are
+                    if (formKey === 'autoscale' && this.autoscale === false) {
                         const rangeFormField = this.fields.range;
                         this.validationErrors.range = rangeFormField.validate?.({
                             min: this.rangeMin,
