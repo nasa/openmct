@@ -252,6 +252,7 @@ export default class PlotSeries extends Model {
         }
 
         const valueMetadata = this.metadata.value(newKey);
+        //TODO: Should we do this even if there is a persisted config?
         if (!this.persistedConfig || !this.persistedConfig.interpolate) {
             if (valueMetadata.format === 'enum') {
                 this.set('interpolate', 'stepAfter');
