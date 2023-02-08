@@ -21,10 +21,9 @@ describe('Application router utility functions', () => {
 
         openmct.on('start', () => {
             resolveFunction = () => {
-                const success = window.location.hash !== null && window.location.hash !== '';
-                if (success) {
-                    done();
-                }
+                expect(window.location.hash).not.toBe(null);
+                expect(window.location.hash).not.toBe('');
+                done();
             };
 
             openmct.router.on('change:hash', resolveFunction);
@@ -32,6 +31,7 @@ describe('Application router utility functions', () => {
             // the above resolve function sometimes doesn't fire due to a race condition.
             openmct.router.setHash.flush();
             openmct.router.setLocationFromUrl();
+            openmct.router.setHash.flush();
         });
 
         openmct.start(appHolder);
@@ -47,8 +47,7 @@ describe('Application router utility functions', () => {
     });
 
     it('has initial hash when loaded', () => {
-        const success = window.location.hash !== null;
-        expect(success).toBe(true);
+        expect(window.location.hash).not.toBe(null);
     });
 
     it('The setSearchParam function sets an individual search parameter in the window location hash', () => {
