@@ -26,6 +26,7 @@ import ExampleTagsPlugin from "../../../example/exampleTags/plugin";
 describe("The Annotation API", () => {
     let openmct;
     let mockObjectProvider;
+    let mockImmutableObjectProvider;
     let mockDomainObject;
     let mockFolderObject;
     let mockAnnotationObject;
@@ -89,6 +90,23 @@ describe("The Annotation API", () => {
         mockObjectProvider.create.and.returnValue(Promise.resolve(true));
         mockObjectProvider.update.and.returnValue(Promise.resolve(true));
 
+        mockImmutableObjectProvider = jasmine.createSpyObj("mock immutable provider", [
+            "get"
+        ]);
+        // eslint-disable-next-line require-await
+        mockImmutableObjectProvider.get = async (identifier) => {
+            if (identifier.key === mockDomainObject.identifier.key) {
+                return mockDomainObject;
+            } else if (identifier.key === mockAnnotationObject.identifier.key) {
+                return mockAnnotationObject;
+            } else if (identifier.key === mockFolderObject.identifier.key) {
+                return mockFolderObject;
+            } else {
+                return null;
+            }
+        };
+
+        openmct.objects.addProvider('immutableProvider', mockImmutableObjectProvider);
         openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
         openmct.on('start', done);
         openmct.startHeadless();
@@ -115,9 +133,59 @@ describe("The Annotation API", () => {
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
         });
+        it("can create annotations if domain object is immutable", async () => {
+            mockDomainObject.identifier.namespace = 'immutableProvider';
+            const annotationCreationArguments = {
+                name: 'Test Annotation',
+                domainObject: mockDomainObject,
+                annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                tags: ['sometag'],
+                contentText: "fooContext",
+                targetDomainObjects: [mockDomainObject],
+                targets: {'fooTarget': {}}
+            };
+            openmct.annotation.setNamespaceToSaveAnnotations('fooNameSpace');
+            const annotationObject = await openmct.annotation.create(annotationCreationArguments);
+            expect(annotationObject).toBeDefined();
+            expect(annotationObject.type).toEqual('annotation');
+        });
         it("fails if annotation is an unknown type", async () => {
             try {
                 await openmct.annotation.create('Garbage Annotation', mockDomainObject, 'garbageAnnotation', ['sometag'], "fooContext", {'fooTarget': {}});
+            } catch (error) {
+                expect(error).toBeDefined();
+            }
+        });
+        it("fails if annotation if given an immutable namespace to save to", async () => {
+            try {
+                const annotationCreationArguments = {
+                    name: 'Test Annotation',
+                    domainObject: mockDomainObject,
+                    annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                    tags: ['sometag'],
+                    contentText: "fooContext",
+                    targetDomainObjects: [mockDomainObject],
+                    targets: {'fooTarget': {}}
+                };
+                openmct.annotation.setNamespaceToSaveAnnotations('nameespaceThatDoesNotExist');
+                await openmct.annotation.create(annotationCreationArguments);
+            } catch (error) {
+                expect(error).toBeDefined();
+            }
+        });
+        it("fails if annotation if given an undefined namespace to save to", async () => {
+            try {
+                const annotationCreationArguments = {
+                    name: 'Test Annotation',
+                    domainObject: mockDomainObject,
+                    annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                    tags: ['sometag'],
+                    contentText: "fooContext",
+                    targetDomainObjects: [mockDomainObject],
+                    targets: {'fooTarget': {}}
+                };
+                openmct.annotation.setNamespaceToSaveAnnotations('immutableProvider');
+                await openmct.annotation.create(annotationCreationArguments);
             } catch (error) {
                 expect(error).toBeDefined();
             }
