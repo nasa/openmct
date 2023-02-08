@@ -92,7 +92,7 @@ test.describe('Grand Search', () => {
 });
 
 test.describe("Search Tests @unstable", () => {
-    const searchResultSelector = '.c-gsearch-result__title';
+    const searchResultSelector = '.c-gsearch-result';
 
     test('Validate empty search result', async ({ page }) => {
         // Go to baseURL
@@ -105,7 +105,7 @@ test.describe("Search Tests @unstable", () => {
         await waitForSearchCompletion(page);
 
         // Get the search results
-        const searchResults = await page.locator(searchResultSelector);
+        const searchResults = page.locator(searchResultSelector);
 
         // Verify that no results are found
         expect(await searchResults.count()).toBe(0);
@@ -135,6 +135,7 @@ test.describe("Search Tests @unstable", () => {
         const searchResults = page.locator(searchResultSelector);
 
         // Verify that one result is found
+        await expect(searchResults).toBeVisible();
         expect(await searchResults.count()).toBe(1);
         await expect(searchResults).toHaveText(folderName);
     });
@@ -162,12 +163,12 @@ test.describe("Search Tests @unstable", () => {
         await waitForSearchCompletion(page);
 
         // Get the search results
-        const searchResults = await page.locator(searchResultSelector);
+        const searchResults = page.locator(searchResultSelector);
 
         // Verify that the search result/s correctly match the search query
         expect(await searchResults.count()).toBe(2);
-        await expect(await searchResults.first()).toHaveText(folderName);
-        await expect(await searchResults.last()).toHaveText(folderName2);
+        await expect(searchResults.first()).toHaveText(folderName);
+        await expect(searchResults.last()).toHaveText(folderName2);
     });
 });
 
