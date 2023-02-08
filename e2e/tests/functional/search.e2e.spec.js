@@ -92,7 +92,7 @@ test.describe('Grand Search', () => {
 });
 
 test.describe("Search Tests @unstable", () => {
-    const searchResultSelector = '.c-gsearch-result';
+    const searchResultSelector = '.c-gsearch-result__title';
 
     test('Validate empty search result', async ({ page }) => {
         // Go to baseURL
