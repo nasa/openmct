@@ -73,7 +73,7 @@
                 </div>
             </li>
             <li
-                v-if="!yAxis.autoscale && yAxis.rangeMin"
+                v-if="!yAxis.autoscale && yAxis.rangeMin !== ''"
                 class="grid-row"
             >
                 <div
@@ -83,7 +83,7 @@
                 <div class="grid-cell value">{{ yAxis.rangeMin }}</div>
             </li>
             <li
-                v-if="!yAxis.autoscale && yAxis.rangeMax"
+                v-if="!yAxis.autoscale && yAxis.rangeMax !== ''"
                 class="grid-row"
             >
                 <div
@@ -217,8 +217,8 @@ export default {
                     autoscale: this.config.yAxis.get('autoscale'),
                     logMode: this.config.yAxis.get('logMode'),
                     autoscalePadding: this.config.yAxis.get('autoscalePadding'),
-                    rangeMin: range ? range.min : '',
-                    rangeMax: range ? range.max : ''
+                    rangeMin: range?.min ?? '',
+                    rangeMax: range?.max ?? ''
                 });
                 this.config.additionalYAxes.forEach(yAxis => {
                     range = yAxis.get('range');
@@ -230,8 +230,8 @@ export default {
                         autoscale: yAxis.get('autoscale'),
                         logMode: yAxis.get('logMode'),
                         autoscalePadding: yAxis.get('autoscalePadding'),
-                        rangeMin: range ? range.min : '',
-                        rangeMax: range ? range.max : ''
+                        rangeMin: range?.min ?? '',
+                        rangeMax: range?.max ?? ''
                     });
                 });
             }

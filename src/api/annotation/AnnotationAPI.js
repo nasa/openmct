@@ -84,6 +84,7 @@ export default class AnnotationAPI extends EventEmitter {
         super();
         this.openmct = openmct;
         this.availableTags = {};
+        this.namespaceToSaveAnnotations = '';
 
         this.ANNOTATION_TYPES = ANNOTATION_TYPES;
         this.ANNOTATION_TYPE = ANNOTATION_TYPE;
@@ -139,7 +140,7 @@ export default class AnnotationAPI extends EventEmitter {
         const domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
         const originalPathObjects = await this.openmct.objects.getOriginalPath(domainObjectKeyString);
         const originalContextPath = this.openmct.objects.getRelativePath(originalPathObjects);
-        const namespace = domainObject.identifier.namespace;
+        const namespace = this.namespaceToSaveAnnotations;
         const type = 'annotation';
         const typeDefinition = this.openmct.types.get(type);
         const definition = typeDefinition.definition;
@@ -196,6 +197,14 @@ export default class AnnotationAPI extends EventEmitter {
     */
     defineTag(tagKey, tagsDefinition) {
         this.availableTags[tagKey] = tagsDefinition;
+    }
+
+    /**
+    * @method setNamespaceToSaveAnnotations
+    * @param {String} namespace the namespace to save new annotations to
+    */
+    setNamespaceToSaveAnnotations(namespace) {
+        this.namespaceToSaveAnnotations = namespace;
     }
 
     /**

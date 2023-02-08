@@ -855,7 +855,7 @@ export default {
         gatherNearbyAnnotations() {
             const nearbyAnnotations = [];
             this.config.series.models.forEach(series => {
-                if (series.closest.annotationsById) {
+                if (series?.closest?.annotationsById) {
                     Object.values(series.closest.annotationsById).forEach(closeAnnotation => {
                         const addedAnnotationAlready = nearbyAnnotations.some(annotation => {
                             return _.isEqual(annotation.targets, closeAnnotation.targets)

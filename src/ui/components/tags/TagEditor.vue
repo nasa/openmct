@@ -31,6 +31,7 @@
         :added-tags="addedTags"
         @tagRemoved="tagRemoved"
         @tagAdded="tagAdded"
+        @tagBlurred="tagBlurred"
     />
     <button
         v-show="!userAddingTag && !maxTagsAdded"
@@ -164,6 +165,12 @@ export default {
                     this.onTagChange(this.annotations);
                 }
             }
+        },
+        tagBlurred() {
+            // Remove last tag when user clicks outside of TagSelection
+            this.addedTags.pop();
+            // Hide TagSelection and show "Add Tag" button
+            this.userAddingTag = false;
         },
         async tagAdded(newTag) {
             // Either undelete an annotation, or create one (1) new annotation
