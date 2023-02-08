@@ -29,8 +29,11 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Overlay Plot', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
+
     test('Plot legend color is in sync with plot series color', async ({ page }) => {
-        await page.goto('/', { waitUntil: 'networkidle' });
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
@@ -56,8 +59,8 @@ test.describe('Overlay Plot', () => {
 
         expect(color).toBe('rgb(255, 166, 61)');
     });
+
     test('The elements pool supports dragging series into multiple y-axis buckets', async ({ page }) => {
-        await page.goto('/', { waitUntil: 'networkidle' });
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
