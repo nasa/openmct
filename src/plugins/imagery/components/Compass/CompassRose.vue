@@ -293,13 +293,7 @@ export default {
             return this.cameraPan ?? this.heading;
         },
         cameraAngleOfView() {
-            const cameraAngleOfView = this.transformations?.cameraAngleOfView;
-
-            if (!cameraAngleOfView) {
-                console.warn('No Camera Angle of View provided');
-            }
-
-            return cameraAngleOfView;
+            return this.transformations?.cameraAngleOfView;
         },
         camAngleAndPositionStyle() {
             const translateX = this.transformations?.translateX;
