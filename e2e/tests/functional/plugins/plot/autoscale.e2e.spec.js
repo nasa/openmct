@@ -32,7 +32,7 @@ test.use({
     }
 });
 
-test.describe('ExportAsJSON', () => {
+test.describe('Autoscale', () => {
     test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
@@ -47,16 +47,32 @@ test.describe('ExportAsJSON', () => {
 
         await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
 
+        // enter edit mode
+        await page.click('button[title="Edit"]');
+
         await turnOffAutoscale(page);
 
-        // Make sure that after turning off autoscale, the user selected range values start at the same values the plot had prior.
-        await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
+        await setUserDefinedMinAndMax(page, '-2', '2');
+
+        // save
+        await page.click('button[title="Save"]');
+        await Promise.all([
+            page.locator('li[title = "Save and Finish Editing"]').click(),
+            //Wait for Save Banner to appear
+            page.waitForSelector('.c-message-banner__message')
+        ]);
+        //Wait until Save Banner is gone
+        await page.locator('.c-message-banner__close-button').click();
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+
+        // Make sure that after turning off autoscale, the user entered range values are reflexted in the ticks.
+        await testYTicks(page, ['-2.00', '-1.50', '-1.00', '-0.50', '0.00', '0.50', '1.00', '1.50', '2.00']);
 
         const canvas = page.locator('canvas').nth(1);
 
         await canvas.hover({trial: true});
 
-        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan.png', { animations: 'disabled' });
+        expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan.png', { animations: 'disabled' });
 
         //Alt Drag Start
         await page.keyboard.down('Alt');
@@ -76,11 +92,12 @@ test.describe('ExportAsJSON', () => {
         await page.keyboard.up('Alt');
 
         // Ensure the drag worked.
-        await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00']);
+        await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00', '3.50']);
 
+        //Wait for canvas to stablize.
         await canvas.hover({trial: true});
 
-        expect(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
+        expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
     });
 });
 
@@ -152,22 +169,25 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
  * @param {import('@playwright/test').Page} page
  */
 async function turnOffAutoscale(page) {
-    // enter edit mode
-    await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
-
     // uncheck autoscale
     await page.getByRole('listitem').filter({ hasText: 'Auto scale' }).getByRole('checkbox').uncheck();
+}
 
-    // save
-    await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-    await Promise.all([
-        page.locator('text=Save and Finish Editing').click(),
-        //Wait for Save Banner to appear
-        page.waitForSelector('.c-message-banner__message')
-    ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} min
+ * @param {string} max
+ */
+async function setUserDefinedMinAndMax(page, min, max) {
+    // set minimum value
+    const minRangeInput = page.getByRole('listitem').filter({ hasText: 'Minimum Value' }).locator('input[type="number"]');
+    await minRangeInput.click();
+    await minRangeInput.fill(min);
+
+    // set maximum value
+    const maxRangeInput = page.getByRole('listitem').filter({ hasText: 'Maximum Value' }).locator('input[type="number"]');
+    await maxRangeInput.click();
+    await maxRangeInput.fill(max);
 }
 
 /**
@@ -179,7 +199,7 @@ async function testYTicks(page, values) {
     let promises = [yTicks.count().then(c => expect(c).toBe(values.length))];
 
     for (let i = 0, l = values.length; i < l; i += 1) {
-        promises.push(expect(yTicks.nth(i)).toHaveText(values[i])); // eslint-disable-line
+        promises.push(expect.soft(yTicks.nth(i)).toHaveText(values[i])); // eslint-disable-line
     }
 
     await Promise.all(promises);
