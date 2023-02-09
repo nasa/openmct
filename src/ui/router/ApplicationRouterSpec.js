@@ -23,18 +23,15 @@ describe('Application router utility functions', () => {
             resolveFunction = () => {
                 expect(window.location.hash).not.toBe(null);
                 expect(window.location.hash).not.toBe('');
-                // ensure next call to setHash fires straight away
-                openmct.router.setHash.flush();
                 done();
             };
 
             openmct.router.on('change:hash', resolveFunction);
             // We have a debounce set to 300ms on setHash, so if we don't flush,
             // the above resolve function sometimes doesn't fire due to a race condition.
-            // note also, flush doesn't actually fire the function, so it needs to be run
-            // before the function runs
             openmct.router.setHash.flush();
             openmct.router.setLocationFromUrl();
+            openmct.router.setHash.flush();
         });
 
         openmct.start(appHolder);
