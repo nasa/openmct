@@ -29,8 +29,11 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Overlay Plot', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
+
     test('Plot legend color is in sync with plot series color', async ({ page }) => {
-        await page.goto('/', { waitUntil: 'networkidle' });
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
@@ -56,35 +59,30 @@ test.describe('Overlay Plot', () => {
 
         expect(color).toBe('rgb(255, 166, 61)');
     });
+
     test('The elements pool supports dragging series into multiple y-axis buckets', async ({ page }) => {
-        await page.goto('/', { waitUntil: 'networkidle' });
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
 
-        await createDomainObjectWithDefaults(page, {
+        const swgA = await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator",
-            name: 'swg a',
             parent: overlayPlot.uuid
         });
-        await createDomainObjectWithDefaults(page, {
+        const swgB = await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator",
-            name: 'swg b',
             parent: overlayPlot.uuid
         });
-        await createDomainObjectWithDefaults(page, {
+        const swgC = await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator",
-            name: 'swg c',
             parent: overlayPlot.uuid
         });
-        await createDomainObjectWithDefaults(page, {
+        const swgD = await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator",
-            name: 'swg d',
             parent: overlayPlot.uuid
         });
-        await createDomainObjectWithDefaults(page, {
+        const swgE = await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator",
-            name: 'swg e',
             parent: overlayPlot.uuid
         });
 
@@ -92,33 +90,54 @@ test.describe('Overlay Plot', () => {
         await page.click('button[title="Edit"]');
 
         // Expand the elements pool vertically
-        await page.locator('.l-pane__handle').nth(2).hover({ trial: true });
+        await page.locator('.l-pane.l-pane--vertical-handle-before', {
+            hasText: 'Elements'
+        }).locator('.l-pane__handle').hover();
         await page.mouse.down();
         await page.mouse.move(0, 100);
         await page.mouse.up();
 
-        // Drag swg a, c, e into Y Axis 2
-        await page.locator('#inspector-elements-tree >> text=swg a').dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
-        await page.locator('#inspector-elements-tree >> text=swg c').dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
-        await page.locator('#inspector-elements-tree >> text=swg e').dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+        const yAxis1PropertyGroup = page.locator('[aria-label="Y Axis Properties"]');
+        const yAxis2PropertyGroup = page.locator('[aria-label="Y Axis 2 Properties"]');
+        const yAxis3PropertyGroup = page.locator('[aria-label="Y Axis 3 Properties"]');
 
-        // Drag swg b into Y Axis 3
-        await page.locator('#inspector-elements-tree >> text=swg b').dragTo(page.locator('[aria-label="Element Item Group Y Axis 3"]'));
+        // Assert that Y Axis 1 property group is visible only
+        await expect(yAxis1PropertyGroup).toBeVisible();
+        await expect(yAxis2PropertyGroup).toBeHidden();
+        await expect(yAxis3PropertyGroup).toBeHidden();
+
+        // Drag swg a, c, e into Y Axis 2
+        await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+        await page.locator(`#inspector-elements-tree >> text=${swgC.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+        await page.locator(`#inspector-elements-tree >> text=${swgE.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+
+        // Assert that Y Axis 1 and Y Axis 2 property groups are visible only
+        await expect(yAxis1PropertyGroup).toBeVisible();
+        await expect(yAxis2PropertyGroup).toBeVisible();
+        await expect(yAxis3PropertyGroup).toBeHidden();
 
         const yAxis1Group = page.getByLabel("Y Axis 1");
         const yAxis2Group = page.getByLabel("Y Axis 2");
         const yAxis3Group = page.getByLabel("Y Axis 3");
 
+        // Drag swg b into Y Axis 3
+        await page.locator(`#inspector-elements-tree >> text=${swgB.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 3"]'));
+
+        // Assert that all Y Axis property groups are visible
+        await expect(yAxis1PropertyGroup).toBeVisible();
+        await expect(yAxis2PropertyGroup).toBeVisible();
+        await expect(yAxis3PropertyGroup).toBeVisible();
+
         // Verify that the elements are in the correct buckets and in the correct order
-        expect(yAxis1Group.getByRole('listitem', { name: 'swg d' })).toBeTruthy();
-        expect(yAxis1Group.getByRole('listitem').nth(0).getByText('swg d')).toBeTruthy();
-        expect(yAxis2Group.getByRole('listitem', { name: 'swg e' })).toBeTruthy();
-        expect(yAxis2Group.getByRole('listitem').nth(0).getByText('swg e')).toBeTruthy();
-        expect(yAxis2Group.getByRole('listitem', { name: 'swg c' })).toBeTruthy();
-        expect(yAxis2Group.getByRole('listitem').nth(1).getByText('swg c')).toBeTruthy();
-        expect(yAxis2Group.getByRole('listitem', { name: 'swg a' })).toBeTruthy();
-        expect(yAxis2Group.getByRole('listitem').nth(2).getByText('swg a')).toBeTruthy();
-        expect(yAxis3Group.getByRole('listitem', { name: 'swg b' })).toBeTruthy();
-        expect(yAxis3Group.getByRole('listitem').nth(0).getByText('swg b')).toBeTruthy();
+        expect(yAxis1Group.getByRole('listitem', { name: swgD.name })).toBeTruthy();
+        expect(yAxis1Group.getByRole('listitem').nth(0).getByText(swgD.name)).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem', { name: swgE.name })).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem').nth(0).getByText(swgE.name)).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem', { name: swgC.name })).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem').nth(1).getByText(swgC.name)).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem', { name: swgA.name })).toBeTruthy();
+        expect(yAxis2Group.getByRole('listitem').nth(2).getByText(swgA.name)).toBeTruthy();
+        expect(yAxis3Group.getByRole('listitem', { name: swgB.name })).toBeTruthy();
+        expect(yAxis3Group.getByRole('listitem').nth(0).getByText(swgB.name)).toBeTruthy();
     });
 });
