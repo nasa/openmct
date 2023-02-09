@@ -46,9 +46,8 @@
 <script>
 import search from '../../components/search.vue';
 import SearchResultsDropDown from './SearchResultsDropDown.vue';
-import _ from 'lodash';
 
-const SEARCH_THROTTLE_TIME = 1000;
+const SEARCH_DEBOUNCE_TIME = 300;
 
 export default {
     name: 'GrandSearch',
@@ -68,7 +67,7 @@ export default {
         };
     },
     mounted() {
-        this.getSearchResults = _.throttle(this.getSearchResults, SEARCH_THROTTLE_TIME);
+        this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
     },
     destroyed() {
         document.body.removeEventListener('click', this.handleOutsideClick);
@@ -98,6 +97,21 @@ export default {
                 };
                 this.$refs.searchResultsDropDown.showResults(dropdownOptions);
             }
+        },
+        debounceAsyncFunction(functionToDebounce, debounceTime) {
+            let timeoutID;
+
+            return function (...args) {
+                clearTimeout(timeoutID);
+
+                return new Promise((resolve, reject) => {
+                    timeoutID = setTimeout(() => {
+                        functionToDebounce(...args)
+                            .then(resolve)
+                            .catch(reject);
+                    }, debounceTime);
+                });
+            };
         },
         getPathsForObjects(objectsNeedingPaths) {
             return Promise.all(objectsNeedingPaths.map(async (domainObject) => {
