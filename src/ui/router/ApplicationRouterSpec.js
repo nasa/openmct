@@ -23,6 +23,7 @@ describe('Application router utility functions', () => {
             resolveFunction = () => {
                 expect(window.location.hash).not.toBe(null);
                 expect(window.location.hash).not.toBe('');
+                // ensure next call to setHash fires straight away
                 openmct.router.setHash.flush();
                 done();
             };

@@ -24,7 +24,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-describe("The URLTimeSettingsSynchronizer", () => {
+fdescribe("The URLTimeSettingsSynchronizer", () => {
     let appHolder;
     let openmct;
     let resolveFunction;
@@ -121,13 +121,14 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    it("reset hash", (done) => {
-        window.location.hash = oldHash;
+    it("resets hash", (done) => {
         resolveFunction = () => {
             expect(window.location.hash).toBe(oldHash);
             done();
         };
 
+        openmct.router.setHash.flush();
+        window.location.hash = oldHash;
         openmct.router.on('change:hash', resolveFunction);
     });
 });
