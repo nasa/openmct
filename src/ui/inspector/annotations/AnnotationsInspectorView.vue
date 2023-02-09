@@ -201,7 +201,6 @@ export default {
             }
         },
         async loadAnnotationForTargetObject(target) {
-            console.debug(`📝 Loading annotations for target`, target);
             const targetID = this.openmct.objects.makeKeyString(target.identifier);
             const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(target.identifier);
             const filteredAnnotationsForSelection = allAnnotationsForTarget.filter(annotation => {
