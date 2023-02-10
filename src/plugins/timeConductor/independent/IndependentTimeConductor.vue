@@ -227,6 +227,10 @@ export default {
             if (this.isFixed) {
                 offsets = this.timeOptions.fixedOffsets;
             } else {
+                if (this.timeOptions.clockOffsets === undefined) {
+                    this.timeOptions.clockOffsets = this.openmct.time.clockOffsets();
+                }
+
                 offsets = this.timeOptions.clockOffsets;
             }
 
