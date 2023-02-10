@@ -588,7 +588,6 @@ export default {
         focusedImageIndex() {
             this.trackDuration();
             this.resetAgeCSS();
-            this.updateRelatedTelemetryForFocusedImage();
             this.getImageNaturalDimensions();
         },
         bounds() {
@@ -774,6 +773,10 @@ export default {
             this.layers = layersMetadata;
             if (this.domainObject.configuration) {
                 const persistedLayers = this.domainObject.configuration.layers;
+                if (!persistedLayers) {
+                    return;
+                }
+
                 layersMetadata.forEach((layer) => {
                     const persistedLayer = persistedLayers.find(object => object.name === layer.name);
                     if (persistedLayer) {
@@ -960,6 +963,7 @@ export default {
             }
 
             this.focusedImageIndex = index;
+            this.updateRelatedTelemetryForFocusedImage();
         },
         trackDuration() {
             if (this.canTrackDuration) {
