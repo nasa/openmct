@@ -26,14 +26,12 @@
     :style="`width: 100%; height: 100%`"
 >
     <CompassHUD
-        v-if="showCompassHUD"
         :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
-        :camera-pan="cameraPan"
+        :camera-azimuth="cameraAzimuth"
     />
     <CompassRose
-        v-if="showCompassRose"
-        :camera-pan="cameraPan"
+        :camera-azimuth="cameraAzimuth"
         :heading="heading"
         :sized-image-dimensions="sizedImageDimensions"
         :sun-heading="sunHeading"
@@ -62,12 +60,6 @@ export default {
         }
     },
     computed: {
-        showCompassHUD() {
-            return this.hasCameraPan && this.cameraAngleOfView > 0;
-        },
-        showCompassRose() {
-            return (this.hasCameraPan || this.hasHeading) && this.cameraAngleOfView > 0;
-        },
         // horizontal rotation from north in degrees
         heading() {
             return this.image.heading;
@@ -80,11 +72,11 @@ export default {
             return this.image.sunOrientation;
         },
         // horizontal rotation from north in degrees
-        cameraPan() {
+        cameraAzimuth() {
             return this.image.cameraPan;
         },
-        hasCameraPan() {
-            return this.cameraPan !== undefined;
+        hasCameraAzimuth() {
+            return this.cameraAzimuth !== undefined;
         },
         cameraAngleOfView() {
             return this.transformations?.cameraAngleOfView;

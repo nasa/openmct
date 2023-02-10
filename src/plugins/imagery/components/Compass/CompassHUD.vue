@@ -102,7 +102,7 @@ export default {
             type: Number,
             default: undefined
         },
-        cameraPan: {
+        cameraAzimuth: {
             type: Number,
             required: true
         }
@@ -132,8 +132,8 @@ export default {
         },
         visibleRange() {
             return [
-                rotate(this.cameraPan, -this.cameraAngleOfView / 2),
-                rotate(this.cameraPan, this.cameraAngleOfView / 2)
+                rotate(this.cameraAzimuth, -this.cameraAngleOfView / 2),
+                rotate(this.cameraAzimuth, this.cameraAngleOfView / 2)
             ];
         }
     }

@@ -431,8 +431,9 @@ export default {
                 && this.zoomFactor === 1
                 && this.imagePanned !== true;
             const hasCameraConfigurations = this.focusedImage?.transformations !== undefined;
+            const hasHeading = this.focusedImage?.heading !== undefined;
 
-            return display && hasCameraConfigurations;
+            return display && hasCameraConfigurations && hasHeading;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;

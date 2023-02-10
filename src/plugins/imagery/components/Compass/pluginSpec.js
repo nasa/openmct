@@ -35,7 +35,7 @@ describe("The Compass component", () => {
             roll: 90,
             pitch: 90,
             cameraTilt: 100,
-            cameraPan: 90,
+            cameraAzimuth: 90,
             sunAngle: 30
         };
         let propsData = {

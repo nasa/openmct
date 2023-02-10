@@ -75,7 +75,6 @@
                     :style="sunHeadingStyle"
                 />
 
-                <!-- Camera FOV -->
                 <mask
                     id="mask2"
                     class="c-cr__cam-fov-l-mask"
@@ -117,10 +116,10 @@
                         class="cr-vrover"
                         :style="camAngleAndPositionStyle"
                     >
-                        <!-- Equipment body. Rotates relative to the camera pan value for cams that gimbal. -->
+                        <!-- Equipment body. Rotates relative to the camera pan value for cameras that gimble. -->
                         <path
                             class="cr-vrover__body"
-                            :style="camGimbalAngleStyle"
+                            :style="gimbledCameraPanStyle"
                             x
                             fill-rule="evenodd"
                             clip-rule="evenodd"
@@ -128,6 +127,7 @@
                         />
                     </g>
 
+                    <!-- Camera FOV -->
                     <g
                         class="c-cr__cam-fov"
                     >
@@ -160,7 +160,7 @@
             <!-- NSEW and ticks -->
             <g
                 class="c-cr__nsew"
-                :style="compassRoseStyle"
+                :style="compassDialStyle"
             >
                 <g class="c-cr__ticks-major">
                     <path d="M50 3L43 10H57L50 3Z" />
@@ -270,7 +270,7 @@ export default {
             type: Number,
             default: undefined
         },
-        cameraPan: {
+        cameraAzimuth: {
             type: Number,
             default: undefined
         },
@@ -289,8 +289,14 @@ export default {
         };
     },
     computed: {
-        cameraHeading() {
-            return this.cameraPan ?? this.heading;
+        hasGimble() {
+            return this.cameraAzimuth !== undefined;
+        },
+        // compass ordinal orientation of camera
+        normalizedCameraAzimuth() {
+            return this.hasGimble
+                ? rotate(this.cameraAzimuth)
+                : rotate(this.heading, -this.transformations?.rotation ?? 0);
         },
         cameraAngleOfView() {
             return this.transformations?.cameraAngleOfView;
@@ -303,18 +309,22 @@ export default {
 
             return { transform: `translate(${translateX}%, ${translateY}%) rotate(${rotation}deg) scale(${scale})` };
         },
-        camGimbalAngleStyle() {
-            const rotation = rotate(this.heading);
+        gimbledCameraPanStyle() {
+            if (!this.hasGimble) {
+                return;
+            }
+
+            const gimbledCameraPan = rotate(this.normalizedCameraAzimuth, -this.heading);
 
             return {
-                transform: `rotate(${ rotation }deg)`
+                transform: `rotate(${ -gimbledCameraPan }deg)`
             };
         },
-        compassRoseStyle() {
+        compassDialStyle() {
             return { transform: `rotate(${ this.north }deg)` };
         },
         north() {
-            return this.lockCompass ? rotate(-this.cameraHeading) : 0;
+            return this.lockCompass ? rotate(-this.normalizedCameraAzimuth) : 0;
         },
         cardinalTextRotateN() {
             return { transform: `translateY(-27%) rotate(${ -this.north }deg)` };
@@ -342,7 +352,7 @@ export default {
             };
         },
         cameraHeadingStyle() {
-            const rotation = rotate(this.north, this.cameraHeading);
+            const rotation = rotate(this.north, this.normalizedCameraAzimuth);
 
             return {
                 transform: `rotate(${ rotation }deg)`
