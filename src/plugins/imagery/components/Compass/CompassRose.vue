@@ -259,16 +259,13 @@ import { throttle } from 'lodash';
 
 export default {
     props: {
+        cameraAngleOfView: {
+            type: Number,
+            required: true
+        },
         heading: {
             type: Number,
-            required: true,
-            default() {
-                return 0;
-            }
-        },
-        sunHeading: {
-            type: Number,
-            default: undefined
+            required: true
         },
         cameraAzimuth: {
             type: Number,
@@ -276,6 +273,10 @@ export default {
         },
         transformations: {
             type: Object,
+            required: true
+        },
+        sunHeading: {
+            type: Number,
             default: undefined
         },
         sizedImageDimensions: {
@@ -297,9 +298,6 @@ export default {
             return this.hasGimble
                 ? rotate(this.cameraAzimuth)
                 : rotate(this.heading, -this.transformations?.rotation ?? 0);
-        },
-        cameraAngleOfView() {
-            return this.transformations?.cameraAngleOfView;
         },
         camAngleAndPositionStyle() {
             const translateX = this.transformations?.translateX;

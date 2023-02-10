@@ -430,10 +430,12 @@ export default {
                 && imageHeightAndWidth
                 && this.zoomFactor === 1
                 && this.imagePanned !== true;
-            const hasCameraConfigurations = this.focusedImage?.transformations !== undefined;
             const hasHeading = this.focusedImage?.heading !== undefined;
+            const hasCameraAngleOfView = this.focusedImage?.transformations?.cameraAngleOfView > 0;
 
-            return display && hasCameraConfigurations && hasHeading;
+            return display
+                && hasCameraAngleOfView
+                && hasHeading;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;

@@ -94,17 +94,25 @@ const COMPASS_POINTS = [
 
 export default {
     props: {
-        sunHeading: {
-            type: Number,
-            default: undefined
-        },
         cameraAngleOfView: {
             type: Number,
-            default: undefined
+            required: true
+        },
+        heading: {
+            type: Number,
+            required: true
         },
         cameraAzimuth: {
             type: Number,
+            default: undefined
+        },
+        transformations: {
+            type: Object,
             required: true
+        },
+        sunHeading: {
+            type: Number,
+            default: undefined
         }
     },
     computed: {

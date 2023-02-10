@@ -26,16 +26,19 @@
     :style="`width: 100%; height: 100%`"
 >
     <CompassHUD
-        :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
+        :heading="heading"
         :camera-azimuth="cameraAzimuth"
+        :transformations="transformations"
+        :sun-heading="sunHeading"
     />
     <CompassRose
-        :camera-azimuth="cameraAzimuth"
+        :camera-angle-of-view="cameraAngleOfView"
         :heading="heading"
-        :sized-image-dimensions="sizedImageDimensions"
-        :sun-heading="sunHeading"
+        :camera-azimuth="cameraAzimuth"
         :transformations="transformations"
+        :sun-heading="sunHeading"
+        :sized-image-dimensions="sizedImageDimensions"
     />
 </div>
 </template>
@@ -75,11 +78,8 @@ export default {
         cameraAzimuth() {
             return this.image.cameraPan;
         },
-        hasCameraAzimuth() {
-            return this.cameraAzimuth !== undefined;
-        },
         cameraAngleOfView() {
-            return this.transformations?.cameraAngleOfView;
+            return this.transformations.cameraAngleOfView;
         },
         transformations() {
             return this.image.transformations;
