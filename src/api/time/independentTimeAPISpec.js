@@ -93,18 +93,43 @@ describe("The Independent Time API", function () {
     });
 
     it("follows a parent time context given the objectPath", () => {
-        let timeContext = api.getContextForView([{
+        api.getContextForView([{
             identifier: {
                 namespace: '',
                 key: 'blah'
             }
-        }, {
+        }]);
+        let destroyTimeContext = api.addIndependentContext('blah', independentBounds);
+        let timeContext = api.getContextForView([{
             identifier: {
                 namespace: '',
                 key: domainObjectKey
             }
+        }, {
+            identifier: {
+                namespace: '',
+                key: 'blah'
+            }
         }]);
-        let destroyTimeContext = api.addIndependentContext('blah', independentBounds);
+        expect(timeContext.bounds()).toEqual(independentBounds);
+        destroyTimeContext();
+        expect(timeContext.bounds()).toEqual(bounds);
+    });
+
+    it("uses an object's independent time context if the parent doesn't have one", () => {
+        let timeContext = api.getContextForView([{
+            identifier: {
+                namespace: '',
+                key: domainObjectKey
+            }
+        }, {
+            identifier: {
+                namespace: '',
+                key: 'blah'
+            }
+        }]);
+        expect(timeContext.bounds()).toEqual(bounds);
+        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         expect(timeContext.bounds()).toEqual(independentBounds);
         destroyTimeContext();
         expect(timeContext.bounds()).toEqual(bounds);

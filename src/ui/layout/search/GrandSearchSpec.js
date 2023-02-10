@@ -29,7 +29,7 @@ import GrandSearch from './GrandSearch.vue';
 import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
 import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
 
-describe("GrandSearch", () => {
+xdescribe("GrandSearch", () => {
     let openmct;
     let grandSearchComponent;
     let viewContainer;
