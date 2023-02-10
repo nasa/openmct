@@ -75,7 +75,7 @@ export default {
         normalizedCameraAzimuth() {
             return this.hasGimble
                 ? rotate(this.cameraAzimuth)
-                : rotate(this.heading, -(this.transformations.rotation || 0));
+                : rotate(this.heading, -this.transformations.rotation || 0);
         },
         // horizontal rotation from north in degrees
         heading() {
