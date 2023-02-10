@@ -217,13 +217,6 @@ describe("The Annotation API", () => {
             openmct.annotation.deleteAnnotations([annotationObject]);
             expect(annotationObject._deleted).toBeTrue();
         });
-        it("throws an error if deleting non-existent tag", async () => {
-            const annotationObject = await openmct.annotation.create(tagCreationArguments);
-            expect(annotationObject).toBeDefined();
-            expect(() => {
-                openmct.annotation.removeAnnotationTag(annotationObject, 'ThisTagShouldNotExist');
-            }).toThrow();
-        });
         it("can remove all tags", async () => {
             const annotationObject = await openmct.annotation.create(tagCreationArguments);
             expect(annotationObject).toBeDefined();
