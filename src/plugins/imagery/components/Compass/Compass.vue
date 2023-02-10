@@ -30,6 +30,8 @@
         :heading="heading"
         :camera-azimuth="cameraAzimuth"
         :transformations="transformations"
+        :has-gimble="hasGimble"
+        :normalized-camera-azimuth="normalizedCameraAzimuth"
         :sun-heading="sunHeading"
     />
     <CompassRose
@@ -37,6 +39,8 @@
         :heading="heading"
         :camera-azimuth="cameraAzimuth"
         :transformations="transformations"
+        :has-gimble="hasGimble"
+        :normalized-camera-azimuth="normalizedCameraAzimuth"
         :sun-heading="sunHeading"
         :sized-image-dimensions="sizedImageDimensions"
     />
@@ -46,6 +50,7 @@
 <script>
 import CompassHUD from './CompassHUD.vue';
 import CompassRose from './CompassRose.vue';
+import { rotate } from './utils';
 
 export default {
     components: {
@@ -63,6 +68,15 @@ export default {
         }
     },
     computed: {
+        hasGimble() {
+            return this.cameraAzimuth !== undefined;
+        },
+        // compass ordinal orientation of camera
+        normalizedCameraAzimuth() {
+            return this.hasGimble
+                ? rotate(this.cameraAzimuth)
+                : rotate(this.heading, -this.transformations?.rotation ?? 0);
+        },
         // horizontal rotation from north in degrees
         heading() {
             return this.image.heading;

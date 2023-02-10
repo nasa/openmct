@@ -110,6 +110,14 @@ export default {
             type: Object,
             required: true
         },
+        hasGimble: {
+            type: Boolean,
+            required: true
+        },
+        normalizedCameraAzimuth: {
+            type: Number,
+            required: true
+        },
         sunHeading: {
             type: Number,
             default: undefined
@@ -138,10 +146,13 @@ export default {
                 left: `${ percentage * 100 }%`
             };
         },
+        cameraRotation() {
+            return this.transformations?.rotation;
+        },
         visibleRange() {
             return [
-                rotate(this.cameraAzimuth, -this.cameraAngleOfView / 2),
-                rotate(this.cameraAzimuth, this.cameraAngleOfView / 2)
+                rotate(this.normalizedCameraAzimuth, -this.cameraAngleOfView / 2),
+                rotate(this.normalizedCameraAzimuth, this.cameraAngleOfView / 2)
             ];
         }
     }

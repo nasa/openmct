@@ -275,6 +275,14 @@ export default {
             type: Object,
             required: true
         },
+        hasGimble: {
+            type: Boolean,
+            required: true
+        },
+        normalizedCameraAzimuth: {
+            type: Number,
+            required: true
+        },
         sunHeading: {
             type: Number,
             default: undefined
@@ -290,15 +298,6 @@ export default {
         };
     },
     computed: {
-        hasGimble() {
-            return this.cameraAzimuth !== undefined;
-        },
-        // compass ordinal orientation of camera
-        normalizedCameraAzimuth() {
-            return this.hasGimble
-                ? rotate(this.cameraAzimuth)
-                : rotate(this.heading, -this.transformations?.rotation ?? 0);
-        },
         camAngleAndPositionStyle() {
             const translateX = this.transformations?.translateX;
             const translateY = this.transformations?.translateY;
