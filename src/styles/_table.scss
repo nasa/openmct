@@ -194,7 +194,15 @@ div.c-table {
         width: 33%; // Needed to prevent size jumping as values dynamically update
     }
 
+    tbody tr {
+        &:hover {
+            background: $colorItemTreeHoverBg;
+        }
+    }
+
     td {
+        user-select: none; // Table supports context-click to display Actions menu, don't allow text selection.
+
         &.is-stale {
             @include isStaleElement();
         }
