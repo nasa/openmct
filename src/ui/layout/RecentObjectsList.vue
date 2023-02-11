@@ -191,6 +191,20 @@ export default {
         shouldTrackCompositionFor(domainObject, navigationPath) {
             return this.compositionCollections[navigationPath] === undefined
                 && this.openmct.composition.supportsComposition(domainObject);
+        },
+        /**
+         * Clears the Recent Objects list from localStorage.
+         */
+        clearRecentObjects() {
+            localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
+        },
+        /**
+         * Clears the Recent Objects list from localStorage and updates the recents list.
+         * This method is called when the user clicks the "Clear recent objects list" button.
+         */
+        handleClearAndUpdateRecentObjects() {
+            this.clearRecentObjects();
+            this.getSavedRecentItems();
         }
     }
 };
