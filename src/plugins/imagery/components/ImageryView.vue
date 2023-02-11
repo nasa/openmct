@@ -94,7 +94,6 @@
                 <Compass
                     v-if="shouldDisplayCompass"
                     :image="focusedImage"
-                    :natural-aspect-ratio="focusedImageNaturalAspectRatio"
                     :sized-image-dimensions="sizedImageDimensions"
                 />
             </div>
