@@ -584,10 +584,34 @@ export default {
             },
             deep: true
         },
-        focusedImageIndex() {
-            this.trackDuration();
-            this.resetAgeCSS();
-            this.getImageNaturalDimensions();
+        focusedImage: {
+            handler(newImage, oldImage) {
+                const newTime = newImage?.time;
+                const oldTime = oldImage?.time;
+                const newUrl = newImage?.url;
+                const oldUrl = oldImage?.url;
+
+                // Skip if it's all falsy
+                if (!newTime && !oldTime && !newUrl && !oldUrl) {
+                    return;
+                }
+
+                // Skip if it's the same image
+                if (newTime === oldTime && newUrl === oldUrl) {
+                    return;
+                }
+
+                // Update image duration and reset age CSS
+                this.trackDuration();
+                this.resetAgeCSS();
+
+                // Reset image dimensions and calculate new dimensions
+                // on new image load
+                this.getImageNaturalDimensions();
+
+                // Get the related telemetry for the new image
+                this.updateRelatedTelemetryForFocusedImage();
+            }
         },
         bounds() {
             this.scrollHandler();
@@ -962,7 +986,6 @@ export default {
             }
 
             this.focusedImageIndex = index;
-            this.updateRelatedTelemetryForFocusedImage();
         },
         trackDuration() {
             if (this.canTrackDuration) {
