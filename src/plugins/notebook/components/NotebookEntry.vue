@@ -235,7 +235,8 @@ export default {
         return {
             editMode: false,
             canEdit: true,
-            enableEmbedsWrapperScroll: false
+            enableEmbedsWrapperScroll: false,
+            urlWhitelist: null
         };
     },
     computed: {
