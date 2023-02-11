@@ -191,6 +191,16 @@ test.describe('Recent Objects', () => {
         expect(await clockBreadcrumbs.count()).toBe(2);
         expect(await clockBreadcrumbs.nth(0).innerText()).not.toEqual(await clockBreadcrumbs.nth(1).innerText());
     });
+    test("Clears the Recent Objects list when the 'Clear Recent Objects' button is clicked", async ({ page }) => {
+        // Assert that the list initially contains 3 objects (clock, folder, my items)
+        expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
+
+        // Click the aria-label="Clear Recent Objects list" button
+        await page.getByRole('button', { name: 'Clear Recent Objects list' }).click();
+
+        // Assert that the list is empty
+        expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
+    });
     test("Enforces a limit of 20 recent objects", async ({ page }) => {
         // Creating 21 objects takes a while, so increase the timeout
         test.slow();
