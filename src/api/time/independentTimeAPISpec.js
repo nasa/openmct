@@ -93,14 +93,14 @@ describe("The Independent Time API", function () {
     });
 
     it("follows a parent time context given the objectPath", () => {
-        let timeContext = api.getContextForView([{
+        api.getContextForView([{
             identifier: {
                 namespace: '',
                 key: 'blah'
             }
         }]);
         let destroyTimeContext = api.addIndependentContext('blah', independentBounds);
-        timeContext = api.getContextForView([{
+        let timeContext = api.getContextForView([{
             identifier: {
                 namespace: '',
                 key: domainObjectKey
