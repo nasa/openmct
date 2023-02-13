@@ -54,6 +54,7 @@
     <div class="c-recentobjects-listitem__target-button">
         <button
             class="c-icon-button icon-target"
+            :aria-label="`Open and scroll to ${domainObject.name}`"
             @click="openAndScrollTo(navigationPath)"
         ></button>
     </div>

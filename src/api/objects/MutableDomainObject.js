@@ -75,7 +75,7 @@ class MutableDomainObject {
         return eventOff;
     }
     $set(path, value) {
-        const oldModel = structuredClone(this);
+        const oldModel = JSON.parse(JSON.stringify(this));
         const oldValue = _.get(oldModel, path);
         MutableDomainObject.mutateObject(this, path, value);
 
@@ -126,7 +126,7 @@ class MutableDomainObject {
         Object.assign(mutable, object);
 
         mutable.$observe('$_synchronize_model', (updatedObject) => {
-            let clone = structuredClone(updatedObject);
+            let clone = JSON.parse(JSON.stringify(updatedObject));
             utils.refresh(mutable, clone);
         });
 

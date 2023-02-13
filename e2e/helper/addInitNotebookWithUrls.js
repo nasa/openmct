@@ -19,27 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import availableTags from './tags.json';
 
-/**
-@typedef {{
-    namespaceToSaveAnnotations: string
-}} TagsPluginOptions
-*/
+// This should be used to install the re-instal default Notebook plugin with a simple url whitelist.
+// e.g.
+// await page.addInitScript({ path: path.join(__dirname, 'addInitNotebookWithUrls.js') });
+const NOTEBOOK_NAME = 'Notebook';
+const URL_WHITELIST = ['google.com'];
 
-/**
- * @typedef {TagsPluginOptions} options
- * @returns {function} The plugin install function
- */
-export default function exampleTagsPlugin(options) {
-    return function install(openmct) {
-        if (options?.namespaceToSaveAnnotations) {
-            openmct.annotation.setNamespaceToSaveAnnotations(options?.namespaceToSaveAnnotations);
-        }
-
-        Object.keys(availableTags.tags).forEach(tagKey => {
-            const tagDefinition = availableTags.tags[tagKey];
-            openmct.annotation.defineTag(tagKey, tagDefinition);
-        });
-    };
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const openmct = window.openmct;
+    openmct.install(openmct.plugins.Notebook(NOTEBOOK_NAME, URL_WHITELIST));
+});
