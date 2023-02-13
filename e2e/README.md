@@ -92,7 +92,9 @@ Read more about [Playwright Snapshots](https://playwright.dev/docs/test-snapshot
 - Snapshots need to be executed within the official Playwright container to ensure we're using the exact rendering platform in CI and locally. To do a valid comparison locally:
 
 ```sh
-docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:[GET THIS VERSION FROM OUR CIRCLECI CONFIG FILE]-focal /bin/bash
+// Replace {X.X.X} with the current Playwright version 
+// from our package.json or circleCI configuration file
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
 npm install
 npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot
 ```
@@ -104,17 +106,20 @@ When the `@snapshot` tests fail, they will need to be evaluated to determine if 
 To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
 
 MacOS
+
 ```
 npm run test:e2e:updatesnapshots
 ```
 
 Linux/CI
+
 ```sh
 // Replace {X.X.X} with the current Playwright version 
 // from our package.json or circleCI configuration file
 docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
 npm install
 npm run test:e2e:updatesnapshots
+```
 
 ## Performance Testing
 

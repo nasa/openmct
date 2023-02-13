@@ -75,7 +75,7 @@
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
                     aria-label="Notebook Entry Input"
-                    tabindex="0"
+                    tabindex="-1"
                     :contenteditable="canEdit"
                     v-bind.prop="formattedText"
                     @mouseover="checkEditability($event)"
@@ -235,7 +235,8 @@ export default {
         return {
             editMode: false,
             canEdit: true,
-            enableEmbedsWrapperScroll: false
+            enableEmbedsWrapperScroll: false,
+            urlWhitelist: null
         };
     },
     computed: {
