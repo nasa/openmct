@@ -93,21 +93,82 @@ describe("The Independent Time API", function () {
     });
 
     it("follows a parent time context given the objectPath", () => {
-        let timeContext = api.getContextForView([{
+        api.getContextForView([{
             identifier: {
                 namespace: '',
                 key: 'blah'
             }
+        }]);
+        let destroyTimeContext = api.addIndependentContext('blah', independentBounds);
+        let timeContext = api.getContextForView([{
+            identifier: {
+                namespace: '',
+                key: domainObjectKey
+            }
         }, {
+            identifier: {
+                namespace: '',
+                key: 'blah'
+            }
+        }]);
+        expect(timeContext.bounds()).toEqual(independentBounds);
+        destroyTimeContext();
+        expect(timeContext.bounds()).toEqual(bounds);
+    });
+
+    it("uses an object's independent time context if the parent doesn't have one", () => {
+        const domainObjectKey2 = `${domainObjectKey}-2`;
+        const domainObjectKey3 = `${domainObjectKey}-3`;
+        let timeContext = api.getContextForView([{
             identifier: {
                 namespace: '',
                 key: domainObjectKey
             }
         }]);
-        let destroyTimeContext = api.addIndependentContext('blah', independentBounds);
+        let timeContext2 = api.getContextForView([{
+            identifier: {
+                namespace: '',
+                key: domainObjectKey2
+            }
+        }]);
+        let timeContext3 = api.getContextForView([{
+            identifier: {
+                namespace: '',
+                key: domainObjectKey3
+            }
+        }]);
+        // all bounds follow global time context
+        expect(timeContext.bounds()).toEqual(bounds);
+        expect(timeContext2.bounds()).toEqual(bounds);
+        expect(timeContext3.bounds()).toEqual(bounds);
+        // only first item has own context
+        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         expect(timeContext.bounds()).toEqual(independentBounds);
+        expect(timeContext2.bounds()).toEqual(bounds);
+        expect(timeContext3.bounds()).toEqual(bounds);
+        // first and second item have own context
+        let destroyTimeContext2 = api.addIndependentContext(domainObjectKey2, independentBounds);
+        expect(timeContext.bounds()).toEqual(independentBounds);
+        expect(timeContext2.bounds()).toEqual(independentBounds);
+        expect(timeContext3.bounds()).toEqual(bounds);
+        // all items have own time context
+        let destroyTimeContext3 = api.addIndependentContext(domainObjectKey3, independentBounds);
+        expect(timeContext.bounds()).toEqual(independentBounds);
+        expect(timeContext2.bounds()).toEqual(independentBounds);
+        expect(timeContext3.bounds()).toEqual(independentBounds);
+        //remove own contexts one at a time - should revert to global time context
         destroyTimeContext();
         expect(timeContext.bounds()).toEqual(bounds);
+        expect(timeContext2.bounds()).toEqual(independentBounds);
+        expect(timeContext3.bounds()).toEqual(independentBounds);
+        destroyTimeContext2();
+        expect(timeContext.bounds()).toEqual(bounds);
+        expect(timeContext2.bounds()).toEqual(bounds);
+        expect(timeContext3.bounds()).toEqual(independentBounds);
+        destroyTimeContext3();
+        expect(timeContext.bounds()).toEqual(bounds);
+        expect(timeContext2.bounds()).toEqual(bounds);
+        expect(timeContext3.bounds()).toEqual(bounds);
     });
 
     it("Allows setting of valid bounds", function () {
