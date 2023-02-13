@@ -43,7 +43,7 @@ class IndependentTimeContext extends TimeContext {
         this.refreshContext();
 
         this.globalTimeContext.on('refreshContext', this.refreshContext);
-        this.globalTimeContext.on('removeContext', this.removeIndependentContext);
+        this.globalTimeContext.on('removeOwnContext', this.removeIndependentContext);
     }
 
     bounds(newBounds) {
@@ -263,7 +263,7 @@ class IndependentTimeContext extends TimeContext {
             // Emit bounds so that views that are changing context get the upstream bounds
             this.emit('bounds', this.bounds());
             // now that the view's context is set, tell others to check theirs in case they were following this view's context.
-            this.emit('refreshContext', viewKey);
+            this.globalTimeContext.emit('refreshContext', viewKey);
         }
     }
 }
