@@ -149,7 +149,7 @@ class TimeAPI extends GlobalTimeContext {
 
         return () => {
             //follow any upstream time context
-            this.emit('refreshContext');
+            this.emit('removeOwnContext', key);
         };
     }
 
