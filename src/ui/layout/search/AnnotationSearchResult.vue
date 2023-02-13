@@ -67,6 +67,7 @@
 
 <script>
 import ObjectPath from '../../components/ObjectPath.vue';
+import PreviewAction from '../../preview/PreviewAction';
 import { identifierToString } from '../../../../src/tools/url';
 
 export default {
@@ -125,17 +126,35 @@ export default {
             return this.result.fullTagModels[0].foregroundColor;
         }
     },
+    mounted() {
+        this.previewAction = new PreviewAction(this.openmct);
+        this.previewAction.on('isVisible', this.togglePreviewState);
+    },
+    destroyed() {
+        this.previewAction.off('isVisible', this.togglePreviewState);
+    },
     methods: {
-        clickedResult() {
+        clickedResult(event) {
             const objectPath = this.domainObject.originalPath;
-            let resultUrl = identifierToString(this.openmct, objectPath);
+            if (this.openmct.editor.isEditing()) {
+                event.preventDefault();
+                this.preview(objectPath);
+            } else {
+                let resultUrl = identifierToString(this.openmct, objectPath);
 
-            this.openmct.router.navigate(resultUrl);
+                this.openmct.router.navigate(resultUrl);
+            }
+
             if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
                 //wait a beat for the navigation
                 setTimeout(() => {
                     this.clickedPlotAnnotation();
                 }, 100);
+            }
+        },
+        preview(objectPath) {
+            if (this.previewAction.appliesTo(objectPath)) {
+                this.previewAction.invoke(objectPath);
             }
         },
         clickedPlotAnnotation() {
