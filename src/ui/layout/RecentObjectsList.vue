@@ -196,7 +196,7 @@ export default {
          * Clears the Recent Objects list from localStorage.
          */
         clearRecentObjects() {
-            localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
+            this.recents = [];
         },
         /**
          * Clears the Recent Objects list from localStorage and updates the recents list.
