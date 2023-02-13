@@ -200,7 +200,7 @@ export default {
         },
         /**
          * Clears the Recent Objects list from localStorage and updates the recents list.
-         * This method is called when the user clicks the "Clear recent objects list" button.
+         * This method is called when the user clicks the "Clear Recently Viewed" button.
          */
         handleClearAndUpdateRecentObjects() {
             this.clearRecentObjects();

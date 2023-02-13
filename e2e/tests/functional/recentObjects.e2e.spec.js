@@ -195,8 +195,8 @@ test.describe('Recent Objects', () => {
         // Assert that the list initially contains 3 objects (clock, folder, my items)
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
 
-        // Click the aria-label="Clear Recent Objects list" button
-        await page.getByRole('button', { name: 'Clear Recent Objects list' }).click();
+        // Click the aria-label="Clear Recently Viewed" button
+        await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
 
         // Assert that the list is empty
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
