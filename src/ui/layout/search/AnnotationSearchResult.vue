@@ -140,7 +140,7 @@ export default {
                 event.preventDefault();
                 this.preview(objectPath);
             } else {
-                let resultUrl = identifierToString(this.openmct, objectPath);
+                const resultUrl = identifierToString(this.openmct, objectPath);
 
                 this.openmct.router.navigate(resultUrl);
             }
