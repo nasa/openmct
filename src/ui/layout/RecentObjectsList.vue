@@ -193,18 +193,10 @@ export default {
                 && this.openmct.composition.supportsComposition(domainObject);
         },
         /**
-         * Clears the Recent Objects list from localStorage.
+         * Clears the Recent Objects list.
          */
         clearRecentObjects() {
             this.recents = [];
-        },
-        /**
-         * Clears the Recent Objects list from localStorage and updates the recents list.
-         * This method is called when the user clicks the "Clear Recently Viewed" button.
-         */
-        handleClearAndUpdateRecentObjects() {
-            this.clearRecentObjects();
-            this.getSavedRecentItems();
         }
     }
 };

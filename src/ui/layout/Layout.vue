@@ -102,7 +102,7 @@
                         class="c-icon-button l-shell__reset-tree-button icon-clear-data"
                         aria-label="Clear Recently Viewed"
                         title="Clear Recently Viewed"
-                        @click="handleClearAndUpdateRecentObjects"
+                        @click="handleClearRecentObjects"
                     >
                     </button>
                 </pane>
@@ -288,8 +288,8 @@ export default {
         handleTreeReset() {
             this.triggerReset = !this.triggerReset;
         },
-        handleClearAndUpdateRecentObjects() {
-            this.$refs.recentObjectsList.handleClearAndUpdateRecentObjects();
+        handleClearRecentObjects() {
+            this.$refs.recentObjectsList.clearRecentObjects();
         },
         onStartResizing() {
             this.isResizing = true;
