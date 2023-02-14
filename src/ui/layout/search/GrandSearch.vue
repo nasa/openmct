@@ -47,7 +47,7 @@
 import search from '../../components/search.vue';
 import SearchResultsDropDown from './SearchResultsDropDown.vue';
 
-const SEARCH_DEBOUNCE_TIME = 300;
+const SEARCH_DEBOUNCE_TIME = 200;
 
 export default {
     name: 'GrandSearch',

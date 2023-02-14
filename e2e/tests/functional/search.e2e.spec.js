@@ -139,6 +139,45 @@ test.describe("Search Tests @unstable", () => {
         await expect(searchResults).toHaveText(folderName);
     });
 
+    test('Search results are debounced @couchdb', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6179'
+        });
+        //Go to baseURL
+        await page.goto("./", { waitUntil: "networkidle" });
+
+        await createObjectsForSearch(page);
+
+        let networkRequests = [];
+        page.on('request', (request) => {
+            const searchRequest = request.url().endsWith('_find');
+            const fetchRequest = request.resourceType() === 'fetch';
+            if (searchRequest && fetchRequest) {
+                networkRequests.push(request);
+            }
+        });
+
+        // Full search for object
+        await page.type("input[type=search]", 'Clock', { delay: 100 });
+
+        // wait for debounced search requests to accumulate and send
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Wait for search to complete
+        await page.waitForLoadState('networkidle');
+
+        // Network requests for the composite telemetry with multiple items should be:
+        // 1.  batched request for latest telemetry using the bulk API
+        expect(networkRequests.length).toBe(1);
+
+        // Get the search results
+        const searchResults = page.locator(searchResultSelector);
+
+        // Verify that one result is found
+        expect(await searchResults.count()).toBe(25);
+    });
+
     test("Validate multiple objects in search results return partial matches", async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
