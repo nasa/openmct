@@ -52,6 +52,41 @@ const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
 const ANNOTATION_SIZE = MARKER_SIZE * 3.0;
 const CLEARANCE = 15;
+// These attributes are changed in the plot model, but we don't need to react to the changes.
+const NO_HANDLING_NEEDED_ATTRIBUTES = {
+    label: 'label',
+    values: 'values',
+    format: 'format',
+    color: 'color',
+    name: 'name',
+    unit: 'unit'
+};
+// These attributes in turn set one of HANDLED_ATTRIBUTES, so we don't need specific listeners for them - this prevents excessive redraws.
+const IMPLICIT_HANDLED_ATTRIBUTES = {
+    range: 'range',
+    //series stats update y axis stats
+    stats: 'stats',
+    frozen: 'frozen',
+    autoscale: 'autoscale',
+    autoscalePadding: 'autoscalePadding',
+    logMode: 'logMode',
+    yKey: 'yKey'
+};
+// Attribute changes that we are specifically handling with listeners
+const HANDLED_ATTRIBUTES = {
+    //X and Y Axis attributes
+    key: 'key',
+    displayRange: 'displayRange',
+    //series attributes
+    xKey: 'xKey',
+    interpolate: 'interpolate',
+    markers: 'markers',
+    markerShape: 'markerShape',
+    markerSize: 'markerSize',
+    alarmMarkers: 'alarmMarkers',
+    limitLines: 'limitLines',
+    yAxisId: 'yAxisId'
+};
 
 export default {
     inject: ['openmct', 'domainObject', 'path'],
@@ -138,14 +173,16 @@ export default {
         this.offset = {
             [yAxisId]: {}
         };
-        this.listenTo(this.config.yAxis, 'change:key', this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
-        this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
+        this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
+        this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.key}`, this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
+        this.listenTo(this.config.yAxis, 'change', this.redrawIfNotAlreadyHandled);
         if (this.config.additionalYAxes.length) {
             this.config.additionalYAxes.forEach(yAxis => {
                 const id = yAxis.get('id');
                 this.offset[id] = {};
-                this.listenTo(yAxis, 'change', this.updateLimitsAndDraw);
-                this.listenTo(yAxis, 'change:key', this.resetYOffsetAndSeriesDataForYAxis.bind(this, id), this);
+                this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
+                this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.key}`, this.resetYOffsetAndSeriesDataForYAxis.bind(this, id), this);
+                this.listenTo(yAxis, 'change', this.redrawIfNotAlreadyHandled);
             });
         }
 
@@ -162,7 +199,8 @@ export default {
         this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
 
-        this.listenTo(this.config.xAxis, 'change', this.updateLimitsAndDraw);
+        this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
+        this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
         this.config.series.forEach(this.onSeriesAdd, this);
         this.$emit('chartLoaded');
     },
@@ -191,14 +229,15 @@ export default {
             this.changeLimitLines(mode, o, series);
         },
         onSeriesAdd(series) {
-            this.listenTo(series, 'change:xKey', this.reDraw, this);
-            this.listenTo(series, 'change:interpolate', this.changeInterpolate, this);
-            this.listenTo(series, 'change:markers', this.changeMarkers, this);
-            this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
-            this.listenTo(series, 'change:limitLines', this.changeLimitLines, this);
-            this.listenTo(series, 'change:yAxisId', this.resetAxisAndRedraw, this);
-            // TODO: Which other changes is the listener below reacting to?
-            this.listenTo(series, 'change', this.scheduleDraw);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.xKey}`, this.reDraw, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.interpolate}`, this.changeInterpolate, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.markers}`, this.changeMarkers, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.alarmMarkers}`, this.changeAlarmMarkers, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.limitLines}`, this.changeLimitLines, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.yAxisId}`, this.resetAxisAndRedraw, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.markerShape}`, this.scheduleDraw, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.markerSize}`, this.scheduleDraw, this);
+            this.listenTo(series, 'change', this.redrawIfNotAlreadyHandled);
             this.listenTo(series, 'add', this.onAddPoint);
             this.makeChartElement(series);
             this.makeLimitLines(series);
@@ -530,6 +569,21 @@ export default {
             }
 
             return true;
+        },
+        redrawIfNotAlreadyHandled(attribute, value, oldValue) {
+            if (Object.keys(HANDLED_ATTRIBUTES).includes(attribute) && oldValue) {
+                return;
+            }
+
+            if (Object.keys(IMPLICIT_HANDLED_ATTRIBUTES).includes(attribute) && oldValue) {
+                return;
+            }
+
+            if (Object.keys(NO_HANDLING_NEEDED_ATTRIBUTES).includes(attribute) && oldValue) {
+                return;
+            }
+
+            this.updateLimitsAndDraw();
         },
         updateLimitsAndDraw() {
             this.drawLimitLines();

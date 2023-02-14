@@ -42,7 +42,7 @@
         ></div>
     </div>
     <div
-        v-if="!hideOptions"
+        v-if="!hideOptions && filteredOptions.length > 0"
         class="c-menu c-input--autocomplete__options"
         aria-label="Autocomplete Options"
         @blur="hideOptions = true"
@@ -230,10 +230,10 @@ export default {
             this.showFilteredOptions = false;
             this.autocompleteInputElement.select();
 
-            if (this.hideOptions) {
-                this.showOptions();
-            } else {
+            if (!this.hideOptions && this.filteredOptions.length > 0) {
                 this.hideOptions = true;
+            } else {
+                this.showOptions();
             }
 
         },
@@ -242,6 +242,7 @@ export default {
             // dropdown is visible, this will collapse the dropdown.
             const clickedInsideAutocomplete = this.autocompleteInputAndArrow.contains(event.target);
             if (!clickedInsideAutocomplete && !this.hideOptions) {
+                this.$emit('autoCompleteBlur');
                 this.hideOptions = true;
             }
         },

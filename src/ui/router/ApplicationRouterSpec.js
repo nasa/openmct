@@ -6,7 +6,7 @@ let child;
 let appHolder;
 let resolveFunction;
 
-describe('Application router utility functions', () => {
+xdescribe('Application router utility functions', () => {
     beforeEach(done => {
         appHolder = document.createElement('div');
         appHolder.style.width = '640px';

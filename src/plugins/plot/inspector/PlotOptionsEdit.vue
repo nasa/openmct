@@ -27,6 +27,7 @@
     <ul
         v-if="!isStackedPlotObject"
         class="c-tree"
+        aria-label="Plot Series Properties"
     >
         <h2 title="Display properties for this object">Plot Series</h2>
         <li
@@ -53,7 +54,6 @@
     >
         <h2 title="Legend options">Legend</h2>
         <legend-form
-            v-if="plotSeries.length"
             class="grid-properties"
             :legend="config.legend"
         />
@@ -97,20 +97,23 @@ export default {
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
-        this.yAxes = [{
-            id: this.config.yAxis.id,
-            seriesCount: 0
-        }];
-        if (this.config.additionalYAxes) {
-            this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
-                return {
-                    id: yAxis.id,
-                    seriesCount: 0
-                };
-            }));
+        if (!this.isStackedPlotObject) {
+            this.yAxes = [{
+                id: this.config.yAxis.id,
+                seriesCount: 0
+            }];
+            if (this.config.additionalYAxes) {
+                this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
+                    return {
+                        id: yAxis.id,
+                        seriesCount: 0
+                    };
+                }));
+            }
+
+            this.registerListeners();
         }
 
-        this.registerListeners();
         this.loaded = true;
     },
     beforeDestroy() {
@@ -150,23 +153,50 @@ export default {
 
         addSeries(series, index) {
             const yAxisId = series.get('yAxisId');
-            this.updateAxisUsageCount(yAxisId, 1);
+            this.incrementAxisUsageCount(yAxisId);
             this.$set(this.plotSeries, index, series);
             this.setYAxisLabel(yAxisId);
+
+            if (this.isStackedPlotObject) {
+                return;
+            }
+
+            // If the series moves to a different yAxis, update the seriesCounts for both yAxes
+            // so we can display the configuration options for all used yAxes
+            this.listenTo(series, 'change:yAxisId', (newYAxisId, oldYAxisId) => {
+                this.incrementAxisUsageCount(newYAxisId);
+                this.decrementAxisUsageCount(oldYAxisId);
+            }, this);
         },
 
         removeSeries(series, index) {
             const yAxisId = series.get('yAxisId');
-            this.updateAxisUsageCount(yAxisId, -1);
+            this.decrementAxisUsageCount(yAxisId);
             this.plotSeries.splice(index, 1);
             this.setYAxisLabel(yAxisId);
+
+            if (this.isStackedPlotObject) {
+                return;
+            }
+
+            this.stopListening(series, 'change:yAxisId');
+        },
+
+        incrementAxisUsageCount(yAxisId) {
+            this.updateAxisUsageCount(yAxisId, 1);
+        },
+
+        decrementAxisUsageCount(yAxisId) {
+            this.updateAxisUsageCount(yAxisId, -1);
         },
 
         updateAxisUsageCount(yAxisId, updateCount) {
             const foundYAxis = this.findYAxisForId(yAxisId);
-            if (foundYAxis) {
-                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
+            if (!foundYAxis) {
+                throw new Error(`yAxis with id ${yAxisId} not found`);
             }
+
+            foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
         },
 
         updateSeriesConfigForObject(config) {
