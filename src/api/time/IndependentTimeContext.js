@@ -32,14 +32,18 @@ class IndependentTimeContext extends TimeContext {
         this.openmct = openmct;
         this.unlisteners = [];
         this.globalTimeContext = globalTimeContext;
-        this.upstreamTimeContext = undefined;
+        // We always start with the global time context.
+        // This upstream context will be undefined when an independent time context is added later.
+        this.upstreamTimeContext = this.globalTimeContext;
         this.objectPath = objectPath;
         this.refreshContext = this.refreshContext.bind(this);
         this.resetContext = this.resetContext.bind(this);
+        this.removeIndependentContext = this.removeIndependentContext.bind(this);
 
         this.refreshContext();
 
         this.globalTimeContext.on('refreshContext', this.refreshContext);
+        this.globalTimeContext.on('removeOwnContext', this.removeIndependentContext);
     }
 
     bounds(newBounds) {
@@ -202,10 +206,16 @@ class IndependentTimeContext extends TimeContext {
     }
 
     getUpstreamContext() {
+        // If a view has an independent context, don't return an upstream context
+        // Be aware that when a new independent time context is created, we assign the global context as default
+        if (this.hasOwnContext()) {
+            return undefined;
+        }
+
         let timeContext = this.globalTimeContext;
         this.objectPath.some((item, index) => {
             const key = this.openmct.objects.makeKeyString(item.identifier);
-            //first index is the view object itself
+            // we're only interested in parents, not self, so index > 0
             const itemContext = this.globalTimeContext.independentContexts.get(key);
             if (index > 0 && itemContext && itemContext.hasOwnContext()) {
                 //upstream time context
@@ -218,6 +228,43 @@ class IndependentTimeContext extends TimeContext {
         });
 
         return timeContext;
+    }
+
+    /**
+     * Set the time context of a view to follow any upstream time contexts as necessary (defaulting to the global context)
+     * This needs to be separate from refreshContext
+     */
+    removeIndependentContext(viewKey) {
+        const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
+        if (viewKey && key === viewKey) {
+            //this is necessary as the upstream context gets reassigned after this
+            this.stopFollowingTimeContext();
+
+            let timeContext = this.globalTimeContext;
+
+            this.objectPath.some((item, index) => {
+                const objectKey = this.openmct.objects.makeKeyString(item.identifier);
+                // we're only interested in any parents, not self, so index > 0
+                const itemContext = this.globalTimeContext.independentContexts.get(objectKey);
+                if (index > 0 && itemContext && itemContext.hasOwnContext()) {
+                    //upstream time context
+                    timeContext = itemContext;
+
+                    return true;
+                }
+
+                return false;
+            });
+
+            this.upstreamTimeContext = timeContext;
+
+            this.followTimeContext();
+
+            // Emit bounds so that views that are changing context get the upstream bounds
+            this.emit('bounds', this.bounds());
+            // now that the view's context is set, tell others to check theirs in case they were following this view's context.
+            this.globalTimeContext.emit('refreshContext', viewKey);
+        }
     }
 }
 
