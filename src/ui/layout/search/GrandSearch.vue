@@ -61,13 +61,14 @@ export default {
     data() {
         return {
             searchValue: '',
+            debouncedSearchTimeoutID: null,
             searchLoading: false,
             annotationSearchResults: [],
             objectSearchResults: []
         };
     },
     mounted() {
-        this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
+        this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME, this);
     },
     destroyed() {
         document.body.removeEventListener('click', this.handleOutsideClick);
@@ -89,6 +90,7 @@ export default {
             if (this.searchValue) {
                 await this.getSearchResults();
             } else {
+                clearTimeout(this.debouncedSearchTimeoutID);
                 const dropdownOptions = {
                     searchLoading: this.searchLoading,
                     searchValue: this.searchValue,
@@ -99,13 +101,11 @@ export default {
             }
         },
         debounceAsyncFunction(functionToDebounce, debounceTime) {
-            let timeoutID;
-
-            return function (...args) {
-                clearTimeout(timeoutID);
+            return (...args) => {
+                clearTimeout(this.debouncedSearchTimeoutID);
 
                 return new Promise((resolve, reject) => {
-                    timeoutID = setTimeout(() => {
+                    this.debouncedSearchTimeoutID = setTimeout(() => {
                         functionToDebounce(...args)
                             .then(resolve)
                             .catch(reject);
@@ -132,6 +132,7 @@ export default {
         async getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
+            console.debug(`🔍 Searching for ${this.searchValue}`);
             this.searchLoading = true;
             this.$refs.searchResultsDropDown.showSearchStarted();
             this.abortSearchController = new AbortController();
