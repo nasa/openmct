@@ -68,7 +68,7 @@ export default {
         };
     },
     mounted() {
-        this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME, this);
+        this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
     },
     destroyed() {
         document.body.removeEventListener('click', this.handleOutsideClick);
@@ -132,7 +132,6 @@ export default {
         async getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
-            console.debug(`🔍 Searching for ${this.searchValue}`);
             this.searchLoading = true;
             this.$refs.searchResultsDropDown.showSearchStarted();
             this.abortSearchController = new AbortController();
