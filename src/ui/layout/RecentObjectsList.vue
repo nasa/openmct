@@ -193,9 +193,10 @@ export default {
                 && this.openmct.composition.supportsComposition(domainObject);
         },
         /**
-         * Clears the Recent Objects list.
+         * Clears the Recent Objects list in localStorage and in the component.
          */
         clearRecentObjects() {
+            localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
             this.recents = [];
         }
     }
