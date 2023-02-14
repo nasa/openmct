@@ -80,7 +80,7 @@ export default {
             const normalizedDataToAdd = addedItems.map(datum => this.normalizeDatum(datum));
             let newImageHistory = this.imageHistory.slice();
             normalizedDataToAdd.forEach(((datum, index) => {
-                newImageHistory.splice(datum, 0, addedItemIndices[index]);
+                newImageHistory.splice(addedItemIndices[index] ?? -1, 0, datum);
             }));
             //Assign just once so imageHistory watchers don't get called too often
             this.imageHistory = newImageHistory;
