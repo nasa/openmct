@@ -96,11 +96,11 @@ export default {
     },
     methods: {
         clickedResult(event) {
+            const { objectPath } = this.result;
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
-                this.preview();
+                this.preview(objectPath);
             } else {
-                const { objectPath } = this.result;
                 let resultUrl = identifierToString(this.openmct, objectPath);
 
                 // Remove the vestigial 'ROOT' identifier from url if it exists
@@ -114,8 +114,7 @@ export default {
         togglePreviewState(previewState) {
             this.$emit('preview-changed', previewState);
         },
-        preview() {
-            const { objectPath } = this.result;
+        preview(objectPath) {
             if (this.previewAction.appliesTo(objectPath)) {
                 this.previewAction.invoke(objectPath);
             }
