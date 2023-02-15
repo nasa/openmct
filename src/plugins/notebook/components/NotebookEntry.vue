@@ -64,7 +64,7 @@
                     tabindex="0"
                 >
                     <TextHighlight
-                        :text="formattValidUrls(entry.text)"
+                        :text="formatValidUrls(entry.text)"
                         :highlight="highlightText"
                         :highlight-class="'search-highlight'"
                     />
@@ -252,11 +252,11 @@ export default {
             // remove ANY tags
             const text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
 
-            if (this.editMode || !this.urlWhitelist.length === 0) {
+            if (this.editMode || this.urlWhitelist.length === 0) {
                 return { innerText: text };
             }
 
-            const html = this.formattValidUrls(text);
+            const html = this.formatValidUrls(text);
 
             return { innerHTML: html };
         },
@@ -344,7 +344,7 @@ export default {
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
         },
-        formattValidUrls(text) {
+        formatValidUrls(text) {
             return text.replace(URL_REGEX, (match) => {
                 const url = new URL(match);
                 const domain = url.hostname;
