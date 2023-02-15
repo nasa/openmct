@@ -76,9 +76,14 @@ export default {
         this.telemetryCollection.destroy();
     },
     methods: {
-        dataAdded(dataToAdd) {
-            const normalizedDataToAdd = dataToAdd.map(datum => this.normalizeDatum(datum));
-            this.imageHistory = this.imageHistory.concat(normalizedDataToAdd);
+        dataAdded(addedItems, addedItemIndices) {
+            const normalizedDataToAdd = addedItems.map(datum => this.normalizeDatum(datum));
+            let newImageHistory = this.imageHistory.slice();
+            normalizedDataToAdd.forEach(((datum, index) => {
+                newImageHistory.splice(addedItemIndices[index] ?? -1, 0, datum);
+            }));
+            //Assign just once so imageHistory watchers don't get called too often
+            this.imageHistory = newImageHistory;
         },
         dataCleared() {
             this.imageHistory = [];
