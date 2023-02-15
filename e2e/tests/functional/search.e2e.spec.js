@@ -29,6 +29,7 @@ const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
     const searchResultSelector = '.c-gsearch-result__title';
+    const searchResultDropDownSelector = '.c-gsearch__results';
 
     test.beforeEach(async ({ page }) => {
         // Go to baseURL
@@ -162,7 +163,7 @@ test.describe('Grand Search', () => {
         // 1.  batched request for latest telemetry using the bulk API
         expect(networkRequests.length).toBe(1);
 
-        const searchResultDropDown = await page.locator('.c-gsearch__results');
+        const searchResultDropDown = await page.locator(searchResultDropDownSelector);
 
         await expect(searchResultDropDown).toHaveText('Clock A');
     });
@@ -193,7 +194,7 @@ test.describe('Grand Search', () => {
         // Wait for search to finish
         await waitForSearchCompletion(page);
 
-        const searchResultDropDown = await page.locator('.c-gsearch__results');
+        const searchResultDropDown = await page.locator(searchResultDropDownSelector);
 
         // Verify that the search result/s correctly match the search query
         await expect(searchResultDropDown).toContainText(folderName1);
