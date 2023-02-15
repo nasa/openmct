@@ -28,7 +28,10 @@
         v-show="resultsShown"
         class="c-gsearch__results-wrapper"
     >
-        <div class="c-gsearch__results">
+        <div
+            class="c-gsearch__results"
+            :class="{ 'search-finished' : !searchLoading }"
+        >
             <div
                 v-if="objectResults && objectResults.length"
                 ref="objectResults"
