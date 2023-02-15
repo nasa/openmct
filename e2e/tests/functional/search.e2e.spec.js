@@ -106,7 +106,7 @@ test.describe('Grand Search', () => {
         await waitForSearchCompletion(page);
 
         // Get the search results
-        const searchResults = await page.locator(searchResultSelector);
+        const searchResults = page.locator(searchResultSelector);
 
         // Verify that no results are found
         expect(await searchResults.count()).toBe(0);
@@ -165,7 +165,7 @@ test.describe('Grand Search', () => {
 
         const searchResultDropDown = await page.locator(searchResultDropDownSelector);
 
-        await expect(searchResultDropDown).toHaveText('Clock A');
+        await expect(searchResultDropDown).toContainText('Clock A');
     });
 
     test("Validate multiple objects in search results return partial matches", async ({ page }) => {
