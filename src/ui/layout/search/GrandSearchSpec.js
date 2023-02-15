@@ -291,4 +291,16 @@ xdescribe("GrandSearch", () => {
         const previewWindow = document.querySelector('.js-preview-window');
         expect(previewWindow.innerText).toContain('Snapshot');
     });
+
+    it("should preview annotation search results in edit mode if annotation clicked", async () => {
+        await grandSearchComponent.$children[0].searchEverything('Dri');
+        grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
+        await Vue.nextTick();
+        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        expect(annotationResults.length).toBe(1);
+        expect(annotationResults[0].innerText).toContain('Driving');
+        annotationResults[0].click();
+        const previewWindow = document.querySelector('.js-preview-window');
+        expect(previewWindow.innerText).toContain('Snapshot');
+    });
 });
