@@ -82,6 +82,56 @@ test.describe('Stacked Plot', () => {
         await expect(swgCElementsPoolItem).toHaveCount(1);
     });
 
+    test('Can reorder Stacked Plot items', async ({ page }) => {
+        const swgAElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgA.name });
+        const swgBElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgB.name });
+        const swgCElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgC.name });
+
+        await page.goto(stackedPlot.url);
+
+        await page.click('button[title="Edit"]');
+
+        // Expand the elements pool vertically
+        await page.locator('.l-pane__handle').nth(2).hover({ trial: true });
+        await page.mouse.down();
+        await page.mouse.move(0, 100);
+        await page.mouse.up();
+
+        const stackedPlotItem1 = page.locator('.c-plot--stacked-container').nth(0);
+        const stackedPlotItem2 = page.locator('.c-plot--stacked-container').nth(1);
+        const stackedPlotItem3 = page.locator('.c-plot--stacked-container').nth(2);
+
+        // assert initial plot order
+        await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
+        await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
+        await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
+
+        // Drag and drop to reorder
+        await swgBElementsPoolItem.dragTo(swgAElementsPoolItem);
+
+        // assert plot order after reorder
+        await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
+        await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
+        await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
+
+        // Drag and drop to reorder
+        await swgCElementsPoolItem.dragTo(swgAElementsPoolItem);
+
+        // assert plot order after second reorder
+        await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
+        await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
+        await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
+
+        // Save (exit edit mode)
+        await page.locator('button[title="Save"]').click();
+        await page.locator('li[title="Save and Finish Editing"]').click();
+
+        // assert plot order persists after save
+        await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
+        await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
+        await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
+    });
+
     test('Selecting a child plot while in browse and edit modes shows its properties in the inspector', async ({ page }) => {
         await page.goto(stackedPlot.url);
 
