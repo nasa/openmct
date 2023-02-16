@@ -101,23 +101,23 @@ test.describe('Stacked Plot', () => {
         const stackedPlotItem2 = page.locator('.c-plot--stacked-container').nth(1);
         const stackedPlotItem3 = page.locator('.c-plot--stacked-container').nth(2);
 
-        // assert initial plot order
+        // assert initial plot order - [swgA, swgB, swgC]
         await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
         await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
         await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
 
-        // Drag and drop to reorder
+        // Drag and drop to reorder - [swgB, swgA, swgC]
         await swgBElementsPoolItem.dragTo(swgAElementsPoolItem);
 
-        // assert plot order after reorder
+        // assert plot order after reorder - [swgB, swgA, swgC]
         await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
         await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
         await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
 
-        // Drag and drop to reorder
+        // Drag and drop to reorder - [swgB, swgC, swgA]
         await swgCElementsPoolItem.dragTo(swgAElementsPoolItem);
 
-        // assert plot order after second reorder
+        // assert plot order after second reorder - [swgB, swgC, swgA]
         await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
         await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
         await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
@@ -126,7 +126,7 @@ test.describe('Stacked Plot', () => {
         await page.locator('button[title="Save"]').click();
         await page.locator('li[title="Save and Finish Editing"]').click();
 
-        // assert plot order persists after save
+        // assert plot order persists after save - [swgB, swgC, swgA]
         await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
         await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
         await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
