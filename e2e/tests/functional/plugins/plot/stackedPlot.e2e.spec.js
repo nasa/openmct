@@ -35,8 +35,9 @@ test.describe('Stacked Plot', () => {
     let swgC;
 
     test.beforeEach(async ({ page }) => {
-        //Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('/', { waitUntil: 'networkidle' });
+        // Open a browser, navigate to the main page, and wait until all networkevents to resolve
+        await page.goto('./', { waitUntil: 'networkidle' });
+
         stackedPlot = await createDomainObjectWithDefaults(page, {
             type: "Stacked Plot"
         });
