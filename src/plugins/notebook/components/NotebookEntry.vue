@@ -80,6 +80,7 @@
                     aria-label="Notebook Entry Input"
                     tabindex="-1"
                     :contenteditable="canEdit"
+                    :disabled="!isSelectedEntry"
                     v-bind.prop="formattedText"
                     @mouseover="checkEditability($event)"
                     @mouseleave="canEdit = true"
