@@ -791,6 +791,7 @@ export default {
             this.updateDefaultNotebook(notebookStorage);
             const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
             this.focusEntryId = id;
+            this.selectedEntryId = id;
             this.filterAndSortEntries();
         },
         orientationChange() {
