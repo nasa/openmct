@@ -25,7 +25,10 @@
 <div
     class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
-    :class="{ 'locked': isLocked, 'is-selected': isSelectedEntry }"
+    :class="{ 'locked': isLocked,
+              'is-selected': isSelectedEntry,
+              'is-editing' : editMode
+    }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
@@ -82,9 +85,13 @@
                     @mouseleave="canEdit = true"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
-                    @keydown.enter.exact.prevent
-                    @keyup.enter.exact.prevent="forceBlur($event)"
                 >
+                </div>
+                <div
+                    v-if="editMode"
+                    class="c-ne__save-button"
+                >
+                    <button class="c-button c-button--major icon-check"></button>
                 </div>
             </template>
 
