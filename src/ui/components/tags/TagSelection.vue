@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="w-tag-wrapper">
+<div class="w-tag-wrapper has-tag-applier">
     <template v-if="newTag">
         <AutoCompleteField
             v-if="newTag"
