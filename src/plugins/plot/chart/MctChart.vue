@@ -222,11 +222,11 @@ export default {
 
             return config;
         },
-        reDraw(mode, o, series) {
-            this.changeInterpolate(mode, o, series);
-            this.changeMarkers(mode, o, series);
-            this.changeAlarmMarkers(mode, o, series);
-            this.changeLimitLines(mode, o, series);
+        reDraw(newXKey, oldXKey, series) {
+            this.changeInterpolate(newXKey, oldXKey, series);
+            this.changeMarkers(newXKey, oldXKey, series);
+            this.changeAlarmMarkers(newXKey, oldXKey, series);
+            this.changeLimitLines(newXKey, oldXKey, series);
         },
         onSeriesAdd(series) {
             this.listenTo(series, `change:${HANDLED_ATTRIBUTES.xKey}`, this.reDraw, this);
@@ -317,8 +317,8 @@ export default {
                 this.pointSets.push(pointSet);
             }
         },
-        changeLimitLines(mode, o, series) {
-            if (mode === o) {
+        changeLimitLines(newLimits, oldLimits, series) {
+            if (newLimits === oldLimits) {
                 return;
             }
 
