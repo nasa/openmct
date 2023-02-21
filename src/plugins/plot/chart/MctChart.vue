@@ -151,12 +151,12 @@ export default {
             this.scheduleDraw();
         },
         showLimitLineLabels() {
-            this.drawLimitLines();
+            this.updateLimitLines();
         },
         hiddenYAxisIds() {
             this.hiddenYAxisIds.forEach(id => {
                 this.resetYOffsetAndSeriesDataForYAxis(id);
-                this.drawLimitLines();
+                this.updateLimitLines();
             });
             this.scheduleDraw();
         }
@@ -242,6 +242,11 @@ export default {
             this.makeChartElement(series);
             this.makeLimitLines(series);
         },
+        onSeriesRemove(series) {
+            this.stopListening(series);
+            this.removeChartElement(series);
+            this.scheduleDraw();
+        },
         onAddPoint(point, insertIndex, series) {
             const mainYAxisId = this.config.yAxis.get('id');
             const seriesYAxisId = series.get('yAxisId');
@@ -323,7 +328,8 @@ export default {
             }
 
             this.makeLimitLines(series);
-            this.updateLimitsAndDraw();
+            this.updateLimitLines();
+            this.scheduleDraw();
         },
         resetAxisAndRedraw(newYAxisId, oldYAxisId, series) {
             if (!oldYAxisId) {
@@ -337,12 +343,7 @@ export default {
             //Make the chart elements again for the new y-axis and offset
             this.makeChartElement(series);
             this.makeLimitLines(series);
-
-            this.scheduleDraw();
-        },
-        onSeriesRemove(series) {
-            this.stopListening(series);
-            this.removeChartElement(series);
+            this.updateLimitLines();
             this.scheduleDraw();
         },
         destroy() {
@@ -583,10 +584,7 @@ export default {
                 return;
             }
 
-            this.updateLimitsAndDraw();
-        },
-        updateLimitsAndDraw() {
-            this.drawLimitLines();
+            this.updateLimitLines();
             this.scheduleDraw();
         },
         scheduleDraw() {
@@ -680,17 +678,17 @@ export default {
             const alarmSets = this.alarmSets.filter(this.matchByYAxisId.bind(this, id));
             alarmSets.forEach(this.drawAlarmPoints, this);
         },
-        drawLimitLines() {
+        updateLimitLines() {
             Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
             this.config.series.models.forEach(series => {
                 const yAxisId = series.get('yAxisId');
 
                 if (this.hiddenYAxisIds.indexOf(yAxisId) < 0) {
-                    this.drawLimitLinesForSeries(yAxisId, series);
+                    this.updateLimitLinesForSeries(yAxisId, series);
                 }
             });
         },
-        drawLimitLinesForSeries(yAxisId, series) {
+        updateLimitLinesForSeries(yAxisId, series) {
             if (!this.canDraw(yAxisId)) {
                 return;
             }
