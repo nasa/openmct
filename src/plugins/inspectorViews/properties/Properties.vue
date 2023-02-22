@@ -21,24 +21,29 @@
  *****************************************************************************/
 
 <template>
-<div class="c-inspector__properties c-inspect-properties">
-    <ul
-        v-if="hasDetails"
-        class="c-inspect-properties__section"
-    >
-        <Component
-            :is="getComponent(detail)"
-            v-for="detail in details"
-            :key="detail.name"
-            :detail="detail"
-        />
+<div>
+    <div class="c-inspector__properties c-inspect-properties">
+        <div class="c-inspect-properties__header">
+            Details
+        </div>
+        <ul
+            v-if="hasDetails"
+            class="c-inspect-properties__section"
+        >
+            <Component
+                :is="getComponent(detail)"
+                v-for="detail in details"
+                :key="detail.name"
+                :detail="detail"
+            />
 
-    </ul>
-    <div
-        v-else
-        class="c-inspect-properties__row--span-all"
-    >
-        {{ noDetailsMessage }}
+        </ul>
+        <div
+            v-else
+            class="c-inspect-properties__row--span-all"
+        >
+            {{ noDetailsMessage }}
+        </div>
     </div>
 
     <Location
