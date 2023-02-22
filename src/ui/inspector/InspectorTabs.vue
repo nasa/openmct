@@ -80,11 +80,7 @@ export default {
             this.updateSelection();
         },
         visibleTabs() {
-            const selectedTabIsVisible = this.visibleTabs.some(tab => this.isSelected(tab));
-
-            if (!selectedTabIsVisible) {
-                this.selectTab(this.visibleTabs[0]);
-            }
+            this.selectDefaultTabIfSelectedNotVisible();
         }
     },
     methods: {
@@ -99,15 +95,20 @@ export default {
                     showTab: view.showTab
                 };
             });
-
-            this.selectTab(this.visibleTabs[0]);
         },
         isSelected(tab) {
-            return this.selectedTab.key === tab.key;
+            return this.selectedTab?.key === tab.key;
         },
         selectTab(tab) {
             this.selectedTab = tab;
             this.$emit('select-tab', tab);
+        },
+        selectDefaultTabIfSelectedNotVisible() {
+            const selectedTabIsVisible = this.visibleTabs.some(tab => this.isSelected(tab));
+
+            if (!selectedTabIsVisible) {
+                this.selectTab(this.visibleTabs[0]);
+            }
         }
     }
 };
