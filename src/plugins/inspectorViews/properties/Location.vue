@@ -61,10 +61,18 @@ export default {
         ObjectLabel
     },
     inject: [
-        'openmct',
-        'domainObject',
-        'parentDomainObject'
+        'openmct'
     ],
+    props:{
+        domainObject: {
+            type: Object,
+            required: true
+        },
+        parentDomainObject: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
             pathBreadCrumb: []

@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import PropertiesViewProvider from './properties/PropertiesViewProvider';
-import LocationViewProvider from './location/LocationViewProvider';
 import ElementsViewProvider from './elements/ElementsViewProvider';
 import PlotElementsViewProvider from './elements/PlotElementsViewProvider';
 import StylesInspectorViewProvider from './styles/StylesInspectorViewProvider';
@@ -30,7 +29,6 @@ import AnnotationsViewProvider from './annotations/AnnotationsViewProvider';
 export default function InspectorViewsPlugin() {
     return function install(openmct) {
         openmct.inspectorViews.addProvider(new PropertiesViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new LocationViewProvider(openmct));
         openmct.inspectorViews.addProvider(new ElementsViewProvider(openmct));
         openmct.inspectorViews.addProvider(new PlotElementsViewProvider(openmct));
         openmct.inspectorViews.addProvider(new StylesInspectorViewProvider(openmct));
