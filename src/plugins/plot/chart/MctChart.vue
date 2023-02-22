@@ -322,8 +322,8 @@ export default {
                 this.pointSets.push(pointSet);
             }
         },
-        changeLimitLines(newLimits, oldLimits, series) {
-            if (newLimits === oldLimits) {
+        changeLimitLines(showLimitLines, oldShowLimitLines, series) {
+            if (showLimitLines === oldShowLimitLines) {
                 return;
             }
 
