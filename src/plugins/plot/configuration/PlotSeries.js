@@ -338,6 +338,7 @@ export default class PlotSeries extends Model {
         }
 
         this.emit('limits', this);
+        this.emit('change:limitLines', this);
     }
 
     /**
