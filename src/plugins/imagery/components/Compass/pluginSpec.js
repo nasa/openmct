@@ -35,8 +35,15 @@ describe("The Compass component", () => {
             roll: 90,
             pitch: 90,
             cameraTilt: 100,
-            cameraPan: 90,
-            sunAngle: 30
+            cameraAzimuth: 90,
+            sunAngle: 30,
+            transformations: {
+                translateX: 0,
+                translateY: 18,
+                rotation: 0,
+                scale: 0.3,
+                cameraAngleOfView: 70
+            }
         };
         let propsData = {
             naturalAspectRatio: 0.9,
@@ -44,8 +51,7 @@ describe("The Compass component", () => {
             sizedImageDimensions: {
                 width: 100,
                 height: 100
-            },
-            compassRoseSizingClasses: '--rose-small --rose-min'
+            }
         };
 
         app = new Vue({
@@ -54,7 +60,6 @@ describe("The Compass component", () => {
                 return propsData;
             },
             template: `<Compass
-                :compass-rose-sizing-classes="compassRoseSizingClasses"
                 :image="image"
                 :natural-aspect-ratio="naturalAspectRatio"
                 :sized-image-dimensions="sizedImageDimensions"
@@ -67,7 +72,7 @@ describe("The Compass component", () => {
         app.$destroy();
     });
 
-    describe("when a heading value exists on the image", () => {
+    describe("when a heading value and cameraAngleOfView exists on the image", () => {
 
         it("should display a compass rose", () => {
             let compassRoseElement = instance.$el.querySelector(COMPASS_ROSE_CLASS

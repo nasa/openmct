@@ -180,6 +180,7 @@ export default class TelemetryCollection extends EventEmitter {
         let beforeStartOfBounds;
         let afterEndOfBounds;
         let added = [];
+        let addedIndices = [];
 
         // loop through, sort and dedupe
         for (let datum of data) {
@@ -212,6 +213,7 @@ export default class TelemetryCollection extends EventEmitter {
                     let index = endIndex || startIndex;
 
                     this.boundedTelemetry.splice(index, 0, datum);
+                    addedIndices.push(index);
                     added.push(datum);
                 }
 
@@ -230,7 +232,7 @@ export default class TelemetryCollection extends EventEmitter {
                     this.emit('add', this.boundedTelemetry);
                 }
             } else {
-                this.emit('add', added);
+                this.emit('add', added, addedIndices);
             }
         }
     }
@@ -330,7 +332,8 @@ export default class TelemetryCollection extends EventEmitter {
                     this.boundedTelemetry = added;
                 }
 
-                this.emit('add', added);
+                // Assumption is that added will be of length 1 here, so just send the last index of the boundedTelemetry in the add event
+                this.emit('add', added, [this.boundedTelemetry.length]);
             }
         } else {
             // user bounds change, reset

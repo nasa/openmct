@@ -275,7 +275,7 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
         local: Math.floor(timestamp / delay) * delay,
         url,
         sunOrientation: getCompassValues(0, 360),
-        cameraPan: getCompassValues(0, 360),
+        cameraAzimuth: getCompassValues(0, 360),
         heading: getCompassValues(0, 360),
         transformations: navCamTransformations,
         imageDownloadName
