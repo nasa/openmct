@@ -47,13 +47,14 @@ export default {
             this.updateSelectionViews();
         },
         selectedTab() {
-            this.showViewsForTab();
+            this.clearAndShowViewsForTab();
         }
     },
     methods: {
         updateSelectionViews(selection) {
             this.clearViews();
             this.selectedViews = this.openmct.inspectorViews.get(this.selection);
+            this.showViewsForTab();
         },
         clearViews() {
             if (this.visibleViews) {
@@ -66,15 +67,18 @@ export default {
             }
         },
         showViewsForTab() {
-            this.clearViews();
             this.visibleViews = this.selectedViews
-                .filter(view => view.name === this.selectedTab.name);
+                .filter(view => view.key === this.selectedTab.key);
 
             this.visibleViews.forEach(visibleView => {
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
                 visibleView.show(viewContainer);
             });
+        },
+        clearAndShowViewsForTab() {
+            this.clearViews();
+            this.showViewsForTab();
         }
     }
 };
