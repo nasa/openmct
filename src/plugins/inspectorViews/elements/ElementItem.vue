@@ -30,7 +30,7 @@
     @drop="emitDropEvent"
 >
     <div
-        class="c-tree__item c-elements-pool__item"
+        class="c-tree__item c-elements-pool__item js-elements-pool__item"
         :class="{
             'is-context-clicked': contextClickActive,
             'hover': hover,

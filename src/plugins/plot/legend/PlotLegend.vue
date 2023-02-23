@@ -49,10 +49,10 @@
                 title="Cursor is point locked. Click anywhere in the plot to unlock."
             ></div>
             <plot-legend-item-collapsed
-                v-for="(seriesObject, seriesIndex) in series"
-                :key="`${seriesObject.keyString}-${seriesIndex}`"
+                v-for="(seriesObject, seriesIndex) in seriesModels"
+                :key="`${seriesObject.keyString}-${seriesIndex}-collapsed`"
                 :highlights="highlights"
-                :value-to-show-when-collapsed="legend.get('valueToShowWhenCollapsed')"
+                :value-to-show-when-collapsed="valueToShowWhenCollapsed"
                 :series-object="seriesObject"
                 @legendHoverChanged="legendHoverChanged"
             />
@@ -95,11 +95,10 @@
                 </thead>
                 <tbody>
                     <plot-legend-item-expanded
-                        v-for="(seriesObject, seriesIndex) in series"
+                        v-for="(seriesObject, seriesIndex) in seriesModels"
                         :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
                         :series-object="seriesObject"
                         :highlights="highlights"
-                        :legend="legend"
                         @legendHoverChanged="legendHoverChanged"
                     />
                 </tbody>
@@ -111,6 +110,9 @@
 <script>
 import PlotLegendItemCollapsed from "./PlotLegendItemCollapsed.vue";
 import PlotLegendItemExpanded from "./PlotLegendItemExpanded.vue";
+import configStore from "../configuration/ConfigStore";
+import eventHelpers from "../lib/eventHelpers";
+
 export default {
     components: {
         PlotLegendItemExpanded,
@@ -124,57 +126,120 @@ export default {
                 return false;
             }
         },
-        series: {
-            type: Array,
-            default() {
-                return [];
-            }
-        },
         highlights: {
             type: Array,
             default() {
                 return [];
             }
-        },
-        legend: {
-            type: Object,
-            default() {
-                return {};
-            }
         }
     },
     data() {
         return {
-            isLegendExpanded: this.legend.get('expanded') === true
+            isLegendExpanded: false,
+            seriesModels: [],
+            loaded: false
         };
     },
     computed: {
         showUnitsWhenExpanded() {
-            return this.legend.get('showUnitsWhenExpanded') === true;
+            return this.loaded && this.legend.get('showUnitsWhenExpanded') === true;
         },
         showMinimumWhenExpanded() {
-            return this.legend.get('showMinimumWhenExpanded') === true;
+            return this.loaded && this.legend.get('showMinimumWhenExpanded') === true;
         },
         showMaximumWhenExpanded() {
-            return this.legend.get('showMaximumWhenExpanded') === true;
+            return this.loaded && this.legend.get('showMaximumWhenExpanded') === true;
         },
         showValueWhenExpanded() {
-            return this.legend.get('showValueWhenExpanded') === true;
+            return this.loaded && this.legend.get('showValueWhenExpanded') === true;
         },
         showTimestampWhenExpanded() {
-            return this.legend.get('showTimestampWhenExpanded') === true;
+            return this.loaded && this.legend.get('showTimestampWhenExpanded') === true;
         },
         isLegendHidden() {
-            return this.legend.get('hideLegendWhenSmall') === true;
+            return this.loaded && this.legend.get('hideLegendWhenSmall') === true;
+        },
+        valueToShowWhenCollapsed() {
+            return this.loaded && this.legend.get('valueToShowWhenCollapsed');
         }
     },
+    mounted() {
+        this.seriesModels = [];
+        eventHelpers.extend(this);
+        this.config = this.getConfig();
+        this.legend = this.config.legend;
+        this.loaded = true;
+        this.isLegendExpanded = this.legend.get('expanded') === true;
+        this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
+        this.updatePosition();
+
+        this.initialize();
+    },
+    beforeDestroy() {
+        if (this.objectComposition) {
+            this.objectComposition.off('add', this.addTelemetryObject);
+            this.objectComposition.off('remove', this.removeTelemetryObject);
+        }
+
+        this.stopListening();
+    },
     methods: {
+        initialize() {
+            if (this.domainObject.type === 'telemetry.plot.stacked') {
+                this.objectComposition = this.openmct.composition.get(this.domainObject);
+                this.objectComposition.on('add', this.addTelemetryObject);
+                this.objectComposition.on('remove', this.removeTelemetryObject);
+                this.objectComposition.load();
+            } else {
+                this.registerListeners(this.config);
+            }
+        },
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return configStore.get(configId);
+        },
+        addTelemetryObject(object) {
+            //get the config for each child
+            const configId = this.openmct.objects.makeKeyString(object.identifier);
+            const config = configStore.get(configId);
+            if (config) {
+                this.registerListeners(config);
+            }
+        },
+        removeTelemetryObject(identifier) {
+            const configId = this.openmct.objects.makeKeyString(identifier);
+            const config = configStore.get(configId);
+            if (config) {
+                config.series.forEach(this.removeSeries, this);
+            }
+        },
+        registerListeners(config) {
+        //listen to any changes to the telemetry endpoints that are associated with the child
+            this.listenTo(config.series, 'add', this.addSeries, this);
+            this.listenTo(config.series, 'remove', this.removeSeries, this);
+            config.series.forEach(this.addSeries, this);
+        },
+        addSeries(series) {
+            this.$set(this.seriesModels, this.seriesModels.length, series);
+        },
+
+        removeSeries(plotSeries) {
+            this.stopListening(plotSeries);
+
+            const seriesIndex = this.seriesModels.findIndex(series => series.keyString === plotSeries.keyString);
+            this.seriesModels.splice(seriesIndex, 1);
+        },
         expandLegend() {
             this.isLegendExpanded = !this.isLegendExpanded;
             this.legend.set('expanded', this.isLegendExpanded);
+            this.$emit('expanded', this.isLegendExpanded);
         },
         legendHoverChanged(data) {
             this.$emit('legendHoverChanged', data);
+        },
+        updatePosition() {
+            this.$emit('position', this.legend.get('position'));
         }
     }
 };

@@ -20,39 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-<template>
-<!-- eslint-disable-next-line vue/no-v-html -->
-<span v-html="highlightedText"></span>
+// This should be used to install the re-instal default Notebook plugin with a simple url whitelist.
+// e.g.
+// await page.addInitScript({ path: path.join(__dirname, 'addInitNotebookWithUrls.js') });
+const NOTEBOOK_NAME = 'Notebook';
+const URL_WHITELIST = ['google.com'];
 
-</template>
-
-<script>
-
-export default {
-    props: {
-        text: {
-            type: String,
-            required: true
-        },
-        highlight: {
-            type: String,
-            default() {
-                return '';
-            }
-        },
-        highlightClass: {
-            type: String,
-            default() {
-                return 'highlight';
-            }
-        }
-    },
-    computed: {
-        highlightedText() {
-            let regex = new RegExp(`(?<!<[^>]*)(${this.highlight})`, 'gi');
-
-            return this.text.replace(regex, `<span class="${this.highlightClass}">${this.highlight}</span>`);
-        }
-    }
-};
-</script>
+document.addEventListener('DOMContentLoaded', () => {
+    const openmct = window.openmct;
+    openmct.install(openmct.plugins.Notebook(NOTEBOOK_NAME, URL_WHITELIST));
+});

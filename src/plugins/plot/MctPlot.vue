@@ -23,16 +23,8 @@
 <div
     v-if="loaded"
     class="gl-plot"
-    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <plot-legend
-        v-if="!isNestedWithinAStackedPlot"
-        :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
-        :highlights="highlights"
-        :legend="legend"
-        @legendHoverChanged="legendHoverChanged"
-    />
+    <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <div
             v-if="seriesModels.length"
@@ -42,13 +34,14 @@
                 v-for="(yAxis, index) in yAxesIds"
                 :id="yAxis.id"
                 :key="`yAxis-${yAxis.id}-${index}`"
-                :multiple-left-axes="multipleLeftAxes"
+                :has-multiple-left-axes="hasMultipleLeftAxes"
                 :position="yAxis.id > 2 ? 'right' : 'left'"
                 :class="{'plot-yaxis-right': yAxis.id > 2}"
                 :tick-width="yAxis.tickWidth"
+                :used-tick-width="plotFirstLeftTickWidth"
                 :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
                 @yKeyChanged="setYAxisKey"
-                @tickWidthChanged="onTickWidthChange"
+                @plotYTickWidth="onYTickWidthChange"
                 @toggleAxisVisibility="toggleSeriesForYAxis"
             />
         </div>
@@ -69,7 +62,6 @@
                     v-show="gridLines && !options.compact"
                     :axis-type="'xAxis'"
                     :position="'right'"
-                    @plotTickWidth="onTickWidthChange"
                 />
 
                 <mct-ticks
@@ -79,7 +71,7 @@
                     :axis-type="'yAxis'"
                     :position="'bottom'"
                     :axis-id="yAxis.id"
-                    @plotTickWidth="onTickWidthChange"
+                    @plotTickWidth="onYTickWidthChange"
                 />
 
                 <div
@@ -94,7 +86,6 @@
                         :highlights="highlights"
                         :annotated-points="annotatedPoints"
                         :annotation-selections="annotationSelections"
-                        :show-limit-line-labels="showLimitLineLabels"
                         :hidden-y-axis-ids="hiddenYAxisIds"
                         :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
                         @plotReinitializeCanvas="initCanvas"
@@ -217,7 +208,6 @@ import LinearScale from "./LinearScale";
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
 import configStore from './configuration/ConfigStore';
 
-import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
@@ -232,7 +222,6 @@ export default {
     components: {
         XAxis,
         YAxis,
-        PlotLegend,
         MctTicks,
         MctChart
     },
@@ -258,10 +247,14 @@ export default {
                 return false;
             }
         },
-        plotTickWidth: {
-            type: Number,
+        parentYTickWidth: {
+            type: Object,
             default() {
-                return 0;
+                return {
+                    leftTickWidth: 0,
+                    rightTickWidth: 0,
+                    hasMultipleLeftAxes: false
+                };
             }
         },
         limitLineLabels: {
@@ -296,7 +289,6 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
             cursorGuide: this.initCursorGuide,
             gridLines: this.initGridLines,
@@ -308,13 +300,14 @@ export default {
     computed: {
         xAxisStyle() {
             const rightAxis = this.yAxesIds.find(yAxis => yAxis.id > 2);
-            const leftOffset = this.multipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
+            const leftOffset = this.hasMultipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
             let style = {
                 left: `${this.plotLeftTickWidth + leftOffset}px`
             };
+            const parentRightAxisWidth = this.parentYTickWidth.rightTickWidth;
 
-            if (rightAxis) {
-                style.right = `${rightAxis.tickWidth + AXES_PADDING}px`;
+            if (parentRightAxisWidth || rightAxis) {
+                style.right = `${(parentRightAxisWidth || rightAxis.tickWidth) + AXES_PADDING}px`;
             }
 
             return style;
@@ -322,8 +315,8 @@ export default {
         yAxesIds() {
             return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         },
-        multipleLeftAxes() {
-            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
+        hasMultipleLeftAxes() {
+            return this.parentYTickWidth.hasMultipleLeftAxes || this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
         },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
@@ -334,22 +327,13 @@ export default {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         annotationViewingAndEditingAllowed() {
-            // only allow annotations viewing/editing if plot is paused or in fixed time mode
+        // only allow annotations viewing/editing if plot is paused or in fixed time mode
             return this.isFrozen || !this.isRealTime;
         },
-        plotLegendPositionClass() {
-            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
-        },
-        plotLegendExpandedStateClass() {
-            if (this.isNestedWithinAStackedPlot) {
-                return '';
-            }
+        plotFirstLeftTickWidth() {
+            const firstYAxis = this.yAxes.find(yAxis => yAxis.id === 1);
 
-            if (this.config.legend.get('expanded')) {
-                return 'plot-legend-expanded';
-            } else {
-                return 'plot-legend-collapsed';
-            }
+            return firstYAxis ? firstYAxis.tickWidth : 0;
         },
         plotLeftTickWidth() {
             let leftTickWidth = 0;
@@ -360,17 +344,12 @@ export default {
 
                 leftTickWidth = leftTickWidth + yAxis.tickWidth;
             });
+            const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
 
-            return this.plotTickWidth || leftTickWidth;
+            return parentLeftTickWidth || leftTickWidth;
         }
     },
     watch: {
-        limitLineLabels: {
-            handler(limitLineLabels) {
-                this.legendHoverChanged(limitLineLabels);
-            },
-            deep: true
-        },
         initGridLines(newGridLines) {
             this.gridLines = newGridLines;
         },
@@ -406,8 +385,7 @@ export default {
             }));
         }
 
-        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.$emit('configLoaded', configId);
+        this.$emit('configLoaded', true);
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -439,15 +417,20 @@ export default {
     methods: {
         updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
-            if (!selectionContext
-                || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
-                // Selection changed, but it's us, so ignoring it
+            // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
+            // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
+            const selectionType = selection?.[0]?.[0]?.context?.type;
+            const validSelectionTypes = ['clicked-on-plot-selection', 'plot-annotation-search-result'];
+            const isAnnotationSearchResult = selectionType === 'plot-annotation-search-result';
+
+            if (!validSelectionTypes.includes(selectionType)) {
+                // wrong type of selection
                 return;
             }
 
-            const selectionType = selection?.[0]?.[1]?.context?.type;
-            if (selectionType !== 'plot-points-selection') {
-                // wrong type of selection
+            if (selectionContext
+                && (!isAnnotationSearchResult)
+                && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
                 return;
             }
 
@@ -460,7 +443,18 @@ export default {
                 return;
             }
 
-            const selectedAnnotations = selection?.[0]?.[1]?.context?.annotations;
+            const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
+            //This section is only for the annotations search results entry to displaying annotations
+            if (isAnnotationSearchResult) {
+                this.showAnnotationsFromSearchResults(selectedAnnotations);
+            }
+
+            //This section is common to all entry points for annotation display
+            this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
+        showAnnotationsFromSearchResults(selectedAnnotations) {
+        //Start section
+
             if (selectedAnnotations?.length) {
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
@@ -494,10 +488,9 @@ export default {
                     min: minY,
                     max: maxY
                 });
+                //Zoom out just a touch so that the highlighted section for annotations doesn't take over the whole view - which is not a nice look.
                 this.zoom('out', 0.2);
             }
-
-            this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
@@ -575,6 +568,14 @@ export default {
         updateTicksAndSeriesForYAxis(newAxisId, oldAxisId) {
             this.updateAxisUsageCount(oldAxisId, -1);
             this.updateAxisUsageCount(newAxisId, 1);
+
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === oldAxisId);
+            if (foundYAxis.seriesCount === 0) {
+                this.onYTickWidthChange({
+                    width: foundYAxis.tickWidth,
+                    yAxisId: foundYAxis.id
+                });
+            }
         },
 
         updateAxisUsageCount(yAxisId, updateCountBy) {
@@ -688,9 +689,15 @@ export default {
                 series.reset();
             });
         },
+        shareCommonParent(domainObjectToFind) {
+            return false;
+        },
+        compositionPathContainsId(domainObjectToFind) {
+            if (!domainObjectToFind.composition) {
+                return false;
+            }
 
-        compositionPathContainsId(domainObjectToClear) {
-            return domainObjectToClear.composition.some((compositionIdentifier) => {
+            return domainObjectToFind.composition.some((compositionIdentifier) => {
                 return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
             });
         },
@@ -820,27 +827,35 @@ export default {
 
         marqueeAnnotations(annotationsToSelect) {
             annotationsToSelect.forEach(annotationToSelect => {
-                const firstTargetKeyString = Object.keys(annotationToSelect.targets)[0];
-                const firstTarget = annotationToSelect.targets[firstTargetKeyString];
-                const rectangle = {
-                    start: {
-                        x: firstTarget.minX,
-                        y: firstTarget.minY
-                    },
-                    end: {
-                        x: firstTarget.maxX,
-                        y: firstTarget.maxY
-                    },
-                    color: [1, 1, 1, 0.10]
-                };
-                this.rectangles.push(rectangle);
+                Object.keys(annotationToSelect.targets).forEach(targetKeyString => {
+                    const target = annotationToSelect.targets[targetKeyString];
+                    const series = this.seriesModels.find(seriesModel => seriesModel.keyString === targetKeyString);
+                    if (!series) {
+                        return;
+                    }
 
+                    const yAxisId = series.get('yAxisId');
+                    const rectangle = {
+                        start: {
+                            x: target.minX,
+                            y: [target.minY],
+                            yAxisIds: [yAxisId]
+                        },
+                        end: {
+                            x: target.maxX,
+                            y: [target.maxY],
+                            yAxisIds: [yAxisId]
+                        },
+                        color: [1, 1, 1, 0.10]
+                    };
+                    this.rectangles.push(rectangle);
+                });
             });
         },
         gatherNearbyAnnotations() {
             const nearbyAnnotations = [];
             this.config.series.models.forEach(series => {
-                if (series.closest.annotationsById) {
+                if (series?.closest?.annotationsById) {
                     Object.values(series.closest.annotationsById).forEach(closeAnnotation => {
                         const addedAnnotationAlready = nearbyAnnotations.some(annotation => {
                             return _.isEqual(annotation.targets, closeAnnotation.targets)
@@ -938,8 +953,13 @@ export default {
             }
         },
 
-        onTickWidthChange(data, fromDifferentObject) {
-            const {width, yAxisId} = data;
+        /**
+       * Aggregate widths of all left and right y axes and send them up to any parent plots
+       * @param {Object} tickWidthWithYAxisId - the width and yAxisId of the tick bar
+       * @param fromDifferentObject
+       */
+        onYTickWidthChange(tickWidthWithYAxisId, fromDifferentObject) {
+            const {width, yAxisId} = tickWidthWithYAxisId;
             if (yAxisId) {
                 const index = this.yAxes.findIndex(yAxis => yAxis.id === yAxisId);
                 if (fromDifferentObject) {
@@ -948,13 +968,23 @@ export default {
                 } else {
                 // Otherwise, only accept tick with if it's larger.
                     const newWidth = Math.max(width, this.yAxes[index].tickWidth);
-                    if (newWidth !== this.yAxes[index].tickWidth) {
+                    if (width !== this.yAxes[index].tickWidth) {
                         this.yAxes[index].tickWidth = newWidth;
                     }
                 }
 
                 const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                this.$emit('plotTickWidth', this.yAxes[index].tickWidth, id);
+                const leftTickWidth = this.yAxes.filter(yAxis => yAxis.id < 3).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                const rightTickWidth = this.yAxes.filter(yAxis => yAxis.id > 2).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                this.$emit('plotYTickWidth', {
+                    hasMultipleLeftAxes: this.hasMultipleLeftAxes,
+                    leftTickWidth,
+                    rightTickWidth
+                }, id);
             }
         },
 
@@ -1036,8 +1066,6 @@ export default {
 
         highlightValues(point) {
             this.highlightPoint = point;
-            // TODO: used in StackedPlotController
-            this.$emit('plotHighlightUpdate', point);
             if (this.lockHighlightPoint) {
                 return;
             }
@@ -1149,7 +1177,7 @@ export default {
                     endPixels: this.positionOverElement,
                     start: this.positionOverPlot,
                     end: this.positionOverPlot,
-                    color: [1, 1, 1, 0.5]
+                    color: [1, 1, 1, 0.25]
                 };
                 if (annotationEvent) {
                     this.marquee.annotationEvent = true;
@@ -1160,57 +1188,92 @@ export default {
             }
         },
         selectNearbyAnnotations(event) {
+            // need to stop propagation right away to prevent selecting the plot itself
             event.stopPropagation();
 
-            if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
+            const nearbyAnnotations = this.gatherNearbyAnnotations();
+
+            if (this.annotationViewingAndEditingAllowed && this.annotationSelections.length) {
+                //no annotations were found, but we are adding some now
                 return;
             }
 
-            const nearbyAnnotations = this.gatherNearbyAnnotations();
-            const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
-            this.selectPlotAnnotations({
-                targetDetails,
-                targetDomainObjects,
-                annotations: nearbyAnnotations
-            });
+            if (this.annotationViewingAndEditingAllowed && nearbyAnnotations.length) {
+                //show annotations if some were found
+                const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
+                this.selectPlotAnnotations({
+                    targetDetails,
+                    targetDomainObjects,
+                    annotations: nearbyAnnotations
+                });
+
+                return;
+            }
+
+            //Fall through to here if either there is no new selection add tags or no existing annotations were retrieved
+            this.selectPlot();
         },
-        selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
-            const selection =
-                    [
-                        {
-                            element: this.openmct.layout.$refs.browseObject.$el,
-                            context: {
-                                item: this.domainObject
-                            }
-                        },
-                        {
-                            element: this.$el,
-                            context: {
-                                type: 'plot-points-selection',
-                                targetDetails,
-                                targetDomainObjects,
-                                annotations,
-                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                                onAnnotationChange: this.onAnnotationChange
-                            }
-                        }
-                    ];
+        selectPlot() {
+            // should show plot itself if we didn't find any annotations
+            const selection = this.createPathSelection();
             this.openmct.selection.select(selection, true);
         },
-        selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event) {
-            const boundingBox = {
-                minX,
-                minY,
-                maxX,
-                maxY
+        createPathSelection() {
+            let selection = [];
+            selection.unshift({
+                element: this.$el,
+                context: {
+                    item: this.domainObject
+                }
+            });
+            this.path.forEach((pathObject, index) => {
+                selection.push({
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: pathObject
+                    }
+                });
+            });
+
+            return selection;
+        },
+        selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
+            const annotationContext = {
+                type: 'clicked-on-plot-selection',
+                targetDetails,
+                targetDomainObjects,
+                annotations,
+                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                onAnnotationChange: this.onAnnotationChange
             };
+            const selection = this.createPathSelection();
+            if (selection.length && this.openmct.objects.areIdsEqual(selection[0].context.item.identifier, this.domainObject.identifier)) {
+                selection[0].context = {
+                    ...selection[0].context,
+                    ...annotationContext
+                };
+            } else {
+                selection.unshift({
+                    element: this.$el,
+                    context: {
+                        item: this.domainObject,
+                        ...annotationContext
+                    }
+                });
+            }
+
+            this.openmct.selection.select(selection, true);
+        },
+        selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
             let targetDetails = {};
-            let annotations = {};
+            let annotations = [];
             pointsInBox.forEach(pointInBox => {
                 if (pointInBox.length) {
                     const seriesID = pointInBox[0].series.keyString;
-                    targetDetails[seriesID] = boundingBox;
+                    const boundingBoxWithId = boundingBoxPerYAxis.find(box => box.id === pointInBox[0].series.get('yAxisId'));
+                    targetDetails[seriesID] = boundingBoxWithId?.boundingBox;
+
                     targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
                 }
             });
@@ -1225,10 +1288,23 @@ export default {
             rawAnnotations.forEach(rawAnnotation => {
                 if (rawAnnotation.targets) {
                     const targetValues = Object.values(rawAnnotation.targets);
+                    const targetKeys = Object.keys(rawAnnotation.targets);
                     if (targetValues && targetValues.length) {
-                        // just get the first one
-                        const boundingBox = Object.values(targetValues)?.[0];
-                        const pointsInBox = this.getPointsInBox(boundingBox, rawAnnotation);
+                        let boundingBoxPerYAxis = [];
+                        targetValues.forEach((boundingBox, index) => {
+                            const seriesId = targetKeys[index];
+                            const series = this.seriesModels.find(seriesModel => seriesModel.keyString === seriesId);
+                            if (!series) {
+                                return;
+                            }
+
+                            boundingBoxPerYAxis.push({
+                                id: series.get('yAxisId'),
+                                boundingBox
+                            });
+                        });
+
+                        const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis, rawAnnotation);
                         if (pointsInBox && pointsInBox.length) {
                             annotationsByPoints.push(pointsInBox.flat());
                         }
@@ -1238,10 +1314,17 @@ export default {
 
             return annotationsByPoints.flat();
         },
-        getPointsInBox(boundingBox, rawAnnotation) {
+        getPointsInBox(boundingBoxPerYAxis, rawAnnotation) {
             // load series models in KD-Trees
             const seriesKDTrees = [];
             this.seriesModels.forEach(seriesModel => {
+                const boundingBoxWithId = boundingBoxPerYAxis.find(box => box.id === seriesModel.get('yAxisId'));
+                const boundingBox = boundingBoxWithId?.boundingBox;
+                //Series was probably added after the last annotations were saved
+                if (!boundingBox) {
+                    return;
+                }
+
                 const seriesData = seriesModel.getSeriesData();
                 if (seriesData && seriesData.length) {
                     const kdTree = new KDBush(seriesData,
@@ -1283,25 +1366,31 @@ export default {
             return seriesKDTrees;
         },
         endAnnotationMarquee(event) {
-            const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
-            const startMinY = this.marquee.start.y.reduce((previousY, currentY) => {
-                return Math.min(previousY, currentY);
-            }, this.marquee.start.y[0]);
-            const endMinY = this.marquee.end.y.reduce((previousY, currentY) => {
-                return Math.min(previousY, currentY);
-            }, this.marquee.end.y[0]);
-            const minY = Math.min(startMinY, endMinY);
-            const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
-            const maxY = Math.max(startMinY, endMinY);
-            const boundingBox = {
-                minX,
-                minY,
-                maxX,
-                maxY
-            };
-            const pointsInBox = this.getPointsInBox(boundingBox);
+            const boundingBoxPerYAxis = [];
+            this.yAxisListWithRange.forEach((yAxis, yIndex) => {
+                const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
+                const minY = Math.min(this.marquee.start.y[yIndex], this.marquee.end.y[yIndex]);
+                const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
+                const maxY = Math.max(this.marquee.start.y[yIndex], this.marquee.end.y[yIndex]);
+                const boundingBox = {
+                    minX,
+                    minY,
+                    maxX,
+                    maxY
+                };
+                boundingBoxPerYAxis.push({
+                    id: yAxis.get('id'),
+                    boundingBox
+                });
+            });
+
+            const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis);
+            if (!pointsInBox) {
+                return;
+            }
+
             this.annotationSelections = pointsInBox.flat();
-            this.selectNewPlotAnnotations(minX, minY, maxX, maxY, pointsInBox, event);
+            this.selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event);
         },
         endZoomMarquee() {
             const startPixels = this.marquee.startPixels;
@@ -1681,7 +1770,9 @@ export default {
         },
 
         destroy() {
-            configStore.deleteStore(this.config.id);
+            if (this.config) {
+                configStore.deleteStore(this.config.id);
+            }
 
             this.stopListening();
 
@@ -1721,9 +1812,6 @@ export default {
                 this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
-        },
-        legendHoverChanged(data) {
-            this.showLimitLineLabels = data;
         },
         toggleCursorGuide() {
             this.cursorGuide = !this.cursorGuide;

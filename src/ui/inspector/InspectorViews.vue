@@ -24,6 +24,7 @@
 <div
     class="c-inspector__content"
     role="tabpanel"
+    aria-label="Inspector Views"
 ></div>
 </template>
 

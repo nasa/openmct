@@ -68,26 +68,25 @@ export default class PlotConfigurationModel extends Model {
         //Add any axes in addition to the main yAxis above - we must always have at least 1 y-axis
         //Addition axes ids will be the MAIN_Y_AXES_ID + x where x is between 1 and MAX_ADDITIONAL_AXES
         this.additionalYAxes = [];
-        if (Array.isArray(options.model.additionalYAxes)) {
-            const maxLength = Math.min(MAX_ADDITIONAL_AXES, options.model.additionalYAxes.length);
-            for (let yAxisCount = 0; yAxisCount < maxLength; yAxisCount++) {
-                const yAxis = options.model.additionalYAxes[yAxisCount];
+        const hasAdditionalAxesConfiguration = Array.isArray(options.model.additionalYAxes);
+
+        for (let yAxisCount = 0; yAxisCount < MAX_ADDITIONAL_AXES; yAxisCount++) {
+            const yAxisId = MAIN_Y_AXES_ID + yAxisCount + 1;
+            const yAxis = hasAdditionalAxesConfiguration && options.model.additionalYAxes.find(additionalYAxis => additionalYAxis?.id === yAxisId);
+            if (yAxis) {
                 this.additionalYAxes.push(new YAxisModel({
                     model: yAxis,
                     plot: this,
                     openmct: options.openmct,
-                    id: yAxis.id || (MAIN_Y_AXES_ID + yAxisCount + 1)
+                    id: yAxis.id
+                }));
+            } else {
+                this.additionalYAxes.push(new YAxisModel({
+                    plot: this,
+                    openmct: options.openmct,
+                    id: yAxisId
                 }));
             }
-        }
-
-        // If the saved options config doesn't include information about all the additional axes, we initialize the remaining here
-        for (let axesCount = this.additionalYAxes.length; axesCount < MAX_ADDITIONAL_AXES; axesCount++) {
-            this.additionalYAxes.push(new YAxisModel({
-                plot: this,
-                openmct: options.openmct,
-                id: MAIN_Y_AXES_ID + axesCount + 1
-            }));
         }
         // end add additional axes
 

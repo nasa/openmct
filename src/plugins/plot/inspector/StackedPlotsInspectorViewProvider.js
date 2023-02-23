@@ -12,12 +12,10 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
             }
 
             const object = selection[0][0].context.item;
-            const parent = selection[0].length > 1 && selection[0][1].context.item;
 
-            const isOverlayPlotObject = object && object.type === 'telemetry.plot.overlay';
-            const isParentStackedPlotObject = parent && parent.type === 'telemetry.plot.stacked';
+            const isStackedPlotObject = object && object.type === 'telemetry.plot.stacked';
 
-            return !isOverlayPlotObject && isParentStackedPlotObject;
+            return isStackedPlotObject;
         },
         view: function (selection) {
             let component;

@@ -28,7 +28,7 @@ import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
 
-const TEST_KEY_ID = 'test-key';
+const TEST_KEY_ID = 'some-other-key';
 
 describe("the plugin", function () {
     let element;
@@ -535,6 +535,30 @@ describe("the plugin", function () {
                 expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
 
             });
+
+            describe('limits', () => {
+
+                it('lines are not displayed by default', () => {
+                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                    expect(limitEl.length).toBe(0);
+                });
+
+                it('lines are displayed when configuration is set to true', (done) => {
+                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+                    const config = configStore.get(configId);
+                    config.yAxis.set('displayRange', {
+                        min: 0,
+                        max: 4
+                    });
+                    config.series.models[0].set('limitLines', true);
+
+                    Vue.nextTick(() => {
+                        let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                        expect(limitEl.length).toBe(4);
+                        done();
+                    });
+                });
+            });
         });
 
         describe('controls in time strip view', () => {
@@ -867,25 +891,6 @@ describe("the plugin", function () {
             it('renders color palette options', () => {
                 const colorSwatch = editOptionsEl.querySelector(".c-click-swatch");
                 expect(colorSwatch).toBeDefined();
-            });
-        });
-
-        describe('limits', () => {
-
-            it('lines are not displayed by default', () => {
-                let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
-                expect(limitEl.length).toBe(0);
-            });
-
-            xit('lines are displayed when configuration is set to true', (done) => {
-                config.series.models[0].set('limitLines', true);
-
-                Vue.nextTick(() => {
-                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
-                    expect(limitEl.length).toBe(4);
-                    done();
-                });
-
             });
         });
     });

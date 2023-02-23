@@ -26,7 +26,7 @@
   align-items: flex-start;
 
   > * + * {
-      margin-left: $interiorMargin;
+      margin-left: $interiorMarginSm;
   }
 
   + .c-recentobjects-listitem {
@@ -58,7 +58,7 @@
 
   &__type-icon {
       color: $colorItemTreeIcon;
-      font-size: 2.2em;
+      font-size: 1.25em;
 
       // TEMP: uses object-label component, hide label part
       .c-object-label__name {
@@ -72,6 +72,7 @@
 
   &__body {
       flex: 1 1 auto;
+      padding-top: 2px; // Align with type icon
 
       > * + * {
           margin-top: $interiorMarginSm;
@@ -89,7 +90,6 @@
             }
           }
       }
-
   }
 
   &__tags {
@@ -102,7 +102,7 @@
 
   &__title {
       border-radius: $basicCr;
-      color: pullForward($colorBodyFg, 30%);
+      color: $colorItemTreeFg;
       cursor: pointer;
       padding: $interiorMarginSm;
 
