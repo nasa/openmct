@@ -22,7 +22,6 @@
 
 <template>
 <div
-    v-if="isEditing"
     class="c-inspect-properties"
 >
     <ul class="c-inspect-properties__section">
@@ -37,6 +36,7 @@
                 <input
                     id="telemetryPrintfFormat"
                     type="text"
+                    :disabled="!isEditing"
                     :value="telemetryFormat"
                     :placeholder="nonMixedFormat ? '' : 'Mixed'"
                     @change="formatTelemetry"
