@@ -60,6 +60,75 @@ test.describe('Overlay Plot', () => {
         expect(color).toBe('rgb(255, 166, 61)');
     });
 
+    test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6338'
+        });
+        // Create an Overlay Plot with a default SWG
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
+            type: "Overlay Plot"
+        });
+
+        const swgA = await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            parent: overlayPlot.uuid
+        });
+
+        await page.goto(overlayPlot.url);
+
+        // Assert that no limit lines are shown by default
+        await page.waitForSelector('.js-limit-area', { state: 'attached' });
+        const limitLineCount = await page.locator('.c-plot-limit-line').count();
+        expect(limitLineCount).toBe(0);
+
+        // Enter edit mode
+        await page.click('button[title="Edit"]');
+
+        // Expand the "Sine Wave Generator" plot series options and enable limit lines
+        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
+        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('[title="Display limit lines"]~div input').check();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        // Save (exit edit mode)
+        await page.locator('button[title="Save"]').click();
+        await page.locator('li[title="Save and Finish Editing"]').click();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        await page.reload();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        // Enter edit mode
+        await page.click('button[title="Edit"]');
+
+        // Expand the elements pool vertically
+        await page.locator('.l-pane.l-pane--vertical-handle-before', {
+            hasText: 'Elements'
+        }).locator('.l-pane__handle').hover();
+        await page.mouse.down();
+        await page.mouse.move(0, 100);
+        await page.mouse.up();
+
+        // Drag Sine Wave Generator series from Y Axis 1 into Y Axis 2
+        await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        // Save (exit edit mode)
+        await page.locator('button[title="Save"]').click();
+        await page.locator('li[title="Save and Finish Editing"]').click();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        await page.reload();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+    });
+
     test('The elements pool supports dragging series into multiple y-axis buckets', async ({ page }) => {
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
@@ -197,4 +266,17 @@ async function getCanvasPixelsWithData(page) {
     });
 
     return getTelemValuePromise;
+}
+
+/**
+ *
+ * @param {import('@playwright/test').Page} page
+ */
+async function assertLimitLinesExistAndAreVisible(page) {
+    await page.waitForSelector('.js-limit-area', { state: 'attached' });
+    const limitLineCount = await page.locator('.c-plot-limit-line').count();
+    expect(limitLineCount).toBe(10);
+    for (let i = 0; i < limitLineCount; i++) {
+        await expect(page.locator('.c-plot-limit-line').nth(i)).toBeVisible();
+    }
 }
