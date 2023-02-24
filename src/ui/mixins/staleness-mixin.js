@@ -30,9 +30,19 @@ export default {
     },
     beforeDestroy() {
         this.triggerUnsubscribeFromStaleness();
+        this.unwatchClock();
+    },
+    mounted() {
+        this.watchClock();
     },
     methods: {
         subscribeToStaleness(domainObject, callback) {
+            if (!this.resubscribeToStaleness) {
+                this.resubscribeToStaleness = () => {
+                    this.subscribeToStaleness(domainObject, callback);
+                };
+            }
+
             if (!this.stalenessUtils) {
                 this.stalenessUtils = new StalenessUtils(this.openmct, domainObject);
             }
@@ -62,6 +72,18 @@ export default {
                 this.unsubscribeFromStaleness();
                 delete this.unsubscribeFromStaleness;
                 this.stalenessUtils.destroy();
+            }
+        },
+        watchClock() {
+            this.openmct.time.on('clock', this.handleClockChange, this);
+        },
+        unwatchClock() {
+            this.openmct.time.off('clock', this.handleClockChange, this);
+        },
+        handleClockChange() {
+            if (this.resubscribeToStaleness) {
+                this.triggerUnsubscribeFromStaleness();
+                this.resubscribeToStaleness();
             }
         }
     }
