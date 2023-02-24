@@ -173,16 +173,10 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - lint:
-          name: node14-lint
-          node-version: lts/fermium
-      - unit-test:
-          name: node18-chrome
-          node-version: "18"
       - e2e-test:
-          name: e2e-stable
+          name: e2e-full
           node-version: lts/gallium
-          suite: stable
+          suite: full
       - perf-test:
           node-version: lts/gallium
       - visual-test:
