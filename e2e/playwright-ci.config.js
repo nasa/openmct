@@ -19,7 +19,7 @@ const config = {
         timeout: 200 * 1000,
         reuseExistingServer: false
     },
-    maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
+    //maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
     workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
     use: {
         baseURL: 'http://localhost:8080/',
