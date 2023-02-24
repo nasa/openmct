@@ -12,7 +12,6 @@ const config = {
     retries: 2, //Retries 2 times for a total of 3 runs. When running sharded and with maxFailures = 5, this should ensure that flake is managed without failing the full suite
     testDir: 'tests',
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
-    timeout: 60 * 1000,
     webServer: {
         command: 'npm run start:coverage',
         url: 'http://localhost:8080/#',

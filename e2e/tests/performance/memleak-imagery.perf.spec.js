@@ -37,7 +37,7 @@ const { test, expect } = require('@playwright/test');
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 
 // eslint-disable-next-line playwright/no-skipped-test
-test.describe.skip('Memory Performance tests', () => {
+test.describe('Memory Performance tests', () => {
     test.beforeEach(async ({ page, browser }, testInfo) => {
         // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
