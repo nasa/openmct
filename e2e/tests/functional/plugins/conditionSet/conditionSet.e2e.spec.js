@@ -214,7 +214,7 @@ test.describe('Basic Condition Set Use', () => {
             type: 'Sine Wave Generator',
             name: "Beta Sine Wave Generator"
         });
-        await createDomainObjectWithDefaults(page, {
+        const conditionSet1 = await createDomainObjectWithDefaults(page, {
             type: 'Condition Set',
             name: "Test Condition Set"
         });
@@ -223,14 +223,15 @@ test.describe('Basic Condition Set Use', () => {
         await page.locator('[title="Edit"]').click();
 
         // Expand the 'My Items' folder in the left tree
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
+        await page.goto(conditionSet1.url);
+        page.click('button[title="Show selected item in tree"]');
         // Add the Alpha & Beta Sine Wave Generator to the Condition Set and save changes
         const treePane = page.getByRole('tree', {
             name: 'Main Tree'
         });
         const alphaGeneratorTreeItem = treePane.getByRole('treeitem', { name: "Alpha Sine Wave Generator"});
         const betaGeneratorTreeItem = treePane.getByRole('treeitem', { name: "Beta Sine Wave Generator"});
-        const conditionCollection = await page.locator('#conditionCollection');
+        const conditionCollection = page.locator('#conditionCollection');
 
         await alphaGeneratorTreeItem.dragTo(conditionCollection);
         await betaGeneratorTreeItem.dragTo(conditionCollection);
@@ -240,8 +241,9 @@ test.describe('Basic Condition Set Use', () => {
         await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
         await page.click('button[title="Change the current view"]');
 
-        await expect(page.locator('li[role="menuitem"]:text("Lad Table")')).toBeHidden();
-        await expect(page.locator('li[role="menuitem"]:text("Conditions View")')).toBeVisible();
-        await expect(page.locator('li[role="menuitem"]:text("Plot")')).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: /Lad Table/ })).toBeHidden();
+        await expect(page.getByRole('menuitem', { name: /Conditions View/ })).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
     });
 });
