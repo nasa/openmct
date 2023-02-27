@@ -47,7 +47,7 @@
     "mini-css-extract-plugin": "2.7.2",
     "moment": "2.29.4",
     "moment-duration-format": "2.3.2",
-    "moment-timezone": "0.5.40",
+    "moment-timezone": "0.5.41",
     "nyc": "15.1.0",
     "painterro": "1.2.78",
     "playwright-core": "1.29.0",
