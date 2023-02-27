@@ -162,6 +162,7 @@ export default {
                 await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
                 this.$emit('tags-updated', annotationsToDelete);
                 if (this.onTagChange) {
+                    this.userAddingTag = false;
                     this.onTagChange(this.annotations);
                 }
             }
