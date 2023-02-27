@@ -99,7 +99,7 @@
                     />
                     <button
                         slot="controls"
-                        class="c-icon-button l-shell__reset-tree-button icon-clear-data"
+                        class="c-icon-button icon-clear-data"
                         aria-label="Clear Recently Viewed"
                         title="Clear Recently Viewed"
                         @click="handleClearRecentObjects"
