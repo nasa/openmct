@@ -33,9 +33,12 @@ export default class LADTableViewProvider {
     canView(domainObject) {
         const supportsComposition = this.openmct.composition.supportsComposition(domainObject);
         const providesTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
+        const isLadTable = domainObject.type === 'LadTable';
+        const isConditionSet = domainObject.type === 'conditionSet';
 
-        return domainObject.type === 'LadTable'
-            || (providesTelemetry && supportsComposition);
+        return !isConditionSet
+            && (isLadTable
+            || (providesTelemetry && supportsComposition));
     }
 
     canEdit(domainObject) {

@@ -583,7 +583,6 @@ export default {
                 return;
             }
 
-            console.warn('Unhandled change:', attribute);
             this.updateLimitsAndDraw();
         },
         updateLimitsAndDraw() {

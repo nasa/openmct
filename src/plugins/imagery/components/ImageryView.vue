@@ -94,7 +94,6 @@
                 <Compass
                     v-if="shouldDisplayCompass"
                     :image="focusedImage"
-                    :natural-aspect-ratio="focusedImageNaturalAspectRatio"
                     :sized-image-dimensions="sizedImageDimensions"
                 />
             </div>
@@ -171,7 +170,7 @@
         >
             <ImageThumbnail
                 v-for="(image, index) in imageHistory"
-                :key="`${image.thumbnailUrl || image.url}${image.time}`"
+                :key="`${image.thumbnailUrl || image.url}-${image.time}-${index}`"
                 :image="image"
                 :active="focusedImageIndex === index"
                 :selected="focusedImageIndex === index && isPaused"
@@ -430,9 +429,12 @@ export default {
                 && imageHeightAndWidth
                 && this.zoomFactor === 1
                 && this.imagePanned !== true;
-            const hasCameraConfigurations = this.focusedImage?.transformations !== undefined;
+            const hasHeading = this.focusedImage?.heading !== undefined;
+            const hasCameraAngleOfView = this.focusedImage?.transformations?.cameraAngleOfView > 0;
 
-            return display && hasCameraConfigurations;
+            return display
+                && hasCameraAngleOfView
+                && hasHeading;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;
@@ -582,11 +584,34 @@ export default {
             },
             deep: true
         },
-        focusedImageIndex() {
-            this.trackDuration();
-            this.resetAgeCSS();
-            this.updateRelatedTelemetryForFocusedImage();
-            this.getImageNaturalDimensions();
+        focusedImage: {
+            handler(newImage, oldImage) {
+                const newTime = newImage?.time;
+                const oldTime = oldImage?.time;
+                const newUrl = newImage?.url;
+                const oldUrl = oldImage?.url;
+
+                // Skip if it's all falsy
+                if (!newTime && !oldTime && !newUrl && !oldUrl) {
+                    return;
+                }
+
+                // Skip if it's the same image
+                if (newTime === oldTime && newUrl === oldUrl) {
+                    return;
+                }
+
+                // Update image duration and reset age CSS
+                this.trackDuration();
+                this.resetAgeCSS();
+
+                // Reset image dimensions and calculate new dimensions
+                // on new image load
+                this.getImageNaturalDimensions();
+
+                // Get the related telemetry for the new image
+                this.updateRelatedTelemetryForFocusedImage();
+            }
         },
         bounds() {
             this.scrollHandler();
@@ -771,6 +796,10 @@ export default {
             this.layers = layersMetadata;
             if (this.domainObject.configuration) {
                 const persistedLayers = this.domainObject.configuration.layers;
+                if (!persistedLayers) {
+                    return;
+                }
+
                 layersMetadata.forEach((layer) => {
                     const persistedLayer = persistedLayers.find(object => object.name === layer.name);
                     if (persistedLayer) {
@@ -856,6 +885,10 @@ export default {
             });
         },
         focusElement() {
+            if (this.isComposedInLayout) {
+                return false;
+            }
+
             this.$el.focus();
         },
 

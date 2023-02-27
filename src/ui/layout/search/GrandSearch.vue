@@ -47,6 +47,8 @@
 import search from '../../components/search.vue';
 import SearchResultsDropDown from './SearchResultsDropDown.vue';
 
+const SEARCH_DEBOUNCE_TIME = 200;
+
 export default {
     name: 'GrandSearch',
     components: {
@@ -59,10 +61,14 @@ export default {
     data() {
         return {
             searchValue: '',
+            debouncedSearchTimeoutID: null,
             searchLoading: false,
             annotationSearchResults: [],
             objectSearchResults: []
         };
+    },
+    mounted() {
+        this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
     },
     destroyed() {
         document.body.removeEventListener('click', this.handleOutsideClick);
@@ -84,6 +90,7 @@ export default {
             if (this.searchValue) {
                 await this.getSearchResults();
             } else {
+                clearTimeout(this.debouncedSearchTimeoutID);
                 const dropdownOptions = {
                     searchLoading: this.searchLoading,
                     searchValue: this.searchValue,
@@ -92,6 +99,19 @@ export default {
                 };
                 this.$refs.searchResultsDropDown.showResults(dropdownOptions);
             }
+        },
+        debounceAsyncFunction(functionToDebounce, debounceTime) {
+            return (...args) => {
+                clearTimeout(this.debouncedSearchTimeoutID);
+
+                return new Promise((resolve, reject) => {
+                    this.debouncedSearchTimeoutID = setTimeout(() => {
+                        functionToDebounce(...args)
+                            .then(resolve)
+                            .catch(reject);
+                    }, debounceTime);
+                });
+            };
         },
         getPathsForObjects(objectsNeedingPaths) {
             return Promise.all(objectsNeedingPaths.map(async (domainObject) => {

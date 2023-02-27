@@ -153,23 +153,50 @@ export default {
 
         addSeries(series, index) {
             const yAxisId = series.get('yAxisId');
-            this.updateAxisUsageCount(yAxisId, 1);
+            this.incrementAxisUsageCount(yAxisId);
             this.$set(this.plotSeries, index, series);
             this.setYAxisLabel(yAxisId);
+
+            if (this.isStackedPlotObject) {
+                return;
+            }
+
+            // If the series moves to a different yAxis, update the seriesCounts for both yAxes
+            // so we can display the configuration options for all used yAxes
+            this.listenTo(series, 'change:yAxisId', (newYAxisId, oldYAxisId) => {
+                this.incrementAxisUsageCount(newYAxisId);
+                this.decrementAxisUsageCount(oldYAxisId);
+            }, this);
         },
 
         removeSeries(series, index) {
             const yAxisId = series.get('yAxisId');
-            this.updateAxisUsageCount(yAxisId, -1);
+            this.decrementAxisUsageCount(yAxisId);
             this.plotSeries.splice(index, 1);
             this.setYAxisLabel(yAxisId);
+
+            if (this.isStackedPlotObject) {
+                return;
+            }
+
+            this.stopListening(series, 'change:yAxisId');
+        },
+
+        incrementAxisUsageCount(yAxisId) {
+            this.updateAxisUsageCount(yAxisId, 1);
+        },
+
+        decrementAxisUsageCount(yAxisId) {
+            this.updateAxisUsageCount(yAxisId, -1);
         },
 
         updateAxisUsageCount(yAxisId, updateCount) {
             const foundYAxis = this.findYAxisForId(yAxisId);
-            if (foundYAxis) {
-                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
+            if (!foundYAxis) {
+                throw new Error(`yAxis with id ${yAxisId} not found`);
             }
+
+            foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
         },
 
         updateSeriesConfigForObject(config) {

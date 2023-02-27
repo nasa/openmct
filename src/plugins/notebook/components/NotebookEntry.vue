@@ -64,7 +64,7 @@
                     tabindex="0"
                 >
                     <TextHighlight
-                        :text="entryText"
+                        :text="formatValidUrls(entry.text)"
                         :highlight="highlightText"
                         :highlight-class="'search-highlight'"
                     />
@@ -75,7 +75,7 @@
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
                     aria-label="Notebook Entry Input"
-                    tabindex="0"
+                    tabindex="-1"
                     :contenteditable="canEdit"
                     v-bind.prop="formattedText"
                     @mouseover="checkEditability($event)"
@@ -94,7 +94,7 @@
                     class="c-ne__text"
                     contenteditable="false"
                     tabindex="0"
-                    v-html="formattedText"
+                    v-bind.prop="formattedText"
                 >
                 </div>
             </template>
@@ -228,14 +228,17 @@ export default {
         },
         selectedEntryId: {
             type: String,
-            required: true
+            default() {
+                return '';
+            }
         }
     },
     data() {
         return {
             editMode: false,
             canEdit: true,
-            enableEmbedsWrapperScroll: false
+            enableEmbedsWrapperScroll: false,
+            urlWhitelist: []
         };
     },
     computed: {
@@ -247,28 +250,15 @@ export default {
         },
         formattedText() {
             // remove ANY tags
-            let text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
+            const text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
 
-            if (this.editMode || !this.urlWhitelist) {
+            if (this.editMode || this.urlWhitelist.length === 0) {
                 return { innerText: text };
             }
 
-            text = text.replace(URL_REGEX, (match) => {
-                const url = new URL(match);
-                const domain = url.hostname;
-                let result = match;
-                let isMatch = this.urlWhitelist.find((partialDomain) => {
-                    return domain.endsWith(partialDomain);
-                });
+            const html = this.formatValidUrls(text);
 
-                if (isMatch) {
-                    result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
-                }
-
-                return result;
-            });
-
-            return { innerHTML: text };
+            return { innerHTML: html };
         },
         isSelectedEntry() {
             return this.selectedEntryId === this.entry.id;
@@ -353,6 +343,22 @@ export default {
         },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
+        },
+        formatValidUrls(text) {
+            return text.replace(URL_REGEX, (match) => {
+                const url = new URL(match);
+                const domain = url.hostname;
+                let result = match;
+                let isMatch = this.urlWhitelist.find((partialDomain) => {
+                    return domain.endsWith(partialDomain);
+                });
+
+                if (isMatch) {
+                    result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
+                }
+
+                return result;
+            });
         },
         manageEmbedLayout() {
             if (this.$refs.embeds) {
