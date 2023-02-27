@@ -325,6 +325,7 @@ export default {
                         let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
                         const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
 
+                        //We shouldn't need the else block here if we clip text to fit the rectangle
                         if (activityNameFitsRect) {
                             currentRow = this.getRowForActivity(rectX, rectWidth, activitiesByRow);
                         } else {
@@ -365,6 +366,8 @@ export default {
                 };
             });
         },
+        //REDO this to receive the rectangle width as the max width of text (minus padding)
+        // Cut off any text that exceeds this width.
         getActivityDisplayText(context, text, activityNameFitsRect) {
         //TODO: If the activity start is less than viewBounds.start then the text should be cropped on the left/should be off-screen)
             let words = text.split(' ');
@@ -376,6 +379,7 @@ export default {
                 let testLine = line + words[n] + ' ';
                 let metrics = context.measureText(testLine);
                 let testWidth = metrics.width;
+                //We need to go to a new line if the width of our line is > MAX_TEXT_WIDTH
                 if (!activityNameFitsRect && (testWidth > MAX_TEXT_WIDTH && n > 0)) {
                     activityText.push(line);
                     line = words[n] + ' ';
