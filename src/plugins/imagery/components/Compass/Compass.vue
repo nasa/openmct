@@ -26,18 +26,23 @@
     :style="`width: 100%; height: 100%`"
 >
     <CompassHUD
-        v-if="showCompassHUD"
-        :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
-        :camera-pan="cameraPan"
+        :heading="heading"
+        :camera-azimuth="cameraAzimuth"
+        :transformations="transformations"
+        :has-gimble="hasGimble"
+        :normalized-camera-azimuth="normalizedCameraAzimuth"
+        :sun-heading="sunHeading"
     />
     <CompassRose
-        v-if="showCompassRose"
-        :camera-pan="cameraPan"
+        :camera-angle-of-view="cameraAngleOfView"
         :heading="heading"
-        :sized-image-dimensions="sizedImageDimensions"
-        :sun-heading="sunHeading"
+        :camera-azimuth="cameraAzimuth"
         :transformations="transformations"
+        :has-gimble="hasGimble"
+        :normalized-camera-azimuth="normalizedCameraAzimuth"
+        :sun-heading="sunHeading"
+        :sized-image-dimensions="sizedImageDimensions"
     />
 </div>
 </template>
@@ -45,6 +50,7 @@
 <script>
 import CompassHUD from './CompassHUD.vue';
 import CompassRose from './CompassRose.vue';
+import { rotate } from './utils';
 
 export default {
     components: {
@@ -62,11 +68,14 @@ export default {
         }
     },
     computed: {
-        showCompassHUD() {
-            return this.hasCameraPan && this.cameraAngleOfView > 0;
+        hasGimble() {
+            return this.cameraAzimuth !== undefined;
         },
-        showCompassRose() {
-            return (this.hasCameraPan || this.hasHeading) && this.cameraAngleOfView > 0;
+        // compass ordinal orientation of camera
+        normalizedCameraAzimuth() {
+            return this.hasGimble
+                ? rotate(this.cameraAzimuth)
+                : rotate(this.heading, -this.transformations.rotation || 0);
         },
         // horizontal rotation from north in degrees
         heading() {
@@ -80,14 +89,11 @@ export default {
             return this.image.sunOrientation;
         },
         // horizontal rotation from north in degrees
-        cameraPan() {
+        cameraAzimuth() {
             return this.image.cameraPan;
         },
-        hasCameraPan() {
-            return this.cameraPan !== undefined;
-        },
         cameraAngleOfView() {
-            return this.transformations?.cameraAngleOfView;
+            return this.transformations.cameraAngleOfView;
         },
         transformations() {
             return this.image.transformations;

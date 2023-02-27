@@ -111,7 +111,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Driving");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
-    test('Can search for tags', async ({ page }) => {
+    test('Can search for tags and preview works properly', async ({ page }) => {
         await createNotebookEntryAndTags(page);
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
@@ -126,6 +126,19 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
         await expect(page.locator('text=No results found')).toBeVisible();
+
+        await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout'
+        });
+
+        // Go back into edit mode for the display layout
+        await page.locator('button[title="Edit"]').click();
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
+        await expect(page.locator('[aria-label="Search Result"]')).toContainText("Science");
+        await page.getByText('Entry 0').click();
+        await expect(page.locator('.js-preview-window')).toBeVisible();
     });
 
     test('Can delete tags', async ({ page }) => {
@@ -230,5 +243,26 @@ test.describe('Tagging in Notebooks @addInit', () => {
             await expect(page.locator(entryLocator)).toContainText("Science");
             await expect(page.locator(entryLocator)).toContainText("Driving");
         }
+    });
+    test('Can cancel adding a tag', async ({ page }) => {
+        await createNotebookAndEntry(page);
+
+        // Click on Annotations tab
+        await page.locator('.c-inspector__tab', { hasText: "Annotations" }).click();
+
+        // Click on the "Add Tag" button
+        await page.locator('button:has-text("Add Tag")').click();
+
+        // Click inside the AutoComplete field
+        await page.locator('[placeholder="Type to select tag"]').click();
+
+        // Click on the "Tags" header (simulating a click outside the autocomplete)
+        await page.locator('div.c-inspect-properties__header:has-text("Tags")').click();
+
+        // Verify there is a button with text "Add Tag"
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
+
+        // Verify the AutoComplete field is hidden
+        await expect(page.locator('[placeholder="Type to select tag"]')).toBeHidden();
     });
 });

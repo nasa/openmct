@@ -31,6 +31,7 @@
         :added-tags="addedTags"
         @tagRemoved="tagRemoved"
         @tagAdded="tagAdded"
+        @tagBlurred="tagBlurred"
     />
     <button
         v-show="!userAddingTag && !maxTagsAdded"
@@ -161,9 +162,16 @@ export default {
                 await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
                 this.$emit('tags-updated', annotationsToDelete);
                 if (this.onTagChange) {
+                    this.userAddingTag = false;
                     this.onTagChange(this.annotations);
                 }
             }
+        },
+        tagBlurred() {
+            // Remove last tag when user clicks outside of TagSelection
+            this.addedTags.pop();
+            // Hide TagSelection and show "Add Tag" button
+            this.userAddingTag = false;
         },
         async tagAdded(newTag) {
             // Either undelete an annotation, or create one (1) new annotation
