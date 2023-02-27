@@ -885,6 +885,10 @@ export default {
             });
         },
         focusElement() {
+            if (this.isComposedInLayout) {
+                return false;
+            }
+
             this.$el.focus();
         },
 
