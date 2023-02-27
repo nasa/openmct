@@ -199,7 +199,7 @@ test.describe('Basic Condition Set Use', () => {
         const numOfUnnamedConditions = await page.locator('text=Unnamed Condition').count();
         expect(numOfUnnamedConditions).toEqual(1);
     });
-    test('ConditionSet should ouput blank instead of the default value', async ({ page }) => {
+    test('ConditionSet should output blank instead of the default value', async ({ page }) => {
         //Navigate to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
