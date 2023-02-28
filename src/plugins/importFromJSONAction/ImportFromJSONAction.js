@@ -28,8 +28,8 @@ export default class ImportAsJSONAction {
         this.name = 'Import from JSON';
         this.key = 'import.JSON';
         this.description = '';
-        this.cssClass = "icon-import";
-        this.group = "json";
+        this.cssClass = 'icon-import';
+        this.group = 'json';
         this.priority = 2;
 
         this.openmct = openmct;
@@ -44,7 +44,9 @@ export default class ImportAsJSONAction {
     appliesTo(objectPath) {
         const domainObject = objectPath[0];
         const locked = domainObject && domainObject.locked;
-        const persistable = this.openmct.objects.isPersistable(domainObject.identifier);
+        const persistable = this.openmct.objects.isPersistable(
+            domainObject.identifier
+        );
         const TypeDefinition = this.openmct.types.get(domainObject.type);
         const definition = TypeDefinition.definition;
         const creatable = definition && definition.creatable;
@@ -53,8 +55,10 @@ export default class ImportAsJSONAction {
             return false;
         }
 
-        return domainObject !== undefined
-            && this.openmct.composition.get(domainObject);
+        return (
+            domainObject !== undefined &&
+            this.openmct.composition.get(domainObject)
+        );
     }
     /**
      *
@@ -113,11 +117,14 @@ export default class ImportAsJSONAction {
 
         let parentComposition = this.openmct.composition.get(parent);
         if (parentComposition) {
-            objectIdentifiers = Array.from(parentComposition.domainObject.composition);
+            objectIdentifiers = Array.from(
+                parentComposition.domainObject.composition
+            );
         }
 
         //conditional object styles are not saved on the composition, so we need to check for them
-        let parentObjectReference = parent.configuration?.objectStyles?.conditionSetIdentifier;
+        let parentObjectReference =
+            parent.configuration?.objectStyles?.conditionSetIdentifier;
         if (parentObjectReference) {
             objectIdentifiers.push(parentObjectReference);
         }
@@ -132,7 +139,7 @@ export default class ImportAsJSONAction {
      */
     _generateNewIdentifiers(tree, namespace) {
         // For each domain object in the file, generate new ID, replace in tree
-        Object.keys(tree.openmct).forEach(domainObjectId => {
+        Object.keys(tree.openmct).forEach((domainObjectId) => {
             const newId = {
                 namespace,
                 key: uuid()
@@ -162,17 +169,25 @@ export default class ImportAsJSONAction {
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
             this._deepInstantiate(rootObj, tree.openmct, []);
 
-            const compositionCollection = this.openmct.composition.get(domainObject);
-            let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-            this.openmct.objects.mutate(rootObj, 'location', domainObjectKeyString);
+            const compositionCollection =
+                this.openmct.composition.get(domainObject);
+            let domainObjectKeyString = this.openmct.objects.makeKeyString(
+                domainObject.identifier
+            );
+            this.openmct.objects.mutate(
+                rootObj,
+                'location',
+                domainObjectKeyString
+            );
             compositionCollection.add(rootObj);
         } else {
             const dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
-                message: "We're sorry, but you cannot import that object type into this object.",
+                message:
+                    "We're sorry, but you cannot import that object type into this object.",
                 buttons: [
                     {
-                        label: "Ok",
+                        label: 'Ok',
                         emphasis: true,
                         callback: function () {
                             dialog.dismiss();
@@ -205,15 +220,20 @@ export default class ImportAsJSONAction {
     _rewriteId(oldId, newId, tree) {
         let newIdKeyString = this.openmct.objects.makeKeyString(newId);
         let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
-        tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
+        tree = JSON.stringify(tree).replace(
+            new RegExp(oldIdKeyString, 'g'),
+            newIdKeyString
+        );
 
         return JSON.parse(tree, (key, value) => {
-            if (value !== undefined
-                && value !== null
-                && Object.prototype.hasOwnProperty.call(value, 'key')
-                && Object.prototype.hasOwnProperty.call(value, 'namespace')
-                && value.key === oldId.key
-                && value.namespace === oldId.namespace) {
+            if (
+                value !== undefined &&
+                value !== null &&
+                Object.prototype.hasOwnProperty.call(value, 'key') &&
+                Object.prototype.hasOwnProperty.call(value, 'namespace') &&
+                value.key === oldId.key &&
+                value.namespace === oldId.namespace
+            ) {
                 return newId;
             } else {
                 return value;
@@ -244,11 +264,10 @@ export default class ImportAsJSONAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure)
-            .then(changes => {
-                let onSave = this.onSave.bind(this);
-                onSave(domainObject, changes);
-            });
+        this.openmct.forms.showForm(formStructure).then((changes) => {
+            let onSave = this.onSave.bind(this);
+            onSave(domainObject, changes);
+        });
     }
     /**
      * @private
@@ -271,7 +290,9 @@ export default class ImportAsJSONAction {
         }
 
         if (!success) {
-            this.openmct.notifications.error('Invalid File: The selected file was either invalid JSON or was not formatted properly for import into Open MCT.');
+            this.openmct.notifications.error(
+                'Invalid File: The selected file was either invalid JSON or was not formatted properly for import into Open MCT.'
+            );
         }
 
         return success;

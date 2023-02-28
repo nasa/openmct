@@ -39,27 +39,27 @@
 
 /** @type {IndicatorState} */
 export const CONNECTED = {
-    statusClass: "s-status-on",
-    text: "CouchDB is connected",
-    description: "CouchDB is online and accepting requests."
+    statusClass: 's-status-on',
+    text: 'CouchDB is connected',
+    description: 'CouchDB is online and accepting requests.'
 };
 /** @type {IndicatorState} */
 export const PENDING = {
-    statusClass: "s-status-warning-lo",
-    text: "Attempting to connect to CouchDB...",
-    description: "Checking status of CouchDB, please stand by..."
+    statusClass: 's-status-warning-lo',
+    text: 'Attempting to connect to CouchDB...',
+    description: 'Checking status of CouchDB, please stand by...'
 };
 /** @type {IndicatorState} */
 export const DISCONNECTED = {
-    statusClass: "s-status-warning-hi",
-    text: "CouchDB is offline",
-    description: "CouchDB is offline and unavailable for requests."
+    statusClass: 's-status-warning-hi',
+    text: 'CouchDB is offline',
+    description: 'CouchDB is offline and unavailable for requests.'
 };
 /** @type {IndicatorState} */
 export const UNKNOWN = {
-    statusClass: "s-status-info",
-    text: "CouchDB connectivity unknown",
-    description: "CouchDB is in an unknown state of connectivity."
+    statusClass: 's-status-info',
+    text: 'CouchDB connectivity unknown',
+    description: 'CouchDB is in an unknown state of connectivity.'
 };
 
 export default class CouchStatusIndicator {

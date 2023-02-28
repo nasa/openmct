@@ -14,7 +14,9 @@ export default {
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
-        this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.keystring = this.openmct.objects.makeKeyString(
+            this.domainObject.identifier
+        );
         if (!this.composition) {
             return;
         }
@@ -33,21 +35,25 @@ export default {
     },
     methods: {
         add(child, index, anything) {
-            const type = this.openmct.types.get(child.type) || unknownObjectType;
+            const type =
+                this.openmct.types.get(child.type) || unknownObjectType;
             this.items.push({
                 model: child,
                 type: type.definition,
                 isAlias: this.keystring !== child.location,
                 objectPath: [child].concat(this.openmct.router.path),
-                objectKeyString: this.openmct.objects.makeKeyString(child.identifier)
+                objectKeyString: this.openmct.objects.makeKeyString(
+                    child.identifier
+                )
             });
         },
         remove(identifier) {
-            this.items = this.items
-                .filter((i) => {
-                    return i.model.identifier.key !== identifier.key
-                        || i.model.identifier.namespace !== identifier.namespace;
-                });
+            this.items = this.items.filter((i) => {
+                return (
+                    i.model.identifier.key !== identifier.key ||
+                    i.model.identifier.namespace !== identifier.namespace
+                );
+            });
         }
     }
 };

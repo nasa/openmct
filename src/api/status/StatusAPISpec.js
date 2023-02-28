@@ -1,7 +1,7 @@
 import StatusAPI from './StatusAPI.js';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
-describe("The Status API", () => {
+describe('The Status API', () => {
     let statusAPI;
     let openmct;
     let identifier;
@@ -13,20 +13,23 @@ describe("The Status API", () => {
         openmct = createOpenMct();
         statusAPI = new StatusAPI(openmct);
         identifier = {
-            namespace: "test-namespace",
-            key: "test-key"
+            namespace: 'test-namespace',
+            key: 'test-key'
         };
-        status = "test-status";
+        status = 'test-status';
         status2 = 'test-status-deux';
-        callback = jasmine.createSpy('callback', (statusUpdate) => statusUpdate);
+        callback = jasmine.createSpy(
+            'callback',
+            (statusUpdate) => statusUpdate
+        );
     });
 
     afterEach(() => {
         return resetApplicationState(openmct);
     });
 
-    describe("set function", () => {
-        it("sets status for identifier", () => {
+    describe('set function', () => {
+        it('sets status for identifier', () => {
             statusAPI.set(identifier, status);
 
             let resultingStatus = statusAPI.get(identifier);
@@ -35,8 +38,8 @@ describe("The Status API", () => {
         });
     });
 
-    describe("get function", () => {
-        it("returns status for identifier", () => {
+    describe('get function', () => {
+        it('returns status for identifier', () => {
             statusAPI.set(identifier, status2);
 
             let resultingStatus = statusAPI.get(identifier);
@@ -45,8 +48,8 @@ describe("The Status API", () => {
         });
     });
 
-    describe("delete function", () => {
-        it("deletes status for identifier", () => {
+    describe('delete function', () => {
+        it('deletes status for identifier', () => {
             statusAPI.set(identifier, status);
 
             let resultingStatus = statusAPI.get(identifier);
@@ -59,9 +62,8 @@ describe("The Status API", () => {
         });
     });
 
-    describe("observe function", () => {
-
-        it("allows callbacks to be attached to status set and delete events", () => {
+    describe('observe function', () => {
+        it('allows callbacks to be attached to status set and delete events', () => {
             let unsubscribe = statusAPI.observe(identifier, callback);
             statusAPI.set(identifier, status);
 
@@ -73,7 +75,7 @@ describe("The Status API", () => {
             unsubscribe();
         });
 
-        it("returns a unsubscribe function", () => {
+        it('returns a unsubscribe function', () => {
             let unsubscribe = statusAPI.observe(identifier, callback);
             unsubscribe();
 

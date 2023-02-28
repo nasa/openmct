@@ -73,7 +73,7 @@ class MenuAPI {
     }
 
     actionsToMenuItems(actions, objectPath, view) {
-        return actions.map(action => {
+        return actions.map((action) => {
             const isActionGroup = Array.isArray(action);
             if (isActionGroup) {
                 action = this.actionsToMenuItems(action, objectPath, view);
@@ -122,7 +122,11 @@ class MenuAPI {
     }
 
     _showObjectMenu(objectPath, x, y, actionsToBeIncluded) {
-        let applicableActions = this.openmct.actions._groupedAndSortedObjectActions(objectPath, actionsToBeIncluded);
+        let applicableActions =
+            this.openmct.actions._groupedAndSortedObjectActions(
+                objectPath,
+                actionsToBeIncluded
+            );
 
         this.showMenu(x, y, applicableActions);
     }

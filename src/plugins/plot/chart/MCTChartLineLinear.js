@@ -28,4 +28,3 @@ export default class MCTChartLineLinear extends MCTChartSeriesElement {
         this.buffer[start + 1] = point.y;
     }
 }
-

@@ -21,14 +21,22 @@
  *****************************************************************************/
 
 import ScatterPlotView from './ScatterPlotView.vue';
-import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW, TIME_STRIP_KEY } from './scatterPlotConstants.js';
+import {
+    SCATTER_PLOT_KEY,
+    SCATTER_PLOT_VIEW,
+    TIME_STRIP_KEY
+} from './scatterPlotConstants.js';
 import Vue from 'vue';
 
 export default function ScatterPlotViewProvider(openmct) {
     function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === TIME_STRIP_KEY);
+        let isChildOfTimeStrip = objectPath.find(
+            (object) => object.type === TIME_STRIP_KEY
+        );
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+        return (
+            isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath)
+        );
     }
 
     return {
@@ -66,7 +74,8 @@ export default function ScatterPlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<scatter-plot-view :options="options"></scatter-plot-view>'
+                        template:
+                            '<scatter-plot-view :options="options"></scatter-plot-view>'
                     });
                 },
                 destroy: function () {

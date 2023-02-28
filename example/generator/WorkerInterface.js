@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'uuid'
-], function (
-    { v4: uuid }
-) {
+define(['uuid'], function ({ v4: uuid }) {
     function WorkerInterface(openmct, StalenessProvider) {
         // eslint-disable-next-line no-undef
         const workerUrl = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}generatorWorker.js`;
@@ -38,7 +34,7 @@ define([
     }
 
     WorkerInterface.prototype.watchStaleness = function () {
-        this.StalenessProvider.on('stalenessEvent', ({ id, isStale}) => {
+        this.StalenessProvider.on('stalenessEvent', ({ id, isStale }) => {
             this.staleTelemetryIds[id] = isStale;
         });
     };
@@ -84,7 +80,6 @@ define([
             }
 
             delete self.callbacks[messageId];
-
         }
 
         messageId = this.dispatch('request', request, callback.bind(this));

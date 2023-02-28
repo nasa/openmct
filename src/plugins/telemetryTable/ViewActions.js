@@ -34,7 +34,7 @@ const exportCSV = {
 const exportMarkedDataAsCSV = {
     name: 'Export Marked Rows',
     key: 'export-csv-marked',
-    description: "Export marked rows as CSV",
+    description: 'Export marked rows as CSV',
     cssClass: 'icon-download labeled',
     invoke: (objectPath, view) => {
         view.getViewContext().exportMarkedDataAsCSV();
@@ -81,7 +81,7 @@ const play = {
 const expandColumns = {
     name: 'Expand Columns',
     key: 'expand-columns',
-    description: "Increase column widths to fit currently available data.",
+    description: 'Increase column widths to fit currently available data.',
     cssClass: 'icon-arrows-right-left labeled',
     invoke: (objectPath, view) => {
         view.getViewContext().expandColumns();
@@ -93,7 +93,8 @@ const expandColumns = {
 const autosizeColumns = {
     name: 'Autosize Columns',
     key: 'autosize-columns',
-    description: "Automatically size columns to fit the table into the available space.",
+    description:
+        'Automatically size columns to fit the table into the available space.',
     cssClass: 'icon-expand labeled',
     invoke: (objectPath, view) => {
         view.getViewContext().autosizeColumns();
@@ -112,7 +113,7 @@ const viewActions = [
     autosizeColumns
 ];
 
-viewActions.forEach(action => {
+viewActions.forEach((action) => {
     action.appliesTo = (objectPath, view = {}) => {
         const viewContext = view.getViewContext && view.getViewContext();
         if (!viewContext) {

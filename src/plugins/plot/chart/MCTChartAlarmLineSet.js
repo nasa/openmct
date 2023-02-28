@@ -81,7 +81,13 @@ export default class MCTChartAlarmLineSet {
                     level: key.toLowerCase(),
                     name: this.name(),
                     seriesColor: series.get('color').asHexString(),
-                    point: this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.high), series),
+                    point: this.makePoint(
+                        Object.assign(
+                            { [xKey]: this.bounds.start },
+                            limitForLevel.high
+                        ),
+                        series
+                    ),
                     value: series.getYVal(limitForLevel.high),
                     color: limitForLevel.high.color,
                     isUpper: true
@@ -94,7 +100,13 @@ export default class MCTChartAlarmLineSet {
                     level: key.toLowerCase(),
                     name: this.name(),
                     seriesColor: series.get('color').asHexString(),
-                    point: this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.low), series),
+                    point: this.makePoint(
+                        Object.assign(
+                            { [xKey]: this.bounds.start },
+                            limitForLevel.low
+                        ),
+                        series
+                    ),
                     value: series.getYVal(limitForLevel.low),
                     color: limitForLevel.low.color,
                     isUpper: false
@@ -113,7 +125,6 @@ export default class MCTChartAlarmLineSet {
     destroy() {
         this.stopListening();
     }
-
 }
 
 /**

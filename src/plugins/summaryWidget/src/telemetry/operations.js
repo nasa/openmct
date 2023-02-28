@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
+define([], function () {
     const OPERATIONS = {
         equalTo: {
             operation: function (input) {

@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createOpenMct, resetApplicationState} from "utils/testing";
-import PlanPlugin from "../plan/plugin";
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import PlanPlugin from '../plan/plugin';
 import Vue from 'vue';
-import Properties from "@/ui/inspector/details/Properties.vue";
+import Properties from '@/ui/inspector/details/Properties.vue';
 
 describe('the plugin', function () {
     let planDefinition;
@@ -88,25 +88,33 @@ describe('the plugin', function () {
     describe('the plan view', () => {
         it('provides a plan view', () => {
             const testViewObject = {
-                id: "test-object",
-                type: "plan"
+                id: 'test-object',
+                type: 'plan'
             };
             openmct.router.path = [testViewObject];
 
-            const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
-            let planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
+            const applicableViews = openmct.objectViews.get(testViewObject, [
+                testViewObject
+            ]);
+            let planView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plan.view'
+            );
             expect(planView).toBeDefined();
         });
 
         it('is not an editable view', () => {
             const testViewObject = {
-                id: "test-object",
-                type: "plan"
+                id: 'test-object',
+                type: 'plan'
             };
             openmct.router.path = [testViewObject];
 
-            const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
-            let planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
+            const applicableViews = openmct.objectViews.get(testViewObject, [
+                testViewObject
+            ]);
+            let planView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plan.view'
+            );
             expect(planView.canEdit()).toBeFalse();
         });
     });
@@ -137,25 +145,25 @@ describe('the plugin', function () {
                     namespace: ''
                 },
                 type: 'plan',
-                id: "test-object",
+                id: 'test-object',
                 selectFile: {
                     body: JSON.stringify({
-                        "TEST-GROUP": [
+                        'TEST-GROUP': [
                             {
-                                "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                                "start": 1597170002854,
-                                "end": 1597171032854,
-                                "type": "TEST-GROUP",
-                                "color": "fuchsia",
-                                "textColor": "black"
+                                name: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
+                                start: 1597170002854,
+                                end: 1597171032854,
+                                type: 'TEST-GROUP',
+                                color: 'fuchsia',
+                                textColor: 'black'
                             },
                             {
-                                "name": "Sed ut perspiciatis",
-                                "start": 1597171132854,
-                                "end": 1597171232854,
-                                "type": "TEST-GROUP",
-                                "color": "fuchsia",
-                                "textColor": "black"
+                                name: 'Sed ut perspiciatis',
+                                start: 1597171132854,
+                                end: 1597171232854,
+                                type: 'TEST-GROUP',
+                                color: 'fuchsia',
+                                textColor: 'black'
                             }
                         ]
                     })
@@ -164,8 +172,12 @@ describe('the plugin', function () {
 
             openmct.router.path = [planDomainObject];
 
-            const applicableViews = openmct.objectViews.get(planDomainObject, [planDomainObject]);
-            planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
+            const applicableViews = openmct.objectViews.get(planDomainObject, [
+                planDomainObject
+            ]);
+            planView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plan.view'
+            );
             let view = planView.view(planDomainObject, mockObjectPath);
             view.show(child, true);
 
@@ -178,7 +190,9 @@ describe('the plugin', function () {
         });
 
         it('displays the group label', () => {
-            const labelEl = element.querySelector('.c-plan__contents .c-object-label .c-object-label__name');
+            const labelEl = element.querySelector(
+                '.c-plan__contents .c-object-label .c-object-label__name'
+            );
             expect(labelEl.innerHTML).toEqual('TEST-GROUP');
         });
 
@@ -191,23 +205,32 @@ describe('the plugin', function () {
             openmct.time.bounds(bounds);
 
             Vue.nextTick(() => {
-                const rectEls = element.querySelectorAll('.c-plan__contents rect');
+                const rectEls = element.querySelectorAll(
+                    '.c-plan__contents rect'
+                );
                 expect(rectEls.length).toEqual(2);
-                const textEls = element.querySelectorAll('.c-plan__contents text');
+                const textEls = element.querySelectorAll(
+                    '.c-plan__contents text'
+                );
                 expect(textEls.length).toEqual(3);
 
                 done();
             });
         });
 
-        it ('shows the status indicator when available', (done) => {
-            openmct.status.set({
-                key: "test-object",
-                namespace: ''
-            }, 'draft');
+        it('shows the status indicator when available', (done) => {
+            openmct.status.set(
+                {
+                    key: 'test-object',
+                    namespace: ''
+                },
+                'draft'
+            );
 
             Vue.nextTick(() => {
-                const statusEl = element.querySelector('.c-plan__contents .is-status--draft');
+                const statusEl = element.querySelector(
+                    '.c-plan__contents .is-status--draft'
+                );
                 expect(statusEl).toBeDefined();
                 done();
             });
@@ -228,18 +251,24 @@ describe('the plugin', function () {
         };
 
         beforeEach(() => {
-            openmct.selection.select([{
-                element: element,
-                context: {
-                    item: testPlanObject
-                }
-            }, {
-                element: openmct.layout.$refs.browseObject.$el,
-                context: {
-                    item: testPlanObject,
-                    supportsMultiSelect: false
-                }
-            }], false);
+            openmct.selection.select(
+                [
+                    {
+                        element: element,
+                        context: {
+                            item: testPlanObject
+                        }
+                    },
+                    {
+                        element: openmct.layout.$refs.browseObject.$el,
+                        context: {
+                            item: testPlanObject,
+                            supportsMultiSelect: false
+                        }
+                    }
+                ],
+                false
+            );
 
             return Vue.nextTick().then(() => {
                 let viewContainer = document.createElement('div');
@@ -263,11 +292,15 @@ describe('the plugin', function () {
 
         it('provides an inspector view with the version information if available', () => {
             componentObject = component.$root.$children[0];
-            const propertiesEls = componentObject.$el.querySelectorAll('.c-inspect-properties__row');
+            const propertiesEls = componentObject.$el.querySelectorAll(
+                '.c-inspect-properties__row'
+            );
             expect(propertiesEls.length).toEqual(6);
             const found = Array.from(propertiesEls).some((propertyEl) => {
-                return (propertyEl.children[0].innerHTML.trim() === 'Version'
-                    && propertyEl.children[1].innerHTML.trim() === 'v1');
+                return (
+                    propertyEl.children[0].innerHTML.trim() === 'Version' &&
+                    propertyEl.children[1].innerHTML.trim() === 'v1'
+                );
             });
             expect(found).toBeTrue();
         });

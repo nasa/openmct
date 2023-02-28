@@ -66,7 +66,11 @@ export function identifierToString(openmct, objectPath) {
  * @param {any} customUrlParams
  * @returns {string} url
  */
-export default function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
+export default function objectPathToUrl(
+    openmct,
+    objectPath,
+    customUrlParams = {}
+) {
     let url = identifierToString(openmct, objectPath);
 
     let urlParams = paramsToArray(openmct, customUrlParams);

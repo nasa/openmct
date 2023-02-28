@@ -34,10 +34,12 @@ import availableTags from './tags.json';
 export default function exampleTagsPlugin(options) {
     return function install(openmct) {
         if (options?.namespaceToSaveAnnotations) {
-            openmct.annotation.setNamespaceToSaveAnnotations(options?.namespaceToSaveAnnotations);
+            openmct.annotation.setNamespaceToSaveAnnotations(
+                options?.namespaceToSaveAnnotations
+            );
         }
 
-        Object.keys(availableTags.tags).forEach(tagKey => {
+        Object.keys(availableTags.tags).forEach((tagKey) => {
             const tagDefinition = availableTags.tags[tagKey];
             openmct.annotation.defineTag(tagKey, tagDefinition);
         });

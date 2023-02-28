@@ -9,16 +9,16 @@ describe('The Composition API', function () {
         publicAPI = createOpenMct();
         compositionAPI = publicAPI.composition;
 
-        const mockObjectProvider = jasmine.createSpyObj("mock provider", [
-            "create",
-            "update",
-            "get"
+        const mockObjectProvider = jasmine.createSpyObj('mock provider', [
+            'create',
+            'update',
+            'get'
         ]);
 
         mockObjectProvider.create.and.returnValue(Promise.resolve(true));
         mockObjectProvider.update.and.returnValue(Promise.resolve(true));
         mockObjectProvider.get.and.callFake((identifier) => {
-            return Promise.resolve({identifier});
+            return Promise.resolve({ identifier });
         });
 
         publicAPI.objects.addProvider('test', mockObjectProvider);
@@ -73,7 +73,9 @@ describe('The Composition API', function () {
         it('correctly reflects composability', function () {
             expect(compositionAPI.supportsComposition(domainObject)).toBe(true);
             delete domainObject.composition;
-            expect(compositionAPI.supportsComposition(domainObject)).toBe(false);
+            expect(compositionAPI.supportsComposition(domainObject)).toBe(
+                false
+            );
         });
 
         it('loads composition from domain object', function () {
@@ -104,7 +106,7 @@ describe('The Composition API', function () {
             it('', function () {
                 composition.reorder(1, 0);
                 let newComposition =
-                        publicAPI.objects.mutate.calls.mostRecent().args[2];
+                    publicAPI.objects.mutate.calls.mostRecent().args[2];
                 let reorderPlan = listener.calls.mostRecent().args[0][0];
 
                 expect(reorderPlan.oldIndex).toBe(1);
@@ -116,7 +118,7 @@ describe('The Composition API', function () {
             it('', function () {
                 composition.reorder(0, 2);
                 let newComposition =
-                        publicAPI.objects.mutate.calls.mostRecent().args[2];
+                    publicAPI.objects.mutate.calls.mostRecent().args[2];
                 let reorderPlan = listener.calls.mostRecent().args[0][0];
 
                 expect(reorderPlan.oldIndex).toBe(0);
@@ -139,7 +141,9 @@ describe('The Composition API', function () {
                 composition.add(mockChildObject);
             }).then(() => {
                 expect(domainObject.composition.length).toBe(4);
-                expect(domainObject.composition[3]).toEqual(mockChildObject.identifier);
+                expect(domainObject.composition[3]).toEqual(
+                    mockChildObject.identifier
+                );
             });
         });
     });
@@ -212,12 +216,18 @@ describe('The Composition API', function () {
             });
 
             it('calls add on the provider', function () {
-                expect(customProvider.add).toHaveBeenCalledWith(domainObject, mockChildObject.identifier);
+                expect(customProvider.add).toHaveBeenCalledWith(
+                    domainObject,
+                    mockChildObject.identifier
+                );
             });
 
             it('calls remove on the provider', function () {
                 composition.remove(mockChildObject);
-                expect(customProvider.remove).toHaveBeenCalledWith(domainObject, mockChildObject.identifier);
+                expect(customProvider.remove).toHaveBeenCalledWith(
+                    domainObject,
+                    mockChildObject.identifier
+                );
             });
         });
     });
@@ -279,7 +289,8 @@ describe('The Composition API', function () {
             const add = customProvider.on.calls.all()[0].args[2];
             const remove = customProvider.on.calls.all()[1].args[2];
 
-            return composition.load()
+            return composition
+                .load()
                 .then(function () {
                     expect(addListener).not.toHaveBeenCalled();
                     expect(removeListener).not.toHaveBeenCalled();
@@ -289,7 +300,8 @@ describe('The Composition API', function () {
                     });
 
                     return addPromise;
-                }).then(function () {
+                })
+                .then(function () {
                     expect(addListener).toHaveBeenCalledWith({
                         identifier: {
                             namespace: 'custom',
@@ -299,7 +311,8 @@ describe('The Composition API', function () {
                     remove(addListener.calls.mostRecent().args[0]);
 
                     return removePromise;
-                }).then(function () {
+                })
+                .then(function () {
                     expect(removeListener).toHaveBeenCalledWith({
                         identifier: {
                             namespace: 'custom',

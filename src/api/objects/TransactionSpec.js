@@ -1,11 +1,11 @@
-import Transaction from "./Transaction";
+import Transaction from './Transaction';
 import utils from 'objectUtils';
 
 let openmct = {};
 let objectAPI;
 let transaction;
 
-describe("Transaction Class", () => {
+describe('Transaction Class', () => {
     beforeEach(() => {
         objectAPI = {
             makeKeyString: (identifier) => utils.makeKeyString(identifier),
@@ -17,11 +17,15 @@ describe("Transaction Class", () => {
             },
             refresh: (object) => Promise.resolve(object),
             areIdsEqual: (...identifiers) => {
-                return identifiers.map(utils.parseKeyString)
-                    .every(identifier => {
-                        return identifier === identifiers[0]
-                            || (identifier.namespace === identifiers[0].namespace
-                                && identifier.key === identifiers[0].key);
+                return identifiers
+                    .map(utils.parseKeyString)
+                    .every((identifier) => {
+                        return (
+                            identifier === identifiers[0] ||
+                            (identifier.namespace ===
+                                identifiers[0].namespace &&
+                                identifier.key === identifiers[0].key)
+                        );
                     });
             }
         };
@@ -49,10 +53,12 @@ describe("Transaction Class", () => {
 
         expect(Object.keys(transaction.dirtyObjects).length).toEqual(3);
 
-        transaction.cancel()
-            .then(success => {
+        transaction
+            .cancel()
+            .then((success) => {
                 expect(Object.keys(transaction.dirtyObjects).length).toEqual(0);
-            }).finally(done);
+            })
+            .finally(done);
     });
 
     it('commit(), saves all dirtyObjects', (done) => {
@@ -62,11 +68,13 @@ describe("Transaction Class", () => {
         expect(Object.keys(transaction.dirtyObjects).length).toEqual(3);
         spyOn(objectAPI, 'save').and.callThrough();
 
-        transaction.commit()
-            .then(success => {
+        transaction
+            .commit()
+            .then((success) => {
                 expect(Object.keys(transaction.dirtyObjects).length).toEqual(0);
                 expect(objectAPI.save.calls.count()).toEqual(3);
-            }).finally(done);
+            })
+            .finally(done);
     });
 
     it('getDirtyObject(), returns correct dirtyObject', () => {
@@ -74,7 +82,9 @@ describe("Transaction Class", () => {
         transaction.add(mockDomainObjects[0]);
 
         expect(Object.keys(transaction.dirtyObjects).length).toEqual(1);
-        const dirtyObject = transaction.getDirtyObject(mockDomainObjects[0].identifier);
+        const dirtyObject = transaction.getDirtyObject(
+            mockDomainObjects[0].identifier
+        );
 
         expect(dirtyObject).toEqual(mockDomainObjects[0]);
     });
@@ -83,7 +93,9 @@ describe("Transaction Class", () => {
         const mockDomainObjects = createMockDomainObjects();
 
         expect(Object.keys(transaction.dirtyObjects).length).toEqual(0);
-        const dirtyObject = transaction.getDirtyObject(mockDomainObjects[0].identifier);
+        const dirtyObject = transaction.getDirtyObject(
+            mockDomainObjects[0].identifier
+        );
 
         expect(dirtyObject).toEqual(undefined);
     });

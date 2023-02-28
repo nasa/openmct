@@ -40,8 +40,8 @@ describe('RootObjectProvider', function () {
 
         expect(root).toEqual({
             identifier: {
-                key: "ROOT",
-                namespace: ""
+                key: 'ROOT',
+                namespace: ''
             },
             name: ROOT_NAME,
             type: 'root',

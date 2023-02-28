@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+    openObjectTreeContextMenu,
+    createDomainObjectWithDefaults
+} = require('../../../../appActions');
 
 test.describe('Timer', () => {
     let timer;
@@ -38,21 +41,21 @@ test.describe('Timer', () => {
 
         const timerUrl = timer.url;
 
-        await test.step("From the tree context menu", async () => {
+        await test.step('From the tree context menu', async () => {
             await triggerTimerContextMenuAction(page, timerUrl, 'Start');
             await triggerTimerContextMenuAction(page, timerUrl, 'Pause');
             await triggerTimerContextMenuAction(page, timerUrl, 'Restart at 0');
             await triggerTimerContextMenuAction(page, timerUrl, 'Stop');
         });
 
-        await test.step("From the 3dot menu", async () => {
+        await test.step('From the 3dot menu', async () => {
             await triggerTimer3dotMenuAction(page, 'Start');
             await triggerTimer3dotMenuAction(page, 'Pause');
             await triggerTimer3dotMenuAction(page, 'Restart at 0');
             await triggerTimer3dotMenuAction(page, 'Stop');
         });
 
-        await test.step("From the object view", async () => {
+        await test.step('From the object view', async () => {
             await triggerTimerViewAction(page, 'Start');
             await triggerTimerViewAction(page, 'Pause');
             await triggerTimerViewAction(page, 'Restart at 0');
@@ -111,7 +114,7 @@ async function triggerTimer3dotMenuAction(page, action) {
  * @param {TimerViewAction} action
  */
 async function triggerTimerViewAction(page, action) {
-    await page.locator('.c-timer').hover({trial: true});
+    await page.locator('.c-timer').hover({ trial: true });
     const buttonTitle = buttonTitleFromAction(action);
     await page.click(`button[title="${buttonTitle}"]`);
     assertTimerStateAfterAction(page, action);
@@ -123,12 +126,12 @@ async function triggerTimerViewAction(page, action) {
  */
 function buttonTitleFromAction(action) {
     switch (action) {
-    case 'Start':
-        return 'Start';
-    case 'Pause':
-        return 'Pause';
-    case 'Restart at 0':
-        return 'Reset';
+        case 'Start':
+            return 'Start';
+        case 'Pause':
+            return 'Pause';
+        case 'Restart at 0':
+            return 'Reset';
     }
 }
 
@@ -140,17 +143,19 @@ function buttonTitleFromAction(action) {
 async function assertTimerStateAfterAction(page, action) {
     let timerStateClass;
     switch (action) {
-    case 'Start':
-    case 'Restart at 0':
-        timerStateClass = "is-started";
-        break;
-    case 'Stop':
-        timerStateClass = 'is-stopped';
-        break;
-    case 'Pause':
-        timerStateClass = 'is-paused';
-        break;
+        case 'Start':
+        case 'Restart at 0':
+            timerStateClass = 'is-started';
+            break;
+        case 'Stop':
+            timerStateClass = 'is-stopped';
+            break;
+        case 'Pause':
+            timerStateClass = 'is-paused';
+            break;
     }
 
-    await expect.soft(page.locator('.c-timer')).toHaveClass(new RegExp(timerStateClass));
+    await expect
+        .soft(page.locator('.c-timer'))
+        .toHaveClass(new RegExp(timerStateClass));
 }

@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './AutoflowTabularRowController'
-], function (AutoflowTabularRowController) {
+define(['./AutoflowTabularRowController'], function (
+    AutoflowTabularRowController
+) {
     /**
      * Controller for an Autoflow Tabular View. Subscribes to telemetry
      * associated with children of the domain object and passes that
@@ -59,11 +59,11 @@ define([
      */
     AutoflowTabularController.prototype.addRow = function (childObject) {
         const identifier = childObject.identifier;
-        const id = [identifier.namespace, identifier.key].join(":");
+        const id = [identifier.namespace, identifier.key].join(':');
 
         if (!this.rows[id]) {
             this.rows[id] = {
-                classes: "",
+                classes: '',
                 name: childObject.name,
                 value: undefined
             };
@@ -84,12 +84,14 @@ define([
      * @private
      */
     AutoflowTabularController.prototype.removeRow = function (identifier) {
-        const id = [identifier.namespace, identifier.key].join(":");
+        const id = [identifier.namespace, identifier.key].join(':');
 
         if (this.rows[id]) {
-            this.data.items = this.data.items.filter(function (item) {
-                return item !== this.rows[id];
-            }.bind(this));
+            this.data.items = this.data.items.filter(
+                function (item) {
+                    return item !== this.rows[id];
+                }.bind(this)
+            );
             this.controllers[id].destroy();
             delete this.controllers[id];
             delete this.rows[id];
@@ -109,9 +111,11 @@ define([
      * Destroy this controller; detach any associated resources.
      */
     AutoflowTabularController.prototype.destroy = function () {
-        Object.keys(this.controllers).forEach(function (id) {
-            this.controllers[id].destroy();
-        }.bind(this));
+        Object.keys(this.controllers).forEach(
+            function (id) {
+                this.controllers[id].destroy();
+            }.bind(this)
+        );
         this.controllers = {};
         this.composition.off('add', this.addRow);
         this.composition.off('remove', this.removeRow);

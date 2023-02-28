@@ -48,7 +48,8 @@ export default function ConditionWidget(openmct) {
                             openmct,
                             domainObject
                         },
-                        template: '<condition-widget-component></condition-widget-component>'
+                        template:
+                            '<condition-widget-component></condition-widget-component>'
                     });
                 },
                 destroy: function (element) {

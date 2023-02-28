@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import TimeAPI from "./TimeAPI";
-import {createOpenMct} from "utils/testing";
+import TimeAPI from './TimeAPI';
+import { createOpenMct } from 'utils/testing';
 
-describe("The Time API", function () {
+describe('The Time API', function () {
     let api;
     let timeSystemKey;
     let timeSystem;
@@ -36,31 +36,27 @@ describe("The Time API", function () {
     beforeEach(function () {
         openmct = createOpenMct();
         api = new TimeAPI(openmct);
-        timeSystemKey = "timeSystemKey";
-        timeSystem = {key: timeSystemKey};
-        clockKey = "someClockKey";
-        clock = jasmine.createSpyObj("clock", [
-            "on",
-            "off",
-            "currentValue"
-        ]);
+        timeSystemKey = 'timeSystemKey';
+        timeSystem = { key: timeSystemKey };
+        clockKey = 'someClockKey';
+        clock = jasmine.createSpyObj('clock', ['on', 'off', 'currentValue']);
         clock.currentValue.and.returnValue(100);
         clock.key = clockKey;
         bounds = {
             start: 0,
             end: 1
         };
-        eventListener = jasmine.createSpy("eventListener");
+        eventListener = jasmine.createSpy('eventListener');
         toi = 111;
     });
 
-    it("Supports setting and querying of time of interest", function () {
+    it('Supports setting and querying of time of interest', function () {
         expect(api.timeOfInterest()).not.toBe(toi);
         api.timeOfInterest(toi);
         expect(api.timeOfInterest()).toBe(toi);
     });
 
-    it("Allows setting of valid bounds", function () {
+    it('Allows setting of valid bounds', function () {
         bounds = {
             start: 0,
             end: 1
@@ -70,7 +66,7 @@ describe("The Time API", function () {
         expect(api.bounds()).toEqual(bounds);
     });
 
-    it("Disallows setting of invalid bounds", function () {
+    it('Disallows setting of invalid bounds', function () {
         bounds = {
             start: 1,
             end: 0
@@ -79,13 +75,13 @@ describe("The Time API", function () {
         expect(api.bounds.bind(api, bounds)).toThrow();
         expect(api.bounds()).not.toEqual(bounds);
 
-        bounds = {start: 1};
+        bounds = { start: 1 };
         expect(api.bounds()).not.toEqual(bounds);
         expect(api.bounds.bind(api, bounds)).toThrow();
         expect(api.bounds()).not.toEqual(bounds);
     });
 
-    it("Allows setting of previously registered time system with bounds", function () {
+    it('Allows setting of previously registered time system with bounds', function () {
         api.addTimeSystem(timeSystem);
         expect(api.timeSystem()).not.toBe(timeSystem);
         expect(function () {
@@ -94,7 +90,7 @@ describe("The Time API", function () {
         expect(api.timeSystem()).toBe(timeSystem);
     });
 
-    it("Disallows setting of time system without bounds", function () {
+    it('Disallows setting of time system without bounds', function () {
         api.addTimeSystem(timeSystem);
         expect(api.timeSystem()).not.toBe(timeSystem);
         expect(function () {
@@ -103,7 +99,7 @@ describe("The Time API", function () {
         expect(api.timeSystem()).not.toBe(timeSystem);
     });
 
-    it("allows setting of timesystem without bounds with clock", function () {
+    it('allows setting of timesystem without bounds with clock', function () {
         api.addTimeSystem(timeSystem);
         api.addClock(clock);
         api.clock(clockKey, {
@@ -115,32 +111,31 @@ describe("The Time API", function () {
             api.timeSystem(timeSystemKey);
         }).not.toThrow();
         expect(api.timeSystem()).toBe(timeSystem);
-
     });
 
-    it("Emits an event when time system changes", function () {
+    it('Emits an event when time system changes', function () {
         api.addTimeSystem(timeSystem);
         expect(eventListener).not.toHaveBeenCalled();
-        api.on("timeSystem", eventListener);
+        api.on('timeSystem', eventListener);
         api.timeSystem(timeSystemKey, bounds);
         expect(eventListener).toHaveBeenCalledWith(timeSystem);
     });
 
-    it("Emits an event when time of interest changes", function () {
+    it('Emits an event when time of interest changes', function () {
         expect(eventListener).not.toHaveBeenCalled();
-        api.on("timeOfInterest", eventListener);
+        api.on('timeOfInterest', eventListener);
         api.timeOfInterest(toi);
         expect(eventListener).toHaveBeenCalledWith(toi);
     });
 
-    it("Emits an event when bounds change", function () {
+    it('Emits an event when bounds change', function () {
         expect(eventListener).not.toHaveBeenCalled();
-        api.on("bounds", eventListener);
+        api.on('bounds', eventListener);
         api.bounds(bounds);
         expect(eventListener).toHaveBeenCalledWith(bounds, false);
     });
 
-    it("If bounds are set and TOI lies inside them, do not change TOI", function () {
+    it('If bounds are set and TOI lies inside them, do not change TOI', function () {
         api.timeOfInterest(6);
         api.bounds({
             start: 1,
@@ -149,7 +144,7 @@ describe("The Time API", function () {
         expect(api.timeOfInterest()).toEqual(6);
     });
 
-    it("If bounds are set and TOI lies outside them, reset TOI", function () {
+    it('If bounds are set and TOI lies outside them, reset TOI', function () {
         api.timeOfInterest(11);
         api.bounds({
             start: 1,
@@ -158,22 +153,20 @@ describe("The Time API", function () {
         expect(api.timeOfInterest()).toBeUndefined();
     });
 
-    it("Maintains delta during tick", function () {
-    });
+    it('Maintains delta during tick', function () {});
 
-    it("Allows registered time system to be activated", function () {
-    });
+    it('Allows registered time system to be activated', function () {});
 
-    it("Allows a registered tick source to be activated", function () {
-        const mockTickSource = jasmine.createSpyObj("mockTickSource", [
-            "on",
-            "off",
-            "currentValue"
+    it('Allows a registered tick source to be activated', function () {
+        const mockTickSource = jasmine.createSpyObj('mockTickSource', [
+            'on',
+            'off',
+            'currentValue'
         ]);
         mockTickSource.key = 'mockTickSource';
     });
 
-    describe(" when enabling a tick source", function () {
+    describe(' when enabling a tick source', function () {
         let mockTickSource;
         let anotherMockTickSource;
         const mockOffsets = {
@@ -182,48 +175,54 @@ describe("The Time API", function () {
         };
 
         beforeEach(function () {
-            mockTickSource = jasmine.createSpyObj("clock", [
-                "on",
-                "off",
-                "currentValue"
+            mockTickSource = jasmine.createSpyObj('clock', [
+                'on',
+                'off',
+                'currentValue'
             ]);
             mockTickSource.currentValue.and.returnValue(10);
-            mockTickSource.key = "mts";
+            mockTickSource.key = 'mts';
 
-            anotherMockTickSource = jasmine.createSpyObj("clock", [
-                "on",
-                "off",
-                "currentValue"
+            anotherMockTickSource = jasmine.createSpyObj('clock', [
+                'on',
+                'off',
+                'currentValue'
             ]);
-            anotherMockTickSource.key = "amts";
+            anotherMockTickSource.key = 'amts';
             anotherMockTickSource.currentValue.and.returnValue(10);
 
             api.addClock(mockTickSource);
             api.addClock(anotherMockTickSource);
         });
 
-        it("sets bounds based on current value", function () {
-            api.clock("mts", mockOffsets);
+        it('sets bounds based on current value', function () {
+            api.clock('mts', mockOffsets);
             expect(api.bounds()).toEqual({
                 start: 10,
                 end: 11
             });
         });
 
-        it("a new tick listener is registered", function () {
-            api.clock("mts", mockOffsets);
-            expect(mockTickSource.on).toHaveBeenCalledWith("tick", jasmine.any(Function));
+        it('a new tick listener is registered', function () {
+            api.clock('mts', mockOffsets);
+            expect(mockTickSource.on).toHaveBeenCalledWith(
+                'tick',
+                jasmine.any(Function)
+            );
         });
 
-        it("listener of existing tick source is reregistered", function () {
-            api.clock("mts", mockOffsets);
-            api.clock("amts", mockOffsets);
-            expect(mockTickSource.off).toHaveBeenCalledWith("tick", jasmine.any(Function));
+        it('listener of existing tick source is reregistered', function () {
+            api.clock('mts', mockOffsets);
+            api.clock('amts', mockOffsets);
+            expect(mockTickSource.off).toHaveBeenCalledWith(
+                'tick',
+                jasmine.any(Function)
+            );
         });
 
-        it("Allows the active clock to be set and unset", function () {
+        it('Allows the active clock to be set and unset', function () {
             expect(api.clock()).toBeUndefined();
-            api.clock("mts", mockOffsets);
+            api.clock('mts', mockOffsets);
             expect(api.clock()).toBeDefined();
             api.stopClock();
             expect(api.clock()).toBeUndefined();
@@ -234,12 +233,12 @@ describe("The Time API", function () {
             expect(timeContext).not.toBe(null);
         });
 
-        it("Without a clock, is in fixed time mode", () => {
+        it('Without a clock, is in fixed time mode', () => {
             const timeContext = api.getContextForView([]);
             expect(timeContext.isRealTime()).toBe(false);
         });
 
-        it("Provided a clock, is in real-time mode", () => {
+        it('Provided a clock, is in real-time mode', () => {
             const timeContext = api.getContextForView([]);
             timeContext.clock('mts', {
                 start: 0,
@@ -247,34 +246,36 @@ describe("The Time API", function () {
             });
             expect(timeContext.isRealTime()).toBe(true);
         });
-
     });
 
-    it("on tick, observes offsets, and indicates tick in bounds callback", function () {
-        const mockTickSource = jasmine.createSpyObj("clock", [
-            "on",
-            "off",
-            "currentValue"
+    it('on tick, observes offsets, and indicates tick in bounds callback', function () {
+        const mockTickSource = jasmine.createSpyObj('clock', [
+            'on',
+            'off',
+            'currentValue'
         ]);
         mockTickSource.currentValue.and.returnValue(100);
         let tickCallback;
-        const boundsCallback = jasmine.createSpy("boundsCallback");
+        const boundsCallback = jasmine.createSpy('boundsCallback');
         const clockOffsets = {
             start: -100,
             end: 100
         };
-        mockTickSource.key = "mts";
+        mockTickSource.key = 'mts';
 
         api.addClock(mockTickSource);
-        api.clock("mts", clockOffsets);
+        api.clock('mts', clockOffsets);
 
-        api.on("bounds", boundsCallback);
+        api.on('bounds', boundsCallback);
 
         tickCallback = mockTickSource.on.calls.mostRecent().args[1];
         tickCallback(1000);
-        expect(boundsCallback).toHaveBeenCalledWith({
-            start: 900,
-            end: 1100
-        }, true);
+        expect(boundsCallback).toHaveBeenCalledWith(
+            {
+                start: 900,
+                end: 1100
+            },
+            true
+        );
     });
 });

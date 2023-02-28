@@ -1,5 +1,9 @@
-import { createOpenMct, resetApplicationState } from "../utils/testing";
-import {paramsToArray, identifierToString, default as objectPathToUrl} from "./url";
+import { createOpenMct, resetApplicationState } from '../utils/testing';
+import {
+    paramsToArray,
+    identifierToString,
+    default as objectPathToUrl
+} from './url';
 
 describe('the url tool', function () {
     let openmct;
@@ -52,10 +56,14 @@ describe('the url tool', function () {
             expect(identifierToString).toBeDefined();
         });
         it('can construct a String properly from a path', () => {
-            const constructedString = identifierToString(openmct, mockObjectPath);
-            expect(constructedString).toEqual('#/browse/mock-parent-folder/mock-folder');
+            const constructedString = identifierToString(
+                openmct,
+                mockObjectPath
+            );
+            expect(constructedString).toEqual(
+                '#/browse/mock-parent-folder/mock-folder'
+            );
         });
-
     });
 
     describe('objectPathToUrl', () => {
@@ -64,7 +72,9 @@ describe('the url tool', function () {
         });
         it('can construct URL properly from a path', () => {
             const constructedURL = objectPathToUrl(openmct, mockObjectPath);
-            expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder');
+            expect(constructedURL).toContain(
+                '#/browse/mock-parent-folder/mock-folder'
+            );
         });
         it('can take params to set a custom url', () => {
             const customParams = {
@@ -72,8 +82,14 @@ describe('the url tool', function () {
                 'tc.endBound': 1669911082,
                 'tc.mode': 'fixed'
             };
-            const constructedURL = objectPathToUrl(openmct, mockObjectPath, customParams);
-            expect(constructedURL).toContain('tc.startBound=1669911059&tc.endBound=1669911082&tc.mode=fixed');
+            const constructedURL = objectPathToUrl(
+                openmct,
+                mockObjectPath,
+                customParams
+            );
+            expect(constructedURL).toContain(
+                'tc.startBound=1669911059&tc.endBound=1669911082&tc.mode=fixed'
+            );
         });
     });
 });

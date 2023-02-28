@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
 const faultName = 'super duper fault';
 const aFault = {
@@ -103,7 +100,9 @@ describe('The Fault Management API', () => {
 
         let faultResponse = await openmct.faults.request(faultDomainObject);
 
-        expect(faultManagementProvider.supportsRequest).toHaveBeenCalledWith(faultDomainObject);
+        expect(faultManagementProvider.supportsRequest).toHaveBeenCalledWith(
+            faultDomainObject
+        );
         expect(faultResponse[0].fault.name).toEqual(faultName);
     });
 
@@ -114,9 +113,13 @@ describe('The Fault Management API', () => {
         let unsubscribe = openmct.faults.subscribe(faultDomainObject, () => {});
 
         expect(unsubscribe).toEqual(jasmine.any(Function));
-        expect(faultManagementProvider.supportsSubscribe).toHaveBeenCalledWith(faultDomainObject);
-        expect(faultManagementProvider.subscribe).toHaveBeenCalledOnceWith(faultDomainObject, jasmine.any(Function));
-
+        expect(faultManagementProvider.supportsSubscribe).toHaveBeenCalledWith(
+            faultDomainObject
+        );
+        expect(faultManagementProvider.subscribe).toHaveBeenCalledOnceWith(
+            faultDomainObject,
+            jasmine.any(Function)
+        );
     });
 
     it('will tell you if the fault management provider supports actions', () => {
@@ -126,9 +129,15 @@ describe('The Fault Management API', () => {
     it('will allow you to acknowledge a fault', async () => {
         spyOn(faultManagementProvider, 'acknowledgeFault').and.callThrough();
 
-        let ackResponse = await openmct.faults.acknowledgeFault(aFault, aComment);
+        let ackResponse = await openmct.faults.acknowledgeFault(
+            aFault,
+            aComment
+        );
 
-        expect(faultManagementProvider.acknowledgeFault).toHaveBeenCalledWith(aFault, aComment);
+        expect(faultManagementProvider.acknowledgeFault).toHaveBeenCalledWith(
+            aFault,
+            aComment
+        );
         expect(ackResponse.success).toBeTrue();
     });
 
@@ -137,8 +146,10 @@ describe('The Fault Management API', () => {
 
         let shelveResponse = await openmct.faults.shelveFault(aFault, aComment);
 
-        expect(faultManagementProvider.shelveFault).toHaveBeenCalledWith(aFault, aComment);
+        expect(faultManagementProvider.shelveFault).toHaveBeenCalledWith(
+            aFault,
+            aComment
+        );
         expect(shelveResponse.success).toBeTrue();
     });
-
 });

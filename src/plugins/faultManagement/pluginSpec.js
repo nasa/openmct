@@ -20,17 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import {
     FAULT_MANAGEMENT_TYPE,
     FAULT_MANAGEMENT_VIEW,
     FAULT_MANAGEMENT_NAMESPACE
 } from './constants';
 
-describe("The Fault Management Plugin", () => {
+describe('The Fault Management Plugin', () => {
     let openmct;
     const faultDomainObject = {
         name: 'it is not your fault',
@@ -68,7 +65,10 @@ describe("The Fault Management Plugin", () => {
         });
 
         it('provides a view for fault management types', () => {
-            const applicableViews = openmct.objectViews.get(faultDomainObject, []);
+            const applicableViews = openmct.objectViews.get(
+                faultDomainObject,
+                []
+            );
             const faultManagementView = applicableViews.find(
                 (viewProvider) => viewProvider.key === FAULT_MANAGEMENT_VIEW
             );
@@ -78,14 +78,18 @@ describe("The Fault Management Plugin", () => {
         });
 
         it('provides an inspector view for fault management types', () => {
-            const faultDomainObjectSelection = [[
-                {
-                    context: {
-                        item: faultDomainObject
+            const faultDomainObjectSelection = [
+                [
+                    {
+                        context: {
+                            item: faultDomainObject
+                        }
                     }
-                }
-            ]];
-            const applicableInspectorViews = openmct.inspectorViews.get(faultDomainObjectSelection);
+                ]
+            ];
+            const applicableInspectorViews = openmct.inspectorViews.get(
+                faultDomainObjectSelection
+            );
 
             expect(applicableInspectorViews.length).toEqual(1);
         });
@@ -94,10 +98,11 @@ describe("The Fault Management Plugin", () => {
             const root = await openmct.objects.getRoot();
             const rootCompositionCollection = openmct.composition.get(root);
             const rootComposition = await rootCompositionCollection.load();
-            const faultObject = rootComposition.find(obj => obj.identifier.namespace === FAULT_MANAGEMENT_NAMESPACE);
+            const faultObject = rootComposition.find(
+                (obj) => obj.identifier.namespace === FAULT_MANAGEMENT_NAMESPACE
+            );
 
             expect(faultObject).toBeDefined();
         });
-
     });
 });

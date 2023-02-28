@@ -1,9 +1,4 @@
-define([
-    './Select'
-], function (
-    Select
-) {
-
+define(['./Select'], function (Select) {
     /**
      * Create a {Select} element whose composition is dynamically updated with
      * the telemetry fields of a particular domain object
@@ -42,8 +37,11 @@ define([
          * @private
          */
         function onObjectChange(key) {
-            const selected = self.manager.metadataLoadCompleted() ? self.select.getSelected() : self.config.key;
-            self.telemetryMetadata = self.manager.getTelemetryMetadata(key) || {};
+            const selected = self.manager.metadataLoadCompleted()
+                ? self.select.getSelected()
+                : self.config.key;
+            self.telemetryMetadata =
+                self.manager.getTelemetryMetadata(key) || {};
             self.generateOptions();
             self.select.setSelected(selected);
         }
@@ -56,7 +54,9 @@ define([
          */
         function onMetadataLoad() {
             if (self.manager.getTelemetryMetadata(self.config.object)) {
-                self.telemetryMetadata = self.manager.getTelemetryMetadata(self.config.object);
+                self.telemetryMetadata = self.manager.getTelemetryMetadata(
+                    self.config.object
+                );
                 self.generateOptions();
             }
 
@@ -77,7 +77,9 @@ define([
      * Populate this select with options based on its current composition
      */
     KeySelect.prototype.generateOptions = function () {
-        const items = Object.entries(this.telemetryMetadata).map(function (metaDatum) {
+        const items = Object.entries(this.telemetryMetadata).map(function (
+            metaDatum
+        ) {
             return [metaDatum[0], metaDatum[1].name];
         });
         items.splice(0, 0, ['', NULLVALUE]);
@@ -95,5 +97,4 @@ define([
     };
 
     return KeySelect;
-
 });

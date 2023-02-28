@@ -21,12 +21,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("The local storage plugin", () => {
+describe('The local storage plugin', () => {
     let space;
     let openmct;
 
@@ -35,7 +32,6 @@ describe("The local storage plugin", () => {
         openmct = createOpenMct();
 
         openmct.install(openmct.plugins.LocalStorage('', space));
-
     });
 
     it('initializes localstorage if not already initialized', () => {
@@ -74,7 +70,9 @@ describe("The local storage plugin", () => {
         let testObject = await openmct.objects.get(domainObject.identifier);
 
         expect(testObject.name).toEqual(domainObject.name);
-        expect(testObject.anotherProperty).toEqual(domainObject.anotherProperty);
+        expect(testObject.anotherProperty).toEqual(
+            domainObject.anotherProperty
+        );
     });
 
     afterEach(() => {

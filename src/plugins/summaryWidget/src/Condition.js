@@ -31,7 +31,8 @@ define([
         this.index = index;
         this.conditionManager = conditionManager;
 
-        this.domElement = templateHelpers.convertTemplateToHTML(conditionTemplate)[0];
+        this.domElement =
+            templateHelpers.convertTemplateToHTML(conditionTemplate)[0];
 
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change'];
@@ -72,7 +73,9 @@ define([
          */
         function onValueInput(event) {
             const elem = event.target;
-            const value = isNaN(Number(elem.value)) ? elem.value : Number(elem.value);
+            const value = isNaN(Number(elem.value))
+                ? elem.value
+                : Number(elem.value);
             const inputIndex = self.valueInputs.indexOf(elem);
 
             self.eventEmitter.emit('change', {
@@ -85,18 +88,27 @@ define([
         this.listenTo(this.deleteButton, 'click', this.remove, this);
         this.listenTo(this.duplicateButton, 'click', this.duplicate, this);
 
-        this.selects.object = new ObjectSelect(this.config, this.conditionManager, [
-            ['any', 'any telemetry'],
-            ['all', 'all telemetry']
-        ]);
-        this.selects.key = new KeySelect(this.config, this.selects.object, this.conditionManager);
+        this.selects.object = new ObjectSelect(
+            this.config,
+            this.conditionManager,
+            [
+                ['any', 'any telemetry'],
+                ['all', 'all telemetry']
+            ]
+        );
+        this.selects.key = new KeySelect(
+            this.config,
+            this.selects.object,
+            this.conditionManager
+        );
         this.selects.operation = new OperationSelect(
             this.config,
             this.selects.key,
             this.conditionManager,
             function (value) {
                 onSelectChange(value, 'operation');
-            });
+            }
+        );
 
         this.selects.object.on('change', function (value) {
             onSelectChange(value, 'object');
@@ -106,10 +118,16 @@ define([
         });
 
         Object.values(this.selects).forEach(function (select) {
-            self.domElement.querySelector('.t-configuration').append(select.getDOM());
+            self.domElement
+                .querySelector('.t-configuration')
+                .append(select.getDOM());
         });
 
-        this.listenTo(this.domElement.querySelector('.t-value-inputs'), 'input', onValueInput);
+        this.listenTo(
+            this.domElement.querySelector('.t-value-inputs'),
+            'input',
+            onValueInput
+        );
     }
 
     Condition.prototype.getDOM = function (container) {
@@ -193,7 +211,7 @@ define([
                 if (inputType === 'select') {
                     const options = this.generateSelectOptions();
 
-                    newInput = document.createElement("select");
+                    newInput = document.createElement('select');
                     newInput.innerHTML = options;
 
                     emitChange = true;
@@ -202,7 +220,7 @@ define([
                     const value = this.config.values[index] || defaultValue;
                     this.config.values[index] = value;
 
-                    newInput = document.createElement("input");
+                    newInput = document.createElement('input');
                     newInput.type = `${inputType}`;
                     newInput.value = `${value}`;
                 }
@@ -223,11 +241,20 @@ define([
     };
 
     Condition.prototype.generateSelectOptions = function () {
-        let telemetryMetadata = this.conditionManager.getTelemetryMetadata(this.config.object);
+        let telemetryMetadata = this.conditionManager.getTelemetryMetadata(
+            this.config.object
+        );
         let options = '';
-        telemetryMetadata[this.config.key].enumerations.forEach(enumeration => {
-            options += '<option value="' + enumeration.value + '">' + enumeration.string + '</option>';
-        });
+        telemetryMetadata[this.config.key].enumerations.forEach(
+            (enumeration) => {
+                options +=
+                    '<option value="' +
+                    enumeration.value +
+                    '">' +
+                    enumeration.string +
+                    '</option>';
+            }
+        );
 
         return options;
     };

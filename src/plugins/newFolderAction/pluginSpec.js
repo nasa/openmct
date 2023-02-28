@@ -19,12 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("the plugin", () => {
+describe('the plugin', () => {
     let openmct;
     let newFolderAction;
 
@@ -62,11 +59,11 @@ describe("the plugin", () => {
             };
             parentObjectPath = [parentObject];
 
-            spyOn(openmct.objects, "save");
+            spyOn(openmct.objects, 'save');
             openmct.objects.save.and.callThrough();
 
-            spyOn(openmct.forms, "showForm");
-            openmct.forms.showForm.and.callFake(formStructure => {
+            spyOn(openmct.forms, 'showForm');
+            openmct.forms.showForm.and.callFake((formStructure) => {
                 return Promise.resolve({
                     name: 'test',
                     notes: 'test notes',
@@ -74,11 +71,15 @@ describe("the plugin", () => {
                 });
             });
 
-            unobserve = openmct.objects.observe(parentObject, '*', (newObject) => {
-                changedParentObject = newObject;
+            unobserve = openmct.objects.observe(
+                parentObject,
+                '*',
+                (newObject) => {
+                    changedParentObject = newObject;
 
-                done();
-            });
+                    done();
+                }
+            );
 
             newFolderAction.invoke(parentObjectPath);
         });
@@ -97,14 +98,16 @@ describe("the plugin", () => {
         });
 
         it('checks if the domainObject is persistable', () => {
-            const mockObjectPath = [{
-                name: 'mock folder',
-                type: 'folder',
-                identifier: {
-                    key: 'mock-folder',
-                    namespace: ''
+            const mockObjectPath = [
+                {
+                    name: 'mock folder',
+                    type: 'folder',
+                    identifier: {
+                        key: 'mock-folder',
+                        namespace: ''
+                    }
                 }
-            }];
+            ];
 
             spyOn(openmct.objects, 'isPersistable').and.returnValue(true);
 

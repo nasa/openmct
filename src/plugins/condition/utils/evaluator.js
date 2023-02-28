@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { TRIGGER } from "./constants";
+import { TRIGGER } from './constants';
 
 export function evaluateResults(results, trigger) {
     if (trigger && trigger === TRIGGER.XOR) {

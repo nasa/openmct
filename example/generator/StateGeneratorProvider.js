@@ -20,15 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
-
-    function StateGeneratorProvider() {
-
-    }
+define([], function () {
+    function StateGeneratorProvider() {}
 
     function pointForTimestamp(timestamp, duration, name) {
         return {
@@ -38,11 +31,16 @@ define([
         };
     }
 
-    StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
+    StateGeneratorProvider.prototype.supportsSubscribe = function (
+        domainObject
+    ) {
         return domainObject.type === 'example.state-generator';
     };
 
-    StateGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
+    StateGeneratorProvider.prototype.subscribe = function (
+        domainObject,
+        callback
+    ) {
         var duration = domainObject.telemetry.duration * 1000;
 
         var interval = setInterval(function () {
@@ -57,11 +55,17 @@ define([
         };
     };
 
-    StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
+    StateGeneratorProvider.prototype.supportsRequest = function (
+        domainObject,
+        options
+    ) {
         return domainObject.type === 'example.state-generator';
     };
 
-    StateGeneratorProvider.prototype.request = function (domainObject, options) {
+    StateGeneratorProvider.prototype.request = function (
+        domainObject,
+        options
+    ) {
         var start = options.start;
         var end = Math.min(Date.now(), options.end); // no future values
         var duration = domainObject.telemetry.duration * 1000;
@@ -79,5 +83,4 @@ define([
     };
 
     return StateGeneratorProvider;
-
 });

@@ -26,8 +26,8 @@ import {
     spyOnBuiltins
 } from 'utils/testing';
 import TabsLayout from './plugin';
-import Vue from "vue";
-import EventEmitter from "EventEmitter";
+import Vue from 'vue';
+import EventEmitter from 'EventEmitter';
 
 describe('the plugin', function () {
     let element;
@@ -45,47 +45,47 @@ describe('the plugin', function () {
         keep_alive: true,
         composition: [
             {
-                'identifier': {
-                    'namespace': '',
-                    'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
+                identifier: {
+                    namespace: '',
+                    key: '55122607-e65e-44d5-9c9d-9c31a914ca89'
                 }
             },
             {
-                'identifier': {
-                    'namespace': '',
-                    'key': '55122607-e65e-44d5-9c9d-9c31a914ca90'
+                identifier: {
+                    namespace: '',
+                    key: '55122607-e65e-44d5-9c9d-9c31a914ca90'
                 }
             }
         ]
     };
     const telemetryItemTemplate = {
-        'telemetry': {
-            'period': 5,
-            'amplitude': 5,
-            'offset': 5,
-            'dataRateInHz': 5,
-            'phase': 5,
-            'randomness': 0
+        telemetry: {
+            period: 5,
+            amplitude: 5,
+            offset: 5,
+            dataRateInHz: 5,
+            phase: 5,
+            randomness: 0
         },
-        'type': 'generator',
-        'modified': 1592851063871,
-        'location': 'mine',
-        'persisted': 1592851063871
+        type: 'generator',
+        modified: 1592851063871,
+        location: 'mine',
+        persisted: 1592851063871
     };
     let telemetryItem1 = Object.assign({}, telemetryItemTemplate, {
-        'name': 'Sine Wave Generator 1',
-        'id': '55122607-e65e-44d5-9c9d-9c31a914ca89',
-        'identifier': {
-            'namespace': '',
-            'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
+        name: 'Sine Wave Generator 1',
+        id: '55122607-e65e-44d5-9c9d-9c31a914ca89',
+        identifier: {
+            namespace: '',
+            key: '55122607-e65e-44d5-9c9d-9c31a914ca89'
         }
     });
     let telemetryItem2 = Object.assign({}, telemetryItemTemplate, {
-        'name': 'Sine Wave Generator 2',
-        'id': '55122607-e65e-44d5-9c9d-9c31a914ca90',
-        'identifier': {
-            'namespace': '',
-            'key': '55122607-e65e-44d5-9c9d-9c31a914ca90'
+        name: 'Sine Wave Generator 2',
+        id: '55122607-e65e-44d5-9c9d-9c31a914ca90',
+        identifier: {
+            namespace: '',
+            key: '55122607-e65e-44d5-9c9d-9c31a914ca90'
         }
     });
 
@@ -130,7 +130,9 @@ describe('the plugin', function () {
             spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
             const applicableViews = openmct.objectViews.get(testViewObject, []);
-            tabsLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'tabs');
+            tabsLayoutViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'tabs'
+            );
             let view = tabsLayoutViewProvider.view(testViewObject, []);
             view.show(child, true);
 
@@ -150,7 +152,9 @@ describe('the plugin', function () {
         it('renders empty tab element with msg', () => {
             const tabsElement = element.querySelector('.c-tabs');
 
-            expect(tabsElement.innerText.trim()).toEqual('Drag objects here to add them to this view.');
+            expect(tabsElement.innerText.trim()).toEqual(
+                'Drag objects here to add them to this view.'
+            );
         });
     });
 
@@ -165,8 +169,8 @@ describe('the plugin', function () {
                 constructor(cb) {
                     resizeCallback = cb;
                 }
-                observe() { }
-                disconnect() { }
+                observe() {}
+                disconnect() {}
             }
 
             mockComposition = new EventEmitter();
@@ -186,7 +190,9 @@ describe('the plugin', function () {
             window.ResizeObserver.and.callFake(mockResizeObserver);
 
             const applicableViews = openmct.objectViews.get(testViewObject, []);
-            tabsLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'tabs');
+            tabsLayoutViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'tabs'
+            );
             let view = tabsLayoutViewProvider.view(testViewObject, []);
             view.show(child, true);
 
@@ -198,15 +204,14 @@ describe('the plugin', function () {
             testViewObject.keep_alive = true;
         });
 
-        it ('renders a tab for each item', () => {
+        it('renders a tab for each item', () => {
             let tabEls = element.querySelectorAll('.js-tab');
 
             expect(tabEls.length).toEqual(2);
         });
 
         describe('with domainObject.keep_alive set to', () => {
-
-            it ('true, will keep all views loaded, regardless of current tab view', (done) => {
+            it('true, will keep all views loaded, regardless of current tab view', (done) => {
                 resizeCallback();
 
                 // the function called by the resize observer is debounced 500ms,
@@ -215,25 +220,30 @@ describe('the plugin', function () {
                     setTimeout(resolve, 501);
                 });
 
-                Promise.all([Vue.nextTick(), promise]).then(() => {
-                    let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
+                Promise.all([Vue.nextTick(), promise])
+                    .then(() => {
+                        let tabViewEls = element.querySelectorAll(
+                            '.c-tabs-view__object'
+                        );
 
-                    expect(tabViewEls.length).toEqual(2);
-                }).finally(() => {
-                    done();
-                });
+                        expect(tabViewEls.length).toEqual(2);
+                    })
+                    .finally(() => {
+                        done();
+                    });
             });
 
-            it ('false, will only keep the current tab view loaded', async () => {
+            it('false, will only keep the current tab view loaded', async () => {
                 testViewObject.keep_alive = false;
 
                 await Vue.nextTick();
 
-                let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
+                let tabViewEls = element.querySelectorAll(
+                    '.c-tabs-view__object'
+                );
 
                 expect(tabViewEls.length).toEqual(1);
             });
-
         });
     });
 });

@@ -22,7 +22,11 @@
 
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
-import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
+import {
+    LOADED_ERROR,
+    TIMESYSTEM_KEY_NOTIFICATION,
+    TIMESYSTEM_KEY_WARNING
+} from './constants';
 
 /** Class representing a Telemetry Collection. */
 
@@ -108,8 +112,10 @@ export default class TelemetryCollection extends EventEmitter {
         let historicalProvider;
 
         this.openmct.telemetry.standardizeRequestOptions(options);
-        historicalProvider = this.openmct.telemetry.
-            findRequestProvider(this.domainObject, options);
+        historicalProvider = this.openmct.telemetry.findRequestProvider(
+            this.domainObject,
+            options
+        );
 
         if (!historicalProvider) {
             return;
@@ -127,8 +133,15 @@ export default class TelemetryCollection extends EventEmitter {
             this.requestAbort = new AbortController();
             options.signal = this.requestAbort.signal;
             this.emit('requestStarted');
-            const modifiedOptions = await this.openmct.telemetry.applyRequestInterceptors(this.domainObject, options);
-            historicalData = await historicalProvider.request(this.domainObject, modifiedOptions);
+            const modifiedOptions =
+                await this.openmct.telemetry.applyRequestInterceptors(
+                    this.domainObject,
+                    options
+                );
+            historicalData = await historicalProvider.request(
+                this.domainObject,
+                modifiedOptions
+            );
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Error requesting telemetry data...');
@@ -140,7 +153,6 @@ export default class TelemetryCollection extends EventEmitter {
         this.requestAbort = undefined;
 
         this._processNewTelemetry(historicalData);
-
     }
 
     /**
@@ -148,17 +160,15 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _initiateSubscriptionTelemetry() {
-
         if (this.unsubscribe) {
             this.unsubscribe();
         }
 
-        this.unsubscribe = this.openmct.telemetry
-            .subscribe(
-                this.domainObject,
-                datum => this._processNewTelemetry(datum),
-                this.options
-            );
+        this.unsubscribe = this.openmct.telemetry.subscribe(
+            this.domainObject,
+            (datum) => this._processNewTelemetry(datum),
+            this.options
+        );
     }
 
     /**
@@ -174,8 +184,11 @@ export default class TelemetryCollection extends EventEmitter {
             return;
         }
 
-        let latestBoundedDatum = this.boundedTelemetry[this.boundedTelemetry.length - 1];
-        let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
+        let latestBoundedDatum =
+            this.boundedTelemetry[this.boundedTelemetry.length - 1];
+        let data = Array.isArray(telemetryData)
+            ? telemetryData
+            : [telemetryData];
         let parsedValue;
         let beforeStartOfBounds;
         let afterEndOfBounds;
@@ -198,15 +211,23 @@ export default class TelemetryCollection extends EventEmitter {
                     endIndex = _.sortedLastIndexBy(
                         this.boundedTelemetry,
                         datum,
-                        boundedDatum => this.parseTime(boundedDatum)
+                        (boundedDatum) => this.parseTime(boundedDatum)
                     );
 
                     if (endIndex > startIndex) {
-                        let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
-                        isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
+                        let potentialDupes = this.boundedTelemetry.slice(
+                            startIndex,
+                            endIndex
+                        );
+                        isDuplicate = potentialDupes.some(
+                            _.isEqual.bind(undefined, datum)
+                        );
                     }
                 } else if (startIndex === this.boundedTelemetry.length) {
-                    isDuplicate = _.isEqual(datum, this.boundedTelemetry[this.boundedTelemetry.length - 1]);
+                    isDuplicate = _.isEqual(
+                        datum,
+                        this.boundedTelemetry[this.boundedTelemetry.length - 1]
+                    );
                 }
 
                 if (!isDuplicate) {
@@ -216,7 +237,6 @@ export default class TelemetryCollection extends EventEmitter {
                     addedIndices.push(index);
                     added.push(datum);
                 }
-
             } else if (afterEndOfBounds) {
                 this.futureBuffer.push(datum);
             }
@@ -225,7 +245,9 @@ export default class TelemetryCollection extends EventEmitter {
         if (added.length) {
             // if latest strategy is requested, we need to check if the value is the latest unmitted value
             if (this.isStrategyLatest) {
-                this.boundedTelemetry = [this.boundedTelemetry[this.boundedTelemetry.length - 1]];
+                this.boundedTelemetry = [
+                    this.boundedTelemetry[this.boundedTelemetry.length - 1]
+                ];
 
                 // if true, then this value has yet to be emitted
                 if (this.boundedTelemetry[0] !== latestBoundedDatum) {
@@ -248,7 +270,9 @@ export default class TelemetryCollection extends EventEmitter {
         }
 
         let parsedValue = this.parseTime(datum);
-        let lastValue = this.parseTime(this.boundedTelemetry[this.boundedTelemetry.length - 1]);
+        let lastValue = this.parseTime(
+            this.boundedTelemetry[this.boundedTelemetry.length - 1]
+        );
 
         if (parsedValue > lastValue || parsedValue === lastValue) {
             return this.boundedTelemetry.length;
@@ -256,7 +280,7 @@ export default class TelemetryCollection extends EventEmitter {
             return _.sortedIndexBy(
                 this.boundedTelemetry,
                 datum,
-                boundedDatum => this.parseTime(boundedDatum)
+                (boundedDatum) => this.parseTime(boundedDatum)
             );
         }
     }
@@ -300,10 +324,13 @@ export default class TelemetryCollection extends EventEmitter {
                     startIndex = _.sortedIndexBy(
                         this.boundedTelemetry,
                         testDatum,
-                        datum => this.parseTime(datum)
+                        (datum) => this.parseTime(datum)
                     );
                     discarded = this.boundedTelemetry.splice(0, startIndex);
-                } else if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
+                } else if (
+                    this.parseTime(testDatum) >
+                    this.parseTime(this.boundedTelemetry[0])
+                ) {
                     discarded = this.boundedTelemetry;
                     this.boundedTelemetry = [];
                 }
@@ -315,7 +342,7 @@ export default class TelemetryCollection extends EventEmitter {
                 endIndex = _.sortedLastIndexBy(
                     this.futureBuffer,
                     testDatum,
-                    datum => this.parseTime(datum)
+                    (datum) => this.parseTime(datum)
                 );
                 added = this.futureBuffer.splice(0, endIndex);
             }
@@ -326,7 +353,10 @@ export default class TelemetryCollection extends EventEmitter {
 
             if (added.length > 0) {
                 if (!this.isStrategyLatest) {
-                    this.boundedTelemetry = [...this.boundedTelemetry, ...added];
+                    this.boundedTelemetry = [
+                        ...this.boundedTelemetry,
+                        ...added
+                    ];
                 } else {
                     added = [added[added.length - 1]];
                     this.boundedTelemetry = added;
@@ -339,7 +369,6 @@ export default class TelemetryCollection extends EventEmitter {
             // user bounds change, reset
             this._reset();
         }
-
     }
 
     /**
@@ -356,7 +385,9 @@ export default class TelemetryCollection extends EventEmitter {
 
         if (this.metadata) {
             domains = this.metadata.valuesForHints(['domain']);
-            metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
+            metadataValue = this.metadata.value(timeSystem.key) || {
+                format: timeSystem.key
+            };
         }
 
         let domain = domains.find((d) => d.key === timeSystem.key);
@@ -371,7 +402,8 @@ export default class TelemetryCollection extends EventEmitter {
             this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
         }
 
-        let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+        let valueFormatter =
+            this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (datum) => {
             return valueFormatter.parse(datum);
@@ -420,7 +452,11 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _watchTimeSystem() {
-        this.openmct.time.on('timeSystem', this._setTimeSystemAndFetchData, this);
+        this.openmct.time.on(
+            'timeSystem',
+            this._setTimeSystemAndFetchData,
+            this
+        );
     }
 
     /**
@@ -428,7 +464,11 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _unwatchTimeSystem() {
-        this.openmct.time.off('timeSystem', this._setTimeSystemAndFetchData, this);
+        this.openmct.time.off(
+            'timeSystem',
+            this._setTimeSystemAndFetchData,
+            this
+        );
     }
 
     /**

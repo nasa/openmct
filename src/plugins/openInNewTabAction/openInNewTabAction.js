@@ -25,9 +25,9 @@ export default class OpenInNewTab {
         this.name = 'Open In New Tab';
         this.key = 'newTab';
         this.description = 'Open in a new browser tab';
-        this.group = "windowing";
+        this.group = 'windowing';
         this.priority = 10;
-        this.cssClass = "icon-new-window";
+        this.cssClass = 'icon-new-window';
 
         this._openmct = openmct;
     }

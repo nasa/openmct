@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 /**
-     * @label string (required) display name of shape
-     * @drawWebGL integer (unique, required) index provided to WebGL Fragment Shader
-     * @drawC2D function (required) canvas2d draw function
-     */
+ * @label string (required) display name of shape
+ * @drawWebGL integer (unique, required) index provided to WebGL Fragment Shader
+ * @drawC2D function (required) canvas2d draw function
+ */
 export const MARKER_SHAPES = {
     point: {
         label: 'Point',

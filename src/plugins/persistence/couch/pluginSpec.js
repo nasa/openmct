@@ -23,9 +23,15 @@ import Vue from 'vue';
 import CouchPlugin from './plugin.js';
 import {
     createOpenMct,
-    resetApplicationState, spyOnBuiltins
+    resetApplicationState,
+    spyOnBuiltins
 } from 'utils/testing';
-import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
+import {
+    CONNECTED,
+    DISCONNECTED,
+    PENDING,
+    UNKNOWN
+} from './CouchStatusIndicator';
 
 describe('the plugin', () => {
     let openmct;
@@ -53,10 +59,9 @@ describe('the plugin', () => {
         openmct = createOpenMct();
 
         openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-        mockIdentifierService = jasmine.createSpyObj(
-            'identifierService',
-            ['parse']
-        );
+        mockIdentifierService = jasmine.createSpyObj('identifierService', [
+            'parse'
+        ]);
         mockIdentifierService.parse.and.returnValue({
             getSpace: () => {
                 return 'mct';
@@ -67,7 +72,7 @@ describe('the plugin', () => {
 
         openmct.install(new CouchPlugin(options));
 
-        openmct.types.addType('notebook', {creatable: true});
+        openmct.types.addType('notebook', { creatable: true });
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -105,8 +110,12 @@ describe('the plugin', () => {
         });
 
         it('gets an object', async () => {
-            const result = await openmct.objects.get(mockDomainObject.identifier);
-            expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
+            const result = await openmct.objects.get(
+                mockDomainObject.identifier
+            );
+            expect(result.identifier.key).toEqual(
+                mockDomainObject.identifier.key
+            );
         });
 
         it('prioritizes couch requests above other requests', async () => {
@@ -183,13 +192,18 @@ describe('the plugin', () => {
             //Set modified timestamp it detects a change and persists the updated model.
             mockDomainObject.modified = mockDomainObject.persisted + 1;
             const updatedResult = await openmct.objects.save(mockDomainObject);
-            openmct.objects.observe(mockDomainObject, '*', (updatedObject) => {
-            });
+            openmct.objects.observe(
+                mockDomainObject,
+                '*',
+                (updatedObject) => {}
+            );
 
             expect(updatedResult).toBeTrue();
             expect(provider.update).toHaveBeenCalled();
             expect(provider.fetchChanges).toHaveBeenCalled();
-            expect(provider.isObservingObjectChanges.calls.mostRecent().returnValue).toBe(true);
+            expect(
+                provider.isObservingObjectChanges.calls.mostRecent().returnValue
+            ).toBe(true);
             sharedWorkerCallback(fakeUpdateEvent);
             expect(provider.onEventMessage).toHaveBeenCalled();
 
@@ -215,19 +229,19 @@ describe('the plugin', () => {
                 {
                     namespace: '',
                     key: 'object-1'
-                }, {
+                },
+                {
                     namespace: '',
                     key: 'object-2'
-                }, {
+                },
+                {
                     namespace: '',
                     key: 'object-3'
                 }
             ];
 
             await Promise.all(
-                objectIds.map((identifier) =>
-                    openmct.objects.get(identifier)
-                )
+                objectIds.map((identifier) => openmct.objects.get(identifier))
             );
 
             const requestUrl = fetch.calls.mostRecent().args[0];
@@ -282,12 +296,16 @@ describe('the plugin', () => {
             expect(requestUrl.endsWith('_find')).toBeTrue();
         });
 
-        it("and supports search by object name", async () => {
+        it('and supports search by object name', async () => {
             await Promise.all(openmct.objects.search('test'));
-            const requestPayload = JSON.parse(fetch.calls.mostRecent().args[1].body);
+            const requestPayload = JSON.parse(
+                fetch.calls.mostRecent().args[1].body
+            );
 
             expect(requestPayload).toBeDefined();
-            expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
+            expect(requestPayload.selector.model.name.$regex).toEqual(
+                '(?i)test'
+            );
         });
     });
 });

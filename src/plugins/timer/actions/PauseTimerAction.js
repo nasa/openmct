@@ -34,14 +34,20 @@ export default class PauseTimerAction {
     invoke(objectPath) {
         const domainObject = objectPath[0];
         if (!domainObject || !domainObject.configuration) {
-            return new Error('Unable to run pause timer action. No domainObject provided.');
+            return new Error(
+                'Unable to run pause timer action. No domainObject provided.'
+            );
         }
 
         const newConfiguration = { ...domainObject.configuration };
         newConfiguration.timerState = 'paused';
         newConfiguration.pausedTime = new Date();
 
-        this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
+        this.openmct.objects.mutate(
+            domainObject,
+            'configuration',
+            newConfiguration
+        );
     }
     appliesTo(objectPath, view = {}) {
         const domainObject = objectPath[0];

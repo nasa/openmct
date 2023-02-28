@@ -21,8 +21,13 @@
  *****************************************************************************/
 
 define([], function () {
-
-    function TelemetryAverager(telemetryAPI, timeAPI, domainObject, samples, averageDatumCallback) {
+    function TelemetryAverager(
+        telemetryAPI,
+        timeAPI,
+        domainObject,
+        samples,
+        averageDatumCallback
+    ) {
         this.telemetryAPI = telemetryAPI;
         this.timeAPI = timeAPI;
 

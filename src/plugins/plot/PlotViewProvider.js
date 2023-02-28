@@ -31,22 +31,30 @@ export default function PlotViewProvider(openmct) {
 
         let metadata = openmct.telemetry.getMetadata(domainObject);
 
-        return metadata.values().length > 0 && hasDomainAndNumericRange(metadata);
+        return (
+            metadata.values().length > 0 && hasDomainAndNumericRange(metadata)
+        );
     }
 
     function hasDomainAndNumericRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
         const domains = metadata.valuesForHints(['domain']);
 
-        return domains.length > 0
-            && rangeValues.length > 0
-            && !rangeValues.every(value => value.format === 'string');
+        return (
+            domains.length > 0 &&
+            rangeValues.length > 0 &&
+            !rangeValues.every((value) => value.format === 'string')
+        );
     }
 
     function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+        let isChildOfTimeStrip = objectPath.find(
+            (object) => object.type === 'time-strip'
+        );
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+        return (
+            isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath)
+        );
     }
 
     return {
@@ -80,7 +88,8 @@ export default function PlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<plot ref="plotComponent" :options="options"></plot>'
+                        template:
+                            '<plot ref="plotComponent" :options="options"></plot>'
                     });
                 },
                 getViewContext() {

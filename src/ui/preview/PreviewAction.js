@@ -87,11 +87,14 @@ export default class PreviewAction extends EventEmitter {
 
     appliesTo(objectPath, view = {}) {
         const parentElement = view.parentElement;
-        const isObjectView = parentElement && parentElement.classList.contains('js-object-view');
+        const isObjectView =
+            parentElement && parentElement.classList.contains('js-object-view');
 
-        return !PreviewAction.isVisible
-            && !this._openmct.router.isNavigatedObject(objectPath)
-            && !isObjectView;
+        return (
+            !PreviewAction.isVisible &&
+            !this._openmct.router.isNavigatedObject(objectPath) &&
+            !isObjectView
+        );
     }
 
     _preventPreview(objectPath) {

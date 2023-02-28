@@ -31,31 +31,54 @@ export default function multiFormat(date) {
      * Licensed
      */
     const format = [
-        [".SSS", function (m) {
-            return m.milliseconds();
-        }],
-        [":ss", function (m) {
-            return m.seconds();
-        }],
-        ["HH:mm", function (m) {
-            return m.minutes();
-        }],
-        ["HH:mm", function (m) {
-            return m.hours();
-        }],
-        ["ddd DD", function (m) {
-            return m.days()
-                && m.date() !== 1;
-        }],
-        ["MMM DD", function (m) {
-            return m.date() !== 1;
-        }],
-        ["MMMM", function (m) {
-            return m.month();
-        }],
-        ["YYYY", function () {
-            return true;
-        }]
+        [
+            '.SSS',
+            function (m) {
+                return m.milliseconds();
+            }
+        ],
+        [
+            ':ss',
+            function (m) {
+                return m.seconds();
+            }
+        ],
+        [
+            'HH:mm',
+            function (m) {
+                return m.minutes();
+            }
+        ],
+        [
+            'HH:mm',
+            function (m) {
+                return m.hours();
+            }
+        ],
+        [
+            'ddd DD',
+            function (m) {
+                return m.days() && m.date() !== 1;
+            }
+        ],
+        [
+            'MMM DD',
+            function (m) {
+                return m.date() !== 1;
+            }
+        ],
+        [
+            'MMMM',
+            function (m) {
+                return m.month();
+            }
+        ],
+        [
+            'YYYY',
+            function () {
+                return true;
+            }
+        ]
     ].filter(function (row) {
         return row[1](momentified);
     })[0][0];

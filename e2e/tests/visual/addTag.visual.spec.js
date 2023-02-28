@@ -24,12 +24,11 @@
  * This test is dedicated to test the blur behavior of the add tag button.
  */
 
-const { test } = require("../../pluginFixtures");
+const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
-test.describe("Visual - Check blur of Add Tag button", () => {
-
+test.describe('Visual - Check blur of Add Tag button', () => {
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all network events to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -38,14 +37,20 @@ test.describe("Visual - Check blur of Add Tag button", () => {
     test("Blur 'Add tag'", async ({ page, theme }) => {
         createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        await page
+            .locator(
+                'text=To start a new entry, click here or drag and drop any object'
+            )
+            .click();
         const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 0`;
         await page.locator(entryLocator).click();
         await page.locator(entryLocator).fill(`Entry 0`);
         await page.locator(entryLocator).press('Enter');
 
         // Click on Annotations tab
-        await page.locator('.c-inspector__tab', { hasText: "Annotations" }).click();
+        await page
+            .locator('.c-inspector__tab', { hasText: 'Annotations' })
+            .click();
 
         // Take snapshot of the notebook with the Annotations tab opened
         await percySnapshot(page, `Notebook Annotation (theme: '${theme}')`);
@@ -60,9 +65,14 @@ test.describe("Visual - Check blur of Add Tag button", () => {
         await page.locator('[placeholder="Type to select tag"]').click();
 
         // Click on the "Tags" header (simulating a click outside the autocomplete field)
-        await page.locator('div.c-inspect-properties__header:has-text("Tags")').click();
+        await page
+            .locator('div.c-inspect-properties__header:has-text("Tags")')
+            .click();
 
         // Take snapshot of the notebook with the AutoComplete field hidden and with the "Add Tag" button visible
-        await percySnapshot(page, `Notebook Annotation de-select blur (theme: '${theme}')`);
+        await percySnapshot(
+            page,
+            `Notebook Annotation de-select blur (theme: '${theme}')`
+        );
     });
 });

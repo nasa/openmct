@@ -39,7 +39,7 @@ class ConfigStore {
     }
 
     deleteAll() {
-        Object.keys(this.store).forEach(id => this.deleteStore(id));
+        Object.keys(this.store).forEach((id) => this.deleteStore(id));
     }
 
     /**

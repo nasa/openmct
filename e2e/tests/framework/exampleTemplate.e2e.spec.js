@@ -21,28 +21,28 @@
  *****************************************************************************/
 
 /*
-* This test suite template is to be used when creating new test suites. It will be kept up to date with the latest improvements
-* made by the Open MCT team. It will also follow our best pratices as those evolve. Please use this structure as a _reference_ and clear
-* or update any references when creating a new test suite!
-*
-* To illustrate current best practices, we've included a mocked up test suite for Renaming a Timer domain object.
-*
-* Demonstrated:
-* - Using appActions to leverage existing functions
-* - Structure
-* - @unstable annotation
-* - await, expect, test, describe syntax
-* - Writing a custom function for a test suite
-* - Test stub for unfinished test coverage (test.fixme)
-*
-* The structure should follow
-* 1. imports
-* 2. test.describe()
-* 3. -> test1
-*    -> test2
-*    -> test3(stub)
-* 4. Any custom functions
-*/
+ * This test suite template is to be used when creating new test suites. It will be kept up to date with the latest improvements
+ * made by the Open MCT team. It will also follow our best pratices as those evolve. Please use this structure as a _reference_ and clear
+ * or update any references when creating a new test suite!
+ *
+ * To illustrate current best practices, we've included a mocked up test suite for Renaming a Timer domain object.
+ *
+ * Demonstrated:
+ * - Using appActions to leverage existing functions
+ * - Structure
+ * - @unstable annotation
+ * - await, expect, test, describe syntax
+ * - Writing a custom function for a test suite
+ * - Test stub for unfinished test coverage (test.fixme)
+ *
+ * The structure should follow
+ * 1. imports
+ * 2. test.describe()
+ * 3. -> test1
+ *    -> test2
+ *    -> test3(stub)
+ * 4. Any custom functions
+ */
 
 // Structure: Some standard Imports. Please update the required pathing.
 const { test, expect } = require('../../pluginFixtures');
@@ -70,7 +70,9 @@ test.describe('Renaming Timer Object', () => {
         timer = await createDomainObjectWithDefaults(page, { type: 'Timer' });
 
         // Assert the object to be created and check its name in the title
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(timer.name);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            timer.name
+        );
     });
 
     /**
@@ -78,30 +80,38 @@ test.describe('Renaming Timer Object', () => {
      * A good testcase name concisely describes the test's goal(s) and should give
      * some hint as to what went wrong if the test fails.
      */
-    test('An existing Timer object can be renamed via the 3dot actions menu', async ({ page }) => {
-        const newObjectName = "Renamed Timer";
+    test('An existing Timer object can be renamed via the 3dot actions menu', async ({
+        page
+    }) => {
+        const newObjectName = 'Renamed Timer';
 
         // We've created an example of a shared function which pases the page and newObjectName values
         await renameTimerFrom3DotMenu(page, timer.url, newObjectName);
 
         // Assert that the name has changed in the browser bar to the value we assigned above
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            newObjectName
+        );
     });
 
     test('An existing Timer object can be renamed twice', async ({ page }) => {
-        const newObjectName = "Renamed Timer";
-        const newObjectName2 = "Re-Renamed Timer";
+        const newObjectName = 'Renamed Timer';
+        const newObjectName2 = 'Re-Renamed Timer';
 
         await renameTimerFrom3DotMenu(page, timer.url, newObjectName);
 
         // Assert that the name has changed in the browser bar to the value we assigned above
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            newObjectName
+        );
 
         // Rename the Timer object again
         await renameTimerFrom3DotMenu(page, timer.url, newObjectName2);
 
         // Assert that the name has changed in the browser bar to the second value
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName2);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            newObjectName2
+        );
     });
 
     /**
@@ -141,7 +151,9 @@ async function renameTimerFrom3DotMenu(page, timerUrl, newNameForTimer) {
     await page.locator('text=Edit Properties...').click();
 
     // Rename the timer object
-    await page.locator('text=Properties Title Notes >> input[type="text"]').fill(newNameForTimer);
+    await page
+        .locator('text=Properties Title Notes >> input[type="text"]')
+        .fill(newNameForTimer);
 
     // Click Ok button to Save
     await page.locator('button:has-text("OK")').click();

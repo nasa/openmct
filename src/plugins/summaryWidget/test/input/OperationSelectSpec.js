@@ -9,7 +9,6 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
         let mockKeySelect;
         let mockEvaluator;
         beforeEach(function () {
-
             mockConfig = {
                 object: 'object1',
                 key: 'a',
@@ -47,7 +46,6 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
                 'triggerCallback',
                 'getTelemetryPropertyType',
                 'getEvaluator'
-
             ]);
 
             mockKeySelect = jasmine.createSpyObj('mockKeySelect', [
@@ -61,14 +59,19 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
                 'getOperationText'
             ]);
 
-            mockEvaluator.getOperationKeys.and.returnValue(Object.keys(mockOperations));
+            mockEvaluator.getOperationKeys.and.returnValue(
+                Object.keys(mockOperations)
+            );
 
             mockEvaluator.getOperationText.and.callFake(function (key) {
                 return mockOperations[key].text;
             });
 
-            mockEvaluator.operationAppliesTo.and.callFake(function (operation, type) {
-                return (mockOperations[operation].appliesTo.includes(type));
+            mockEvaluator.operationAppliesTo.and.callFake(function (
+                operation,
+                type
+            ) {
+                return mockOperations[operation].appliesTo.includes(type);
             });
 
             mockKeySelect.on.and.callFake((event, callback) => {
@@ -85,11 +88,14 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
                 mockManager.callbacks[event] = callback;
             });
 
-            mockManager.triggerCallback.and.callFake(event => {
+            mockManager.triggerCallback.and.callFake((event) => {
                 mockManager.callbacks[event]();
             });
 
-            mockManager.getTelemetryPropertyType.and.callFake(function (object, key) {
+            mockManager.getTelemetryPropertyType.and.callFake(function (
+                object,
+                key
+            ) {
                 return mockPropertyTypes[object][key];
             });
 
@@ -98,32 +104,52 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
 
         it('waits until the metadata fully loads to populate itself', function () {
             mockManager.metadataLoadCompleted.and.returnValue(false);
-            operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
+            operationSelect = new OperationSelect(
+                mockConfig,
+                mockKeySelect,
+                mockManager
+            );
             expect(operationSelect.getSelected()).toEqual('');
         });
 
         it('populates itself with operations on a metadata load', function () {
             mockManager.metadataLoadCompleted.and.returnValue(false);
-            operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
+            operationSelect = new OperationSelect(
+                mockConfig,
+                mockKeySelect,
+                mockManager
+            );
             mockManager.triggerCallback('metadata');
             expect(operationSelect.getSelected()).toEqual('operation1');
         });
 
         it('populates itself with operations if metadata load is already complete', function () {
             mockManager.metadataLoadCompleted.and.returnValue(true);
-            operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
+            operationSelect = new OperationSelect(
+                mockConfig,
+                mockKeySelect,
+                mockManager
+            );
             expect(operationSelect.getSelected()).toEqual('operation1');
         });
 
         it('clears its selection state if the operation in its config does not apply', function () {
             mockManager.metadataLoadCompleted.and.returnValue(true);
-            operationSelect = new OperationSelect(mockBadConfig, mockKeySelect, mockManager);
+            operationSelect = new OperationSelect(
+                mockBadConfig,
+                mockKeySelect,
+                mockManager
+            );
             expect(operationSelect.getSelected()).toEqual('');
         });
 
         it('populates with the appropriate options when its linked key changes', function () {
             mockManager.metadataLoadCompleted.and.returnValue(true);
-            operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
+            operationSelect = new OperationSelect(
+                mockConfig,
+                mockKeySelect,
+                mockManager
+            );
             mockKeySelect.triggerCallback('change', 'b');
             operationSelect.setSelected('operation2');
             expect(operationSelect.getSelected()).toEqual('operation2');
@@ -133,14 +159,22 @@ define(['../../src/input/OperationSelect'], function (OperationSelect) {
 
         it('clears its selection on a change if the operation does not apply', function () {
             mockManager.metadataLoadCompleted.and.returnValue(true);
-            operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
+            operationSelect = new OperationSelect(
+                mockConfig,
+                mockKeySelect,
+                mockManager
+            );
             mockKeySelect.triggerCallback('change', 'b');
             expect(operationSelect.getSelected()).toEqual('');
         });
 
         it('maintains its selected state on change if the operation does apply', function () {
             mockManager.metadataLoadCompleted.and.returnValue(true);
-            operationSelect = new OperationSelect(mockConfig, mockKeySelect, mockManager);
+            operationSelect = new OperationSelect(
+                mockConfig,
+                mockKeySelect,
+                mockManager
+            );
             mockKeySelect.triggerCallback('change', 'c');
             expect(operationSelect.getSelected()).toEqual('operation1');
         });

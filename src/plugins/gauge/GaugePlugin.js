@@ -36,11 +36,15 @@ export default function () {
     return function install(openmct) {
         openmct.objectViews.addProvider(new GaugeViewProvider(openmct));
 
-        openmct.forms.addNewFormControl('gauge-controller', getGaugeFormController(openmct));
+        openmct.forms.addNewFormControl(
+            'gauge-controller',
+            getGaugeFormController(openmct)
+        );
         openmct.types.addType('gauge', {
-            name: "Gauge",
+            name: 'Gauge',
             creatable: true,
-            description: "Graphically visualize a telemetry element's current value between a minimum and maximum.",
+            description:
+                "Graphically visualize a telemetry element's current value between a minimum and maximum.",
             cssClass: 'icon-gauge',
             initialize(domainObject) {
                 domainObject.composition = [];
@@ -61,77 +65,66 @@ export default function () {
             },
             form: [
                 {
-                    name: "Gauge type",
-                    options: GAUGE_TYPES.map(type => {
+                    name: 'Gauge type',
+                    options: GAUGE_TYPES.map((type) => {
                         return {
                             name: type[0],
                             value: type[1]
                         };
                     }),
-                    control: "select",
-                    cssClass: "l-input-sm",
-                    key: "gaugeController",
+                    control: 'select',
+                    cssClass: 'l-input-sm',
+                    key: 'gaugeController',
+                    property: ['configuration', 'gaugeController', 'gaugeType']
+                },
+                {
+                    name: 'Display current value',
+                    control: 'toggleSwitch',
+                    cssClass: 'l-input',
+                    key: 'isDisplayCurVal',
                     property: [
-                        "configuration",
-                        "gaugeController",
-                        "gaugeType"
+                        'configuration',
+                        'gaugeController',
+                        'isDisplayCurVal'
                     ]
                 },
                 {
-                    name: "Display current value",
-                    control: "toggleSwitch",
-                    cssClass: "l-input",
-                    key: "isDisplayCurVal",
+                    name: 'Display units',
+                    control: 'toggleSwitch',
+                    cssClass: 'l-input',
+                    key: 'isDisplayUnits',
                     property: [
-                        "configuration",
-                        "gaugeController",
-                        "isDisplayCurVal"
+                        'configuration',
+                        'gaugeController',
+                        'isDisplayUnits'
                     ]
                 },
                 {
-                    name: "Display units",
-                    control: "toggleSwitch",
-                    cssClass: "l-input",
-                    key: "isDisplayUnits",
+                    name: 'Display range values',
+                    control: 'toggleSwitch',
+                    cssClass: 'l-input',
+                    key: 'isDisplayMinMax',
                     property: [
-                        "configuration",
-                        "gaugeController",
-                        "isDisplayUnits"
+                        'configuration',
+                        'gaugeController',
+                        'isDisplayMinMax'
                     ]
                 },
                 {
-                    name: "Display range values",
-                    control: "toggleSwitch",
-                    cssClass: "l-input",
-                    key: "isDisplayMinMax",
-                    property: [
-                        "configuration",
-                        "gaugeController",
-                        "isDisplayMinMax"
-                    ]
+                    name: 'Float precision',
+                    control: 'numberfield',
+                    cssClass: 'l-input-sm',
+                    key: 'precision',
+                    property: ['configuration', 'gaugeController', 'precision']
                 },
                 {
-                    name: "Float precision",
-                    control: "numberfield",
-                    cssClass: "l-input-sm",
-                    key: "precision",
-                    property: [
-                        "configuration",
-                        "gaugeController",
-                        "precision"
-                    ]
-                },
-                {
-                    name: "Value ranges and limits",
-                    control: "gauge-controller",
-                    cssClass: "l-input",
-                    key: "gaugeController",
+                    name: 'Value ranges and limits',
+                    control: 'gauge-controller',
+                    cssClass: 'l-input',
+                    key: 'gaugeController',
                     required: false,
                     hideFromInspector: true,
-                    property: [
-                        "configuration",
-                        "gaugeController"
-                    ],
+                    property: ['configuration', 'gaugeController'],
                     validate: ({ value }, callback) => {
                         if (value.isUseTelemetryLimits) {
                             return true;
@@ -163,12 +156,17 @@ export default function () {
                         }
 
                         if (limitHigh !== '') {
-                            valid.limitHigh = min < limitHigh && limitHigh <= max;
+                            valid.limitHigh =
+                                min < limitHigh && limitHigh <= max;
                         }
 
-                        if (valid.limitLow && valid.limitHigh
-                                && limitLow !== '' && limitHigh !== ''
-                                && limitLow > limitHigh) {
+                        if (
+                            valid.limitLow &&
+                            valid.limitHigh &&
+                            limitLow !== '' &&
+                            limitHigh !== '' &&
+                            limitLow > limitHigh
+                        ) {
                             valid.limitLow = false;
                             valid.limitHigh = false;
                         }
@@ -177,7 +175,12 @@ export default function () {
                             callback(valid);
                         }
 
-                        return valid.min && valid.max && valid.limitLow && valid.limitHigh;
+                        return (
+                            valid.min &&
+                            valid.max &&
+                            valid.limitLow &&
+                            valid.limitHigh
+                        );
                     }
                 }
             ]

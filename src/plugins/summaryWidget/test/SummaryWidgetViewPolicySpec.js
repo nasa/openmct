@@ -20,21 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    '../SummaryWidgetViewPolicy'
-], function (
-    SummaryWidgetViewPolicy
-) {
-
+define(['../SummaryWidgetViewPolicy'], function (SummaryWidgetViewPolicy) {
     describe('SummaryWidgetViewPolicy', function () {
         let policy;
         let domainObject;
         let view;
         beforeEach(function () {
             policy = new SummaryWidgetViewPolicy();
-            domainObject = jasmine.createSpyObj('domainObject', [
-                'getModel'
-            ]);
+            domainObject = jasmine.createSpyObj('domainObject', ['getModel']);
             domainObject.getModel.and.returnValue({});
             view = {};
         });
@@ -61,6 +54,5 @@ define([
             view.key = 'other view';
             expect(policy.allow(view, domainObject)).toBe(false);
         });
-
     });
 });

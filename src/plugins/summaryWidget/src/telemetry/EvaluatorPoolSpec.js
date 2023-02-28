@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './EvaluatorPool',
-    './SummaryWidgetEvaluator'
-], function (
+define(['./EvaluatorPool', './SummaryWidgetEvaluator'], function (
     EvaluatorPool,
     SummaryWidgetEvaluator
 ) {
@@ -41,11 +38,7 @@ define([
             openmct.composition.get.and.callFake(function () {
                 const compositionCollection = jasmine.createSpyObj(
                     'compositionCollection',
-                    [
-                        'load',
-                        'on',
-                        'off'
-                    ]
+                    ['load', 'on', 'off']
                 );
                 compositionCollection.load.and.returnValue(Promise.resolve());
 

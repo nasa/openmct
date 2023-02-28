@@ -26,7 +26,8 @@ export default class LadTableSetView {
                     domainObject: this.domainObject
                 };
             },
-            template: '<lad-table-set ref="ladTableSet" :domain-object="domainObject"></lad-table-set>'
+            template:
+                '<lad-table-set ref="ladTableSet" :domain-object="domainObject"></lad-table-set>'
         });
     }
 

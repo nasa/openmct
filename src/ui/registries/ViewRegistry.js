@@ -46,12 +46,16 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     ViewRegistry.prototype.get = function (item, objectPath) {
         if (objectPath === undefined) {
-            throw "objectPath must be provided to get applicable views for an object";
+            throw 'objectPath must be provided to get applicable views for an object';
         }
 
         function byPriority(providerA, providerB) {
-            let priorityA = providerA.priority ? providerA.priority(item) : DEFAULT_VIEW_PRIORITY;
-            let priorityB = providerB.priority ? providerB.priority(item) : DEFAULT_VIEW_PRIORITY;
+            let priorityA = providerA.priority
+                ? providerA.priority(item)
+                : DEFAULT_VIEW_PRIORITY;
+            let priorityB = providerB.priority
+                ? providerB.priority(item)
+                : DEFAULT_VIEW_PRIORITY;
 
             return priorityB - priorityA;
         }
@@ -59,7 +63,8 @@ define(['EventEmitter'], function (EventEmitter) {
         return this.getAllProviders()
             .filter(function (provider) {
                 return provider.canView(item, objectPath);
-            }).sort(byPriority);
+            })
+            .sort(byPriority);
     };
 
     /**
@@ -83,7 +88,10 @@ define(['EventEmitter'], function (EventEmitter) {
         }
 
         if (this.providers[key] !== undefined) {
-            console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
+            console.warn(
+                "Provider already defined for key '%s'. Provider keys must be unique.",
+                key
+            );
         }
 
         const wrappedView = provider.view.bind(provider);
@@ -270,5 +278,4 @@ define(['EventEmitter'], function (EventEmitter) {
      */
 
     return ViewRegistry;
-
 });

@@ -25,7 +25,7 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-describe("The Move Action plugin", () => {
+describe('The Move Action plugin', () => {
     let openmct;
     let moveAction;
     let childObject;
@@ -40,10 +40,10 @@ describe("The Move Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Child Folder",
+                    name: 'Child Folder',
                     identifier: {
-                        namespace: "",
-                        key: "child-folder-object"
+                        namespace: '',
+                        key: 'child-folder-object'
                     }
                 }
             }
@@ -53,11 +53,11 @@ describe("The Move Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Parent Folder",
+                    name: 'Parent Folder',
                     composition: [childObject.identifier],
                     identifier: {
-                        namespace: "",
-                        key: "parent-folder-object"
+                        namespace: '',
+                        key: 'parent-folder-object'
                     }
                 }
             }
@@ -67,10 +67,10 @@ describe("The Move Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Another Parent Folder",
+                    name: 'Another Parent Folder',
                     identifier: {
-                        namespace: "",
-                        key: "another-parent-folder-object"
+                        namespace: '',
+                        key: 'another-parent-folder-object'
                     }
                 }
             }
@@ -86,28 +86,32 @@ describe("The Move Action plugin", () => {
         return resetApplicationState(openmct);
     });
 
-    it("should be defined", () => {
+    it('should be defined', () => {
         expect(moveAction).toBeDefined();
     });
 
-    describe("when moving an object to a new parent and removing from the old parent", () => {
+    describe('when moving an object to a new parent and removing from the old parent', () => {
         let unObserve;
         beforeEach((done) => {
             openmct.router.path = [];
 
-            spyOn(openmct.objects, "save");
+            spyOn(openmct.objects, 'save');
             openmct.objects.save.and.callThrough();
-            spyOn(openmct.forms, "showForm");
-            openmct.forms.showForm.and.callFake(formStructure => {
+            spyOn(openmct.forms, 'showForm');
+            openmct.forms.showForm.and.callFake((formStructure) => {
                 return Promise.resolve({
                     name: 'test',
                     location: [anotherParentObject]
                 });
             });
 
-            unObserve = openmct.objects.observe(parentObject, '*', (newObject) => {
-                done();
-            });
+            unObserve = openmct.objects.observe(
+                parentObject,
+                '*',
+                (newObject) => {
+                    done();
+                }
+            );
 
             moveAction.inNavigationPath = () => false;
 

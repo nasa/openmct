@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+    openObjectTreeContextMenu,
+    createDomainObjectWithDefaults
+} = require('../../../../appActions');
 const path = require('path');
 const nbUtils = require('../../../../helper/notebookUtils');
 
@@ -36,16 +39,22 @@ test.describe('Restricted Notebook', () => {
     });
 
     test('Can be renamed @addInit', async ({ page }) => {
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(`${notebook.name}`);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            `${notebook.name}`
+        );
     });
 
-    test('Can be deleted if there are no locked pages @addInit', async ({ page }) => {
+    test('Can be deleted if there are no locked pages @addInit', async ({
+        page
+    }) => {
         await openObjectTreeContextMenu(page, notebook.url);
 
         const menuOptions = page.locator('.c-menu ul');
         await expect.soft(menuOptions).toContainText('Remove');
 
-        const restrictedNotebookTreeObject = page.locator(`a:has-text("${notebook.name}")`);
+        const restrictedNotebookTreeObject = page.locator(
+            `a:has-text("${notebook.name}")`
+        );
 
         // notebook tree object exists
         expect.soft(await restrictedNotebookTreeObject.count()).toEqual(1);
@@ -64,14 +73,14 @@ test.describe('Restricted Notebook', () => {
         expect(await restrictedNotebookTreeObject.count()).toEqual(0);
     });
 
-    test('Can be locked if at least one page has one entry @addInit', async ({ page }) => {
-
+    test('Can be locked if at least one page has one entry @addInit', async ({
+        page
+    }) => {
         await nbUtils.enterTextEntry(page, TEST_TEXT);
 
         const commitButton = page.locator('button:has-text("Commit Entries")');
         expect(await commitButton.count()).toEqual(1);
     });
-
 });
 
 test.describe('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
@@ -85,15 +94,24 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await page.locator('button.c-notebook__toggle-nav-button').click();
     });
 
-    test('Locked page should now be in a locked state @addInit @unstable', async ({ page }, testInfo) => {
+    test('Locked page should now be in a locked state @addInit @unstable', async ({
+        page
+    }, testInfo) => {
         // eslint-disable-next-line playwright/no-skipped-test
-        test.skip(testInfo.project === 'chrome-beta', "Test is unreliable on chrome-beta");
+        test.skip(
+            testInfo.project === 'chrome-beta',
+            'Test is unreliable on chrome-beta'
+        );
         // main lock message on page
-        const lockMessage = page.locator('text=This page has been committed and cannot be modified or removed');
+        const lockMessage = page.locator(
+            'text=This page has been committed and cannot be modified or removed'
+        );
         expect.soft(await lockMessage.count()).toEqual(1);
 
         // lock icon on page in sidebar
-        const pageLockIcon = page.locator('ul.c-notebook__pages li div.icon-lock');
+        const pageLockIcon = page.locator(
+            'ul.c-notebook__pages li div.icon-lock'
+        );
         expect.soft(await pageLockIcon.count()).toEqual(1);
 
         // no way to remove a restricted notebook with a locked page
@@ -103,7 +121,9 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await expect(menuOptions).not.toContainText('Remove');
     });
 
-    test('Can still: add page, rename, add entry, delete unlocked pages @addInit', async ({ page }) => {
+    test('Can still: add page, rename, add entry, delete unlocked pages @addInit', async ({
+        page
+    }) => {
         // Click text=Page Add >> button
         await Promise.all([
             page.waitForNavigation(),
@@ -144,13 +164,14 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 });
 
 test.describe('Restricted Notebook with a page locked and with an embed @addInit', () => {
-
     test.beforeEach(async ({ page }) => {
         const notebook = await startAndAddRestrictedNotebookObject(page);
         await nbUtils.dragAndDropEmbed(page, notebook);
     });
 
-    test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {
+    test('Allows embeds to be deleted if page unlocked @addInit', async ({
+        page
+    }) => {
         // Click .c-ne__embed__name .c-popup-menu-button
         await page.locator('.c-ne__embed__name .c-icon-button').click(); // embed popup menu
 
@@ -158,7 +179,9 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
         await expect(embedMenu).toContainText('Remove This Embed');
     });
 
-    test('Disallows embeds to be deleted if page locked @addInit', async ({ page }) => {
+    test('Disallows embeds to be deleted if page locked @addInit', async ({
+        page
+    }) => {
         await lockPage(page);
         // Click .c-ne__embed__name .c-popup-menu-button
         await page.locator('.c-ne__embed__name .c-icon-button').click(); // embed popup menu
@@ -166,7 +189,6 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
         const embedMenu = page.locator('body >> .c-menu');
         await expect(embedMenu).not.toContainText('Remove This Embed');
     });
-
 });
 
 /**
@@ -174,7 +196,13 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
  */
 async function startAndAddRestrictedNotebookObject(page) {
     // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitRestrictedNotebook.js') });
+    await page.addInitScript({
+        path: path.join(
+            __dirname,
+            '../../../../helper/',
+            'addInitRestrictedNotebook.js'
+        )
+    });
     await page.goto('./', { waitUntil: 'networkidle' });
 
     return createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });

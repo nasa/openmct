@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
-import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
+import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
+import { getStylesWithoutNoneValue } from '@/plugins/condition/utils/styleUtils';
 
 export default {
     inject: ['openmct'],
@@ -35,7 +35,9 @@ export default {
     mounted() {
         this.parentDomainObject = this.$parent.domainObject;
         this.itemId = this.item.id;
-        this.objectStyle = this.getObjectStyleForItem(this.parentDomainObject.configuration.objectStyles);
+        this.objectStyle = this.getObjectStyleForItem(
+            this.parentDomainObject.configuration.objectStyles
+        );
         this.initObjectStyles();
     },
     beforeDestroy() {
@@ -50,14 +52,21 @@ export default {
     methods: {
         getObjectStyleForItem(objectStyle) {
             if (objectStyle) {
-                return objectStyle[this.itemId] ? Object.assign({}, objectStyle[this.itemId]) : undefined;
+                return objectStyle[this.itemId]
+                    ? Object.assign({}, objectStyle[this.itemId])
+                    : undefined;
             } else {
                 return undefined;
             }
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
-                this.styleRuleManager = new StyleRuleManager(this.objectStyle, this.openmct, this.updateStyle.bind(this), true);
+                this.styleRuleManager = new StyleRuleManager(
+                    this.objectStyle,
+                    this.openmct,
+                    this.updateStyle.bind(this),
+                    true
+                );
             } else {
                 this.styleRuleManager.updateObjectStyleConfig(this.objectStyle);
             }
@@ -66,14 +75,21 @@ export default {
                 this.stopListeningObjectStyles();
             }
 
-            this.stopListeningObjectStyles = this.openmct.objects.observe(this.parentDomainObject, 'configuration.objectStyles', (newObjectStyle) => {
-                //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
-                let newItemObjectStyle = this.getObjectStyleForItem(newObjectStyle);
-                if (this.objectStyle !== newItemObjectStyle) {
-                    this.objectStyle = newItemObjectStyle;
-                    this.styleRuleManager.updateObjectStyleConfig(this.objectStyle);
+            this.stopListeningObjectStyles = this.openmct.objects.observe(
+                this.parentDomainObject,
+                'configuration.objectStyles',
+                (newObjectStyle) => {
+                    //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
+                    let newItemObjectStyle =
+                        this.getObjectStyleForItem(newObjectStyle);
+                    if (this.objectStyle !== newItemObjectStyle) {
+                        this.objectStyle = newItemObjectStyle;
+                        this.styleRuleManager.updateObjectStyleConfig(
+                            this.objectStyle
+                        );
+                    }
                 }
-            });
+            );
         },
         updateStyle(style) {
             this.itemStyle = getStylesWithoutNoneValue(style);

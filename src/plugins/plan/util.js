@@ -34,7 +34,11 @@ export function getValidatedData(domainObject) {
         json = body;
     }
 
-    if (sourceMap !== undefined && sourceMap.activities !== undefined && sourceMap.groupId !== undefined) {
+    if (
+        sourceMap !== undefined &&
+        sourceMap.activities !== undefined &&
+        sourceMap.groupId !== undefined
+    ) {
         let mappedJson = {};
         json[sourceMap.activities].forEach((activity) => {
             if (activity[sourceMap.groupId]) {

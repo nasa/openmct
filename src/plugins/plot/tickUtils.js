@@ -1,4 +1,4 @@
-import { antisymlog, symlog } from "./mathUtils";
+import { antisymlog, symlog } from './mathUtils';
 
 const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
@@ -33,7 +33,7 @@ function getPrecision(step) {
         return 0;
     }
 
-    let precision = Math.max(0, -(Number(exponential.slice(i + 1))));
+    let precision = Math.max(0, -Number(exponential.slice(i + 1)));
 
     if (precision > 20) {
         precision = 20;
@@ -42,12 +42,17 @@ function getPrecision(step) {
     return precision;
 }
 
-export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount = 6) {
+export function getLogTicks(
+    start,
+    stop,
+    mainTickCount = 8,
+    secondaryTickCount = 6
+) {
     // log()'ed values
     const mainLogTicks = ticks(start, stop, mainTickCount);
 
     // original values
-    const mainTicks = mainLogTicks.map(n => antisymlog(n, 10));
+    const mainTicks = mainLogTicks.map((n) => antisymlog(n, 10));
 
     const result = [];
 
@@ -67,8 +72,7 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
             tick + rangeBetweenMainTicks / (secondaryTickCount + 1),
             nextTick - rangeBetweenMainTicks / (secondaryTickCount + 1),
             secondaryTickCount - 2
-        )
-            .map(n => symlog(n, 10));
+        ).map((n) => symlog(n, 10));
 
         result.push(...secondaryLogTicks);
 
@@ -127,13 +131,12 @@ export function commonSuffix(a, b) {
 }
 
 export function getFormattedTicks(newTicks, format) {
-    newTicks = newTicks
-        .map(function (tickValue) {
-            return {
-                value: tickValue,
-                text: format(tickValue)
-            };
-        });
+    newTicks = newTicks.map(function (tickValue) {
+        return {
+            value: tickValue,
+            text: format(tickValue)
+        };
+    });
 
     if (newTicks.length && typeof newTicks[0].text === 'string') {
         const tickText = newTicks.map(function (t) {

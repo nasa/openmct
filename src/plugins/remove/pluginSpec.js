@@ -25,8 +25,7 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-describe("The Remove Action plugin", () => {
-
+describe('The Remove Action plugin', () => {
     let openmct;
     let removeAction;
     let childObject;
@@ -40,10 +39,10 @@ describe("The Remove Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Child Folder",
+                    name: 'Child Folder',
                     identifier: {
-                        namespace: "",
-                        key: "child-folder-object"
+                        namespace: '',
+                        key: 'child-folder-object'
                     }
                 }
             }
@@ -52,7 +51,7 @@ describe("The Remove Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Parent Folder",
+                    name: 'Parent Folder',
                     composition: [childObject.identifier]
                 }
             }
@@ -68,12 +67,11 @@ describe("The Remove Action plugin", () => {
         return resetApplicationState(openmct);
     });
 
-    it("should be defined", () => {
+    it('should be defined', () => {
         expect(removeAction).toBeDefined();
     });
 
-    describe("when removing an object from a parent composition", () => {
-
+    describe('when removing an object from a parent composition', () => {
         beforeEach(() => {
             spyOn(removeAction, 'removeFromComposition').and.callThrough();
             spyOn(removeAction, 'inNavigationPath').and.returnValue(false);
@@ -83,21 +81,26 @@ describe("The Remove Action plugin", () => {
             removeAction.removeFromComposition(parentObject, childObject);
         });
 
-        it("removeFromComposition should be called with the parent and child", () => {
+        it('removeFromComposition should be called with the parent and child', () => {
             expect(removeAction.removeFromComposition).toHaveBeenCalled();
-            expect(removeAction.removeFromComposition).toHaveBeenCalledWith(parentObject, childObject);
+            expect(removeAction.removeFromComposition).toHaveBeenCalledWith(
+                parentObject,
+                childObject
+            );
         });
 
-        it("it should mutate the parent object", () => {
+        it('it should mutate the parent object', () => {
             expect(openmct.objects.mutate).toHaveBeenCalled();
-            expect(openmct.objects.mutate.calls.argsFor(0)[0]).toEqual(parentObject);
+            expect(openmct.objects.mutate.calls.argsFor(0)[0]).toEqual(
+                parentObject
+            );
         });
 
-        it("it should start a transaction", () => {
+        it('it should start a transaction', () => {
             expect(openmct.objects.startTransaction).toHaveBeenCalled();
         });
 
-        it("it should end the transaction", (done) => {
+        it('it should end the transaction', (done) => {
             setTimeout(() => {
                 expect(openmct.objects.endTransaction).toHaveBeenCalled();
                 done();
@@ -105,18 +108,17 @@ describe("The Remove Action plugin", () => {
         });
     });
 
-    describe("when determining the object is applicable", () => {
-
+    describe('when determining the object is applicable', () => {
         beforeEach(() => {
             spyOn(removeAction, 'appliesTo').and.callThrough();
         });
 
-        it("should be true when the parent is creatable and has composition", () => {
+        it('should be true when the parent is creatable and has composition', () => {
             let applies = removeAction.appliesTo([childObject, parentObject]);
             expect(applies).toBe(true);
         });
 
-        it("should be false when the child is locked", () => {
+        it('should be false when the child is locked', () => {
             childObject.locked = true;
             let applies = removeAction.appliesTo([childObject, parentObject]);
             expect(applies).toBe(false);

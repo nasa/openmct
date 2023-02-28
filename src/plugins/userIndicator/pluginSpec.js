@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
 import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
 
@@ -57,14 +54,14 @@ describe('The User Indicator plugin', () => {
     });
 
     it('will not show, if there is no user provider', () => {
-        userIndicator = openmct.indicators.indicatorObjects
-            .find(indicator => indicator.key === 'user-indicator');
+        userIndicator = openmct.indicators.indicatorObjects.find(
+            (indicator) => indicator.key === 'user-indicator'
+        );
 
         expect(userIndicator).toBe(undefined);
     });
 
     describe('with a user provider installed', () => {
-
         beforeEach(() => {
             provider = new ExampleUserProvider(openmct);
             provider.autoLogin(USERNAME);
@@ -75,26 +72,31 @@ describe('The User Indicator plugin', () => {
         });
 
         it('exists', () => {
-            userIndicator = openmct.indicators.indicatorObjects
-                .find(indicator => indicator.key === 'user-indicator').element;
+            userIndicator = openmct.indicators.indicatorObjects.find(
+                (indicator) => indicator.key === 'user-indicator'
+            ).element;
 
-            const hasClockIndicator = userIndicator !== null && userIndicator !== undefined;
+            const hasClockIndicator =
+                userIndicator !== null && userIndicator !== undefined;
             expect(hasClockIndicator).toBe(true);
         });
 
         it('contains the logged in user name', (done) => {
-            openmct.user.getCurrentUser().then(async (user) => {
-                await Vue.nextTick();
+            openmct.user
+                .getCurrentUser()
+                .then(async (user) => {
+                    await Vue.nextTick();
 
-                userIndicator = openmct.indicators.indicatorObjects
-                    .find(indicator => indicator.key === 'user-indicator').element;
+                    userIndicator = openmct.indicators.indicatorObjects.find(
+                        (indicator) => indicator.key === 'user-indicator'
+                    ).element;
 
-                const userName = userIndicator.textContent.trim();
+                    const userName = userIndicator.textContent.trim();
 
-                expect(user.name).toEqual(USERNAME);
-                expect(userName).toContain(USERNAME);
-            }).finally(done);
+                    expect(user.name).toEqual(USERNAME);
+                    expect(userName).toContain(USERNAME);
+                })
+                .finally(done);
         });
-
     });
 });

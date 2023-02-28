@@ -34,7 +34,9 @@ export default class RestartTimerAction {
     invoke(objectPath) {
         const domainObject = objectPath[0];
         if (!domainObject || !domainObject.configuration) {
-            return new Error('Unable to run restart timer action. No domainObject provided.');
+            return new Error(
+                'Unable to run restart timer action. No domainObject provided.'
+            );
         }
 
         const newConfiguration = { ...domainObject.configuration };
@@ -42,7 +44,11 @@ export default class RestartTimerAction {
         newConfiguration.timestamp = new Date();
         newConfiguration.pausedTime = undefined;
 
-        this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
+        this.openmct.objects.mutate(
+            domainObject,
+            'configuration',
+            newConfiguration
+        );
     }
     appliesTo(objectPath, view = {}) {
         const domainObject = objectPath[0];

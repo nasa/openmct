@@ -20,28 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GlobalTimeContext from "./GlobalTimeContext";
-import IndependentTimeContext from "@/api/time/IndependentTimeContext";
+import GlobalTimeContext from './GlobalTimeContext';
+import IndependentTimeContext from '@/api/time/IndependentTimeContext';
 
 /**
-* The public API for setting and querying the temporal state of the
-* application. The concept of time is integral to Open MCT, and at least
-* one {@link TimeSystem}, as well as some default time bounds must be
-* registered and enabled via {@link TimeAPI.addTimeSystem} and
-* {@link TimeAPI.timeSystem} respectively for Open MCT to work.
-*
-* Time-sensitive views will typically respond to changes to bounds or other
-* properties of the time conductor and update the data displayed based on
-* the temporal state of the application. The current time bounds are also
-* used in queries for historical data.
-*
-* The TimeAPI extends the GlobalTimeContext which in turn extends the TimeContext/EventEmitter class. A number of events are
-* fired when properties of the time conductor change, which are documented
-* below.
-*
-* @interface
-* @memberof module:openmct
-*/
+ * The public API for setting and querying the temporal state of the
+ * application. The concept of time is integral to Open MCT, and at least
+ * one {@link TimeSystem}, as well as some default time bounds must be
+ * registered and enabled via {@link TimeAPI.addTimeSystem} and
+ * {@link TimeAPI.timeSystem} respectively for Open MCT to work.
+ *
+ * Time-sensitive views will typically respond to changes to bounds or other
+ * properties of the time conductor and update the data displayed based on
+ * the temporal state of the application. The current time bounds are also
+ * used in queries for historical data.
+ *
+ * The TimeAPI extends the GlobalTimeContext which in turn extends the TimeContext/EventEmitter class. A number of events are
+ * fired when properties of the time conductor change, which are documented
+ * below.
+ *
+ * @interface
+ * @memberof module:openmct
+ */
 class TimeAPI extends GlobalTimeContext {
     constructor(openmct) {
         super();
@@ -176,7 +176,9 @@ class TimeAPI extends GlobalTimeContext {
             throw new Error('No objectPath provided');
         }
 
-        const viewKey = objectPath.length && this.openmct.objects.makeKeyString(objectPath[0].identifier);
+        const viewKey =
+            objectPath.length &&
+            this.openmct.objects.makeKeyString(objectPath[0].identifier);
 
         if (!viewKey) {
             // Return the global time context
@@ -186,17 +188,27 @@ class TimeAPI extends GlobalTimeContext {
         let viewTimeContext = this.getIndependentContext(viewKey);
         if (!viewTimeContext) {
             // If the context doesn't exist yet, create it.
-            viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
+            viewTimeContext = new IndependentTimeContext(
+                this.openmct,
+                this,
+                objectPath
+            );
             this.independentContexts.set(viewKey, viewTimeContext);
         } else {
             // If it already exists, compare the objectPath to see if it needs to be updated.
-            const currentPath = this.openmct.objects.getRelativePath(viewTimeContext.objectPath);
+            const currentPath = this.openmct.objects.getRelativePath(
+                viewTimeContext.objectPath
+            );
             const newPath = this.openmct.objects.getRelativePath(objectPath);
 
             if (currentPath !== newPath) {
                 // If the path has changed, update the context.
                 this.independentContexts.delete(viewKey);
-                viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
+                viewTimeContext = new IndependentTimeContext(
+                    this.openmct,
+                    this,
+                    objectPath
+                );
                 this.independentContexts.set(viewKey, viewTimeContext);
             }
         }

@@ -47,5 +47,4 @@ export default class CouchObjectQueue {
         this.rev = undefined;
         this.objects = [];
     }
-
 }

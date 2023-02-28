@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW, FAULT_MANAGEMENT_NAMESPACE } from './constants';
+import {
+    FAULT_MANAGEMENT_TYPE,
+    FAULT_MANAGEMENT_VIEW,
+    FAULT_MANAGEMENT_NAMESPACE
+} from './constants';
 
 export default class FaultManagementObjectProvider {
     constructor(openmct) {

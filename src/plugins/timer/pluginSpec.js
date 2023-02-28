@@ -20,12 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, spyOnBuiltins, resetApplicationState } from 'utils/testing';
+import {
+    createOpenMct,
+    spyOnBuiltins,
+    resetApplicationState
+} from 'utils/testing';
 import timerPlugin from './plugin';
 
 import Vue from 'vue';
 
-describe("Timer plugin:", () => {
+describe('Timer plugin:', () => {
     let openmct;
     let timerDefinition;
     let element;
@@ -88,7 +92,7 @@ describe("Timer plugin:", () => {
                     namespace: 'test-namespace'
                 },
                 type: 'timer',
-                id: "test-object",
+                id: 'test-object',
                 name: 'Timer',
                 timerFormat: 'short',
                 timestamp: relativeTimestamp,
@@ -96,16 +100,29 @@ describe("Timer plugin:", () => {
                 pausedTime: relativeTimestamp
             };
 
-            const applicableViews = openmct.objectViews.get(timerViewObject, [timerViewObject]);
-            timerViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'timer.view');
+            const applicableViews = openmct.objectViews.get(timerViewObject, [
+                timerViewObject
+            ]);
+            timerViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'timer.view'
+            );
 
-            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(timerViewObject));
-            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
+            spyOn(openmct.objects, 'get').and.returnValue(
+                Promise.resolve(timerViewObject)
+            );
+            spyOn(openmct.objects, 'save').and.returnValue(
+                Promise.resolve(true)
+            );
 
-            mutableTimerObject = await openmct.objects.getMutable(timerViewObject.identifier);
+            mutableTimerObject = await openmct.objects.getMutable(
+                timerViewObject.identifier
+            );
 
             timerObjectPath = [mutableTimerObject];
-            timerView = timerViewProvider.view(mutableTimerObject, timerObjectPath);
+            timerView = timerViewProvider.view(
+                mutableTimerObject,
+                timerObjectPath
+            );
             timerView.show(child);
 
             await Vue.nextTick();
@@ -115,16 +132,23 @@ describe("Timer plugin:", () => {
             timerView.destroy();
         });
 
-        it("should migrate old object properties to the configuration section", () => {
-            openmct.objects.applyGetInterceptors(timerViewObject.identifier, timerViewObject);
+        it('should migrate old object properties to the configuration section', () => {
+            openmct.objects.applyGetInterceptors(
+                timerViewObject.identifier,
+                timerViewObject
+            );
             expect(timerViewObject.configuration.timerFormat).toBe('short');
-            expect(timerViewObject.configuration.timestamp).toBe(relativeTimestamp);
+            expect(timerViewObject.configuration.timestamp).toBe(
+                relativeTimestamp
+            );
             expect(timerViewObject.configuration.timerState).toBe('paused');
-            expect(timerViewObject.configuration.pausedTime).toBe(relativeTimestamp);
+            expect(timerViewObject.configuration.pausedTime).toBe(
+                relativeTimestamp
+            );
         });
     });
 
-    describe("Timer view:", () => {
+    describe('Timer view:', () => {
         let timerViewProvider;
         let timerView;
         let timerViewObject;
@@ -135,7 +159,9 @@ describe("Timer plugin:", () => {
             await setupTimer();
 
             spyOnBuiltins(['requestAnimationFrame']);
-            window.requestAnimationFrame.and.callFake((cb) => setTimeout(cb, 500));
+            window.requestAnimationFrame.and.callFake((cb) =>
+                setTimeout(cb, 500)
+            );
             const baseTimestamp = 1634688000000; // Oct 20, 2021, 12:00 AM
             const relativeTimestamp = 1634774400000; // Oct 21 2021, 12:00 AM
 
@@ -145,7 +171,7 @@ describe("Timer plugin:", () => {
 
             timerViewObject = {
                 ...timerDomainObject,
-                id: "test-object",
+                id: 'test-object',
                 name: 'Timer',
                 configuration: {
                     timerFormat: 'long',
@@ -156,16 +182,29 @@ describe("Timer plugin:", () => {
                 }
             };
 
-            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(timerViewObject));
-            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
+            spyOn(openmct.objects, 'get').and.returnValue(
+                Promise.resolve(timerViewObject)
+            );
+            spyOn(openmct.objects, 'save').and.returnValue(
+                Promise.resolve(true)
+            );
 
-            const applicableViews = openmct.objectViews.get(timerViewObject, [timerViewObject]);
-            timerViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'timer.view');
+            const applicableViews = openmct.objectViews.get(timerViewObject, [
+                timerViewObject
+            ]);
+            timerViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'timer.view'
+            );
 
-            mutableTimerObject = await openmct.objects.getMutable(timerViewObject.identifier);
+            mutableTimerObject = await openmct.objects.getMutable(
+                timerViewObject.identifier
+            );
 
             timerObjectPath = [mutableTimerObject];
-            timerView = timerViewProvider.view(mutableTimerObject, timerObjectPath);
+            timerView = timerViewProvider.view(
+                mutableTimerObject,
+                timerObjectPath
+            );
             timerView.show(child);
 
             await Vue.nextTick();
@@ -180,35 +219,46 @@ describe("Timer plugin:", () => {
             }
         });
 
-        it("has name as Timer", () => {
+        it('has name as Timer', () => {
             expect(timerDefinition.name).toEqual('Timer');
         });
 
-        it("is creatable", () => {
+        it('is creatable', () => {
             expect(timerDefinition.creatable).toEqual(true);
         });
 
-        it("provides timer view", () => {
+        it('provides timer view', () => {
             expect(timerViewProvider).toBeDefined();
         });
 
-        it("renders timer element", () => {
+        it('renders timer element', () => {
             const timerElement = element.querySelectorAll('.c-timer');
             expect(timerElement.length).toBe(1);
         });
 
-        it("renders major elements", () => {
+        it('renders major elements', () => {
             const timerElement = element.querySelector('.c-timer');
-            const resetButton = timerElement.querySelector('.c-timer__ctrl-reset');
-            const pausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
-            const timerDirectionIcon = timerElement.querySelector('.c-timer__direction');
+            const resetButton = timerElement.querySelector(
+                '.c-timer__ctrl-reset'
+            );
+            const pausePlayButton = timerElement.querySelector(
+                '.c-timer__ctrl-pause-play'
+            );
+            const timerDirectionIcon = timerElement.querySelector(
+                '.c-timer__direction'
+            );
             const timerValue = timerElement.querySelector('.c-timer__value');
-            const hasMajorElements = Boolean(resetButton && pausePlayButton && timerDirectionIcon && timerValue);
+            const hasMajorElements = Boolean(
+                resetButton &&
+                    pausePlayButton &&
+                    timerDirectionIcon &&
+                    timerValue
+            );
 
             expect(hasMajorElements).toBe(true);
         });
 
-        it("gets errors from actions if configuration is not passed", async () => {
+        it('gets errors from actions if configuration is not passed', async () => {
             await Vue.nextTick();
             const objectPath = _.cloneDeep(timerObjectPath);
             delete objectPath[0].configuration;
@@ -216,10 +266,14 @@ describe("Timer plugin:", () => {
             let action = openmct.actions.getAction('timer.start');
             let actionResults = action.invoke(objectPath);
             let actionFilterWithoutConfig = action.appliesTo(objectPath);
-            await openmct.objects.mutate(timerObjectPath[0], 'configuration', { timerState: 'started' });
+            await openmct.objects.mutate(timerObjectPath[0], 'configuration', {
+                timerState: 'started'
+            });
             let actionFilterWithConfig = action.appliesTo(timerObjectPath);
 
-            let actionError = new Error('Unable to run start timer action. No domainObject provided.');
+            let actionError = new Error(
+                'Unable to run start timer action. No domainObject provided.'
+            );
             expect(actionResults).toEqual(actionError);
             expect(actionFilterWithoutConfig).toBe(undefined);
             expect(actionFilterWithConfig).toBe(false);
@@ -227,10 +281,14 @@ describe("Timer plugin:", () => {
             action = openmct.actions.getAction('timer.stop');
             actionResults = action.invoke(objectPath);
             actionFilterWithoutConfig = action.appliesTo(objectPath);
-            await openmct.objects.mutate(timerObjectPath[0], 'configuration', { timerState: 'stopped' });
+            await openmct.objects.mutate(timerObjectPath[0], 'configuration', {
+                timerState: 'stopped'
+            });
             actionFilterWithConfig = action.appliesTo(timerObjectPath);
 
-            actionError = new Error('Unable to run stop timer action. No domainObject provided.');
+            actionError = new Error(
+                'Unable to run stop timer action. No domainObject provided.'
+            );
             expect(actionResults).toEqual(actionError);
             expect(actionFilterWithoutConfig).toBe(undefined);
             expect(actionFilterWithConfig).toBe(false);
@@ -238,10 +296,14 @@ describe("Timer plugin:", () => {
             action = openmct.actions.getAction('timer.pause');
             actionResults = action.invoke(objectPath);
             actionFilterWithoutConfig = action.appliesTo(objectPath);
-            await openmct.objects.mutate(timerObjectPath[0], 'configuration', { timerState: 'paused' });
+            await openmct.objects.mutate(timerObjectPath[0], 'configuration', {
+                timerState: 'paused'
+            });
             actionFilterWithConfig = action.appliesTo(timerObjectPath);
 
-            actionError = new Error('Unable to run pause timer action. No domainObject provided.');
+            actionError = new Error(
+                'Unable to run pause timer action. No domainObject provided.'
+            );
             expect(actionResults).toEqual(actionError);
             expect(actionFilterWithoutConfig).toBe(undefined);
             expect(actionFilterWithConfig).toBe(false);
@@ -249,50 +311,80 @@ describe("Timer plugin:", () => {
             action = openmct.actions.getAction('timer.restart');
             actionResults = action.invoke(objectPath);
             actionFilterWithoutConfig = action.appliesTo(objectPath);
-            await openmct.objects.mutate(timerObjectPath[0], 'configuration', { timerState: 'stopped' });
+            await openmct.objects.mutate(timerObjectPath[0], 'configuration', {
+                timerState: 'stopped'
+            });
             actionFilterWithConfig = action.appliesTo(timerObjectPath);
 
-            actionError = new Error('Unable to run restart timer action. No domainObject provided.');
+            actionError = new Error(
+                'Unable to run restart timer action. No domainObject provided.'
+            );
             expect(actionResults).toEqual(actionError);
             expect(actionFilterWithoutConfig).toBe(undefined);
             expect(actionFilterWithConfig).toBe(false);
         });
 
-        it("displays a started timer ticking down to a future date", async () => {
+        it('displays a started timer ticking down to a future date', async () => {
             const newBaseTime = 1634774400000; // Oct 21 2021, 12:00 AM
-            openmct.objects.mutate(timerViewObject, 'configuration.timestamp', newBaseTime);
+            openmct.objects.mutate(
+                timerViewObject,
+                'configuration.timestamp',
+                newBaseTime
+            );
 
             jasmine.clock().tick(5000);
             await Vue.nextTick();
 
             const timerElement = element.querySelector('.c-timer');
-            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
-            const timerDirectionIcon = timerElement.querySelector('.c-timer__direction');
-            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
+            const timerPausePlayButton = timerElement.querySelector(
+                '.c-timer__ctrl-pause-play'
+            );
+            const timerDirectionIcon = timerElement.querySelector(
+                '.c-timer__direction'
+            );
+            const timerValue =
+                timerElement.querySelector('.c-timer__value').innerText;
 
-            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(true);
-            expect(timerDirectionIcon.classList.contains('icon-minus')).toBe(true);
+            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(
+                true
+            );
+            expect(timerDirectionIcon.classList.contains('icon-minus')).toBe(
+                true
+            );
             expect(timerValue).toBe('0D 23:59:55');
         });
 
-        it("displays a started timer ticking up from a past date", async () => {
+        it('displays a started timer ticking up from a past date', async () => {
             const newBaseTime = 1634601600000; // Oct 19, 2021, 12:00 AM
-            openmct.objects.mutate(timerViewObject, 'configuration.timestamp', newBaseTime);
+            openmct.objects.mutate(
+                timerViewObject,
+                'configuration.timestamp',
+                newBaseTime
+            );
 
             jasmine.clock().tick(5000);
             await Vue.nextTick();
 
             const timerElement = element.querySelector('.c-timer');
-            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
-            const timerDirectionIcon = timerElement.querySelector('.c-timer__direction');
-            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
+            const timerPausePlayButton = timerElement.querySelector(
+                '.c-timer__ctrl-pause-play'
+            );
+            const timerDirectionIcon = timerElement.querySelector(
+                '.c-timer__direction'
+            );
+            const timerValue =
+                timerElement.querySelector('.c-timer__value').innerText;
 
-            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(true);
-            expect(timerDirectionIcon.classList.contains('icon-plus')).toBe(true);
+            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(
+                true
+            );
+            expect(timerDirectionIcon.classList.contains('icon-plus')).toBe(
+                true
+            );
             expect(timerValue).toBe('1D 00:00:05');
         });
 
-        it("displays a paused timer correctly in the DOM", async () => {
+        it('displays a paused timer correctly in the DOM', async () => {
             jasmine.clock().tick(5000);
             await Vue.nextTick();
 
@@ -303,10 +395,15 @@ describe("Timer plugin:", () => {
 
             await Vue.nextTick();
             const timerElement = element.querySelector('.c-timer');
-            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
-            let timerValue = timerElement.querySelector('.c-timer__value').innerText;
+            const timerPausePlayButton = timerElement.querySelector(
+                '.c-timer__ctrl-pause-play'
+            );
+            let timerValue =
+                timerElement.querySelector('.c-timer__value').innerText;
 
-            expect(timerPausePlayButton.classList.contains('icon-play')).toBe(true);
+            expect(timerPausePlayButton.classList.contains('icon-play')).toBe(
+                true
+            );
             expect(timerValue).toBe('0D 23:59:55');
 
             jasmine.clock().tick(5000);
@@ -325,11 +422,12 @@ describe("Timer plugin:", () => {
             }
 
             await Vue.nextTick();
-            timerValue = timerElement.querySelector('.c-timer__value').innerText;
+            timerValue =
+                timerElement.querySelector('.c-timer__value').innerText;
             expect(timerValue).toBe('1D 00:00:00');
         });
 
-        it("displays a stopped timer correctly in the DOM", async () => {
+        it('displays a stopped timer correctly in the DOM', async () => {
             const action = openmct.actions.getAction('timer.stop');
             if (action) {
                 action.invoke(timerObjectPath, timerView);
@@ -337,16 +435,23 @@ describe("Timer plugin:", () => {
 
             await Vue.nextTick();
             const timerElement = element.querySelector('.c-timer');
-            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
-            const timerResetButton = timerElement.querySelector('.c-timer__ctrl-reset');
-            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
+            const timerValue =
+                timerElement.querySelector('.c-timer__value').innerText;
+            const timerResetButton = timerElement.querySelector(
+                '.c-timer__ctrl-reset'
+            );
+            const timerPausePlayButton = timerElement.querySelector(
+                '.c-timer__ctrl-pause-play'
+            );
 
             expect(timerResetButton.classList.contains('hide')).toBe(true);
-            expect(timerPausePlayButton.classList.contains('icon-play')).toBe(true);
+            expect(timerPausePlayButton.classList.contains('icon-play')).toBe(
+                true
+            );
             expect(timerValue).toBe('--:--:--');
         });
 
-        it("displays a restarted timer correctly in the DOM", async () => {
+        it('displays a restarted timer correctly in the DOM', async () => {
             const action = openmct.actions.getAction('timer.restart');
             if (action) {
                 action.invoke(timerObjectPath, timerView);
@@ -355,10 +460,15 @@ describe("Timer plugin:", () => {
             jasmine.clock().tick(5000);
             await Vue.nextTick();
             const timerElement = element.querySelector('.c-timer');
-            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
-            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
+            const timerValue =
+                timerElement.querySelector('.c-timer__value').innerText;
+            const timerPausePlayButton = timerElement.querySelector(
+                '.c-timer__ctrl-pause-play'
+            );
 
-            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(true);
+            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(
+                true
+            );
             expect(timerValue).toBe('0D 00:00:05');
         });
     });

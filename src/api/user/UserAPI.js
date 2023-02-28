@@ -21,10 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import {
-    MULTIPLE_PROVIDER_ERROR,
-    NO_PROVIDER_ERROR
-} from './constants';
+import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants';
 import StatusAPI from './StatusAPI';
 import User from './User';
 

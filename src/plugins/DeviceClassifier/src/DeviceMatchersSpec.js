@@ -19,23 +19,23 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DeviceMatchers from "./DeviceMatchers";
+import DeviceMatchers from './DeviceMatchers';
 
-describe("DeviceMatchers", function () {
+describe('DeviceMatchers', function () {
     let mockAgent;
 
     beforeEach(function () {
-        mockAgent = jasmine.createSpyObj("agent", [
-            "isMobile",
-            "isPhone",
-            "isTablet",
-            "isPortrait",
-            "isLandscape",
-            "isTouch"
+        mockAgent = jasmine.createSpyObj('agent', [
+            'isMobile',
+            'isPhone',
+            'isTablet',
+            'isPortrait',
+            'isLandscape',
+            'isTouch'
         ]);
     });
 
-    it("detects when a device is a desktop device", function () {
+    it('detects when a device is a desktop device', function () {
         mockAgent.isMobile.and.returnValue(false);
         expect(DeviceMatchers.desktop(mockAgent)).toBe(true);
         mockAgent.isMobile.and.returnValue(true);
@@ -43,19 +43,19 @@ describe("DeviceMatchers", function () {
     });
 
     function method(deviceType) {
-        return "is" + deviceType[0].toUpperCase() + deviceType.slice(1);
+        return 'is' + deviceType[0].toUpperCase() + deviceType.slice(1);
     }
 
     [
-        "mobile",
-        "phone",
-        "tablet",
-        "landscape",
-        "portrait",
-        "landscape",
-        "touch"
+        'mobile',
+        'phone',
+        'tablet',
+        'landscape',
+        'portrait',
+        'landscape',
+        'touch'
     ].forEach(function (deviceType) {
-        it("detects when a device is a " + deviceType + " device", function () {
+        it('detects when a device is a ' + deviceType + ' device', function () {
             mockAgent[method(deviceType)].and.returnValue(true);
             expect(DeviceMatchers[deviceType](mockAgent)).toBe(true);
             mockAgent[method(deviceType)].and.returnValue(false);

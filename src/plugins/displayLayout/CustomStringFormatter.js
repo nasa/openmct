@@ -14,7 +14,10 @@ export default class CustomStringFormatter {
         }
 
         if (!this.itemFormat.startsWith('&')) {
-            return printj.sprintf(this.itemFormat, datum[this.valueMetadata.key]);
+            return printj.sprintf(
+                this.itemFormat,
+                datum[this.valueMetadata.key]
+            );
         }
 
         try {

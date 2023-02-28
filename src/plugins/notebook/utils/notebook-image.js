@@ -27,14 +27,24 @@ export function getThumbnailURLFromCanvas(canvas, size = DEFAULT_SIZE) {
     thumbnailCanvas.setAttribute('width', size.width);
     thumbnailCanvas.setAttribute('height', size.height);
     const ctx = thumbnailCanvas.getContext('2d');
-    ctx.globalCompositeOperation = "copy";
-    ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, size.width, size.height);
+    ctx.globalCompositeOperation = 'copy';
+    ctx.drawImage(
+        canvas,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+        0,
+        0,
+        size.width,
+        size.height
+    );
 
     return thumbnailCanvas.toDataURL('image/png');
 }
 
 export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         const image = new Image();
 
         const canvas = document.createElement('canvas');
@@ -42,7 +52,8 @@ export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
         canvas.height = size.height;
 
         image.onload = function () {
-            canvas.getContext('2d')
+            canvas
+                .getContext('2d')
                 .drawImage(image, 0, 0, size.width, size.height);
 
             resolve(canvas.toDataURL('image/png'));
@@ -54,29 +65,33 @@ export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
 
 export function saveNotebookImageDomainObject(openmct, object) {
     return new Promise((resolve, reject) => {
-        openmct.objects.save(object)
-            .then(result => {
+        openmct.objects
+            .save(object)
+            .then((result) => {
                 if (result) {
                     resolve(object);
                 } else {
                     reject();
                 }
             })
-            .catch(e => {
+            .catch((e) => {
                 console.error(e);
                 reject();
             });
     });
 }
 
-export function updateNotebookImageDomainObject(openmct, identifier, fullSizeImage) {
-    openmct.objects.get(identifier)
-        .then(domainObject => {
-            const configuration = domainObject.configuration;
-            configuration.fullSizeImageURL = fullSizeImage.src;
+export function updateNotebookImageDomainObject(
+    openmct,
+    identifier,
+    fullSizeImage
+) {
+    openmct.objects.get(identifier).then((domainObject) => {
+        const configuration = domainObject.configuration;
+        configuration.fullSizeImageURL = fullSizeImage.src;
 
-            openmct.objects.mutate(domainObject, 'configuration', configuration);
-        });
+        openmct.objects.mutate(domainObject, 'configuration', configuration);
+    });
 }
 
 export function updateNamespaceOfDomainObject(object, namespace) {

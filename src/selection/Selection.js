@@ -53,10 +53,11 @@ export default class Selection extends EventEmitter {
             selectable = [selectable];
         }
 
-        let multiSelect = isMultiSelectEvent
-            && this.parentSupportsMultiSelect(selectable)
-            && this.isPeer(selectable)
-            && !this.selectionContainsParent(selectable);
+        let multiSelect =
+            isMultiSelectEvent &&
+            this.parentSupportsMultiSelect(selectable) &&
+            this.isPeer(selectable) &&
+            !this.selectionContainsParent(selectable);
 
         if (multiSelect) {
             this.handleMultiSelect(selectable);
@@ -65,8 +66,8 @@ export default class Selection extends EventEmitter {
         }
     }
     /**
-             * @private
-             */
+     * @private
+     */
     handleMultiSelect(selectable) {
         if (this.elementSelected(selectable)) {
             this.remove(selectable);
@@ -78,8 +79,8 @@ export default class Selection extends EventEmitter {
         this.emit('change', this.selected);
     }
     /**
-             * @private
-             */
+     * @private
+     */
     handleSingleSelect(selectable) {
         if (!_.isEqual([selectable], this.selected)) {
             this.setSelectionStyles(selectable);
@@ -89,16 +90,20 @@ export default class Selection extends EventEmitter {
         }
     }
     /**
-             * @private
-             */
+     * @private
+     */
     elementSelected(selectable) {
-        return this.selected.some(selectionPath => _.isEqual(selectionPath, selectable));
+        return this.selected.some((selectionPath) =>
+            _.isEqual(selectionPath, selectable)
+        );
     }
     /**
      * @private
      */
     remove(selectable) {
-        this.selected = this.selected.filter(selectionPath => !_.isEqual(selectionPath, selectable));
+        this.selected = this.selected.filter(
+            (selectionPath) => !_.isEqual(selectionPath, selectable)
+        );
 
         if (this.selected.length === 0) {
             this.removeSelectionAttributes(selectable);
@@ -111,7 +116,9 @@ export default class Selection extends EventEmitter {
      * @private
      */
     setSelectionStyles(selectable) {
-        this.selected.forEach(selectionPath => this.removeSelectionAttributes(selectionPath));
+        this.selected.forEach((selectionPath) =>
+            this.removeSelectionAttributes(selectionPath)
+        );
         this.addSelectionAttributes(selectable);
     }
     removeSelectionAttributes(selectionPath, keepParentStyle) {
@@ -129,11 +136,11 @@ export default class Selection extends EventEmitter {
      */
     addSelectionAttributes(selectable) {
         if (selectable[0] && selectable[0].element) {
-            selectable[0].element.setAttribute('s-selected', "");
+            selectable[0].element.setAttribute('s-selected', '');
         }
 
         if (selectable[1] && selectable[1].element) {
-            selectable[1].element.setAttribute('s-selected-parent', "");
+            selectable[1].element.setAttribute('s-selected-parent', '');
         }
     }
     /**
@@ -146,13 +153,17 @@ export default class Selection extends EventEmitter {
      * @private
      */
     selectionContainsParent(selectable) {
-        return this.selected.some(selectionPath => _.isEqual(selectionPath[0], selectable[1]));
+        return this.selected.some((selectionPath) =>
+            _.isEqual(selectionPath[0], selectable[1])
+        );
     }
     /**
      * @private
      */
     isPeer(selectable) {
-        return this.selected.some(selectionPath => _.isEqual(selectionPath[1], selectable[1]));
+        return this.selected.some((selectionPath) =>
+            _.isEqual(selectionPath[1], selectable[1])
+        );
     }
     /**
      * @private
@@ -168,7 +179,8 @@ export default class Selection extends EventEmitter {
      * @private
      */
     capture(selectable) {
-        let capturingContainsSelectable = this.capturing && this.capturing.includes(selectable);
+        let capturingContainsSelectable =
+            this.capturing && this.capturing.includes(selectable);
 
         if (!this.capturing || capturingContainsSelectable) {
             this.capturing = [];
@@ -204,7 +216,7 @@ export default class Selection extends EventEmitter {
      */
     selectable(element, context, select) {
         if (!this.isSelectable(element)) {
-            return () => { };
+            return () => {};
         }
 
         let selectable = {
@@ -232,13 +244,17 @@ export default class Selection extends EventEmitter {
             }
         }
 
-        return (function () {
+        return function () {
             element.removeEventListener('click', capture, true);
             element.removeEventListener('click', selectCapture);
 
-            if (context.item !== undefined && context.item.isMutable && removeMutable === true) {
+            if (
+                context.item !== undefined &&
+                context.item.isMutable &&
+                removeMutable === true
+            ) {
                 this.openmct.objects.destroyMutable(context.item);
             }
-        }).bind(this);
+        }.bind(this);
     }
 }

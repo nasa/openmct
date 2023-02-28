@@ -27,15 +27,25 @@ Tests to verify log plot functionality when objects are missing
 const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Handle missing object for plots', () => {
-    test('Displays empty div for missing stacked plot item @unstable', async ({ page, browserName, openmctConfig }) => {
+    test('Displays empty div for missing stacked plot item @unstable', async ({
+        page,
+        browserName,
+        openmctConfig
+    }) => {
         // eslint-disable-next-line playwright/no-skipped-test
-        test.skip(browserName === 'firefox', 'Firefox failing due to console events being missed');
+        test.skip(
+            browserName === 'firefox',
+            'Firefox failing due to console events being missed'
+        );
 
         const { myItemsFolderName } = openmctConfig;
         const errorLogs = [];
 
-        page.on("console", (message) => {
-            if (message.type() === 'warning' && message.text().includes('Missing domain object')) {
+        page.on('console', (message) => {
+            if (
+                message.type() === 'warning' &&
+                message.text().includes('Missing domain object')
+            ) {
                 errorLogs.push(message.text());
             }
         });
@@ -53,7 +63,9 @@ test.describe('Handle missing object for plots', () => {
 
         //Sets local storage with missing object
         await page.evaluate(
-            `window.localStorage.setItem('mct', '${JSON.stringify(parsedData)}')`
+            `window.localStorage.setItem('mct', '${JSON.stringify(
+                parsedData
+            )}')`
         );
 
         //Reloads page and clicks on stacked plot
@@ -63,16 +75,23 @@ test.describe('Handle missing object for plots', () => {
         ]);
 
         //Verify Main section is there on load
-        await expect.soft(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Stacked Plot');
+        await expect
+            .soft(page.locator('.l-browse-bar__object-name'))
+            .toContainText('Unnamed Stacked Plot');
 
-        await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
+        await page
+            .locator(`text=Open MCT ${myItemsFolderName} >> span`)
+            .nth(3)
+            .click();
         await Promise.all([
             page.waitForNavigation(),
             page.locator('text=Unnamed Stacked Plot').first().click()
         ]);
 
         //Check that there is only one stacked item plot with a plot, the missing one will be empty
-        await expect(page.locator(".c-plot--stacked-container:has(.gl-plot)")).toHaveCount(1);
+        await expect(
+            page.locator('.c-plot--stacked-container:has(.gl-plot)')
+        ).toHaveCount(1);
         //Verify that console.warn is thrown
         expect(errorLogs).toHaveLength(1);
     });
@@ -91,7 +110,7 @@ async function makeStackedPlot(page, myItemsFolderName) {
     await page.locator('li[role="menuitem"]:has-text("Stacked Plot")').click();
 
     await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle'}),
+        page.waitForNavigation({ waitUntil: 'networkidle' }),
         page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
@@ -104,7 +123,10 @@ async function makeStackedPlot(page, myItemsFolderName) {
     await createSineWaveGenerator(page);
 
     // click on stacked plot
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
+    await page
+        .locator(`text=Open MCT ${myItemsFolderName} >> span`)
+        .nth(3)
+        .click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Stacked Plot').first().click()
@@ -114,7 +136,10 @@ async function makeStackedPlot(page, myItemsFolderName) {
     await createSineWaveGenerator(page);
 
     // click on stacked plot
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
+    await page
+        .locator(`text=Open MCT ${myItemsFolderName} >> span`)
+        .nth(3)
+        .click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Stacked Plot').first().click()
@@ -127,7 +152,12 @@ async function makeStackedPlot(page, myItemsFolderName) {
  */
 async function saveStackedPlot(page) {
     // save stacked plot
-    await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+    await page
+        .locator(
+            'text=Snapshot Save and Finish Editing Save and Continue Editing >> button'
+        )
+        .nth(1)
+        .click();
 
     await Promise.all([
         page.locator('text=Save and Finish Editing').click(),
@@ -136,7 +166,9 @@ async function saveStackedPlot(page) {
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 }
 
 /**
@@ -146,10 +178,12 @@ async function saveStackedPlot(page) {
 async function createSineWaveGenerator(page) {
     //Create sine wave generator
     await page.locator('button.c-create-button').click();
-    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
+    await page
+        .locator('li[role="menuitem"]:has-text("Sine Wave Generator")')
+        .click();
 
     await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle'}),
+        page.waitForNavigation({ waitUntil: 'networkidle' }),
         page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')

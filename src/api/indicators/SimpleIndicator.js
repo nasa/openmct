@@ -66,7 +66,10 @@ class SimpleIndicator extends EventEmitter {
     }
 
     description(description) {
-        if (description !== undefined && description !== this.descriptionValue) {
+        if (
+            description !== undefined &&
+            description !== this.descriptionValue
+        ) {
             this.descriptionValue = description;
             this.element.title = description;
         }

@@ -60,7 +60,7 @@ export function createMouseEvent(eventName) {
 }
 
 export function spyOnBuiltins(functionNames, object = window) {
-    functionNames.forEach(functionName => {
+    functionNames.forEach((functionName) => {
         if (nativeFunctions[functionName]) {
             throw `Builtin spy function already defined for ${functionName}`;
         }
@@ -108,7 +108,6 @@ export function resetApplicationState(openmct) {
 // required: key
 // optional: element, keyCode, type
 export function simulateKeyEvent(opts) {
-
     if (!opts.key) {
         console.warn('simulateKeyEvent needs a key');
 
@@ -128,7 +127,8 @@ export function simulateKeyEvent(opts) {
 }
 
 function clearBuiltinSpy(funcDefinition) {
-    funcDefinition.object[funcDefinition.functionName] = funcDefinition.nativeFunction;
+    funcDefinition.object[funcDefinition.functionName] =
+        funcDefinition.nativeFunction;
 }
 
 export function getLatestTelemetry(telemetry = [], opts = {}) {
@@ -171,9 +171,11 @@ export function getMockObjects(opts = {}) {
     if (!opts.objectKeyStrings) {
         requestedMocks = copyObj(mockObjects[opts.type]);
     } else {
-        opts.objectKeyStrings.forEach(objKey => {
+        opts.objectKeyStrings.forEach((objKey) => {
             if (mockObjects[opts.type] && mockObjects[opts.type][objKey]) {
-                requestedMocks[objKey] = copyObj(mockObjects[opts.type][objKey]);
+                requestedMocks[objKey] = copyObj(
+                    mockObjects[opts.type][objKey]
+                );
             } else {
                 throw `No mock object for object key "${objKey}" of type "${opts.type}"`;
             }
@@ -191,13 +193,14 @@ export function getMockObjects(opts = {}) {
         if (format === 'utc') {
             // save for later if new keys
             if (keys) {
-                format = requestedMocks.telemetry
-                    .telemetry.values.find((vals) => vals.key === 'utc');
+                format = requestedMocks.telemetry.telemetry.values.find(
+                    (vals) => vals.key === 'utc'
+                );
             }
         } else {
             format = {
                 key: format,
-                name: "Time",
+                name: 'Time',
                 format: format === 'local' ? 'local-format' : format,
                 hints: {
                     domain: 1
@@ -230,7 +233,10 @@ export function getMockObjects(opts = {}) {
     if (opts.overwrite) {
         for (let mock in requestedMocks) {
             if (opts.overwrite[mock]) {
-                requestedMocks[mock] = Object.assign(requestedMocks[mock], opts.overwrite[mock]);
+                requestedMocks[mock] = Object.assign(
+                    requestedMocks[mock],
+                    opts.overwrite[mock]
+                );
             }
         }
     }
@@ -268,7 +274,9 @@ export function getMockTelemetry(opts = {}) {
 
         for (let k = 1; k < keyCount + 1; k++) {
             let key = keys ? keys[k - 1] : 'some-key-' + k;
-            let value = keys ? keys[k - 1] + ' value ' + i : 'some value ' + i + '-' + k;
+            let value = keys
+                ? keys[k - 1] + ' value ' + i
+                : 'some value ' + i + '-' + k;
             datum[key] = value;
         }
 
@@ -289,59 +297,64 @@ function setMockObjects() {
         default: {
             folder: {
                 identifier: {
-                    namespace: "",
-                    key: "folder-object"
+                    namespace: '',
+                    key: 'folder-object'
                 },
-                name: "Test Folder Object",
-                type: "folder",
+                name: 'Test Folder Object',
+                type: 'folder',
                 composition: [],
-                location: "mine"
+                location: 'mine'
             },
             ladTable: {
                 identifier: {
-                    namespace: "",
-                    key: "lad-object"
+                    namespace: '',
+                    key: 'lad-object'
                 },
                 type: 'LadTable',
                 composition: []
             },
             ladTableSet: {
                 identifier: {
-                    namespace: "",
-                    key: "lad-set-object"
+                    namespace: '',
+                    key: 'lad-set-object'
                 },
                 type: 'LadTableSet',
                 composition: []
             },
             telemetry: {
                 identifier: {
-                    namespace: "",
-                    key: "telemetry-object"
+                    namespace: '',
+                    key: 'telemetry-object'
                 },
-                type: "test-telemetry-object",
-                name: "Test Telemetry Object",
+                type: 'test-telemetry-object',
+                name: 'Test Telemetry Object',
                 telemetry: {
-                    values: [{
-                        key: "name",
-                        name: "Name",
-                        format: "string"
-                    }, {
-                        key: "utc",
-                        name: "Time",
-                        format: "utc",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'name',
+                            name: 'Name',
+                            format: 'string'
+                        },
+                        {
+                            key: 'utc',
+                            name: 'Time',
+                            format: 'utc',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            name: 'Some attribute 1',
+                            key: 'some-key-1',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            name: 'Some attribute 2',
+                            key: 'some-key-2'
                         }
-                    }, {
-                        name: "Some attribute 1",
-                        key: "some-key-1",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        name: "Some attribute 2",
-                        key: "some-key-2"
-                    }]
+                    ]
                 }
             }
         },

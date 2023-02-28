@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { TIMESYSTEM_KEY_WARNING } from './constants';
 
 describe('Telemetry Collection', () => {
@@ -32,7 +29,7 @@ describe('Telemetry Collection', () => {
     let mockMetadata = {};
     let domainObject;
 
-    beforeEach(done => {
+    beforeEach((done) => {
         openmct = createOpenMct();
         openmct.on('start', done);
 
@@ -73,11 +70,14 @@ describe('Telemetry Collection', () => {
             }
         ];
 
-        const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
+        const telemetryCollection =
+            openmct.telemetry.requestCollection(domainObject);
         spyOn(telemetryCollection, '_warn');
         telemetryCollection.load();
 
-        expect(telemetryCollection._warn).toHaveBeenCalledOnceWith(TIMESYSTEM_KEY_WARNING);
+        expect(telemetryCollection._warn).toHaveBeenCalledOnceWith(
+            TIMESYSTEM_KEY_WARNING
+        );
     });
 
     it('Does not warn if telemetry metadata matches the active timesystem', () => {
@@ -92,7 +92,8 @@ describe('Telemetry Collection', () => {
             }
         ];
 
-        const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
+        const telemetryCollection =
+            openmct.telemetry.requestCollection(domainObject);
         spyOn(telemetryCollection, '_warn');
         telemetryCollection.load();
 

@@ -21,10 +21,7 @@
  *****************************************************************************/
 import CreateAction from './CreateAction';
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 import { debounce } from 'lodash';
 
@@ -32,7 +29,7 @@ let parentObject;
 let parentObjectPath;
 let unObserve;
 
-describe("The create action plugin", () => {
+describe('The create action plugin', () => {
     let openmct;
 
     const TYPES = [
@@ -89,7 +86,7 @@ describe("The create action plugin", () => {
             spyOn(openmct.objects, 'save');
             openmct.objects.save.and.callThrough();
             spyOn(openmct.forms, 'showForm');
-            openmct.forms.showForm.and.callFake(formStructure => {
+            openmct.forms.showForm.and.callFake((formStructure) => {
                 return Promise.resolve({
                     name: 'test',
                     notes: 'test notes',
@@ -103,24 +100,35 @@ describe("The create action plugin", () => {
             unObserve();
         });
 
-        TYPES.forEach(type => {
+        TYPES.forEach((type) => {
             it(`type ${type}`, (done) => {
                 function callback(newObject) {
                     const composition = newObject.composition;
 
-                    openmct.objects.get(composition[0])
-                        .then(object => {
-                            expect(object.type).toEqual(type);
-                            expect(object.location).toEqual(openmct.objects.makeKeyString(parentObject.identifier));
+                    openmct.objects.get(composition[0]).then((object) => {
+                        expect(object.type).toEqual(type);
+                        expect(object.location).toEqual(
+                            openmct.objects.makeKeyString(
+                                parentObject.identifier
+                            )
+                        );
 
-                            done();
-                        });
+                        done();
+                    });
                 }
 
                 const deBouncedCallback = debounce(callback, 300);
-                unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
+                unObserve = openmct.objects.observe(
+                    parentObject,
+                    '*',
+                    deBouncedCallback
+                );
 
-                const createAction = new CreateAction(openmct, type, parentObject);
+                const createAction = new CreateAction(
+                    openmct,
+                    type,
+                    parentObject
+                );
                 createAction.invoke();
             });
         });

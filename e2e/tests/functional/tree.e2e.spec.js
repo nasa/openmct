@@ -27,7 +27,10 @@ const {
 } = require('../../appActions.js');
 
 test.describe('Tree operations', () => {
-    test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
+    test('Renaming an object reorders the tree @unstable', async ({
+        page,
+        openmctConfig
+    }) => {
         const { myItemsFolderName } = openmctConfig;
         await page.goto('./', { waitUntil: 'networkidle' });
 
@@ -59,42 +62,71 @@ test.describe('Tree operations', () => {
         // Expand the root folder
         await expandTreePaneItemByName(page, myItemsFolderName);
 
-        await test.step("Reorders objects with the same tree depth", async () => {
-            await getAndAssertTreeItems(page, ['aaa', 'Bar', 'Baz', 'Foo', 'www']);
+        await test.step('Reorders objects with the same tree depth', async () => {
+            await getAndAssertTreeItems(page, [
+                'aaa',
+                'Bar',
+                'Baz',
+                'Foo',
+                'www'
+            ]);
             await renameObjectFromContextMenu(page, clock1.url, 'zzz');
-            await getAndAssertTreeItems(page, ['Bar', 'Baz', 'Foo', 'www', 'zzz']);
+            await getAndAssertTreeItems(page, [
+                'Bar',
+                'Baz',
+                'Foo',
+                'www',
+                'zzz'
+            ]);
         });
 
-        await test.step("Reorders links to objects as well as original objects", async () => {
+        await test.step('Reorders links to objects as well as original objects', async () => {
             await page.click('role=treeitem[name=/Bar/]');
-            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+            await page.dragAndDrop(
+                'role=treeitem[name=/www/]',
+                '.c-object-view'
+            );
+            await page.dragAndDrop(
+                'role=treeitem[name=/zzz/]',
+                '.c-object-view'
+            );
             await page.click('role=treeitem[name=/Baz/]');
-            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+            await page.dragAndDrop(
+                'role=treeitem[name=/www/]',
+                '.c-object-view'
+            );
+            await page.dragAndDrop(
+                'role=treeitem[name=/zzz/]',
+                '.c-object-view'
+            );
             await page.click('role=treeitem[name=/Foo/]');
-            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+            await page.dragAndDrop(
+                'role=treeitem[name=/www/]',
+                '.c-object-view'
+            );
+            await page.dragAndDrop(
+                'role=treeitem[name=/zzz/]',
+                '.c-object-view'
+            );
             // Expand the unopened folders
             await expandTreePaneItemByName(page, 'Bar');
             await expandTreePaneItemByName(page, 'Baz');
             await expandTreePaneItemByName(page, 'Foo');
 
             await renameObjectFromContextMenu(page, clock1.url, '___');
-            await getAndAssertTreeItems(page,
-                [
-                    "___",
-                    "Bar",
-                    "___",
-                    "www",
-                    "Baz",
-                    "___",
-                    "www",
-                    "Foo",
-                    "___",
-                    "www",
-                    "www"
-                ]);
+            await getAndAssertTreeItems(page, [
+                '___',
+                'Bar',
+                '___',
+                'www',
+                'Baz',
+                '___',
+                'www',
+                'Foo',
+                '___',
+                'www',
+                'www'
+            ]);
         });
     });
 });
@@ -119,7 +151,9 @@ async function expandTreePaneItemByName(page, name) {
     const treePane = page.getByRole('tree', {
         name: 'Main Tree'
     });
-    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
+    const treeItem = treePane.locator(
+        `role=treeitem[expanded=false][name=/${name}/]`
+    );
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
 }
@@ -133,8 +167,10 @@ async function expandTreePaneItemByName(page, name) {
 async function renameObjectFromContextMenu(page, url, newName) {
     await openObjectTreeContextMenu(page, url);
     await page.click('li:text("Edit Properties")');
-    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-    await nameInput.fill("");
+    const nameInput = page.locator(
+        'form[name="mctForm"] .first input[type="text"]'
+    );
+    await nameInput.fill('');
     await nameInput.fill(newName);
     await page.click('[aria-label="Save"]');
 }

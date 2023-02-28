@@ -42,7 +42,8 @@ export default class OperatorStatusIndicator extends AbstractStatusIndicator {
                     positionY: 0
                 };
             },
-            template: '<operator-status :positionX="positionX" :positionY="positionY" />'
+            template:
+                '<operator-status :positionX="positionX" :positionY="positionY" />'
         }).$mount();
 
         return popupElement;
@@ -51,11 +52,11 @@ export default class OperatorStatusIndicator extends AbstractStatusIndicator {
     createIndicator() {
         const operatorIndicator = this.openmct.indicators.simpleIndicator();
 
-        operatorIndicator.text("My Operator Status");
-        operatorIndicator.description("Set my operator status");
+        operatorIndicator.text('My Operator Status');
+        operatorIndicator.description('Set my operator status');
         operatorIndicator.iconClass('icon-status-poll-question-mark');
-        operatorIndicator.element.classList.add("c-indicator--operator-status");
-        operatorIndicator.element.classList.add("no-minify");
+        operatorIndicator.element.classList.add('c-indicator--operator-status');
+        operatorIndicator.element.classList.add('no-minify');
         operatorIndicator.on('click', this.showPopup);
 
         return operatorIndicator;

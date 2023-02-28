@@ -48,30 +48,34 @@ const helperFunctions = {
             this._listeningTo = [];
         }
 
-        this._listeningTo.filter(function (listener) {
-            if (object && object !== listener.object) {
-                return false;
-            }
+        this._listeningTo
+            .filter(function (listener) {
+                if (object && object !== listener.object) {
+                    return false;
+                }
 
-            if (event && event !== listener.event) {
-                return false;
-            }
+                if (event && event !== listener.event) {
+                    return false;
+                }
 
-            if (callback && callback !== listener.callback) {
-                return false;
-            }
+                if (callback && callback !== listener.callback) {
+                    return false;
+                }
 
-            if (context && context !== listener.context) {
-                return false;
-            }
+                if (context && context !== listener.context) {
+                    return false;
+                }
 
-            return true;
-        })
+                return true;
+            })
             .map(function (listener) {
                 if (listener.unlisten) {
                     listener.unlisten();
                 } else if (listener.object.removeEventListener) {
-                    listener.object.removeEventListener(listener.event, listener._cb);
+                    listener.object.removeEventListener(
+                        listener.event,
+                        listener._cb
+                    );
                 } else {
                     listener.object.off(listener.event, listener._cb);
                 }
@@ -79,7 +83,10 @@ const helperFunctions = {
                 return listener;
             })
             .forEach(function (listener) {
-                this._listeningTo.splice(this._listeningTo.indexOf(listener), 1);
+                this._listeningTo.splice(
+                    this._listeningTo.indexOf(listener),
+                    1
+                );
             }, this);
     },
 

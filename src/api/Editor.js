@@ -1,4 +1,3 @@
-
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -37,7 +36,7 @@ export default class Editor extends EventEmitter {
      */
     edit() {
         if (this.editing === true) {
-            throw "Already editing";
+            throw 'Already editing';
         }
 
         this.editing = true;
@@ -77,7 +76,8 @@ export default class Editor extends EventEmitter {
                 return resolve();
             }
 
-            transaction.cancel()
+            transaction
+                .cancel()
                 .then(resolve)
                 .catch(reject)
                 .finally(() => {

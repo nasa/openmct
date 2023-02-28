@@ -20,9 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createMouseEvent, createOpenMct, resetApplicationState} from "utils/testing";
-import {millisecondsToDHMS, getPreciseDuration} from "../../utils/duration";
-import ConductorPlugin from "./plugin";
+import {
+    createMouseEvent,
+    createOpenMct,
+    resetApplicationState
+} from 'utils/testing';
+import { millisecondsToDHMS, getPreciseDuration } from '../../utils/duration';
+import ConductorPlugin from './plugin';
 import Vue from 'vue';
 
 const THIRTY_SECONDS = 30 * 1000;
@@ -40,7 +44,7 @@ describe('time conductor', () => {
     let config = {
         menuOptions: [
             {
-                name: "FixedTimeRange",
+                name: 'FixedTimeRange',
                 timeSystem: 'utc',
                 bounds: {
                     start: date - THIRTY_MINUTES,
@@ -50,7 +54,7 @@ describe('time conductor', () => {
                 records: 2
             },
             {
-                name: "LocalClock",
+                name: 'LocalClock',
                 timeSystem: 'utc',
                 clock: 'local',
                 clockOffsets: {
@@ -83,7 +87,7 @@ describe('time conductor', () => {
                 done();
             });
         });
-        appHolder = document.createElement("div");
+        appHolder = document.createElement('div');
         openmct.start(appHolder);
     });
 
@@ -96,20 +100,26 @@ describe('time conductor', () => {
 
     it('shows delta inputs in fixed mode', () => {
         const fixedModeEl = appHolder.querySelector('.is-fixed-mode');
-        const dateTimeInputs = fixedModeEl.querySelectorAll('.c-input--datetime');
+        const dateTimeInputs =
+            fixedModeEl.querySelectorAll('.c-input--datetime');
         expect(dateTimeInputs[0].value).toEqual('1978-01-19 23:30:00.000Z');
         expect(dateTimeInputs[1].value).toEqual('1978-01-20 00:00:00.000Z');
-        expect(fixedModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Fixed Timespan');
+        expect(
+            fixedModeEl.querySelector('.c-mode-button .c-button__label')
+                .innerHTML
+        ).toEqual('Fixed Timespan');
     });
 
     describe('shows delta inputs in realtime mode', () => {
         beforeEach((done) => {
             const switcher = appHolder.querySelector('.c-mode-button');
-            const clickEvent = createMouseEvent("click");
+            const clickEvent = createMouseEvent('click');
 
             switcher.dispatchEvent(clickEvent);
             Vue.nextTick(() => {
-                const clockItem = document.querySelectorAll('.c-conductor__mode-menu li')[1];
+                const clockItem = document.querySelectorAll(
+                    '.c-conductor__mode-menu li'
+                )[1];
                 clockItem.dispatchEvent(clickEvent);
                 Vue.nextTick(() => {
                     done();
@@ -119,27 +129,55 @@ describe('time conductor', () => {
 
         it('shows clock options', () => {
             const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
-            const dateTimeInputs = realtimeModeEl.querySelectorAll('.c-conductor__delta-button');
-            expect(dateTimeInputs[0].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:30:00');
-            expect(dateTimeInputs[1].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:00:30');
-            expect(realtimeModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Local Clock');
+            const dateTimeInputs = realtimeModeEl.querySelectorAll(
+                '.c-conductor__delta-button'
+            );
+            expect(
+                dateTimeInputs[0].innerHTML.replace(/[^(\d|:)]/g, '')
+            ).toEqual('00:30:00');
+            expect(
+                dateTimeInputs[1].innerHTML.replace(/[^(\d|:)]/g, '')
+            ).toEqual('00:00:30');
+            expect(
+                realtimeModeEl.querySelector('.c-mode-button .c-button__label')
+                    .innerHTML
+            ).toEqual('Local Clock');
         });
     });
-
 });
 
 describe('duration functions', () => {
     it('should transform milliseconds to DHMS', () => {
-        const functionResults = [millisecondsToDHMS(0), millisecondsToDHMS(86400000),
-            millisecondsToDHMS(129600000), millisecondsToDHMS(661824000), millisecondsToDHMS(213927028)];
-        const validResults = [' ', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s', '+ 2d 11h 25m 27s 28ms'];
+        const functionResults = [
+            millisecondsToDHMS(0),
+            millisecondsToDHMS(86400000),
+            millisecondsToDHMS(129600000),
+            millisecondsToDHMS(661824000),
+            millisecondsToDHMS(213927028)
+        ];
+        const validResults = [
+            ' ',
+            '+ 1d',
+            '+ 1d 12h',
+            '+ 7d 15h 50m 24s',
+            '+ 2d 11h 25m 27s 28ms'
+        ];
         expect(validResults).toEqual(functionResults);
     });
 
     it('should get precise duration', () => {
-        const functionResults = [getPreciseDuration(0), getPreciseDuration(643680000),
-            getPreciseDuration(1605312000), getPreciseDuration(213927028)];
-        const validResults = ['00:00:00:00:000', '07:10:48:00:000', '18:13:55:12:000', '02:11:25:27:028'];
+        const functionResults = [
+            getPreciseDuration(0),
+            getPreciseDuration(643680000),
+            getPreciseDuration(1605312000),
+            getPreciseDuration(213927028)
+        ];
+        const validResults = [
+            '00:00:00:00:000',
+            '07:10:48:00:000',
+            '18:13:55:12:000',
+            '02:11:25:27:028'
+        ];
         expect(validResults).toEqual(functionResults);
     });
 });

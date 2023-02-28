@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
-import InterceptorPlugin from "./plugin";
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import InterceptorPlugin from './plugin';
 
 describe('the plugin', function () {
     let element;
@@ -53,9 +53,7 @@ describe('the plugin', function () {
         let mockProvider;
 
         beforeEach(() => {
-            mockProvider = jasmine.createSpyObj("mock provider", [
-                "get"
-            ]);
+            mockProvider = jasmine.createSpyObj('mock provider', ['get']);
             mockProvider.get.and.returnValue(Promise.resolve(undefined));
             openmct.objects.addProvider(TEST_NAMESPACE, mockProvider);
         });
@@ -74,6 +72,5 @@ describe('the plugin', function () {
                 });
             });
         });
-
     });
 });

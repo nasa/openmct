@@ -26,8 +26,8 @@ export default class DuplicateAction {
         this.name = 'Duplicate';
         this.key = 'duplicate';
         this.description = 'Duplicate this object.';
-        this.cssClass = "icon-duplicate";
-        this.group = "action";
+        this.cssClass = 'icon-duplicate';
+        this.group = 'action';
         this.priority = 7;
 
         this.openmct = openmct;
@@ -42,8 +42,12 @@ export default class DuplicateAction {
     }
 
     inNavigationPath() {
-        return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
+        return this.openmct.router.path.some((objectInPath) =>
+            this.openmct.objects.areIdsEqual(
+                objectInPath.identifier,
+                this.object.identifier
+            )
+        );
     }
 
     async onSave(changes) {
@@ -55,7 +59,7 @@ export default class DuplicateAction {
         }
 
         let duplicationTask = new DuplicateTask(this.openmct);
-        if (changes.name && (changes.name !== this.object.name)) {
+        if (changes.name && changes.name !== this.object.name) {
             duplicationTask.changeName(changes.name);
         }
 
@@ -69,23 +73,23 @@ export default class DuplicateAction {
 
     showForm(domainObject, parentDomainObject) {
         const formStructure = {
-            title: "Duplicate Item",
+            title: 'Duplicate Item',
             sections: [
                 {
                     rows: [
                         {
-                            key: "name",
-                            control: "textfield",
-                            name: "Title",
-                            pattern: "\\S+",
+                            key: 'name',
+                            control: 'textfield',
+                            name: 'Title',
+                            pattern: '\\S+',
                             required: true,
-                            cssClass: "l-input-lg",
+                            cssClass: 'l-input-lg',
                             value: domainObject.name
                         },
                         {
-                            name: "Location",
-                            cssClass: "grows",
-                            control: "locator",
+                            name: 'Location',
+                            cssClass: 'grows',
+                            control: 'locator',
                             required: true,
                             parent: parentDomainObject,
                             validate: this.validate(parentDomainObject),
@@ -96,19 +100,26 @@ export default class DuplicateAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure)
-            .then(this.onSave.bind(this));
+        this.openmct.forms.showForm(formStructure).then(this.onSave.bind(this));
     }
 
     validate(currentParent) {
         return (data) => {
             const parentCandidate = data.value[0];
 
-            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
-            let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+            let currentParentKeystring = this.openmct.objects.makeKeyString(
+                currentParent.identifier
+            );
+            let parentCandidateKeystring = this.openmct.objects.makeKeyString(
+                parentCandidate.identifier
+            );
+            let objectKeystring = this.openmct.objects.makeKeyString(
+                this.object.identifier
+            );
 
-            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+            if (
+                !this.openmct.objects.isPersistable(parentCandidate.identifier)
+            ) {
                 return false;
             }
 
@@ -121,11 +132,20 @@ export default class DuplicateAction {
             }
 
             const parentCandidateComposition = parentCandidate.composition;
-            if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
+            if (
+                parentCandidateComposition &&
+                parentCandidateComposition.indexOf(objectKeystring) !== -1
+            ) {
                 return false;
             }
 
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
+            return (
+                parentCandidate &&
+                this.openmct.composition.checkPolicy(
+                    parentCandidate,
+                    this.object
+                )
+            );
         };
     }
 
@@ -135,17 +155,21 @@ export default class DuplicateAction {
         const child = objectPath[0];
         const childType = child && this.openmct.types.get(child.type);
         const locked = child.locked ? child.locked : parent && parent.locked;
-        const isPersistable = this.openmct.objects.isPersistable(child.identifier);
+        const isPersistable = this.openmct.objects.isPersistable(
+            child.identifier
+        );
 
         if (locked || !isPersistable) {
             return false;
         }
 
-        return childType
-            && childType.definition.creatable
-            && parentType
-            && parentType.definition.creatable
-            && Array.isArray(parent.composition);
+        return (
+            childType &&
+            childType.definition.creatable &&
+            parentType &&
+            parentType.definition.creatable &&
+            Array.isArray(parent.composition)
+        );
     }
 
     startTransaction() {

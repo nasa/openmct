@@ -24,24 +24,25 @@ define([
     './flexibleLayoutViewProvider',
     './utils/container',
     './toolbarProvider'
-], function (
-    FlexibleLayoutViewProvider,
-    Container,
-    ToolBarProvider
-) {
+], function (FlexibleLayoutViewProvider, Container, ToolBarProvider) {
     return function plugin() {
-
         return function install(openmct) {
-            openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
+            openmct.objectViews.addProvider(
+                new FlexibleLayoutViewProvider(openmct)
+            );
 
             openmct.types.addType('flexible-layout', {
-                name: "Flexible Layout",
+                name: 'Flexible Layout',
                 creatable: true,
-                description: "A fluid, flexible layout canvas that can display multiple objects in rows or columns.",
+                description:
+                    'A fluid, flexible layout canvas that can display multiple objects in rows or columns.',
                 cssClass: 'icon-flexible-layout',
                 initialize: function (domainObject) {
                     domainObject.configuration = {
-                        containers: [new Container.default(50), new Container.default(50)],
+                        containers: [
+                            new Container.default(50),
+                            new Container.default(50)
+                        ],
                         rowsLayout: false
                     };
                     domainObject.composition = [];

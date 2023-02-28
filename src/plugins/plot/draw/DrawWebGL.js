@@ -84,23 +84,26 @@ const VERTEX_SHADER = `
  */
 function DrawWebGL(canvas, overlay) {
     this.canvas = canvas;
-    this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true })
-        || this.canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true });
+    this.gl =
+        this.canvas.getContext('webgl', { preserveDrawingBuffer: true }) ||
+        this.canvas.getContext('experimental-webgl', {
+            preserveDrawingBuffer: true
+        });
 
     this.overlay = overlay;
     this.c2d = overlay.getContext('2d');
     if (!this.c2d) {
-        throw new Error("No canvas 2d!");
+        throw new Error('No canvas 2d!');
     }
 
     // Ensure a context was actually available before proceeding
     if (!this.gl) {
-        throw new Error("WebGL unavailable.");
+        throw new Error('WebGL unavailable.');
     }
 
     this.initContext();
 
-    this.listenTo(this.canvas, "webglcontextlost", this.onContextLost, this);
+    this.listenTo(this.canvas, 'webglcontextlost', this.onContextLost, this);
 }
 
 Object.assign(DrawWebGL.prototype, EventEmitter.prototype);
@@ -132,12 +135,18 @@ DrawWebGL.prototype.initContext = function () {
 
     // Get locations for attribs/uniforms from the
     // shader programs (to pass values into shaders at draw-time)
-    this.aVertexPosition = this.gl.getAttribLocation(this.program, "aVertexPosition");
-    this.uColor = this.gl.getUniformLocation(this.program, "uColor");
-    this.uMarkerShape = this.gl.getUniformLocation(this.program, "uMarkerShape");
-    this.uDimensions = this.gl.getUniformLocation(this.program, "uDimensions");
-    this.uOrigin = this.gl.getUniformLocation(this.program, "uOrigin");
-    this.uPointSize = this.gl.getUniformLocation(this.program, "uPointSize");
+    this.aVertexPosition = this.gl.getAttribLocation(
+        this.program,
+        'aVertexPosition'
+    );
+    this.uColor = this.gl.getUniformLocation(this.program, 'uColor');
+    this.uMarkerShape = this.gl.getUniformLocation(
+        this.program,
+        'uMarkerShape'
+    );
+    this.uDimensions = this.gl.getUniformLocation(this.program, 'uDimensions');
+    this.uOrigin = this.gl.getUniformLocation(this.program, 'uOrigin');
+    this.uPointSize = this.gl.getUniformLocation(this.program, 'uPointSize');
 
     this.gl.enableVertexAttribArray(this.aVertexPosition);
 
@@ -147,7 +156,6 @@ DrawWebGL.prototype.initContext = function () {
     // Enable blending, for smoothness
     this.gl.enable(this.gl.BLEND);
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
-
 };
 
 DrawWebGL.prototype.destroy = function () {
@@ -161,8 +169,9 @@ DrawWebGL.prototype.x = function (v) {
 
 // Convert from logical to physical y coordinates
 DrawWebGL.prototype.y = function (v) {
-    return this.height
-        - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
+    return (
+        this.height - ((v - this.origin[1]) / this.dimensions[1]) * this.height
+    );
 };
 
 DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
@@ -174,7 +183,14 @@ DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, buf, this.gl.DYNAMIC_DRAW);
-    this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
+    this.gl.vertexAttribPointer(
+        this.aVertexPosition,
+        2,
+        this.gl.FLOAT,
+        false,
+        0,
+        0
+    );
     this.gl.uniform4fv(this.uColor, color);
     this.gl.uniform1i(this.uMarkerShape, shapeCode);
     if (points !== 0) {
@@ -217,8 +233,7 @@ DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
         return;
     }
 
-    if (dimensions && dimensions.length > 0
-        && origin && origin.length > 0) {
+    if (dimensions && dimensions.length > 0 && origin && origin.length > 0) {
         this.gl.uniform2fv(this.uDimensions, dimensions);
         this.gl.uniform2fv(this.uOrigin, origin);
     }
@@ -246,7 +261,13 @@ DrawWebGL.prototype.drawLine = function (buf, color, points) {
  * Draw the buffer as points.
  *
  */
-DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize, shape) {
+DrawWebGL.prototype.drawPoints = function (
+    buf,
+    color,
+    points,
+    pointSize,
+    shape
+) {
     if (this.isContextLost) {
         return;
     }
@@ -269,9 +290,14 @@ DrawWebGL.prototype.drawSquare = function (min, max, color) {
         return;
     }
 
-    this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
-        min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
-    ), color, 4);
+    this.doDraw(
+        this.gl.TRIANGLE_FAN,
+        new Float32Array(
+            min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
+        ),
+        color,
+        4
+    );
 };
 
 DrawWebGL.prototype.drawLimitPoint = function (x, y, size) {
@@ -285,11 +311,13 @@ DrawWebGL.prototype.drawLimitPoints = function (points, color, pointSize) {
     const limitSize = pointSize * 2;
     const offset = limitSize / 2;
 
-    const mappedColor = color.map(function (c, i) {
-        return i < 3 ? Math.floor(c * 255) : (c);
-    }).join(',');
-    this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
-    this.c2d.fillStyle = "rgba(" + mappedColor + ")";
+    const mappedColor = color
+        .map(function (c, i) {
+            return i < 3 ? Math.floor(c * 255) : c;
+        })
+        .join(',');
+    this.c2d.strokeStyle = 'rgba(' + mappedColor + ')';
+    this.c2d.fillStyle = 'rgba(' + mappedColor + ')';
 
     for (let i = 0; i < points.length; i++) {
         this.drawLimitPoint(

@@ -69,7 +69,8 @@ export default class AbstractStatusIndicator {
         popupElement.positionX = indicatorBox.left;
         popupElement.positionY = indicatorBox.bottom;
 
-        const popupRight = popupElement.positionX + popupElement.$el.clientWidth;
+        const popupRight =
+            popupElement.positionX + popupElement.$el.clientWidth;
         const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
         popupElement.positionX = popupElement.positionX + offsetLeft;
     }

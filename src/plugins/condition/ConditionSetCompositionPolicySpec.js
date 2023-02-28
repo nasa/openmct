@@ -23,7 +23,6 @@
 import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy';
 
 describe('ConditionSetCompositionPolicy', () => {
-
     let policy;
     let testTelemetryObject;
     let openmct = {};
@@ -32,31 +31,41 @@ describe('ConditionSetCompositionPolicy', () => {
     beforeAll(function () {
         testTelemetryObject = {
             identifier: {
-                namespace: "",
-                key: "test-object"
+                namespace: '',
+                key: 'test-object'
             },
-            type: "test-object",
-            name: "Test Object",
+            type: 'test-object',
+            name: 'Test Object',
             telemetry: {
-                values: [{
-                    key: "some-key",
-                    name: "Some attribute",
-                    hints: {
-                        domain: 1
+                values: [
+                    {
+                        key: 'some-key',
+                        name: 'Some attribute',
+                        hints: {
+                            domain: 1
+                        }
+                    },
+                    {
+                        key: 'some-other-key',
+                        name: 'Another attribute',
+                        hints: {
+                            range: 1
+                        }
                     }
-                }, {
-                    key: "some-other-key",
-                    name: "Another attribute",
-                    hints: {
-                        range: 1
-                    }
-                }]
+                ]
             }
         };
-        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
+        openmct.objects = jasmine.createSpyObj('objects', [
+            'get',
+            'makeKeyString'
+        ]);
         openmct.objects.get.and.returnValue(testTelemetryObject);
-        openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject']);
+        openmct.objects.makeKeyString.and.returnValue(
+            testTelemetryObject.identifier.key
+        );
+        openmct.telemetry = jasmine.createSpyObj('telemetry', [
+            'isTelemetryObject'
+        ]);
         policy = new ConditionSetCompositionPolicy(openmct);
         parentDomainObject = {};
     });
@@ -76,13 +85,16 @@ describe('ConditionSetCompositionPolicy', () => {
     it('returns true for object types that are telemetry objects when parent is a conditionSet', function () {
         parentDomainObject.type = 'conditionSet';
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
-        expect(policy.allow(parentDomainObject, testTelemetryObject)).toBe(true);
+        expect(policy.allow(parentDomainObject, testTelemetryObject)).toBe(
+            true
+        );
     });
 
     it('returns true for object types that are telemetry objects when parent is not a conditionSet', function () {
         parentDomainObject.type = 'random';
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
-        expect(policy.allow(parentDomainObject, testTelemetryObject)).toBe(true);
+        expect(policy.allow(parentDomainObject, testTelemetryObject)).toBe(
+            true
+        );
     });
-
 });

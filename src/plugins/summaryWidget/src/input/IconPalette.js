@@ -1,8 +1,4 @@
-define([
-    './Palette'
-], function (
-    Palette
-) {
+define(['./Palette'], function (Palette) {
     //The icons that will be used to instantiate this palette if none are provided
     const DEFAULT_ICONS = [
         'icon-alert-rect',
@@ -49,11 +45,13 @@ define([
         const domElement = this.palette.getDOM();
         const self = this;
 
-        domElement.querySelector('.c-button--menu').classList.add('c-button--swatched');
+        domElement
+            .querySelector('.c-button--menu')
+            .classList.add('c-button--swatched');
         domElement.querySelector('.t-swatch').classList.add('icon-swatch');
         domElement.querySelector('.c-palette').classList.add('c-palette--icon');
 
-        domElement.querySelectorAll('.c-palette-item').forEach(item => {
+        domElement.querySelectorAll('.c-palette-item').forEach((item) => {
             // eslint-disable-next-line no-invalid-this
             item.classList.add(item.dataset.item);
         });
@@ -65,10 +63,14 @@ define([
          */
         function updateSwatch() {
             if (self.oldIcon) {
-                domElement.querySelector('.icon-swatch').classList.remove(self.oldIcon);
+                domElement
+                    .querySelector('.icon-swatch')
+                    .classList.remove(self.oldIcon);
             }
 
-            domElement.querySelector('.icon-swatch').classList.add(self.palette.getCurrent());
+            domElement
+                .querySelector('.icon-swatch')
+                .classList.add(self.palette.getCurrent());
             self.oldIcon = self.palette.getCurrent();
         }
 

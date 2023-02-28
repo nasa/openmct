@@ -20,14 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/FiltersView.vue',
-    'vue'
-], function (
-    FiltersView,
-    Vue
-) {
-
+define(['./components/FiltersView.vue', 'vue'], function (FiltersView, Vue) {
     function FiltersInspectorViewProvider(openmct, supportedObjectTypesArray) {
         return {
             key: 'filters-inspector',
@@ -39,7 +32,12 @@ define([
 
                 let object = selection[0][0].context.item;
 
-                return object && supportedObjectTypesArray.some(type => object.type === type);
+                return (
+                    object &&
+                    supportedObjectTypesArray.some(
+                        (type) => object.type === type
+                    )
+                );
             },
             view: function (selection) {
                 let component;

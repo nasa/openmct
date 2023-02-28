@@ -47,7 +47,7 @@ class StylesManager extends EventEmitter {
     normalizeStyle(style) {
         const normalizedStyle = this.getBaseStyleObject();
 
-        Object.keys(normalizedStyle).forEach(property => {
+        Object.keys(normalizedStyle).forEach((property) => {
             const value = style[property];
             if (value !== undefined) {
                 normalizedStyle[property] = value;
@@ -87,7 +87,9 @@ class StylesManager extends EventEmitter {
      * @private
      */
     isExistingStyle(style, styles) {
-        return styles.some(existingStyle => this.isEqual(style, existingStyle));
+        return styles.some((existingStyle) =>
+            this.isEqual(style, existingStyle)
+        );
     }
 
     /**
@@ -95,7 +97,10 @@ class StylesManager extends EventEmitter {
      */
     persist(styles) {
         try {
-            window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(styles));
+            window.localStorage.setItem(
+                LOCAL_STORAGE_KEY,
+                JSON.stringify(styles)
+            );
 
             return true;
         } catch (e) {
@@ -110,9 +115,11 @@ class StylesManager extends EventEmitter {
      */
     isEqual(style1, style2) {
         const keys = Object.keys(Object.assign({}, style1, style2));
-        const different = keys.some(key => (!style1[key] && style2[key])
-            || (style1[key] && !style2[key])
-            || (style1[key] !== style2[key])
+        const different = keys.some(
+            (key) =>
+                (!style1[key] && style2[key]) ||
+                (style1[key] && !style2[key]) ||
+                style1[key] !== style2[key]
         );
 
         return !different;

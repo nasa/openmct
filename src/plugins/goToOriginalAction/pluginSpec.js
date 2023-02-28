@@ -19,12 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("the goToOriginalAction plugin", () => {
+describe('the goToOriginalAction plugin', () => {
     let openmct;
     let goToOriginalAction;
     let mockRootFolder;
@@ -65,13 +62,13 @@ describe("the goToOriginalAction plugin", () => {
                 mockRootFolder
             ];
 
-            spyOn(openmct.objects, 'get').and.callFake(identifier => {
+            spyOn(openmct.objects, 'get').and.callFake((identifier) => {
                 const mockedObject = getMockObject(identifier);
 
                 return Promise.resolve(mockedObject);
             });
 
-            spyOn(openmct.router, 'navigate').and.callFake(navigateTo => {
+            spyOn(openmct.router, 'navigate').and.callFake((navigateTo) => {
                 hash = navigateTo;
             });
 
@@ -113,84 +110,84 @@ describe("the goToOriginalAction plugin", () => {
         const id = typeof key === 'string' ? key : key.key;
 
         const mockMCTObjects = {
-            "ROOT": {
-                "composition": [
+            ROOT: {
+                composition: [
                     {
-                        "namespace": "",
-                        "key": "mock-root"
+                        namespace: '',
+                        key: 'mock-root'
                     }
                 ],
-                "identifier": {
-                    "namespace": "",
-                    "key": "mock-root"
+                identifier: {
+                    namespace: '',
+                    key: 'mock-root'
                 }
             },
-            "mock-root": {
-                "composition": [
+            'mock-root': {
+                composition: [
                     {
-                        "namespace": "",
-                        "key": "mock-sub"
+                        namespace: '',
+                        key: 'mock-sub'
                     },
                     {
-                        "namespace": "",
-                        "key": "mock-table"
+                        namespace: '',
+                        key: 'mock-table'
                     }
                 ],
-                "name": "root",
-                "type": "folder",
-                "id": "mock-root",
-                "location": "ROOT",
-                "identifier": {
-                    "namespace": "",
-                    "key": "mock-root"
+                name: 'root',
+                type: 'folder',
+                id: 'mock-root',
+                location: 'ROOT',
+                identifier: {
+                    namespace: '',
+                    key: 'mock-root'
                 }
             },
-            "mock-sub": {
-                "composition": [
+            'mock-sub': {
+                composition: [
                     {
-                        "namespace": "",
-                        "key": "mock-sub-sub"
+                        namespace: '',
+                        key: 'mock-sub-sub'
                     },
                     {
-                        "namespace": "",
-                        "key": "mock-table"
+                        namespace: '',
+                        key: 'mock-table'
                     }
                 ],
-                "name": "sub",
-                "type": "folder",
-                "location": "mock-root",
-                "identifier": {
-                    "namespace": "",
-                    "key": "mock-sub"
+                name: 'sub',
+                type: 'folder',
+                location: 'mock-root',
+                identifier: {
+                    namespace: '',
+                    key: 'mock-sub'
                 }
             },
-            "mock-table": {
-                "composition": [],
-                "configuration": {
-                    "columnWidths": {},
-                    "hiddenColumns": {}
+            'mock-table': {
+                composition: [],
+                configuration: {
+                    columnWidths: {},
+                    hiddenColumns: {}
                 },
-                "name": "table",
-                "type": "table",
-                "location": "mock-root",
-                "identifier": {
-                    "namespace": "",
-                    "key": "mock-table"
+                name: 'table',
+                type: 'table',
+                location: 'mock-root',
+                identifier: {
+                    namespace: '',
+                    key: 'mock-table'
                 }
             },
-            "mock-sub-sub": {
-                "composition": [
+            'mock-sub-sub': {
+                composition: [
                     {
-                        "namespace": "",
-                        "key": "mock-table"
+                        namespace: '',
+                        key: 'mock-table'
                     }
                 ],
-                "name": "sub sub",
-                "type": "folder",
-                "location": "mock-sub",
-                "identifier": {
-                    "namespace": "",
-                    "key": "mock-sub-sub"
+                name: 'sub sub',
+                type: 'folder',
+                location: 'mock-sub',
+                identifier: {
+                    namespace: '',
+                    key: 'mock-sub-sub'
                 }
             }
         };

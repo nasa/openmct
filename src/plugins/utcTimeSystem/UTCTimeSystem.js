@@ -27,7 +27,6 @@ define([], function () {
      * @constructor
      */
     function UTCTimeSystem() {
-
         /**
          * Metadata used to identify the time system in
          * the UI

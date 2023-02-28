@@ -20,20 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './FolderGridView',
-    './FolderListView'
-], function (
+define(['./FolderGridView', './FolderListView'], function (
     FolderGridView,
     FolderListView
 ) {
     return function plugin() {
         return function install(openmct) {
             openmct.types.addType('folder', {
-                name: "Folder",
-                key: "folder",
-                description: "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
-                cssClass: "icon-folder",
+                name: 'Folder',
+                key: 'folder',
+                description:
+                    "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
+                cssClass: 'icon-folder',
                 creatable: true,
                 initialize: function (domainObject) {
                     domainObject.composition = [];

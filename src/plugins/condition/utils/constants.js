@@ -28,17 +28,17 @@ export const TRIGGER = {
 };
 
 export const TRIGGER_LABEL = {
-    'any': 'any criteria are met',
-    'all': 'all criteria are met',
-    'not': 'no criteria are met',
-    'xor': 'only one criterion is met'
+    any: 'any criteria are met',
+    all: 'all criteria are met',
+    not: 'no criteria are met',
+    xor: 'only one criterion is met'
 };
 
 export const TRIGGER_CONJUNCTION = {
-    'any': 'or',
-    'all': 'and',
-    'not': 'and',
-    'xor': 'or'
+    any: 'or',
+    all: 'and',
+    not: 'and',
+    xor: 'or'
 };
 
 export const STYLE_CONSTANTS = {
@@ -52,10 +52,10 @@ export const STYLE_CONSTANTS = {
 };
 
 export const ERROR = {
-    'TELEMETRY_NOT_FOUND': {
+    TELEMETRY_NOT_FOUND: {
         errorText: 'Telemetry not found for criterion'
     },
-    'CONDITION_NOT_FOUND': {
+    CONDITION_NOT_FOUND: {
         errorText: 'Condition not found'
     }
 };

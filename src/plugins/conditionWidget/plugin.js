@@ -24,12 +24,15 @@ import ConditionWidgetViewProvider from './ConditionWidgetViewProvider.js';
 
 export default function plugin() {
     return function install(openmct) {
-        openmct.objectViews.addProvider(new ConditionWidgetViewProvider(openmct));
+        openmct.objectViews.addProvider(
+            new ConditionWidgetViewProvider(openmct)
+        );
 
         openmct.types.addType('conditionWidget', {
             key: 'conditionWidget',
-            name: "Condition Widget",
-            description: "A button that can be used on its own, or dynamically styled with a Condition Set.",
+            name: 'Condition Widget',
+            description:
+                'A button that can be used on its own, or dynamically styled with a Condition Set.',
             creatable: true,
             cssClass: 'icon-condition-widget',
             initialize(domainObject) {
@@ -39,21 +42,19 @@ export default function plugin() {
             },
             form: [
                 {
-                    "key": "label",
-                    "name": "Label",
-                    "control": "textfield",
-                    property: [
-                        "label"
-                    ],
-                    "required": true,
-                    "cssClass": "l-input"
+                    key: 'label',
+                    name: 'Label',
+                    control: 'textfield',
+                    property: ['label'],
+                    required: true,
+                    cssClass: 'l-input'
                 },
                 {
-                    "key": "url",
-                    "name": "URL",
-                    "control": "textfield",
-                    "required": false,
-                    "cssClass": "l-input-lg"
+                    key: 'url',
+                    name: 'URL',
+                    control: 'textfield',
+                    required: false,
+                    cssClass: 'l-input-lg'
                 }
             ]
         });

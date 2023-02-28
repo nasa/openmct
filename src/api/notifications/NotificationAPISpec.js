@@ -120,7 +120,11 @@ describe('The Notifiation API', () => {
         let updatedMessage;
 
         beforeAll(() => {
-            notification = notificationAPIInstance.progress(title, percentage1, message1);
+            notification = notificationAPIInstance.progress(
+                title,
+                percentage1,
+                message1
+            );
             notification.on('progress', (percentage, text) => {
                 updatedPercentage = percentage;
                 updatedMessage = text;
@@ -131,21 +135,21 @@ describe('The Notifiation API', () => {
             notificationAPIInstance.dismissAllNotifications();
         });
 
-        it ('shows a notification with a message, progress message, percentage and info severity', () => {
+        it('shows a notification with a message, progress message, percentage and info severity', () => {
             expect(notification.model.message).toEqual(title);
             expect(notification.model.severity).toEqual(severity);
             expect(notification.model.progressText).toEqual(message1);
             expect(notification.model.progressPerc).toEqual(percentage1);
         });
 
-        it ('allows dynamically updating the progress attributes', () => {
+        it('allows dynamically updating the progress attributes', () => {
             notification.progress(percentage2, message2);
 
             expect(updatedPercentage).toEqual(percentage2);
             expect(updatedMessage).toEqual(message2);
         });
 
-        it ('allows dynamically dismissing of progress notification', () => {
+        it('allows dynamically dismissing of progress notification', () => {
             notification.dismiss();
 
             expect(notificationAPIInstance.notifications.length).toEqual(0);

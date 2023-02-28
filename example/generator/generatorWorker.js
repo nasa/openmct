@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 (function () {
-
     var FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     var handlers = {
@@ -34,9 +33,12 @@
 
     function workSubscriptions(timestamp) {
         var now = Date.now();
-        var nextWork = Math.min.apply(Math, Object.values(subscriptions).map(function (subscription) {
-            return subscription(now);
-        }));
+        var nextWork = Math.min.apply(
+            Math,
+            Object.values(subscriptions).map(function (subscription) {
+                return subscription(now);
+            })
+        );
         var wait = nextWork - now;
         if (wait < 0) {
             wait = 0;
@@ -59,7 +61,7 @@
             work = function (now) {
                 while (nextStep < now) {
                     const messageCopy = Object.create(message);
-                    message.data.start = nextStep - (60 * 1000);
+                    message.data.start = nextStep - 60 * 1000;
                     message.data.end = nextStep;
                     onRequest(messageCopy);
                     nextStep += step;
@@ -76,10 +78,26 @@
                             name: data.name,
                             utc: nextStep,
                             yesterday: nextStep - 60 * 60 * 24 * 1000,
-                            sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness, data.infinityValues),
+                            sin: sin(
+                                nextStep,
+                                data.period,
+                                data.amplitude,
+                                data.offset,
+                                data.phase,
+                                data.randomness,
+                                data.infinityValues
+                            ),
                             wavelengths: wavelengths(),
                             intensities: intensities(),
-                            cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness, data.infinityValues)
+                            cos: cos(
+                                nextStep,
+                                data.period,
+                                data.amplitude,
+                                data.offset,
+                                data.phase,
+                                data.randomness,
+                                data.infinityValues
+                            )
                         }
                     });
                     nextStep += step;
@@ -128,10 +146,26 @@
             data.push({
                 utc: nextStep,
                 yesterday: nextStep - 60 * 60 * 24 * 1000,
-                sin: sin(nextStep, period, amplitude, offset, phase, randomness, infinityValues),
+                sin: sin(
+                    nextStep,
+                    period,
+                    amplitude,
+                    offset,
+                    phase,
+                    randomness,
+                    infinityValues
+                ),
                 wavelengths: wavelengths(),
                 intensities: intensities(),
-                cos: cos(nextStep, period, amplitude, offset, phase, randomness, infinityValues)
+                cos: cos(
+                    nextStep,
+                    period,
+                    amplitude,
+                    offset,
+                    phase,
+                    randomness,
+                    infinityValues
+                )
             });
         }
 
@@ -145,33 +179,59 @@
     function postOnRequest(message, request, data) {
         self.postMessage({
             id: message.id,
-            data: request.spectra ? {
-                wavelength: data.map((item) => {
-                    return item.wavelength;
-                }),
-                cos: data.map((item) => {
-                    return item.cos;
-                })
-            } : data
+            data: request.spectra
+                ? {
+                      wavelength: data.map((item) => {
+                          return item.wavelength;
+                      }),
+                      cos: data.map((item) => {
+                          return item.cos;
+                      })
+                  }
+                : data
         });
     }
 
-    function cos(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
+    function cos(
+        timestamp,
+        period,
+        amplitude,
+        offset,
+        phase,
+        randomness,
+        infinityValues
+    ) {
         if (infinityValues && Math.random() > 0.5) {
             return Number.POSITIVE_INFINITY;
         }
 
-        return amplitude
-            * Math.cos(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+        return (
+            amplitude *
+                Math.cos(phase + (timestamp / period / 1000) * Math.PI * 2) +
+            amplitude * Math.random() * randomness +
+            offset
+        );
     }
 
-    function sin(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
+    function sin(
+        timestamp,
+        period,
+        amplitude,
+        offset,
+        phase,
+        randomness,
+        infinityValues
+    ) {
         if (infinityValues && Math.random() > 0.5) {
             return Number.POSITIVE_INFINITY;
         }
 
-        return amplitude
-            * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+        return (
+            amplitude *
+                Math.sin(phase + (timestamp / period / 1000) * Math.PI * 2) +
+            amplitude * Math.random() * randomness +
+            offset
+        );
     }
 
     function wavelengths() {
@@ -220,5 +280,4 @@
             }
         }
     };
-
-}());
+})();

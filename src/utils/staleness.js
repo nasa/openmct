@@ -55,10 +55,12 @@ export default class StalenessUtils {
         let metadataValue = { format: timeSystem.key };
 
         if (this.metadata) {
-            metadataValue = this.metadata.value(timeSystem.key) ?? metadataValue;
+            metadataValue =
+                this.metadata.value(timeSystem.key) ?? metadataValue;
         }
 
-        const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+        const valueFormatter =
+            this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (stalenessResponse) => {
             const stalenessDatum = {

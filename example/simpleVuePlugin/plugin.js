@@ -9,9 +9,9 @@ function SimpleVuePlugin() {
             creatable: true
         });
         openmct.objectViews.addProvider({
-            name: "demo-provider",
-            key: "hello-world",
-            cssClass: "icon-packet",
+            name: 'demo-provider',
+            key: 'hello-world',
+            cssClass: 'icon-packet',
             canView: function (d) {
                 return d.type === 'hello-world';
             },
@@ -29,7 +29,6 @@ function SimpleVuePlugin() {
                 };
             }
         });
-
     };
 }
 

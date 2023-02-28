@@ -1,7 +1,17 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
-import { getDefaultNotebook, getNotebookSectionAndPage, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
+import {
+    getDefaultNotebook,
+    getNotebookSectionAndPage,
+    getDefaultNotebookLink,
+    setDefaultNotebook
+} from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
-import { createNotebookImageDomainObject, saveNotebookImageDomainObject, updateNamespaceOfDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
+import {
+    createNotebookImageDomainObject,
+    saveNotebookImageDomainObject,
+    updateNamespaceOfDomainObject,
+    DEFAULT_SIZE
+} from './utils/notebook-image';
 
 import SnapshotContainer from './snapshot-container';
 import ImageExporter from '../../exporters/ImageExporter';
@@ -21,33 +31,50 @@ export default class Snapshot {
             className: 's-status-taking-snapshot',
             thumbnailSize: DEFAULT_SIZE
         };
-        this.imageExporter.exportPNGtoSRC(domElement, options)
-            .then(function ({blob, thumbnail}) {
+        this.imageExporter.exportPNGtoSRC(domElement, options).then(
+            function ({ blob, thumbnail }) {
                 const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function () {
-                    this._saveSnapShot(notebookType, reader.result, thumbnail, snapshotMeta);
+                    this._saveSnapShot(
+                        notebookType,
+                        reader.result,
+                        thumbnail,
+                        snapshotMeta
+                    );
                 }.bind(this);
-            }.bind(this));
+            }.bind(this)
+        );
     }
 
     /**
      * @private
      */
-    _saveSnapShot(notebookType, fullSizeImageURL, thumbnailImageURL, snapshotMeta) {
+    _saveSnapShot(
+        notebookType,
+        fullSizeImageURL,
+        thumbnailImageURL,
+        snapshotMeta
+    ) {
         const object = createNotebookImageDomainObject(fullSizeImageURL);
         const thumbnailImage = { src: thumbnailImageURL || '' };
         const snapshot = {
             fullSizeImageObjectIdentifier: object.identifier,
             thumbnailImage
         };
-        createNewEmbed(snapshotMeta, snapshot).then(embed => {
+        createNewEmbed(snapshotMeta, snapshot).then((embed) => {
             if (notebookType === NOTEBOOK_DEFAULT) {
                 const notebookStorage = getDefaultNotebook();
 
                 this._saveToDefaultNoteBook(notebookStorage, embed);
-                const notebookImageDomainObject = updateNamespaceOfDomainObject(object, notebookStorage.identifier.namespace);
-                saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
+                const notebookImageDomainObject = updateNamespaceOfDomainObject(
+                    object,
+                    notebookStorage.identifier.namespace
+                );
+                saveNotebookImageDomainObject(
+                    this.openmct,
+                    notebookImageDomainObject
+                );
             } else {
                 this._saveToNotebookSnapshots(object, embed);
             }
@@ -58,19 +85,32 @@ export default class Snapshot {
      * @private
      */
     _saveToDefaultNoteBook(notebookStorage, embed) {
-        this.openmct.objects.get(notebookStorage.identifier)
+        this.openmct.objects
+            .get(notebookStorage.identifier)
             .then((domainObject) => {
-                return addNotebookEntry(this.openmct, domainObject, notebookStorage, embed).then(async () => {
+                return addNotebookEntry(
+                    this.openmct,
+                    domainObject,
+                    notebookStorage,
+                    embed
+                ).then(async () => {
                     let link = notebookStorage.link;
 
                     // Backwards compatibility fix (old notebook model without link)
                     if (!link) {
-                        link = await getDefaultNotebookLink(this.openmct, domainObject);
+                        link = await getDefaultNotebookLink(
+                            this.openmct,
+                            domainObject
+                        );
                         notebookStorage.link = link;
                         setDefaultNotebook(this.openmct, notebookStorage);
                     }
 
-                    const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.defaultSectionId, notebookStorage.defaultPageId);
+                    const { section, page } = getNotebookSectionAndPage(
+                        domainObject,
+                        notebookStorage.defaultSectionId,
+                        notebookStorage.defaultPageId
+                    );
                     if (!section || !page) {
                         return;
                     }

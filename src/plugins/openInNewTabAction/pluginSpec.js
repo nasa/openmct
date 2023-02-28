@@ -25,7 +25,7 @@ import {
     spyOnBuiltins
 } from 'utils/testing';
 
-describe("the plugin", () => {
+describe('the plugin', () => {
     let openmct;
     let openInNewTabAction;
     let mockObjectPath;
@@ -48,22 +48,25 @@ describe("the plugin", () => {
     });
 
     describe('when invoked', () => {
-
         beforeEach(async () => {
-            mockObjectPath = [{
-                name: 'mock folder',
-                type: 'folder',
-                identifier: {
-                    key: 'mock-folder',
-                    namespace: ''
+            mockObjectPath = [
+                {
+                    name: 'mock folder',
+                    type: 'folder',
+                    identifier: {
+                        key: 'mock-folder',
+                        namespace: ''
+                    }
                 }
-            }];
-            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({
-                identifier: {
-                    namespace: '',
-                    key: 'test'
-                }
-            }));
+            ];
+            spyOn(openmct.objects, 'get').and.returnValue(
+                Promise.resolve({
+                    identifier: {
+                        namespace: '',
+                        key: 'test'
+                    }
+                })
+            );
             spyOnBuiltins(['open']);
             await openInNewTabAction.invoke(mockObjectPath);
         });

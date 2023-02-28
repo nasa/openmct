@@ -34,7 +34,9 @@ const jsonFilePath = 'e2e/test-data/ExampleLayouts.json';
 const imageFilePath = 'e2e/test-data/rick.jpg';
 
 test.describe('Form Validation Behavior', () => {
-    test('Required Field indicators appear if title is empty and can be corrected', async ({ page }) => {
+    test('Required Field indicators appear if title is empty and can be corrected', async ({
+        page
+    }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
@@ -43,21 +45,37 @@ test.describe('Form Validation Behavior', () => {
 
         // Fill in empty string into title and trigger validation with 'Tab'
         await page.click('text=Properties Title Notes >> input[type="text"]');
-        await page.fill('text=Properties Title Notes >> input[type="text"]', '');
-        await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
+        await page.fill(
+            'text=Properties Title Notes >> input[type="text"]',
+            ''
+        );
+        await page.press(
+            'text=Properties Title Notes >> input[type="text"]',
+            'Tab'
+        );
 
         //Required Field Form Validation
         await expect(page.locator('button:has-text("OK")')).toBeDisabled();
-        await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/invalid/);
+        await expect(
+            page.locator('.c-form-row__state-indicator').first()
+        ).toHaveClass(/invalid/);
 
         //Correct Form Validation for missing title and trigger validation with 'Tab'
         await page.click('text=Properties Title Notes >> input[type="text"]');
-        await page.fill('text=Properties Title Notes >> input[type="text"]', TEST_FOLDER);
-        await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
+        await page.fill(
+            'text=Properties Title Notes >> input[type="text"]',
+            TEST_FOLDER
+        );
+        await page.press(
+            'text=Properties Title Notes >> input[type="text"]',
+            'Tab'
+        );
 
         //Required Field Form Validation is corrected
         await expect(page.locator('button:has-text("OK")')).toBeEnabled();
-        await expect(page.locator('.c-form-row__state-indicator').first()).not.toHaveClass(/invalid/);
+        await expect(
+            page.locator('.c-form-row__state-indicator').first()
+        ).not.toHaveClass(/invalid/);
 
         //Finish Creating Domain Object
         await Promise.all([
@@ -66,21 +84,31 @@ test.describe('Form Validation Behavior', () => {
         ]);
 
         //Verify that the Domain Object has been created with the corrected title property
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(TEST_FOLDER);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            TEST_FOLDER
+        );
     });
 });
 
 test.describe('Form File Input Behavior', () => {
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js') });
+        await page.addInitScript({
+            path: path.join(
+                __dirname,
+                '../../helper',
+                'addInitFileInputObject.js'
+            )
+        });
     });
 
     test('Can select a JSON file type', async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         await page.getByRole('button', { name: ' Create ' }).click();
-        await page.getByRole('menuitem', { name: 'JSON File Input Object' }).click();
+        await page
+            .getByRole('menuitem', { name: 'JSON File Input Object' })
+            .click();
 
         await page.setInputFiles('#fileElem', jsonFilePath);
 
@@ -94,7 +122,9 @@ test.describe('Form File Input Behavior', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         await page.getByRole('button', { name: ' Create ' }).click();
-        await page.getByRole('menuitem', { name: 'Image File Input Object' }).click();
+        await page
+            .getByRole('menuitem', { name: 'Image File Input Object' })
+            .click();
 
         await page.setInputFiles('#fileElem', imageFilePath);
 
@@ -109,10 +139,18 @@ test.describe('Persistence operations @addInit', () => {
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
+        await page.addInitScript({
+            path: path.join(
+                __dirname,
+                '../../helper',
+                'addNoneditableObject.js'
+            )
+        });
     });
 
-    test('Persistability should be respected in the create form location field', async ({ page }) => {
+    test('Persistability should be respected in the create form location field', async ({
+        page
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/4323'
@@ -123,7 +161,9 @@ test.describe('Persistence operations @addInit', () => {
 
         await page.click('text=Condition Set');
 
-        await page.locator('form[name="mctForm"] >> text=Persistence Testing').click();
+        await page
+            .locator('form[name="mctForm"] >> text=Persistence Testing')
+            .click();
 
         const okButton = page.locator('button:has-text("OK")');
         await expect(okButton).toBeDisabled();
@@ -132,7 +172,9 @@ test.describe('Persistence operations @addInit', () => {
 
 test.describe('Persistence operations @couchdb', () => {
     test.use({ failOnConsoleError: false });
-    test('Editing object properties should generate a single persistence operation', async ({ page }) => {
+    test('Editing object properties should generate a single persistence operation', async ({
+        page
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5616'
@@ -147,7 +189,7 @@ test.describe('Persistence operations @couchdb', () => {
 
         // Count all persistence operations (PUT requests) for this specific object
         let putRequestCount = 0;
-        page.on('request', req => {
+        page.on('request', (req) => {
             if (req.method() === 'PUT' && req.url().endsWith(clock.uuid)) {
                 putRequestCount += 1;
             }
@@ -158,15 +200,22 @@ test.describe('Persistence operations @couchdb', () => {
         await page.click('li[title="Edit properties of this object."]');
 
         // Modify the display format from default 12hr -> 24hr and click 'Save'
-        await page.locator('select[aria-label="12 or 24 hour clock"]').selectOption({ value: 'clock24' });
+        await page
+            .locator('select[aria-label="12 or 24 hour clock"]')
+            .selectOption({ value: 'clock24' });
         await page.click('button[aria-label="Save"]');
 
-        await expect.poll(() => putRequestCount, {
-            message: 'Verify a single PUT request was made to persist the object',
-            timeout: 1000
-        }).toEqual(1);
+        await expect
+            .poll(() => putRequestCount, {
+                message:
+                    'Verify a single PUT request was made to persist the object',
+                timeout: 1000
+            })
+            .toEqual(1);
     });
-    test('Can create an object after a conflict error @couchdb @2p', async ({ page }) => {
+    test('Can create an object after a conflict error @couchdb @2p', async ({
+        page
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5982'
@@ -193,14 +242,18 @@ test.describe('Persistence operations @couchdb', () => {
         ]);
 
         // Generate unique names for both objects
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        const nameInput2 = page2.locator('form[name="mctForm"] .first input[type="text"]');
+        const nameInput = page.locator(
+            'form[name="mctForm"] .first input[type="text"]'
+        );
+        const nameInput2 = page2.locator(
+            'form[name="mctForm"] .first input[type="text"]'
+        );
 
         // Both pages: Fill in the 'Name' form field.
         await Promise.all([
-            nameInput.fill(""),
+            nameInput.fill(''),
             nameInput.fill(`Clock:${genUuid()}`),
-            nameInput2.fill(""),
+            nameInput2.fill(''),
             nameInput2.fill(`Clock:${genUuid()}`)
         ]);
 
@@ -208,7 +261,9 @@ test.describe('Persistence operations @couchdb', () => {
         // currently running test and its project.
         const testNotes = page.testNotes;
         const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
-        const notesInput2 = page2.locator('form[name="mctForm"] #notes-textarea');
+        const notesInput2 = page2.locator(
+            'form[name="mctForm"] #notes-textarea'
+        );
         await Promise.all([
             notesInput.fill(testNotes),
             notesInput2.fill(testNotes)
@@ -238,9 +293,11 @@ test.describe('Persistence operations @couchdb', () => {
         ]);
 
         // Page 1: Verify that the conflict has occurred and an error notification is displayed.
-        await expect(page.locator('.c-message-banner__message', {
-            hasText: "Conflict detected while saving mine"
-        })).toBeVisible();
+        await expect(
+            page.locator('.c-message-banner__message', {
+                hasText: 'Conflict detected while saving mine'
+            })
+        ).toBeVisible();
 
         // Page 1: Start logging console errors from this point on
         let errors = [];
@@ -256,14 +313,21 @@ test.describe('Persistence operations @couchdb', () => {
         });
 
         // Page 1: Wait for save progress dialog to appear/disappear
-        await page.locator('.c-message-banner__message', {
-            hasText: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
-            state: 'visible'
-        }).waitFor({ state: 'hidden' });
+        await page
+            .locator('.c-message-banner__message', {
+                hasText:
+                    'Do not navigate away from this page or close this browser tab while this message is displayed.',
+                state: 'visible'
+            })
+            .waitFor({ state: 'hidden' });
 
         // Page 1: Navigate to 'My Items' and verify that the second clock was created
         await page.goto('./#/browse/mine');
-        await expect(page.locator(`.c-grid-item__name[title="${clockAfterConflict.name}"]`)).toBeVisible();
+        await expect(
+            page.locator(
+                `.c-grid-item__name[title="${clockAfterConflict.name}"]`
+            )
+        ).toBeVisible();
 
         // Verify no console errors occurred
         expect(errors).toHaveLength(0);
@@ -271,9 +335,24 @@ test.describe('Persistence operations @couchdb', () => {
 });
 
 test.describe('Form Correctness by Object Type', () => {
-    test.fixme('Verify correct behavior of number object (SWG)', async ({page}) => {});
-    test.fixme('Verify correct behavior of number object Timer', async ({page}) => {});
-    test.fixme('Verify correct behavior of number object Plan View', async ({page}) => {});
-    test.fixme('Verify correct behavior of number object Clock', async ({page}) => {});
-    test.fixme('Verify correct behavior of number object Hyperlink', async ({page}) => {});
+    test.fixme(
+        'Verify correct behavior of number object (SWG)',
+        async ({ page }) => {}
+    );
+    test.fixme(
+        'Verify correct behavior of number object Timer',
+        async ({ page }) => {}
+    );
+    test.fixme(
+        'Verify correct behavior of number object Plan View',
+        async ({ page }) => {}
+    );
+    test.fixme(
+        'Verify correct behavior of number object Clock',
+        async ({ page }) => {}
+    );
+    test.fixme(
+        'Verify correct behavior of number object Hyperlink',
+        async ({ page }) => {}
+    );
 });

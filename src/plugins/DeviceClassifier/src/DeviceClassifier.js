@@ -38,7 +38,7 @@
  * @param document the HTML DOM document object
  * @constructor
  */
-import DeviceMatchers from "./DeviceMatchers";
+import DeviceMatchers from './DeviceMatchers';
 
 export default (agent, document) => {
     const body = document.body;
@@ -50,14 +50,14 @@ export default (agent, document) => {
     });
 
     if (agent.isMobile()) {
-        const mediaQuery = window.matchMedia("(orientation: landscape)");
+        const mediaQuery = window.matchMedia('(orientation: landscape)');
         function eventHandler(event) {
             if (event.matches) {
-                body.classList.remove("portrait");
-                body.classList.add("landscape");
+                body.classList.remove('portrait');
+                body.classList.add('landscape');
             } else {
-                body.classList.remove("landscape");
-                body.classList.add("portrait");
+                body.classList.remove('landscape');
+                body.classList.add('portrait');
             }
         }
 

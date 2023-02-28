@@ -29,7 +29,7 @@ describe('the plugin', () => {
 
     let performanceIndicator;
 
-    beforeEach(done => {
+    beforeEach((done) => {
         openmct = createOpenMct();
 
         element = document.createElement('div');
@@ -40,9 +40,11 @@ describe('the plugin', () => {
 
         openmct.on('start', done);
 
-        performanceIndicator = openmct.indicators.indicatorObjects.find(indicator => {
-            return indicator.text && indicator.text() === '~ fps';
-        });
+        performanceIndicator = openmct.indicators.indicatorObjects.find(
+            (indicator) => {
+                return indicator.text && indicator.text() === '~ fps';
+            }
+        );
 
         openmct.startHeadless();
     });
@@ -65,7 +67,7 @@ describe('the plugin', () => {
     function loopForABit() {
         let frames = 0;
 
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             requestAnimationFrame(function loop() {
                 if (++frames > 90) {
                     resolve();

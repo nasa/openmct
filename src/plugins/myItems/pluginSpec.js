@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import {
     createMyItemsIdentifier,
     MY_ITEMS_KEY
@@ -34,7 +31,7 @@ const DEFAULT_NAME = 'My Items';
 const FANCY_NAME = 'Fancy Items';
 const myItemsIdentifier = createMyItemsIdentifier();
 
-describe("the plugin", () => {
+describe('the plugin', () => {
     let openmct;
     let missingObj = {
         identifier: myItemsIdentifier,
@@ -43,7 +40,6 @@ describe("the plugin", () => {
     };
 
     describe('with no arguments passed in', () => {
-
         beforeEach((done) => {
             openmct = createOpenMct();
             openmct.install(openmct.plugins.MyItems());
@@ -61,7 +57,10 @@ describe("the plugin", () => {
             const rootCompostionCollection = openmct.composition.get(root);
             const rootCompostion = await rootCompostionCollection.load();
             let myItems = rootCompostion.filter((domainObject) => {
-                return openmct.objects.areIdsEqual(domainObject.identifier, myItemsIdentifier);
+                return openmct.objects.areIdsEqual(
+                    domainObject.identifier,
+                    myItemsIdentifier
+                );
             })[0];
 
             expect(myItems.name).toBe(DEFAULT_NAME);
@@ -81,22 +80,25 @@ describe("the plugin", () => {
                 };
 
                 activeProvider = mockNotFoundProvider;
-                spyOn(openmct.objects, 'getProvider').and.returnValue(activeProvider);
+                spyOn(openmct.objects, 'getProvider').and.returnValue(
+                    activeProvider
+                );
                 myItemsObject = await openmct.objects.get(myItemsIdentifier);
             });
 
             it('missing objects', () => {
-                let idsMatch = openmct.objects.areIdsEqual(myItemsObject.identifier, myItemsIdentifier);
+                let idsMatch = openmct.objects.areIdsEqual(
+                    myItemsObject.identifier,
+                    myItemsIdentifier
+                );
 
                 expect(myItemsObject).toBeDefined();
                 expect(idsMatch).toBeTrue();
             });
         });
-
     });
 
     describe('with a name argument passed in', () => {
-
         beforeEach((done) => {
             openmct = createOpenMct();
             openmct.install(openmct.plugins.MyItems(FANCY_NAME));
@@ -117,7 +119,5 @@ describe("the plugin", () => {
             expect(myItems.name).toBe(FANCY_NAME);
             expect(myItems).toBeDefined();
         });
-
     });
-
 });

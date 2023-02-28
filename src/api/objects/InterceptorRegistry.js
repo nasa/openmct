@@ -56,19 +56,22 @@ export default class InterceptorRegistry {
      * @memberof module:openmct.InterceptorRegistry#
      */
     getInterceptors(identifier, object) {
-
         function byPriority(interceptorA, interceptorB) {
-            let priorityA = interceptorA.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
-            let priorityB = interceptorB.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
+            let priorityA =
+                interceptorA.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
+            let priorityB =
+                interceptorB.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
 
             return priorityB - priorityA;
         }
 
-        return this.interceptors.filter(interceptor => {
-            return typeof interceptor.appliesTo === 'function'
-                && interceptor.appliesTo(identifier, object);
-        }).sort(byPriority);
+        return this.interceptors
+            .filter((interceptor) => {
+                return (
+                    typeof interceptor.appliesTo === 'function' &&
+                    interceptor.appliesTo(identifier, object)
+                );
+            })
+            .sort(byPriority);
     }
-
 }
-

@@ -4,14 +4,7 @@ define([
     './TestDataItem',
     '../../../utils/template/templateHelpers',
     'lodash'
-], function (
-    eventHelpers,
-    testDataTemplate,
-    TestDataItem,
-    templateHelpers,
-    _
-) {
-
+], function (eventHelpers, testDataTemplate, TestDataItem, templateHelpers, _) {
     /**
      * Controls the input and usage of test data in the summary widget.
      * @constructor
@@ -28,13 +21,18 @@ define([
         this.openmct = openmct;
 
         this.evaluator = this.manager.getEvaluator();
-        this.domElement = templateHelpers.convertTemplateToHTML(testDataTemplate)[0];
+        this.domElement =
+            templateHelpers.convertTemplateToHTML(testDataTemplate)[0];
         this.config = this.domainObject.configuration.testDataConfig;
         this.testCache = {};
 
         this.itemArea = this.domElement.querySelector('.t-test-data-config');
-        this.addItemButton = this.domElement.querySelector('.add-test-condition');
-        this.testDataInput = this.domElement.querySelector('.t-test-data-checkbox');
+        this.addItemButton = this.domElement.querySelector(
+            '.add-test-condition'
+        );
+        this.testDataInput = this.domElement.querySelector(
+            '.t-test-data-checkbox'
+        );
 
         /**
          * Toggles whether the associated {ConditionEvaluator} uses the actual
@@ -81,7 +79,7 @@ define([
         };
         let newItem;
 
-        newItem = (config !== undefined ? config.sourceItem : defaultItem);
+        newItem = config !== undefined ? config.sourceItem : defaultItem;
         if (sourceIndex !== undefined) {
             this.config.splice(sourceIndex + 1, 0, newItem);
         } else {
@@ -140,9 +138,11 @@ define([
 
         self.items = [];
 
-        this.domElement.querySelectorAll('.t-test-data-item').forEach(item => {
-            item.remove();
-        });
+        this.domElement
+            .querySelectorAll('.t-test-data-item')
+            .forEach((item) => {
+                item.remove();
+            });
 
         this.config.forEach(function (item, index) {
             const newItem = new TestDataItem(item, index, self.manager);
@@ -194,7 +194,11 @@ define([
      * Update the domain object configuration associated with this test data manager
      */
     TestDataManager.prototype.updateDomainObject = function () {
-        this.openmct.objects.mutate(this.domainObject, 'configuration.testDataConfig', this.config);
+        this.openmct.objects.mutate(
+            this.domainObject,
+            'configuration.testDataConfig',
+            this.config
+        );
     };
 
     TestDataManager.prototype.destroy = function () {

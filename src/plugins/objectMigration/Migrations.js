@@ -20,20 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'uuid'
-], function (
-    { v4: uuid }
-) {
+define(['uuid'], function ({ v4: uuid }) {
     return function Migrations(openmct) {
         function getColumnNameKeyMap(domainObject) {
             let composition = openmct.composition.get(domainObject);
             if (composition) {
-                return composition.load().then(composees => {
+                return composition.load().then((composees) => {
                     return composees.reduce((nameKeyMap, composee) => {
                         let metadata = openmct.telemetry.getMetadata(composee);
                         if (metadata !== undefined) {
-                            metadata.values().forEach(value => {
+                            metadata.values().forEach((value) => {
                                 nameKeyMap[value.name] = value.key;
                             });
                         }
@@ -47,9 +43,11 @@ define([
         }
 
         function isTelemetry(domainObject) {
-            if (openmct.telemetry.isTelemetryObject(domainObject)
-                && domainObject.type !== 'summary-widget'
-                && domainObject.type !== 'example.imagery') {
+            if (
+                openmct.telemetry.isTelemetryObject(domainObject) &&
+                domainObject.type !== 'summary-widget' &&
+                domainObject.type !== 'example.imagery'
+            ) {
                 return true;
             } else {
                 return false;
@@ -62,7 +60,7 @@ define([
             let panels = migratedObject.configuration.layout.panels;
             let items = [];
 
-            Object.keys(panels).forEach(key => {
+            Object.keys(panels).forEach((key) => {
                 let panel = panels[key];
                 let childDomainObject = childObjects[key];
                 let identifier = undefined;
@@ -78,18 +76,27 @@ define([
                         identifier: identifier,
                         location: childDomainObject.location,
                         name: childDomainObject.name,
-                        type: "telemetry.plot.overlay"
+                        type: 'telemetry.plot.overlay'
                     };
                     let plotType = openmct.types.get('telemetry.plot.overlay');
                     plotType.definition.initialize(plotObject);
                     plotObject.composition.push(childDomainObject.identifier);
                     openmct.objects.mutate(plotObject, 'persisted', Date.now());
 
-                    let keyString = openmct.objects.makeKeyString(childDomainObject.identifier);
-                    let clonedComposition = Object.assign([], migratedObject.composition);
+                    let keyString = openmct.objects.makeKeyString(
+                        childDomainObject.identifier
+                    );
+                    let clonedComposition = Object.assign(
+                        [],
+                        migratedObject.composition
+                    );
                     clonedComposition.forEach((objIdentifier, index) => {
-                        if (openmct.objects.makeKeyString(objIdentifier) === keyString) {
-                            migratedObject.composition[index] = plotObject.identifier;
+                        if (
+                            openmct.objects.makeKeyString(objIdentifier) ===
+                            keyString
+                        ) {
+                            migratedObject.composition[index] =
+                                plotObject.identifier;
                         }
                     });
                 }
@@ -107,21 +114,26 @@ define([
             });
 
             migratedObject.configuration.items = items;
-            migratedObject.configuration.layoutGrid = migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
+            migratedObject.configuration.layoutGrid =
+                migratedObject.layoutGrid || DEFAULT_GRID_SIZE;
             delete migratedObject.layoutGrid;
             delete migratedObject.configuration.layout;
 
             return migratedObject;
         }
 
-        function migrateFixedPositionConfiguration(elements, telemetryObjects, gridSize) {
-            const DEFAULT_STROKE = "transparent";
-            const DEFAULT_SIZE = "13px";
-            const DEFAULT_COLOR = "";
-            const DEFAULT_FILL = "";
+        function migrateFixedPositionConfiguration(
+            elements,
+            telemetryObjects,
+            gridSize
+        ) {
+            const DEFAULT_STROKE = 'transparent';
+            const DEFAULT_SIZE = '13px';
+            const DEFAULT_COLOR = '';
+            const DEFAULT_FILL = '';
             let items = [];
 
-            elements.forEach(element => {
+            elements.forEach((element) => {
                 let item = {
                     x: element.x,
                     y: element.y,
@@ -137,35 +149,37 @@ define([
                     item.height = Math.round(item.height / gridSize[1]);
                 }
 
-                if (element.type === "fixed.telemetry") {
-                    item.type = "telemetry-view";
+                if (element.type === 'fixed.telemetry') {
+                    item.type = 'telemetry-view';
                     item.stroke = element.stroke || DEFAULT_STROKE;
                     item.fill = element.fill || DEFAULT_FILL;
                     item.color = element.color || DEFAULT_COLOR;
                     item.size = element.size || DEFAULT_SIZE;
                     item.identifier = telemetryObjects[element.id].identifier;
                     item.displayMode = element.titled ? 'all' : 'value';
-                    item.value = openmct.telemetry.getMetadata(telemetryObjects[element.id]).getDefaultDisplayValue()?.key;
+                    item.value = openmct.telemetry
+                        .getMetadata(telemetryObjects[element.id])
+                        .getDefaultDisplayValue()?.key;
                 } else if (element.type === 'fixed.box') {
-                    item.type = "box-view";
+                    item.type = 'box-view';
                     item.stroke = element.stroke || DEFAULT_STROKE;
                     item.fill = element.fill || DEFAULT_FILL;
                 } else if (element.type === 'fixed.line') {
-                    item.type = "line-view";
+                    item.type = 'line-view';
                     item.x2 = element.x2;
                     item.y2 = element.y2;
                     item.stroke = element.stroke || DEFAULT_STROKE;
                     delete item.height;
                     delete item.width;
                 } else if (element.type === 'fixed.text') {
-                    item.type = "text-view";
+                    item.type = 'text-view';
                     item.text = element.text;
                     item.stroke = element.stroke || DEFAULT_STROKE;
                     item.fill = element.fill || DEFAULT_FILL;
                     item.color = element.color || DEFAULT_COLOR;
                     item.size = element.size || DEFAULT_SIZE;
                 } else if (element.type === 'fixed.image') {
-                    item.type = "image-view";
+                    item.type = 'image-view';
                     item.url = element.url;
                     item.stroke = element.stroke || DEFAULT_STROKE;
                 }
@@ -179,30 +193,34 @@ define([
         return [
             {
                 check(domainObject) {
-                    return domainObject.type === 'layout'
-                        && domainObject.configuration
-                        && domainObject.configuration.layout;
+                    return (
+                        domainObject.type === 'layout' &&
+                        domainObject.configuration &&
+                        domainObject.configuration.layout
+                    );
                 },
                 migrate(domainObject) {
                     let childObjects = {};
-                    let promises = Object.keys(domainObject.configuration.layout.panels).map(key => {
-                        return openmct.objects.get(key)
-                            .then(object => {
-                                childObjects[key] = object;
-                            });
+                    let promises = Object.keys(
+                        domainObject.configuration.layout.panels
+                    ).map((key) => {
+                        return openmct.objects.get(key).then((object) => {
+                            childObjects[key] = object;
+                        });
                     });
 
-                    return Promise.all(promises)
-                        .then(function () {
-                            return migrateDisplayLayout(domainObject, childObjects);
-                        });
+                    return Promise.all(promises).then(function () {
+                        return migrateDisplayLayout(domainObject, childObjects);
+                    });
                 }
             },
             {
                 check(domainObject) {
-                    return domainObject.type === 'telemetry.fixed'
-                        && domainObject.configuration
-                        && domainObject.configuration['fixed-display'];
+                    return (
+                        domainObject.type === 'telemetry.fixed' &&
+                        domainObject.configuration &&
+                        domainObject.configuration['fixed-display']
+                    );
                 },
                 migrate(domainObject) {
                     const DEFAULT_GRID_SIZE = [64, 16];
@@ -210,7 +228,7 @@ define([
                         identifier: domainObject.identifier,
                         location: domainObject.location,
                         name: domainObject.name,
-                        type: "layout"
+                        type: 'layout'
                     };
                     let gridSize = domainObject.layoutGrid || DEFAULT_GRID_SIZE;
                     let layoutType = openmct.types.get('layout');
@@ -218,12 +236,14 @@ define([
                     newLayoutObject.composition = domainObject.composition;
                     newLayoutObject.configuration.layoutGrid = gridSize;
 
-                    let elements = domainObject.configuration['fixed-display'].elements;
+                    let elements =
+                        domainObject.configuration['fixed-display'].elements;
                     let telemetryObjects = {};
-                    let promises = elements.map(element => {
+                    let promises = elements.map((element) => {
                         if (element.id) {
-                            return openmct.objects.get(element.id)
-                                .then(object => {
+                            return openmct.objects
+                                .get(element.id)
+                                .then((object) => {
                                     telemetryObjects[element.id] = object;
                                 });
                         } else {
@@ -231,40 +251,61 @@ define([
                         }
                     });
 
-                    return Promise.all(promises)
-                        .then(function () {
-                            newLayoutObject.configuration.items =
-                                migrateFixedPositionConfiguration(elements, telemetryObjects, gridSize);
+                    return Promise.all(promises).then(function () {
+                        newLayoutObject.configuration.items =
+                            migrateFixedPositionConfiguration(
+                                elements,
+                                telemetryObjects,
+                                gridSize
+                            );
 
-                            return newLayoutObject;
-                        });
+                        return newLayoutObject;
+                    });
                 }
             },
             {
                 check(domainObject) {
-                    return domainObject.type === 'table'
-                        && domainObject.configuration
-                        && domainObject.configuration.table;
+                    return (
+                        domainObject.type === 'table' &&
+                        domainObject.configuration &&
+                        domainObject.configuration.table
+                    );
                 },
                 migrate(domainObject) {
-                    let currentTableConfiguration = domainObject.configuration.table || {};
-                    let currentColumnConfiguration = currentTableConfiguration.columns || {};
+                    let currentTableConfiguration =
+                        domainObject.configuration.table || {};
+                    let currentColumnConfiguration =
+                        currentTableConfiguration.columns || {};
 
-                    return getColumnNameKeyMap(domainObject).then(nameKeyMap => {
-                        let hiddenColumns = Object.keys(currentColumnConfiguration).filter(columnName => {
-                            return currentColumnConfiguration[columnName] === false;
-                        }).reduce((hiddenColumnsMap, hiddenColumnName) => {
-                            let key = nameKeyMap[hiddenColumnName];
-                            hiddenColumnsMap[key] = true;
+                    return getColumnNameKeyMap(domainObject).then(
+                        (nameKeyMap) => {
+                            let hiddenColumns = Object.keys(
+                                currentColumnConfiguration
+                            )
+                                .filter((columnName) => {
+                                    return (
+                                        currentColumnConfiguration[
+                                            columnName
+                                        ] === false
+                                    );
+                                })
+                                .reduce(
+                                    (hiddenColumnsMap, hiddenColumnName) => {
+                                        let key = nameKeyMap[hiddenColumnName];
+                                        hiddenColumnsMap[key] = true;
 
-                            return hiddenColumnsMap;
-                        }, {});
+                                        return hiddenColumnsMap;
+                                    },
+                                    {}
+                                );
 
-                        domainObject.configuration.hiddenColumns = hiddenColumns;
-                        delete domainObject.configuration.table;
+                            domainObject.configuration.hiddenColumns =
+                                hiddenColumns;
+                            delete domainObject.configuration.table;
 
-                        return domainObject;
-                    });
+                            return domainObject;
+                        }
+                    );
                 }
             }
         ];

@@ -20,13 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './SummaryWidgetRule'
-], function (
-    SummaryWidgetRule
-) {
+define(['./SummaryWidgetRule'], function (SummaryWidgetRule) {
     describe('SummaryWidgetRule', function () {
-
         let rule;
         let telemetryState;
 
@@ -42,13 +37,11 @@ define([
             telemetryState = {
                 objectId: {
                     formats: formatMap,
-                    lastDatum: {
-                    }
+                    lastDatum: {}
                 },
                 otherObjectId: {
                     formats: formatMap,
-                    lastDatum: {
-                    }
+                    lastDatum: {}
                 }
             };
         });
@@ -56,14 +49,14 @@ define([
         it('allows single condition rules with any', function () {
             rule = new SummaryWidgetRule({
                 trigger: 'any',
-                conditions: [{
-                    object: 'objectId',
-                    key: 'raw',
-                    operation: 'greaterThan',
-                    values: [
-                        10
-                    ]
-                }]
+                conditions: [
+                    {
+                        object: 'objectId',
+                        key: 'raw',
+                        operation: 'greaterThan',
+                        values: [10]
+                    }
+                ]
             });
 
             telemetryState.objectId.lastDatum.value = 5;
@@ -75,14 +68,14 @@ define([
         it('allows single condition rules with all', function () {
             rule = new SummaryWidgetRule({
                 trigger: 'all',
-                conditions: [{
-                    object: 'objectId',
-                    key: 'raw',
-                    operation: 'greaterThan',
-                    values: [
-                        10
-                    ]
-                }]
+                conditions: [
+                    {
+                        object: 'objectId',
+                        key: 'raw',
+                        operation: 'greaterThan',
+                        values: [10]
+                    }
+                ]
             });
 
             telemetryState.objectId.lastDatum.value = 5;
@@ -94,21 +87,20 @@ define([
         it('can combine multiple conditions with all', function () {
             rule = new SummaryWidgetRule({
                 trigger: 'all',
-                conditions: [{
-                    object: 'objectId',
-                    key: 'raw',
-                    operation: 'greaterThan',
-                    values: [
-                        10
-                    ]
-                }, {
-                    object: 'otherObjectId',
-                    key: 'raw',
-                    operation: 'greaterThan',
-                    values: [
-                        20
-                    ]
-                }]
+                conditions: [
+                    {
+                        object: 'objectId',
+                        key: 'raw',
+                        operation: 'greaterThan',
+                        values: [10]
+                    },
+                    {
+                        object: 'otherObjectId',
+                        key: 'raw',
+                        operation: 'greaterThan',
+                        values: [20]
+                    }
+                ]
             });
 
             telemetryState.objectId.lastDatum.value = 5;
@@ -123,27 +115,25 @@ define([
             telemetryState.objectId.lastDatum.value = 15;
             telemetryState.otherObjectId.lastDatum.value = 25;
             expect(rule.evaluate(telemetryState)).toBe(true);
-
         });
 
         it('can combine multiple conditions with any', function () {
             rule = new SummaryWidgetRule({
                 trigger: 'any',
-                conditions: [{
-                    object: 'objectId',
-                    key: 'raw',
-                    operation: 'greaterThan',
-                    values: [
-                        10
-                    ]
-                }, {
-                    object: 'otherObjectId',
-                    key: 'raw',
-                    operation: 'greaterThan',
-                    values: [
-                        20
-                    ]
-                }]
+                conditions: [
+                    {
+                        object: 'objectId',
+                        key: 'raw',
+                        operation: 'greaterThan',
+                        values: [10]
+                    },
+                    {
+                        object: 'otherObjectId',
+                        key: 'raw',
+                        operation: 'greaterThan',
+                        values: [20]
+                    }
+                ]
             });
 
             telemetryState.objectId.lastDatum.value = 5;

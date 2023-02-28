@@ -1,11 +1,4 @@
-define([
-    './Select',
-    '../eventHelpers'
-], function (
-    Select,
-    eventHelpers
-) {
-
+define(['./Select', '../eventHelpers'], function (Select, eventHelpers) {
     /**
      * Create a {Select} element whose composition is dynamically updated with
      * the operations applying to a particular telemetry property
@@ -64,7 +57,12 @@ define([
          * @private
          */
         function onMetadataLoad() {
-            if (self.manager.getTelemetryPropertyType(self.config.object, self.config.key)) {
+            if (
+                self.manager.getTelemetryPropertyType(
+                    self.config.object,
+                    self.config.key
+                )
+            ) {
                 self.loadOptions(self.config.key);
                 self.generateOptions();
             }
@@ -124,5 +122,4 @@ define([
     };
 
     return OperationSelect;
-
 });

@@ -24,12 +24,11 @@ export default class RemoveAction {
     #transaction;
 
     constructor(openmct) {
-
         this.name = 'Remove';
         this.key = 'remove';
         this.description = 'Remove this object from its containing object.';
-        this.cssClass = "icon-trash";
-        this.group = "action";
+        this.cssClass = 'icon-trash';
+        this.group = 'action';
         this.priority = 1;
 
         this.openmct = openmct;
@@ -60,7 +59,8 @@ export default class RemoveAction {
             let dialog = this.openmct.overlays.dialog({
                 title: `Remove ${object.name}`,
                 iconClass: 'alert',
-                message: 'Warning! This action will remove this object. Are you sure you want to continue?',
+                message:
+                    'Warning! This action will remove this object. Are you sure you want to continue?',
                 buttons: [
                     {
                         label: 'OK',
@@ -82,14 +82,21 @@ export default class RemoveAction {
     }
 
     inNavigationPath(object) {
-        return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+        return this.openmct.router.path.some((objectInPath) =>
+            this.openmct.objects.areIdsEqual(
+                objectInPath.identifier,
+                object.identifier
+            )
+        );
     }
 
     navigateTo(objectPath) {
-        let urlPath = objectPath.reverse()
-            .map(object => this.openmct.objects.makeKeyString(object.identifier))
-            .join("/");
+        let urlPath = objectPath
+            .reverse()
+            .map((object) =>
+                this.openmct.objects.makeKeyString(object.identifier)
+            )
+            .join('/');
 
         this.openmct.router.navigate('#/browse/' + urlPath);
     }
@@ -117,7 +124,9 @@ export default class RemoveAction {
             return false;
         }
 
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+        const parentKeyString = this.openmct.objects.makeKeyString(
+            parent.identifier
+        );
         const childLocation = child.location;
 
         return childLocation !== parentKeyString;
@@ -129,7 +138,9 @@ export default class RemoveAction {
         const child = objectPath[0];
         const locked = child.locked ? child.locked : parent && parent.locked;
         const isEditing = this.openmct.editor.isEditing();
-        const isPersistable = this.openmct.objects.isPersistable(child.identifier);
+        const isPersistable = this.openmct.objects.isPersistable(
+            child.identifier
+        );
         const isAlias = this.isAlias(child, parent);
 
         if (locked || (!isPersistable && !isAlias)) {
@@ -142,9 +153,11 @@ export default class RemoveAction {
             }
         }
 
-        return parentType
-            && parentType.definition.creatable
-            && Array.isArray(parent.composition);
+        return (
+            parentType &&
+            parentType.definition.creatable &&
+            Array.isArray(parent.composition)
+        );
     }
 
     startTransaction() {

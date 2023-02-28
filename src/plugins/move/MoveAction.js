@@ -23,9 +23,10 @@ export default class MoveAction {
     constructor(openmct) {
         this.name = 'Move';
         this.key = 'move';
-        this.description = 'Move this object from its containing object to another object.';
-        this.cssClass = "icon-move";
-        this.group = "action";
+        this.description =
+            'Move this object from its containing object to another object.';
+        this.cssClass = 'icon-move';
+        this.group = 'action';
         this.priority = 7;
 
         this.openmct = openmct;
@@ -40,20 +41,29 @@ export default class MoveAction {
     }
 
     inNavigationPath() {
-        return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
+        return this.openmct.router.path.some((objectInPath) =>
+            this.openmct.objects.areIdsEqual(
+                objectInPath.identifier,
+                this.object.identifier
+            )
+        );
     }
 
     navigateTo(objectPath) {
-        let urlPath = objectPath.reverse()
-            .map(object => this.openmct.objects.makeKeyString(object.identifier))
-            .join("/");
+        let urlPath = objectPath
+            .reverse()
+            .map((object) =>
+                this.openmct.objects.makeKeyString(object.identifier)
+            )
+            .join('/');
 
         this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
     addToNewParent(child, newParent) {
-        let newParentKeyString = this.openmct.objects.makeKeyString(newParent.identifier);
+        let newParentKeyString = this.openmct.objects.makeKeyString(
+            newParent.identifier
+        );
         let compositionCollection = this.openmct.composition.get(newParent);
 
         this.openmct.objects.mutate(child, 'location', newParentKeyString);
@@ -71,13 +81,20 @@ export default class MoveAction {
         const parentDomainObjectpath = changes.location || [this.parent];
         const parent = parentDomainObjectpath[0];
 
-        if (this.openmct.objects.areIdsEqual(parent.identifier, this.oldParent.identifier)) {
-            this.openmct.notifications.error(`Error: new location cant not be same as old`);
+        if (
+            this.openmct.objects.areIdsEqual(
+                parent.identifier,
+                this.oldParent.identifier
+            )
+        ) {
+            this.openmct.notifications.error(
+                `Error: new location cant not be same as old`
+            );
 
             return;
         }
 
-        if (changes.name && (changes.name !== this.object.name)) {
+        if (changes.name && changes.name !== this.object.name) {
             this.object.name = changes.name;
         }
 
@@ -92,9 +109,13 @@ export default class MoveAction {
 
         let newObjectPath;
         if (parentDomainObjectpath) {
-            newObjectPath = parentDomainObjectpath && [this.object].concat(parentDomainObjectpath);
+            newObjectPath =
+                parentDomainObjectpath &&
+                [this.object].concat(parentDomainObjectpath);
         } else {
-            newObjectPath = await this.openmct.objects.getOriginalPath(this.object.identifier);
+            newObjectPath = await this.openmct.objects.getOriginalPath(
+                this.object.identifier
+            );
             let root = await this.openmct.objects.getRoot();
             let rootChildCount = root.composition.length;
 
@@ -108,29 +129,31 @@ export default class MoveAction {
     }
 
     removeFromOldParent(child) {
-        let compositionCollection = this.openmct.composition.get(this.oldParent);
+        let compositionCollection = this.openmct.composition.get(
+            this.oldParent
+        );
 
         compositionCollection.remove(child);
     }
 
     showForm(domainObject, parentDomainObject) {
         const formStructure = {
-            title: "Move Item",
+            title: 'Move Item',
             sections: [
                 {
                     rows: [
                         {
-                            key: "name",
-                            control: "textfield",
-                            name: "Title",
-                            pattern: "\\S+",
+                            key: 'name',
+                            control: 'textfield',
+                            name: 'Title',
+                            pattern: '\\S+',
                             required: true,
-                            cssClass: "l-input-lg",
+                            cssClass: 'l-input-lg',
                             value: domainObject.name
                         },
                         {
-                            name: "Location",
-                            control: "locator",
+                            name: 'Location',
+                            control: 'locator',
                             parent: parentDomainObject,
                             required: true,
                             validate: this.validate(parentDomainObject),
@@ -141,8 +164,7 @@ export default class MoveAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure)
-            .then(this.onSave.bind(this));
+        this.openmct.forms.showForm(formStructure).then(this.onSave.bind(this));
     }
 
     validate(currentParent) {
@@ -151,29 +173,52 @@ export default class MoveAction {
             const parentCandidate = parentCandidatePath[0];
 
             // check if moving to same place
-            if (this.openmct.objects.areIdsEqual(parentCandidate.identifier, currentParent.identifier)) {
+            if (
+                this.openmct.objects.areIdsEqual(
+                    parentCandidate.identifier,
+                    currentParent.identifier
+                )
+            ) {
                 return false;
             }
 
             // check if moving to a child
-            if (parentCandidatePath.some(candidatePath => {
-                return this.openmct.objects.areIdsEqual(candidatePath.identifier, this.object.identifier);
-            })) {
+            if (
+                parentCandidatePath.some((candidatePath) => {
+                    return this.openmct.objects.areIdsEqual(
+                        candidatePath.identifier,
+                        this.object.identifier
+                    );
+                })
+            ) {
                 return false;
             }
 
-            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+            if (
+                !this.openmct.objects.isPersistable(parentCandidate.identifier)
+            ) {
                 return false;
             }
 
-            let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+            let objectKeystring = this.openmct.objects.makeKeyString(
+                this.object.identifier
+            );
 
             const parentCandidateComposition = parentCandidate.composition;
-            if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
+            if (
+                parentCandidateComposition &&
+                parentCandidateComposition.indexOf(objectKeystring) !== -1
+            ) {
                 return false;
             }
 
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
+            return (
+                parentCandidate &&
+                this.openmct.composition.checkPolicy(
+                    parentCandidate,
+                    this.object
+                )
+            );
         };
     }
 
@@ -182,17 +227,21 @@ export default class MoveAction {
         let parentType = parent && this.openmct.types.get(parent.type);
         let child = objectPath[0];
         let childType = child && this.openmct.types.get(child.type);
-        let isPersistable = this.openmct.objects.isPersistable(child.identifier);
+        let isPersistable = this.openmct.objects.isPersistable(
+            child.identifier
+        );
 
         if (child.locked || (parent && parent.locked) || !isPersistable) {
             return false;
         }
 
-        return parentType
-            && parentType.definition.creatable
-            && childType
-            && childType.definition.creatable
-            && Array.isArray(parent.composition);
+        return (
+            parentType &&
+            parentType.definition.creatable &&
+            childType &&
+            childType.definition.creatable &&
+            Array.isArray(parent.composition)
+        );
     }
 
     startTransaction() {

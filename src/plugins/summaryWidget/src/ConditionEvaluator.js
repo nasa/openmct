@@ -1,5 +1,4 @@
 define([], function () {
-
     /**
      * Responsible for maintaining the possible operations for conditions
      * in this widget, and evaluating the boolean value of conditions passed as
@@ -274,9 +273,14 @@ define([], function () {
                     conditionValue = false;
                     Object.keys(compositionObjs).forEach(function (objId) {
                         try {
-                            conditionValue = conditionValue
-                                || self.executeCondition(objId, condition.key,
-                                    condition.operation, condition.values);
+                            conditionValue =
+                                conditionValue ||
+                                self.executeCondition(
+                                    objId,
+                                    condition.key,
+                                    condition.operation,
+                                    condition.values
+                                );
                             conditionDefined = true;
                         } catch (e) {
                             //ignore a malformed condition
@@ -286,9 +290,14 @@ define([], function () {
                     conditionValue = true;
                     Object.keys(compositionObjs).forEach(function (objId) {
                         try {
-                            conditionValue = conditionValue
-                                && self.executeCondition(objId, condition.key,
-                                    condition.operation, condition.values);
+                            conditionValue =
+                                conditionValue &&
+                                self.executeCondition(
+                                    objId,
+                                    condition.key,
+                                    condition.operation,
+                                    condition.values
+                                );
                             conditionDefined = true;
                         } catch (e) {
                             //ignore a malformed condition
@@ -296,8 +305,12 @@ define([], function () {
                     });
                 } else {
                     try {
-                        conditionValue = self.executeCondition(condition.object, condition.key,
-                            condition.operation, condition.values);
+                        conditionValue = self.executeCondition(
+                            condition.object,
+                            condition.key,
+                            condition.operation,
+                            condition.values
+                        );
                         conditionDefined = true;
                     } catch (e) {
                         //ignore malformed condition
@@ -305,7 +318,8 @@ define([], function () {
                 }
 
                 if (conditionDefined) {
-                    active = (mode === 'all' && !firstRuleEvaluated ? true : active);
+                    active =
+                        mode === 'all' && !firstRuleEvaluated ? true : active;
                     firstRuleEvaluated = true;
                     if (mode === 'any') {
                         active = active || conditionValue;
@@ -327,8 +341,15 @@ define([], function () {
      * @param {string} values An array of comparison values to invoke the operation with
      * @return {boolean} The value of this condition
      */
-    ConditionEvaluator.prototype.executeCondition = function (object, key, operation, values) {
-        const cache = (this.useTestCache ? this.testCache : this.subscriptionCache);
+    ConditionEvaluator.prototype.executeCondition = function (
+        object,
+        key,
+        operation,
+        values
+    ) {
+        const cache = this.useTestCache
+            ? this.testCache
+            : this.subscriptionCache;
         let telemetryValue;
         let op;
         let input;
@@ -341,11 +362,16 @@ define([], function () {
 
         op = this.operations[operation] && this.operations[operation].operation;
         input = telemetryValue && telemetryValue.concat(values);
-        validator = op && this.inputValidators[this.operations[operation].appliesTo[0]];
+        validator =
+            op && this.inputValidators[this.operations[operation].appliesTo[0]];
 
         if (op && input && validator) {
             if (this.operations[operation].appliesTo.length > 1) {
-                return (this.validateNumberInput(input) || this.validateStringInput(input)) && op(input);
+                return (
+                    (this.validateNumberInput(input) ||
+                        this.validateStringInput(input)) &&
+                    op(input)
+                );
             } else {
                 return validator(input) && op(input);
             }
@@ -363,7 +389,7 @@ define([], function () {
     ConditionEvaluator.prototype.validateNumberInput = function (input) {
         let valid = true;
         input.forEach(function (value) {
-            valid = valid && (typeof value === 'number');
+            valid = valid && typeof value === 'number';
         });
 
         return valid;
@@ -378,7 +404,7 @@ define([], function () {
     ConditionEvaluator.prototype.validateStringInput = function (input) {
         let valid = true;
         input.forEach(function (value) {
-            valid = valid && (typeof value === 'string');
+            valid = valid && typeof value === 'string';
         });
 
         return valid;
@@ -408,7 +434,7 @@ define([], function () {
      * @returns {boolean} True if the condition applies, false otherwise
      */
     ConditionEvaluator.prototype.operationAppliesTo = function (key, type) {
-        return (this.operations[key].appliesTo.includes(type));
+        return this.operations[key].appliesTo.includes(type);
     };
 
     /**
@@ -429,7 +455,10 @@ define([], function () {
      *                  of the operation
      * @return {string} A text description of this operation
      */
-    ConditionEvaluator.prototype.getOperationDescription = function (key, values) {
+    ConditionEvaluator.prototype.getOperationDescription = function (
+        key,
+        values
+    ) {
         if (this.operations[key]) {
             return this.operations[key].getDescription(values);
         }

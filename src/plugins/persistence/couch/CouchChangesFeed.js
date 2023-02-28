@@ -27,7 +27,10 @@
 
                 connected = false;
                 // stop listening for events
-                couchEventSource.removeEventListener('message', self.onCouchMessage);
+                couchEventSource.removeEventListener(
+                    'message',
+                    self.onCouchMessage
+                );
                 couchEventSource.close();
                 console.debug('🚪 Closed couch connection 🚪');
 
@@ -79,7 +82,10 @@
          */
         keepAliveTimer = setTimeout(self.listenForChanges, keepAliveTime);
 
-        if (!couchEventSource || couchEventSource.readyState === EventSource.CLOSED) {
+        if (
+            !couchEventSource ||
+            couchEventSource.readyState === EventSource.CLOSED
+        ) {
             console.debug('⇿ Opening CouchDB change feed connection ⇿');
             couchEventSource = new EventSource(changesFeedUrl);
             couchEventSource.onerror = self.onerror;
@@ -99,23 +105,26 @@
             state: 'pending'
         };
         switch (readyState) {
-        case EventSource.CONNECTING:
-            message.state = 'pending';
-            break;
-        case EventSource.OPEN:
-            message.state = 'open';
-            break;
-        case EventSource.CLOSED:
-            message.state = 'close';
-            break;
-        default:
-            message.state = 'unknown';
-            console.error('🚨 Received unexpected readyState value from CouchDB EventSource feed: 🚨', readyState);
-            break;
+            case EventSource.CONNECTING:
+                message.state = 'pending';
+                break;
+            case EventSource.OPEN:
+                message.state = 'open';
+                break;
+            case EventSource.CLOSED:
+                message.state = 'close';
+                break;
+            default:
+                message.state = 'unknown';
+                console.error(
+                    '🚨 Received unexpected readyState value from CouchDB EventSource feed: 🚨',
+                    readyState
+                );
+                break;
         }
 
         connections.forEach(function (connection) {
             connection.postMessage(message);
         });
     };
-}());
+})();

@@ -45,12 +45,15 @@ define([
             items: [],
             columns: [],
             width: INITIAL_COLUMN_WIDTH,
-            filter: "",
-            updated: "No updates",
+            filter: '',
+            updated: 'No updates',
             rowCount: 1
         };
-        const controller =
-            new AutoflowTabularController(domainObject, data, openmct);
+        const controller = new AutoflowTabularController(
+            domainObject,
+            data,
+            openmct
+        );
         let interval;
 
         VueView.call(this, {
@@ -58,17 +61,21 @@ define([
             methods: {
                 increaseColumnWidth: function () {
                     data.width += COLUMN_WIDTH_STEP;
-                    data.width = data.width > MAX_COLUMN_WIDTH
-                        ? INITIAL_COLUMN_WIDTH : data.width;
+                    data.width =
+                        data.width > MAX_COLUMN_WIDTH
+                            ? INITIAL_COLUMN_WIDTH
+                            : data.width;
                 },
                 reflow: function () {
                     let column = [];
                     let index = 0;
-                    const filteredItems =
-                        data.items.filter(function (item) {
-                            return item.name.toLowerCase()
-                                .indexOf(data.filter.toLowerCase()) !== -1;
-                        });
+                    const filteredItems = data.items.filter(function (item) {
+                        return (
+                            item.name
+                                .toLowerCase()
+                                .indexOf(data.filter.toLowerCase()) !== -1
+                        );
+                    });
 
                     data.columns = [];
 
@@ -108,7 +115,10 @@ define([
                     const tabularArea = this.$refs.autoflowItems;
                     const height = tabularArea ? tabularArea.clientHeight : 0;
                     const available = height - SLIDER_HEIGHT;
-                    const rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
+                    const rows = Math.max(
+                        1,
+                        Math.floor(available / ROW_HEIGHT)
+                    );
                     data.rowCount = rows;
                 }.bind(this);
 
@@ -122,4 +132,3 @@ define([
 
     return AutoflowTabularView;
 });
-

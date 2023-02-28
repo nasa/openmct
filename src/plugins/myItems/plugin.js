@@ -20,12 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createMyItemsIdentifier } from "./createMyItemsIdentifier";
-import myItemsInterceptor from "./myItemsInterceptor";
+import { createMyItemsIdentifier } from './createMyItemsIdentifier';
+import myItemsInterceptor from './myItemsInterceptor';
 
 const MY_ITEMS_DEFAULT_NAME = 'My Items';
 
-export default function MyItemsPlugin(name = MY_ITEMS_DEFAULT_NAME, namespace = '', priority = undefined) {
+export default function MyItemsPlugin(
+    name = MY_ITEMS_DEFAULT_NAME,
+    namespace = '',
+    priority = undefined
+) {
     return function install(openmct) {
         const identifier = createMyItemsIdentifier(namespace);
 
@@ -33,7 +37,9 @@ export default function MyItemsPlugin(name = MY_ITEMS_DEFAULT_NAME, namespace = 
             priority = openmct.priority.LOW;
         }
 
-        openmct.objects.addGetInterceptor(myItemsInterceptor(openmct, identifier, name));
+        openmct.objects.addGetInterceptor(
+            myItemsInterceptor(openmct, identifier, name)
+        );
         openmct.objects.addRoot(identifier, priority);
     };
 }

@@ -42,7 +42,7 @@ export default class CreateWizard {
             value: this.domainObject.notes
         };
 
-        sections.forEach(section => {
+        sections.forEach((section) => {
             if (section.name !== 'Properties') {
                 return;
             }
@@ -62,7 +62,7 @@ export default class CreateWizard {
             value: this.domainObject.name
         };
 
-        sections.forEach(section => {
+        sections.forEach((section) => {
             if (section.name !== 'Properties') {
                 return;
             }
@@ -87,15 +87,17 @@ export default class CreateWizard {
 
         sections.push({
             name: 'Properties',
-            rows: this.properties.map(property => {
-                const row = JSON.parse(JSON.stringify(property));
-                row.value = this.getValue(row);
-                if (property.validate) {
-                    row.validate = property.validate;
-                }
+            rows: this.properties
+                .map((property) => {
+                    const row = JSON.parse(JSON.stringify(property));
+                    row.value = this.getValue(row);
+                    if (property.validate) {
+                        row.validate = property.validate;
+                    }
 
-                return row;
-            }).filter(row => row && row.control)
+                    return row;
+                })
+                .filter((row) => row && row.control)
         });
 
         this.addNotes(sections);
@@ -104,8 +106,13 @@ export default class CreateWizard {
         // Ensure there is always a 'save in' section
         if (includeLocation) {
             function validateLocation(data) {
-                const policyCheck = self.openmct.composition.checkPolicy(data.value[0], domainObject);
-                const parentIsPersistable = self.openmct.objects.isPersistable(data.value[0].identifier);
+                const policyCheck = self.openmct.composition.checkPolicy(
+                    data.value[0],
+                    domainObject
+                );
+                const parentIsPersistable = self.openmct.objects.isPersistable(
+                    data.value[0].identifier
+                );
 
                 return policyCheck && parentIsPersistable;
             }
@@ -113,16 +120,18 @@ export default class CreateWizard {
             sections.push({
                 name: 'Location',
                 cssClass: 'grows',
-                rows: [{
-                    name: 'Save In',
-                    cssClass: 'grows',
-                    control: 'locator',
-                    domainObject,
-                    required: true,
-                    parent: this.parent,
-                    validate: validateLocation.bind(this),
-                    key: 'location'
-                }]
+                rows: [
+                    {
+                        name: 'Save In',
+                        cssClass: 'grows',
+                        control: 'locator',
+                        domainObject,
+                        required: true,
+                        parent: this.parent,
+                        validate: validateLocation.bind(this),
+                        key: 'location'
+                    }
+                ]
             });
         }
 
@@ -133,7 +142,10 @@ export default class CreateWizard {
 
     getValue(row) {
         if (row.property) {
-            return row.property.reduce((acc, property) => acc && acc[property], this.domainObject);
+            return row.property.reduce(
+                (acc, property) => acc && acc[property],
+                this.domainObject
+            );
         } else {
             return this.domainObject[row.key];
         }

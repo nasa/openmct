@@ -31,7 +31,6 @@ define([
     TelemetryTableConfiguration,
     Vue
 ) {
-
     function TableConfigurationViewProvider(openmct) {
         return {
             key: 'table-configuration',
@@ -48,20 +47,25 @@ define([
             view: function (selection) {
                 let component;
                 let domainObject = selection[0][0].context.item;
-                let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+                let tableConfiguration = new TelemetryTableConfiguration(
+                    domainObject,
+                    openmct
+                );
 
                 return {
                     show: function (element) {
                         component = new Vue({
                             el: element,
                             components: {
-                                TableConfiguration: TableConfigurationComponent.default
+                                TableConfiguration:
+                                    TableConfigurationComponent.default
                             },
                             provide: {
                                 openmct,
                                 tableConfiguration
                             },
-                            template: '<table-configuration></table-configuration>'
+                            template:
+                                '<table-configuration></table-configuration>'
                         });
                     },
                     destroy: function () {

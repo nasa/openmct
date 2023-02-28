@@ -42,7 +42,8 @@ export default class PollQuestionIndicator extends AbstractStatusIndicator {
                     positionY: 0
                 };
             },
-            template: '<poll-question :positionX="positionX" :positionY="positionY" />'
+            template:
+                '<poll-question :positionX="positionX" :positionY="positionY" />'
         }).$mount();
 
         return pollQuestionElement;
@@ -51,11 +52,13 @@ export default class PollQuestionIndicator extends AbstractStatusIndicator {
     createIndicator() {
         const pollQuestionIndicator = this.openmct.indicators.simpleIndicator();
 
-        pollQuestionIndicator.text("No Poll Question");
-        pollQuestionIndicator.description("Set the current poll question");
+        pollQuestionIndicator.text('No Poll Question');
+        pollQuestionIndicator.description('Set the current poll question');
         pollQuestionIndicator.iconClass('icon-status-poll-edit');
-        pollQuestionIndicator.element.classList.add("c-indicator--operator-status");
-        pollQuestionIndicator.element.classList.add("no-minify");
+        pollQuestionIndicator.element.classList.add(
+            'c-indicator--operator-status'
+        );
+        pollQuestionIndicator.element.classList.add('no-minify');
         pollQuestionIndicator.on('click', this.showPopup);
 
         return pollQuestionIndicator;

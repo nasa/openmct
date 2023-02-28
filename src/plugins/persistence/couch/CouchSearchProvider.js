@@ -31,7 +31,11 @@ class CouchSearchProvider {
     constructor(couchObjectProvider) {
         this.couchObjectProvider = couchObjectProvider;
         this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
-        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.TAGS];
+        this.supportedSearchTypes = [
+            this.searchTypes.OBJECTS,
+            this.searchTypes.ANNOTATIONS,
+            this.searchTypes.TAGS
+        ];
     }
 
     supportsSearchType(searchType) {
@@ -52,10 +56,10 @@ class CouchSearchProvider {
 
     searchForObjects(query, abortSignal) {
         const filter = {
-            "selector": {
-                "model": {
-                    "name": {
-                        "$regex": `(?i)${query}`
+            selector: {
+                model: {
+                    name: {
+                        $regex: `(?i)${query}`
                     }
                 }
             }
@@ -66,24 +70,23 @@ class CouchSearchProvider {
 
     searchForAnnotations(keyString, abortSignal) {
         const filter = {
-            "selector": {
-                "$and": [
+            selector: {
+                $and: [
                     {
-                        "model": {
-                            "targets": {
-                            }
+                        model: {
+                            targets: {}
                         }
                     },
                     {
-                        "model.type": {
-                            "$eq": "annotation"
+                        'model.type': {
+                            $eq: 'annotation'
                         }
                     }
                 ]
             }
         };
         filter.selector.$and[0].model.targets[keyString] = {
-            "$exists": true
+            $exists: true
         };
 
         return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
@@ -95,32 +98,30 @@ class CouchSearchProvider {
         }
 
         const filter = {
-            "selector": {
-                "$and": [
+            selector: {
+                $and: [
                     {
-                        "model.tags": {
-                            "$elemMatch": {
-                                "$or": [
-                                ]
+                        'model.tags': {
+                            $elemMatch: {
+                                $or: []
                             }
                         }
                     },
                     {
-                        "model.type": {
-                            "$eq": "annotation"
+                        'model.type': {
+                            $eq: 'annotation'
                         }
                     }
                 ]
             }
         };
-        tagsArray.forEach(tag => {
-            filter.selector.$and[0]["model.tags"].$elemMatch.$or.push({
-                "$eq": `${tag}`
+        tagsArray.forEach((tag) => {
+            filter.selector.$and[0]['model.tags'].$elemMatch.$or.push({
+                $eq: `${tag}`
             });
         });
 
         return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
     }
-
 }
 export default CouchSearchProvider;

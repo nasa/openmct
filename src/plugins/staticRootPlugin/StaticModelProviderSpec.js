@@ -24,7 +24,6 @@ import testStaticData from './static-provider-test.json';
 import StaticModelProvider from './StaticModelProvider';
 
 describe('StaticModelProvider', function () {
-
     let staticProvider;
 
     beforeEach(function () {
@@ -133,17 +132,25 @@ describe('StaticModelProvider', function () {
         });
 
         it('rewrites matched identifiers in objects', function () {
-            expect(layout.configuration.layout.panels['my-import:1'])
-                .toBeDefined();
-            expect(layout.configuration.layout.panels['my-import:3'])
-                .toBeDefined();
-            expect(layout.configuration.layout.panels['483c00d4-bb1d-4b42-b29a-c58e06b322a0'])
-                .not.toBeDefined();
-            expect(layout.configuration.layout.panels['20273193-f069-49e9-b4f7-b97a87ed755d'])
-                .not.toBeDefined();
-            expect(fixed.configuration['fixed-display'].elements[0].id)
-                .toBe('my-import:1');
+            expect(
+                layout.configuration.layout.panels['my-import:1']
+            ).toBeDefined();
+            expect(
+                layout.configuration.layout.panels['my-import:3']
+            ).toBeDefined();
+            expect(
+                layout.configuration.layout.panels[
+                    '483c00d4-bb1d-4b42-b29a-c58e06b322a0'
+                ]
+            ).not.toBeDefined();
+            expect(
+                layout.configuration.layout.panels[
+                    '20273193-f069-49e9-b4f7-b97a87ed755d'
+                ]
+            ).not.toBeDefined();
+            expect(fixed.configuration['fixed-display'].elements[0].id).toBe(
+                'my-import:1'
+            );
         });
-
     });
 });

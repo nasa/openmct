@@ -37,7 +37,7 @@ export default function PerformanceIndicator() {
 
         function incremementFrames() {
             let now = performance.now();
-            if ((now - lastCalculated) < 1000) {
+            if (now - lastCalculated < 1000) {
                 frames++;
             } else {
                 updateFPS(frames);

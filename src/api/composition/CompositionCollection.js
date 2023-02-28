@@ -89,7 +89,7 @@ export default class CompositionCollection {
         if (this.domainObject.isMutable) {
             this.returnMutables = true;
             let unobserve = this.domainObject.$on('$_destroy', () => {
-                Object.values(this.#mutables).forEach(mutable => {
+                Object.values(this.#mutables).forEach((mutable) => {
                     this.#publicAPI.objects.destroyMutable(mutable);
                 });
                 unobserve();
@@ -156,7 +156,7 @@ export default class CompositionCollection {
             throw new Error('Event not supported by composition: ' + event);
         }
 
-        const index = this.#listeners[event].findIndex(l => {
+        const index = this.#listeners[event].findIndex((l) => {
             return l.callback === callback && l.context === context;
         });
 
@@ -211,14 +211,24 @@ export default class CompositionCollection {
      */
     add(child, skipMutate) {
         if (!skipMutate) {
-            if (!this.#publicAPI.composition.checkPolicy(this.domainObject, child)) {
+            if (
+                !this.#publicAPI.composition.checkPolicy(
+                    this.domainObject,
+                    child
+                )
+            ) {
                 throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
             }
 
             this.#provider.add(this.domainObject, child.identifier);
         } else {
-            if (this.returnMutables && this.#publicAPI.objects.supportsMutation(child.identifier)) {
-                let keyString = this.#publicAPI.objects.makeKeyString(child.identifier);
+            if (
+                this.returnMutables &&
+                this.#publicAPI.objects.supportsMutation(child.identifier)
+            ) {
+                let keyString = this.#publicAPI.objects.makeKeyString(
+                    child.identifier
+                );
 
                 child = this.#publicAPI.objects.toMutable(child);
                 this.#mutables[keyString] = child;
@@ -239,8 +249,10 @@ export default class CompositionCollection {
     async load(abortSignal) {
         this.#cleanUpMutables();
         const children = await this.#provider.load(this.domainObject);
-        const childObjects = await Promise.all(children.map((c) => this.#publicAPI.objects.get(c, abortSignal)));
-        childObjects.forEach(c => this.add(c, true));
+        const childObjects = await Promise.all(
+            children.map((c) => this.#publicAPI.objects.get(c, abortSignal))
+        );
+        childObjects.forEach((c) => this.add(c, true));
         this.#emit('load');
 
         return childObjects;
@@ -265,8 +277,13 @@ export default class CompositionCollection {
         } else {
             if (this.returnMutables) {
                 let keyString = this.#publicAPI.objects.makeKeyString(child);
-                if (this.#mutables[keyString] !== undefined && this.#mutables[keyString].isMutable) {
-                    this.#publicAPI.objects.destroyMutable(this.#mutables[keyString]);
+                if (
+                    this.#mutables[keyString] !== undefined &&
+                    this.#mutables[keyString].isMutable
+                ) {
+                    this.#publicAPI.objects.destroyMutable(
+                        this.#mutables[keyString]
+                    );
                     delete this.#mutables[keyString];
                 }
             }
@@ -312,11 +329,13 @@ export default class CompositionCollection {
      * @returns {DomainObject}
      */
     #onProviderAdd(childId) {
-        return this.#publicAPI.objects.get(childId).then(function (child) {
-            this.add(child, true);
+        return this.#publicAPI.objects.get(childId).then(
+            function (child) {
+                this.add(child, true);
 
-            return child;
-        }.bind(this));
+                return child;
+            }.bind(this)
+        );
     }
 
     /**
@@ -349,7 +368,7 @@ export default class CompositionCollection {
      * @private
      */
     #cleanUpMutables() {
-        Object.values(this.#mutables).forEach(mutable => {
+        Object.values(this.#mutables).forEach((mutable) => {
             this.#publicAPI.objects.destroyMutable(mutable);
         });
     }

@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from "EventEmitter";
-import SimpleIndicator from "./SimpleIndicator";
+import EventEmitter from 'EventEmitter';
+import SimpleIndicator from './SimpleIndicator';
 
 class IndicatorAPI extends EventEmitter {
     constructor(openmct) {
@@ -32,7 +32,9 @@ class IndicatorAPI extends EventEmitter {
     }
 
     getIndicatorObjectsByPriority() {
-        const sortedIndicators = this.indicatorObjects.sort((a, b) => b.priority - a.priority);
+        const sortedIndicators = this.indicatorObjects.sort(
+            (a, b) => b.priority - a.priority
+        );
 
         return sortedIndicators;
     }
@@ -71,7 +73,6 @@ class IndicatorAPI extends EventEmitter {
 
         this.emit('addIndicator', indicator);
     }
-
 }
 
 export default IndicatorAPI;

@@ -20,29 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
-describe("The User Status API", () => {
+describe('The User Status API', () => {
     let openmct;
     let userProvider;
     let mockUser;
 
     beforeEach(() => {
-        userProvider = jasmine.createSpyObj("userProvider", [
-            "setPollQuestion",
-            "getPollQuestion",
-            "getCurrentUser",
-            "getPossibleStatuses",
-            "getAllStatusRoles",
-            "canSetPollQuestion",
-            "isLoggedIn",
-            "on"
+        userProvider = jasmine.createSpyObj('userProvider', [
+            'setPollQuestion',
+            'getPollQuestion',
+            'getCurrentUser',
+            'getPossibleStatuses',
+            'getAllStatusRoles',
+            'canSetPollQuestion',
+            'isLoggedIn',
+            'on'
         ]);
         openmct = createOpenMct();
-        mockUser = new openmct.user.User("test-user", "A test user");
+        mockUser = new openmct.user.User('test-user', 'A test user');
         userProvider.getCurrentUser.and.returnValue(Promise.resolve(mockUser));
         userProvider.getPossibleStatuses.and.returnValue(Promise.resolve([]));
         userProvider.getAllStatusRoles.and.returnValue(Promise.resolve([]));
@@ -54,14 +51,20 @@ describe("The User Status API", () => {
         return resetApplicationState(openmct);
     });
 
-    describe("the poll question", () => {
+    describe('the poll question', () => {
         it('can be set via a user status provider if supported', () => {
             openmct.user.setProvider(userProvider);
-            userProvider.canSetPollQuestion.and.returnValue(Promise.resolve(true));
+            userProvider.canSetPollQuestion.and.returnValue(
+                Promise.resolve(true)
+            );
 
-            return openmct.user.status.setPollQuestion('This is a poll question').then(() => {
-                expect(userProvider.setPollQuestion).toHaveBeenCalledWith('This is a poll question');
-            });
+            return openmct.user.status
+                .setPollQuestion('This is a poll question')
+                .then(() => {
+                    expect(userProvider.setPollQuestion).toHaveBeenCalledWith(
+                        'This is a poll question'
+                    );
+                });
         });
         // fit('emits an event when the poll question changes', () => {
         //     const pollQuestionChangeCallback = jasmine.createSpy('pollQuestionChangeCallback');
@@ -91,13 +94,18 @@ describe("The User Status API", () => {
         // });
         it('cannot be set if the user is not permitted', () => {
             openmct.user.setProvider(userProvider);
-            userProvider.canSetPollQuestion.and.returnValue(Promise.resolve(false));
+            userProvider.canSetPollQuestion.and.returnValue(
+                Promise.resolve(false)
+            );
 
-            return openmct.user.status.setPollQuestion('This is a poll question').catch((error) => {
-                expect(error).toBeInstanceOf(Error);
-            }).finally(() => {
-                expect(userProvider.setPollQuestion).not.toHaveBeenCalled();
-            });
+            return openmct.user.status
+                .setPollQuestion('This is a poll question')
+                .catch((error) => {
+                    expect(error).toBeInstanceOf(Error);
+                })
+                .finally(() => {
+                    expect(userProvider.setPollQuestion).not.toHaveBeenCalled();
+                });
         });
     });
 });

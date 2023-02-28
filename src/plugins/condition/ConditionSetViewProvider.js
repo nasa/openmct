@@ -36,13 +36,17 @@ export default class ConditionSetViewProvider {
     canView(domainObject, objectPath) {
         const isConditionSet = domainObject.type === 'conditionSet';
 
-        return isConditionSet && this.openmct.router.isNavigatedObject(objectPath);
+        return (
+            isConditionSet && this.openmct.router.isNavigatedObject(objectPath)
+        );
     }
 
     canEdit(domainObject, objectPath) {
         const isConditionSet = domainObject.type === 'conditionSet';
 
-        return isConditionSet && this.openmct.router.isNavigatedObject(objectPath);
+        return (
+            isConditionSet && this.openmct.router.isNavigatedObject(objectPath)
+        );
     }
 
     view(domainObject, objectPath) {
@@ -66,7 +70,8 @@ export default class ConditionSetViewProvider {
                             isEditing
                         };
                     },
-                    template: '<condition-set :isEditing="isEditing"></condition-set>'
+                    template:
+                        '<condition-set :isEditing="isEditing"></condition-set>'
                 });
             },
             onEditModeChange: (isEditing) => {

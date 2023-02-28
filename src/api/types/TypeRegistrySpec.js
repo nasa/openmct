@@ -25,7 +25,7 @@ define(['./TypeRegistry', './Type'], function (TypeRegistry, Type) {
         let typeRegistryInstance;
 
         beforeEach(function () {
-            typeRegistryInstance = new TypeRegistry ();
+            typeRegistryInstance = new TypeRegistry();
             typeRegistryInstance.addType('testType', {
                 name: 'Test Type',
                 description: 'This is a test type.',
@@ -39,17 +39,27 @@ define(['./TypeRegistry', './Type'], function (TypeRegistry, Type) {
                 description: 'This is a test type.',
                 creatable: true
             });
-            typeRegistryInstance.standardizeType(typeRegistryInstance.types.standardizationTestType);
-            expect(typeRegistryInstance.get('standardizationTestType').definition.label).toBeUndefined();
-            expect(typeRegistryInstance.get('standardizationTestType').definition.name).toBe('Test Type');
+            typeRegistryInstance.standardizeType(
+                typeRegistryInstance.types.standardizationTestType
+            );
+            expect(
+                typeRegistryInstance.get('standardizationTestType').definition
+                    .label
+            ).toBeUndefined();
+            expect(
+                typeRegistryInstance.get('standardizationTestType').definition
+                    .name
+            ).toBe('Test Type');
         });
 
         it('new types are registered successfully and can be retrieved', function () {
-            expect(typeRegistryInstance.get('testType').definition.name).toBe('Test Type');
+            expect(typeRegistryInstance.get('testType').definition.name).toBe(
+                'Test Type'
+            );
         });
 
         it('type registry contains new keys', function () {
-            expect(typeRegistryInstance.listKeys ()).toContain('testType');
+            expect(typeRegistryInstance.listKeys()).toContain('testType');
         });
     });
 });

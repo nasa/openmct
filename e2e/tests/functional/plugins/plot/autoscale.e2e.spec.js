@@ -33,7 +33,10 @@ test.use({
 });
 
 test.describe('Autoscale', () => {
-    test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
+    test('User can set autoscale with a valid range @snapshot', async ({
+        page,
+        openmctConfig
+    }) => {
         const { myItemsFolderName } = openmctConfig;
 
         //This is necessary due to the size of the test suite.
@@ -63,16 +66,32 @@ test.describe('Autoscale', () => {
         ]);
         //Wait until Save Banner is gone
         await page.locator('.c-message-banner__close-button').click();
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+        await page.waitForSelector('.c-message-banner__message', {
+            state: 'detached'
+        });
 
         // Make sure that after turning off autoscale, the user entered range values are reflexted in the ticks.
-        await testYTicks(page, ['-2.00', '-1.50', '-1.00', '-0.50', '0.00', '0.50', '1.00', '1.50', '2.00']);
+        await testYTicks(page, [
+            '-2.00',
+            '-1.50',
+            '-1.00',
+            '-0.50',
+            '0.00',
+            '0.50',
+            '1.00',
+            '1.50',
+            '2.00'
+        ]);
 
         const canvas = page.locator('canvas').nth(1);
 
-        await canvas.hover({trial: true});
+        await canvas.hover({ trial: true });
 
-        expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan.png', { animations: 'disabled' });
+        expect
+            .soft(await canvas.screenshot())
+            .toMatchSnapshot('autoscale-canvas-prepan.png', {
+                animations: 'disabled'
+            });
 
         //Alt Drag Start
         await page.keyboard.down('Alt');
@@ -92,12 +111,25 @@ test.describe('Autoscale', () => {
         await page.keyboard.up('Alt');
 
         // Ensure the drag worked.
-        await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00', '3.50']);
+        await testYTicks(page, [
+            '0.00',
+            '0.50',
+            '1.00',
+            '1.50',
+            '2.00',
+            '2.50',
+            '3.00',
+            '3.50'
+        ]);
 
         //Wait for canvas to stablize.
-        await canvas.hover({trial: true});
+        await canvas.hover({ trial: true });
 
-        expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
+        expect
+            .soft(await canvas.screenshot())
+            .toMatchSnapshot('autoscale-canvas-panned.png', {
+                animations: 'disabled'
+            });
     });
 });
 
@@ -106,7 +138,11 @@ test.describe('Autoscale', () => {
  * @param {string} start
  * @param {string} end
  */
-async function setTimeRange(page, start = '2022-03-29 22:00:00.000Z', end = '2022-03-29 22:00:30.000Z') {
+async function setTimeRange(
+    page,
+    start = '2022-03-29 22:00:00.000Z',
+    end = '2022-03-29 22:00:30.000Z'
+) {
     // Set a specific time range for consistency, otherwise it will change
     // on every test to a range based on the current time.
 
@@ -136,17 +172,26 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 
     // save (exit edit mode)
-    await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+    await page
+        .locator(
+            'text=Snapshot Save and Finish Editing Save and Continue Editing >> button'
+        )
+        .nth(1)
+        .click();
     await page.locator('text=Save and Finish Editing').click();
 
     // click create button
     await page.locator('button:has-text("Create")').click();
 
     // add sine wave generator with defaults
-    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
+    await page
+        .locator('li[role="menuitem"]:has-text("Sine Wave Generator")')
+        .click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('button:has-text("OK")').click(),
@@ -155,10 +200,15 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 
     // focus the overlay plot
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
+    await page
+        .locator(`text=Open MCT ${myItemsFolderName} >> span`)
+        .nth(3)
+        .click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()
@@ -170,7 +220,11 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
  */
 async function turnOffAutoscale(page) {
     // uncheck autoscale
-    await page.getByRole('listitem').filter({ hasText: 'Auto scale' }).getByRole('checkbox').uncheck();
+    await page
+        .getByRole('listitem')
+        .filter({ hasText: 'Auto scale' })
+        .getByRole('checkbox')
+        .uncheck();
 }
 
 /**
@@ -180,12 +234,18 @@ async function turnOffAutoscale(page) {
  */
 async function setUserDefinedMinAndMax(page, min, max) {
     // set minimum value
-    const minRangeInput = page.getByRole('listitem').filter({ hasText: 'Minimum Value' }).locator('input[type="number"]');
+    const minRangeInput = page
+        .getByRole('listitem')
+        .filter({ hasText: 'Minimum Value' })
+        .locator('input[type="number"]');
     await minRangeInput.click();
     await minRangeInput.fill(min);
 
     // set maximum value
-    const maxRangeInput = page.getByRole('listitem').filter({ hasText: 'Maximum Value' }).locator('input[type="number"]');
+    const maxRangeInput = page
+        .getByRole('listitem')
+        .filter({ hasText: 'Maximum Value' })
+        .locator('input[type="number"]');
     await maxRangeInput.click();
     await maxRangeInput.fill(max);
 }
@@ -196,7 +256,7 @@ async function setUserDefinedMinAndMax(page, min, max) {
 async function testYTicks(page, values) {
     const yTicks = page.locator('.gl-plot-y-tick-label');
     await page.locator('canvas >> nth=1').hover();
-    let promises = [yTicks.count().then(c => expect(c).toBe(values.length))];
+    let promises = [yTicks.count().then((c) => expect(c).toBe(values.length))];
 
     for (let i = 0, l = values.length; i < l; i += 1) {
         promises.push(expect.soft(yTicks.nth(i)).toHaveText(values[i])); // eslint-disable-line

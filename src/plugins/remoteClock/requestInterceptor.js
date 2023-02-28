@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForBounds) {
+function remoteClockRequestInterceptor(
+    openmct,
+    _remoteClockIdentifier,
+    waitForBounds
+) {
     let remoteClockLoaded = false;
 
     return {

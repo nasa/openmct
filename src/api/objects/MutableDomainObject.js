@@ -66,8 +66,11 @@ class MutableDomainObject {
     }
     $observe(path, callback) {
         let fullPath = qualifiedEventName(this, path);
-        let eventOff =
-            this._globalEventEmitter.off.bind(this._globalEventEmitter, fullPath, callback);
+        let eventOff = this._globalEventEmitter.off.bind(
+            this._globalEventEmitter,
+            fullPath,
+            callback
+        );
 
         this._globalEventEmitter.on(fullPath, callback);
         this._observers.push(eventOff);
@@ -80,18 +83,34 @@ class MutableDomainObject {
         MutableDomainObject.mutateObject(this, path, value);
 
         //Emit secret synchronization event first, so that all objects are in sync before subsequent events fired.
-        this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);
+        this._globalEventEmitter.emit(
+            qualifiedEventName(this, '$_synchronize_model'),
+            this
+        );
 
         //Emit a general "any object" event
         this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this, oldModel);
         //Emit wildcard event, with path so that callback knows what changed
-        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value, oldModel, oldValue);
+        this._globalEventEmitter.emit(
+            qualifiedEventName(this, '*'),
+            this,
+            path,
+            value,
+            oldModel,
+            oldValue
+        );
 
         //Emit events specific to properties affected
         let parentPropertiesList = path.split('.');
         for (let index = parentPropertiesList.length; index > 0; index--) {
-            let parentPropertyPath = parentPropertiesList.slice(0, index).join('.');
-            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath), _.get(oldModel, parentPropertyPath));
+            let parentPropertyPath = parentPropertiesList
+                .slice(0, index)
+                .join('.');
+            this._globalEventEmitter.emit(
+                qualifiedEventName(this, parentPropertyPath),
+                _.get(this, parentPropertyPath),
+                _.get(oldModel, parentPropertyPath)
+            );
         }
 
         //TODO: Emit events for listeners of child properties when parent changes.
@@ -101,7 +120,10 @@ class MutableDomainObject {
     $refresh(model) {
         //TODO: Currently we are updating the entire object.
         // In the future we could update a specific property of the object using the 'path' parameter.
-        this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), model);
+        this._globalEventEmitter.emit(
+            qualifiedEventName(this, '$_synchronize_model'),
+            model
+        );
 
         //Emit wildcard event, with path so that callback knows what changed
         this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this);

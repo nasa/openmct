@@ -27,14 +27,16 @@ define(['./src/MeanTelemetryProvider'], function (MeanTelemetryProvider) {
         return function install(openmct) {
             openmct.types.addType('telemetry-mean', {
                 name: 'Telemetry Filter',
-                description: 'Provides telemetry values that represent the mean of the last N values of a telemetry stream',
+                description:
+                    'Provides telemetry values that represent the mean of the last N values of a telemetry stream',
                 creatable: true,
                 cssClass: 'icon-telemetry',
                 initialize: function (domainObject) {
                     domainObject.samples = DEFAULT_SAMPLES;
                     domainObject.telemetry = {};
-                    domainObject.telemetry.values =
-                        openmct.time.getAllTimeSystems().map(function (timeSystem, index) {
+                    domainObject.telemetry.values = openmct.time
+                        .getAllTimeSystems()
+                        .map(function (timeSystem, index) {
                             return {
                                 key: timeSystem.key,
                                 name: timeSystem.name,
@@ -44,8 +46,8 @@ define(['./src/MeanTelemetryProvider'], function (MeanTelemetryProvider) {
                             };
                         });
                     domainObject.telemetry.values.push({
-                        key: "value",
-                        name: "Value",
+                        key: 'value',
+                        name: 'Value',
                         hints: {
                             range: 1
                         }
@@ -53,18 +55,18 @@ define(['./src/MeanTelemetryProvider'], function (MeanTelemetryProvider) {
                 },
                 form: [
                     {
-                        "key": "telemetryPoint",
-                        "name": "Telemetry Point",
-                        "control": "textfield",
-                        "required": true,
-                        "cssClass": "l-input-lg"
+                        key: 'telemetryPoint',
+                        name: 'Telemetry Point',
+                        control: 'textfield',
+                        required: true,
+                        cssClass: 'l-input-lg'
                     },
                     {
-                        "key": "samples",
-                        "name": "Samples to Average",
-                        "control": "textfield",
-                        "required": true,
-                        "cssClass": "l-input-sm"
+                        key: 'samples',
+                        name: 'Samples to Average',
+                        control: 'textfield',
+                        required: true,
+                        cssClass: 'l-input-sm'
                     }
                 ]
             });

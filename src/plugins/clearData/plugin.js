@@ -24,19 +24,15 @@ define([
     './components/globalClearIndicator.vue',
     './ClearDataAction',
     'vue'
-], function (
-    GlobaClearIndicator,
-    ClearDataAction,
-    Vue
-) {
-    return function plugin(appliesToObjects, options = {indicator: true}) {
+], function (GlobaClearIndicator, ClearDataAction, Vue) {
+    return function plugin(appliesToObjects, options = { indicator: true }) {
         let installIndicator = options.indicator;
 
         appliesToObjects = appliesToObjects || [];
 
         return function install(openmct) {
             if (installIndicator) {
-                let component = new Vue ({
+                let component = new Vue({
                     components: {
                         GlobalClearIndicator: GlobaClearIndicator.default
                     },
@@ -55,7 +51,9 @@ define([
                 openmct.indicators.add(indicator);
             }
 
-            openmct.actions.register(new ClearDataAction.default(openmct, appliesToObjects));
+            openmct.actions.register(
+                new ClearDataAction.default(openmct, appliesToObjects)
+            );
         };
     };
 });

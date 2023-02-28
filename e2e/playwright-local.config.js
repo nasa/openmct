@@ -19,7 +19,7 @@ const config = {
     },
     workers: 1,
     use: {
-        browserName: "chromium",
+        browserName: 'chromium',
         baseURL: 'http://localhost:8080/',
         headless: false,
         ignoreHTTPSErrors: true,
@@ -94,10 +94,13 @@ const config = {
     ],
     reporter: [
         ['list'],
-        ['html', {
-            open: 'on-failure',
-            outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
-        }]
+        [
+            'html',
+            {
+                open: 'on-failure',
+                outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
+            }
+        ]
     ]
 };
 

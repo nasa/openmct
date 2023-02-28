@@ -19,10 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 const OLD_ROOT_NAME = 'Open MCT';
 const NEW_ROOT_NAME = 'not_a_root';
@@ -43,12 +40,11 @@ describe('the DefaultRootNamePlugin', () => {
         });
 
         it('does not changes root name', (done) => {
-            openmct.objects.getRoot()
-                .then(object => {
-                    expect(object.name).toEqual(OLD_ROOT_NAME);
+            openmct.objects.getRoot().then((object) => {
+                expect(object.name).toEqual(OLD_ROOT_NAME);
 
-                    done();
-                });
+                done();
+            });
         });
     });
 
@@ -66,12 +62,11 @@ describe('the DefaultRootNamePlugin', () => {
         });
 
         it('changes root name', (done) => {
-            openmct.objects.getRoot()
-                .then(object => {
-                    expect(object.name).toEqual(NEW_ROOT_NAME);
+            openmct.objects.getRoot().then((object) => {
+                expect(object.name).toEqual(NEW_ROOT_NAME);
 
-                    done();
-                });
+                done();
+            });
         });
     });
 });

@@ -24,9 +24,8 @@ import UserIndicator from './components/UserIndicator.vue';
 import Vue from 'vue';
 
 export default function UserIndicatorPlugin() {
-
     function addIndicator(openmct) {
-        const userIndicator = new Vue ({
+        const userIndicator = new Vue({
             components: {
                 UserIndicator
             },

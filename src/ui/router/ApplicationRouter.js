@@ -154,7 +154,10 @@ class ApplicationRouter extends EventEmitter {
             return false;
         }
 
-        return this.openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
+        return this.openmct.objects.areIdsEqual(
+            targetObject.identifier,
+            navigatedObject.identifier
+        );
     }
 
     /**
@@ -226,7 +229,7 @@ class ApplicationRouter extends EventEmitter {
 
         this.started = true;
 
-        this.locationBar.onChange(p => this.hashChanged(p));
+        this.locationBar.onChange((p) => this.hashChanged(p));
         this.locationBar.start({
             root: location.pathname
         });
@@ -271,7 +274,9 @@ class ApplicationRouter extends EventEmitter {
      * To force update url based on value in currentLocation object
      */
     updateTimeSettings() {
-        const hash = `${this.currentLocation.path}?${this.currentLocation.getQueryString()}`;
+        const hash = `${
+            this.currentLocation.path
+        }?${this.currentLocation.getQueryString()}`;
 
         this.setHash(hash);
     }
@@ -316,9 +321,13 @@ class ApplicationRouter extends EventEmitter {
             return;
         }
 
-        let route = this.routes.filter(r => r.matcher.test(newPath))[0];
+        let route = this.routes.filter((r) => r.matcher.test(newPath))[0];
         if (route) {
-            route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
+            route.callback(
+                newPath,
+                route.matcher.exec(newPath),
+                this.currentLocation.params
+            );
         }
 
         this.openmct.telemetry.abortAllRequests();
@@ -344,7 +353,7 @@ class ApplicationRouter extends EventEmitter {
                 changedParams[key] = value;
             }
         });
-        Object.keys(oldParams).forEach(key => {
+        Object.keys(oldParams).forEach((key) => {
             if (!Object.prototype.hasOwnProperty.call(newParams, key)) {
                 changedParams[key] = undefined;
             }
@@ -372,15 +381,9 @@ class ApplicationRouter extends EventEmitter {
             return;
         }
 
-        this.doPathChange(
-            newLocation.path,
-            oldLocation.path
-        );
+        this.doPathChange(newLocation.path, oldLocation.path);
 
-        this.doParamsChange(
-            newLocation.params,
-            oldLocation.params
-        );
+        this.doParamsChange(newLocation.params, oldLocation.params);
     }
 
     /**
@@ -411,7 +414,9 @@ class ApplicationRouter extends EventEmitter {
      * @param {string} queryString queryString part of url
      */
     setQueryString(queryString) {
-        this.handleLocationChange(`${this.currentLocation.path}?${queryString}`);
+        this.handleLocationChange(
+            `${this.currentLocation.path}?${queryString}`
+        );
     }
 }
 

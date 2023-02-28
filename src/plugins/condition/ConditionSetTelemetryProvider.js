@@ -43,8 +43,9 @@ export default class ConditionSetTelemetryProvider {
     request(domainObject, options) {
         let conditionManager = this.getConditionManager(domainObject);
 
-        return conditionManager.requestLADConditionSetOutput(options)
-            .then(latestOutput => {
+        return conditionManager
+            .requestLADConditionSetOutput(options)
+            .then((latestOutput) => {
                 return latestOutput;
             });
     }
@@ -56,7 +57,10 @@ export default class ConditionSetTelemetryProvider {
             callback(data);
         });
 
-        return this.destroyConditionManager.bind(this, this.openmct.objects.makeKeyString(domainObject.identifier));
+        return this.destroyConditionManager.bind(
+            this,
+            this.openmct.objects.makeKeyString(domainObject.identifier)
+        );
     }
 
     /**
@@ -68,7 +72,10 @@ export default class ConditionSetTelemetryProvider {
         const id = this.openmct.objects.makeKeyString(domainObject.identifier);
 
         if (!this.conditionManagerPool[id]) {
-            this.conditionManagerPool[id] = new ConditionManager(domainObject, this.openmct);
+            this.conditionManagerPool[id] = new ConditionManager(
+                domainObject,
+                this.openmct
+            );
         }
 
         return this.conditionManagerPool[id];

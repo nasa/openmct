@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 define(function () {
-
     /**
      * A Type describes a kind of domain object that may appear or be
      * created within Open MCT.
@@ -116,7 +115,10 @@ define(function () {
             };
         }
 
-        if (legacyDefinition.features && legacyDefinition.features.includes("creation")) {
+        if (
+            legacyDefinition.features &&
+            legacyDefinition.features.includes('creation')
+        ) {
             definition.creatable = true;
         }
 

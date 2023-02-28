@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Condition from "./Condition";
-import {TRIGGER} from "./utils/constants";
-import TelemetryCriterion from "./criterion/TelemetryCriterion";
+import Condition from './Condition';
+import { TRIGGER } from './utils/constants';
+import TelemetryCriterion from './criterion/TelemetryCriterion';
 
 let openmct = {};
 let testConditionDefinition;
@@ -32,57 +32,76 @@ let conditionManager;
 let mockTelemetryReceived;
 let mockTimeSystems;
 
-describe("The condition", function () {
-
-    beforeEach (() => {
-        conditionManager = jasmine.createSpyObj('conditionManager',
-            ['on', 'updateConditionDescription']
-        );
+describe('The condition', function () {
+    beforeEach(() => {
+        conditionManager = jasmine.createSpyObj('conditionManager', [
+            'on',
+            'updateConditionDescription'
+        ]);
         mockTelemetryReceived = jasmine.createSpy('listener');
         conditionManager.on('telemetryReceived', mockTelemetryReceived);
-        conditionManager.updateConditionDescription.and.returnValue(function () {});
+        conditionManager.updateConditionDescription.and.returnValue(
+            function () {}
+        );
 
         testTelemetryObject = {
             identifier: {
-                namespace: "",
-                key: "test-object"
+                namespace: '',
+                key: 'test-object'
             },
-            type: "test-object",
-            name: "Test Object",
+            type: 'test-object',
+            name: 'Test Object',
             telemetry: {
-                valueMetadatas: [{
-                    key: "some-key",
-                    name: "Some attribute",
-                    hints: {
-                        range: 2
+                valueMetadatas: [
+                    {
+                        key: 'some-key',
+                        name: 'Some attribute',
+                        hints: {
+                            range: 2
+                        }
+                    },
+                    {
+                        key: 'utc',
+                        name: 'Time',
+                        format: 'utc',
+                        hints: {
+                            domain: 1
+                        }
+                    },
+                    {
+                        key: 'testSource',
+                        source: 'value',
+                        name: 'Test',
+                        format: 'string'
                     }
-                },
-                {
-                    key: "utc",
-                    name: "Time",
-                    format: "utc",
-                    hints: {
-                        domain: 1
-                    }
-                }, {
-                    key: "testSource",
-                    source: "value",
-                    name: "Test",
-                    format: "string"
-                }]
+                ]
             }
         };
         conditionManager.telemetryObjects = {
-            "test-object": testTelemetryObject
+            'test-object': testTelemetryObject
         };
-        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
-        openmct.objects.get.and.returnValue(new Promise(function (resolve, reject) {
-            resolve(testTelemetryObject);
-        })); openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
-        openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', 'subscribe', 'getMetadata']);
+        openmct.objects = jasmine.createSpyObj('objects', [
+            'get',
+            'makeKeyString'
+        ]);
+        openmct.objects.get.and.returnValue(
+            new Promise(function (resolve, reject) {
+                resolve(testTelemetryObject);
+            })
+        );
+        openmct.objects.makeKeyString.and.returnValue(
+            testTelemetryObject.identifier.key
+        );
+        openmct.telemetry = jasmine.createSpyObj('telemetry', [
+            'isTelemetryObject',
+            'subscribe',
+            'getMetadata'
+        ]);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
-        openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
+        openmct.telemetry.getMetadata.and.returnValue(
+            testTelemetryObject.telemetry
+        );
 
         mockTimeSystems = {
             key: 'utc'
@@ -115,7 +134,7 @@ describe("The condition", function () {
         );
     });
 
-    it("generates criteria with the correct properties", function () {
+    it('generates criteria with the correct properties', function () {
         const testCriterion = testConditionDefinition.configuration.criteria[0];
         let criterion = conditionObj.generateCriterion(testCriterion);
         expect(criterion.id).toBeDefined();
@@ -125,30 +144,38 @@ describe("The condition", function () {
         expect(criterion.telemetry).toEqual(testCriterion.telemetry);
     });
 
-    it("initializes with an id", function () {
+    it('initializes with an id', function () {
         expect(conditionObj.id).toBeDefined();
     });
 
-    it("initializes with criteria from the condition definition", function () {
+    it('initializes with criteria from the condition definition', function () {
         expect(conditionObj.criteria.length).toEqual(1);
         let criterion = conditionObj.criteria[0];
         expect(criterion instanceof TelemetryCriterion).toBeTrue();
-        expect(criterion.operator).toEqual(testConditionDefinition.configuration.criteria[0].operator);
-        expect(criterion.input).toEqual(testConditionDefinition.configuration.criteria[0].input);
-        expect(criterion.metadata).toEqual(testConditionDefinition.configuration.criteria[0].metadata);
+        expect(criterion.operator).toEqual(
+            testConditionDefinition.configuration.criteria[0].operator
+        );
+        expect(criterion.input).toEqual(
+            testConditionDefinition.configuration.criteria[0].input
+        );
+        expect(criterion.metadata).toEqual(
+            testConditionDefinition.configuration.criteria[0].metadata
+        );
     });
 
-    it("initializes with the trigger from the condition definition", function () {
-        expect(conditionObj.trigger).toEqual(testConditionDefinition.configuration.trigger);
+    it('initializes with the trigger from the condition definition', function () {
+        expect(conditionObj.trigger).toEqual(
+            testConditionDefinition.configuration.trigger
+        );
     });
 
-    it("destroys all criteria for a condition", function () {
+    it('destroys all criteria for a condition', function () {
         const result = conditionObj.destroyCriteria();
         expect(result).toBeTrue();
         expect(conditionObj.criteria.length).toEqual(0);
     });
 
-    it("gets the result of a condition when new telemetry data is received", function () {
+    it('gets the result of a condition when new telemetry data is received', function () {
         conditionObj.updateResult({
             value: '0',
             utc: 'Hi',
@@ -157,7 +184,7 @@ describe("The condition", function () {
         expect(conditionObj.result).toBeTrue();
     });
 
-    it("gets the result of a condition when new telemetry data is received", function () {
+    it('gets the result of a condition when new telemetry data is received', function () {
         conditionObj.updateResult({
             value: '1',
             utc: 'Hi',
@@ -166,7 +193,7 @@ describe("The condition", function () {
         expect(conditionObj.result).toBeFalse();
     });
 
-    it("keeps the old result new telemetry data is not used by it", function () {
+    it('keeps the old result new telemetry data is not used by it', function () {
         conditionObj.updateResult({
             value: '0',
             utc: 'Hi',

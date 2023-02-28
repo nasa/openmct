@@ -45,7 +45,6 @@ export default class Collection extends Model {
             model.collection = this;
 
             return model;
-
         }
 
         return new this.modelClass({
@@ -92,7 +91,7 @@ export default class Collection extends Model {
     }
 
     indexOf(model) {
-        return this.models.findIndex(m => m === model);
+        return this.models.findIndex((m) => m === model);
     }
 
     remove(model) {

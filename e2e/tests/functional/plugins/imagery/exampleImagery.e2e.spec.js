@@ -30,7 +30,8 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
-const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+const expectedAltText =
+    process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
@@ -40,14 +41,20 @@ test.describe('Example Imagery Object', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create a default 'Example Imagery' object
-        const exampleImagery = await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
+        const exampleImagery = await createDomainObjectWithDefaults(page, {
+            type: 'Example Imagery'
+        });
 
         // Verify that the created object is focused
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            exampleImagery.name
+        );
+        await page.locator(backgroundImageSelector).hover({ trial: true });
     });
 
-    test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
+    test('Can use Mouse Wheel to zoom in and out of latest image', async ({
+        page
+    }) => {
         // Zoom in x2 and assert
         await mouseZoomOnImageAndAssert(page, 2);
 
@@ -55,26 +62,38 @@ test.describe('Example Imagery Object', () => {
         await mouseZoomOnImageAndAssert(page, -2);
     });
 
-    test('Can adjust image brightness/contrast by dragging the sliders', async ({ page, browserName }) => {
+    test('Can adjust image brightness/contrast by dragging the sliders', async ({
+        page,
+        browserName
+    }) => {
         // eslint-disable-next-line playwright/no-skipped-test
-        test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+        test.skip(
+            browserName === 'firefox',
+            'This test needs to be updated to work with firefox'
+        );
         // Open the image filter menu
-        await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+        await page
+            .locator('[role=toolbar] button[title="Brightness and contrast"]')
+            .click();
 
         // Drag the brightness and contrast sliders around and assert filter values
         await dragBrightnessSliderAndAssertFilterValues(page);
         await dragContrastSliderAndAssertFilterValues(page);
     });
 
-    test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
+    test('Can use alt+drag to move around image once zoomed in', async ({
+        page
+    }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
 
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        await page.locator(backgroundImageSelector).hover({ trial: true });
 
         // zoom in
         await page.mouse.wheel(0, deltaYStep * 2);
-        await page.locator(backgroundImageSelector).hover({trial: true});
-        const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        await page.locator(backgroundImageSelector).hover({ trial: true });
+        const zoomedBoundingBox = await page
+            .locator(backgroundImageSelector)
+            .boundingBox();
         const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
         const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
         // move to the right
@@ -87,80 +106,114 @@ test.describe('Example Imagery Object', () => {
         const getUA = await page.evaluate(() => navigator.userAgent);
         console.log('navigator.userAgent ' + getUA);
         // Pan Imagery Hints
-        const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+        const imageryHintsText = await page
+            .locator('.c-imagery__hints')
+            .innerText();
         expect(expectedAltText).toEqual(imageryHintsText);
 
         // pan right
-        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+        await Promise.all(panHotkey.map((x) => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
         await page.mouse.up();
-        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-        const afterRightPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
+        const afterRightPanBoundingBox = await page
+            .locator(backgroundImageSelector)
+            .boundingBox();
         expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
 
         // pan left
-        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+        await Promise.all(panHotkey.map((x) => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY, 10);
         await page.mouse.up();
-        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-        const afterLeftPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-        expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
+        await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
+        const afterLeftPanBoundingBox = await page
+            .locator(backgroundImageSelector)
+            .boundingBox();
+        expect(afterRightPanBoundingBox.x).toBeLessThan(
+            afterLeftPanBoundingBox.x
+        );
 
         // pan up
         await page.mouse.move(imageCenterX, imageCenterY);
-        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+        await Promise.all(panHotkey.map((x) => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
         await page.mouse.up();
-        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-        const afterUpPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-        expect(afterUpPanBoundingBox.y).toBeGreaterThan(afterLeftPanBoundingBox.y);
+        await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
+        const afterUpPanBoundingBox = await page
+            .locator(backgroundImageSelector)
+            .boundingBox();
+        expect(afterUpPanBoundingBox.y).toBeGreaterThan(
+            afterLeftPanBoundingBox.y
+        );
 
         // pan down
-        await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+        await Promise.all(panHotkey.map((x) => page.keyboard.down(x)));
         await page.mouse.down();
         await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
         await page.mouse.up();
-        await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-        const afterDownPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
+        const afterDownPanBoundingBox = await page
+            .locator(backgroundImageSelector)
+            .boundingBox();
         expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
-
     });
 
-    test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
+    test('Can use + - buttons to zoom on the image @unstable', async ({
+        page
+    }) => {
         await buttonZoomOnImageAndAssert(page);
     });
 
-    test('Can use the reset button to reset the image @unstable', async ({ page }, testInfo) => {
-        test.slow(testInfo.project === 'chrome-beta', "This test is slow in chrome-beta");
+    test('Can use the reset button to reset the image @unstable', async ({
+        page
+    }, testInfo) => {
+        test.slow(
+            testInfo.project === 'chrome-beta',
+            'This test is slow in chrome-beta'
+        );
         // Get initial image dimensions
-        const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        const initialBoundingBox = await page
+            .locator(backgroundImageSelector)
+            .boundingBox();
 
         // Zoom in twice via button
         await zoomIntoImageryByButton(page);
         await zoomIntoImageryByButton(page);
 
         // Get and assert zoomed in image dimensions
-        const zoomedInBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-        expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
-        expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
+        const zoomedInBoundingBox = await page
+            .locator(backgroundImageSelector)
+            .boundingBox();
+        expect
+            .soft(zoomedInBoundingBox.height)
+            .toBeGreaterThan(initialBoundingBox.height);
+        expect
+            .soft(zoomedInBoundingBox.width)
+            .toBeGreaterThan(initialBoundingBox.width);
 
         // Reset pan and zoom and assert against initial image dimensions
         await resetImageryPanAndZoom(page);
-        const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+        const finalBoundingBox = await page
+            .locator(backgroundImageSelector)
+            .boundingBox();
         expect(finalBoundingBox).toEqual(initialBoundingBox);
     });
 
-    test('Using the zoom features does not pause telemetry', async ({ page }) => {
+    test('Using the zoom features does not pause telemetry', async ({
+        page
+    }) => {
         const pausePlayButton = page.locator('.c-button.pause-play');
 
         // open the time conductor drop down
         await page.locator('.c-mode-button').click();
 
         // Click local clock
-        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+        await page
+            .locator('[data-testid="conductor-modeOption-realtime"]')
+            .click();
         await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
         // Zoom in via button
@@ -169,7 +222,9 @@ test.describe('Example Imagery Object', () => {
     });
 
     test('Uses low fetch priority', async ({ page }) => {
-        const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
+        const priority = await page
+            .locator('.js-imageryView-image')
+            .getAttribute('fetchpriority');
         await expect(priority).toBe('low');
     });
 });
@@ -180,7 +235,9 @@ test.describe('Example Imagery in Display Layout', () => {
         // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        displayLayout = await createDomainObjectWithDefaults(page, { type: 'Display Layout' });
+        displayLayout = await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout'
+        });
         await page.goto(displayLayout.url);
 
         /* Create Sine Wave Generator with minimum Image Load Delay */
@@ -196,18 +253,22 @@ test.describe('Example Imagery in Display Layout', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
+            page.waitForNavigation({ waitUntil: 'networkidle' }),
             page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
 
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            'Unnamed Example Imagery'
+        );
 
         await page.goto(displayLayout.url);
     });
 
-    test('View Large action pauses imagery when in realtime and returns to realtime', async ({ page }) => {
+    test('View Large action pauses imagery when in realtime and returns to realtime', async ({
+        page
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/3647'
@@ -217,7 +278,9 @@ test.describe('Example Imagery in Display Layout', () => {
         await page.locator('.c-mode-button').click();
 
         // set realtime mode
-        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+        await page
+            .locator('[data-testid="conductor-modeOption-realtime"]')
+            .click();
 
         // pause/play button
         const pausePlayButton = await page.locator('.c-button.pause-play');
@@ -233,7 +296,9 @@ test.describe('Example Imagery in Display Layout', () => {
         await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
     });
 
-    test('View Large action leaves keeps realtime mode paused', async ({ page }) => {
+    test('View Large action leaves keeps realtime mode paused', async ({
+        page
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/3647'
@@ -243,7 +308,9 @@ test.describe('Example Imagery in Display Layout', () => {
         await page.locator('.c-mode-button').click();
 
         // set realtime mode
-        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+        await page
+            .locator('[data-testid="conductor-modeOption-realtime"]')
+            .click();
 
         // pause/play button
         const pausePlayButton = await page.locator('.c-button.pause-play');
@@ -273,16 +340,22 @@ test.describe('Example Imagery in Display Layout', () => {
 
         // Adjust object height
         await page.locator('div[title="Resize object height"] > input').click();
-        await page.locator('div[title="Resize object height"] > input').fill('50');
+        await page
+            .locator('div[title="Resize object height"] > input')
+            .fill('50');
 
         // Adjust object width
         await page.locator('div[title="Resize object width"] > input').click();
-        await page.locator('div[title="Resize object width"] > input').fill('50');
+        await page
+            .locator('div[title="Resize object width"] > input')
+            .fill('50');
 
         await performImageryViewOperationsAndAssert(page);
     });
 
-    test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
+    test('Resizing the layout changes thumbnail visibility and size', async ({
+        page
+    }) => {
         const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
         // Edit mode
         await page.click('button[title="Edit"]');
@@ -300,14 +373,18 @@ test.describe('Example Imagery in Display Layout', () => {
         Specifically, height is set to 50px for small thumbs and 100px for regular
         */
         await page.locator('div[title="Resize object height"] > input').click();
-        await page.locator('div[title="Resize object height"] > input').fill('50');
+        await page
+            .locator('div[title="Resize object height"] > input')
+            .fill('50');
 
         expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
         await expect(thumbsWrapperLocator).toHaveClass(/is-small-thumbs/);
 
         // Resize the example imagery vertically to change the thumbnail visibility
         await page.locator('div[title="Resize object height"] > input').click();
-        await page.locator('div[title="Resize object height"] > input').fill('100');
+        await page
+            .locator('div[title="Resize object height"] > input')
+            .fill('100');
 
         expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
         await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
@@ -319,7 +396,9 @@ test.describe('Example Imagery in Flexible layout', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
+        flexibleLayout = await createDomainObjectWithDefaults(page, {
+            type: 'Flexible Layout'
+        });
         await page.goto(flexibleLayout.url);
 
         /* Create Sine Wave Generator with minimum Image Load Delay */
@@ -335,18 +414,23 @@ test.describe('Example Imagery in Flexible layout', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
+            page.waitForNavigation({ waitUntil: 'networkidle' }),
             page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
 
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            'Unnamed Example Imagery'
+        );
 
         await page.goto(flexibleLayout.url);
     });
     test('Imagery View operations @unstable', async ({ page, browserName }) => {
-        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+        test.fixme(
+            browserName === 'firefox',
+            'This test needs to be updated to work with firefox'
+        );
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5326'
@@ -361,7 +445,9 @@ test.describe('Example Imagery in Tabs View', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        tabsView = await createDomainObjectWithDefaults(page, { type: 'Tabs View' });
+        tabsView = await createDomainObjectWithDefaults(page, {
+            type: 'Tabs View'
+        });
         await page.goto(tabsView.url);
 
         /* Create Sine Wave Generator with minimum Image Load Delay */
@@ -377,13 +463,15 @@ test.describe('Example Imagery in Tabs View', () => {
 
         // Click text=OK
         await Promise.all([
-            page.waitForNavigation({waitUntil: 'networkidle'}),
+            page.waitForNavigation({ waitUntil: 'networkidle' }),
             page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
 
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            'Unnamed Example Imagery'
+        );
 
         await page.goto(tabsView.url);
     });
@@ -407,7 +495,10 @@ test.describe('Example Imagery in Time Strip', () => {
         // Navigate to timestrip
         await page.goto(timeStripObject.url);
     });
-    test('Clicking a thumbnail loads the image in large view', async ({ page, browserName }) => {
+    test('Clicking a thumbnail loads the image in large view', async ({
+        page,
+        browserName
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5632'
@@ -417,8 +508,12 @@ test.describe('Example Imagery in Time Strip', () => {
         await page.locator('.c-imagery-tsv-container').hover();
 
         // Get the img src of the hovered image thumbnail
-        const hoveredThumbnailImg = page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
-        const hoveredThumbnailImgSrc = await hoveredThumbnailImg.getAttribute('src');
+        const hoveredThumbnailImg = page.locator(
+            '.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img'
+        );
+        const hoveredThumbnailImgSrc = await hoveredThumbnailImg.getAttribute(
+            'src'
+        );
 
         // Verify that imagery timestrip view uses the thumbnailUrl as img src for thumbnails
         expect(hoveredThumbnailImgSrc).toBeTruthy();
@@ -453,8 +548,14 @@ async function performImageryViewOperationsAndAssert(page) {
     // Verify that imagery thumbnails use a thumbnail url
     const thumbnailImages = page.locator('.c-thumb__image');
     const mainImage = page.locator('.c-imagery__main-image__image');
-    await expect(thumbnailImages.first()).toHaveAttribute('src', thumbnailUrlParamsRegexp);
-    await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
+    await expect(thumbnailImages.first()).toHaveAttribute(
+        'src',
+        thumbnailUrlParamsRegexp
+    );
+    await expect(mainImage).not.toHaveAttribute(
+        'src',
+        thumbnailUrlParamsRegexp
+    );
 
     // Click previous image button
     const previousImageButton = page.locator('.c-nav--prev');
@@ -496,14 +597,21 @@ async function performImageryViewOperationsAndAssert(page) {
 
     // The imagery view should be updated when new images come in
     const imageCount = await page.locator('.c-imagery__thumb').count();
-    await expect.poll(async () => {
-        const newImageCount = await page.locator('.c-imagery__thumb').count();
+    await expect
+        .poll(
+            async () => {
+                const newImageCount = await page
+                    .locator('.c-imagery__thumb')
+                    .count();
 
-        return newImageCount;
-    }, {
-        message: "verify that old images are discarded",
-        timeout: 7 * 1000
-    }).toBe(imageCount);
+                return newImageCount;
+            },
+            {
+                message: 'verify that old images are discarded',
+                timeout: 7 * 1000
+            }
+        )
+        .toBe(imageCount);
 
     // Verify selected image is still displayed
     await expect(selectedImage).toBeVisible();
@@ -515,7 +623,9 @@ async function performImageryViewOperationsAndAssert(page) {
     await assertBackgroundImageUrlFromBackgroundCss(page);
 
     // Open the image filter menu
-    await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
+    await page
+        .locator('[role=toolbar] button[title="Brightness and contrast"]')
+        .click();
 
     // Drag the brightness and contrast sliders around and assert filter values
     await dragBrightnessSliderAndAssertFilterValues(page);
@@ -527,14 +637,22 @@ async function performImageryViewOperationsAndAssert(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function dragBrightnessSliderAndAssertFilterValues(page) {
-    const brightnessSlider = 'div.c-image-controls__slider-wrapper.icon-brightness > input';
-    const brightnessBoundingBox = await page.locator(brightnessSlider).boundingBox();
-    const brightnessMidX = brightnessBoundingBox.x + brightnessBoundingBox.width / 2;
-    const brightnessMidY = brightnessBoundingBox.y + brightnessBoundingBox.height / 2;
+    const brightnessSlider =
+        'div.c-image-controls__slider-wrapper.icon-brightness > input';
+    const brightnessBoundingBox = await page
+        .locator(brightnessSlider)
+        .boundingBox();
+    const brightnessMidX =
+        brightnessBoundingBox.x + brightnessBoundingBox.width / 2;
+    const brightnessMidY =
+        brightnessBoundingBox.y + brightnessBoundingBox.height / 2;
 
-    await page.locator(brightnessSlider).hover({trial: true});
+    await page.locator(brightnessSlider).hover({ trial: true });
     await page.mouse.down();
-    await page.mouse.move(brightnessBoundingBox.x + brightnessBoundingBox.width, brightnessMidY);
+    await page.mouse.move(
+        brightnessBoundingBox.x + brightnessBoundingBox.width,
+        brightnessMidY
+    );
     await assertBackgroundImageBrightness(page, '500');
     await page.mouse.move(brightnessBoundingBox.x, brightnessMidY);
     await assertBackgroundImageBrightness(page, '0');
@@ -548,14 +666,20 @@ async function dragBrightnessSliderAndAssertFilterValues(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function dragContrastSliderAndAssertFilterValues(page) {
-    const contrastSlider = 'div.c-image-controls__slider-wrapper.icon-contrast > input';
-    const contrastBoundingBox = await page.locator(contrastSlider).boundingBox();
+    const contrastSlider =
+        'div.c-image-controls__slider-wrapper.icon-contrast > input';
+    const contrastBoundingBox = await page
+        .locator(contrastSlider)
+        .boundingBox();
     const contrastMidX = contrastBoundingBox.x + contrastBoundingBox.width / 2;
     const contrastMidY = contrastBoundingBox.y + contrastBoundingBox.height / 2;
 
-    await page.locator(contrastSlider).hover({trial: true});
+    await page.locator(contrastSlider).hover({ trial: true });
     await page.mouse.down();
-    await page.mouse.move(contrastBoundingBox.x + contrastBoundingBox.width, contrastMidY);
+    await page.mouse.move(
+        contrastBoundingBox.x + contrastBoundingBox.width,
+        contrastMidY
+    );
     await assertBackgroundImageContrast(page, '500');
     await page.mouse.move(contrastBoundingBox.x, contrastMidY);
     await assertBackgroundImageContrast(page, '0');
@@ -571,7 +695,9 @@ async function dragContrastSliderAndAssertFilterValues(page) {
  * @param {String} expected The expected brightness value
  */
 async function assertBackgroundImageBrightness(page, expected) {
-    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+    const backgroundImage = page.locator(
+        '.c-imagery__main-image__background-image'
+    );
 
     // Get the brightness filter value (i.e: filter: brightness(500%) => "500")
     const actual = await backgroundImage.evaluate((el) => {
@@ -584,26 +710,41 @@ async function assertBackgroundImageBrightness(page, expected) {
  * @param {import('@playwright/test').Page} page
  */
 async function assertBackgroundImageUrlFromBackgroundCss(page) {
-    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+    const backgroundImage = page.locator(
+        '.c-imagery__main-image__background-image'
+    );
     let backgroundImageUrl = await backgroundImage.evaluate((el) => {
-        return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+        return window
+            .getComputedStyle(el)
+            .getPropertyValue('background-image')
+            .match(/url\(([^)]+)\)/)[1];
     });
     let backgroundImageUrl1 = backgroundImageUrl.slice(1, -1); //forgive me, padre
     console.log('backgroundImageUrl1 ' + backgroundImageUrl1);
 
     let backgroundImageUrl2;
-    await expect.poll(async () => {
-        // Verify next image has updated
-        let backgroundImageUrlNext = await backgroundImage.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
-        });
-        backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
+    await expect
+        .poll(
+            async () => {
+                // Verify next image has updated
+                let backgroundImageUrlNext = await backgroundImage.evaluate(
+                    (el) => {
+                        return window
+                            .getComputedStyle(el)
+                            .getPropertyValue('background-image')
+                            .match(/url\(([^)]+)\)/)[1];
+                    }
+                );
+                backgroundImageUrl2 = backgroundImageUrlNext.slice(1, -1); //forgive me, padre
 
-        return backgroundImageUrl2;
-    }, {
-        message: "verify next image has updated",
-        timeout: 7 * 1000
-    }).not.toBe(backgroundImageUrl1);
+                return backgroundImageUrl2;
+            },
+            {
+                message: 'verify next image has updated',
+                timeout: 7 * 1000
+            }
+        )
+        .not.toBe(backgroundImageUrl1);
     console.log('backgroundImageUrl2 ' + backgroundImageUrl2);
 }
 
@@ -611,48 +752,64 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function panZoomAndAssertImageProperties(page) {
-    const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+    const imageryHintsText = await page
+        .locator('.c-imagery__hints')
+        .innerText();
     expect(expectedAltText).toEqual(imageryHintsText);
-    const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const zoomedBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
 
     // Pan right
-    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await Promise.all(panHotkey.map((x) => page.keyboard.down(x)));
     await page.mouse.down();
     await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
     await page.mouse.up();
-    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-    const afterRightPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
+    const afterRightPanBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
     expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
 
     // Pan left
-    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await Promise.all(panHotkey.map((x) => page.keyboard.down(x)));
     await page.mouse.down();
     await page.mouse.move(imageCenterX, imageCenterY, 10);
     await page.mouse.up();
-    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-    const afterLeftPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
+    const afterLeftPanBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
     expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
 
     // Pan up
     await page.mouse.move(imageCenterX, imageCenterY);
-    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await Promise.all(panHotkey.map((x) => page.keyboard.down(x)));
     await page.mouse.down();
     await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
     await page.mouse.up();
-    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-    const afterUpPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-    expect(afterUpPanBoundingBox.y).toBeGreaterThanOrEqual(afterLeftPanBoundingBox.y);
+    await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
+    const afterUpPanBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
+    expect(afterUpPanBoundingBox.y).toBeGreaterThanOrEqual(
+        afterLeftPanBoundingBox.y
+    );
 
     // Pan down
-    await Promise.all(panHotkey.map(x => page.keyboard.down(x)));
+    await Promise.all(panHotkey.map((x) => page.keyboard.down(x)));
     await page.mouse.down();
     await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
     await page.mouse.up();
-    await Promise.all(panHotkey.map(x => page.keyboard.up(x)));
-    const afterDownPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-    expect(afterDownPanBoundingBox.y).toBeLessThanOrEqual(afterUpPanBoundingBox.y);
+    await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
+    const afterDownPanBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
+    expect(afterDownPanBoundingBox.y).toBeLessThanOrEqual(
+        afterUpPanBoundingBox.y
+    );
 }
 
 /**
@@ -660,14 +817,18 @@ async function panZoomAndAssertImageProperties(page) {
  * has successfully zoomed in or out.
  * @param {import('@playwright/test').Page} page
  * @param {number} [factor = 2] The zoom factor. Positive for zoom in, negative for zoom out.
-*/
+ */
 async function mouseZoomOnImageAndAssert(page, factor = 2) {
     // Zoom in
-    const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-    await page.locator(backgroundImageSelector).hover({trial: true});
+    const originalImageDimensions = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
+    await page.locator(backgroundImageSelector).hover({ trial: true });
     const deltaYStep = 100; // equivalent to 1x zoom
     await page.mouse.wheel(0, deltaYStep * factor);
-    const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const zoomedBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
 
@@ -675,15 +836,25 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
     await page.mouse.move(imageCenterX, imageCenterY);
 
     // Wait for zoom animation to finish
-    await page.locator(backgroundImageSelector).hover({trial: true});
-    const imageMouseZoomed = await page.locator(backgroundImageSelector).boundingBox();
+    await page.locator(backgroundImageSelector).hover({ trial: true });
+    const imageMouseZoomed = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
 
     if (factor > 0) {
-        expect(imageMouseZoomed.height).toBeGreaterThan(originalImageDimensions.height);
-        expect(imageMouseZoomed.width).toBeGreaterThan(originalImageDimensions.width);
+        expect(imageMouseZoomed.height).toBeGreaterThan(
+            originalImageDimensions.height
+        );
+        expect(imageMouseZoomed.width).toBeGreaterThan(
+            originalImageDimensions.width
+        );
     } else {
-        expect(imageMouseZoomed.height).toBeLessThan(originalImageDimensions.height);
-        expect(imageMouseZoomed.width).toBeLessThan(originalImageDimensions.width);
+        expect(imageMouseZoomed.height).toBeLessThan(
+            originalImageDimensions.height
+        );
+        expect(imageMouseZoomed.width).toBeLessThan(
+            originalImageDimensions.width
+        );
     }
 }
 
@@ -694,28 +865,40 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
  */
 async function buttonZoomOnImageAndAssert(page) {
     // Get initial image dimensions
-    const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const initialBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
 
     // Zoom in twice via button
     await zoomIntoImageryByButton(page);
     await zoomIntoImageryByButton(page);
 
     // Get and assert zoomed in image dimensions
-    const zoomedInBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-    expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
+    const zoomedInBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
+    expect(zoomedInBoundingBox.height).toBeGreaterThan(
+        initialBoundingBox.height
+    );
     expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
     // Zoom out once via button
     await zoomOutOfImageryByButton(page);
 
     // Get and assert zoomed out image dimensions
-    const zoomedOutBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-    expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
+    const zoomedOutBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
+    expect(zoomedOutBoundingBox.height).toBeLessThan(
+        zoomedInBoundingBox.height
+    );
     expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
 
     // Zoom out again via button, assert against the initial image dimensions
     await zoomOutOfImageryByButton(page);
-    const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const finalBoundingBox = await page
+        .locator(backgroundImageSelector)
+        .boundingBox();
     expect(finalBoundingBox).toEqual(initialBoundingBox);
 }
 
@@ -726,7 +909,9 @@ async function buttonZoomOnImageAndAssert(page) {
  * @param {String} expected The expected contrast value
  */
 async function assertBackgroundImageContrast(page, expected) {
-    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
+    const backgroundImage = page.locator(
+        '.c-imagery__main-image__background-image'
+    );
 
     // Get the contrast filter value (i.e: filter: contrast(500%) => "500")
     const actual = await backgroundImage.evaluate((el) => {
@@ -742,10 +927,12 @@ async function assertBackgroundImageContrast(page, expected) {
  */
 async function zoomIntoImageryByButton(page) {
     // FIXME: There should only be one set of imagery buttons, but there are two?
-    const zoomInBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-in").nth(0);
+    const zoomInBtn = page
+        .locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-in")
+        .nth(0);
     const backgroundImage = page.locator(backgroundImageSelector);
     if (!(await zoomInBtn.isVisible())) {
-        await backgroundImage.hover({trial: true});
+        await backgroundImage.hover({ trial: true });
     }
 
     await zoomInBtn.click();
@@ -759,10 +946,14 @@ async function zoomIntoImageryByButton(page) {
  */
 async function zoomOutOfImageryByButton(page) {
     // FIXME: There should only be one set of imagery buttons, but there are two?
-    const zoomOutBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-out").nth(0);
+    const zoomOutBtn = page
+        .locator(
+            "[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-out"
+        )
+        .nth(0);
     const backgroundImage = page.locator(backgroundImageSelector);
     if (!(await zoomOutBtn.isVisible())) {
-        await backgroundImage.hover({trial: true});
+        await backgroundImage.hover({ trial: true });
     }
 
     await zoomOutBtn.click();
@@ -776,10 +967,14 @@ async function zoomOutOfImageryByButton(page) {
  */
 async function resetImageryPanAndZoom(page) {
     // FIXME: There should only be one set of imagery buttons, but there are two?
-    const panZoomResetBtn = page.locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-reset").nth(0);
+    const panZoomResetBtn = page
+        .locator(
+            "[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-reset"
+        )
+        .nth(0);
     const backgroundImage = page.locator(backgroundImageSelector);
     if (!(await panZoomResetBtn.isVisible())) {
-        await backgroundImage.hover({trial: true});
+        await backgroundImage.hover({ trial: true });
     }
 
     await panZoomResetBtn.click();

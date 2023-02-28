@@ -27,7 +27,7 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-describe("The Duplicate Action plugin", () => {
+describe('The Duplicate Action plugin', () => {
     let openmct;
     let duplicateTask;
     let childObject;
@@ -42,10 +42,10 @@ describe("The Duplicate Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Child Folder",
+                    name: 'Child Folder',
                     identifier: {
-                        namespace: "",
-                        key: "child-folder-object"
+                        namespace: '',
+                        key: 'child-folder-object'
                     }
                 }
             }
@@ -55,8 +55,8 @@ describe("The Duplicate Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Parent Folder",
-                    type: "folder",
+                    name: 'Parent Folder',
+                    type: 'folder',
                     composition: [childObject.identifier]
                 }
             }
@@ -66,14 +66,16 @@ describe("The Duplicate Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Another Parent Folder"
+                    name: 'Another Parent Folder'
                 }
             }
         }).folder;
 
         let objectGet = openmct.objects.get.bind(openmct.objects);
         spyOn(openmct.objects, 'get').and.callFake((identifier) => {
-            let obj = [childObject, parentObject, anotherParentObject].find((ob) => ob.identifier.key === identifier.key);
+            let obj = [childObject, parentObject, anotherParentObject].find(
+                (ob) => ob.identifier.key === identifier.key
+            );
 
             if (!obj) {
                 // not one of the mocked objs, callthrough basically
@@ -86,12 +88,21 @@ describe("The Duplicate Action plugin", () => {
         spyOn(openmct.composition, 'get').and.callFake((domainObject) => {
             return {
                 load: async () => {
-                    let obj = [childObject, parentObject, anotherParentObject].find((ob) => ob.identifier.key === domainObject.identifier.key);
+                    let obj = [
+                        childObject,
+                        parentObject,
+                        anotherParentObject
+                    ].find(
+                        (ob) =>
+                            ob.identifier.key === domainObject.identifier.key
+                    );
                     let children = [];
 
                     if (obj) {
                         for (let i = 0; i < obj.composition.length; i++) {
-                            children.push(await openmct.objects.get(obj.composition[i]));
+                            children.push(
+                                await openmct.objects.get(obj.composition[i])
+                            );
                         }
                     }
 
@@ -105,7 +116,7 @@ describe("The Duplicate Action plugin", () => {
 
         // already installed by default, but never hurts, just adds to context menu
         openmct.install(DuplicateActionPlugin());
-        openmct.types.addType('folder', {creatable: true});
+        openmct.types.addType('folder', { creatable: true });
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -115,11 +126,11 @@ describe("The Duplicate Action plugin", () => {
         return resetApplicationState(openmct);
     });
 
-    it("should be defined", () => {
+    it('should be defined', () => {
         expect(DuplicateActionPlugin).toBeDefined();
     });
 
-    describe("when moving an object to a new parent", () => {
+    describe('when moving an object to a new parent', () => {
         beforeEach(async () => {
             duplicateTask = new DuplicateTask(openmct);
             await duplicateTask.duplicate(parentObject, anotherParentObject);
@@ -127,7 +138,9 @@ describe("The Duplicate Action plugin", () => {
 
         it("the duplicate child object's name (when not changing) should be the same as the original object", async () => {
             let duplicatedObjectIdentifier = anotherParentObject.composition[0];
-            let duplicatedObject = await openmct.objects.get(duplicatedObjectIdentifier);
+            let duplicatedObject = await openmct.objects.get(
+                duplicatedObjectIdentifier
+            );
             let duplicateObjectName = duplicatedObject.name;
 
             expect(duplicateObjectName).toEqual(parentObject.name);
@@ -136,20 +149,24 @@ describe("The Duplicate Action plugin", () => {
         it("the duplicate child object's identifier should be new", () => {
             let duplicatedObjectIdentifier = anotherParentObject.composition[0];
 
-            expect(duplicatedObjectIdentifier.key).not.toEqual(parentObject.identifier.key);
+            expect(duplicatedObjectIdentifier.key).not.toEqual(
+                parentObject.identifier.key
+            );
         });
     });
 
-    describe("when a new name is provided for the duplicated object", () => {
-        it("the name is updated", async () => {
+    describe('when a new name is provided for the duplicated object', () => {
+        it('the name is updated', async () => {
             const NEW_NAME = 'New Name';
 
             duplicateTask = new DuplicateTask(openmct);
             duplicateTask.changeName(NEW_NAME);
-            const child = await duplicateTask.duplicate(childObject, anotherParentObject);
+            const child = await duplicateTask.duplicate(
+                childObject,
+                anotherParentObject
+            );
 
             expect(child.name).toEqual(NEW_NAME);
         });
     });
-
 });

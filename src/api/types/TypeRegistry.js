@@ -21,9 +21,9 @@
  *****************************************************************************/
 define(['./Type'], function (Type) {
     const UNKNOWN_TYPE = new Type({
-        key: "unknown",
-        name: "Unknown Type",
-        cssClass: "icon-object-unknown"
+        key: 'unknown',
+        name: 'Unknown Type',
+        cssClass: 'icon-object-unknown'
     });
 
     /**
@@ -98,7 +98,8 @@ define(['./Type'], function (Type) {
     };
 
     TypeRegistry.prototype.importLegacyTypes = function (types) {
-        types.filter((t) => this.get(t.key) === UNKNOWN_TYPE)
+        types
+            .filter((t) => this.get(t.key) === UNKNOWN_TYPE)
             .forEach((type) => {
                 let def = Type.definitionFromLegacyDefinition(type);
                 this.addType(type.key, def);
@@ -107,4 +108,3 @@ define(['./Type'], function (Type) {
 
     return TypeRegistry;
 });
-

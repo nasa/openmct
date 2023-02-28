@@ -29,8 +29,8 @@ export default class UserProvider {
      */
     isLoggedIn() {}
     /**
-    * @param {String} role
-    * @returns {Promise<Boolean>} true if the current user has the given role
-    */
+     * @param {String} role
+     * @returns {Promise<Boolean>} true if the current user has the given role
+     */
     hasRole(role) {}
 }

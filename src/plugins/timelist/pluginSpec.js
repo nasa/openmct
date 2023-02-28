@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createOpenMct, resetApplicationState} from "utils/testing";
-import TimelistPlugin from "./plugin";
-import { TIMELIST_TYPE } from "./constants";
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import TimelistPlugin from './plugin';
+import { TIMELIST_TYPE } from './constants';
 import Vue from 'vue';
-import moment from "moment";
-import EventEmitter from "EventEmitter";
+import moment from 'moment';
+import EventEmitter from 'EventEmitter';
 
 const LIST_ITEM_CLASS = '.js-table__body .js-list-item';
 const LIST_ITEM_VALUE_CLASS = '.js-list-item__value';
@@ -40,34 +40,34 @@ describe('the plugin', function () {
     let originalRouterPath;
     let mockComposition;
     let now = Date.now();
-    let twoHoursPast = now - (1000 * 60 * 60 * 2);
-    let oneHourPast = now - (1000 * 60 * 60);
-    let twoHoursFuture = now + (1000 * 60 * 60 * 2);
+    let twoHoursPast = now - 1000 * 60 * 60 * 2;
+    let oneHourPast = now - 1000 * 60 * 60;
+    let twoHoursFuture = now + 1000 * 60 * 60 * 2;
     let planObject = {
         identifier: {
             key: 'test-plan-object',
             namespace: ''
         },
         type: 'plan',
-        id: "test-plan-object",
+        id: 'test-plan-object',
         selectFile: {
             body: JSON.stringify({
-                "TEST-GROUP": [
+                'TEST-GROUP': [
                     {
-                        "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                        "start": twoHoursPast,
-                        "end": oneHourPast,
-                        "type": "TEST-GROUP",
-                        "color": "fuchsia",
-                        "textColor": "black"
+                        name: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
+                        start: twoHoursPast,
+                        end: oneHourPast,
+                        type: 'TEST-GROUP',
+                        color: 'fuchsia',
+                        textColor: 'black'
                     },
                     {
-                        "name": "Sed ut perspiciatis",
-                        "start": now,
-                        "end": twoHoursFuture,
-                        "type": "TEST-GROUP",
-                        "color": "fuchsia",
-                        "textColor": "black"
+                        name: 'Sed ut perspiciatis',
+                        start: now,
+                        end: twoHoursFuture,
+                        type: 'TEST-GROUP',
+                        color: 'fuchsia',
+                        textColor: 'black'
                     }
                 ]
             })
@@ -122,19 +122,25 @@ describe('the plugin', function () {
     });
 
     it('is creatable', () => {
-        expect(timelistDefinition.creatable).toEqual(mockTimelistObject.creatable);
+        expect(timelistDefinition.creatable).toEqual(
+            mockTimelistObject.creatable
+        );
     });
 
     describe('the timelist view', () => {
         it('provides a timelist view', () => {
             const testViewObject = {
-                id: "test-object",
+                id: 'test-object',
                 type: TIMELIST_TYPE
             };
             openmct.router.path = [testViewObject];
 
-            const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
-            let timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            const applicableViews = openmct.objectViews.get(testViewObject, [
+                testViewObject
+            ]);
+            let timelistView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'timelist.view'
+            );
             expect(timelistView).toBeDefined();
         });
     });
@@ -150,7 +156,7 @@ describe('the plugin', function () {
                     namespace: ''
                 },
                 type: TIMELIST_TYPE,
-                id: "test-object",
+                id: 'test-object',
                 configuration: {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
@@ -166,22 +172,22 @@ describe('the plugin', function () {
                 },
                 selectFile: {
                     body: JSON.stringify({
-                        "TEST-GROUP": [
+                        'TEST-GROUP': [
                             {
-                                "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                                "start": twoHoursPast,
-                                "end": oneHourPast,
-                                "type": "TEST-GROUP",
-                                "color": "fuchsia",
-                                "textColor": "black"
+                                name: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
+                                start: twoHoursPast,
+                                end: oneHourPast,
+                                type: 'TEST-GROUP',
+                                color: 'fuchsia',
+                                textColor: 'black'
                             },
                             {
-                                "name": "Sed ut perspiciatis",
-                                "start": now,
-                                "end": twoHoursFuture,
-                                "type": "TEST-GROUP",
-                                "color": "fuchsia",
-                                "textColor": "black"
+                                name: 'Sed ut perspiciatis',
+                                start: now,
+                                end: twoHoursFuture,
+                                type: 'TEST-GROUP',
+                                color: 'fuchsia',
+                                textColor: 'black'
                             }
                         ]
                     })
@@ -190,8 +196,13 @@ describe('the plugin', function () {
 
             openmct.router.path = [timelistDomainObject];
 
-            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
-            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            const applicableViews = openmct.objectViews.get(
+                timelistDomainObject,
+                [timelistDomainObject]
+            );
+            timelistView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'timelist.view'
+            );
             let view = timelistView.view(timelistDomainObject, []);
             view.show(child, true);
 
@@ -211,11 +222,19 @@ describe('the plugin', function () {
         it('displays activity details', (done) => {
             Vue.nextTick(() => {
                 const itemEls = element.querySelectorAll(LIST_ITEM_CLASS);
-                const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
+                const itemValues = itemEls[0].querySelectorAll(
+                    LIST_ITEM_VALUE_CLASS
+                );
                 expect(itemValues.length).toEqual(4);
-                expect(itemValues[3].innerHTML.trim()).toEqual('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua');
-                expect(itemValues[0].innerHTML.trim()).toEqual(`${moment(twoHoursPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
-                expect(itemValues[1].innerHTML.trim()).toEqual(`${moment(oneHourPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
+                expect(itemValues[3].innerHTML.trim()).toEqual(
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
+                );
+                expect(itemValues[0].innerHTML.trim()).toEqual(
+                    `${moment(twoHoursPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`
+                );
+                expect(itemValues[1].innerHTML.trim()).toEqual(
+                    `${moment(oneHourPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`
+                );
 
                 done();
             });
@@ -233,7 +252,7 @@ describe('the plugin', function () {
                     namespace: ''
                 },
                 type: TIMELIST_TYPE,
-                id: "test-object",
+                id: 'test-object',
                 configuration: {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
@@ -247,19 +266,28 @@ describe('the plugin', function () {
                     pastEventsDuration: 0,
                     filter: ''
                 },
-                composition: [{
-                    identifier: {
-                        key: 'test-plan-object',
-                        namespace: ''
+                composition: [
+                    {
+                        identifier: {
+                            key: 'test-plan-object',
+                            namespace: ''
+                        }
                     }
-                }]
+                ]
             };
 
             openmct.router.path = [timelistDomainObject];
 
-            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
-            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
-            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            const applicableViews = openmct.objectViews.get(
+                timelistDomainObject,
+                [timelistDomainObject]
+            );
+            timelistView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'timelist.view'
+            );
+            let view = timelistView.view(timelistDomainObject, [
+                timelistDomainObject
+            ]);
             view.show(child, true);
 
             return Vue.nextTick();
@@ -286,7 +314,7 @@ describe('the plugin', function () {
                     namespace: ''
                 },
                 type: TIMELIST_TYPE,
-                id: "test-object",
+                id: 'test-object',
                 configuration: {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
@@ -300,19 +328,28 @@ describe('the plugin', function () {
                     pastEventsDuration: 0,
                     filter: 'perspiciatis'
                 },
-                composition: [{
-                    identifier: {
-                        key: 'test-plan-object',
-                        namespace: ''
+                composition: [
+                    {
+                        identifier: {
+                            key: 'test-plan-object',
+                            namespace: ''
+                        }
                     }
-                }]
+                ]
             };
 
             openmct.router.path = [timelistDomainObject];
 
-            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
-            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
-            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            const applicableViews = openmct.objectViews.get(
+                timelistDomainObject,
+                [timelistDomainObject]
+            );
+            timelistView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'timelist.view'
+            );
+            let view = timelistView.view(timelistDomainObject, [
+                timelistDomainObject
+            ]);
             view.show(child, true);
 
             return Vue.nextTick();
@@ -339,7 +376,7 @@ describe('the plugin', function () {
                     namespace: ''
                 },
                 type: TIMELIST_TYPE,
-                id: "test-object",
+                id: 'test-object',
                 configuration: {
                     sortOrderIndex: 0,
                     futureEventsIndex: 1,
@@ -353,19 +390,28 @@ describe('the plugin', function () {
                     pastEventsDuration: 0,
                     filter: ''
                 },
-                composition: [{
-                    identifier: {
-                        key: 'test-plan-object',
-                        namespace: ''
+                composition: [
+                    {
+                        identifier: {
+                            key: 'test-plan-object',
+                            namespace: ''
+                        }
                     }
-                }]
+                ]
             };
 
             openmct.router.path = [timelistDomainObject];
 
-            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
-            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
-            let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+            const applicableViews = openmct.objectViews.get(
+                timelistDomainObject,
+                [timelistDomainObject]
+            );
+            timelistView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'timelist.view'
+            );
+            let view = timelistView.view(timelistDomainObject, [
+                timelistDomainObject
+            ]);
             view.show(child, true);
 
             return Vue.nextTick();

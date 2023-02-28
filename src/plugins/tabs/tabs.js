@@ -20,13 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/tabs.vue',
-    'vue'
-], function (
-    TabsComponent,
-    Vue
-) {
+define(['./components/tabs.vue', 'vue'], function (TabsComponent, Vue) {
     function Tabs(openmct) {
         return {
             key: 'tabs',
@@ -52,14 +46,16 @@ define([
                                 openmct,
                                 domainObject,
                                 objectPath,
-                                composition: openmct.composition.get(domainObject)
+                                composition:
+                                    openmct.composition.get(domainObject)
                             },
                             data() {
                                 return {
                                     isEditing: editMode
                                 };
                             },
-                            template: '<tabs-component :isEditing="isEditing"></tabs-component>'
+                            template:
+                                '<tabs-component :isEditing="isEditing"></tabs-component>'
                         });
                     },
                     onEditModeChange(editMode) {

@@ -20,49 +20,52 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createOpenMct, resetApplicationState} from "utils/testing";
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import CouchDBSearchFolderPlugin from './plugin';
 
 describe('the plugin', function () {
     let identifier = {
         namespace: 'couch-search',
-        key: "couch-search"
+        key: 'couch-search'
     };
     let testPath = '/test/db';
     let openmct;
     let composition;
 
     beforeEach(() => {
-
         openmct = createOpenMct();
 
         let couchPlugin = openmct.plugins.CouchDB(testPath);
         openmct.install(couchPlugin);
 
-        openmct.install(new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
-            "selector": {
-                "model": {
-                    "type": "plan"
+        openmct.install(
+            new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
+                selector: {
+                    model: {
+                        type: 'plan'
+                    }
                 }
-            }
-        }));
+            })
+        );
 
-        spyOn(couchPlugin.couchProvider, 'getObjectsByFilter').and.returnValue(Promise.resolve([
-            {
-                identifier: {
-                    key: "1",
-                    namespace: "mct"
+        spyOn(couchPlugin.couchProvider, 'getObjectsByFilter').and.returnValue(
+            Promise.resolve([
+                {
+                    identifier: {
+                        key: '1',
+                        namespace: 'mct'
+                    }
+                },
+                {
+                    identifier: {
+                        key: '2',
+                        namespace: 'mct'
+                    }
                 }
-            },
-            {
-                identifier: {
-                    key: "2",
-                    namespace: "mct"
-                }
-            }
-        ]));
+            ])
+        );
 
-        spyOn(couchPlugin.couchProvider, "get").and.callFake((id) => {
+        spyOn(couchPlugin.couchProvider, 'get').and.callFake((id) => {
             return Promise.resolve({
                 identifier: id
             });
@@ -72,7 +75,7 @@ describe('the plugin', function () {
             openmct.once('start', resolve);
             openmct.startHeadless();
         }).then(() => {
-            composition = openmct.composition.get({identifier});
+            composition = openmct.composition.get({ identifier });
         });
     });
 
@@ -96,5 +99,4 @@ describe('the plugin', function () {
             expect(objects.length).toEqual(2);
         });
     });
-
 });

@@ -40,7 +40,7 @@ export default class Transaction {
         const promiseArray = [];
         const save = this.objectAPI.save.bind(this.objectAPI);
 
-        Object.values(this.dirtyObjects).forEach(object => {
+        Object.values(this.dirtyObjects).forEach((object) => {
             promiseArray.push(this.createDirtyObjectPromise(object, save));
         });
 
@@ -63,8 +63,11 @@ export default class Transaction {
     getDirtyObject(identifier) {
         let dirtyObject;
 
-        Object.values(this.dirtyObjects).forEach(object => {
-            const areIdsEqual = this.objectAPI.areIdsEqual(object.identifier, identifier);
+        Object.values(this.dirtyObjects).forEach((object) => {
+            const areIdsEqual = this.objectAPI.areIdsEqual(
+                object.identifier,
+                identifier
+            );
             if (areIdsEqual) {
                 dirtyObject = object;
             }
@@ -77,7 +80,7 @@ export default class Transaction {
         const promiseArray = [];
         const refresh = this.objectAPI.refresh.bind(this.objectAPI);
 
-        Object.values(this.dirtyObjects).forEach(object => {
+        Object.values(this.dirtyObjects).forEach((object) => {
             promiseArray.push(this.createDirtyObjectPromise(object, refresh));
         });
 

@@ -28,9 +28,8 @@ function copyRelatedMetadata(metadata) {
     return copiedMetadata;
 }
 
-import IndependentTimeContext from "@/api/time/IndependentTimeContext";
+import IndependentTimeContext from '@/api/time/IndependentTimeContext';
 export default class RelatedTelemetry {
-
     constructor(openmct, domainObject, telemetryKeys) {
         this._openmct = openmct;
         this._domainObject = domainObject;
@@ -49,7 +48,9 @@ export default class RelatedTelemetry {
             // grab related telemetry metadata
             for (let key of this.keys) {
                 if (imageHints.relatedTelemetry[key]) {
-                    this[key] = copyRelatedMetadata(imageHints.relatedTelemetry[key]);
+                    this[key] = copyRelatedMetadata(
+                        imageHints.relatedTelemetry[key]
+                    );
                 }
             }
 
@@ -64,7 +65,9 @@ export default class RelatedTelemetry {
 
     async load() {
         if (!this.hasRelatedTelemetry) {
-            throw new Error('This domain object does not have related telemetry, use "hasRelatedTelemetry" to check before loading.');
+            throw new Error(
+                'This domain object does not have related telemetry, use "hasRelatedTelemetry" to check before loading.'
+            );
         }
 
         await Promise.all(
@@ -74,7 +77,11 @@ export default class RelatedTelemetry {
                         await this._initializeHistorical(key);
                     }
 
-                    if (this[key].realtime && this[key].realtime.telemetryObjectId && this[key].realtime.telemetryObjectId !== '') {
+                    if (
+                        this[key].realtime &&
+                        this[key].realtime.telemetryObjectId &&
+                        this[key].realtime.telemetryObjectId !== ''
+                    ) {
                         await this._intializeRealtime(key);
                     }
                 }
@@ -86,7 +93,9 @@ export default class RelatedTelemetry {
         if (!this[key].historical.telemetryObjectId) {
             this[key].historical.hasTelemetryOnDatum = true;
         } else if (this[key].historical.telemetryObjectId !== '') {
-            this[key].historicalDomainObject = await this._openmct.objects.get(this[key].historical.telemetryObjectId);
+            this[key].historicalDomainObject = await this._openmct.objects.get(
+                this[key].historical.telemetryObjectId
+            );
 
             this[key].requestLatestFor = async (datum) => {
                 // We need to create a throwaway time context and pass it along
@@ -116,8 +125,10 @@ export default class RelatedTelemetry {
                     timeContext: ephemeralContext,
                     strategy: 'latest'
                 };
-                let results = await this._openmct.telemetry
-                    .request(this[key].historicalDomainObject, options);
+                let results = await this._openmct.telemetry.request(
+                    this[key].historicalDomainObject,
+                    options
+                );
 
                 return results[results.length - 1];
             };
@@ -125,10 +136,11 @@ export default class RelatedTelemetry {
     }
 
     async _intializeRealtime(key) {
-        this[key].realtimeDomainObject = await this._openmct.objects.get(this[key].realtime.telemetryObjectId);
+        this[key].realtimeDomainObject = await this._openmct.objects.get(
+            this[key].realtime.telemetryObjectId
+        );
         this[key].listeners = [];
         this[key].subscribe = (callback) => {
-
             if (!this[key].isSubscribed) {
                 this._subscribeToDataForKey(key);
             }
@@ -152,11 +164,11 @@ export default class RelatedTelemetry {
 
         if (this[key].realtimeDomainObject) {
             this[key].unsubscribe = this._openmct.telemetry.subscribe(
-                this[key].realtimeDomainObject, datum => {
-                    this[key].listeners.forEach(callback => {
+                this[key].realtimeDomainObject,
+                (datum) => {
+                    this[key].listeners.forEach((callback) => {
                         callback(datum);
                     });
-
                 }
             );
 
@@ -172,7 +184,8 @@ export default class RelatedTelemetry {
         let key = system.key;
         let metadata = this._openmct.telemetry.getMetadata(this._domainObject);
         let metadataValue = metadata.value(key) || { format: key };
-        this._timeFormatter = this._openmct.telemetry.getValueFormatter(metadataValue);
+        this._timeFormatter =
+            this._openmct.telemetry.getValueFormatter(metadataValue);
     }
 
     destroy() {
@@ -183,5 +196,4 @@ export default class RelatedTelemetry {
             }
         }
     }
-
 }

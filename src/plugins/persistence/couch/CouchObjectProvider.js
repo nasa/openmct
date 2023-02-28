@@ -20,15 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchDocument from "./CouchDocument";
-import CouchObjectQueue from "./CouchObjectQueue";
-import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from "./CouchStatusIndicator";
+import CouchDocument from './CouchDocument';
+import CouchObjectQueue from './CouchObjectQueue';
+import {
+    PENDING,
+    CONNECTED,
+    DISCONNECTED,
+    UNKNOWN
+} from './CouchStatusIndicator';
 import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
 
-const REV = "_rev";
-const ID = "_id";
+const REV = '_rev';
+const ID = '_id';
 const HEARTBEAT = 50000;
-const ALL_DOCS = "_all_docs?include_docs=true";
+const ALL_DOCS = '_all_docs?include_docs=true';
 
 class CouchObjectProvider {
     constructor(openmct, options, namespace, indicator) {
@@ -54,9 +59,13 @@ class CouchObjectProvider {
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
 
-        sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
+        sharedWorker = new SharedWorker(
+            sharedWorkerURL,
+            'CouchDB SSE Shared Worker'
+        );
         sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
-        sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
+        sharedWorker.port.onmessageerror =
+            provider.onSharedWorkerMessageError.bind(this);
         sharedWorker.port.start();
 
         this.openmct.on('destroy', () => {
@@ -75,10 +84,12 @@ class CouchObjectProvider {
     }
 
     isSynchronizedObject(object) {
-        return (object && object.type
-            && this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES
-            && this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.includes(object.type));
-
+        return (
+            object &&
+            object.type &&
+            this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES &&
+            this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)
+        );
     }
 
     onSharedWorkerMessage(event) {
@@ -93,13 +104,17 @@ class CouchObjectProvider {
                 namespace: this.namespace,
                 key: objectChanges.id
             };
-            let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
+            let keyString =
+                this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
             let isInTransaction = false;
 
             if (this.openmct.objects.isTransactionActive()) {
-                isInTransaction = this.openmct.objects.transaction.getDirtyObject(objectIdentifier);
+                isInTransaction =
+                    this.openmct.objects.transaction.getDirtyObject(
+                        objectIdentifier
+                    );
             }
 
             if (observersForObject && !isInTransaction) {
@@ -122,18 +137,18 @@ class CouchObjectProvider {
     #messageToIndicatorState(message) {
         let state;
         switch (message) {
-        case 'open':
-            state = CONNECTED;
-            break;
-        case 'close':
-            state = DISCONNECTED;
-            break;
-        case 'pending':
-            state = PENDING;
-            break;
-        case 'unknown':
-            state = UNKNOWN;
-            break;
+            case 'open':
+                state = CONNECTED;
+                break;
+            case 'close':
+                state = DISCONNECTED;
+                break;
+            case 'pending':
+                state = PENDING;
+                break;
+            case 'unknown':
+                state = UNKNOWN;
+                break;
         }
 
         return state;
@@ -148,30 +163,30 @@ class CouchObjectProvider {
     #statusCodeToIndicatorState(statusCode) {
         let state;
         switch (statusCode) {
-        case CouchObjectProvider.HTTP_OK:
-        case CouchObjectProvider.HTTP_CREATED:
-        case CouchObjectProvider.HTTP_ACCEPTED:
-        case CouchObjectProvider.HTTP_NOT_MODIFIED:
-        case CouchObjectProvider.HTTP_BAD_REQUEST:
-        case CouchObjectProvider.HTTP_UNAUTHORIZED:
-        case CouchObjectProvider.HTTP_FORBIDDEN:
-        case CouchObjectProvider.HTTP_NOT_FOUND:
-        case CouchObjectProvider.HTTP_METHOD_NOT_ALLOWED:
-        case CouchObjectProvider.HTTP_NOT_ACCEPTABLE:
-        case CouchObjectProvider.HTTP_CONFLICT:
-        case CouchObjectProvider.HTTP_PRECONDITION_FAILED:
-        case CouchObjectProvider.HTTP_REQUEST_ENTITY_TOO_LARGE:
-        case CouchObjectProvider.HTTP_UNSUPPORTED_MEDIA_TYPE:
-        case CouchObjectProvider.HTTP_REQUESTED_RANGE_NOT_SATISFIABLE:
-        case CouchObjectProvider.HTTP_EXPECTATION_FAILED:
-        case CouchObjectProvider.HTTP_SERVER_ERROR:
-            state = CONNECTED;
-            break;
-        case CouchObjectProvider.HTTP_SERVICE_UNAVAILABLE:
-            state = DISCONNECTED;
-            break;
-        default:
-            state = UNKNOWN;
+            case CouchObjectProvider.HTTP_OK:
+            case CouchObjectProvider.HTTP_CREATED:
+            case CouchObjectProvider.HTTP_ACCEPTED:
+            case CouchObjectProvider.HTTP_NOT_MODIFIED:
+            case CouchObjectProvider.HTTP_BAD_REQUEST:
+            case CouchObjectProvider.HTTP_UNAUTHORIZED:
+            case CouchObjectProvider.HTTP_FORBIDDEN:
+            case CouchObjectProvider.HTTP_NOT_FOUND:
+            case CouchObjectProvider.HTTP_METHOD_NOT_ALLOWED:
+            case CouchObjectProvider.HTTP_NOT_ACCEPTABLE:
+            case CouchObjectProvider.HTTP_CONFLICT:
+            case CouchObjectProvider.HTTP_PRECONDITION_FAILED:
+            case CouchObjectProvider.HTTP_REQUEST_ENTITY_TOO_LARGE:
+            case CouchObjectProvider.HTTP_UNSUPPORTED_MEDIA_TYPE:
+            case CouchObjectProvider.HTTP_REQUESTED_RANGE_NOT_SATISFIABLE:
+            case CouchObjectProvider.HTTP_EXPECTATION_FAILED:
+            case CouchObjectProvider.HTTP_SERVER_ERROR:
+                state = CONNECTED;
+                break;
+            case CouchObjectProvider.HTTP_SERVICE_UNAVAILABLE:
+                state = DISCONNECTED;
+                break;
+            default:
+                state = UNKNOWN;
         }
 
         return state;
@@ -200,7 +215,7 @@ class CouchObjectProvider {
         if (fetchOptions.body) {
             fetchOptions.body = JSON.stringify(fetchOptions.body);
             fetchOptions.headers = {
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json'
             };
         }
 
@@ -242,16 +257,22 @@ class CouchObjectProvider {
      * @private
      */
     #handleResponseCode(status, json, fetchOptions) {
-        this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
+        this.indicator.setIndicatorToState(
+            this.#statusCodeToIndicatorState(status)
+        );
         if (status === CouchObjectProvider.HTTP_CONFLICT) {
             const objectName = JSON.parse(fetchOptions.body)?.model?.name;
-            throw new this.openmct.objects.errors.Conflict(`Conflict persisting "${objectName}"`);
+            throw new this.openmct.objects.errors.Conflict(
+                `Conflict persisting "${objectName}"`
+            );
         } else if (status >= CouchObjectProvider.HTTP_BAD_REQUEST) {
             if (!json.error || !json.reason) {
                 throw new Error(`CouchDB Error ${status}`);
             }
 
-            throw new Error(`CouchDB Error ${status}: "${json.error} - ${json.reason}"`);
+            throw new Error(
+                `CouchDB Error ${status}: "${json.error} - ${json.reason}"`
+            );
         }
     }
 
@@ -298,7 +319,10 @@ class CouchObjectProvider {
             let object = this.fromPersistedModel(response.model, key);
 
             if (!this.objectQueue[key]) {
-                this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
+                this.objectQueue[key] = new CouchObjectQueue(
+                    undefined,
+                    response[REV]
+                );
             }
 
             if (isNotebookOrAnnotationType(object)) {
@@ -323,10 +347,9 @@ class CouchObjectProvider {
             this.bulkPromise = this.#deferBatchedGet(abortSignal);
         }
 
-        return this.bulkPromise
-            .then((domainObjectMap) => {
-                return domainObjectMap[identifier.key];
-            });
+        return this.bulkPromise.then((domainObjectMap) => {
+            return domainObjectMap[identifier.key];
+        });
     }
 
     /**
@@ -345,8 +368,12 @@ class CouchObjectProvider {
                 let objectKey = batchIds[0];
 
                 //If there's only one request, just do a regular get
-                return this.request(objectKey, "GET", undefined, abortSignal)
-                    .then(this.#returnAsMap(objectKey));
+                return this.request(
+                    objectKey,
+                    'GET',
+                    undefined,
+                    abortSignal
+                ).then(this.#returnAsMap(objectKey));
             } else {
                 return this.#bulkGet(batchIds, abortSignal);
             }
@@ -389,24 +416,26 @@ class CouchObjectProvider {
         ids = this.removeDuplicates(ids);
 
         const query = {
-            'keys': ids
+            keys: ids
         };
 
-        return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
-            if (response && response.rows !== undefined) {
-                return response.rows.reduce((map, row) => {
-                    //row.doc === null if the document does not exist.
-                    //row.doc === undefined if the document is not found.
-                    if (row.doc !== undefined) {
-                        map[row.key] = this.#getModel(row.doc);
-                    }
+        return this.request(ALL_DOCS, 'POST', query, signal).then(
+            (response) => {
+                if (response && response.rows !== undefined) {
+                    return response.rows.reduce((map, row) => {
+                        //row.doc === null if the document does not exist.
+                        //row.doc === undefined if the document is not found.
+                        if (row.doc !== undefined) {
+                            map[row.key] = this.#getModel(row.doc);
+                        }
 
-                    return map;
-                }, {});
-            } else {
-                return {};
+                        return map;
+                    }, {});
+                } else {
+                    return {};
+                }
             }
-        });
+        );
     }
 
     /**
@@ -435,9 +464,9 @@ class CouchObjectProvider {
         }
 
         const response = await fetch(url, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json'
             },
             signal: abortSignal,
             body
@@ -445,10 +474,10 @@ class CouchObjectProvider {
 
         const reader = response.body.getReader();
         let completed = false;
-        let decoder = new TextDecoder("utf-8");
+        let decoder = new TextDecoder('utf-8');
         let decodedChunk = '';
         while (!completed) {
-            const {done, value} = await reader.read();
+            const { done, value } = await reader.read();
             //done is true when we lose connection with the provider
             if (done) {
                 completed = true;
@@ -457,7 +486,7 @@ class CouchObjectProvider {
             if (value) {
                 let chunk = new Uint8Array(value.length);
                 chunk.set(value, 0);
-                const partial = decoder.decode(chunk, {stream: !completed});
+                const partial = decoder.decode(chunk, { stream: !completed });
                 decodedChunk = decodedChunk + partial;
             }
         }
@@ -466,7 +495,7 @@ class CouchObjectProvider {
             const json = JSON.parse(decodedChunk);
             if (json) {
                 let docs = json.docs;
-                docs.forEach(doc => {
+                docs.forEach((doc) => {
                     let object = this.#getModel(doc);
                     if (object) {
                         objects.push(object);
@@ -491,7 +520,9 @@ class CouchObjectProvider {
 
         return () => {
             if (this.observers[keyString]) {
-                this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
+                this.observers[keyString] = this.observers[keyString].filter(
+                    (observer) => observer !== callback
+                );
                 if (this.observers[keyString].length === 0) {
                     delete this.observers[keyString];
                 }
@@ -584,7 +615,10 @@ class CouchObjectProvider {
 
         this.stopObservingObjectChanges = () => {
             controller.abort();
-            couchEventSource.removeEventListener('message', this.onEventMessage.bind(this));
+            couchEventSource.removeEventListener(
+                'message',
+                this.onEventMessage.bind(this)
+            );
             delete this.stopObservingObjectChanges;
         };
 
@@ -595,7 +629,10 @@ class CouchObjectProvider {
         couchEventSource.onopen = this.onEventOpen.bind(this);
 
         // start listening for events
-        couchEventSource.addEventListener('message', this.onEventMessage.bind(this));
+        couchEventSource.addEventListener(
+            'message',
+            this.onEventMessage.bind(this)
+        );
 
         console.debug('⇿ Opened connection ⇿');
     }
@@ -620,18 +657,18 @@ class CouchObjectProvider {
     #updateIndicatorStatus(readyState) {
         let message;
         switch (readyState) {
-        case EventSource.CONNECTING:
-            message = 'pending';
-            break;
-        case EventSource.OPEN:
-            message = 'open';
-            break;
-        case EventSource.CLOSED:
-            message = 'close';
-            break;
-        default:
-            message = 'unknown';
-            break;
+            case EventSource.CONNECTING:
+                message = 'pending';
+                break;
+            case EventSource.OPEN:
+                message = 'open';
+                break;
+            case EventSource.CLOSED:
+                message = 'close';
+                break;
+            default:
+                message = 'unknown';
+                break;
         }
 
         const indicatorState = this.#messageToIndicatorState(message);
@@ -666,12 +703,18 @@ class CouchObjectProvider {
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model);
             document.metadata.created = Date.now();
-            this.request(key, "PUT", document).then((response) => {
-                this.#checkResponse(response, queued.intermediateResponse, key);
-            }).catch(error => {
-                queued.intermediateResponse.reject(error);
-                this.objectQueue[key].pending = false;
-            });
+            this.request(key, 'PUT', document)
+                .then((response) => {
+                    this.#checkResponse(
+                        response,
+                        queued.intermediateResponse,
+                        key
+                    );
+                })
+                .catch((error) => {
+                    queued.intermediateResponse.reject(error);
+                    this.objectQueue[key].pending = false;
+                });
         }
 
         return intermediateResponse.promise;
@@ -684,13 +727,23 @@ class CouchObjectProvider {
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
-            let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
-            this.request(key, "PUT", document).then((response) => {
-                this.#checkResponse(response, queued.intermediateResponse, key);
-            }).catch((error) => {
-                queued.intermediateResponse.reject(error);
-                this.objectQueue[key].pending = false;
-            });
+            let document = new CouchDocument(
+                key,
+                queued.model,
+                this.objectQueue[key].rev
+            );
+            this.request(key, 'PUT', document)
+                .then((response) => {
+                    this.#checkResponse(
+                        response,
+                        queued.intermediateResponse,
+                        key
+                    );
+                })
+                .catch((error) => {
+                    queued.intermediateResponse.reject(error);
+                    this.objectQueue[key].pending = false;
+                });
         }
     }
 

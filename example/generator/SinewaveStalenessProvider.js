@@ -75,7 +75,10 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
         const intervalId = setInterval(() => {
             if (this.#providingStaleness(domainObject)) {
-                this.#updateStaleness(id, !this.#observingStaleness[id].isStale);
+                this.#updateStaleness(
+                    id,
+                    !this.#observingStaleness[id].isStale
+                );
             }
         }, 10000);
 

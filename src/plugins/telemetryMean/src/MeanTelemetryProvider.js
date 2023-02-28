@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'objectUtils',
-    './TelemetryAverager'
-], function (objectUtils, TelemetryAverager) {
-
+define(['objectUtils', './TelemetryAverager'], function (
+    objectUtils,
+    TelemetryAverager
+) {
     function MeanTelemetryProvider(openmct) {
         this.openmct = openmct;
         this.telemetryAPI = openmct.telemetry;
@@ -33,7 +32,9 @@ define([
         this.perObjectProviders = {};
     }
 
-    MeanTelemetryProvider.prototype.canProvideTelemetry = function (domainObject) {
+    MeanTelemetryProvider.prototype.canProvideTelemetry = function (
+        domainObject
+    ) {
         return domainObject.type === 'telemetry-mean';
     };
 
@@ -41,18 +42,30 @@ define([
         MeanTelemetryProvider.prototype.supportsSubscribe =
             MeanTelemetryProvider.prototype.canProvideTelemetry;
 
-    MeanTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
+    MeanTelemetryProvider.prototype.subscribe = function (
+        domainObject,
+        callback
+    ) {
         let wrappedUnsubscribe;
         let unsubscribeCalled = false;
-        const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+        const objectId = objectUtils.parseKeyString(
+            domainObject.telemetryPoint
+        );
         const samples = domainObject.samples;
 
-        this.objectAPI.get(objectId)
-            .then(function (linkedDomainObject) {
-                if (!unsubscribeCalled) {
-                    wrappedUnsubscribe = this.subscribeToAverage(linkedDomainObject, samples, callback);
-                }
-            }.bind(this))
+        this.objectAPI
+            .get(objectId)
+            .then(
+                function (linkedDomainObject) {
+                    if (!unsubscribeCalled) {
+                        wrappedUnsubscribe = this.subscribeToAverage(
+                            linkedDomainObject,
+                            samples,
+                            callback
+                        );
+                    }
+                }.bind(this)
+            )
             .catch(logError);
 
         return function unsubscribe() {
@@ -63,43 +76,77 @@ define([
         };
     };
 
-    MeanTelemetryProvider.prototype.subscribeToAverage = function (domainObject, samples, callback) {
-        const telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples, callback);
-        const createAverageDatum = telemetryAverager.createAverageDatum.bind(telemetryAverager);
+    MeanTelemetryProvider.prototype.subscribeToAverage = function (
+        domainObject,
+        samples,
+        callback
+    ) {
+        const telemetryAverager = new TelemetryAverager(
+            this.telemetryAPI,
+            this.timeAPI,
+            domainObject,
+            samples,
+            callback
+        );
+        const createAverageDatum =
+            telemetryAverager.createAverageDatum.bind(telemetryAverager);
 
         return this.telemetryAPI.subscribe(domainObject, createAverageDatum);
     };
 
     MeanTelemetryProvider.prototype.request = function (domainObject, request) {
-        const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+        const objectId = objectUtils.parseKeyString(
+            domainObject.telemetryPoint
+        );
         const samples = domainObject.samples;
 
-        return this.objectAPI.get(objectId).then(function (linkedDomainObject) {
-            return this.requestAverageTelemetry(linkedDomainObject, request, samples);
-        }.bind(this));
+        return this.objectAPI.get(objectId).then(
+            function (linkedDomainObject) {
+                return this.requestAverageTelemetry(
+                    linkedDomainObject,
+                    request,
+                    samples
+                );
+            }.bind(this)
+        );
     };
 
     /**
      * @private
      */
-    MeanTelemetryProvider.prototype.requestAverageTelemetry = function (domainObject, request, samples) {
+    MeanTelemetryProvider.prototype.requestAverageTelemetry = function (
+        domainObject,
+        request,
+        samples
+    ) {
         const averageData = [];
         const addToAverageData = averageData.push.bind(averageData);
-        const telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples, addToAverageData);
-        const createAverageDatum = telemetryAverager.createAverageDatum.bind(telemetryAverager);
+        const telemetryAverager = new TelemetryAverager(
+            this.telemetryAPI,
+            this.timeAPI,
+            domainObject,
+            samples,
+            addToAverageData
+        );
+        const createAverageDatum =
+            telemetryAverager.createAverageDatum.bind(telemetryAverager);
 
-        return this.telemetryAPI.request(domainObject, request).then(function (telemetryData) {
-            telemetryData.forEach(createAverageDatum);
+        return this.telemetryAPI
+            .request(domainObject, request)
+            .then(function (telemetryData) {
+                telemetryData.forEach(createAverageDatum);
 
-            return averageData;
-        });
+                return averageData;
+            });
     };
 
     /**
      * @private
      */
     MeanTelemetryProvider.prototype.getLinkedObject = function (domainObject) {
-        const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+        const objectId = objectUtils.parseKeyString(
+            domainObject.telemetryPoint
+        );
 
         return this.objectAPI.get(objectId);
     };

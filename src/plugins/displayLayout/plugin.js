@@ -60,7 +60,8 @@ class DisplayLayoutView {
                     isEditing
                 };
             },
-            template: '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
+            template:
+                '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
         });
     }
 
@@ -76,14 +77,26 @@ class DisplayLayoutView {
         return {
             item: this.domainObject,
             supportsMultiSelect: true,
-            addElement: this.component && this.component.$refs.displayLayout.addElement,
-            removeItem: this.component && this.component.$refs.displayLayout.removeItem,
-            orderItem: this.component && this.component.$refs.displayLayout.orderItem,
-            duplicateItem: this.component && this.component.$refs.displayLayout.duplicateItem,
-            switchViewType: this.component && this.component.$refs.displayLayout.switchViewType,
-            mergeMultipleTelemetryViews: this.component && this.component.$refs.displayLayout.mergeMultipleTelemetryViews,
-            mergeMultipleOverlayPlots: this.component && this.component.$refs.displayLayout.mergeMultipleOverlayPlots,
-            toggleGrid: this.component && this.component.$refs.displayLayout.toggleGrid
+            addElement:
+                this.component && this.component.$refs.displayLayout.addElement,
+            removeItem:
+                this.component && this.component.$refs.displayLayout.removeItem,
+            orderItem:
+                this.component && this.component.$refs.displayLayout.orderItem,
+            duplicateItem:
+                this.component &&
+                this.component.$refs.displayLayout.duplicateItem,
+            switchViewType:
+                this.component &&
+                this.component.$refs.displayLayout.switchViewType,
+            mergeMultipleTelemetryViews:
+                this.component &&
+                this.component.$refs.displayLayout.mergeMultipleTelemetryViews,
+            mergeMultipleOverlayPlots:
+                this.component &&
+                this.component.$refs.displayLayout.mergeMultipleOverlayPlots,
+            toggleGrid:
+                this.component && this.component.$refs.displayLayout.toggleGrid
         };
     }
 
@@ -110,7 +123,12 @@ export default function DisplayLayoutPlugin(options) {
                 return domainObject.type === 'layout';
             },
             view: function (domainObject, objectPath) {
-                return new DisplayLayoutView(openmct, domainObject, objectPath, options);
+                return new DisplayLayoutView(
+                    openmct,
+                    domainObject,
+                    objectPath,
+                    options
+                );
             },
             priority() {
                 return 100;
@@ -118,7 +136,9 @@ export default function DisplayLayoutPlugin(options) {
         });
         openmct.types.addType('layout', DisplayLayoutType());
         openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct));
-        openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
+        openmct.inspectorViews.addProvider(
+            new AlphaNumericFormatViewProvider(openmct, options)
+        );
         openmct.composition.addPolicy((parent, child) => {
             if (parent.type === 'layout' && child.type === 'folder') {
                 return false;
@@ -127,7 +147,9 @@ export default function DisplayLayoutPlugin(options) {
             }
         });
 
-        for (const [type, definition] of Object.entries(DisplayLayoutDrawingObjectTypes)) {
+        for (const [type, definition] of Object.entries(
+            DisplayLayoutDrawingObjectTypes
+        )) {
             openmct.types.addType(type, definition);
         }
 

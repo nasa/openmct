@@ -20,18 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
-
+define(['lodash'], function (_) {
     function applyReasonableDefaults(valueMetadata, index) {
         valueMetadata.source = valueMetadata.source || valueMetadata.key;
         valueMetadata.hints = valueMetadata.hints || {};
 
         if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'x')) {
-            if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'domain')) {
+            if (
+                !Object.prototype.hasOwnProperty.call(
+                    valueMetadata.hints,
+                    'domain'
+                )
+            ) {
                 valueMetadata.hints.domain = valueMetadata.hints.x;
             }
 
@@ -39,7 +39,12 @@ define([
         }
 
         if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'y')) {
-            if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'range')) {
+            if (
+                !Object.prototype.hasOwnProperty.call(
+                    valueMetadata.hints,
+                    'range'
+                )
+            ) {
                 valueMetadata.hints.range = valueMetadata.hints.y;
             }
 
@@ -48,7 +53,9 @@ define([
 
         if (valueMetadata.format === 'enum') {
             if (!valueMetadata.values) {
-                valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
+                valueMetadata.values = valueMetadata.enumerations.map(
+                    (e) => e.value
+                );
             }
 
             if (!Object.prototype.hasOwnProperty.call(valueMetadata, 'max')) {
@@ -60,7 +67,12 @@ define([
             }
         }
 
-        if (!Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'priority')) {
+        if (
+            !Object.prototype.hasOwnProperty.call(
+                valueMetadata.hints,
+                'priority'
+            )
+        ) {
             valueMetadata.hints.priority = index;
         }
 
@@ -75,7 +87,9 @@ define([
     function TelemetryMetadataManager(metadata) {
         this.metadata = metadata;
 
-        this.valueMetadatas = this.metadata.values ? this.metadata.values.map(applyReasonableDefaults) : [];
+        this.valueMetadatas = this.metadata.values
+            ? this.metadata.values.map(applyReasonableDefaults)
+            : [];
     }
 
     /**
@@ -99,9 +113,7 @@ define([
      * Array is sorted based on hint priority.
      *
      */
-    TelemetryMetadataManager.prototype.valuesForHints = function (
-        hints
-    ) {
+    TelemetryMetadataManager.prototype.valuesForHints = function (hints) {
         function hasHint(hint) {
             // eslint-disable-next-line no-invalid-this
             return Object.prototype.hasOwnProperty.call(this.hints, hint);
@@ -112,7 +124,7 @@ define([
         }
 
         const matchingMetadata = this.valueMetadatas.filter(hasHints);
-        let iteratees = hints.map(hint => {
+        let iteratees = hints.map((hint) => {
             return (metadata) => {
                 return metadata.hints[hint];
             };
@@ -134,15 +146,17 @@ define([
     };
 
     TelemetryMetadataManager.prototype.getFilterableValues = function () {
-        return this.valueMetadatas.filter(metadatum => metadatum.filters && metadatum.filters.length > 0);
+        return this.valueMetadatas.filter(
+            (metadatum) => metadatum.filters && metadatum.filters.length > 0
+        );
     };
 
     TelemetryMetadataManager.prototype.getDefaultDisplayValue = function () {
         let valueMetadata = this.valuesForHints(['range'])[0];
 
         if (valueMetadata === undefined) {
-            valueMetadata = this.values().filter(values => {
-                return !(values.hints.domain);
+            valueMetadata = this.values().filter((values) => {
+                return !values.hints.domain;
             })[0];
         }
 
@@ -154,5 +168,4 @@ define([
     };
 
     return TelemetryMetadataManager;
-
 });

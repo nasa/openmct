@@ -36,7 +36,8 @@ class ActionsAPI extends EventEmitter {
         this.register = this.register.bind(this);
         this.getActionsCollection = this.getActionsCollection.bind(this);
         this._applicableActions = this._applicableActions.bind(this);
-        this._updateCachedActionCollections = this._updateCachedActionCollections.bind(this);
+        this._updateCachedActionCollections =
+            this._updateCachedActionCollections.bind(this);
     }
 
     register(actionDefinition) {
@@ -49,7 +50,10 @@ class ActionsAPI extends EventEmitter {
 
     getActionsCollection(objectPath, view) {
         if (view) {
-            return this._getCachedActionCollection(objectPath, view) || this._newActionCollection(objectPath, view, true);
+            return (
+                this._getCachedActionCollection(objectPath, view) ||
+                this._newActionCollection(objectPath, view, true)
+            );
         } else {
             return this._newActionCollection(objectPath, view, true);
         }
@@ -66,7 +70,13 @@ class ActionsAPI extends EventEmitter {
     _newActionCollection(objectPath, view, skipEnvironmentObservers) {
         let applicableActions = this._applicableActions(objectPath, view);
 
-        const actionCollection = new ActionCollection(applicableActions, objectPath, view, this._openmct, skipEnvironmentObservers);
+        const actionCollection = new ActionCollection(
+            applicableActions,
+            objectPath,
+            view,
+            this._openmct,
+            skipEnvironmentObservers
+        );
         if (view) {
             this._cacheActionCollection(view, actionCollection);
         }
@@ -82,7 +92,10 @@ class ActionsAPI extends EventEmitter {
     _updateCachedActionCollections(key) {
         if (this._actionCollections.has(key)) {
             let actionCollection = this._actionCollections.get(key);
-            actionCollection.off('destroy', this._updateCachedActionCollections);
+            actionCollection.off(
+                'destroy',
+                this._updateCachedActionCollections
+            );
 
             this._actionCollections.delete(key);
         }
@@ -91,7 +104,7 @@ class ActionsAPI extends EventEmitter {
     _applicableActions(objectPath, view) {
         let actionsObject = {};
 
-        let keys = Object.keys(this._allActions).filter(key => {
+        let keys = Object.keys(this._allActions).filter((key) => {
             let actionDefinition = this._allActions[key];
 
             if (actionDefinition.appliesTo === undefined) {
@@ -101,7 +114,7 @@ class ActionsAPI extends EventEmitter {
             }
         });
 
-        keys.forEach(key => {
+        keys.forEach((key) => {
             let action = _.clone(this._allActions[key]);
 
             actionsObject[key] = action;
@@ -112,7 +125,9 @@ class ActionsAPI extends EventEmitter {
 
     _groupAndSortActions(actionsArray = []) {
         if (!Array.isArray(actionsArray) && typeof actionsArray === 'object') {
-            actionsArray = Object.keys(actionsArray).map(key => actionsArray[key]);
+            actionsArray = Object.keys(actionsArray).map(
+                (key) => actionsArray[key]
+            );
         }
 
         let actionsObject = {};
@@ -122,7 +137,7 @@ class ActionsAPI extends EventEmitter {
             return b.priority - a.priority;
         }
 
-        actionsArray.forEach(action => {
+        actionsArray.forEach((action) => {
             if (actionsObject[action.group] === undefined) {
                 actionsObject[action.group] = [action];
             } else {
@@ -130,7 +145,7 @@ class ActionsAPI extends EventEmitter {
             }
         });
 
-        this._groupOrder.forEach(group => {
+        this._groupOrder.forEach((group) => {
             let groupArray = actionsObject[group];
 
             if (groupArray) {

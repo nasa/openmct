@@ -21,14 +21,12 @@
  *****************************************************************************/
 
 define([], function () {
-
     /**
      * This time system supports UTC dates and provides a ticking clock source.
      * @implements TimeSystem
      * @constructor
      */
     function LocalTimeSystem() {
-
         /**
          * Some metadata, which will be used to identify the time system in
          * the UI

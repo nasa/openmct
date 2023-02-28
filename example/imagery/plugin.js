@@ -21,24 +21,24 @@
  *****************************************************************************/
 
 const DEFAULT_IMAGE_SAMPLES = [
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18731.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18732.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18733.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18734.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18735.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18736.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18737.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18738.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18739.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18740.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18741.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18742.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18743.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18744.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18745.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18746.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg",
-    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18731.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18732.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18733.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18734.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18735.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18736.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18737.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18738.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18739.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18740.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18741.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18742.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18743.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18744.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18745.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18746.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg',
+    'https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg'
 ];
 const DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS = 20000;
 const MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS = 5000;
@@ -52,13 +52,15 @@ export default function () {
             key: 'example.imagery',
             name: 'Example Imagery',
             cssClass: 'icon-image',
-            description: 'For development use. Creates example imagery '
-                + 'data that mimics a live imagery stream.',
+            description:
+                'For development use. Creates example imagery ' +
+                'data that mimics a live imagery stream.',
             creatable: true,
             initialize: (object) => {
                 object.configuration = {
                     imageLocation: '',
-                    imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS,
+                    imageLoadDelayInMilliSeconds:
+                        DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS,
                     imageSamples: [],
                     layers: []
                 };
@@ -133,10 +135,7 @@ export default function () {
                     name: 'Images url list (comma separated)',
                     control: 'textarea',
                     cssClass: 'l-inline',
-                    property: [
-                        "configuration",
-                        "imageLocation"
-                    ]
+                    property: ['configuration', 'imageLocation']
                 },
                 {
                     key: 'imageLoadDelayInMilliSeconds',
@@ -144,10 +143,7 @@ export default function () {
                     control: 'numberfield',
                     required: true,
                     cssClass: 'l-inline',
-                    property: [
-                        "configuration",
-                        "imageLoadDelayInMilliSeconds"
-                    ]
+                    property: ['configuration', 'imageLoadDelayInMilliSeconds']
                 }
             ]
         });
@@ -187,15 +183,25 @@ function getImageUrlListFromConfig(configuration) {
 }
 
 function getImageLoadDelay(domainObject) {
-    const imageLoadDelay = Math.trunc(Number(domainObject.configuration.imageLoadDelayInMilliSeconds));
+    const imageLoadDelay = Math.trunc(
+        Number(domainObject.configuration.imageLoadDelayInMilliSeconds)
+    );
     if (!imageLoadDelay) {
-        openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS);
+        openmctInstance.objects.mutate(
+            domainObject,
+            'configuration.imageLoadDelayInMilliSeconds',
+            DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS
+        );
 
         return DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS;
     }
 
     if (imageLoadDelay < MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS) {
-        openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS);
+        openmctInstance.objects.mutate(
+            domainObject,
+            'configuration.imageLoadDelayInMilliSeconds',
+            MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS
+        );
 
         return MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS;
     }
@@ -205,12 +211,20 @@ function getImageLoadDelay(domainObject) {
 
 function getRealtimeProvider() {
     return {
-        supportsSubscribe: domainObject => domainObject.type === 'example.imagery',
+        supportsSubscribe: (domainObject) =>
+            domainObject.type === 'example.imagery',
         subscribe: (domainObject, callback) => {
             const delay = getImageLoadDelay(domainObject);
             const interval = setInterval(() => {
-                const imageSamples = getImageSamples(domainObject.configuration);
-                const datum = pointForTimestamp(Date.now(), domainObject.name, imageSamples, delay);
+                const imageSamples = getImageSamples(
+                    domainObject.configuration
+                );
+                const datum = pointForTimestamp(
+                    Date.now(),
+                    domainObject.name,
+                    imageSamples,
+                    delay
+                );
                 callback(datum);
             }, delay);
 
@@ -224,8 +238,10 @@ function getRealtimeProvider() {
 function getHistoricalProvider() {
     return {
         supportsRequest: (domainObject, options) => {
-            return domainObject.type === 'example.imagery'
-                && options.strategy !== 'latest';
+            return (
+                domainObject.type === 'example.imagery' &&
+                options.strategy !== 'latest'
+            );
         },
         request: (domainObject, options) => {
             const delay = getImageLoadDelay(domainObject);
@@ -233,7 +249,14 @@ function getHistoricalProvider() {
             const end = Math.min(options.end, Date.now());
             const data = [];
             while (start <= end && data.length < delay) {
-                data.push(pointForTimestamp(start, domainObject.name, getImageSamples(domainObject.configuration), delay));
+                data.push(
+                    pointForTimestamp(
+                        start,
+                        domainObject.name,
+                        getImageSamples(domainObject.configuration),
+                        delay
+                    )
+                );
                 start += delay;
             }
 
@@ -245,12 +268,19 @@ function getHistoricalProvider() {
 function getLadProvider() {
     return {
         supportsRequest: (domainObject, options) => {
-            return domainObject.type === 'example.imagery'
-                && options.strategy === 'latest';
+            return (
+                domainObject.type === 'example.imagery' &&
+                options.strategy === 'latest'
+            );
         },
         request: (domainObject, options) => {
             const delay = getImageLoadDelay(domainObject);
-            const datum = pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay);
+            const datum = pointForTimestamp(
+                Date.now(),
+                domainObject.name,
+                getImageSamples(domainObject.configuration),
+                delay
+            );
 
             return Promise.resolve([datum]);
         }
@@ -258,15 +288,18 @@ function getLadProvider() {
 }
 
 function pointForTimestamp(timestamp, name, imageSamples, delay) {
-    const url = imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
+    const url =
+        imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
     const urlItems = url.split('/');
-    const imageDownloadName = `example.imagery.${urlItems[urlItems.length - 1]}`;
+    const imageDownloadName = `example.imagery.${
+        urlItems[urlItems.length - 1]
+    }`;
     const navCamTransformations = {
-        "translateX": 0,
-        "translateY": 18,
-        "rotation": 0,
-        "scale": 0.3,
-        "cameraAngleOfView": 70
+        translateX: 0,
+        translateY: 18,
+        rotation: 0,
+        scale: 0.3,
+        cameraAngleOfView: 70
     };
 
     return {

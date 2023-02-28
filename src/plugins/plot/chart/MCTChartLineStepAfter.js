@@ -42,7 +42,7 @@ export default class MCTChartLineStepAfter extends MCTChartSeriesElement {
             return 0;
         }
 
-        return 2 + ((index - 1) * 4);
+        return 2 + (index - 1) * 4;
     }
 
     addPoint(point, start) {
@@ -71,4 +71,3 @@ export default class MCTChartLineStepAfter extends MCTChartSeriesElement {
         }
     }
 }
-

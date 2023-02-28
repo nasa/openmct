@@ -66,18 +66,18 @@ function generateTelemetry(start, count) {
         let logo = 'images/logo-openmct.svg';
 
         telemetry.push({
-            "name": stringRep + " Imagery",
-            "utc": start + (i * ONE_MINUTE),
-            "url": location.host + '/' + logo + '?time=' + stringRep,
-            "timeId": stringRep,
-            "value": 100
+            name: stringRep + ' Imagery',
+            utc: start + i * ONE_MINUTE,
+            url: location.host + '/' + logo + '?time=' + stringRep,
+            timeId: stringRep,
+            value: 100
         });
     }
 
     return telemetry;
 }
 
-describe("The Imagery View Layouts", () => {
+describe('The Imagery View Layouts', () => {
     const imageryKey = 'example.imagery';
     const imageryForTimeStripKey = 'example.imagery.time-strip.view';
     const START = Date.now();
@@ -96,75 +96,77 @@ describe("The Imagery View Layouts", () => {
     let imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
     let imageryObject = {
         identifier: {
-            namespace: "",
-            key: "imageryId"
+            namespace: '',
+            key: 'imageryId'
         },
-        name: "Example Imagery",
-        type: "example.imagery",
-        location: "parentId",
+        name: 'Example Imagery',
+        type: 'example.imagery',
+        location: 'parentId',
         modified: 0,
         persisted: 0,
         configuration: {
-            layers: [{
-                name: '16:9',
-                visible: true
-            }]
+            layers: [
+                {
+                    name: '16:9',
+                    visible: true
+                }
+            ]
         },
         telemetry: {
             values: [
                 {
-                    "name": "Image",
-                    "key": "url",
-                    "format": "image",
-                    "layers": [
+                    name: 'Image',
+                    key: 'url',
+                    format: 'image',
+                    layers: [
                         {
                             source: location.host + '/images/bg-splash.jpg',
                             name: '16:9'
                         }
                     ],
-                    "hints": {
-                        "image": 1,
-                        "priority": 3
+                    hints: {
+                        image: 1,
+                        priority: 3
                     },
-                    "source": "url"
+                    source: 'url'
                 },
                 {
-                    "name": "Image Thumbnail",
-                    "key": "thumbnail-url",
-                    "format": "thumbnail",
-                    "hints": {
-                        "thumbnail": 1,
-                        "priority": 3
+                    name: 'Image Thumbnail',
+                    key: 'thumbnail-url',
+                    format: 'thumbnail',
+                    hints: {
+                        thumbnail: 1,
+                        priority: 3
                     },
-                    "source": "url"
+                    source: 'url'
                 },
                 {
-                    "name": "Name",
-                    "key": "name",
-                    "source": "name",
-                    "hints": {
-                        "priority": 0
+                    name: 'Name',
+                    key: 'name',
+                    source: 'name',
+                    hints: {
+                        priority: 0
                     }
                 },
                 {
-                    "name": "Time",
-                    "key": "utc",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 2,
-                        "priority": 1
+                    name: 'Time',
+                    key: 'utc',
+                    format: 'utc',
+                    hints: {
+                        domain: 2,
+                        priority: 1
                     },
-                    "source": "utc"
+                    source: 'utc'
                 },
                 {
-                    "name": "Local Time",
-                    "key": "local",
-                    "format": "local-format",
-                    "hints": {
-                        "domain": 1,
-                        "priority": 2
+                    name: 'Local Time',
+                    key: 'local',
+                    format: 'local-format',
+                    hints: {
+                        domain: 1,
+                        priority: 2
                     },
-                    "source": "local"
+                    source: 'local'
                 }
             ]
         }
@@ -185,7 +187,9 @@ describe("The Imagery View Layouts", () => {
                 return Promise.resolve(imageTelemetry);
             }
         };
-        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
+        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(
+            historicalProvider
+        );
 
         spyOn(openmct.telemetry, 'request').and.callFake(() => {
             telemetryPromiseResolve(imageTelemetry);
@@ -210,7 +214,9 @@ describe("The Imagery View Layouts", () => {
         });
 
         //spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
+        spyOn(openmct.objects, 'get').and.returnValue(
+            Promise.resolve(imageryObject)
+        );
 
         originalRouterPath = openmct.router.path;
 
@@ -231,7 +237,7 @@ describe("The Imagery View Layouts", () => {
         // This is hacky, we should find a better approach here.
         setTimeout(() => {
             //Cleanup code that needs to happen before dom elements start being destroyed
-            cleanupFirst.forEach(cleanup => cleanup());
+            cleanupFirst.forEach((cleanup) => cleanup());
             cleanupFirst = [];
             document.body.removeChild(parent);
 
@@ -239,79 +245,94 @@ describe("The Imagery View Layouts", () => {
         });
     });
 
-    it("should provide an imagery time strip view when in a time strip", () => {
-        openmct.router.path = [{
-            identifier: {
-                key: 'test-timestrip',
-                namespace: ''
-            },
-            type: 'time-strip'
-        }];
+    it('should provide an imagery time strip view when in a time strip', () => {
+        openmct.router.path = [
+            {
+                identifier: {
+                    key: 'test-timestrip',
+                    namespace: ''
+                },
+                type: 'time-strip'
+            }
+        ];
 
-        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
-            identifier: {
-                key: 'test-timestrip',
-                namespace: ''
-            },
-            type: 'time-strip'
-        }]);
+        let applicableViews = openmct.objectViews.get(imageryObject, [
+            imageryObject,
+            {
+                identifier: {
+                    key: 'test-timestrip',
+                    namespace: ''
+                },
+                type: 'time-strip'
+            }
+        ]);
         let imageryView = applicableViews.find(
-            viewProvider => viewProvider.key === imageryForTimeStripKey
+            (viewProvider) => viewProvider.key === imageryForTimeStripKey
         );
 
         expect(imageryView).toBeDefined();
     });
 
-    it("should provide an imagery view only for imagery producing objects", () => {
-        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
+    it('should provide an imagery view only for imagery producing objects', () => {
+        let applicableViews = openmct.objectViews.get(imageryObject, [
+            imageryObject
+        ]);
         let imageryView = applicableViews.find(
-            viewProvider => viewProvider.key === imageryKey
+            (viewProvider) => viewProvider.key === imageryKey
         );
 
         expect(imageryView).toBeDefined();
     });
 
-    it("should not provide an imagery view when in a time strip", () => {
-        openmct.router.path = [{
-            identifier: {
-                key: 'test-timestrip',
-                namespace: ''
-            },
-            type: 'time-strip'
-        }];
+    it('should not provide an imagery view when in a time strip', () => {
+        openmct.router.path = [
+            {
+                identifier: {
+                    key: 'test-timestrip',
+                    namespace: ''
+                },
+                type: 'time-strip'
+            }
+        ];
 
-        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
-            identifier: {
-                key: 'test-timestrip',
-                namespace: ''
-            },
-            type: 'time-strip'
-        }]);
+        let applicableViews = openmct.objectViews.get(imageryObject, [
+            imageryObject,
+            {
+                identifier: {
+                    key: 'test-timestrip',
+                    namespace: ''
+                },
+                type: 'time-strip'
+            }
+        ]);
         let imageryView = applicableViews.find(
-            viewProvider => viewProvider.key === imageryKey
+            (viewProvider) => viewProvider.key === imageryKey
         );
 
         expect(imageryView).toBeUndefined();
     });
 
-    it("should provide an imagery view when navigated to in the composition of a time strip", () => {
+    it('should provide an imagery view when navigated to in the composition of a time strip', () => {
         openmct.router.path = [imageryObject];
 
-        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
-            identifier: {
-                key: 'test-timestrip',
-                namespace: ''
-            },
-            type: 'time-strip'
-        }]);
+        let applicableViews = openmct.objectViews.get(imageryObject, [
+            imageryObject,
+            {
+                identifier: {
+                    key: 'test-timestrip',
+                    namespace: ''
+                },
+                type: 'time-strip'
+            }
+        ]);
         let imageryView = applicableViews.find(
-            viewProvider => viewProvider.key === imageryKey
+            (viewProvider) => viewProvider.key === imageryKey
         );
 
         expect(imageryView).toBeDefined();
     });
 
-    describe("Clear data action for imagery", () => {
+    describe('Clear data action for imagery', () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
@@ -321,20 +342,25 @@ describe("The Imagery View Layouts", () => {
 
         beforeEach(() => {
             openmct.time.timeSystem('utc', {
-                start: START - (5 * ONE_MINUTE),
-                end: START + (5 * ONE_MINUTE)
+                start: START - 5 * ONE_MINUTE,
+                end: START + 5 * ONE_MINUTE
             });
 
-            applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
-            imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
-            imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
+            applicableViews = openmct.objectViews.get(imageryObject, [
+                imageryObject
+            ]);
+            imageryViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === imageryKey
+            );
+            imageryView = imageryViewProvider.view(imageryObject, [
+                imageryObject
+            ]);
             imageryView.show(child);
             componentView = imageryView._getInstance().$children[0];
 
-            clearDataPlugin = new ClearDataPlugin(
-                ['example.imagery'],
-                {indicator: true}
-            );
+            clearDataPlugin = new ClearDataPlugin(['example.imagery'], {
+                indicator: true
+            });
             openmct.install(clearDataPlugin);
             clearDataAction = openmct.actions.getAction('clear-data-action');
 
@@ -353,11 +379,15 @@ describe("The Imagery View Layouts", () => {
                 let telemetryRequestPromise = new Promise((resolve) => {
                     clearDataResolve = resolve;
                 });
-                expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
+                expect(
+                    parent.querySelectorAll('.c-imagery__thumb').length
+                ).not.toBe(0);
 
                 openmct.objectViews.on('clearData', (_domainObject) => {
                     return Vue.nextTick(() => {
-                        expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
+                        expect(
+                            parent.querySelectorAll('.c-imagery__thumb').length
+                        ).toBe(0);
 
                         clearDataResolve();
                     });
@@ -371,20 +401,26 @@ describe("The Imagery View Layouts", () => {
         });
     });
 
-    describe("imagery view", () => {
+    describe('imagery view', () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
 
         beforeEach(() => {
             openmct.time.timeSystem('utc', {
-                start: START - (5 * ONE_MINUTE),
-                end: START + (5 * ONE_MINUTE)
+                start: START - 5 * ONE_MINUTE,
+                end: START + 5 * ONE_MINUTE
             });
 
-            applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
-            imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
-            imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
+            applicableViews = openmct.objectViews.get(imageryObject, [
+                imageryObject
+            ]);
+            imageryViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === imageryKey
+            );
+            imageryView = imageryViewProvider.view(imageryObject, [
+                imageryObject
+            ]);
             imageryView.show(child);
 
             imageryView._getInstance().$children[0].forceShowThumbnails = true;
@@ -392,27 +428,31 @@ describe("The Imagery View Layouts", () => {
             return Vue.nextTick();
         });
 
-        it("on mount should show the the most recent image", async () => {
+        it('on mount should show the the most recent image', async () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             await Vue.nextTick();
             const imageInfo = getImageInfo(parent);
-            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
+            expect(
+                imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)
+            ).not.toEqual(-1);
         });
 
-        it("on mount should show the any image layers", async () => {
+        it('on mount should show the any image layers', async () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             await Vue.nextTick();
             const layerEls = parent.querySelectorAll('.js-layer-image');
             expect(layerEls.length).toEqual(1);
         });
 
-        it("should use the image thumbnailUrl for thumbnails", async () => {
+        it('should use the image thumbnailUrl for thumbnails', async () => {
             await Vue.nextTick();
             const fullSizeImageUrl = imageTelemetry[5].url;
             const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
 
             // Ensure thumbnails are shown w/ thumbnail Urls
-            const thumbnails = parent.querySelectorAll(`img[src='${thumbnailUrl}']`);
+            const thumbnails = parent.querySelectorAll(
+                `img[src='${thumbnailUrl}']`
+            );
             expect(thumbnails.length).toBeGreaterThan(0);
 
             // Click a thumbnail
@@ -420,11 +460,13 @@ describe("The Imagery View Layouts", () => {
             await Vue.nextTick();
 
             // Ensure full size image is shown w/ full size url
-            const fullSizeImages = parent.querySelectorAll(`img[src='${fullSizeImageUrl}']`);
+            const fullSizeImages = parent.querySelectorAll(
+                `img[src='${fullSizeImageUrl}']`
+            );
             expect(fullSizeImages.length).toBeGreaterThan(0);
         });
 
-        it("should show the clicked thumbnail as the main image", async () => {
+        it('should show the clicked thumbnail as the main image', async () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             await Vue.nextTick();
             const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
@@ -432,10 +474,12 @@ describe("The Imagery View Layouts", () => {
             await Vue.nextTick();
             const imageInfo = getImageInfo(parent);
 
-            expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
+            expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(
+                -1
+            );
         });
 
-        xit("should show that an image is new", (done) => {
+        xit('should show that an image is new', (done) => {
             openmct.time.clock('local', {
                 start: -1000,
                 end: 1000
@@ -451,7 +495,7 @@ describe("The Imagery View Layouts", () => {
             });
         });
 
-        it("should show that an image is not new", async () => {
+        it('should show that an image is not new', async () => {
             await Vue.nextTick();
             const target = formatThumbnail(imageTelemetry[4].url);
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
@@ -462,7 +506,7 @@ describe("The Imagery View Layouts", () => {
             expect(imageIsNew).toBeFalse();
         });
 
-        it("should navigate via arrow keys", async () => {
+        it('should navigate via arrow keys', async () => {
             await Vue.nextTick();
             const keyOpts = {
                 element: parent.querySelector('.c-imagery'),
@@ -475,10 +519,12 @@ describe("The Imagery View Layouts", () => {
 
             await Vue.nextTick();
             const imageInfo = getImageInfo(parent);
-            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
+            expect(
+                imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)
+            ).not.toEqual(-1);
         });
 
-        it("should navigate via numerous arrow keys", async () => {
+        it('should navigate via numerous arrow keys', async () => {
             await Vue.nextTick();
             const element = parent.querySelector('.c-imagery');
             const type = 'keyup';
@@ -504,27 +550,38 @@ describe("The Imagery View Layouts", () => {
 
             await Vue.nextTick();
             const imageInfo = getImageInfo(parent);
-            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
+            expect(
+                imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)
+            ).not.toEqual(-1);
         });
-        it ('shows an auto scroll button when scroll to left', (done) => {
+        it('shows an auto scroll button when scroll to left', (done) => {
             Vue.nextTick(() => {
                 // to mock what a scroll would do
                 imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
                 Vue.nextTick(() => {
-                    let autoScrollButton = parent.querySelector('.c-imagery__auto-scroll-resume-button');
+                    let autoScrollButton = parent.querySelector(
+                        '.c-imagery__auto-scroll-resume-button'
+                    );
                     expect(autoScrollButton).toBeTruthy();
                     done();
                 });
             });
         });
-        it ('scrollToRight is called when clicking on auto scroll button', async () => {
+        it('scrollToRight is called when clicking on auto scroll button', async () => {
             await Vue.nextTick();
             // use spyon to spy the scroll function
-            spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollHandler');
+            spyOn(
+                imageryView._getInstance().$refs.ImageryContainer,
+                'scrollHandler'
+            );
             imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
             await Vue.nextTick();
-            parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
-            expect(imageryView._getInstance().$refs.ImageryContainer.scrollHandler);
+            parent
+                .querySelector('.c-imagery__auto-scroll-resume-button')
+                .click();
+            expect(
+                imageryView._getInstance().$refs.ImageryContainer.scrollHandler
+            );
         });
         xit('should change the image zoom factor when using the zoom buttons', async () => {
             await Vue.nextTick();
@@ -532,17 +589,27 @@ describe("The Imagery View Layouts", () => {
             let imageSizeAfter;
 
             // test clicking the zoom in button
-            imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            imageSizeBefore = parent
+                .querySelector('.c-imagery_main-image_background-image')
+                .getBoundingClientRect();
             parent.querySelector('.t-btn-zoom-in').click();
             await Vue.nextTick();
-            imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
-            expect(imageSizeAfter.height).toBeGreaterThan(imageSizeBefore.height);
+            imageSizeAfter = parent
+                .querySelector('.c-imagery_main-image_background-image')
+                .getBoundingClientRect();
+            expect(imageSizeAfter.height).toBeGreaterThan(
+                imageSizeBefore.height
+            );
             expect(imageSizeAfter.width).toBeGreaterThan(imageSizeBefore.width);
             // test clicking the zoom out button
-            imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            imageSizeBefore = parent
+                .querySelector('.c-imagery_main-image_background-image')
+                .getBoundingClientRect();
             parent.querySelector('.t-btn-zoom-out').click();
             await Vue.nextTick();
-            imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            imageSizeAfter = parent
+                .querySelector('.c-imagery_main-image_background-image')
+                .getBoundingClientRect();
             expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
         });
@@ -552,10 +619,14 @@ describe("The Imagery View Layouts", () => {
             // zoom in to scale up the image dimensions
             parent.querySelector('.t-btn-zoom-in').click();
             await Vue.nextTick();
-            let imageSizeBefore = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            let imageSizeBefore = parent
+                .querySelector('.c-imagery_main-image_background-image')
+                .getBoundingClientRect();
             await Vue.nextTick();
             parent.querySelector('.t-btn-zoom-reset').click();
-            let imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
+            let imageSizeAfter = parent
+                .querySelector('.c-imagery_main-image_background-image')
+                .getBoundingClientRect();
             expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
             done();
@@ -563,15 +634,21 @@ describe("The Imagery View Layouts", () => {
 
         it('should display the viewable area when zoom factor is greater than 1', async () => {
             await Vue.nextTick();
-            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
+            expect(
+                parent.querySelectorAll('.c-thumb__viewable-area').length
+            ).toBe(0);
 
             parent.querySelector('.t-btn-zoom-in').click();
             await Vue.nextTick();
-            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(1);
+            expect(
+                parent.querySelectorAll('.c-thumb__viewable-area').length
+            ).toBe(1);
 
             parent.querySelector('.t-btn-zoom-reset').click();
             await Vue.nextTick();
-            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
+            expect(
+                parent.querySelectorAll('.c-thumb__viewable-area').length
+            ).toBe(0);
         });
 
         it('should reset the brightness and contrast when clicking the reset button', async () => {
@@ -579,8 +656,10 @@ describe("The Imagery View Layouts", () => {
             await Vue.nextTick();
 
             // Save the original brightness and contrast values
-            const origBrightness = viewInstance.$refs.ImageryContainer.filters.brightness;
-            const origContrast = viewInstance.$refs.ImageryContainer.filters.contrast;
+            const origBrightness =
+                viewInstance.$refs.ImageryContainer.filters.brightness;
+            const origContrast =
+                viewInstance.$refs.ImageryContainer.filters.contrast;
 
             // Change them to something else (default: 100)
             viewInstance.$refs.ImageryContainer.setFilters({
@@ -590,20 +669,28 @@ describe("The Imagery View Layouts", () => {
             await Vue.nextTick();
 
             // Verify that the values actually changed
-            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(200);
-            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(200);
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(
+                200
+            );
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(
+                200
+            );
 
             // Click the reset button
             parent.querySelector('.t-btn-reset').click();
             await Vue.nextTick();
 
             // Verify that the values were reset
-            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(origBrightness);
-            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(origContrast);
+            expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(
+                origBrightness
+            );
+            expect(viewInstance.$refs.ImageryContainer.filters.contrast).toBe(
+                origContrast
+            );
         });
     });
 
-    describe("imagery time strip view", () => {
+    describe('imagery time strip view', () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
@@ -611,47 +698,57 @@ describe("The Imagery View Layouts", () => {
 
         beforeEach(() => {
             openmct.time.timeSystem('utc', {
-                start: START - (5 * ONE_MINUTE),
-                end: START + (5 * ONE_MINUTE)
+                start: START - 5 * ONE_MINUTE,
+                end: START + 5 * ONE_MINUTE
             });
 
-            const mockClock = jasmine.createSpyObj("clock", [
-                "on",
-                "off",
-                "currentValue"
+            const mockClock = jasmine.createSpyObj('clock', [
+                'on',
+                'off',
+                'currentValue'
             ]);
             mockClock.key = 'mockClock';
             mockClock.currentValue.and.returnValue(1);
 
             openmct.time.addClock(mockClock);
             openmct.time.clock('mockClock', {
-                start: START - (5 * ONE_MINUTE),
-                end: START + (5 * ONE_MINUTE)
+                start: START - 5 * ONE_MINUTE,
+                end: START + 5 * ONE_MINUTE
             });
 
-            openmct.router.path = [{
-                identifier: {
-                    key: 'test-timestrip',
-                    namespace: ''
-                },
-                type: 'time-strip'
-            }];
+            openmct.router.path = [
+                {
+                    identifier: {
+                        key: 'test-timestrip',
+                        namespace: ''
+                    },
+                    type: 'time-strip'
+                }
+            ];
 
-            applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
-                identifier: {
-                    key: 'test-timestrip',
-                    namespace: ''
-                },
-                type: 'time-strip'
-            }]);
-            imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryForTimeStripKey);
-            imageryView = imageryViewProvider.view(imageryObject, [imageryObject, {
-                identifier: {
-                    key: 'test-timestrip',
-                    namespace: ''
-                },
-                type: 'time-strip'
-            }]);
+            applicableViews = openmct.objectViews.get(imageryObject, [
+                imageryObject,
+                {
+                    identifier: {
+                        key: 'test-timestrip',
+                        namespace: ''
+                    },
+                    type: 'time-strip'
+                }
+            ]);
+            imageryViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === imageryForTimeStripKey
+            );
+            imageryView = imageryViewProvider.view(imageryObject, [
+                imageryObject,
+                {
+                    identifier: {
+                        key: 'test-timestrip',
+                        namespace: ''
+                    },
+                    type: 'time-strip'
+                }
+            ]);
             imageryView.show(child);
 
             componentView = imageryView.getComponent().$children[0];
@@ -660,22 +757,31 @@ describe("The Imagery View Layouts", () => {
             return Vue.nextTick();
         });
 
-        it("on mount should show imagery within the given bounds", (done) => {
+        it('on mount should show imagery within the given bounds', (done) => {
             Vue.nextTick(() => {
-                const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+                const imageElements = parent.querySelectorAll(
+                    '.c-imagery-tsv__image-wrapper'
+                );
                 expect(imageElements.length).toEqual(5);
                 done();
             });
         });
 
-        it("should show the clicked thumbnail as the preview image", (done) => {
+        it('should show the clicked thumbnail as the preview image', (done) => {
             Vue.nextTick(() => {
-                const mouseDownEvent = createMouseEvent("mousedown");
-                let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
+                const mouseDownEvent = createMouseEvent('mousedown');
+                let imageWrapper = parent.querySelectorAll(
+                    `.c-imagery-tsv__image-wrapper`
+                );
                 imageWrapper[2].dispatchEvent(mouseDownEvent);
                 Vue.nextTick(() => {
-                    const timestamp = imageWrapper[2].id.replace('wrapper-', '');
-                    expect(componentView.previewAction.invoke).toHaveBeenCalledWith([componentView.objectPath[0]], {
+                    const timestamp = imageWrapper[2].id.replace(
+                        'wrapper-',
+                        ''
+                    );
+                    expect(
+                        componentView.previewAction.invoke
+                    ).toHaveBeenCalledWith([componentView.objectPath[0]], {
                         timestamp: Number(timestamp),
                         objectPath: componentView.objectPath
                     });
@@ -684,44 +790,52 @@ describe("The Imagery View Layouts", () => {
             });
         });
 
-        it("should remove images when clock advances", async () => {
+        it('should remove images when clock advances', async () => {
             openmct.time.tick(ONE_MINUTE * 2);
             await Vue.nextTick();
             await Vue.nextTick();
-            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            const imageElements = parent.querySelectorAll(
+                '.c-imagery-tsv__image-wrapper'
+            );
             expect(imageElements.length).toEqual(4);
         });
 
-        it("should remove images when start bounds shorten", async () => {
+        it('should remove images when start bounds shorten', async () => {
             openmct.time.timeSystem('utc', {
                 start: START,
-                end: START + (5 * ONE_MINUTE)
+                end: START + 5 * ONE_MINUTE
             });
             await Vue.nextTick();
             await Vue.nextTick();
-            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            const imageElements = parent.querySelectorAll(
+                '.c-imagery-tsv__image-wrapper'
+            );
             expect(imageElements.length).toEqual(1);
         });
 
-        it("should remove images when end bounds shorten", async () => {
+        it('should remove images when end bounds shorten', async () => {
             openmct.time.timeSystem('utc', {
-                start: START - (5 * ONE_MINUTE),
-                end: START - (2 * ONE_MINUTE)
+                start: START - 5 * ONE_MINUTE,
+                end: START - 2 * ONE_MINUTE
             });
             await Vue.nextTick();
             await Vue.nextTick();
-            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            const imageElements = parent.querySelectorAll(
+                '.c-imagery-tsv__image-wrapper'
+            );
             expect(imageElements.length).toEqual(4);
         });
 
-        it("should remove images when both bounds shorten", async () => {
+        it('should remove images when both bounds shorten', async () => {
             openmct.time.timeSystem('utc', {
-                start: START - (2 * ONE_MINUTE),
-                end: START + (2 * ONE_MINUTE)
+                start: START - 2 * ONE_MINUTE,
+                end: START + 2 * ONE_MINUTE
             });
             await Vue.nextTick();
             await Vue.nextTick();
-            const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+            const imageElements = parent.querySelectorAll(
+                '.c-imagery-tsv__image-wrapper'
+            );
             expect(imageElements.length).toEqual(3);
         });
     });

@@ -3,8 +3,7 @@ import Overlay from './Overlay';
 import Vue from 'vue';
 
 class Dialog extends Overlay {
-    constructor({iconClass, message, title, hint, timestamp, ...options}) {
-
+    constructor({ iconClass, message, title, hint, timestamp, ...options }) {
         let component = new Vue({
             components: {
                 DialogComponent: DialogComponent

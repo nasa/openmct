@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {saveAs} from 'saveAs';
+import { saveAs } from 'saveAs';
 
 class JSONExporter {
     export(obj, options) {
-        let filename = (options && options.filename) || "test-export.json";
+        let filename = (options && options.filename) || 'test-export.json';
         let jsonText = JSON.stringify(obj);
-        let blob = new Blob([jsonText], {type: "application/json"});
+        let blob = new Blob([jsonText], { type: 'application/json' });
         saveAs(blob, filename);
     }
 }

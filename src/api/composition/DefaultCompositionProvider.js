@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import objectUtils from "../objects/object-utils";
+import objectUtils from '../objects/object-utils';
 import CompositionProvider from './CompositionProvider';
 
 /**
@@ -85,10 +85,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
      * @param {Function} callback callback to invoke when event is triggered.
      * @param {any} [context] to use when invoking callback.
      */
-    on(domainObject,
-        event,
-        callback,
-        context) {
+    on(domainObject, event, callback, context) {
         this.establishTopicListener();
 
         /** @type {string} */
@@ -119,21 +116,21 @@ export default class DefaultCompositionProvider extends CompositionProvider {
      * @param {Function} callback callback to remove.
      * @param {any} context of callback to remove.
      */
-    off(domainObject,
-        event,
-        callback,
-        context) {
-
+    off(domainObject, event, callback, context) {
         /** @type {string} */
         const keyString = objectUtils.makeKeyString(domainObject.identifier);
         const objectListeners = this.listeningTo[keyString];
 
-        const index = objectListeners[event].findIndex(l => {
+        const index = objectListeners[event].findIndex((l) => {
             return l.callback === callback && l.context === context;
         });
 
         objectListeners[event].splice(index, 1);
-        if (!objectListeners.add.length && !objectListeners.remove.length && !objectListeners.reorder.length) {
+        if (
+            !objectListeners.add.length &&
+            !objectListeners.remove.length &&
+            !objectListeners.reorder.length
+        ) {
             delete this.listeningTo[keyString];
         }
     }
@@ -151,8 +148,10 @@ export default class DefaultCompositionProvider extends CompositionProvider {
      */
     remove(domainObject, childId) {
         let composition = domainObject.composition.filter(function (child) {
-            return !(childId.namespace === child.namespace
-                      && childId.key === child.key);
+            return !(
+                childId.namespace === child.namespace &&
+                childId.key === child.key
+            );
         });
 
         this.publicAPI.objects.mutate(domainObject, 'composition', composition);
@@ -184,7 +183,9 @@ export default class DefaultCompositionProvider extends CompositionProvider {
      * @returns {boolean}
      */
     includes(parent, childId) {
-        return parent.composition.some(composee => this.publicAPI.objects.areIdsEqual(composee, childId));
+        return parent.composition.some((composee) =>
+            this.publicAPI.objects.areIdsEqual(composee, childId)
+        );
     }
 
     /**
@@ -199,13 +200,19 @@ export default class DefaultCompositionProvider extends CompositionProvider {
         let removeId = oldIndex > newIndex ? oldIndex + 1 : oldIndex;
         let insertPosition = oldIndex < newIndex ? newIndex + 1 : newIndex;
         //Insert object in new position
-        newComposition.splice(insertPosition, 0, domainObject.composition[oldIndex]);
+        newComposition.splice(
+            insertPosition,
+            0,
+            domainObject.composition[oldIndex]
+        );
         newComposition.splice(removeId, 1);
 
-        let reorderPlan = [{
-            oldIndex,
-            newIndex
-        }];
+        let reorderPlan = [
+            {
+                oldIndex,
+                newIndex
+            }
+        ];
 
         if (oldIndex > newIndex) {
             for (let i = newIndex; i < oldIndex; i++) {
@@ -223,7 +230,11 @@ export default class DefaultCompositionProvider extends CompositionProvider {
             }
         }
 
-        this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
+        this.publicAPI.objects.mutate(
+            domainObject,
+            'composition',
+            newComposition
+        );
 
         /** @type {string} */
         let id = objectUtils.makeKeyString(domainObject.identifier);

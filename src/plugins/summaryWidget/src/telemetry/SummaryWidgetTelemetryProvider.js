@@ -20,40 +20,47 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './EvaluatorPool'
-], function (
-    EvaluatorPool
-) {
-
+define(['./EvaluatorPool'], function (EvaluatorPool) {
     function SummaryWidgetTelemetryProvider(openmct) {
         this.pool = new EvaluatorPool(openmct);
     }
 
-    SummaryWidgetTelemetryProvider.prototype.supportsRequest = function (domainObject, options) {
+    SummaryWidgetTelemetryProvider.prototype.supportsRequest = function (
+        domainObject,
+        options
+    ) {
         return domainObject.type === 'summary-widget';
     };
 
-    SummaryWidgetTelemetryProvider.prototype.request = function (domainObject, options) {
+    SummaryWidgetTelemetryProvider.prototype.request = function (
+        domainObject,
+        options
+    ) {
         if (options.strategy !== 'latest' && options.size !== 1) {
             return Promise.resolve([]);
         }
 
         const evaluator = this.pool.get(domainObject);
 
-        return evaluator.requestLatest(options)
-            .then(function (latestDatum) {
+        return evaluator.requestLatest(options).then(
+            function (latestDatum) {
                 this.pool.release(evaluator);
 
                 return latestDatum ? [latestDatum] : [];
-            }.bind(this));
+            }.bind(this)
+        );
     };
 
-    SummaryWidgetTelemetryProvider.prototype.supportsSubscribe = function (domainObject) {
+    SummaryWidgetTelemetryProvider.prototype.supportsSubscribe = function (
+        domainObject
+    ) {
         return domainObject.type === 'summary-widget';
     };
 
-    SummaryWidgetTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
+    SummaryWidgetTelemetryProvider.prototype.subscribe = function (
+        domainObject,
+        callback
+    ) {
         const evaluator = this.pool.get(domainObject);
         const unsubscribe = evaluator.subscribe(callback);
 

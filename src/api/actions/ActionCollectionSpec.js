@@ -51,10 +51,13 @@ describe('The ActionCollection', () => {
                 }
             }
         ];
-        openmct.objects.addProvider('', jasmine.createSpyObj('mockMutableObjectProvider', [
-            'create',
-            'update'
-        ]));
+        openmct.objects.addProvider(
+            '',
+            jasmine.createSpyObj('mockMutableObjectProvider', [
+                'create',
+                'update'
+            ])
+        );
         mockView = {
             getViewContext: () => {
                 return {
@@ -77,8 +80,7 @@ describe('The ActionCollection', () => {
 
                     return false;
                 },
-                invoke: () => {
-                }
+                invoke: () => {}
             },
             'test-action-view': {
                 name: 'Test Action View',
@@ -97,12 +99,16 @@ describe('The ActionCollection', () => {
 
                     return false;
                 },
-                invoke: () => {
-                }
+                invoke: () => {}
             }
         };
 
-        actionCollection = new ActionCollection(mockApplicableActions, mockObjectPath, mockView, openmct);
+        actionCollection = new ActionCollection(
+            mockApplicableActions,
+            mockObjectPath,
+            mockView,
+            openmct
+        );
     });
 
     afterEach(() => {
@@ -111,8 +117,8 @@ describe('The ActionCollection', () => {
         return resetApplicationState(openmct);
     });
 
-    describe("disable method invoked with action keys", () => {
-        it("marks those actions as isDisabled", () => {
+    describe('disable method invoked with action keys', () => {
+        it('marks those actions as isDisabled', () => {
             let actionKey = 'test-action-object-path';
             let actionsObject = actionCollection.getActionsObject();
             let action = actionsObject[actionKey];
@@ -127,8 +133,8 @@ describe('The ActionCollection', () => {
         });
     });
 
-    describe("enable method invoked with action keys", () => {
-        it("marks the isDisabled property as false", () => {
+    describe('enable method invoked with action keys', () => {
+        it('marks the isDisabled property as false', () => {
             let actionKey = 'test-action-object-path';
 
             actionCollection.disable([actionKey]);
@@ -146,8 +152,8 @@ describe('The ActionCollection', () => {
         });
     });
 
-    describe("hide method invoked with action keys", () => {
-        it("marks those actions as isHidden", () => {
+    describe('hide method invoked with action keys', () => {
+        it('marks those actions as isHidden', () => {
             let actionKey = 'test-action-object-path';
             let actionsObject = actionCollection.getActionsObject();
             let action = actionsObject[actionKey];
@@ -162,8 +168,8 @@ describe('The ActionCollection', () => {
         });
     });
 
-    describe("show method invoked with action keys", () => {
-        it("marks the isHidden property as false", () => {
+    describe('show method invoked with action keys', () => {
+        it('marks the isHidden property as false', () => {
             let actionKey = 'test-action-object-path';
 
             actionCollection.hide([actionKey]);
@@ -181,8 +187,8 @@ describe('The ActionCollection', () => {
         });
     });
 
-    describe("getVisibleActions method", () => {
-        it("returns an array of non hidden actions", () => {
+    describe('getVisibleActions method', () => {
+        it('returns an array of non hidden actions', () => {
             let action1Key = 'test-action-object-path';
             let action2Key = 'test-action-view';
 
@@ -201,8 +207,8 @@ describe('The ActionCollection', () => {
         });
     });
 
-    describe("getStatusBarActions method", () => {
-        it("returns an array of non disabled, non hidden statusBar actions", () => {
+    describe('getStatusBarActions method', () => {
+        it('returns an array of non disabled, non hidden statusBar actions', () => {
             let action2Key = 'test-action-view';
 
             let statusBarActions = actionCollection.getStatusBarActions();

@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/flexibleLayout.vue',
-    'vue'
-], function (
+define(['./components/flexibleLayout.vue', 'vue'], function (
     FlexibleLayoutComponent,
     Vue
 ) {
@@ -46,7 +43,8 @@ define([
                         component = new Vue({
                             el: element,
                             components: {
-                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
+                                FlexibleLayoutComponent:
+                                    FlexibleLayoutComponent.default
                             },
                             provide: {
                                 openmct,
@@ -58,15 +56,19 @@ define([
                                     isEditing: isEditing
                                 };
                             },
-                            template: '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
+                            template:
+                                '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
                         });
                     },
                     getSelectionContext: function () {
                         return {
                             item: domainObject,
-                            addContainer: component.$refs.flexibleLayout.addContainer,
-                            deleteContainer: component.$refs.flexibleLayout.deleteContainer,
-                            deleteFrame: component.$refs.flexibleLayout.deleteFrame,
+                            addContainer:
+                                component.$refs.flexibleLayout.addContainer,
+                            deleteContainer:
+                                component.$refs.flexibleLayout.deleteContainer,
+                            deleteFrame:
+                                component.$refs.flexibleLayout.deleteFrame,
                             type: 'flexible-layout'
                         };
                     },

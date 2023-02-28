@@ -23,18 +23,21 @@ import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
 import ScatterPlotViewProvider from './ScatterPlotViewProvider';
 import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider';
 import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy';
-import Vue from "vue";
-import ScatterPlotForm from "./ScatterPlotForm.vue";
+import Vue from 'vue';
+import ScatterPlotForm from './ScatterPlotForm.vue';
 
 export default function () {
     return function install(openmct) {
-        openmct.forms.addNewFormControl('scatter-plot-form-control', getScatterPlotFormControl(openmct));
+        openmct.forms.addNewFormControl(
+            'scatter-plot-form-control',
+            getScatterPlotFormControl(openmct)
+        );
 
         openmct.types.addType(SCATTER_PLOT_KEY, {
             key: SCATTER_PLOT_KEY,
-            name: "Scatter Plot",
-            cssClass: "icon-plot-scatter",
-            description: "View data as a scatter plot.",
+            name: 'Scatter Plot',
+            cssClass: 'icon-plot-scatter',
+            description: 'View data as a scatter plot.',
             creatable: true,
             initialize: function (domainObject) {
                 domainObject.composition = [];
@@ -53,23 +56,19 @@ export default function () {
                     type: 'application/json',
                     removable: true,
                     hideFromInspector: true,
-                    property: [
-                        "selectFile"
-                    ]
+                    property: ['selectFile']
                 },
                 {
-                    name: "Underlay ranges",
-                    control: "scatter-plot-form-control",
-                    cssClass: "l-input",
-                    key: "scatterPlotForm",
+                    name: 'Underlay ranges',
+                    control: 'scatter-plot-form-control',
+                    cssClass: 'l-input',
+                    key: 'scatterPlotForm',
                     required: false,
                     hideFromInspector: false,
-                    property: [
-                        "configuration",
-                        "ranges"
-                    ],
+                    property: ['configuration', 'ranges'],
                     validate: ({ value }, callback) => {
-                        const { rangeMin, rangeMax, domainMin, domainMax } = value;
+                        const { rangeMin, rangeMax, domainMin, domainMax } =
+                            value;
                         const valid = {
                             rangeMin,
                             rangeMax,
@@ -82,8 +81,12 @@ export default function () {
                         }
 
                         const values = Object.values(valid);
-                        const hasAllValues = values.every(rangeValue => rangeValue !== undefined);
-                        const hasNoValues = values.every(rangeValue => rangeValue === undefined);
+                        const hasAllValues = values.every(
+                            (rangeValue) => rangeValue !== undefined
+                        );
+                        const hasNoValues = values.every(
+                            (rangeValue) => rangeValue === undefined
+                        );
 
                         return hasAllValues || hasNoValues;
                     }
@@ -94,9 +97,13 @@ export default function () {
 
         openmct.objectViews.addProvider(new ScatterPlotViewProvider(openmct));
 
-        openmct.inspectorViews.addProvider(new ScatterPlotInspectorViewProvider(openmct));
+        openmct.inspectorViews.addProvider(
+            new ScatterPlotInspectorViewProvider(openmct)
+        );
 
-        openmct.composition.addPolicy(new ScatterPlotCompositionPolicy(openmct).allow);
+        openmct.composition.addPolicy(
+            new ScatterPlotCompositionPolicy(openmct).allow
+        );
     };
 
     function getScatterPlotFormControl(openmct) {
@@ -124,4 +131,3 @@ export default function () {
         };
     }
 }
-

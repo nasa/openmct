@@ -24,7 +24,6 @@ import TimelineViewLayout from './TimelineViewLayout.vue';
 import Vue from 'vue';
 
 export default function TimelineViewProvider(openmct) {
-
     return {
         key: 'time-strip.view',
         name: 'TimeStrip',
@@ -53,7 +52,8 @@ export default function TimelineViewProvider(openmct) {
                             composition: openmct.composition.get(domainObject),
                             objectPath
                         },
-                        template: '<timeline-view-layout></timeline-view-layout>'
+                        template:
+                            '<timeline-view-layout></timeline-view-layout>'
                     });
                 },
                 destroy: function () {

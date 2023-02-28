@@ -33,9 +33,9 @@ class EventTelemetryProvider {
 
     generateData(firstObservedTime, count, startTime, duration, name) {
         const millisecondsSinceStart = startTime - firstObservedTime;
-        const utc = startTime + (count * duration);
+        const utc = startTime + count * duration;
         const ind = count % messages.length;
-        const message = messages[ind] + " - [" + millisecondsSinceStart + "]";
+        const message = messages[ind] + ' - [' + millisecondsSinceStart + ']';
 
         return {
             name,
@@ -59,7 +59,13 @@ class EventTelemetryProvider {
 
         const interval = setInterval(() => {
             const startTime = Date.now();
-            const datum = this.generateData(firstObservedTime, count, startTime, duration, domainObject.name);
+            const datum = this.generateData(
+                firstObservedTime,
+                count,
+                startTime,
+                duration,
+                domainObject.name
+            );
             count += 1;
             callback(datum);
         }, duration);
@@ -84,7 +90,15 @@ class EventTelemetryProvider {
 
         while (start <= end && data.length < size) {
             const startTime = options.start + count;
-            data.push(this.generateData(firstObservedTime, count, startTime, duration, domainObject.name));
+            data.push(
+                this.generateData(
+                    firstObservedTime,
+                    count,
+                    startTime,
+                    duration,
+                    domainObject.name
+                )
+            );
             start += duration;
             count += 1;
         }

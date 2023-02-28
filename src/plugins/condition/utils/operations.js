@@ -20,18 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { IS_OLD_KEY, IS_STALE_KEY } from "./constants";
+import { IS_OLD_KEY, IS_STALE_KEY } from './constants';
 
 function convertToNumbers(input) {
     let numberInputs = [];
-    input.forEach(inputValue => numberInputs.push(Number(inputValue)));
+    input.forEach((inputValue) => numberInputs.push(Number(inputValue)));
 
     return numberInputs;
 }
 
 function convertToStrings(input) {
     let stringInputs = [];
-    input.forEach(inputValue => stringInputs.push(inputValue !== undefined ? inputValue.toString() : ''));
+    input.forEach((inputValue) =>
+        stringInputs.push(inputValue !== undefined ? inputValue.toString() : '')
+    );
 
     return stringInputs;
 }
@@ -120,7 +122,7 @@ export const OPERATIONS = [
             let larger = Math.max(...numberInputs.slice(1, 3));
             let smaller = Math.min(...numberInputs.slice(1, 3));
 
-            return (numberInputs[0] > smaller) && (numberInputs[0] < larger);
+            return numberInputs[0] > smaller && numberInputs[0] < larger;
         },
         text: 'is between',
         appliesTo: ['number'],
@@ -136,7 +138,7 @@ export const OPERATIONS = [
             let larger = Math.max(...numberInputs.slice(1, 3));
             let smaller = Math.min(...numberInputs.slice(1, 3));
 
-            return (numberInputs[0] < smaller) || (numberInputs[0] > larger);
+            return numberInputs[0] < smaller || numberInputs[0] > larger;
         },
         text: 'is not between',
         appliesTo: ['number'],
@@ -264,13 +266,15 @@ export const OPERATIONS = [
             if (input[1]) {
                 const values = input[1].split(',');
 
-                return values.some((value) => lhsValue === value.toString().trim());
+                return values.some(
+                    (value) => lhsValue === value.toString().trim()
+                );
             }
 
             return false;
         },
         text: 'is one of',
-        appliesTo: ["string", "number"],
+        appliesTo: ['string', 'number'],
         inputCount: 1,
         getDescription: function (values) {
             return ' is one of ' + values[0];
@@ -282,7 +286,9 @@ export const OPERATIONS = [
             const lhsValue = input[0] !== undefined ? input[0].toString() : '';
             if (input[1]) {
                 const values = input[1].split(',');
-                const found = values.some((value) => lhsValue === value.toString().trim());
+                const found = values.some(
+                    (value) => lhsValue === value.toString().trim()
+                );
 
                 return !found;
             }
@@ -290,7 +296,7 @@ export const OPERATIONS = [
             return false;
         },
         text: 'is not one of',
-        appliesTo: ["string", "number"],
+        appliesTo: ['string', 'number'],
         inputCount: 1,
         getDescription: function (values) {
             return ' is not one of ' + values[0];
@@ -302,7 +308,7 @@ export const OPERATIONS = [
             return false;
         },
         text: 'is older than',
-        appliesTo: ["number"],
+        appliesTo: ['number'],
         inputCount: 1,
         getDescription: function (values) {
             return ` is older than ${values[0] || ''} seconds`;
@@ -314,7 +320,7 @@ export const OPERATIONS = [
             return false;
         },
         text: 'is stale',
-        appliesTo: ["number"],
+        appliesTo: ['number'],
         inputCount: 0,
         getDescription: function () {
             return ' is stale';
@@ -323,12 +329,14 @@ export const OPERATIONS = [
 ];
 
 export const INPUT_TYPES = {
-    'string': 'text',
-    'number': 'number'
+    string: 'text',
+    number: 'number'
 };
 
 export function getOperatorText(operationName, values) {
-    const found = OPERATIONS.find((operation) => operation.name === operationName);
+    const found = OPERATIONS.find(
+        (operation) => operation.name === operationName
+    );
 
     return found?.getDescription(values) ?? '';
 }

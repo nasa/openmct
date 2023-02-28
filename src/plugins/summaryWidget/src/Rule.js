@@ -29,7 +29,14 @@ define([
      * @param {WidgetDnD} widgetDnD A WidgetDnD instance to handle dragging and dropping rules
      * @param {element} container The DOM element which cotains this summary widget
      */
-    function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
+    function Rule(
+        ruleConfig,
+        domainObject,
+        openmct,
+        conditionManager,
+        widgetDnD,
+        container
+    ) {
         eventHelpers.extend(this);
         const self = this;
         const THUMB_ICON_CLASS = 'c-sw__icon js-sw__icon';
@@ -41,9 +48,15 @@ define([
         this.widgetDnD = widgetDnD;
         this.container = container;
 
-        this.domElement = templateHelpers.convertTemplateToHTML(ruleTemplate)[0];
+        this.domElement =
+            templateHelpers.convertTemplateToHTML(ruleTemplate)[0];
         this.eventEmitter = new EventEmitter();
-        this.supportedCallbacks = ['remove', 'duplicate', 'change', 'conditionChange'];
+        this.supportedCallbacks = [
+            'remove',
+            'duplicate',
+            'change',
+            'conditionChange'
+        ];
         this.conditions = [];
         this.dragging = false;
 
@@ -56,14 +69,20 @@ define([
         this.title = this.domElement.querySelector('.rule-title');
         this.description = this.domElement.querySelector('.rule-description');
         this.trigger = this.domElement.querySelector('.t-trigger');
-        this.toggleConfigButton = this.domElement.querySelector('.js-disclosure');
+        this.toggleConfigButton =
+            this.domElement.querySelector('.js-disclosure');
         this.configArea = this.domElement.querySelector('.widget-rule-content');
         this.grippy = this.domElement.querySelector('.t-grippy');
-        this.conditionArea = this.domElement.querySelector('.t-widget-rule-config');
-        this.jsConditionArea = this.domElement.querySelector('.t-rule-js-condition-input-holder');
+        this.conditionArea = this.domElement.querySelector(
+            '.t-widget-rule-config'
+        );
+        this.jsConditionArea = this.domElement.querySelector(
+            '.t-rule-js-condition-input-holder'
+        );
         this.deleteButton = this.domElement.querySelector('.t-delete');
         this.duplicateButton = this.domElement.querySelector('.t-duplicate');
-        this.addConditionButton = this.domElement.querySelector('.add-condition');
+        this.addConditionButton =
+            this.domElement.querySelector('.add-condition');
 
         /**
          * The text inputs for this rule: any input included in this object will
@@ -75,14 +94,19 @@ define([
             name: this.domElement.querySelector('.t-rule-name-input'),
             label: this.domElement.querySelector('.t-rule-label-input'),
             message: this.domElement.querySelector('.t-rule-message-input'),
-            jsCondition: this.domElement.querySelector('.t-rule-js-condition-input')
+            jsCondition: this.domElement.querySelector(
+                '.t-rule-js-condition-input'
+            )
         };
 
         this.iconInput = new IconPalette('', container);
         this.colorInputs = {
-            'background-color': new ColorPalette('icon-paint-bucket', container),
+            'background-color': new ColorPalette(
+                'icon-paint-bucket',
+                container
+            ),
             'border-color': new ColorPalette('icon-line-horz', container),
-            'color': new ColorPalette('icon-font', container)
+            color: new ColorPalette('icon-font', container)
         };
 
         this.colorInputs.color.toggleNullOption();
@@ -162,12 +186,20 @@ define([
          * @private
          */
         function onDragStart(event) {
-            document.querySelectorAll('.t-drag-indicator').forEach(indicator => {
-                // eslint-disable-next-line no-invalid-this
-                const ruleHeader = self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true);
-                indicator.innerHTML = ruleHeader;
-            });
-            self.widgetDnD.setDragImage(self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true));
+            document
+                .querySelectorAll('.t-drag-indicator')
+                .forEach((indicator) => {
+                    // eslint-disable-next-line no-invalid-this
+                    const ruleHeader = self.domElement
+                        .querySelectorAll('.widget-rule-header')[0]
+                        .cloneNode(true);
+                    indicator.innerHTML = ruleHeader;
+                });
+            self.widgetDnD.setDragImage(
+                self.domElement
+                    .querySelectorAll('.widget-rule-header')[0]
+                    .cloneNode(true)
+            );
             self.widgetDnD.dragStart(self.config.id);
             self.domElement.style.display = 'none';
         }
@@ -183,10 +215,18 @@ define([
                 self.configArea.classList.add('expanded');
             }
 
-            if (self.toggleConfigButton.classList.contains('c-disclosure-triangle--expanded')) {
-                self.toggleConfigButton.classList.remove('c-disclosure-triangle--expanded');
+            if (
+                self.toggleConfigButton.classList.contains(
+                    'c-disclosure-triangle--expanded'
+                )
+            ) {
+                self.toggleConfigButton.classList.remove(
+                    'c-disclosure-triangle--expanded'
+                );
             } else {
-                self.toggleConfigButton.classList.add('c-disclosure-triangle--expanded');
+                self.toggleConfigButton.classList.add(
+                    'c-disclosure-triangle--expanded'
+                );
             }
 
             self.config.expanded = !self.config.expanded;
@@ -200,7 +240,9 @@ define([
         });
 
         // Initialize thumbs when first loading
-        this.thumbnailIcon.className = `${THUMB_ICON_CLASS + ' ' + self.config.icon}`;
+        this.thumbnailIcon.className = `${
+            THUMB_ICON_CLASS + ' ' + self.config.icon
+        }`;
         this.thumbnailLabel.innerText = self.config.label;
 
         Object.keys(this.colorInputs).forEach(function (inputKey) {
@@ -214,7 +256,9 @@ define([
                 self.updateDomainObject();
             });
 
-            self.domElement.querySelector('.t-style-input').append(input.getDOM());
+            self.domElement
+                .querySelector('.t-style-input')
+                .append(input.getDOM());
         });
 
         Object.keys(this.textInputs).forEach(function (inputKey) {
@@ -240,11 +284,16 @@ define([
         this.trigger.value = self.config.trigger;
 
         this.listenTo(this.grippy, 'mousedown', onDragStart);
-        this.widgetDnD.on('drop', function () {
-            // eslint-disable-next-line no-invalid-this
-            this.domElement.show();
-            document.querySelector('.t-drag-indicator').style.display = 'none';
-        }, this);
+        this.widgetDnD.on(
+            'drop',
+            function () {
+                // eslint-disable-next-line no-invalid-this
+                this.domElement.show();
+                document.querySelector('.t-drag-indicator').style.display =
+                    'none';
+            },
+            this
+        );
 
         if (!this.conditionManager.loadCompleted()) {
             this.config.expanded = false;
@@ -252,7 +301,9 @@ define([
 
         if (!this.config.expanded) {
             this.configArea.classList.remove('expanded');
-            this.toggleConfigButton.classList.remove('c-disclosure-triangle--expanded');
+            this.toggleConfigButton.classList.remove(
+                'c-disclosure-triangle--expanded'
+            );
         }
 
         if (this.domainObject.configuration.ruleOrder.length === 2) {
@@ -264,7 +315,9 @@ define([
         //if this is the default rule, hide elements that don't apply
         if (this.config.id === 'default') {
             this.domElement.querySelector('.t-delete').style.display = 'none';
-            this.domElement.querySelector('.t-widget-rule-config').style.display = 'none';
+            this.domElement.querySelector(
+                '.t-widget-rule-config'
+            ).style.display = 'none';
             this.domElement.querySelector('.t-grippy').style.display = 'none';
         }
     }
@@ -330,8 +383,11 @@ define([
      * Mutate thet domain object with this rule's local configuration
      */
     Rule.prototype.updateDomainObject = function () {
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById.'
-            + this.config.id, this.config);
+        this.openmct.objects.mutate(
+            this.domainObject,
+            'configuration.ruleConfigById.' + this.config.id,
+            this.config
+        );
     };
 
     /**
@@ -357,8 +413,16 @@ define([
             return ruleId === self.config.id;
         });
 
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleConfigById', ruleConfigById);
-        this.openmct.objects.mutate(this.domainObject, 'configuration.ruleOrder', ruleOrder);
+        this.openmct.objects.mutate(
+            this.domainObject,
+            'configuration.ruleConfigById',
+            ruleConfigById
+        );
+        this.openmct.objects.mutate(
+            this.domainObject,
+            'configuration.ruleOrder',
+            ruleOrder
+        );
         this.destroy();
         this.eventEmitter.emit('remove');
     };
@@ -392,9 +456,14 @@ define([
             values: []
         };
 
-        newConfig = (config !== undefined ? config.sourceCondition : defaultConfig);
+        newConfig =
+            config !== undefined ? config.sourceCondition : defaultConfig;
         if (sourceIndex !== undefined) {
-            ruleConfigById[this.config.id].conditions.splice(sourceIndex + 1, 0, newConfig);
+            ruleConfigById[this.config.id].conditions.splice(
+                sourceIndex + 1,
+                0,
+                newConfig
+            );
         } else {
             ruleConfigById[this.config.id].conditions.push(newConfig);
         }
@@ -412,16 +481,23 @@ define([
         const self = this;
         let $condition = null;
         let loopCnt = 0;
-        const triggerContextStr = self.config.trigger === 'any' ? ' or ' : ' and ';
+        const triggerContextStr =
+            self.config.trigger === 'any' ? ' or ' : ' and ';
 
         self.conditions = [];
 
-        this.domElement.querySelectorAll('.t-condition').forEach(condition => {
-            condition.remove();
-        });
+        this.domElement
+            .querySelectorAll('.t-condition')
+            .forEach((condition) => {
+                condition.remove();
+            });
 
         this.config.conditions.forEach(function (condition, index) {
-            const newCondition = new Condition(condition, index, self.conditionManager);
+            const newCondition = new Condition(
+                condition,
+                index,
+                self.conditionManager
+            );
             newCondition.on('remove', self.removeCondition, self);
             newCondition.on('duplicate', self.initCondition, self);
             newCondition.on('change', self.onConditionChange, self);
@@ -442,10 +518,12 @@ define([
             this.addConditionButton.style.display = '';
             self.conditions.forEach(function (condition) {
                 $condition = condition.getDOM();
-                const lastOfType = self.conditionArea.querySelector('li:last-of-type');
+                const lastOfType =
+                    self.conditionArea.querySelector('li:last-of-type');
                 lastOfType.parentNode.insertBefore($condition, lastOfType);
                 if (loopCnt > 0) {
-                    $condition.querySelector('.t-condition-context').innerHTML = triggerContextStr + ' when';
+                    $condition.querySelector('.t-condition-context').innerHTML =
+                        triggerContextStr + ' when';
                 }
 
                 loopCnt++;
@@ -455,7 +533,6 @@ define([
         if (self.conditions.length === 1) {
             self.conditions[0].hideButtons();
         }
-
     };
 
     /**
@@ -470,7 +547,8 @@ define([
             return index === removeIndex;
         });
 
-        this.domainObject.configuration.ruleConfigById[this.config.id] = this.config;
+        this.domainObject.configuration.ruleConfigById[this.config.id] =
+            this.config;
         this.updateDomainObject();
         this.refreshConditions();
         this.generateDescription();
@@ -491,18 +569,26 @@ define([
 
         if (this.config.conditions && this.config.id !== 'default') {
             if (self.config.trigger === 'js') {
-                description = 'when a custom JavaScript condition evaluates to true';
+                description =
+                    'when a custom JavaScript condition evaluates to true';
             } else {
                 this.config.conditions.forEach(function (condition, index) {
                     name = manager.getObjectName(condition.object);
-                    property = manager.getTelemetryPropertyName(condition.object, condition.key);
-                    operation = evaluator.getOperationDescription(condition.operation, condition.values);
+                    property = manager.getTelemetryPropertyName(
+                        condition.object,
+                        condition.key
+                    );
+                    operation = evaluator.getOperationDescription(
+                        condition.operation,
+                        condition.values
+                    );
                     if (name || property || operation) {
-                        description += 'when '
-                            + (name ? name + '\'s ' : '')
-                            + (property ? property + ' ' : '')
-                            + (operation ? operation + ' ' : '')
-                            + (self.config.trigger === 'any' ? ' OR ' : ' AND ');
+                        description +=
+                            'when ' +
+                            (name ? name + "'s " : '') +
+                            (property ? property + ' ' : '') +
+                            (operation ? operation + ' ' : '') +
+                            (self.config.trigger === 'any' ? ' OR ' : ' AND ');
                     }
                 });
             }
@@ -516,7 +602,8 @@ define([
             description = description.substring(0, description.length - 4);
         }
 
-        description = (description === '' ? this.config.description : description);
+        description =
+            description === '' ? this.config.description : description;
         this.description.innerHTML = self.config.description;
         this.config.description = description;
     };

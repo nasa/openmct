@@ -24,12 +24,12 @@ import EventEmitter from 'EventEmitter';
 import eventHelpers from '../lib/eventHelpers';
 import { MARKER_SHAPES } from './MarkerShapes';
 /**
-    * Create a new draw API utilizing the Canvas's 2D API for rendering.
-    *
-    * @constructor
-    * @param {CanvasElement} canvas the canvas object to render upon
-    * @throws {Error} an error is thrown if Canvas's 2D API is unavailab
-    */
+ * Create a new draw API utilizing the Canvas's 2D API for rendering.
+ *
+ * @constructor
+ * @param {CanvasElement} canvas the canvas object to render upon
+ * @throws {Error} an error is thrown if Canvas's 2D API is unavailab
+ */
 
 /**
  * Create a new draw API utilizing the Canvas's 2D API for rendering.
@@ -47,7 +47,7 @@ function Draw2D(canvas) {
     this.origin = [0, 0];
 
     if (!this.c2d) {
-        throw new Error("Canvas 2d API unavailable.");
+        throw new Error('Canvas 2d API unavailable.');
     }
 }
 
@@ -61,17 +61,20 @@ Draw2D.prototype.x = function (v) {
 
 // Convert from logical to physical y coordinates
 Draw2D.prototype.y = function (v) {
-    return this.height
-        - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
+    return (
+        this.height - ((v - this.origin[1]) / this.dimensions[1]) * this.height
+    );
 };
 
 // Set the color to be used for drawing operations
 Draw2D.prototype.setColor = function (color) {
-    const mappedColor = color.map(function (c, i) {
-        return i < 3 ? Math.floor(c * 255) : (c);
-    }).join(',');
-    this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
-    this.c2d.fillStyle = "rgba(" + mappedColor + ")";
+    const mappedColor = color
+        .map(function (c, i) {
+            return i < 3 ? Math.floor(c * 255) : c;
+        })
+        .join(',');
+    this.c2d.strokeStyle = 'rgba(' + mappedColor + ')';
+    this.c2d.fillStyle = 'rgba(' + mappedColor + ')';
 };
 
 Draw2D.prototype.clear = function () {
@@ -118,23 +121,13 @@ Draw2D.prototype.drawSquare = function (min, max, color) {
     this.c2d.fillRect(x1, y1, w, h);
 };
 
-Draw2D.prototype.drawPoints = function (
-    buf,
-    color,
-    points,
-    pointSize,
-    shape
-) {
+Draw2D.prototype.drawPoints = function (buf, color, points, pointSize, shape) {
     const drawC2DShape = MARKER_SHAPES[shape].drawC2D.bind(this);
 
     this.setColor(color);
 
     for (let i = 0; i < points; i++) {
-        drawC2DShape(
-            this.x(buf[i * 2]),
-            this.y(buf[i * 2 + 1]),
-            pointSize
-        );
+        drawC2DShape(this.x(buf[i * 2]), this.y(buf[i * 2 + 1]), pointSize);
     }
 };
 

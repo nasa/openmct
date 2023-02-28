@@ -1,4 +1,4 @@
-import raf from "./raf";
+import raf from './raf';
 
 describe('The raf utility function', () => {
     it('Throttles function calls that arrive in quick succession using Request Animation Frame', () => {
@@ -26,15 +26,17 @@ describe('The raf utility function', () => {
             throttledFunction();
         }
 
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             requestAnimationFrame(resolve);
-        }).then(() => {
-            return new Promise(resolve => {
-                requestAnimationFrame(resolve);
+        })
+            .then(() => {
+                return new Promise((resolve) => {
+                    requestAnimationFrame(resolve);
+                });
+            })
+            .then(() => {
+                expect(throttledCallback).toHaveBeenCalledTimes(1);
             });
-        }).then(() => {
-            expect(throttledCallback).toHaveBeenCalledTimes(1);
-        });
     });
     it('Invokes callback again if called in subsequent animation frame', () => {
         const throttledCallback = jasmine.createSpy('throttledCallback');
@@ -44,18 +46,20 @@ describe('The raf utility function', () => {
             throttledFunction();
         }
 
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             requestAnimationFrame(resolve);
-        }).then(() => {
-            for (let i = 0; i < 10; i++) {
-                throttledFunction();
-            }
+        })
+            .then(() => {
+                for (let i = 0; i < 10; i++) {
+                    throttledFunction();
+                }
 
-            return new Promise(resolve => {
-                requestAnimationFrame(resolve);
+                return new Promise((resolve) => {
+                    requestAnimationFrame(resolve);
+                });
+            })
+            .then(() => {
+                expect(throttledCallback).toHaveBeenCalledTimes(2);
             });
-        }).then(() => {
-            expect(throttledCallback).toHaveBeenCalledTimes(2);
-        });
     });
 });

@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/GridView.vue',
-    './constants.js',
-    'vue'
-], function (
+define(['./components/GridView.vue', './constants.js', 'vue'], function (
     GridViewComponent,
     constants,
     Vue
@@ -53,7 +49,8 @@ define([
                                 openmct,
                                 domainObject
                             },
-                            template: '<grid-view-component></grid-view-component>'
+                            template:
+                                '<grid-view-component></grid-view-component>'
                         });
                     },
                     destroy: function (element) {

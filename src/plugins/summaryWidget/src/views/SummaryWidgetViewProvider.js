@@ -1,13 +1,8 @@
-define([
-    '../SummaryWidget',
-    './SummaryWidgetView',
-    'objectUtils'
-], function (
+define(['../SummaryWidget', './SummaryWidgetView', 'objectUtils'], function (
     SummaryWidgetEditView,
     SummaryWidgetView,
     objectUtils
 ) {
-
     const DEFAULT_VIEW_PRIORITY = 100;
     /**
      *

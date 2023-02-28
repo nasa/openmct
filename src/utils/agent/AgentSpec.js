@@ -19,18 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Agent from "./Agent";
+import Agent from './Agent';
 
 const TEST_USER_AGENTS = {
     DESKTOP:
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36",
-    IPAD:
-    "Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53",
-    IPHONE:
-    "Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53"
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36',
+    IPAD: 'Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53',
+    IPHONE: 'Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53'
 };
 
-describe("The Agent", function () {
+describe('The Agent', function () {
     let testWindow;
     let agent;
 
@@ -44,7 +42,7 @@ describe("The Agent", function () {
         };
     });
 
-    it("recognizes desktop devices as non-mobile", function () {
+    it('recognizes desktop devices as non-mobile', function () {
         testWindow.navigator.userAgent = TEST_USER_AGENTS.DESKTOP;
         agent = new Agent(testWindow);
         expect(agent.isMobile()).toBeFalsy();
@@ -52,7 +50,7 @@ describe("The Agent", function () {
         expect(agent.isTablet()).toBeFalsy();
     });
 
-    it("detects iPhones", function () {
+    it('detects iPhones', function () {
         testWindow.navigator.userAgent = TEST_USER_AGENTS.IPHONE;
         agent = new Agent(testWindow);
         expect(agent.isMobile()).toBeTruthy();
@@ -60,7 +58,7 @@ describe("The Agent", function () {
         expect(agent.isTablet()).toBeFalsy();
     });
 
-    it("detects iPads", function () {
+    it('detects iPads', function () {
         testWindow.navigator.userAgent = TEST_USER_AGENTS.IPAD;
         agent = new Agent(testWindow);
         expect(agent.isMobile()).toBeTruthy();
@@ -68,7 +66,7 @@ describe("The Agent", function () {
         expect(agent.isTablet()).toBeTruthy();
     });
 
-    it("detects display orientation by innerHeight and innerWidth", function () {
+    it('detects display orientation by innerHeight and innerWidth', function () {
         agent = new Agent(testWindow);
         testWindow.innerWidth = 1024;
         testWindow.innerHeight = 400;
@@ -80,25 +78,25 @@ describe("The Agent", function () {
         expect(agent.isLandscape()).toBeFalsy();
     });
 
-    it("detects display orientation by screen.orientation", function () {
+    it('detects display orientation by screen.orientation', function () {
         agent = new Agent(testWindow);
         testWindow.screen = {
             orientation: {
-                type: "landscape-primary"
+                type: 'landscape-primary'
             }
         };
         expect(agent.isPortrait()).toBeFalsy();
         expect(agent.isLandscape()).toBeTruthy();
         testWindow.screen = {
             orientation: {
-                type: "portrait-primary"
+                type: 'portrait-primary'
             }
         };
         expect(agent.isPortrait()).toBeTruthy();
         expect(agent.isLandscape()).toBeFalsy();
     });
 
-    it("detects display orientation by window.orientation", function () {
+    it('detects display orientation by window.orientation', function () {
         agent = new Agent(testWindow);
         testWindow.orientation = 90;
         expect(agent.isPortrait()).toBeFalsy();
@@ -108,17 +106,17 @@ describe("The Agent", function () {
         expect(agent.isLandscape()).toBeFalsy();
     });
 
-    it("detects touch support", function () {
+    it('detects touch support', function () {
         testWindow.ontouchstart = null;
         expect(new Agent(testWindow).isTouch()).toBe(true);
         delete testWindow.ontouchstart;
         expect(new Agent(testWindow).isTouch()).toBe(false);
     });
 
-    it("allows for checking browser type", function () {
-        testWindow.navigator.userAgent = "Chromezilla Safarifox";
+    it('allows for checking browser type', function () {
+        testWindow.navigator.userAgent = 'Chromezilla Safarifox';
         agent = new Agent(testWindow);
-        expect(agent.isBrowser("Chrome")).toBe(true);
-        expect(agent.isBrowser("Firefox")).toBe(false);
+        expect(agent.isBrowser('Chrome')).toBe(true);
+        expect(agent.isBrowser('Firefox')).toBe(false);
     });
 });

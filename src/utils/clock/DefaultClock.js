@@ -37,11 +37,11 @@ export default class DefaultClock extends EventEmitter {
 
         this.cssClass = 'icon-clock';
         this.name = 'Clock';
-        this.description = "A default clock for openmct.";
+        this.description = 'A default clock for openmct.';
     }
 
     tick(tickValue) {
-        this.emit("tick", tickValue);
+        this.emit('tick', tickValue);
         this.lastTick = tickValue;
     }
 
@@ -85,5 +85,4 @@ export default class DefaultClock extends EventEmitter {
     currentValue() {
         return this.lastTick;
     }
-
 }

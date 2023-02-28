@@ -53,12 +53,20 @@ export function millisecondsToDHMS(numericDuration) {
     const dhms = [
         addTimeSuffix(Math.floor(normalizeAge(ms / ONE_DAY)), 'd'),
         addTimeSuffix(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR)), 'h'),
-        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE)), 'm'),
-        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)), 's'),
-        addTimeSuffix(Math.floor(normalizeAge(ms % ONE_SECOND)), "ms")
-    ].filter(Boolean).join(' ');
+        addTimeSuffix(
+            Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE)),
+            'm'
+        ),
+        addTimeSuffix(
+            Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)),
+            's'
+        ),
+        addTimeSuffix(Math.floor(normalizeAge(ms % ONE_SECOND)), 'ms')
+    ]
+        .filter(Boolean)
+        .join(' ');
 
-    return `${ dhms ? '+' : ''} ${dhms}`;
+    return `${dhms ? '+' : ''} ${dhms}`;
 }
 
 export function getPreciseDuration(value) {
@@ -68,8 +76,9 @@ export function getPreciseDuration(value) {
         toDoubleDigits(Math.floor(normalizeAge(ms / ONE_DAY))),
         toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
         toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
-        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND))),
+        toDoubleDigits(
+            Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND))
+        ),
         toTripleDigits(Math.floor(normalizeAge(ms % ONE_SECOND)))
-    ].join(":");
-
+    ].join(':');
 }

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import RemoteClock from "./RemoteClock";
+import RemoteClock from './RemoteClock';
 /**
  * Install a clock that uses a configurable telemetry endpoint.
  */

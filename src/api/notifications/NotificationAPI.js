@@ -30,8 +30,8 @@
  *
  * @namespace platform/api/notifications
  */
-import moment from 'moment';
 import EventEmitter from 'eventemitter3';
+import moment from 'moment';
 
 /**
  * @typedef {object} NotificationProperties
@@ -83,20 +83,20 @@ const MINIMIZE_ANIMATION_TIMEOUT = 300;
 /**
  * The notification service is responsible for informing the user of
  * events via the use of banner notifications.
-*/
+ */
 export default class NotificationAPI extends EventEmitter {
     constructor() {
         super();
         /** @type {Notification[]} */
         this.notifications = [];
         /** @type {{severity: "info" | "alert" | "error"}} */
-        this.highest = { severity: "info" };
+        this.highest = { severity: 'info' };
 
         /**
-        * A context in which to hold the active notification and a
-        * handle to its timeout.
-        * @type {Notification | undefined}
-        */
+         * A context in which to hold the active notification and a
+         * handle to its timeout.
+         * @type {Notification | undefined}
+         */
         this.activeNotification = undefined;
     }
 
@@ -112,7 +112,7 @@ export default class NotificationAPI extends EventEmitter {
         const notificationModel = {
             message: message,
             autoDismiss: true,
-            severity: "info",
+            severity: 'info',
             options
         };
 
@@ -133,7 +133,7 @@ export default class NotificationAPI extends EventEmitter {
     alert(message, options = {}) {
         const notificationModel = {
             message: message,
-            severity: "alert",
+            severity: 'alert',
             options
         };
 
@@ -154,7 +154,7 @@ export default class NotificationAPI extends EventEmitter {
     error(message, options = {}) {
         let notificationModel = {
             message: message,
-            severity: "error",
+            severity: 'error',
             options
         };
 
@@ -172,7 +172,7 @@ export default class NotificationAPI extends EventEmitter {
             message: message,
             progressPerc: progressPerc,
             progressText: progressText,
-            severity: "info",
+            severity: 'info',
             options: {}
         };
 
@@ -247,12 +247,12 @@ export default class NotificationAPI extends EventEmitter {
 
         if (this.activeTimeout) {
             /* Method can be called manually (clicking dismiss) or
-                * automatically from an auto-timeout. this.activeTimeout
-                * acts as a semaphore to prevent race conditions. Cancel any
-                * timeout in progress (for the case where a manual dismiss
-                * has shortcut an active auto-dismiss), and clear the
-                * semaphore.
-                */
+             * automatically from an auto-timeout. this.activeTimeout
+             * acts as a semaphore to prevent race conditions. Cancel any
+             * timeout in progress (for the case where a manual dismiss
+             * has shortcut an active auto-dismiss), and clear the
+             * semaphore.
+             */
 
             clearTimeout(this.activeTimeout);
             delete this.activeTimeout;
@@ -276,7 +276,7 @@ export default class NotificationAPI extends EventEmitter {
      */
     _dismissOrMinimize(notification) {
         let model = notification?.model;
-        if (model?.severity === "info") {
+        if (model?.severity === 'info') {
             this._dismiss(notification);
         } else {
             this._minimize(notification);
@@ -293,13 +293,18 @@ export default class NotificationAPI extends EventEmitter {
             error: 3
         };
 
-        this.highest.severity = this.notifications.reduce((previous, notification) => {
-            if (severity[notification.model.severity] > severity[previous]) {
-                return notification.model.severity;
-            } else {
-                return previous;
-            }
-        }, "info");
+        this.highest.severity = this.notifications.reduce(
+            (previous, notification) => {
+                if (
+                    severity[notification.model.severity] > severity[previous]
+                ) {
+                    return notification.model.severity;
+                } else {
+                    return previous;
+                }
+            },
+            'info'
+        );
     }
 
     /**
@@ -316,8 +321,10 @@ export default class NotificationAPI extends EventEmitter {
         let notification;
         let activeNotification = this.activeNotification;
 
-        notificationModel.severity = notificationModel.severity || "info";
-        notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
+        notificationModel.severity = notificationModel.severity || 'info';
+        notificationModel.timestamp = moment
+            .utc()
+            .format('YYYY-MM-DD hh:mm:ss.ms');
 
         notification = this._createNotification(notificationModel);
 
@@ -361,7 +368,12 @@ export default class NotificationAPI extends EventEmitter {
             this._dismiss(notification);
         };
 
-        if (Object.prototype.hasOwnProperty.call(notificationModel, 'progressPerc')) {
+        if (
+            Object.prototype.hasOwnProperty.call(
+                notificationModel,
+                'progressPerc'
+            )
+        ) {
             notification.progress = (progressPerc, progressText) => {
                 notification.model.progressPerc = progressPerc;
                 notification.model.progressText = progressText;
@@ -388,8 +400,9 @@ export default class NotificationAPI extends EventEmitter {
         this.emit('notification', notification);
 
         if (notification.model.autoDismiss || this._selectNextNotification()) {
-            const autoDismissTimeout = notification.model.options.autoDismissTimeout
-                || DEFAULT_AUTO_DISMISS_TIMEOUT;
+            const autoDismissTimeout =
+                notification.model.options.autoDismissTimeout ||
+                DEFAULT_AUTO_DISMISS_TIMEOUT;
             this.activeTimeout = setTimeout(() => {
                 this._dismissOrMinimize(notification);
             }, autoDismissTimeout);
@@ -414,8 +427,10 @@ export default class NotificationAPI extends EventEmitter {
         for (; i < this.notifications.length; i++) {
             notification = this.notifications[i];
 
-            if (!notification.model.minimized
-                && notification !== this.activeNotification) {
+            if (
+                !notification.model.minimized &&
+                notification !== this.activeNotification
+            ) {
                 return notification;
             }
         }

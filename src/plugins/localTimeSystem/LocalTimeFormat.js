@@ -20,18 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'moment'
-], function (
-    moment
-) {
-    const DATE_FORMAT = "YYYY-MM-DD h:mm:ss.SSS a";
+define(['moment'], function (moment) {
+    const DATE_FORMAT = 'YYYY-MM-DD h:mm:ss.SSS a';
 
     const DATE_FORMATS = [
         DATE_FORMAT,
-        "YYYY-MM-DD h:mm:ss a",
-        "YYYY-MM-DD h:mm a",
-        "YYYY-MM-DD"
+        'YYYY-MM-DD h:mm:ss a',
+        'YYYY-MM-DD h:mm a',
+        'YYYY-MM-DD'
     ];
 
     /**

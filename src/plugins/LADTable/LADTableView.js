@@ -26,7 +26,8 @@ export default class LADTableView {
                     objectPath: this.objectPath
                 };
             },
-            template: '<lad-table ref="ladTable" :domain-object="domainObject" :object-path="objectPath"></lad-table>'
+            template:
+                '<lad-table ref="ladTable" :domain-object="domainObject" :object-path="objectPath"></lad-table>'
         });
     }
 

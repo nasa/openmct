@@ -21,20 +21,23 @@ define(['../src/Rule'], function (Rule) {
                 style: {
                     'background-color': '',
                     'border-color': '',
-                    'color': ''
+                    color: ''
                 },
                 expanded: true,
-                conditions: [{
-                    object: '',
-                    key: '',
-                    operation: '',
-                    values: []
-                }, {
-                    object: 'blah',
-                    key: 'blah',
-                    operation: 'blah',
-                    values: ['blah.', 'blah!', 'blah?']
-                }]
+                conditions: [
+                    {
+                        object: '',
+                        key: '',
+                        operation: '',
+                        values: []
+                    },
+                    {
+                        object: 'blah',
+                        key: 'blah',
+                        operation: 'blah',
+                        values: ['blah.', 'blah!', 'blah?']
+                    }
+                ]
             };
             mockDomainObject = {
                 configuration: {
@@ -51,26 +54,32 @@ define(['../src/Rule'], function (Rule) {
             mockOpenMCT.objects.mutate = jasmine.createSpy('mutate');
 
             mockEvaluator = {};
-            mockEvaluator.getOperationDescription = jasmine.createSpy('evaluator')
+            mockEvaluator.getOperationDescription = jasmine
+                .createSpy('evaluator')
                 .and.returnValue('Operation Description');
 
-            mockConditionManager = jasmine.createSpyObj('mockConditionManager', [
-                'on',
-                'getComposition',
-                'loadCompleted',
-                'getEvaluator',
-                'getTelemetryMetadata',
-                'metadataLoadCompleted',
-                'getObjectName',
-                'getTelemetryPropertyName'
-            ]);
+            mockConditionManager = jasmine.createSpyObj(
+                'mockConditionManager',
+                [
+                    'on',
+                    'getComposition',
+                    'loadCompleted',
+                    'getEvaluator',
+                    'getTelemetryMetadata',
+                    'metadataLoadCompleted',
+                    'getObjectName',
+                    'getTelemetryPropertyName'
+                ]
+            );
             mockConditionManager.loadCompleted.and.returnValue(false);
             mockConditionManager.metadataLoadCompleted.and.returnValue(false);
             mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
             mockConditionManager.getComposition.and.returnValue({});
             mockConditionManager.getTelemetryMetadata.and.returnValue({});
             mockConditionManager.getObjectName.and.returnValue('Object Name');
-            mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
+            mockConditionManager.getTelemetryPropertyName.and.returnValue(
+                'Property Name'
+            );
 
             mockWidgetDnD = jasmine.createSpyObj('dnd', [
                 'on',
@@ -85,8 +94,13 @@ define(['../src/Rule'], function (Rule) {
             changeSpy = jasmine.createSpy('changeCallback');
             conditionChangeSpy = jasmine.createSpy('conditionChangeCallback');
 
-            testRule = new Rule(mockRuleConfig, mockDomainObject, mockOpenMCT, mockConditionManager,
-                mockWidgetDnD);
+            testRule = new Rule(
+                mockRuleConfig,
+                mockDomainObject,
+                mockOpenMCT,
+                mockConditionManager,
+                mockWidgetDnD
+            );
             testRule.on('remove', removeSpy);
             testRule.on('duplicate', duplicateSpy);
             testRule.on('change', changeSpy);
@@ -99,7 +113,9 @@ define(['../src/Rule'], function (Rule) {
 
         it('gets its DOM element', function () {
             mockContainer.append(testRule.getDOM());
-            expect(mockContainer.querySelectorAll('.l-widget-rule').length).toBeGreaterThan(0);
+            expect(
+                mockContainer.querySelectorAll('.l-widget-rule').length
+            ).toBeGreaterThan(0);
         });
 
         it('gets its configuration properties', function () {
@@ -116,8 +132,13 @@ define(['../src/Rule'], function (Rule) {
         it('can remove itself from the configuration', function () {
             testRule.remove();
             expect(removeSpy).toHaveBeenCalled();
-            expect(mockDomainObject.configuration.ruleConfigById.mockRule).not.toBeDefined();
-            expect(mockDomainObject.configuration.ruleOrder).toEqual(['default', 'otherRule']);
+            expect(
+                mockDomainObject.configuration.ruleConfigById.mockRule
+            ).not.toBeDefined();
+            expect(mockDomainObject.configuration.ruleOrder).toEqual([
+                'default',
+                'otherRule'
+            ]);
         });
 
         it('updates its configuration on a condition change and invokes callbacks', function () {
@@ -126,28 +147,34 @@ define(['../src/Rule'], function (Rule) {
                 property: 'object',
                 index: 0
             });
-            expect(testRule.getProperty('conditions')[0].object).toEqual('newValue');
+            expect(testRule.getProperty('conditions')[0].object).toEqual(
+                'newValue'
+            );
             expect(conditionChangeSpy).toHaveBeenCalled();
         });
 
         it('allows initializing a new condition with a default configuration', function () {
             testRule.initCondition();
-            expect(mockRuleConfig.conditions).toEqual([{
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            }, {
-                object: 'blah',
-                key: 'blah',
-                operation: 'blah',
-                values: ['blah.', 'blah!', 'blah?']
-            }, {
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            }]);
+            expect(mockRuleConfig.conditions).toEqual([
+                {
+                    object: '',
+                    key: '',
+                    operation: '',
+                    values: []
+                },
+                {
+                    object: 'blah',
+                    key: 'blah',
+                    operation: 'blah',
+                    values: ['blah.', 'blah!', 'blah?']
+                },
+                {
+                    object: '',
+                    key: '',
+                    operation: '',
+                    values: []
+                }
+            ]);
         });
 
         it('allows initializing a new condition from a given configuration', function () {
@@ -160,22 +187,26 @@ define(['../src/Rule'], function (Rule) {
                 },
                 index: 0
             });
-            expect(mockRuleConfig.conditions).toEqual([{
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            }, {
-                object: 'object1',
-                key: 'key1',
-                operation: 'operation1',
-                values: [1, 2, 3]
-            }, {
-                object: 'blah',
-                key: 'blah',
-                operation: 'blah',
-                values: ['blah.', 'blah!', 'blah?']
-            }]);
+            expect(mockRuleConfig.conditions).toEqual([
+                {
+                    object: '',
+                    key: '',
+                    operation: '',
+                    values: []
+                },
+                {
+                    object: 'object1',
+                    key: 'key1',
+                    operation: 'operation1',
+                    values: [1, 2, 3]
+                },
+                {
+                    object: 'blah',
+                    key: 'blah',
+                    operation: 'blah',
+                    values: ['blah.', 'blah!', 'blah?']
+                }
+            ]);
         });
 
         it('invokes mutate when updating the domain object', function () {
@@ -185,7 +216,9 @@ define(['../src/Rule'], function (Rule) {
 
         it('builds condition view from condition configuration', function () {
             mockContainer.append(testRule.getDOM());
-            expect(mockContainer.querySelectorAll('.t-condition').length).toEqual(2);
+            expect(
+                mockContainer.querySelectorAll('.t-condition').length
+            ).toEqual(2);
         });
 
         it('responds to input of style properties, and updates the preview', function () {
@@ -196,9 +229,15 @@ define(['../src/Rule'], function (Rule) {
             testRule.colorInputs.color.set('#999999');
             expect(mockRuleConfig.style.color).toEqual('#999999');
 
-            expect(testRule.thumbnail.style['background-color']).toEqual('rgb(67, 67, 67)');
-            expect(testRule.thumbnail.style['border-color']).toEqual('rgb(102, 102, 102)');
-            expect(testRule.thumbnail.style.color).toEqual('rgb(153, 153, 153)');
+            expect(testRule.thumbnail.style['background-color']).toEqual(
+                'rgb(67, 67, 67)'
+            );
+            expect(testRule.thumbnail.style['border-color']).toEqual(
+                'rgb(102, 102, 102)'
+            );
+            expect(testRule.thumbnail.style.color).toEqual(
+                'rgb(153, 153, 153)'
+            );
 
             expect(changeSpy).toHaveBeenCalled();
         });
@@ -241,7 +280,7 @@ define(['../src/Rule'], function (Rule) {
         it('generates a human-readable description from its conditions', function () {
             testRule.generateDescription();
             expect(testRule.config.description).toContain(
-                'Object Name\'s Property Name Operation Description'
+                "Object Name's Property Name Operation Description"
             );
             testRule.config.trigger = 'js';
             testRule.generateDescription();
@@ -267,12 +306,14 @@ define(['../src/Rule'], function (Rule) {
 
         it('can remove a condition from its configuration', function () {
             testRule.removeCondition(0);
-            expect(testRule.config.conditions).toEqual([{
-                object: 'blah',
-                key: 'blah',
-                operation: 'blah',
-                values: ['blah.', 'blah!', 'blah?']
-            }]);
+            expect(testRule.config.conditions).toEqual([
+                {
+                    object: 'blah',
+                    key: 'blah',
+                    operation: 'blah',
+                    values: ['blah.', 'blah!', 'blah?']
+                }
+            ]);
         });
     });
 });

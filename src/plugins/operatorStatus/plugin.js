@@ -28,23 +28,30 @@ import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
  */
 export default function operatorStatusPlugin(configuration) {
     return function install(openmct) {
-
         if (openmct.user.hasProvider()) {
-            openmct.user.status.canProvideStatusForCurrentUser().then(canProvideStatus => {
-                if (canProvideStatus) {
-                    const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
+            openmct.user.status
+                .canProvideStatusForCurrentUser()
+                .then((canProvideStatus) => {
+                    if (canProvideStatus) {
+                        const operatorStatusIndicator =
+                            new OperatorStatusIndicator(openmct, configuration);
 
-                    operatorStatusIndicator.install();
-                }
-            });
+                        operatorStatusIndicator.install();
+                    }
+                });
 
-            openmct.user.status.canSetPollQuestion().then(canSetPollQuestion => {
-                if (canSetPollQuestion) {
-                    const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
+            openmct.user.status
+                .canSetPollQuestion()
+                .then((canSetPollQuestion) => {
+                    if (canSetPollQuestion) {
+                        const pollQuestionIndicator = new PollQuestionIndicator(
+                            openmct,
+                            configuration
+                        );
 
-                    pollQuestionIndicator.install();
-                }
-            });
+                        pollQuestionIndicator.install();
+                    }
+                });
         }
     };
 }

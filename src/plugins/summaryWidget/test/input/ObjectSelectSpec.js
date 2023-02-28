@@ -51,7 +51,6 @@ define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
             mockManager.getComposition.and.callFake(function () {
                 return mockComposition;
             });
-
         });
 
         it('allows setting special keyword options', function () {

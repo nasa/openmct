@@ -25,7 +25,15 @@ import Notebook from './components/Notebook.vue';
 import Agent from '@/utils/agent/Agent';
 
 export default class NotebookViewProvider {
-    constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {
+    constructor(
+        openmct,
+        name,
+        key,
+        type,
+        cssClass,
+        snapshotContainer,
+        entryUrlWhitelist
+    ) {
         this.openmct = openmct;
         this.key = key;
         this.name = `${name} View`;
@@ -64,7 +72,8 @@ export default class NotebookViewProvider {
                             domainObject
                         };
                     },
-                    template: '<Notebook :domain-object="domainObject"></Notebook>'
+                    template:
+                        '<Notebook :domain-object="domainObject"></Notebook>'
                 });
             },
             destroy() {

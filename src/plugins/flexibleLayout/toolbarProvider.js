@@ -21,16 +21,20 @@
  *****************************************************************************/
 
 function ToolbarProvider(openmct) {
-
     return {
-        name: "Flexible Layout Toolbar",
-        key: "flex-layout",
-        description: "A toolbar for objects inside a Flexible Layout.",
+        name: 'Flexible Layout Toolbar',
+        key: 'flex-layout',
+        description: 'A toolbar for objects inside a Flexible Layout.',
         forSelection: function (selection) {
             let context = selection[0][0].context;
 
-            return (context && context.type
-                && (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
+            return (
+                context &&
+                context.type &&
+                (context.type === 'flexible-layout' ||
+                    context.type === 'container' ||
+                    context.type === 'frame')
+            );
         },
         toolbar: function (selection) {
             let selectionPath = selection[0];
@@ -64,7 +68,7 @@ function ToolbarProvider(openmct) {
 
             function getSeparator() {
                 return {
-                    control: "separator"
+                    control: 'separator'
                 };
             }
 
@@ -75,19 +79,18 @@ function ToolbarProvider(openmct) {
 
                 let frameId = primary.context.frameId;
                 let layoutObject = tertiary.context.item;
-                let containers = layoutObject
-                    .configuration
-                    .containers;
-                let container = containers
-                    .filter(c => c.frames.some(f => f.id === frameId))[0];
+                let containers = layoutObject.configuration.containers;
+                let container = containers.filter((c) =>
+                    c.frames.some((f) => f.id === frameId)
+                )[0];
                 let containerIndex = containers.indexOf(container);
-                let frame = container && container
-                    .frames
-                    .filter((f => f.id === frameId))[0];
+                let frame =
+                    container &&
+                    container.frames.filter((f) => f.id === frameId)[0];
                 let frameIndex = container && container.frames.indexOf(frame);
 
                 deleteFrame = {
-                    control: "button",
+                    control: 'button',
                     domainObject: primary.context.item,
                     method: function () {
                         let deleteFrameAction = tertiary.context.deleteFrame;
@@ -100,7 +103,9 @@ function ToolbarProvider(openmct) {
                                     label: 'OK',
                                     emphasis: 'true',
                                     callback: function () {
-                                        deleteFrameAction(primary.context.frameId);
+                                        deleteFrameAction(
+                                            primary.context.frameId
+                                        );
                                         prompt.dismiss();
                                     }
                                 },
@@ -113,45 +118,44 @@ function ToolbarProvider(openmct) {
                             ]
                         });
                     },
-                    key: "remove",
-                    icon: "icon-trash",
-                    title: "Remove Frame"
+                    key: 'remove',
+                    icon: 'icon-trash',
+                    title: 'Remove Frame'
                 };
                 toggleFrame = {
-                    control: "toggle-button",
+                    control: 'toggle-button',
                     domainObject: secondary.context.item,
                     property: `configuration.containers[${containerIndex}].frames[${frameIndex}].noFrame`,
                     options: [
                         {
                             value: false,
                             icon: 'icon-frame-hide',
-                            title: "Frame hidden"
+                            title: 'Frame hidden'
                         },
                         {
                             value: true,
                             icon: 'icon-frame-show',
-                            title: "Frame visible"
+                            title: 'Frame visible'
                         }
                     ]
                 };
                 addContainer = {
-                    control: "button",
+                    control: 'button',
                     domainObject: tertiary.context.item,
                     method: tertiary.context.addContainer,
-                    key: "add",
-                    icon: "icon-plus-in-rect",
+                    key: 'add',
+                    icon: 'icon-plus-in-rect',
                     title: 'Add Container'
                 };
 
                 toggleContainer.domainObject = secondary.context.item;
-
             } else if (primary.context.type === 'container') {
                 if (primary.context.item.locked) {
                     return [];
                 }
 
                 deleteContainer = {
-                    control: "button",
+                    control: 'button',
                     domainObject: primary.context.item,
                     method: function () {
                         let removeContainer = secondary.context.deleteContainer;
@@ -159,7 +163,8 @@ function ToolbarProvider(openmct) {
 
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',
-                            message: 'This action will permanently delete this container from this Flexible Layout. Do you want to continue?',
+                            message:
+                                'This action will permanently delete this container from this Flexible Layout. Do you want to continue?',
                             buttons: [
                                 {
                                     label: 'OK',
@@ -178,34 +183,32 @@ function ToolbarProvider(openmct) {
                             ]
                         });
                     },
-                    key: "remove",
-                    icon: "icon-trash",
-                    title: "Remove Container"
+                    key: 'remove',
+                    icon: 'icon-trash',
+                    title: 'Remove Container'
                 };
 
                 addContainer = {
-                    control: "button",
+                    control: 'button',
                     domainObject: secondary.context.item,
                     method: secondary.context.addContainer,
-                    key: "add",
-                    icon: "icon-plus-in-rect",
+                    key: 'add',
+                    icon: 'icon-plus-in-rect',
                     title: 'Add Container'
                 };
-
             } else if (primary.context.type === 'flexible-layout') {
                 if (primary.context.item.locked) {
                     return [];
                 }
 
                 addContainer = {
-                    control: "button",
+                    control: 'button',
                     domainObject: primary.context.item,
                     method: primary.context.addContainer,
-                    key: "add",
-                    icon: "icon-plus-in-rect",
+                    key: 'add',
+                    icon: 'icon-plus-in-rect',
                     title: 'Add Container'
                 };
-
             }
 
             let toolbar = [
@@ -218,7 +221,7 @@ function ToolbarProvider(openmct) {
                 deleteContainer
             ];
 
-            return toolbar.filter(button => button !== undefined);
+            return toolbar.filter((button) => button !== undefined);
         }
     };
 }

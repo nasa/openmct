@@ -20,13 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
+import { createOpenMct, resetApplicationState } from '../../src/utils/testing';
 import ExampleUserProvider from './ExampleUserProvider';
 
-describe("The Example User Plugin", () => {
+describe('The Example User Plugin', () => {
     let openmct;
 
     beforeEach(() => {

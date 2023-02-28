@@ -22,9 +22,13 @@
 
 import MenuAPI from './MenuAPI';
 import Menu from './menu';
-import { createOpenMct, createMouseEvent, resetApplicationState } from '../../utils/testing';
+import {
+    createOpenMct,
+    createMouseEvent,
+    resetApplicationState
+} from '../../utils/testing';
 
-describe ('The Menu API', () => {
+describe('The Menu API', () => {
     let openmct;
     let appHolder;
     let menuAPI;
@@ -183,11 +187,15 @@ describe ('The Menu API', () => {
             const mouseOverEvent = createMouseEvent('mouseover');
 
             superMenuItem.dispatchEvent(mouseOverEvent);
-            const itemDescription = document.querySelector('.l-item-description__description');
+            const itemDescription = document.querySelector(
+                '.l-item-description__description'
+            );
 
             menuAPI.menuComponent.component.$nextTick(() => {
                 expect(menuElement).not.toBeNull();
-                expect(itemDescription.innerText).toEqual(actionsArray[0].description);
+                expect(itemDescription.innerText).toEqual(
+                    actionsArray[0].description
+                );
 
                 document.body.click();
             });

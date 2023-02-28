@@ -120,7 +120,7 @@ const theme = 'espresso';
  *
  * @type {string}
  */
-const myItemsFolderName = "My Items";
+const myItemsFolderName = 'My Items';
 
 exports.test = test.extend({
     // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
@@ -130,7 +130,9 @@ exports.test = test.extend({
         // eslint-disable-next-line playwright/no-conditional-in-test
         if (theme === 'snow') {
             //inject snow theme
-            await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
+            await page.addInitScript({
+                path: path.join(__dirname, './helper', './useSnowTheme.js')
+            });
         }
 
         // Attach info about the currently running test and its project.

@@ -23,52 +23,54 @@ const { test, expect } = require('../../../pluginFixtures');
 const { createPlanFromJSON } = require('../../../appActions');
 
 const testPlan = {
-    "TEST_GROUP": [
+    TEST_GROUP: [
         {
-            "name": "Past event 1",
-            "start": 1660320408000,
-            "end": 1660343797000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
+            name: 'Past event 1',
+            start: 1660320408000,
+            end: 1660343797000,
+            type: 'TEST-GROUP',
+            color: 'orange',
+            textColor: 'white'
         },
         {
-            "name": "Past event 2",
-            "start": 1660406808000,
-            "end": 1660429160000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
+            name: 'Past event 2',
+            start: 1660406808000,
+            end: 1660429160000,
+            type: 'TEST-GROUP',
+            color: 'orange',
+            textColor: 'white'
         },
         {
-            "name": "Past event 3",
-            "start": 1660493208000,
-            "end": 1660503981000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
+            name: 'Past event 3',
+            start: 1660493208000,
+            end: 1660503981000,
+            type: 'TEST-GROUP',
+            color: 'orange',
+            textColor: 'white'
         },
         {
-            "name": "Past event 4",
-            "start": 1660579608000,
-            "end": 1660624108000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
+            name: 'Past event 4',
+            start: 1660579608000,
+            end: 1660624108000,
+            type: 'TEST-GROUP',
+            color: 'orange',
+            textColor: 'white'
         },
         {
-            "name": "Past event 5",
-            "start": 1660666008000,
-            "end": 1660681529000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
+            name: 'Past event 5',
+            start: 1660666008000,
+            end: 1660681529000,
+            type: 'TEST-GROUP',
+            color: 'orange',
+            textColor: 'white'
         }
     ]
 };
 
-test.describe("Plan", () => {
-    test("Create a Plan and display all plan events @unstable", async ({ page }) => {
+test.describe('Plan', () => {
+    test('Create a Plan and display all plan events @unstable', async ({
+        page
+    }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         const plan = await createPlanFromJSON(page, {
@@ -76,12 +78,14 @@ test.describe("Plan", () => {
             json: testPlan
         });
         const startBound = testPlan.TEST_GROUP[0].start;
-        const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
+        const endBound =
+            testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
         // Switch to fixed time mode with all plan events within the bounds
-        await page.goto(`${plan.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=plan.view`);
+        await page.goto(
+            `${plan.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=plan.view`
+        );
         const eventCount = await page.locator('.activity-bounds').count();
         expect(eventCount).toEqual(testPlan.TEST_GROUP.length);
     });
 });
-

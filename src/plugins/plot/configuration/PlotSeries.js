@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import _ from 'lodash';
-import Model from "./Model";
+import Model from './Model';
 import { MARKER_SHAPES } from '../draw/MarkerShapes';
-import configStore from "../configuration/ConfigStore";
+import configStore from '../configuration/ConfigStore';
 import { symlog } from '../mathUtils';
 
 /**
@@ -70,7 +70,6 @@ export default class PlotSeries extends Model {
      @param {import('./Model').ModelOptions<PlotSeriesModelType, PlotSeriesModelOptions>} options
      */
     constructor(options) {
-
         super(options);
 
         this.logMode = this.getLogMode(options);
@@ -92,7 +91,10 @@ export default class PlotSeries extends Model {
         if (yAxisId === 1) {
             return options.collection.plot.model.yAxis.logMode;
         } else {
-            const foundYAxis = options.collection.plot.model.additionalYAxes.find(yAxis => yAxis.id === yAxisId);
+            const foundYAxis =
+                options.collection.plot.model.additionalYAxes.find(
+                    (yAxis) => yAxis.id === yAxisId
+                );
 
             return foundYAxis ? foundYAxis.logMode : false;
         }
@@ -104,15 +106,11 @@ export default class PlotSeries extends Model {
      * @override
      */
     defaultModel(options) {
-        this.metadata = options
-            .openmct
-            .telemetry
-            .getMetadata(options.domainObject);
+        this.metadata = options.openmct.telemetry.getMetadata(
+            options.domainObject
+        );
 
-        this.formats = options
-            .openmct
-            .telemetry
-            .getFormatMap(this.metadata);
+        this.formats = options.openmct.telemetry.getFormatMap(this.metadata);
 
         //if the object is missing or doesn't have metadata for some reason
         let range = {};
@@ -159,11 +157,17 @@ export default class PlotSeries extends Model {
     initialize(options) {
         this.openmct = options.openmct;
         this.domainObject = options.domainObject;
-        this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.keyString = this.openmct.objects.makeKeyString(
+            this.domainObject.identifier
+        );
         this.dataStoreId = `data-${options.collection.plot.id}-${this.keyString}`;
         this.updateSeriesData([]);
-        this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
-        this.limitDefinition = this.openmct.telemetry.limitDefinition(options.domainObject);
+        this.limitEvaluator = this.openmct.telemetry.limitEvaluator(
+            options.domainObject
+        );
+        this.limitDefinition = this.openmct.telemetry.limitDefinition(
+            options.domainObject
+        );
         this.limits = [];
         this.openmct.time.on('bounds', this.updateLimits);
         this.removeMutationListener = this.openmct.objects.observe(
@@ -194,32 +198,39 @@ export default class PlotSeries extends Model {
             strategy = 'minmax';
         }
 
-        options = Object.assign({}, {
-            size: 1000,
-            strategy,
-            filters: this.filters
-        }, options || {});
+        options = Object.assign(
+            {},
+            {
+                size: 1000,
+                strategy,
+                filters: this.filters
+            },
+            options || {}
+        );
 
         if (!this.unsubscribe) {
-            this.unsubscribe = this.openmct
-                .telemetry
-                .subscribe(
-                    this.domainObject,
-                    this.add.bind(this),
-                    {
-                        filters: this.filters
-                    }
-                );
+            this.unsubscribe = this.openmct.telemetry.subscribe(
+                this.domainObject,
+                this.add.bind(this),
+                {
+                    filters: this.filters
+                }
+            );
         }
 
         try {
-            const points = await this.openmct.telemetry.request(this.domainObject, options);
+            const points = await this.openmct.telemetry.request(
+                this.domainObject,
+                options
+            );
             const data = this.getSeriesData();
             // eslint-disable-next-line you-dont-need-lodash-underscore/concat
             const newPoints = _(data)
                 .concat(points)
                 .sortBy(this.getXVal)
-                .uniq(true, point => [this.getXVal(point), this.getYVal(point)].join())
+                .uniq(true, (point) =>
+                    [this.getXVal(point), this.getYVal(point)].join()
+                )
                 .value();
             this.reset(newPoints);
         } catch (error) {
@@ -475,11 +486,13 @@ export default class PlotSeries extends Model {
                 this.updateSeriesData(data);
                 this.resetStats();
             } else {
-                const newData = this.getSeriesData().slice(startIndex, endIndex);
+                const newData = this.getSeriesData().slice(
+                    startIndex,
+                    endIndex
+                );
                 this.reset(newData);
             }
         }
-
     }
     /**
      * Updates filters, clears the plot series, unsubscribes and resubscribes
@@ -508,7 +521,7 @@ export default class PlotSeries extends Model {
     getDisplayRange(xKey) {
         const unsortedData = this.getSeriesData();
         this.updateSeriesData([]);
-        unsortedData.forEach(point => this.add(point, false));
+        unsortedData.forEach((point) => this.add(point, false));
 
         let data = this.getSeriesData();
         const minValue = this.getXVal(data[0]);
@@ -522,7 +535,7 @@ export default class PlotSeries extends Model {
     markerOptionsDisplayText() {
         const showMarkers = this.get('markers');
         if (!showMarkers) {
-            return "Disabled";
+            return 'Disabled';
         }
 
         const markerShapeKey = this.get('markerShape');

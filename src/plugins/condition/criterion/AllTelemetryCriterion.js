@@ -22,12 +22,11 @@
 
 import TelemetryCriterion from './TelemetryCriterion';
 import StalenessUtils from '@/utils/staleness';
-import { evaluateResults } from "../utils/evaluator";
+import { evaluateResults } from '../utils/evaluator';
 import { getLatestTimestamp, checkIfOld } from '../utils/time';
-import { getOperatorText } from "@/plugins/condition/utils/operations";
+import { getOperatorText } from '@/plugins/condition/utils/operations';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
-
     /**
      * Subscribes/Unsubscribes to telemetry and emits the result
      * of operations performed on the telemetry data returned and a given input value.
@@ -37,7 +36,9 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
      */
 
     initialize() {
-        this.telemetryObjects = { ...this.telemetryDomainObjectDefinition.telemetryObjects };
+        this.telemetryObjects = {
+            ...this.telemetryDomainObjectDefinition.telemetryObjects
+        };
         this.telemetryDataCache = {};
 
         if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
@@ -55,7 +56,9 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         }
 
         Object.values(telemetryObjects).forEach((telemetryObject) => {
-            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            const id = this.openmct.objects.makeKeyString(
+                telemetryObject.identifier
+            );
             if (!this.ageCheck[id]) {
                 this.ageCheck[id] = checkIfOld((data) => {
                     this.handleOldTelemetry(id, data);
@@ -67,7 +70,10 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     handleOldTelemetry(id, data) {
         if (this.telemetryDataCache) {
             this.telemetryDataCache[id] = true;
-            this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
+            this.result = evaluateResults(
+                Object.values(this.telemetryDataCache),
+                this.telemetry
+            );
         }
 
         this.emitEvent('telemetryIsOld', data);
@@ -79,30 +85,43 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         }
 
         Object.values(telemetryObjects).forEach((telemetryObject) => {
-            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            const id = this.openmct.objects.makeKeyString(
+                telemetryObject.identifier
+            );
             if (!this.stalenessSubscription[id]) {
                 this.stalenessSubscription[id] = {};
-                this.stalenessSubscription[id].stalenessUtils = new StalenessUtils(this.openmct, telemetryObject);
-                this.openmct.telemetry.isStale(telemetryObject).then((stalenessResponse) => {
-                    if (stalenessResponse !== undefined) {
-                        this.handleStaleTelemetry(id, stalenessResponse);
-                    }
-                });
-                this.stalenessSubscription[id].unsubscribe = this.openmct.telemetry.subscribeToStaleness(
-                    telemetryObject,
-                    (stalenessResponse) => {
-                        this.handleStaleTelemetry(id, stalenessResponse);
-                    }
-                );
+                this.stalenessSubscription[id].stalenessUtils =
+                    new StalenessUtils(this.openmct, telemetryObject);
+                this.openmct.telemetry
+                    .isStale(telemetryObject)
+                    .then((stalenessResponse) => {
+                        if (stalenessResponse !== undefined) {
+                            this.handleStaleTelemetry(id, stalenessResponse);
+                        }
+                    });
+                this.stalenessSubscription[id].unsubscribe =
+                    this.openmct.telemetry.subscribeToStaleness(
+                        telemetryObject,
+                        (stalenessResponse) => {
+                            this.handleStaleTelemetry(id, stalenessResponse);
+                        }
+                    );
             }
         });
     }
 
     handleStaleTelemetry(id, stalenessResponse) {
         if (this.telemetryDataCache) {
-            if (this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+            if (
+                this.stalenessSubscription[
+                    id
+                ].stalenessUtils.shouldUpdateStaleness(stalenessResponse)
+            ) {
                 this.telemetryDataCache[id] = stalenessResponse.isStale;
-                this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
+                this.result = evaluateResults(
+                    Object.values(this.telemetryDataCache),
+                    this.telemetry
+                );
 
                 this.emitEvent('telemetryStaleness');
             }
@@ -110,7 +129,11 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     }
 
     isValid() {
-        return (this.telemetry === 'any' || this.telemetry === 'all') && this.metadata && this.operation;
+        return (
+            (this.telemetry === 'any' || this.telemetry === 'all') &&
+            this.metadata &&
+            this.operation
+        );
     }
 
     updateTelemetryObjects(telemetryObjects) {
@@ -128,19 +151,21 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
 
     removeTelemetryDataCache() {
         const telemetryCacheIds = Object.keys(this.telemetryDataCache);
-        Object.values(this.telemetryObjects).forEach(telemetryObject => {
-            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        Object.values(this.telemetryObjects).forEach((telemetryObject) => {
+            const id = this.openmct.objects.makeKeyString(
+                telemetryObject.identifier
+            );
             const foundIndex = telemetryCacheIds.indexOf(id);
             if (foundIndex > -1) {
                 telemetryCacheIds.splice(foundIndex, 1);
             }
         });
-        telemetryCacheIds.forEach(id => {
-            delete (this.telemetryDataCache[id]);
-            delete (this.ageCheck[id]);
+        telemetryCacheIds.forEach((id) => {
+            delete this.telemetryDataCache[id];
+            delete this.ageCheck[id];
             this.stalenessSubscription[id].unsubscribe();
             this.stalenessSubscription[id].stalenessUtils.destroy();
-            delete (this.stalenessSubscription[id]);
+            delete this.stalenessSubscription[id];
         });
     }
 
@@ -152,18 +177,23 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         let keys = Object.keys(telemetryObjects);
         keys.forEach((key) => {
             let telemetryObject = telemetryObjects[key];
-            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            const id = this.openmct.objects.makeKeyString(
+                telemetryObject.identifier
+            );
             if (this.telemetryDataCache[id] === undefined) {
                 this.telemetryDataCache[id] = false;
             }
         });
 
         const datum = {
-            result: evaluateResults(Object.values(this.telemetryDataCache), this.telemetry)
+            result: evaluateResults(
+                Object.values(this.telemetryDataCache),
+                this.telemetry
+            )
         };
 
         if (data) {
-            this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
+            this.openmct.time.getAllTimeSystems().forEach((timeSystem) => {
                 datum[timeSystem.key] = data[timeSystem.key];
             });
         }
@@ -182,18 +212,24 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
 
                 this.telemetryDataCache[validatedData.id] = false;
             } else {
-                this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
+                this.telemetryDataCache[validatedData.id] =
+                    this.computeResult(validatedData);
             }
         }
 
-        Object.values(telemetryObjects).forEach(telemetryObject => {
-            const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        Object.values(telemetryObjects).forEach((telemetryObject) => {
+            const id = this.openmct.objects.makeKeyString(
+                telemetryObject.identifier
+            );
             if (this.telemetryDataCache[id] === undefined) {
                 this.telemetryDataCache[id] = false;
             }
         });
 
-        this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
+        this.result = evaluateResults(
+            Object.values(this.telemetryDataCache),
+            this.telemetry
+        );
     }
 
     requestLAD(telemetryObjects, requestOptions) {
@@ -211,26 +247,31 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         }
 
         let keys = Object.keys(Object.assign({}, telemetryObjects));
-        const telemetryRequests = keys
-            .map(key => this.openmct.telemetry.request(
-                telemetryObjects[key],
-                options
-            ));
+        const telemetryRequests = keys.map((key) =>
+            this.openmct.telemetry.request(telemetryObjects[key], options)
+        );
 
         let telemetryDataCache = {};
 
-        return Promise.all(telemetryRequests)
-            .then(telemetryRequestsResults => {
+        return Promise.all(telemetryRequests).then(
+            (telemetryRequestsResults) => {
                 let latestTimestamp;
                 const timeSystems = this.openmct.time.getAllTimeSystems();
                 const timeSystem = this.openmct.time.timeSystem();
 
                 telemetryRequestsResults.forEach((results, index) => {
-                    const latestDatum = (Array.isArray(results) && results.length) ? results[results.length - 1] : {};
+                    const latestDatum =
+                        Array.isArray(results) && results.length
+                            ? results[results.length - 1]
+                            : {};
                     const datumId = keys[index];
-                    const normalizedDatum = this.createNormalizedDatum(latestDatum, telemetryObjects[datumId]);
+                    const normalizedDatum = this.createNormalizedDatum(
+                        latestDatum,
+                        telemetryObjects[datumId]
+                    );
 
-                    telemetryDataCache[datumId] = this.computeResult(normalizedDatum);
+                    telemetryDataCache[datumId] =
+                        this.computeResult(normalizedDatum);
 
                     latestTimestamp = getLatestTimestamp(
                         latestTimestamp,
@@ -241,7 +282,10 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 });
 
                 const datum = {
-                    result: evaluateResults(Object.values(telemetryDataCache), this.telemetry),
+                    result: evaluateResults(
+                        Object.values(telemetryDataCache),
+                        this.telemetry
+                    ),
                     ...latestTimestamp
                 };
 
@@ -249,27 +293,42 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                     id: this.id,
                     data: datum
                 };
-            });
+            }
+        );
     }
 
     getDescription() {
-        const telemetryDescription = this.telemetry === 'all' ? 'all telemetry' : 'any telemetry';
-        let metadataValue = (this.metadata === 'dataReceived' ? '' : this.metadata);
+        const telemetryDescription =
+            this.telemetry === 'all' ? 'all telemetry' : 'any telemetry';
+        let metadataValue =
+            this.metadata === 'dataReceived' ? '' : this.metadata;
         let inputValue = this.input;
         if (this.metadata) {
             const telemetryObjects = Object.values(this.telemetryObjects);
             for (let i = 0; i < telemetryObjects.length; i++) {
                 const telemetryObject = telemetryObjects[i];
-                const metadataObject = this.getMetaDataObject(telemetryObject, this.metadata);
+                const metadataObject = this.getMetaDataObject(
+                    telemetryObject,
+                    this.metadata
+                );
                 if (metadataObject) {
-                    metadataValue = this.getMetadataValueFromMetaData(metadataObject) || this.metadata;
-                    inputValue = this.getInputValueFromMetaData(metadataObject, this.input) || this.input;
+                    metadataValue =
+                        this.getMetadataValueFromMetaData(metadataObject) ||
+                        this.metadata;
+                    inputValue =
+                        this.getInputValueFromMetaData(
+                            metadataObject,
+                            this.input
+                        ) || this.input;
                     break;
                 }
             }
         }
 
-        return `${telemetryDescription} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
+        return `${telemetryDescription} ${metadataValue} ${getOperatorText(
+            this.operation,
+            inputValue
+        )}`;
     }
 
     destroy() {
@@ -277,15 +336,19 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         delete this.telemetryDataCache;
 
         if (this.ageCheck) {
-            Object.values(this.ageCheck).forEach((subscription) => subscription.clear);
+            Object.values(this.ageCheck).forEach(
+                (subscription) => subscription.clear
+            );
             delete this.ageCheck;
         }
 
         if (this.stalenessSubscription) {
-            Object.values(this.stalenessSubscription).forEach(subscription => {
-                subscription.unsubscribe();
-                subscription.stalenessUtils.destroy();
-            });
+            Object.values(this.stalenessSubscription).forEach(
+                (subscription) => {
+                    subscription.unsubscribe();
+                    subscription.stalenessUtils.destroy();
+                }
+            );
         }
     }
 }

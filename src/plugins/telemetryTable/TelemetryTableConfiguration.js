@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash',
-    'EventEmitter'
-], function (_, EventEmitter) {
-
+define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
     class TelemetryTableConfiguration extends EventEmitter {
         constructor(domainObject, openmct) {
             super();
@@ -33,10 +29,15 @@ define([
             this.openmct = openmct;
             this.columns = {};
 
-            this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
+            this.removeColumnsForObject =
+                this.removeColumnsForObject.bind(this);
             this.objectMutated = this.objectMutated.bind(this);
 
-            this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
+            this.unlistenFromMutation = openmct.objects.observe(
+                domainObject,
+                'configuration',
+                this.objectMutated
+            );
         }
 
         getConfiguration() {
@@ -45,13 +46,20 @@ define([
             configuration.columnWidths = configuration.columnWidths || {};
             configuration.columnOrder = configuration.columnOrder || [];
             configuration.cellFormat = configuration.cellFormat || {};
-            configuration.autosize = configuration.autosize === undefined ? true : configuration.autosize;
+            configuration.autosize =
+                configuration.autosize === undefined
+                    ? true
+                    : configuration.autosize;
 
             return configuration;
         }
 
         updateConfiguration(configuration) {
-            this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
+            this.openmct.objects.mutate(
+                this.domainObject,
+                'configuration',
+                configuration
+            );
         }
 
         /**
@@ -65,14 +73,17 @@ define([
         }
 
         addSingleColumnForObject(telemetryObject, column, position) {
-            let objectKeyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            let objectKeyString = this.openmct.objects.makeKeyString(
+                telemetryObject.identifier
+            );
             this.columns[objectKeyString] = this.columns[objectKeyString] || [];
             position = position || this.columns[objectKeyString].length;
             this.columns[objectKeyString].splice(position, 0, column);
         }
 
         removeColumnsForObject(objectIdentifier) {
-            let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
+            let objectKeyString =
+                this.openmct.objects.makeKeyString(objectIdentifier);
             let columnsToRemove = this.columns[objectKeyString];
 
             delete this.columns[objectKeyString];
@@ -92,8 +103,9 @@ define([
         }
 
         hasColumnWithKey(columnKey) {
-            return _.flatten(Object.values(this.columns))
-                .some(column => column.getKey() === columnKey);
+            return _.flatten(Object.values(this.columns)).some(
+                (column) => column.getKey() === columnKey
+            );
         }
 
         getColumns() {
@@ -103,8 +115,9 @@ define([
         getAllHeaders() {
             let flattenedColumns = _.flatten(Object.values(this.columns));
             /* eslint-disable you-dont-need-lodash-underscore/uniq */
-            let headers = _.uniq(flattenedColumns, false, column => column.getKey())
-                .reduce(fromColumnsToHeadersMap, {});
+            let headers = _.uniq(flattenedColumns, false, (column) =>
+                column.getKey()
+            ).reduce(fromColumnsToHeadersMap, {});
             /* eslint-enable you-dont-need-lodash-underscore/uniq */
             function fromColumnsToHeadersMap(headersMap, column) {
                 headersMap[column.getKey()] = column.getTitle();
@@ -120,9 +133,13 @@ define([
             let configuration = this.getConfiguration();
 
             let orderedColumns = this.getColumnOrder();
-            let unorderedColumns = _.difference(Object.keys(allHeaders), orderedColumns);
+            let unorderedColumns = _.difference(
+                Object.keys(allHeaders),
+                orderedColumns
+            );
 
-            return orderedColumns.concat(unorderedColumns)
+            return orderedColumns
+                .concat(unorderedColumns)
                 .filter((headerKey) => {
                     return configuration.hiddenColumns[headerKey] !== true;
                 })

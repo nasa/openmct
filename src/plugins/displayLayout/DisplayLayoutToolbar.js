@@ -23,9 +23,9 @@
 define(['lodash'], function (_) {
     function DisplayLayoutToolbar(openmct) {
         return {
-            name: "Display Layout Toolbar",
-            key: "layout",
-            description: "A toolbar for objects inside a display layout.",
+            name: 'Display Layout Toolbar',
+            key: 'layout',
+            description: 'A toolbar for objects inside a display layout.',
             forSelection: function (selection) {
                 if (!selection || selection.length === 0) {
                     return false;
@@ -36,37 +36,42 @@ define(['lodash'], function (_) {
                 let selectedParent = selectionPath[1];
 
                 // Apply the layout toolbar if the selected object is inside a layout, or the main layout is selected.
-                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout')
-                    || (selectedObject.context.item && selectedObject.context.item.type === 'layout');
+                return (
+                    (selectedParent &&
+                        selectedParent.context.item &&
+                        selectedParent.context.item.type === 'layout') ||
+                    (selectedObject.context.item &&
+                        selectedObject.context.item.type === 'layout')
+                );
             },
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
-                    'text': {
-                        title: "Text Element Properties",
+                    text: {
+                        title: 'Text Element Properties',
                         sections: [
                             {
                                 rows: [
                                     {
-                                        key: "text",
-                                        control: "textfield",
-                                        name: "Text",
+                                        key: 'text',
+                                        control: 'textfield',
+                                        name: 'Text',
                                         required: true,
-                                        cssClass: "l-input-lg"
+                                        cssClass: 'l-input-lg'
                                     }
                                 ]
                             }
                         ]
                     },
-                    'image': {
-                        title: "Image Properties",
+                    image: {
+                        title: 'Image Properties',
                         sections: [
                             {
                                 rows: [
                                     {
-                                        key: "url",
-                                        control: "textfield",
-                                        name: "Image URL",
-                                        cssClass: "l-input-lg",
+                                        key: 'url',
+                                        control: 'textfield',
+                                        name: 'Image URL',
+                                        cssClass: 'l-input-lg',
                                         required: true
                                     }
                                 ]
@@ -83,14 +88,14 @@ define(['lodash'], function (_) {
                     'telemetry.plot.overlay': {
                         value: 'telemetry.plot.overlay',
                         name: 'Overlay Plot',
-                        class: "icon-plot-overlay"
+                        class: 'icon-plot-overlay'
                     },
                     'telemetry.plot.stacked': {
-                        value: "telemetry.plot.stacked",
-                        name: "Stacked Plot",
-                        class: "icon-plot-stacked"
+                        value: 'telemetry.plot.stacked',
+                        name: 'Stacked Plot',
+                        class: 'icon-plot-stacked'
                     },
-                    'table': {
+                    table: {
                         value: 'table',
                         name: 'Table',
                         class: 'icon-tabular-scrolling'
@@ -112,7 +117,7 @@ define(['lodash'], function (_) {
                         VIEW_TYPES.table,
                         VIEW_TYPES['telemetry-view']
                     ],
-                    'table': [
+                    table: [
                         VIEW_TYPES['telemetry.plot.overlay'],
                         VIEW_TYPES['telemetry.plot.stacked'],
                         VIEW_TYPES['telemetry-view']
@@ -132,7 +137,7 @@ define(['lodash'], function (_) {
                 }
 
                 function getAllOfType(selection, specificType) {
-                    return selection.filter(selectionPath => {
+                    return selection.filter((selectionPath) => {
                         let type = selectionPath[0].context.layoutItem.type;
 
                         return type === specificType;
@@ -140,16 +145,18 @@ define(['lodash'], function (_) {
                 }
 
                 function getAllTypes(selection) {
-                    return selection.filter(selectionPath => {
+                    return selection.filter((selectionPath) => {
                         let type = selectionPath[0].context.layoutItem.type;
 
-                        return type === 'text-view'
-                            || type === 'telemetry-view'
-                            || type === 'box-view'
-                            || type === 'ellipse-view'
-                            || type === 'image-view'
-                            || type === 'line-view'
-                            || type === 'subobject-view';
+                        return (
+                            type === 'text-view' ||
+                            type === 'telemetry-view' ||
+                            type === 'box-view' ||
+                            type === 'ellipse-view' ||
+                            type === 'image-view' ||
+                            type === 'line-view' ||
+                            type === 'subobject-view'
+                        );
                     });
                 }
 
@@ -158,7 +165,7 @@ define(['lodash'], function (_) {
                         selectionPath = selectionPath || selection[0];
 
                         return {
-                            control: "menu",
+                            control: 'menu',
                             domainObject: selectionPath[0].context.item,
                             method: function (option) {
                                 let name = option.name.toLowerCase();
@@ -169,29 +176,29 @@ define(['lodash'], function (_) {
                                     selectionPath[0].context.addElement(name);
                                 }
                             },
-                            key: "add",
-                            icon: "icon-plus",
-                            label: "Add",
+                            key: 'add',
+                            icon: 'icon-plus',
+                            label: 'Add',
                             options: [
                                 {
-                                    "name": "Box",
-                                    "class": "icon-box-round-corners"
+                                    name: 'Box',
+                                    class: 'icon-box-round-corners'
                                 },
                                 {
-                                    "name": "Ellipse",
-                                    "class": "icon-circle"
+                                    name: 'Ellipse',
+                                    class: 'icon-circle'
                                 },
                                 {
-                                    "name": "Line",
-                                    "class": "icon-line-horz"
+                                    name: 'Line',
+                                    class: 'icon-line-horz'
                                 },
                                 {
-                                    "name": "Text",
-                                    "class": "icon-font"
+                                    name: 'Text',
+                                    class: 'icon-font'
                                 },
                                 {
-                                    "name": "Image",
-                                    "class": "icon-image"
+                                    name: 'Image',
+                                    class: 'icon-image'
                                 }
                             ]
                         };
@@ -200,39 +207,46 @@ define(['lodash'], function (_) {
 
                 function getToggleFrameButton(selectedParent, selection) {
                     return {
-                        control: "toggle-button",
+                        control: 'toggle-button',
                         domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath =>
-                            selectionPath[0].context.layoutItem.type === 'subobject-view'
+                        applicableSelectedItems: selection.filter(
+                            (selectionPath) =>
+                                selectionPath[0].context.layoutItem.type ===
+                                'subobject-view'
                         ),
                         property: function (selectionPath) {
-                            return getPath(selectionPath) + ".hasFrame";
+                            return getPath(selectionPath) + '.hasFrame';
                         },
                         options: [
                             {
                                 value: false,
                                 icon: 'icon-frame-hide',
-                                title: "Frame visible",
+                                title: 'Frame visible',
                                 label: 'Hide frame'
                             },
                             {
                                 value: true,
                                 icon: 'icon-frame-show',
-                                title: "Frame hidden",
+                                title: 'Frame hidden',
                                 label: 'Show frame'
                             }
                         ]
                     };
                 }
 
-                function getRemoveButton(selectedParent, selectionPath, selection) {
+                function getRemoveButton(
+                    selectedParent,
+                    selectionPath,
+                    selection
+                ) {
                     return {
-                        control: "button",
+                        control: 'button',
                         domainObject: selectedParent,
-                        icon: "icon-trash",
-                        title: "Delete the selected object",
+                        icon: 'icon-trash',
+                        title: 'Delete the selected object',
                         method: function () {
-                            let removeItem = selectionPath[1].context.removeItem;
+                            let removeItem =
+                                selectionPath[1].context.removeItem;
                             let prompt = openmct.overlays.dialog({
                                 iconClass: 'alert',
                                 message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
@@ -259,34 +273,37 @@ define(['lodash'], function (_) {
 
                 function getStackOrder(selectedParent, selectionPath) {
                     return {
-                        control: "menu",
+                        control: 'menu',
                         domainObject: selectedParent,
-                        icon: "icon-layers",
-                        title: "Move the selected object above or below other objects",
+                        icon: 'icon-layers',
+                        title: 'Move the selected object above or below other objects',
                         options: [
                             {
-                                name: "Move to Top",
-                                value: "top",
-                                class: "icon-arrow-double-up"
+                                name: 'Move to Top',
+                                value: 'top',
+                                class: 'icon-arrow-double-up'
                             },
                             {
-                                name: "Move Up",
-                                value: "up",
-                                class: "icon-arrow-up"
+                                name: 'Move Up',
+                                value: 'up',
+                                class: 'icon-arrow-up'
                             },
                             {
-                                name: "Move Down",
-                                value: "down",
-                                class: "icon-arrow-down"
+                                name: 'Move Down',
+                                value: 'down',
+                                class: 'icon-arrow-down'
                             },
                             {
-                                name: "Move to Bottom",
-                                value: "bottom",
-                                class: "icon-arrow-double-down"
+                                name: 'Move to Bottom',
+                                value: 'bottom',
+                                class: 'icon-arrow-double-down'
                             }
                         ],
                         method: function (option) {
-                            selectionPath[1].context.orderItem(option.value, getAllTypes(selectedObjects));
+                            selectionPath[1].context.orderItem(
+                                option.value,
+                                getAllTypes(selectedObjects)
+                            );
                         }
                     };
                 }
@@ -294,15 +311,15 @@ define(['lodash'], function (_) {
                 function getXInput(selectedParent, selection) {
                     if (selection.length === 1) {
                         return {
-                            control: "input",
-                            type: "number",
+                            control: 'input',
+                            type: 'number',
                             domainObject: selectedParent,
                             applicableSelectedItems: getAllTypes(selection),
                             property: function (selectionPath) {
-                                return getPath(selectionPath) + ".x";
+                                return getPath(selectionPath) + '.x';
                             },
-                            label: "X:",
-                            title: "X position"
+                            label: 'X:',
+                            title: 'X position'
                         };
                     }
                 }
@@ -310,15 +327,15 @@ define(['lodash'], function (_) {
                 function getYInput(selectedParent, selection) {
                     if (selection.length === 1) {
                         return {
-                            control: "input",
-                            type: "number",
+                            control: 'input',
+                            type: 'number',
                             domainObject: selectedParent,
                             applicableSelectedItems: getAllTypes(selection),
                             property: function (selectionPath) {
-                                return getPath(selectionPath) + ".y";
+                                return getPath(selectionPath) + '.y';
                             },
-                            label: "Y:",
-                            title: "Y position"
+                            label: 'Y:',
+                            title: 'Y position'
                         };
                     }
                 }
@@ -331,7 +348,7 @@ define(['lodash'], function (_) {
                             domainObject: selectedParent,
                             applicableSelectedItems: getAllTypes(selection),
                             property: function (selectionPath) {
-                                return getPath(selectionPath) + ".width";
+                                return getPath(selectionPath) + '.width';
                             },
                             label: 'W:',
                             title: 'Resize object width'
@@ -347,7 +364,7 @@ define(['lodash'], function (_) {
                             domainObject: selectedParent,
                             applicableSelectedItems: getAllTypes(selection),
                             property: function (selectionPath) {
-                                return getPath(selectionPath) + ".height";
+                                return getPath(selectionPath) + '.height';
                             },
                             label: 'H:',
                             title: 'Resize object height'
@@ -358,17 +375,22 @@ define(['lodash'], function (_) {
                 function getX2Input(selectedParent, selection) {
                     if (selection.length === 1) {
                         return {
-                            control: "input",
-                            type: "number",
+                            control: 'input',
+                            type: 'number',
                             domainObject: selectedParent,
-                            applicableSelectedItems: selection.filter(selectionPath => {
-                                return selectionPath[0].context.layoutItem.type === 'line-view';
-                            }),
+                            applicableSelectedItems: selection.filter(
+                                (selectionPath) => {
+                                    return (
+                                        selectionPath[0].context.layoutItem
+                                            .type === 'line-view'
+                                    );
+                                }
+                            ),
                             property: function (selectionPath) {
-                                return getPath(selectionPath) + ".x2";
+                                return getPath(selectionPath) + '.x2';
                             },
-                            label: "X2:",
-                            title: "X2 position"
+                            label: 'X2:',
+                            title: 'X2 position'
                         };
                     }
                 }
@@ -376,34 +398,44 @@ define(['lodash'], function (_) {
                 function getY2Input(selectedParent, selection) {
                     if (selection.length === 1) {
                         return {
-                            control: "input",
-                            type: "number",
+                            control: 'input',
+                            type: 'number',
                             domainObject: selectedParent,
-                            applicableSelectedItems: selection.filter(selectionPath => {
-                                return selectionPath[0].context.layoutItem.type === 'line-view';
-                            }),
+                            applicableSelectedItems: selection.filter(
+                                (selectionPath) => {
+                                    return (
+                                        selectionPath[0].context.layoutItem
+                                            .type === 'line-view'
+                                    );
+                                }
+                            ),
                             property: function (selectionPath) {
-                                return getPath(selectionPath) + ".y2";
+                                return getPath(selectionPath) + '.y2';
                             },
-                            label: "Y2:",
-                            title: "Y2 position"
+                            label: 'Y2:',
+                            title: 'Y2 position'
                         };
                     }
                 }
 
                 function getTextButton(selectedParent, selection) {
                     return {
-                        control: "button",
+                        control: 'button',
                         domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            return selectionPath[0].context.layoutItem.type === 'text-view';
-                        }),
+                        applicableSelectedItems: selection.filter(
+                            (selectionPath) => {
+                                return (
+                                    selectionPath[0].context.layoutItem.type ===
+                                    'text-view'
+                                );
+                            }
+                        ),
                         property: function (selectionPath) {
                             return getPath(selectionPath);
                         },
-                        icon: "icon-pencil",
-                        title: "Edit text properties",
-                        label: "Edit text",
+                        icon: 'icon-pencil',
+                        title: 'Edit text properties',
+                        label: 'Edit text',
                         dialog: DIALOG_FORM.text
                     };
                 }
@@ -411,21 +443,29 @@ define(['lodash'], function (_) {
                 function getTelemetryValueMenu(selectionPath, selection) {
                     if (selection.length === 1) {
                         return {
-                            control: "select-menu",
+                            control: 'select-menu',
                             domainObject: selectionPath[1].context.item,
-                            applicableSelectedItems: selection.filter(path => {
-                                return path[0].context.layoutItem.type === 'telemetry-view';
-                            }),
+                            applicableSelectedItems: selection.filter(
+                                (path) => {
+                                    return (
+                                        path[0].context.layoutItem.type ===
+                                        'telemetry-view'
+                                    );
+                                }
+                            ),
                             property: function (path) {
-                                return getPath(path) + ".value";
+                                return getPath(path) + '.value';
                             },
-                            title: "Set value",
-                            options: openmct.telemetry.getMetadata(selectionPath[0].context.item).values().map(value => {
-                                return {
-                                    name: value.name,
-                                    value: value.key
-                                };
-                            })
+                            title: 'Set value',
+                            options: openmct.telemetry
+                                .getMetadata(selectionPath[0].context.item)
+                                .values()
+                                .map((value) => {
+                                    return {
+                                        name: value.name,
+                                        value: value.key
+                                    };
+                                })
                         };
                     }
                 }
@@ -433,41 +473,51 @@ define(['lodash'], function (_) {
                 function getDisplayModeMenu(selectedParent, selection) {
                     if (selection.length === 1) {
                         return {
-                            control: "select-menu",
+                            control: 'select-menu',
                             domainObject: selectedParent,
-                            applicableSelectedItems: selection.filter(selectionPath => {
-                                return selectionPath[0].context.layoutItem.type === 'telemetry-view';
-                            }),
+                            applicableSelectedItems: selection.filter(
+                                (selectionPath) => {
+                                    return (
+                                        selectionPath[0].context.layoutItem
+                                            .type === 'telemetry-view'
+                                    );
+                                }
+                            ),
                             property: function (selectionPath) {
-                                return getPath(selectionPath) + ".displayMode";
+                                return getPath(selectionPath) + '.displayMode';
                             },
-                            title: "Set display mode",
+                            title: 'Set display mode',
                             options: [
                                 {
                                     name: 'Label + Value',
                                     value: 'all'
                                 },
                                 {
-                                    name: "Label only",
-                                    value: "label"
+                                    name: 'Label only',
+                                    value: 'label'
                                 },
                                 {
-                                    name: "Value only",
-                                    value: "value"
+                                    name: 'Value only',
+                                    value: 'value'
                                 }
                             ]
                         };
                     }
                 }
 
-                function getDuplicateButton(selectedParent, selectionPath, selection) {
+                function getDuplicateButton(
+                    selectedParent,
+                    selectionPath,
+                    selection
+                ) {
                     return {
-                        control: "button",
+                        control: 'button',
                         domainObject: selectedParent,
-                        icon: "icon-duplicate",
-                        title: "Duplicate the selected object",
+                        icon: 'icon-duplicate',
+                        title: 'Duplicate the selected object',
                         method: function () {
-                            let duplicateItem = selectionPath[1].context.duplicateItem;
+                            let duplicateItem =
+                                selectionPath[1].context.duplicateItem;
 
                             duplicateItem(selection);
                         }
@@ -488,10 +538,13 @@ define(['lodash'], function (_) {
                 function areAllViews(type, path, selection) {
                     let allTelemetry = true;
 
-                    selection.forEach(selectedItem => {
+                    selection.forEach((selectedItem) => {
                         let selectedItemContext = selectedItem[0].context;
 
-                        if (getPropertyFromPath(selectedItemContext, path) !== type) {
+                        if (
+                            getPropertyFromPath(selectedItemContext, path) !==
+                            type
+                        ) {
                             allTelemetry = false;
                         }
                     });
@@ -500,14 +553,17 @@ define(['lodash'], function (_) {
                 }
 
                 function getToggleUnitsButton(selectedParent, selection) {
-                    let applicableItems = getAllOfType(selection, 'telemetry-view');
+                    let applicableItems = getAllOfType(
+                        selection,
+                        'telemetry-view'
+                    );
                     applicableItems = unitsOnly(applicableItems);
                     if (!applicableItems.length) {
                         return;
                     }
 
                     return {
-                        control: "toggle-button",
+                        control: 'toggle-button',
                         domainObject: selectedParent,
                         applicableSelectedItems: applicableItems,
                         property: function (selectionPath) {
@@ -517,14 +573,14 @@ define(['lodash'], function (_) {
                             {
                                 value: true,
                                 icon: 'icon-eye-open',
-                                title: "Show units",
-                                label: "Show units"
+                                title: 'Show units',
+                                label: 'Show units'
                             },
                             {
                                 value: false,
                                 icon: 'icon-eye-disabled',
-                                title: "Hide units",
-                                label: "Hide units"
+                                title: 'Hide units',
+                                label: 'Hide units'
                             }
                         ]
                     };
@@ -533,15 +589,16 @@ define(['lodash'], function (_) {
                 function unitsOnly(items) {
                     let results = items.filter((item) => {
                         let currentItem = item[0];
-                        let metadata = openmct.telemetry.getMetadata(currentItem.context.item);
+                        let metadata = openmct.telemetry.getMetadata(
+                            currentItem.context.item
+                        );
                         if (!metadata) {
                             return false;
                         }
 
-                        let hasUnits = metadata
-                            .valueMetadatas
-                            .filter((metadatum) => metadatum.unit)
-                            .length;
+                        let hasUnits = metadata.valueMetadatas.filter(
+                            (metadatum) => metadatum.unit
+                        ).length;
 
                         return hasUnits > 0;
                     });
@@ -549,13 +606,20 @@ define(['lodash'], function (_) {
                     return results;
                 }
 
-                function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
+                function getViewSwitcherMenu(
+                    selectedParent,
+                    selectionPath,
+                    selection
+                ) {
                     if (selection.length === 1) {
                         let displayLayoutContext = selectionPath[1].context;
                         let selectedItemContext = selectionPath[0].context;
                         let selectedItemType = selectedItemContext.item.type;
 
-                        if (selectedItemContext.layoutItem.type === 'telemetry-view') {
+                        if (
+                            selectedItemContext.layoutItem.type ===
+                            'telemetry-view'
+                        ) {
                             selectedItemType = 'telemetry-view';
                         }
 
@@ -563,43 +627,69 @@ define(['lodash'], function (_) {
 
                         if (viewOptions) {
                             return {
-                                control: "menu",
+                                control: 'menu',
                                 domainObject: selectedParent,
-                                icon: "icon-object",
-                                title: "Switch the way this telemetry is displayed",
-                                label: "View type",
+                                icon: 'icon-object',
+                                title: 'Switch the way this telemetry is displayed',
+                                label: 'View type',
                                 options: viewOptions,
                                 method: function (option) {
-                                    displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
+                                    displayLayoutContext.switchViewType(
+                                        selectedItemContext,
+                                        option.value,
+                                        selection
+                                    );
                                 }
                             };
                         }
                     } else if (selection.length > 1) {
-                        if (areAllViews('telemetry-view', 'layoutItem.type', selection)) {
+                        if (
+                            areAllViews(
+                                'telemetry-view',
+                                'layoutItem.type',
+                                selection
+                            )
+                        ) {
                             let displayLayoutContext = selectionPath[1].context;
 
                             return {
-                                control: "menu",
+                                control: 'menu',
                                 domainObject: selectedParent,
-                                icon: "icon-object",
-                                title: "Merge into a telemetry table or plot",
-                                label: "View type",
-                                options: APPLICABLE_VIEWS['telemetry-view-multi'],
+                                icon: 'icon-object',
+                                title: 'Merge into a telemetry table or plot',
+                                label: 'View type',
+                                options:
+                                    APPLICABLE_VIEWS['telemetry-view-multi'],
                                 method: function (option) {
-                                    displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);
+                                    displayLayoutContext.mergeMultipleTelemetryViews(
+                                        selection,
+                                        option.value
+                                    );
                                 }
                             };
-                        } else if (areAllViews('telemetry.plot.overlay', 'item.type', selection)) {
+                        } else if (
+                            areAllViews(
+                                'telemetry.plot.overlay',
+                                'item.type',
+                                selection
+                            )
+                        ) {
                             let displayLayoutContext = selectionPath[1].context;
 
                             return {
-                                control: "menu",
+                                control: 'menu',
                                 domainObject: selectedParent,
-                                icon: "icon-object",
-                                title: "Merge into a stacked plot",
-                                options: APPLICABLE_VIEWS['telemetry.plot.overlay-multi'],
+                                icon: 'icon-object',
+                                title: 'Merge into a stacked plot',
+                                options:
+                                    APPLICABLE_VIEWS[
+                                        'telemetry.plot.overlay-multi'
+                                    ],
                                 method: function (option) {
-                                    displayLayoutContext.mergeMultipleOverlayPlots(selection, option.value);
+                                    displayLayoutContext.mergeMultipleOverlayPlots(
+                                        selection,
+                                        option.value
+                                    );
                                 }
                             };
                         }
@@ -619,15 +709,16 @@ define(['lodash'], function (_) {
                     }
 
                     return {
-                        control: "button",
+                        control: 'button',
                         domainObject: displayLayoutContext.item,
                         icon: ICON_GRID_SHOW,
                         method: function () {
                             displayLayoutContext.toggleGrid();
 
-                            this.icon = this.icon === ICON_GRID_SHOW
-                                ? ICON_GRID_HIDE
-                                : ICON_GRID_SHOW;
+                            this.icon =
+                                this.icon === ICON_GRID_SHOW
+                                    ? ICON_GRID_HIDE
+                                    : ICON_GRID_SHOW;
                         },
                         secondary: true
                     };
@@ -635,22 +726,24 @@ define(['lodash'], function (_) {
 
                 function getSeparator() {
                     return {
-                        control: "separator"
+                        control: 'separator'
                     };
                 }
 
                 function isMainLayoutSelected(selectionPath) {
                     let selectedObject = selectionPath[0].context.item;
 
-                    return selectedObject && selectedObject.type === 'layout'
-                        && !selectionPath[0].context.layoutItem;
+                    return (
+                        selectedObject &&
+                        selectedObject.type === 'layout' &&
+                        !selectionPath[0].context.layoutItem
+                    );
                 }
 
                 function showForm(formStructure, name, selectionPath) {
-                    openmct.forms.showForm(formStructure)
-                        .then(changes => {
-                            selectionPath[0].context.addElement(name, changes);
-                        });
+                    openmct.forms.showForm(formStructure).then((changes) => {
+                        selectionPath[0].context.addElement(name, changes);
+                    });
                 }
 
                 if (isMainLayoutSelected(selectedObjects[0])) {
@@ -662,21 +755,21 @@ define(['lodash'], function (_) {
 
                 let toolbar = {
                     'add-menu': [],
-                    'text': [],
-                    'url': [],
-                    'viewSwitcher': [],
+                    text: [],
+                    url: [],
+                    viewSwitcher: [],
                     'toggle-frame': [],
                     'display-mode': [],
                     'telemetry-value': [],
-                    'style': [],
+                    style: [],
                     'unit-toggle': [],
-                    'position': [],
-                    'duplicate': [],
-                    'remove': [],
+                    position: [],
+                    duplicate: [],
+                    remove: [],
                     'toggle-grid': []
                 };
 
-                selectedObjects.forEach(selectionPath => {
+                selectedObjects.forEach((selectionPath) => {
                     let selectedParent = selectionPath[1].context.item;
                     let layoutItem = selectionPath[0].context.layoutItem;
 
@@ -685,12 +778,22 @@ define(['lodash'], function (_) {
                     }
 
                     if (layoutItem.type === 'subobject-view') {
-                        if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
-                            toolbar['add-menu'] = [getAddButton(selectedObjects, selectionPath)];
+                        if (
+                            toolbar['add-menu'].length === 0 &&
+                            selectionPath[0].context.item.type === 'layout'
+                        ) {
+                            toolbar['add-menu'] = [
+                                getAddButton(selectedObjects, selectionPath)
+                            ];
                         }
 
                         if (toolbar['toggle-frame'].length === 0) {
-                            toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selectedObjects)];
+                            toolbar['toggle-frame'] = [
+                                getToggleFrameButton(
+                                    selectedParent,
+                                    selectedObjects
+                                )
+                            ];
                         }
 
                         if (toolbar.position.length === 0) {
@@ -705,23 +808,48 @@ define(['lodash'], function (_) {
                         }
 
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                            toolbar.remove = [
+                                getRemoveButton(
+                                    selectedParent,
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
 
                         if (toolbar.viewSwitcher.length === 0) {
-                            toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
+                            toolbar.viewSwitcher = [
+                                getViewSwitcherMenu(
+                                    selectedParent,
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
-                            toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectedObjects)];
+                            toolbar['display-mode'] = [
+                                getDisplayModeMenu(
+                                    selectedParent,
+                                    selectedObjects
+                                )
+                            ];
                         }
 
                         if (toolbar['telemetry-value'].length === 0) {
-                            toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectedObjects)];
+                            toolbar['telemetry-value'] = [
+                                getTelemetryValueMenu(
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
 
                         if (toolbar['unit-toggle'].length === 0) {
-                            let toggleUnitsButton = getToggleUnitsButton(selectedParent, selectedObjects);
+                            let toggleUnitsButton = getToggleUnitsButton(
+                                selectedParent,
+                                selectedObjects
+                            );
                             if (toggleUnitsButton) {
                                 toolbar['unit-toggle'] = [toggleUnitsButton];
                             }
@@ -739,11 +867,23 @@ define(['lodash'], function (_) {
                         }
 
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                            toolbar.remove = [
+                                getRemoveButton(
+                                    selectedParent,
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
 
                         if (toolbar.viewSwitcher.length === 0) {
-                            toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
+                            toolbar.viewSwitcher = [
+                                getViewSwitcherMenu(
+                                    selectedParent,
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
                     } else if (layoutItem.type === 'text-view') {
                         if (toolbar.position.length === 0) {
@@ -758,13 +898,24 @@ define(['lodash'], function (_) {
                         }
 
                         if (toolbar.text.length === 0) {
-                            toolbar.text = [getTextButton(selectedParent, selectedObjects)];
+                            toolbar.text = [
+                                getTextButton(selectedParent, selectedObjects)
+                            ];
                         }
 
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                            toolbar.remove = [
+                                getRemoveButton(
+                                    selectedParent,
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
-                    } else if (layoutItem.type === 'box-view' || layoutItem.type === 'ellipse-view') {
+                    } else if (
+                        layoutItem.type === 'box-view' ||
+                        layoutItem.type === 'ellipse-view'
+                    ) {
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -777,7 +928,13 @@ define(['lodash'], function (_) {
                         }
 
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                            toolbar.remove = [
+                                getRemoveButton(
+                                    selectedParent,
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
                     } else if (layoutItem.type === 'image-view') {
                         if (toolbar.position.length === 0) {
@@ -792,7 +949,13 @@ define(['lodash'], function (_) {
                         }
 
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                            toolbar.remove = [
+                                getRemoveButton(
+                                    selectedParent,
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
                     } else if (layoutItem.type === 'line-view') {
                         if (toolbar.position.length === 0) {
@@ -807,34 +970,52 @@ define(['lodash'], function (_) {
                         }
 
                         if (toolbar.remove.length === 0) {
-                            toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                            toolbar.remove = [
+                                getRemoveButton(
+                                    selectedParent,
+                                    selectionPath,
+                                    selectedObjects
+                                )
+                            ];
                         }
                     }
 
                     if (toolbar.duplicate.length === 0) {
-                        toolbar.duplicate = [getDuplicateButton(selectedParent, selectionPath, selectedObjects)];
+                        toolbar.duplicate = [
+                            getDuplicateButton(
+                                selectedParent,
+                                selectionPath,
+                                selectedObjects
+                            )
+                        ];
                     }
 
                     if (toolbar['toggle-grid'].length === 0) {
-                        toolbar['toggle-grid'] = [getToggleGridButton(selectedObjects, selectionPath)];
+                        toolbar['toggle-grid'] = [
+                            getToggleGridButton(selectedObjects, selectionPath)
+                        ];
                     }
                 });
 
                 let toolbarArray = Object.values(toolbar);
 
-                return _.flatten(toolbarArray.reduce((accumulator, group, index) => {
-                    group = group.filter(control => control !== undefined);
+                return _.flatten(
+                    toolbarArray.reduce((accumulator, group, index) => {
+                        group = group.filter(
+                            (control) => control !== undefined
+                        );
 
-                    if (group.length > 0) {
-                        accumulator.push(group);
+                        if (group.length > 0) {
+                            accumulator.push(group);
 
-                        if (index < toolbarArray.length - 1) {
-                            accumulator.push(getSeparator());
+                            if (index < toolbarArray.length - 1) {
+                                accumulator.push(getSeparator());
+                            }
                         }
-                    }
 
-                    return accumulator;
-                }, []));
+                        return accumulator;
+                    }, [])
+                );
             }
         };
     }

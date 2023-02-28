@@ -43,11 +43,14 @@ const getRandom = {
     }
 };
 
-function shelveFault(fault, opts = {
-    shelved: true,
-    comment: '',
-    shelveDuration: 90000
-}) {
+function shelveFault(
+    fault,
+    opts = {
+        shelved: true,
+        comment: '',
+        shelveDuration: 90000
+    }
+) {
     fault.shelved = true;
 
     setTimeout(() => {

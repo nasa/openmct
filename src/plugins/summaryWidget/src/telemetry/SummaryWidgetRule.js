@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './SummaryWidgetCondition'
-], function (
-    SummaryWidgetCondition
-) {
+define(['./SummaryWidgetCondition'], function (SummaryWidgetCondition) {
     function SummaryWidgetRule(definition) {
         this.name = definition.name;
         this.label = definition.label;
@@ -72,4 +68,3 @@ define([
 
     return SummaryWidgetRule;
 });
-

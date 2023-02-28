@@ -38,9 +38,15 @@ export default function ImageryViewProvider(openmct, options) {
         name: 'Imagery Layout',
         cssClass: 'icon-image',
         canView: function (domainObject, objectPath) {
-            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+            let isChildOfTimeStrip = objectPath.find(
+                (object) => object.type === 'time-strip'
+            );
 
-            return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
+            return (
+                hasImageTelemetry(domainObject) &&
+                (!isChildOfTimeStrip ||
+                    openmct.router.isNavigatedObject(objectPath))
+            );
         },
         view: function (domainObject, objectPath) {
             return new ImageryView(openmct, domainObject, objectPath, options);

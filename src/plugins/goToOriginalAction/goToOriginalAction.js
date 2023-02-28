@@ -24,22 +24,33 @@ export default class GoToOriginalAction {
     constructor(openmct) {
         this.name = 'Go To Original';
         this.key = 'goToOriginal';
-        this.description = 'Go to the original unlinked instance of this object';
+        this.description =
+            'Go to the original unlinked instance of this object';
         this.group = 'action';
         this.priority = 4;
 
         this._openmct = openmct;
     }
     invoke(objectPath) {
-        this._openmct.objects.getOriginalPath(objectPath[0].identifier)
+        this._openmct.objects
+            .getOriginalPath(objectPath[0].identifier)
             .then((originalPath) => {
-                let url = '#/browse/' + originalPath
-                    .map(function (o) {
-                        return o && this._openmct.objects.makeKeyString(o.identifier);
-                    }.bind(this))
-                    .reverse()
-                    .slice(1)
-                    .join('/');
+                let url =
+                    '#/browse/' +
+                    originalPath
+                        .map(
+                            function (o) {
+                                return (
+                                    o &&
+                                    this._openmct.objects.makeKeyString(
+                                        o.identifier
+                                    )
+                                );
+                            }.bind(this)
+                        )
+                        .reverse()
+                        .slice(1)
+                        .join('/');
 
                 this._openmct.router.navigate(url);
             });
@@ -49,12 +60,14 @@ export default class GoToOriginalAction {
             return false;
         }
 
-        let parentKeystring = objectPath[1] && this._openmct.objects.makeKeyString(objectPath[1].identifier);
+        let parentKeystring =
+            objectPath[1] &&
+            this._openmct.objects.makeKeyString(objectPath[1].identifier);
 
         if (!parentKeystring) {
             return false;
         }
 
-        return (parentKeystring !== objectPath[0].location);
+        return parentKeystring !== objectPath[0].location;
     }
 }

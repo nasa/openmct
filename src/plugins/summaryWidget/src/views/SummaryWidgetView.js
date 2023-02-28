@@ -1,7 +1,4 @@
-define([
-    './summary-widget.html',
-    '@braintree/sanitize-url'
-], function (
+define(['./summary-widget.html', '@braintree/sanitize-url'], function (
     summaryWidgetTemplate,
     urlSanitizeLib
 ) {
@@ -52,23 +49,30 @@ define([
 
         const renderTracker = {};
         this.renderTracker = renderTracker;
-        this.openmct.telemetry.request(this.domainObject, {
-            strategy: 'latest',
-            size: 1
-        }).then(function (results) {
-            if (this.destroyed
-                || this.hasUpdated
-                || this.renderTracker !== renderTracker
-                || results.length === 0) {
-                return;
-            }
+        this.openmct.telemetry
+            .request(this.domainObject, {
+                strategy: 'latest',
+                size: 1
+            })
+            .then(
+                function (results) {
+                    if (
+                        this.destroyed ||
+                        this.hasUpdated ||
+                        this.renderTracker !== renderTracker ||
+                        results.length === 0
+                    ) {
+                        return;
+                    }
 
-            this.updateState(results[results.length - 1]);
-        }.bind(this));
+                    this.updateState(results[results.length - 1]);
+                }.bind(this)
+            );
 
-        this.unsubscribe = this.openmct
-            .telemetry
-            .subscribe(this.domainObject, this.updateState.bind(this));
+        this.unsubscribe = this.openmct.telemetry.subscribe(
+            this.domainObject,
+            this.updateState.bind(this)
+        );
     };
 
     SummaryWidgetView.prototype.show = function (container) {
@@ -99,5 +103,4 @@ define([
     };
 
     return SummaryWidgetView;
-
 });

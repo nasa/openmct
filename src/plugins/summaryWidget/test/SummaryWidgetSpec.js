@@ -54,7 +54,10 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
                 'triggerCallback'
             ]);
 
-            listenCallbackSpy = jasmine.createSpy('listenCallbackSpy', function () {});
+            listenCallbackSpy = jasmine.createSpy(
+                'listenCallbackSpy',
+                function () {}
+            );
             mockStatusCapability.get.and.returnValue([]);
             mockStatusCapability.listen.and.callFake(function (callback) {
                 listenCallback = callback;
@@ -67,15 +70,19 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
 
             mockOldDomainObject = {};
             mockOldDomainObject.getCapability = jasmine.createSpy('capability');
-            mockOldDomainObject.getCapability.and.returnValue(mockStatusCapability);
+            mockOldDomainObject.getCapability.and.returnValue(
+                mockStatusCapability
+            );
 
             mockObjectService = {};
             mockObjectService.getObjects = jasmine.createSpy('objectService');
-            mockObjectService.getObjects.and.returnValue(new Promise(function (resolve, reject) {
-                resolve({
-                    'testNamespace:testKey': mockOldDomainObject
-                });
-            }));
+            mockObjectService.getObjects.and.returnValue(
+                new Promise(function (resolve, reject) {
+                    resolve({
+                        'testNamespace:testKey': mockOldDomainObject
+                    });
+                })
+            );
             mockOpenMCT = jasmine.createSpyObj('openmct', [
                 '$injector',
                 'composition',
@@ -98,50 +105,78 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
         });
 
         it('queries with legacyId', function () {
-            expect(mockObjectService.getObjects).toHaveBeenCalledWith(['testNamespace:testKey']);
+            expect(mockObjectService.getObjects).toHaveBeenCalledWith([
+                'testNamespace:testKey'
+            ]);
         });
 
         it('adds its DOM element to the view', function () {
-            expect(mockContainer.getElementsByClassName('w-summary-widget').length).toBeGreaterThan(0);
+            expect(
+                mockContainer.getElementsByClassName('w-summary-widget').length
+            ).toBeGreaterThan(0);
         });
 
         it('initialzes a default rule', function () {
-            expect(mockDomainObject.configuration.ruleConfigById.default).toBeDefined();
-            expect(mockDomainObject.configuration.ruleOrder).toEqual(['default']);
+            expect(
+                mockDomainObject.configuration.ruleConfigById.default
+            ).toBeDefined();
+            expect(mockDomainObject.configuration.ruleOrder).toEqual([
+                'default'
+            ]);
         });
 
         it('builds rules and rule placeholders in view from configuration', function () {
-            expect(summaryWidget.ruleArea.querySelectorAll('.l-widget-rule').length).toEqual(2);
+            expect(
+                summaryWidget.ruleArea.querySelectorAll('.l-widget-rule').length
+            ).toEqual(2);
         });
 
         it('allows initializing a new rule with a particular identifier', function () {
             summaryWidget.initRule('rule0', 'Rule');
-            expect(mockDomainObject.configuration.ruleConfigById.rule0).toBeDefined();
+            expect(
+                mockDomainObject.configuration.ruleConfigById.rule0
+            ).toBeDefined();
         });
 
         it('allows adding a new rule with a unique identifier to the configuration and view', function () {
             summaryWidget.addRule();
             expect(mockDomainObject.configuration.ruleOrder.length).toEqual(2);
             mockDomainObject.configuration.ruleOrder.forEach(function (ruleId) {
-                expect(mockDomainObject.configuration.ruleConfigById[ruleId]).toBeDefined();
+                expect(
+                    mockDomainObject.configuration.ruleConfigById[ruleId]
+                ).toBeDefined();
             });
             summaryWidget.addRule();
             expect(mockDomainObject.configuration.ruleOrder.length).toEqual(3);
             mockDomainObject.configuration.ruleOrder.forEach(function (ruleId) {
-                expect(mockDomainObject.configuration.ruleConfigById[ruleId]).toBeDefined();
+                expect(
+                    mockDomainObject.configuration.ruleConfigById[ruleId]
+                ).toBeDefined();
             });
-            expect(summaryWidget.ruleArea.querySelectorAll('.l-widget-rule').length).toEqual(6);
+            expect(
+                summaryWidget.ruleArea.querySelectorAll('.l-widget-rule').length
+            ).toEqual(6);
         });
 
         it('allows duplicating a rule from source configuration', function () {
-            const sourceConfig = JSON.parse(JSON.stringify(mockDomainObject.configuration.ruleConfigById.default));
+            const sourceConfig = JSON.parse(
+                JSON.stringify(
+                    mockDomainObject.configuration.ruleConfigById.default
+                )
+            );
             summaryWidget.duplicateRule(sourceConfig);
-            expect(Object.keys(mockDomainObject.configuration.ruleConfigById).length).toEqual(2);
+            expect(
+                Object.keys(mockDomainObject.configuration.ruleConfigById)
+                    .length
+            ).toEqual(2);
         });
 
         it('does not duplicate an existing rule in the configuration', function () {
             summaryWidget.initRule('default', 'Default');
-            expect(Object.keys(mockDomainObject.configuration.ruleConfigById).length).toEqual(1);
+            expect(
+                Object.keys(mockDomainObject.configuration.ruleConfigById)
+                    .length
+            ).toEqual(1);
         });
 
         it('uses mutate when updating the domain object only when in edit mode', function () {
@@ -155,13 +190,23 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
                 summaryWidget.onEdit([]);
                 expect(summaryWidget.editing).toEqual(false);
                 expect(summaryWidget.ruleArea.css('display')).toEqual('none');
-                expect(summaryWidget.testDataArea.css('display')).toEqual('none');
-                expect(summaryWidget.addRuleButton.css('display')).toEqual('none');
+                expect(summaryWidget.testDataArea.css('display')).toEqual(
+                    'none'
+                );
+                expect(summaryWidget.addRuleButton.css('display')).toEqual(
+                    'none'
+                );
                 summaryWidget.onEdit(['editing']);
                 expect(summaryWidget.editing).toEqual(true);
-                expect(summaryWidget.ruleArea.css('display')).not.toEqual('none');
-                expect(summaryWidget.testDataArea.css('display')).not.toEqual('none');
-                expect(summaryWidget.addRuleButton.css('display')).not.toEqual('none');
+                expect(summaryWidget.ruleArea.css('display')).not.toEqual(
+                    'none'
+                );
+                expect(summaryWidget.testDataArea.css('display')).not.toEqual(
+                    'none'
+                );
+                expect(summaryWidget.addRuleButton.css('display')).not.toEqual(
+                    'none'
+                );
             }, 100);
         });
 
@@ -175,12 +220,20 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
         it('allows reorders of rules', function () {
             summaryWidget.initRule('rule0');
             summaryWidget.initRule('rule1');
-            summaryWidget.domainObject.configuration.ruleOrder = ['default', 'rule0', 'rule1'];
+            summaryWidget.domainObject.configuration.ruleOrder = [
+                'default',
+                'rule0',
+                'rule1'
+            ];
             summaryWidget.reorder({
                 draggingId: 'rule1',
                 dropTarget: 'default'
             });
-            expect(summaryWidget.domainObject.configuration.ruleOrder).toEqual(['default', 'rule1', 'rule0']);
+            expect(summaryWidget.domainObject.configuration.ruleOrder).toEqual([
+                'default',
+                'rule1',
+                'rule0'
+            ]);
         });
 
         it('adds hyperlink to the widget button and sets newTab preference', function () {

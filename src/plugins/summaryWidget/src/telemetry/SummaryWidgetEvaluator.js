@@ -25,13 +25,7 @@ define([
     '../eventHelpers',
     'objectUtils',
     'lodash'
-], function (
-    SummaryWidgetRule,
-    eventHelpers,
-    objectUtils,
-    _
-) {
-
+], function (SummaryWidgetRule, eventHelpers, objectUtils, _) {
     /**
      * evaluates rules defined in a summary widget against either lad or
      * realtime state.
@@ -65,8 +59,8 @@ define([
         let active = true;
         let unsubscribes = [];
 
-        this.getBaseStateClone()
-            .then(function (realtimeStates) {
+        this.getBaseStateClone().then(
+            function (realtimeStates) {
                 if (!active) {
                     return;
                 }
@@ -87,7 +81,8 @@ define([
                     this.subscribeToObjectState.bind(this, updateCallback)
                 );
                 /* eslint-enable you-dont-need-lodash-underscore/map */
-            }.bind(this));
+            }.bind(this)
+        );
 
         return function () {
             active = false;
@@ -103,23 +98,31 @@ define([
      */
     SummaryWidgetEvaluator.prototype.requestLatest = function (options) {
         return this.getBaseStateClone()
-            .then(function (ladState) {
-                const promises = Object.values(ladState)
-                    .map(this.updateObjectStateFromLAD.bind(this, options));
+            .then(
+                function (ladState) {
+                    const promises = Object.values(ladState).map(
+                        this.updateObjectStateFromLAD.bind(this, options)
+                    );
 
-                return Promise.all(promises)
-                    .then(function () {
+                    return Promise.all(promises).then(function () {
                         return ladState;
                     });
-            }.bind(this))
-            .then(function (ladStates) {
-                return this.evaluateState(ladStates, options.domain);
-            }.bind(this));
+                }.bind(this)
+            )
+            .then(
+                function (ladStates) {
+                    return this.evaluateState(ladStates, options.domain);
+                }.bind(this)
+            );
     };
 
     SummaryWidgetEvaluator.prototype.updateRules = function (domainObject) {
-        this.rules = domainObject.configuration.ruleOrder.map(function (ruleId) {
-            return new SummaryWidgetRule(domainObject.configuration.ruleConfigById[ruleId]);
+        this.rules = domainObject.configuration.ruleOrder.map(function (
+            ruleId
+        ) {
+            return new SummaryWidgetRule(
+                domainObject.configuration.ruleConfigById[ruleId]
+            );
         });
     };
 
@@ -152,8 +155,8 @@ define([
      * metadata and formats.
      */
     SummaryWidgetEvaluator.prototype.getBaseStateClone = function () {
-        return this.load()
-            .then(function () {
+        return this.load().then(
+            function () {
                 /* eslint-disable you-dont-need-lodash-underscore/values */
                 return _(this.baseState)
                     .values()
@@ -161,7 +164,8 @@ define([
                     .keyBy('id')
                     .value();
                 /* eslint-enable you-dont-need-lodash-underscore/values */
-            }.bind(this));
+            }.bind(this)
+        );
     };
 
     /**
@@ -170,12 +174,18 @@ define([
      * a function to unsubscribe.
      * @private.
      */
-    SummaryWidgetEvaluator.prototype.subscribeToObjectState = function (callback, objectState) {
+    SummaryWidgetEvaluator.prototype.subscribeToObjectState = function (
+        callback,
+        objectState
+    ) {
         return this.openmct.telemetry.subscribe(
             objectState.domainObject,
             function (datum) {
                 objectState.lastDatum = datum;
-                objectState.timestamps = this.getTimestamps(objectState.id, datum);
+                objectState.timestamps = this.getTimestamps(
+                    objectState.id,
+                    datum
+                );
                 callback();
             }.bind(this)
         );
@@ -186,25 +196,26 @@ define([
      * object state has been updated from the LAD.
      * @private.
      */
-    SummaryWidgetEvaluator.prototype.updateObjectStateFromLAD = function (options, objectState) {
+    SummaryWidgetEvaluator.prototype.updateObjectStateFromLAD = function (
+        options,
+        objectState
+    ) {
         options = Object.assign({}, options, {
             strategy: 'latest',
             size: 1
         });
 
-        return this.openmct
-            .telemetry
-            .request(
-                objectState.domainObject,
-                options
-            )
-            .then(function (results) {
-                objectState.lastDatum = results[results.length - 1];
-                objectState.timestamps = this.getTimestamps(
-                    objectState.id,
-                    objectState.lastDatum
-                );
-            }.bind(this));
+        return this.openmct.telemetry
+            .request(objectState.domainObject, options)
+            .then(
+                function (results) {
+                    objectState.lastDatum = results[results.length - 1];
+                    objectState.timestamps = this.getTimestamps(
+                        objectState.id,
+                        objectState.lastDatum
+                    );
+                }.bind(this)
+            );
     };
 
     /**
@@ -226,7 +237,10 @@ define([
      * from the matching rule.
      * @private
      */
-    SummaryWidgetEvaluator.prototype.makeDatumFromRule = function (ruleIndex, baseDatum) {
+    SummaryWidgetEvaluator.prototype.makeDatumFromRule = function (
+        ruleIndex,
+        baseDatum
+    ) {
         const rule = this.rules[ruleIndex];
 
         baseDatum.ruleLabel = rule.label;
@@ -248,7 +262,10 @@ define([
      * `timestampKey`.
      * @private.
      */
-    SummaryWidgetEvaluator.prototype.evaluateState = function (state, timestampKey) {
+    SummaryWidgetEvaluator.prototype.evaluateState = function (
+        state,
+        timestampKey
+    ) {
         const hasRequiredData = Object.keys(state).reduce(function (itDoes, k) {
             return itDoes && state[k].lastDatum;
         }, true);
@@ -288,5 +305,4 @@ define([
     };
 
     return SummaryWidgetEvaluator;
-
 });

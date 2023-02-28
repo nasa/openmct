@@ -27,32 +27,36 @@ define([], function () {
     }
 
     DOMObserver.prototype.when = function (latchFunction) {
-        return new Promise(function (resolve, reject) {
-            //Test latch function at least once
-            if (latchFunction()) {
-                resolve();
-            } else {
-                //Latch condition not true yet, create observer on DOM and test again on change.
-                const config = {
-                    attributes: true,
-                    childList: true,
-                    subtree: true
-                };
-                const observer = new MutationObserver(function () {
-                    if (latchFunction()) {
-                        resolve();
-                    }
-                });
-                observer.observe(this.element, config);
-                this.observers.push(observer);
-            }
-        }.bind(this));
+        return new Promise(
+            function (resolve, reject) {
+                //Test latch function at least once
+                if (latchFunction()) {
+                    resolve();
+                } else {
+                    //Latch condition not true yet, create observer on DOM and test again on change.
+                    const config = {
+                        attributes: true,
+                        childList: true,
+                        subtree: true
+                    };
+                    const observer = new MutationObserver(function () {
+                        if (latchFunction()) {
+                            resolve();
+                        }
+                    });
+                    observer.observe(this.element, config);
+                    this.observers.push(observer);
+                }
+            }.bind(this)
+        );
     };
 
     DOMObserver.prototype.destroy = function () {
-        this.observers.forEach(function (observer) {
-            observer.disconnect();
-        }.bind(this));
+        this.observers.forEach(
+            function (observer) {
+                observer.disconnect();
+            }.bind(this)
+        );
     };
 
     return DOMObserver;

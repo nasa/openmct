@@ -48,7 +48,7 @@ export default class URLTimeSettingsSynchronizer {
         this.updateTimeSettings();
         this.openmct.router.on('change:params', this.updateTimeSettings);
 
-        TIME_EVENTS.forEach(event => {
+        TIME_EVENTS.forEach((event) => {
             this.openmct.time.on(event, this.setUrlFromTimeApi);
         });
         this.openmct.time.on('bounds', this.updateBounds);
@@ -60,7 +60,7 @@ export default class URLTimeSettingsSynchronizer {
         this.openmct.off('start', this.initialize);
         this.openmct.off('destroy', this.destroy);
 
-        TIME_EVENTS.forEach(event => {
+        TIME_EVENTS.forEach((event) => {
             this.openmct.time.off(event, this.setUrlFromTimeApi);
         });
         this.openmct.time.off('bounds', this.updateBounds);
@@ -107,12 +107,19 @@ export default class URLTimeSettingsSynchronizer {
 
     setTimeApiFromUrl(timeParameters) {
         if (timeParameters.mode === 'fixed') {
-            if (this.openmct.time.timeSystem().key !== timeParameters.timeSystem) {
+            if (
+                this.openmct.time.timeSystem().key !== timeParameters.timeSystem
+            ) {
                 this.openmct.time.timeSystem(
                     timeParameters.timeSystem,
                     timeParameters.bounds
                 );
-            } else if (!this.areStartAndEndEqual(this.openmct.time.bounds(), timeParameters.bounds)) {
+            } else if (
+                !this.areStartAndEndEqual(
+                    this.openmct.time.bounds(),
+                    timeParameters.bounds
+                )
+            ) {
                 this.openmct.time.bounds(timeParameters.bounds);
             }
 
@@ -120,15 +127,27 @@ export default class URLTimeSettingsSynchronizer {
                 this.openmct.time.stopClock();
             }
         } else {
-            if (!this.openmct.time.clock()
-                || this.openmct.time.clock().key !== timeParameters.mode) {
-                this.openmct.time.clock(timeParameters.mode, timeParameters.clockOffsets);
-            } else if (!this.areStartAndEndEqual(this.openmct.time.clockOffsets(), timeParameters.clockOffsets)) {
+            if (
+                !this.openmct.time.clock() ||
+                this.openmct.time.clock().key !== timeParameters.mode
+            ) {
+                this.openmct.time.clock(
+                    timeParameters.mode,
+                    timeParameters.clockOffsets
+                );
+            } else if (
+                !this.areStartAndEndEqual(
+                    this.openmct.time.clockOffsets(),
+                    timeParameters.clockOffsets
+                )
+            ) {
                 this.openmct.time.clockOffsets(timeParameters.clockOffsets);
             }
 
-            if (!this.openmct.time.timeSystem()
-                || this.openmct.time.timeSystem().key !== timeParameters.timeSystem) {
+            if (
+                !this.openmct.time.timeSystem() ||
+                this.openmct.time.timeSystem().key !== timeParameters.timeSystem
+            ) {
                 this.openmct.time.timeSystem(timeParameters.timeSystem);
             }
         }
@@ -168,16 +187,20 @@ export default class URLTimeSettingsSynchronizer {
             searchParams.delete(SEARCH_END_BOUND);
         }
 
-        searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
+        searchParams.set(
+            SEARCH_TIME_SYSTEM,
+            this.openmct.time.timeSystem().key
+        );
         this.openmct.router.setAllSearchParams(searchParams);
     }
 
     areTimeParametersValid(timeParameters) {
         let isValid = false;
 
-        if (this.isModeValid(timeParameters.mode)
-            && this.isTimeSystemValid(timeParameters.timeSystem)) {
-
+        if (
+            this.isModeValid(timeParameters.mode) &&
+            this.isTimeSystemValid(timeParameters.timeSystem)
+        ) {
             if (timeParameters.mode === 'fixed') {
                 isValid = this.areStartAndEndValid(timeParameters.bounds);
             } else {
@@ -189,19 +212,22 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     areStartAndEndValid(bounds) {
-        return bounds !== undefined
-            && bounds.start !== undefined
-            && bounds.start !== null
-            && bounds.end !== undefined
-            && bounds.start !== null
-            && !isNaN(bounds.start)
-            && !isNaN(bounds.end);
+        return (
+            bounds !== undefined &&
+            bounds.start !== undefined &&
+            bounds.start !== null &&
+            bounds.end !== undefined &&
+            bounds.start !== null &&
+            !isNaN(bounds.start) &&
+            !isNaN(bounds.end)
+        );
     }
 
     isTimeSystemValid(timeSystem) {
         let isValid = timeSystem !== undefined;
         if (isValid) {
-            let timeSystemObject = this.openmct.time.timeSystems.get(timeSystem);
+            let timeSystemObject =
+                this.openmct.time.timeSystems.get(timeSystem);
             isValid = timeSystemObject !== undefined;
         }
 
@@ -211,8 +237,7 @@ export default class URLTimeSettingsSynchronizer {
     isModeValid(mode) {
         let isValid = false;
 
-        if (mode !== undefined
-            && mode !== null) {
+        if (mode !== undefined && mode !== null) {
             isValid = true;
         }
 
@@ -228,7 +253,9 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     areStartAndEndEqual(firstBounds, secondBounds) {
-        return firstBounds.start === secondBounds.start
-            && firstBounds.end === secondBounds.end;
+        return (
+            firstBounds.start === secondBounds.start &&
+            firstBounds.end === secondBounds.end
+        );
     }
 }

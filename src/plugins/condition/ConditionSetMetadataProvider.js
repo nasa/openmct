@@ -43,30 +43,31 @@ export default class ConditionSetMetadataProvider {
     }
 
     getMetadata(domainObject) {
-        const enumerations = domainObject.configuration.conditionCollection
-            .map((condition, index) => {
+        const enumerations = domainObject.configuration.conditionCollection.map(
+            (condition, index) => {
                 return {
                     string: condition.configuration.output,
                     value: index
                 };
-            });
+            }
+        );
 
         return {
             values: this.getDomains().concat([
                 {
-                    key: "state",
-                    source: "output",
-                    name: "State",
-                    format: "enum",
+                    key: 'state',
+                    source: 'output',
+                    name: 'State',
+                    format: 'enum',
                     enumerations: enumerations,
                     hints: {
                         range: 1
                     }
                 },
                 {
-                    key: "output",
-                    name: "Value",
-                    format: "string",
+                    key: 'output',
+                    name: 'Value',
+                    format: 'string',
                     hints: {
                         range: 2
                     }

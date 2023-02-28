@@ -36,7 +36,11 @@ define([], function () {
             };
             if (object.$watch && event.indexOf('change:') === 0) {
                 const scopePath = event.replace('change:', '');
-                listener.unlisten = object.$watch(scopePath, listener._cb, true);
+                listener.unlisten = object.$watch(
+                    scopePath,
+                    listener._cb,
+                    true
+                );
             } else if (object.$on) {
                 listener.unlisten = object.$on(event, listener._cb);
             } else if (object.addEventListener) {
@@ -53,30 +57,34 @@ define([], function () {
                 this._listeningTo = [];
             }
 
-            this._listeningTo.filter(function (listener) {
-                if (object && object !== listener.object) {
-                    return false;
-                }
+            this._listeningTo
+                .filter(function (listener) {
+                    if (object && object !== listener.object) {
+                        return false;
+                    }
 
-                if (event && event !== listener.event) {
-                    return false;
-                }
+                    if (event && event !== listener.event) {
+                        return false;
+                    }
 
-                if (callback && callback !== listener.callback) {
-                    return false;
-                }
+                    if (callback && callback !== listener.callback) {
+                        return false;
+                    }
 
-                if (context && context !== listener.context) {
-                    return false;
-                }
+                    if (context && context !== listener.context) {
+                        return false;
+                    }
 
-                return true;
-            })
+                    return true;
+                })
                 .map(function (listener) {
                     if (listener.unlisten) {
                         listener.unlisten();
                     } else if (listener.object.removeEventListener) {
-                        listener.object.removeEventListener(listener.event, listener._cb);
+                        listener.object.removeEventListener(
+                            listener.event,
+                            listener._cb
+                        );
                     } else {
                         listener.object.off(listener.event, listener._cb);
                     }
@@ -84,7 +92,10 @@ define([], function () {
                     return listener;
                 })
                 .forEach(function (listener) {
-                    this._listeningTo.splice(this._listeningTo.indexOf(listener), 1);
+                    this._listeningTo.splice(
+                        this._listeningTo.indexOf(listener),
+                        1
+                    );
                 }, this);
         },
 

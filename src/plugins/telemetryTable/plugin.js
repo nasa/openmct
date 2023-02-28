@@ -26,8 +26,12 @@ import TelemetryTableViewActions from './ViewActions';
 
 export default function plugin() {
     return function install(openmct) {
-        openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
+        openmct.objectViews.addProvider(
+            new TelemetryTableViewProvider(openmct)
+        );
+        openmct.inspectorViews.addProvider(
+            new TableConfigurationViewProvider(openmct)
+        );
         openmct.types.addType('table', TelemetryTableType);
         openmct.composition.addPolicy((parent, child) => {
             if (parent.type === 'table') {
@@ -37,7 +41,7 @@ export default function plugin() {
             }
         });
 
-        TelemetryTableViewActions.forEach(action => {
+        TelemetryTableViewActions.forEach((action) => {
             openmct.actions.register(action);
         });
     };

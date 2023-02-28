@@ -23,7 +23,10 @@
 export default function ConditionSetCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
-            if (parent.type === 'conditionSet' && !openmct.telemetry.isTelemetryObject(child)) {
+            if (
+                parent.type === 'conditionSet' &&
+                !openmct.telemetry.isTelemetryObject(child)
+            ) {
                 return false;
             }
 

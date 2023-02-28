@@ -20,30 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GeneratorProvider from "./GeneratorProvider";
-import SinewaveLimitProvider from "./SinewaveLimitProvider";
-import SinewaveStalenessProvider from "./SinewaveStalenessProvider";
-import StateGeneratorProvider from "./StateGeneratorProvider";
-import GeneratorMetadataProvider from "./GeneratorMetadataProvider";
+import GeneratorProvider from './GeneratorProvider';
+import SinewaveLimitProvider from './SinewaveLimitProvider';
+import SinewaveStalenessProvider from './SinewaveStalenessProvider';
+import StateGeneratorProvider from './StateGeneratorProvider';
+import GeneratorMetadataProvider from './GeneratorMetadataProvider';
 
 export default function (openmct) {
-
-    openmct.types.addType("example.state-generator", {
-        name: "State Generator",
-        description: "For development use. Generates example enumerated telemetry by cycling through a given set of states.",
-        cssClass: "icon-generator-telemetry",
+    openmct.types.addType('example.state-generator', {
+        name: 'State Generator',
+        description:
+            'For development use. Generates example enumerated telemetry by cycling through a given set of states.',
+        cssClass: 'icon-generator-telemetry',
         creatable: true,
         form: [
             {
-                name: "State Duration (seconds)",
-                control: "numberfield",
-                cssClass: "l-input-sm l-numeric",
-                key: "duration",
+                name: 'State Duration (seconds)',
+                control: 'numberfield',
+                cssClass: 'l-input-sm l-numeric',
+                key: 'duration',
                 required: true,
-                property: [
-                    "telemetry",
-                    "duration"
-                ]
+                property: ['telemetry', 'duration']
             }
         ],
         initialize: function (object) {
@@ -55,108 +52,82 @@ export default function (openmct) {
 
     openmct.telemetry.addProvider(new StateGeneratorProvider());
 
-    openmct.types.addType("generator", {
-        name: "Sine Wave Generator",
-        description: "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
-        cssClass: "icon-generator-telemetry",
+    openmct.types.addType('generator', {
+        name: 'Sine Wave Generator',
+        description:
+            'For development use. Generates example streaming telemetry data using a simple sine wave algorithm.',
+        cssClass: 'icon-generator-telemetry',
         creatable: true,
         form: [
             {
-                name: "Period",
-                control: "numberfield",
-                cssClass: "l-input-sm l-numeric",
-                key: "period",
+                name: 'Period',
+                control: 'numberfield',
+                cssClass: 'l-input-sm l-numeric',
+                key: 'period',
                 required: true,
-                property: [
-                    "telemetry",
-                    "period"
-                ]
+                property: ['telemetry', 'period']
             },
             {
-                name: "Amplitude",
-                control: "numberfield",
-                cssClass: "l-numeric",
-                key: "amplitude",
+                name: 'Amplitude',
+                control: 'numberfield',
+                cssClass: 'l-numeric',
+                key: 'amplitude',
                 required: true,
-                property: [
-                    "telemetry",
-                    "amplitude"
-                ]
+                property: ['telemetry', 'amplitude']
             },
             {
-                name: "Offset",
-                control: "numberfield",
-                cssClass: "l-numeric",
-                key: "offset",
+                name: 'Offset',
+                control: 'numberfield',
+                cssClass: 'l-numeric',
+                key: 'offset',
                 required: true,
-                property: [
-                    "telemetry",
-                    "offset"
-                ]
+                property: ['telemetry', 'offset']
             },
             {
-                name: "Data Rate (hz)",
-                control: "numberfield",
-                cssClass: "l-input-sm l-numeric",
-                key: "dataRateInHz",
+                name: 'Data Rate (hz)',
+                control: 'numberfield',
+                cssClass: 'l-input-sm l-numeric',
+                key: 'dataRateInHz',
                 required: true,
-                property: [
-                    "telemetry",
-                    "dataRateInHz"
-                ]
+                property: ['telemetry', 'dataRateInHz']
             },
             {
-                name: "Phase (radians)",
-                control: "numberfield",
-                cssClass: "l-input-sm l-numeric",
-                key: "phase",
+                name: 'Phase (radians)',
+                control: 'numberfield',
+                cssClass: 'l-input-sm l-numeric',
+                key: 'phase',
                 required: true,
-                property: [
-                    "telemetry",
-                    "phase"
-                ]
+                property: ['telemetry', 'phase']
             },
             {
-                name: "Randomness",
-                control: "numberfield",
-                cssClass: "l-input-sm l-numeric",
-                key: "randomness",
+                name: 'Randomness',
+                control: 'numberfield',
+                cssClass: 'l-input-sm l-numeric',
+                key: 'randomness',
                 required: true,
-                property: [
-                    "telemetry",
-                    "randomness"
-                ]
+                property: ['telemetry', 'randomness']
             },
             {
-                name: "Loading Delay (ms)",
-                control: "numberfield",
-                cssClass: "l-input-sm l-numeric",
-                key: "loadDelay",
+                name: 'Loading Delay (ms)',
+                control: 'numberfield',
+                cssClass: 'l-input-sm l-numeric',
+                key: 'loadDelay',
                 required: true,
-                property: [
-                    "telemetry",
-                    "loadDelay"
-                ]
+                property: ['telemetry', 'loadDelay']
             },
             {
-                name: "Include Infinity Values",
-                control: "toggleSwitch",
-                cssClass: "l-input",
-                key: "infinityValues",
-                property: [
-                    "telemetry",
-                    "infinityValues"
-                ]
+                name: 'Include Infinity Values',
+                control: 'toggleSwitch',
+                cssClass: 'l-input',
+                key: 'infinityValues',
+                property: ['telemetry', 'infinityValues']
             },
             {
-                name: "Provide Staleness Updates",
-                control: "toggleSwitch",
-                cssClass: "l-input",
-                key: "staleness",
-                property: [
-                    "telemetry",
-                    "staleness"
-                ]
+                name: 'Provide Staleness Updates',
+                control: 'toggleSwitch',
+                cssClass: 'l-input',
+                key: 'staleness',
+                property: ['telemetry', 'staleness']
             }
         ],
         initialize: function (object) {
@@ -175,7 +146,9 @@ export default function (openmct) {
     });
     const stalenessProvider = new SinewaveStalenessProvider(openmct);
 
-    openmct.telemetry.addProvider(new GeneratorProvider(openmct, stalenessProvider));
+    openmct.telemetry.addProvider(
+        new GeneratorProvider(openmct, stalenessProvider)
+    );
     openmct.telemetry.addProvider(new GeneratorMetadataProvider());
     openmct.telemetry.addProvider(new SinewaveLimitProvider());
     openmct.telemetry.addProvider(stalenessProvider);

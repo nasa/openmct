@@ -24,7 +24,10 @@
 This test suite is dedicated to tests which verify Open MCT's Notification functionality
 */
 
-const { createDomainObjectWithDefaults, createNotification } = require('../../appActions');
+const {
+    createDomainObjectWithDefaults,
+    createNotification
+} = require('../../appActions');
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Notifications List', () => {
@@ -50,22 +53,38 @@ test.describe('Notifications List', () => {
         });
 
         // Verify that there is a button with aria-label "Review 2 Notifications"
-        expect(await page.locator('button[aria-label="Review 2 Notifications"]').count()).toBe(1);
+        expect(
+            await page
+                .locator('button[aria-label="Review 2 Notifications"]')
+                .count()
+        ).toBe(1);
 
         // Click on button with aria-label "Review 2 Notifications"
         await page.click('button[aria-label="Review 2 Notifications"]');
 
         // Click on button with aria-label="Dismiss notification of Error message"
-        await page.click('button[aria-label="Dismiss notification of Error message"]');
+        await page.click(
+            'button[aria-label="Dismiss notification of Error message"]'
+        );
 
         // Verify there is no a notification (listitem) with the text "Error message" since it was dismissed
-        expect(await page.locator('div[role="dialog"] div[role="listitem"]').innerText()).not.toContain('Error message');
+        expect(
+            await page
+                .locator('div[role="dialog"] div[role="listitem"]')
+                .innerText()
+        ).not.toContain('Error message');
 
         // Verify there is still a notification (listitem) with the text "Alert message"
-        expect(await page.locator('div[role="dialog"] div[role="listitem"]').innerText()).toContain('Alert message');
+        expect(
+            await page
+                .locator('div[role="dialog"] div[role="listitem"]')
+                .innerText()
+        ).toContain('Alert message');
 
         // Click on button with aria-label="Dismiss notification of Alert message"
-        await page.click('button[aria-label="Dismiss notification of Alert message"]');
+        await page.click(
+            'button[aria-label="Dismiss notification of Alert message"]'
+        );
 
         // Verify that there is no dialog since the notification overlay was closed automatically after all notifications were dismissed
         expect(await page.locator('div[role="dialog"]').count()).toBe(0);
@@ -73,7 +92,9 @@ test.describe('Notifications List', () => {
 });
 
 test.describe('Notification Overlay', () => {
-    test('Closing notification list after notification banner disappeared does not cause it to open automatically', async ({ page }) => {
+    test('Closing notification list after notification banner disappeared does not cause it to open automatically', async ({
+        page
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/6130'
@@ -92,7 +113,7 @@ test.describe('Notification Overlay', () => {
         expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
 
         // Wait until there is no Notification Banner
-        await page.waitForSelector('div[role="alert"]', { state: 'detached'});
+        await page.waitForSelector('div[role="alert"]', { state: 'detached' });
 
         // Click on the "Close" button of the Notification List
         await page.click('button[aria-label="Close"]');
@@ -107,6 +128,8 @@ test.describe('Notification Overlay', () => {
         await page.click('li[title="Save and Finish Editing"]');
 
         // Verify that Notification List is NOT open
-        expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);
+        expect(await page.locator('div[role="dialog"]').isVisible()).toBe(
+            false
+        );
     });
 });

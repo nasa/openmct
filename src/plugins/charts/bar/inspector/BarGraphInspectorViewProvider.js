@@ -1,6 +1,6 @@
 import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants';
 import Vue from 'vue';
-import BarGraphOptions from "./BarGraphOptions.vue";
+import BarGraphOptions from './BarGraphOptions.vue';
 
 export default function BarGraphInspectorViewProvider(openmct) {
     return {
@@ -13,8 +13,7 @@ export default function BarGraphInspectorViewProvider(openmct) {
 
             let object = selection[0][0].context.item;
 
-            return object
-                && object.type === BAR_GRAPH_KEY;
+            return object && object.type === BAR_GRAPH_KEY;
         },
         view: function (selection) {
             let component;

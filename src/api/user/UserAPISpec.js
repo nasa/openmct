@@ -20,19 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../utils/testing';
-import {
-    MULTIPLE_PROVIDER_ERROR
-} from './constants';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { MULTIPLE_PROVIDER_ERROR } from './constants';
 import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
 
 const USERNAME = 'Test User';
 const EXAMPLE_ROLE = 'example-role';
 
-describe("The User API", () => {
+describe('The User API', () => {
     let openmct;
 
     beforeEach(() => {
@@ -41,7 +36,7 @@ describe("The User API", () => {
 
     afterEach(() => {
         const activeOverlays = openmct.overlays.activeOverlays;
-        activeOverlays.forEach(overlay => overlay.dismiss());
+        activeOverlays.forEach((overlay) => overlay.dismiss());
 
         return resetApplicationState(openmct);
     });
@@ -94,19 +89,26 @@ describe("The User API", () => {
 
         it('to get the current user', (done) => {
             openmct.user.setProvider(provider);
-            openmct.user.getCurrentUser().then((apiUser) => {
-                expect(apiUser.name).toEqual(USERNAME);
-            }).finally(done);
+            openmct.user
+                .getCurrentUser()
+                .then((apiUser) => {
+                    expect(apiUser.name).toEqual(USERNAME);
+                })
+                .finally(done);
         });
 
         it('to check if a user has a specific role (by id)', (done) => {
             openmct.user.setProvider(provider);
-            let junkIdCheckPromise = openmct.user.hasRole('junk-id').then((hasRole) => {
-                expect(hasRole).toBeFalse();
-            });
-            let realIdCheckPromise = openmct.user.hasRole(EXAMPLE_ROLE).then((hasRole) => {
-                expect(hasRole).toBeTrue();
-            });
+            let junkIdCheckPromise = openmct.user
+                .hasRole('junk-id')
+                .then((hasRole) => {
+                    expect(hasRole).toBeFalse();
+                });
+            let realIdCheckPromise = openmct.user
+                .hasRole(EXAMPLE_ROLE)
+                .then((hasRole) => {
+                    expect(hasRole).toBeTrue();
+                });
 
             Promise.all([junkIdCheckPromise, realIdCheckPromise]).finally(done);
         });

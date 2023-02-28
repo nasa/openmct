@@ -89,7 +89,7 @@ export default class MCTChartSeriesElement {
         this.makePoint(point, series);
         this.removePoint(removalPoint);
 
-        this.count -= (vertexCount / 2);
+        this.count -= vertexCount / 2;
     }
 
     makePoint(point, series) {
@@ -109,7 +109,7 @@ export default class MCTChartSeriesElement {
         this.growIfNeeded(pointsRequired);
         this.makeInsertionPoint(insertionPoint, pointsRequired);
         this.addPoint(this.makePoint(point, series), insertionPoint);
-        this.count += (pointsRequired / 2);
+        this.count += pointsRequired / 2;
     }
 
     makeInsertionPoint(insertionPoint, pointsRequired) {
@@ -151,7 +151,6 @@ export default class MCTChartSeriesElement {
     destroy() {
         this.stopListening();
     }
-
 }
 
 /** @typedef {any} TODO */

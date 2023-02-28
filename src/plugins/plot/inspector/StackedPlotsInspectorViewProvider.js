@@ -1,5 +1,4 @@
-
-import PlotOptions from "./PlotOptions.vue";
+import PlotOptions from './PlotOptions.vue';
 import Vue from 'vue';
 
 export default function StackedPlotsInspectorViewProvider(openmct) {
@@ -13,7 +12,8 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
 
             const object = selection[0][0].context.item;
 
-            const isStackedPlotObject = object && object.type === 'telemetry.plot.stacked';
+            const isStackedPlotObject =
+                object && object.type === 'telemetry.plot.stacked';
 
             return isStackedPlotObject;
         },

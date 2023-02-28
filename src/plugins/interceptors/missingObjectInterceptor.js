@@ -28,7 +28,9 @@ export default function MissingObjectInterceptor(openmct) {
         invoke: (identifier, object) => {
             if (object === undefined) {
                 const keyString = openmct.objects.makeKeyString(identifier);
-                openmct.notifications.error(`Failed to retrieve object ${keyString}`);
+                openmct.notifications.error(
+                    `Failed to retrieve object ${keyString}`
+                );
 
                 return {
                     identifier,

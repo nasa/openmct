@@ -23,11 +23,14 @@
 function inSelectionPath(openmct, domainObject) {
     const domainObjectIdentifier = domainObject.identifier;
 
-    return openmct.selection.get().some(selectionPath => {
-        return selectionPath.some(objectInPath => {
+    return openmct.selection.get().some((selectionPath) => {
+        return selectionPath.some((objectInPath) => {
             const objectInPathIdentifier = objectInPath.context.item.identifier;
 
-            return openmct.objects.areIdsEqual(objectInPathIdentifier, domainObjectIdentifier);
+            return openmct.objects.areIdsEqual(
+                objectInPathIdentifier,
+                domainObjectIdentifier
+            );
         });
     });
 }
@@ -36,7 +39,8 @@ export default class ClearDataAction {
     constructor(openmct, appliesToObjects) {
         this.name = 'Clear Data for Object';
         this.key = 'clear-data-action';
-        this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
+        this.description =
+            'Clears current data for object, unsubscribes and resubscribes to data';
         this.cssClass = 'icon-clear-data';
 
         this._openmct = openmct;
@@ -57,7 +61,7 @@ export default class ClearDataAction {
 
         const contextualDomainObject = objectPath[0];
         // first check to see if this action applies to this sort of object at all
-        const appliesToThisObject = this._appliesToObjects.some(type => {
+        const appliesToThisObject = this._appliesToObjects.some((type) => {
             return contextualDomainObject.type === type;
         });
         if (!appliesToThisObject) {
@@ -65,7 +69,10 @@ export default class ClearDataAction {
             return false;
         }
 
-        const objectInSelectionPath = inSelectionPath(this._openmct, contextualDomainObject);
+        const objectInSelectionPath = inSelectionPath(
+            this._openmct,
+            contextualDomainObject
+        );
         if (objectInSelectionPath) {
             return true;
         } else {

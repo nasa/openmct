@@ -8,7 +8,7 @@ export default {
     },
     computed: {
         statusClass() {
-            return (this.status) ? `is-status--${this.status}` : '';
+            return this.status ? `is-status--${this.status}` : '';
         }
     },
     data() {
@@ -25,7 +25,10 @@ export default {
         let identifier = this.item.model.identifier;
 
         this.status = this.openmct.status.get(identifier);
-        this.removeStatusListener = this.openmct.status.observe(identifier, this.setStatus);
+        this.removeStatusListener = this.openmct.status.observe(
+            identifier,
+            this.setStatus
+        );
     },
     destroyed() {
         this.removeStatusListener();

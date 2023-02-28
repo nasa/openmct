@@ -25,7 +25,7 @@ import Vue from 'vue';
 const COMPASS_ROSE_CLASS = '.c-direction-rose';
 const COMPASS_HUD_CLASS = '.c-compass__hud';
 
-describe("The Compass component", () => {
+describe('The Compass component', () => {
     let app;
     let instance;
 
@@ -72,21 +72,19 @@ describe("The Compass component", () => {
         app.$destroy();
     });
 
-    describe("when a heading value and cameraAngleOfView exists on the image", () => {
-
-        it("should display a compass rose", () => {
-            let compassRoseElement = instance.$el.querySelector(COMPASS_ROSE_CLASS
-            );
+    describe('when a heading value and cameraAngleOfView exists on the image', () => {
+        it('should display a compass rose', () => {
+            let compassRoseElement =
+                instance.$el.querySelector(COMPASS_ROSE_CLASS);
 
             expect(compassRoseElement).toBeDefined();
         });
 
-        it("should display a compass HUD", () => {
-            let compassHUDElement = instance.$el.querySelector(COMPASS_HUD_CLASS);
+        it('should display a compass HUD', () => {
+            let compassHUDElement =
+                instance.$el.querySelector(COMPASS_HUD_CLASS);
 
             expect(compassHUDElement).toBeDefined();
         });
-
     });
-
 });

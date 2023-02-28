@@ -28,7 +28,7 @@ export default class NewFolderAction {
         this.key = 'newFolder';
         this.description = 'Create a new folder';
         this.cssClass = 'icon-folder-new';
-        this.group = "action";
+        this.group = 'action';
         this.priority = 9;
 
         this._openmct = openmct;
@@ -36,13 +36,19 @@ export default class NewFolderAction {
 
     invoke(objectPath) {
         const parentDomainObject = objectPath[0];
-        const createAction = new CreateAction(this._openmct, this.type, parentDomainObject);
+        const createAction = new CreateAction(
+            this._openmct,
+            this.type,
+            parentDomainObject
+        );
         createAction.invoke();
     }
 
     appliesTo(objectPath) {
         let domainObject = objectPath[0];
-        let isPersistable = this._openmct.objects.isPersistable(domainObject.identifier);
+        let isPersistable = this._openmct.objects.isPersistable(
+            domainObject.identifier
+        );
 
         return domainObject.type === this.type && isPersistable;
     }

@@ -20,12 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './SummaryWidgetCondition'
-], function (
-    SummaryWidgetCondition
-) {
-
+define(['./SummaryWidgetCondition'], function (SummaryWidgetCondition) {
     describe('SummaryWidgetCondition', function () {
         let condition;
         let telemetryState;
@@ -50,16 +45,13 @@ define([
             telemetryState = {
                 objectId: {
                     formats: formatMap,
-                    lastDatum: {
-                    }
+                    lastDatum: {}
                 },
                 otherObjectId: {
                     formats: formatMap,
-                    lastDatum: {
-                    }
+                    lastDatum: {}
                 }
             };
-
         });
 
         it('can evaluate if a single object matches', function () {
@@ -67,9 +59,7 @@ define([
                 object: 'objectId',
                 key: 'raw',
                 operation: 'greaterThan',
-                values: [
-                    10
-                ]
+                values: [10]
             });
             telemetryState.objectId.lastDatum.value = 5;
             expect(condition.evaluate(telemetryState)).toBe(false);
@@ -82,9 +72,7 @@ define([
                 object: 'objectId',
                 key: 'adjusted',
                 operation: 'greaterThan',
-                values: [
-                    10
-                ]
+                values: [10]
             });
             telemetryState.objectId.lastDatum.value = -5;
             expect(condition.evaluate(telemetryState)).toBe(false);
@@ -97,9 +85,7 @@ define([
                 object: 'all',
                 key: 'raw',
                 operation: 'greaterThan',
-                values: [
-                    10
-                ]
+                values: [10]
             });
             telemetryState.objectId.lastDatum.value = 0;
             telemetryState.otherObjectId.lastDatum.value = 0;
@@ -120,9 +106,7 @@ define([
                 object: 'any',
                 key: 'raw',
                 operation: 'greaterThan',
-                values: [
-                    10
-                ]
+                values: [10]
             });
             telemetryState.objectId.lastDatum.value = 0;
             telemetryState.otherObjectId.lastDatum.value = 0;
@@ -137,6 +121,5 @@ define([
             telemetryState.otherObjectId.lastDatum.value = 15;
             expect(condition.evaluate(telemetryState)).toBe(true);
         });
-
     });
 });

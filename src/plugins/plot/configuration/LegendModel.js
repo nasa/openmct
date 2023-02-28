@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Model from "./Model";
+import Model from './Model';
 /**
  * TODO: doc strings.
  */
@@ -38,7 +38,12 @@ export default class LegendModel extends Model {
         if (this.get('position') !== 'top') {
             this.set('height', '0px');
         } else {
-            this.set('height', expanded ? (20 * (this.seriesCollection.size() + 1) + 40) + 'px' : '21px');
+            this.set(
+                'height',
+                expanded
+                    ? 20 * (this.seriesCollection.size() + 1) + 40 + 'px'
+                    : '21px'
+            );
         }
     }
 

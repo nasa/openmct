@@ -1,6 +1,9 @@
-import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../scatterPlotConstants';
+import {
+    SCATTER_PLOT_INSPECTOR_KEY,
+    SCATTER_PLOT_KEY
+} from '../scatterPlotConstants';
 import Vue from 'vue';
-import PlotOptions from "./PlotOptions.vue";
+import PlotOptions from './PlotOptions.vue';
 
 export default function ScatterPlotInspectorViewProvider(openmct) {
     return {
@@ -13,8 +16,7 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
 
             let object = selection[0][0].context.item;
 
-            return object
-                && object.type === SCATTER_PLOT_KEY;
+            return object && object.type === SCATTER_PLOT_KEY;
         },
         view: function (selection) {
             let component;

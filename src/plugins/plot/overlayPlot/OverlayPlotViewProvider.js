@@ -25,9 +25,13 @@ import Vue from 'vue';
 
 export default function OverlayPlotViewProvider(openmct) {
     function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+        let isChildOfTimeStrip = objectPath.find(
+            (object) => object.type === 'time-strip'
+        );
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+        return (
+            isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath)
+        );
     }
 
     return {
@@ -65,7 +69,8 @@ export default function OverlayPlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<plot ref="plotComponent" :options="options"></plot>'
+                        template:
+                            '<plot ref="plotComponent" :options="options"></plot>'
                     });
                 },
                 getViewContext() {

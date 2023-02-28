@@ -1,4 +1,3 @@
-
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -32,7 +31,8 @@ export default function TimerPlugin() {
     return function install(openmct) {
         openmct.types.addType('timer', {
             name: 'Timer',
-            description: 'A timer that counts up or down to a datetime. Timers can be started, stopped and reset whenever needed, and support a variety of display formats. Each Timer displays the same value to all users. Timers can be added to Display Layouts.',
+            description:
+                'A timer that counts up or down to a datetime. Timers can be started, stopped and reset whenever needed, and support a variety of display formats. Each Timer displays the same value to all users. Timers can be added to Display Layouts.',
             creatable: true,
             cssClass: 'icon-timer',
             initialize: function (domainObject) {
@@ -44,34 +44,28 @@ export default function TimerPlugin() {
                     pausedTime: undefined
                 };
             },
-            "form": [
+            form: [
                 {
-                    "key": "timestamp",
-                    "control": "datetime",
-                    "name": "Target",
-                    property: [
-                        'configuration',
-                        'timestamp'
-                    ]
+                    key: 'timestamp',
+                    control: 'datetime',
+                    name: 'Target',
+                    property: ['configuration', 'timestamp']
                 },
                 {
-                    "key": "timerFormat",
-                    "name": "Display Format",
-                    "control": "select",
-                    "options": [
+                    key: 'timerFormat',
+                    name: 'Display Format',
+                    control: 'select',
+                    options: [
                         {
-                            "value": "long",
-                            "name": "DDD hh:mm:ss"
+                            value: 'long',
+                            name: 'DDD hh:mm:ss'
                         },
                         {
-                            "value": "short",
-                            "name": "hh:mm:ss"
+                            value: 'short',
+                            name: 'hh:mm:ss'
                         }
                     ],
-                    property: [
-                        'configuration',
-                        'timerFormat'
-                    ]
+                    property: ['configuration', 'timerFormat']
                 }
             ]
         });
@@ -109,11 +103,14 @@ export default function TimerPlugin() {
                     configuration.pausedTime = domainObject.pausedTime;
                 }
 
-                openmct.objects.mutate(domainObject, 'configuration', configuration);
+                openmct.objects.mutate(
+                    domainObject,
+                    'configuration',
+                    configuration
+                );
 
                 return domainObject;
             }
         });
-
     };
 }

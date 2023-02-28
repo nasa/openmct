@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 /**
-     * A representation of a color that allows conversions between different
-     * formats.
-     *
-     * @constructor
-     */
+ * A representation of a color that allows conversions between different
+ * formats.
+ *
+ * @constructor
+ */
 /**
  * A representation of a color that allows conversions between different
  * formats.
@@ -39,9 +39,9 @@ function Color(integerArray) {
 Color.fromHexString = function (hexString) {
     if (!/#([0-9a-fA-F]{2}){2}/.test(hexString)) {
         throw new Error(
-            'Invalid input "'
-            + hexString
-            + '". Hex string must be in CSS format e.g. #00FF00'
+            'Invalid input "' +
+                hexString +
+                '". Hex string must be in CSS format e.g. #00FF00'
         );
     }
 
@@ -72,9 +72,14 @@ Color.prototype.asIntegerArray = function () {
  */
 
 Color.prototype.asHexString = function () {
-    return '#' + this.integerArray.map(function (c) {
-        return (c < 16 ? '0' : '') + c.toString(16);
-    }).join('');
+    return (
+        '#' +
+        this.integerArray
+            .map(function (c) {
+                return (c < 16 ? '0' : '') + c.toString(16);
+            })
+            .join('')
+    );
 };
 
 /**
@@ -86,9 +91,11 @@ Color.prototype.asHexString = function () {
  * @return {number[]} the color, as floating-point RGBA values
  */
 Color.prototype.asRGBAArray = function () {
-    return this.integerArray.map(function (c) {
-        return c / 255.0;
-    }).concat([1]);
+    return this.integerArray
+        .map(function (c) {
+            return c / 255.0;
+        })
+        .concat([1]);
 };
 
 Color.prototype.equalTo = function (otherColor) {

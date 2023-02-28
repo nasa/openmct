@@ -54,9 +54,11 @@ define([], function () {
         getCellComponentName(key) {
             let column = this.columns[key];
 
-            return column
-                && column.getCellComponentName
-                && column.getCellComponentName();
+            return (
+                column &&
+                column.getCellComponentName &&
+                column.getCellComponentName()
+            );
         }
 
         getRowClass() {
@@ -70,14 +72,21 @@ define([], function () {
 
         getCellLimitClasses() {
             if (!this.cellLimitClasses) {
-                this.cellLimitClasses = Object.values(this.columns).reduce((alarmStateMap, column) => {
-                    if (!column.isUnit) {
-                        let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
-                        alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
-                    }
+                this.cellLimitClasses = Object.values(this.columns).reduce(
+                    (alarmStateMap, column) => {
+                        if (!column.isUnit) {
+                            let limitEvaluation = this.limitEvaluator.evaluate(
+                                this.datum,
+                                column.getMetadatum()
+                            );
+                            alarmStateMap[column.getKey()] =
+                                limitEvaluation && limitEvaluation.cssClass;
+                        }
 
-                    return alarmStateMap;
-                }, {});
+                        return alarmStateMap;
+                    },
+                    {}
+                );
             }
 
             return this.cellLimitClasses;
@@ -102,7 +111,7 @@ define([], function () {
     function createNormalizedDatum(datum, columns) {
         const normalizedDatum = JSON.parse(JSON.stringify(datum));
 
-        Object.values(columns).forEach(column => {
+        Object.values(columns).forEach((column) => {
             normalizedDatum[column.getKey()] = column.getRawValue(datum);
         });
 

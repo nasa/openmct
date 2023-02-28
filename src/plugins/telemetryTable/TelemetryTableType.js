@@ -23,7 +23,8 @@
 define(function () {
     return {
         name: 'Telemetry Table',
-        description: 'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
+        description:
+            'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
         creatable: true,
         cssClass: 'icon-tabular-scrolling',
         initialize(domainObject) {

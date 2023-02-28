@@ -20,11 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './plugins/plugins',
-    'utils/testing'
-], function (plugins, testUtils) {
-    describe("MCT", function () {
+define(['./plugins/plugins', 'utils/testing'], function (plugins, testUtils) {
+    describe('MCT', function () {
         let openmct;
         let mockPlugin;
         let mockPlugin2;
@@ -47,71 +44,73 @@ define([
             return testUtils.resetApplicationState(openmct);
         });
 
-        it("exposes plugins", function () {
+        it('exposes plugins', function () {
             expect(openmct.plugins).toEqual(plugins);
         });
 
-        it("does not issue a start event before started", function () {
+        it('does not issue a start event before started', function () {
             expect(mockListener).not.toHaveBeenCalled();
         });
 
-        describe("start", function () {
+        describe('start', function () {
             let appHolder;
             beforeEach(function (done) {
-                appHolder = document.createElement("div");
+                appHolder = document.createElement('div');
                 openmct.on('start', done);
                 openmct.start(appHolder);
             });
 
-            it("calls plugins for configuration", function () {
+            it('calls plugins for configuration', function () {
                 expect(mockPlugin).toHaveBeenCalledWith(openmct);
                 expect(mockPlugin2).toHaveBeenCalledWith(openmct);
             });
 
-            it("emits a start event", function () {
+            it('emits a start event', function () {
                 expect(mockListener).toHaveBeenCalled();
             });
 
-            it("Renders the application into the provided container element", function () {
-                let openMctShellElements = appHolder.querySelectorAll('div.l-shell');
+            it('Renders the application into the provided container element', function () {
+                let openMctShellElements =
+                    appHolder.querySelectorAll('div.l-shell');
                 expect(openMctShellElements.length).toBe(1);
             });
         });
 
-        describe("startHeadless", function () {
+        describe('startHeadless', function () {
             beforeEach(function (done) {
                 openmct.on('start', done);
                 openmct.startHeadless();
             });
 
-            it("calls plugins for configuration", function () {
+            it('calls plugins for configuration', function () {
                 expect(mockPlugin).toHaveBeenCalledWith(openmct);
                 expect(mockPlugin2).toHaveBeenCalledWith(openmct);
             });
 
-            it("emits a start event", function () {
+            it('emits a start event', function () {
                 expect(mockListener).toHaveBeenCalled();
             });
 
-            it("Does not render Open MCT", function () {
-                let openMctShellElements = document.body.querySelectorAll('div.l-shell');
+            it('Does not render Open MCT', function () {
+                let openMctShellElements =
+                    document.body.querySelectorAll('div.l-shell');
                 expect(openMctShellElements.length).toBe(0);
             });
         });
 
-        describe("setAssetPath", function () {
+        describe('setAssetPath', function () {
             let testAssetPath;
 
-            it("configures the path for assets", function () {
-                testAssetPath = "some/path/";
+            it('configures the path for assets', function () {
+                testAssetPath = 'some/path/';
                 openmct.setAssetPath(testAssetPath);
                 expect(openmct.getAssetPath()).toBe(testAssetPath);
             });
 
-            it("adds a trailing /", function () {
-                testAssetPath = "some/path";
+            it('adds a trailing /', function () {
+                testAssetPath = 'some/path';
                 openmct.setAssetPath(testAssetPath);
-                expect(openmct.getAssetPath()).toBe(testAssetPath + "/");
+                expect(openmct.getAssetPath()).toBe(testAssetPath + '/');
             });
         });
     });

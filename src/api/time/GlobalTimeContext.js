@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimeContext from "./TimeContext";
+import TimeContext from './TimeContext';
 
 /**
  * The GlobalContext handles getting and setting time of the openmct application in general.

@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from "EventEmitter";
+import EventEmitter from 'EventEmitter';
 
 export default class StatusAPI extends EventEmitter {
     #userAPI;
@@ -31,7 +31,8 @@ export default class StatusAPI extends EventEmitter {
         this.#openmct = openmct;
 
         this.onProviderStatusChange = this.onProviderStatusChange.bind(this);
-        this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
+        this.onProviderPollQuestionChange =
+            this.onProviderPollQuestionChange.bind(this);
         this.listenToStatusEvents = this.listenToStatusEvents.bind(this);
 
         this.#openmct.once('destroy', () => {
@@ -39,7 +40,10 @@ export default class StatusAPI extends EventEmitter {
 
             if (typeof provider?.off === 'function') {
                 provider.off('statusChange', this.onProviderStatusChange);
-                provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
+                provider.off(
+                    'pollQuestionChange',
+                    this.onProviderPollQuestionChange
+                );
             }
         });
 
@@ -56,7 +60,9 @@ export default class StatusAPI extends EventEmitter {
         if (provider.getPollQuestion) {
             return provider.getPollQuestion();
         } else {
-            this.#userAPI.error("User provider does not support polling questions");
+            this.#userAPI.error(
+                'User provider does not support polling questions'
+            );
         }
     }
 
@@ -76,13 +82,17 @@ export default class StatusAPI extends EventEmitter {
             try {
                 await this.resetAllStatuses();
             } catch (error) {
-                console.warn("Poll question set but unable to clear operator statuses.");
+                console.warn(
+                    'Poll question set but unable to clear operator statuses.'
+                );
                 console.error(error);
             }
 
             return result;
         } else {
-            this.#userAPI.error("User provider does not support setting polling question");
+            this.#userAPI.error(
+                'User provider does not support setting polling question'
+            );
         }
     }
 
@@ -107,11 +117,12 @@ export default class StatusAPI extends EventEmitter {
         const provider = this.#userAPI.getProvider();
 
         if (provider.getPossibleStatuses) {
-            const possibleStatuses = await provider.getPossibleStatuses() || [];
+            const possibleStatuses =
+                (await provider.getPossibleStatuses()) || [];
 
-            return possibleStatuses.map(status => status);
+            return possibleStatuses.map((status) => status);
         } else {
-            this.#userAPI.error("User provider cannot provide statuses");
+            this.#userAPI.error('User provider cannot provide statuses');
         }
     }
 
@@ -127,7 +138,7 @@ export default class StatusAPI extends EventEmitter {
 
             return status;
         } else {
-            this.#userAPI.error("User provider does not support role status");
+            this.#userAPI.error('User provider does not support role status');
         }
     }
 
@@ -157,7 +168,9 @@ export default class StatusAPI extends EventEmitter {
         if (provider.setStatusForRole) {
             return provider.setStatusForRole(role, status);
         } else {
-            this.#userAPI.error("User provider does not support setting role status");
+            this.#userAPI.error(
+                'User provider does not support setting role status'
+            );
         }
     }
 
@@ -173,7 +186,9 @@ export default class StatusAPI extends EventEmitter {
         if (provider.setStatusForRole) {
             return provider.setStatusForRole(role, defaultStatus);
         } else {
-            this.#userAPI.error("User provider does not support resetting role status");
+            this.#userAPI.error(
+                'User provider does not support resetting role status'
+            );
         }
     }
 
@@ -184,7 +199,9 @@ export default class StatusAPI extends EventEmitter {
     async resetAllStatuses() {
         const allStatusRoles = await this.getAllStatusRoles();
 
-        return Promise.all(allStatusRoles.map(role => this.resetStatusForRole(role)));
+        return Promise.all(
+            allStatusRoles.map((role) => this.resetStatusForRole(role))
+        );
     }
 
     /**
@@ -212,7 +229,9 @@ export default class StatusAPI extends EventEmitter {
         if (provider.getAllStatusRoles) {
             return provider.getAllStatusRoles();
         } else {
-            this.#userAPI.error("User provider cannot provide all status roles");
+            this.#userAPI.error(
+                'User provider cannot provide all status roles'
+            );
         }
     }
 
@@ -227,7 +246,9 @@ export default class StatusAPI extends EventEmitter {
         if (provider.getStatusRoleForCurrentUser) {
             return provider.getStatusRoleForCurrentUser();
         } else {
-            this.#userAPI.error("User provider cannot provide role status for this user");
+            this.#userAPI.error(
+                'User provider cannot provide role status for this user'
+            );
         }
     }
 
@@ -239,8 +260,12 @@ export default class StatusAPI extends EventEmitter {
         const provider = this.#userAPI.getProvider();
 
         if (provider.getStatusRoleForCurrentUser) {
-            const activeStatusRole = await this.#userAPI.getProvider().getStatusRoleForCurrentUser();
-            const canProvideStatus = await this.canProvideStatusForRole(activeStatusRole);
+            const activeStatusRole = await this.#userAPI
+                .getProvider()
+                .getStatusRoleForCurrentUser();
+            const canProvideStatus = await this.canProvideStatusForRole(
+                activeStatusRole
+            );
 
             return canProvideStatus;
         } else {
@@ -255,7 +280,10 @@ export default class StatusAPI extends EventEmitter {
     listenToStatusEvents(provider) {
         if (typeof provider.on === 'function') {
             provider.on('statusChange', this.onProviderStatusChange);
-            provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
+            provider.on(
+                'pollQuestionChange',
+                this.onProviderPollQuestionChange
+            );
         }
     }
 

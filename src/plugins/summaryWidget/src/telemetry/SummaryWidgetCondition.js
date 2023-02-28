@@ -20,12 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './operations'
-], function (
-    OPERATIONS
-) {
-
+define(['./operations'], function (OPERATIONS) {
     function SummaryWidgetCondition(definition) {
         this.object = definition.object;
         this.key = definition.key;

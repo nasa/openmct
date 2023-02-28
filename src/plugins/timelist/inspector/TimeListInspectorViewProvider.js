@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelistPropertiesView from "./TimelistPropertiesView.vue";
+import TimelistPropertiesView from './TimelistPropertiesView.vue';
 import { TIMELIST_TYPE } from '../constants';
 import Vue from 'vue';
 
@@ -35,8 +35,9 @@ export default function TimeListInspectorViewProvider(openmct) {
 
             let context = selection[0][0].context;
 
-            return context && context.item
-                && context.item.type === TIMELIST_TYPE;
+            return (
+                context && context.item && context.item.type === TIMELIST_TYPE
+            );
         },
         view: function (selection) {
             let component;
@@ -52,7 +53,8 @@ export default function TimeListInspectorViewProvider(openmct) {
                             openmct,
                             domainObject: selection[0][0].context.item
                         },
-                        template: '<timelist-properties-view></timelist-properties-view>'
+                        template:
+                            '<timelist-properties-view></timelist-properties-view>'
                     });
                 },
                 destroy: function () {

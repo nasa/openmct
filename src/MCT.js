@@ -96,9 +96,9 @@ define([
         this.destroy = this.destroy.bind(this);
         [
             /**
-            * Tracks current selection state of the application.
-            * @private
-            */
+             * Tracks current selection state of the application.
+             * @private
+             */
             ['selection', () => new Selection.default(this)],
 
             /**
@@ -244,7 +244,7 @@ define([
              * @name annotation
              */
             ['annotation', () => new api.AnnotationAPI(this)]
-        ].forEach(apiEntry => {
+        ].forEach((apiEntry) => {
             const apiName = apiEntry[0];
             const apiObject = apiEntry[1]();
 
@@ -337,11 +337,16 @@ define([
      * @param {HTMLElement} [domElement] the DOM element in which to run
      *        MCT; if undefined, MCT will be run in the body of the document
      */
-    MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
+    MCT.prototype.start = function (
+        domElement = document.body,
+        isHeadlessMode = false
+    ) {
         if (this.types.get('layout') === undefined) {
-            this.install(this.plugins.DisplayLayout({
-                showAsView: ['summary-widget']
-            }));
+            this.install(
+                this.plugins.DisplayLayout({
+                    showAsView: ['summary-widget']
+                })
+            );
         }
 
         this.element = domElement;
@@ -360,7 +365,7 @@ define([
         if (!isHeadlessMode) {
             const appLayout = new Vue({
                 components: {
-                    'Layout': Layout.default
+                    Layout: Layout.default
                 },
                 provide: {
                     openmct: this

@@ -42,7 +42,8 @@ export default class RemoteClock extends DefaultClock {
         this.identifier = identifier;
 
         this.name = 'Remote Clock';
-        this.description = "Provides telemetry based timestamps from a configurable source.";
+        this.description =
+            'Provides telemetry based timestamps from a configurable source.';
 
         this.timeTelemetryObject = undefined;
         this.parseTime = undefined;
@@ -62,16 +63,20 @@ export default class RemoteClock extends DefaultClock {
     }
 
     start() {
-        this.openmct.objects.get(this.identifier).then((domainObject) => {
-            this.openmct.time.on('timeSystem', this._timeSystemChange);
-            this.timeTelemetryObject = domainObject;
-            this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-            this._timeSystemChange();
-            this._requestLatest();
-            this._subscribe();
-        }).catch((error) => {
-            throw new Error(error);
-        });
+        this.openmct.objects
+            .get(this.identifier)
+            .then((domainObject) => {
+                this.openmct.time.on('timeSystem', this._timeSystemChange);
+                this.timeTelemetryObject = domainObject;
+                this.metadata =
+                    this.openmct.telemetry.getMetadata(domainObject);
+                this._timeSystemChange();
+                this._requestLatest();
+                this._subscribe();
+            })
+            .catch((error) => {
+                throw new Error(error);
+            });
     }
 
     stop() {
@@ -102,12 +107,14 @@ export default class RemoteClock extends DefaultClock {
      * @private
      */
     _requestLatest() {
-        this.openmct.telemetry.request(this.timeTelemetryObject, {
-            size: 1,
-            strategy: 'latest'
-        }).then(data => {
-            this._processDatum(data[data.length - 1]);
-        });
+        this.openmct.telemetry
+            .request(this.timeTelemetryObject, {
+                size: 1,
+                strategy: 'latest'
+            })
+            .then((data) => {
+                this._processDatum(data[data.length - 1]);
+            });
     }
 
     /**
@@ -133,7 +140,8 @@ export default class RemoteClock extends DefaultClock {
         let timeSystem = this.openmct.time.timeSystem();
         let timeKey = timeSystem.key;
         let metadataValue = this.metadata.value(timeKey);
-        let timeFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+        let timeFormatter =
+            this.openmct.telemetry.getValueFormatter(metadataValue);
         this.parseTime = (datum) => {
             return timeFormatter.parse(datum);
         };

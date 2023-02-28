@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 define([], function () {
-
     /**
      * A ToolbarRegistry maintains the definitions for toolbars.
      *
@@ -46,8 +45,8 @@ define([], function () {
 
         const structure = [];
 
-        providers.forEach(provider => {
-            provider.toolbar(selection).forEach(item => structure.push(item));
+        providers.forEach((provider) => {
+            provider.toolbar(selection).forEach((item) => structure.push(item));
         });
 
         return structure;
@@ -82,7 +81,10 @@ define([], function () {
         }
 
         if (this.providers[key] !== undefined) {
-            console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
+            console.warn(
+                "Provider already defined for key '%s'. Provider keys must be unique.",
+                key
+            );
         }
 
         this.providers[key] = provider;

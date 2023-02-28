@@ -24,7 +24,13 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
 class ActionCollection extends EventEmitter {
-    constructor(applicableActions, objectPath, view, openmct, skipEnvironmentObservers) {
+    constructor(
+        applicableActions,
+        objectPath,
+        view,
+        openmct,
+        skipEnvironmentObservers
+    ) {
         super();
 
         this.applicableActions = applicableActions;
@@ -39,8 +45,16 @@ class ActionCollection extends EventEmitter {
             trailing: true
         };
 
-        this._updateActions = _.debounce(this._updateActions.bind(this), 150, debounceOptions);
-        this._update = _.debounce(this._update.bind(this), 150, debounceOptions);
+        this._updateActions = _.debounce(
+            this._updateActions.bind(this),
+            150,
+            debounceOptions
+        );
+        this._update = _.debounce(
+            this._update.bind(this),
+            150,
+            debounceOptions
+        );
 
         if (!skipEnvironmentObservers) {
             this._observeObjectPath();
@@ -49,7 +63,7 @@ class ActionCollection extends EventEmitter {
     }
 
     disable(actionKeys) {
-        actionKeys.forEach(actionKey => {
+        actionKeys.forEach((actionKey) => {
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].isDisabled = true;
             }
@@ -58,7 +72,7 @@ class ActionCollection extends EventEmitter {
     }
 
     enable(actionKeys) {
-        actionKeys.forEach(actionKey => {
+        actionKeys.forEach((actionKey) => {
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].isDisabled = false;
             }
@@ -67,7 +81,7 @@ class ActionCollection extends EventEmitter {
     }
 
     hide(actionKeys) {
-        actionKeys.forEach(actionKey => {
+        actionKeys.forEach((actionKey) => {
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].isHidden = true;
             }
@@ -76,7 +90,7 @@ class ActionCollection extends EventEmitter {
     }
 
     show(actionKeys) {
-        actionKeys.forEach(actionKey => {
+        actionKeys.forEach((actionKey) => {
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].isHidden = false;
             }
@@ -86,7 +100,7 @@ class ActionCollection extends EventEmitter {
 
     destroy() {
         if (!this.skipEnvironmentObservers) {
-            this.objectUnsubscribes.forEach(unsubscribe => {
+            this.objectUnsubscribes.forEach((unsubscribe) => {
                 unsubscribe();
             });
 
@@ -101,7 +115,7 @@ class ActionCollection extends EventEmitter {
         let actionsArray = Object.keys(this.applicableActions);
         let visibleActions = [];
 
-        actionsArray.forEach(actionKey => {
+        actionsArray.forEach((actionKey) => {
             let action = this.applicableActions[actionKey];
 
             if (!action.isHidden) {
@@ -116,10 +130,14 @@ class ActionCollection extends EventEmitter {
         let actionsArray = Object.keys(this.applicableActions);
         let statusBarActions = [];
 
-        actionsArray.forEach(actionKey => {
+        actionsArray.forEach((actionKey) => {
             let action = this.applicableActions[actionKey];
 
-            if (action.showInStatusBar && !action.isDisabled && !action.isHidden) {
+            if (
+                action.showInStatusBar &&
+                !action.isDisabled &&
+                !action.isHidden
+            ) {
                 statusBarActions.push(action);
             }
         });
@@ -144,9 +162,13 @@ class ActionCollection extends EventEmitter {
             actionCollection._updateActions();
         }
 
-        this.objectPath.forEach(object => {
+        this.objectPath.forEach((object) => {
             if (object) {
-                let unsubscribe = this.openmct.objects.observe(object, '*', updateObject.bind(this, object));
+                let unsubscribe = this.openmct.objects.observe(
+                    object,
+                    '*',
+                    updateObject.bind(this, object)
+                );
 
                 this.objectUnsubscribes.push(unsubscribe);
             }
@@ -154,15 +176,21 @@ class ActionCollection extends EventEmitter {
     }
 
     _updateActions() {
-        let newApplicableActions = this.openmct.actions._applicableActions(this.objectPath, this.view);
+        let newApplicableActions = this.openmct.actions._applicableActions(
+            this.objectPath,
+            this.view
+        );
 
-        this.applicableActions = this._mergeOldAndNewActions(this.applicableActions, newApplicableActions);
+        this.applicableActions = this._mergeOldAndNewActions(
+            this.applicableActions,
+            newApplicableActions
+        );
         this._update();
     }
 
     _mergeOldAndNewActions(oldActions, newActions) {
         let mergedActions = {};
-        Object.keys(newActions).forEach(key => {
+        Object.keys(newActions).forEach((key) => {
             if (oldActions[key]) {
                 mergedActions[key] = oldActions[key];
             } else {

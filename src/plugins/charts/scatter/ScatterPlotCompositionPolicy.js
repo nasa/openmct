@@ -46,7 +46,10 @@ export default function ScatterPlotCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
             if (parent.type === SCATTER_PLOT_KEY) {
-                if ((child.type === 'conditionSet') || (!hasScatterPlotTelemetry(child))) {
+                if (
+                    child.type === 'conditionSet' ||
+                    !hasScatterPlotTelemetry(child)
+                ) {
                     return false;
                 }
             }

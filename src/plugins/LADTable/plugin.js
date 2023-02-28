@@ -25,14 +25,14 @@ import ladTableCompositionPolicy from './LADTableCompositionPolicy';
 
 export default function plugin() {
     return function install(openmct) {
-
         openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
         openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
 
         openmct.types.addType('LadTable', {
-            name: "LAD Table",
+            name: 'LAD Table',
             creatable: true,
-            description: "Display the current value for one or more telemetry end points in a fixed table. Each row is a telemetry end point.",
+            description:
+                'Display the current value for one or more telemetry end points in a fixed table. Each row is a telemetry end point.',
             cssClass: 'icon-tabular-lad',
             initialize(domainObject) {
                 domainObject.composition = [];
@@ -40,9 +40,10 @@ export default function plugin() {
         });
 
         openmct.types.addType('LadTableSet', {
-            name: "LAD Table Set",
+            name: 'LAD Table Set',
             creatable: true,
-            description: "Group LAD Tables together into a single view with sub-headers.",
+            description:
+                'Group LAD Tables together into a single view with sub-headers.',
             cssClass: 'icon-tabular-lad-set',
             initialize(domainObject) {
                 domainObject.composition = [];

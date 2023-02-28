@@ -33,14 +33,20 @@ test.describe('Legend color in sync with plot color', () => {
 
         // navigate to plot series color palette
         await page.click('.l-browse-bar__actions__edit');
-        await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
+        await page
+            .locator('li.c-tree__item.menus-to-left .c-disclosure-triangle')
+            .click();
         await page.locator('.c-click-swatch--menu').click();
-        await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
+        await page
+            .locator('.c-palette__item[style="background: rgb(255, 166, 61);"]')
+            .click();
 
         // gets color for swatch located in legend
         const element = await page.waitForSelector('.plot-series-color-swatch');
         const color = await element.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-color');
+            return window
+                .getComputedStyle(el)
+                .getPropertyValue('background-color');
         });
 
         expect(color).toBe('rgb(255, 166, 61)');
@@ -49,7 +55,12 @@ test.describe('Legend color in sync with plot color', () => {
 
 async function saveOverlayPlot(page) {
     // save overlay plot
-    await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+    await page
+        .locator(
+            'text=Snapshot Save and Finish Editing Save and Continue Editing >> button'
+        )
+        .nth(1)
+        .click();
 
     await Promise.all([
         page.locator('text=Save and Finish Editing').click(),
@@ -58,7 +69,9 @@ async function saveOverlayPlot(page) {
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 }
 
 async function makeOverlayPlot(page) {
@@ -70,14 +83,16 @@ async function makeOverlayPlot(page) {
     await page.locator('button.c-create-button').click();
     await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
     await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle'}),
+        page.waitForNavigation({ waitUntil: 'networkidle' }),
         page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 
     // save the overlay plot
 
@@ -86,19 +101,23 @@ async function makeOverlayPlot(page) {
     // create a sinewave generator
 
     await page.locator('button.c-create-button').click();
-    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
+    await page
+        .locator('li[role="menuitem"]:has-text("Sine Wave Generator")')
+        .click();
 
     // Click OK to make generator
 
     await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle'}),
+        page.waitForNavigation({ waitUntil: 'networkidle' }),
         page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 
     // click on overlay plot
 

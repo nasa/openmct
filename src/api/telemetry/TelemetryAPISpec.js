@@ -29,22 +29,16 @@ describe('Telemetry API', () => {
 
     beforeEach(() => {
         openmct = {
-            time: jasmine.createSpyObj('timeAPI', [
-                'timeSystem',
-                'bounds'
-            ]),
-            types: jasmine.createSpyObj('typeRegistry', [
-                'get'
-            ])
+            time: jasmine.createSpyObj('timeAPI', ['timeSystem', 'bounds']),
+            types: jasmine.createSpyObj('typeRegistry', ['get'])
         };
 
-        openmct.time.timeSystem.and.returnValue({key: 'system'});
+        openmct.time.timeSystem.and.returnValue({ key: 'system' });
         openmct.time.bounds.and.returnValue({
             start: 0,
             end: 1
         });
         telemetryAPI = new TelemetryAPI(openmct);
-
     });
 
     describe('telemetry providers', () => {
@@ -90,14 +84,17 @@ describe('Telemetry API', () => {
 
             const callback = jasmine.createSpy('callback');
             const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
-            expect(telemetryProvider.supportsSubscribe)
-                .toHaveBeenCalledWith(domainObject);
+            expect(telemetryProvider.supportsSubscribe).toHaveBeenCalledWith(
+                domainObject
+            );
             expect(telemetryProvider.subscribe).not.toHaveBeenCalled();
             expect(unsubscribe).toEqual(jasmine.any(Function));
 
             await telemetryAPI.request(domainObject);
-            expect(telemetryProvider.supportsRequest)
-                .toHaveBeenCalledWith(domainObject, jasmine.any(Object));
+            expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
+                domainObject,
+                jasmine.any(Object)
+            );
             expect(telemetryProvider.request).not.toHaveBeenCalled();
         });
 
@@ -110,13 +107,18 @@ describe('Telemetry API', () => {
             const callback = jasmine.createSpy('callback');
             const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
             expect(telemetryProvider.supportsSubscribe.calls.count()).toBe(1);
-            expect(telemetryProvider.supportsSubscribe)
-                .toHaveBeenCalledWith(domainObject);
+            expect(telemetryProvider.supportsSubscribe).toHaveBeenCalledWith(
+                domainObject
+            );
             expect(telemetryProvider.subscribe.calls.count()).toBe(1);
-            expect(telemetryProvider.subscribe)
-                .toHaveBeenCalledWith(domainObject, jasmine.any(Function), undefined);
+            expect(telemetryProvider.subscribe).toHaveBeenCalledWith(
+                domainObject,
+                jasmine.any(Function),
+                undefined
+            );
 
-            const notify = telemetryProvider.subscribe.calls.mostRecent().args[1];
+            const notify =
+                telemetryProvider.subscribe.calls.mostRecent().args[1];
             notify('someValue');
             expect(callback).toHaveBeenCalledWith('someValue');
 
@@ -138,11 +140,15 @@ describe('Telemetry API', () => {
             const callback = jasmine.createSpy('callback');
             const callbacktwo = jasmine.createSpy('callback two');
             const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
-            const unsubscribetwo = telemetryAPI.subscribe(domainObject, callbacktwo);
+            const unsubscribetwo = telemetryAPI.subscribe(
+                domainObject,
+                callbacktwo
+            );
 
             expect(telemetryProvider.subscribe.calls.count()).toBe(1);
 
-            const notify = telemetryProvider.subscribe.calls.mostRecent().args[1];
+            const notify =
+                telemetryProvider.subscribe.calls.mostRecent().args[1];
             notify('someValue');
             expect(callback).toHaveBeenCalledWith('someValue');
             expect(callbacktwo).toHaveBeenCalledWith('someValue');
@@ -170,11 +176,17 @@ describe('Telemetry API', () => {
             const callbacktwo = jasmine.createSpy('callback two');
             const callbackThree = jasmine.createSpy('callback three');
             const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
-            const unsubscribeTwo = telemetryAPI.subscribe(domainObject, callbacktwo);
+            const unsubscribeTwo = telemetryAPI.subscribe(
+                domainObject,
+                callbacktwo
+            );
 
             expect(telemetryProvider.subscribe.calls.count()).toBe(1);
             unsubscribe();
-            const unsubscribeThree = telemetryAPI.subscribe(domainObject, callbackThree);
+            const unsubscribeThree = telemetryAPI.subscribe(
+                domainObject,
+                callbackThree
+            );
             // Regression test for where subscription cache was deleted on each unsubscribe, resulting in
             // superfluous additional subscriptions. If the subscription cache is being deleted on each unsubscribe,
             // then a subsequent subscribe will result in a new subscription at the provider.
@@ -204,7 +216,9 @@ describe('Telemetry API', () => {
             const notifiers = [];
             telemetryProvider.supportsSubscribe.and.returnValue(true);
             telemetryProvider.subscribe.and.callFake(function (obj, cb) {
-                const unsubFunc = jasmine.createSpy('unsubscribe ' + unsubFuncs.length);
+                const unsubFunc = jasmine.createSpy(
+                    'unsubscribe ' + unsubFuncs.length
+                );
                 unsubFuncs.push(unsubFunc);
                 notifiers.push(cb);
 
@@ -219,7 +233,10 @@ describe('Telemetry API', () => {
             const callbacktwo = jasmine.createSpy('callback two');
 
             const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
-            const unsubscribetwo = telemetryAPI.subscribe(otherDomainObject, callbacktwo);
+            const unsubscribetwo = telemetryAPI.subscribe(
+                otherDomainObject,
+                callbacktwo
+            );
 
             expect(telemetryProvider.subscribe.calls.count()).toBe(2);
 
@@ -368,30 +385,29 @@ describe('Telemetry API', () => {
         it('respects explicit priority', () => {
             mockMetadata.values = [
                 {
-                    key: "name",
-                    name: "Name",
+                    key: 'name',
+                    name: 'Name',
                     hints: {
                         priority: 2
                     }
-
                 },
                 {
-                    key: "timestamp",
-                    name: "Timestamp",
+                    key: 'timestamp',
+                    name: 'Timestamp',
                     hints: {
                         priority: 1
                     }
                 },
                 {
-                    key: "sin",
-                    name: "Sine",
+                    key: 'sin',
+                    name: 'Sine',
                     hints: {
                         priority: 4
                     }
                 },
                 {
-                    key: "cos",
-                    name: "Cosine",
+                    key: 'cos',
+                    name: 'Cosine',
                     hints: {
                         priority: 3
                     }
@@ -407,21 +423,20 @@ describe('Telemetry API', () => {
         it('if no explicit priority, defaults to order defined', () => {
             mockMetadata.values = [
                 {
-                    key: "name",
-                    name: "Name"
-
+                    key: 'name',
+                    name: 'Name'
                 },
                 {
-                    key: "timestamp",
-                    name: "Timestamp"
+                    key: 'timestamp',
+                    name: 'Timestamp'
                 },
                 {
-                    key: "sin",
-                    name: "Sine"
+                    key: 'sin',
+                    name: 'Sine'
                 },
                 {
-                    key: "cos",
-                    name: "Cosine"
+                    key: 'cos',
+                    name: 'Cosine'
                 }
             ];
             let metadata = telemetryAPI.getMetadata({});
@@ -434,34 +449,33 @@ describe('Telemetry API', () => {
         it('respects domain priority', () => {
             mockMetadata.values = [
                 {
-                    key: "name",
-                    name: "Name"
-
+                    key: 'name',
+                    name: 'Name'
                 },
                 {
-                    key: "timestamp-utc",
-                    name: "Timestamp UTC",
+                    key: 'timestamp-utc',
+                    name: 'Timestamp UTC',
                     hints: {
                         domain: 2
                     }
                 },
                 {
-                    key: "timestamp-local",
-                    name: "Timestamp Local",
+                    key: 'timestamp-local',
+                    name: 'Timestamp Local',
                     hints: {
                         domain: 1
                     }
                 },
                 {
-                    key: "sin",
-                    name: "Sine",
+                    key: 'sin',
+                    name: 'Sine',
                     hints: {
                         range: 2
                     }
                 },
                 {
-                    key: "cos",
-                    name: "Cosine",
+                    key: 'cos',
+                    name: 'Cosine',
                     hints: {
                         range: 1
                     }
@@ -476,34 +490,33 @@ describe('Telemetry API', () => {
         it('respects range priority', () => {
             mockMetadata.values = [
                 {
-                    key: "name",
-                    name: "Name"
-
+                    key: 'name',
+                    name: 'Name'
                 },
                 {
-                    key: "timestamp-utc",
-                    name: "Timestamp UTC",
+                    key: 'timestamp-utc',
+                    name: 'Timestamp UTC',
                     hints: {
                         domain: 2
                     }
                 },
                 {
-                    key: "timestamp-local",
-                    name: "Timestamp Local",
+                    key: 'timestamp-local',
+                    name: 'Timestamp Local',
                     hints: {
                         domain: 1
                     }
                 },
                 {
-                    key: "sin",
-                    name: "Sine",
+                    key: 'sin',
+                    name: 'Sine',
                     hints: {
                         range: 2
                     }
                 },
                 {
-                    key: "cos",
-                    name: "Cosine",
+                    key: 'cos',
+                    name: 'Cosine',
                     hints: {
                         range: 1
                     }
@@ -518,62 +531,59 @@ describe('Telemetry API', () => {
         it('respects priority and domain ordering', () => {
             mockMetadata.values = [
                 {
-                    key: "id",
-                    name: "ID",
+                    key: 'id',
+                    name: 'ID',
                     hints: {
                         priority: 2
                     }
                 },
                 {
-                    key: "name",
-                    name: "Name",
+                    key: 'name',
+                    name: 'Name',
                     hints: {
                         priority: 1
                     }
-
                 },
                 {
-                    key: "timestamp-utc",
-                    name: "Timestamp UTC",
+                    key: 'timestamp-utc',
+                    name: 'Timestamp UTC',
                     hints: {
                         domain: 2,
                         priority: 1
                     }
                 },
                 {
-                    key: "timestamp-local",
-                    name: "Timestamp Local",
+                    key: 'timestamp-local',
+                    name: 'Timestamp Local',
                     hints: {
                         domain: 1,
                         priority: 2
                     }
                 },
                 {
-                    key: "timestamp-pst",
-                    name: "Timestamp PST",
+                    key: 'timestamp-pst',
+                    name: 'Timestamp PST',
                     hints: {
                         domain: 3,
                         priority: 2
                     }
                 },
                 {
-                    key: "sin",
-                    name: "Sine"
+                    key: 'sin',
+                    name: 'Sine'
                 },
                 {
-                    key: "cos",
-                    name: "Cosine"
+                    key: 'cos',
+                    name: 'Cosine'
                 }
             ];
             let metadata = telemetryAPI.getMetadata({});
             let values = metadata.valuesForHints(['priority', 'domain']);
-            [
-                'timestamp-utc',
-                'timestamp-local',
-                'timestamp-pst'
-            ].forEach((key, index) => {
-                expect(values[index].key).toBe(key);
-            });
+            ['timestamp-utc', 'timestamp-local', 'timestamp-pst'].forEach(
+                (key, index) => {
+                    expect(values[index].key).toBe(key);
+                }
+            );
         });
     });
 
@@ -606,11 +616,11 @@ describe('Telemetry API', () => {
         });
 
         it('when requested, returns an instance of telemetry collection', () => {
-            const telemetryCollection = telemetryAPI.requestCollection(domainObject);
+            const telemetryCollection =
+                telemetryAPI.requestCollection(domainObject);
 
             expect(telemetryCollection).toBeInstanceOf(TelemetryCollection);
         });
-
     });
 });
 
@@ -633,7 +643,9 @@ describe('Telemetery', () => {
                 return Promise.resolve();
             }
         };
-        spyOn(telemetryAPI, 'findRequestProvider').and.returnValue(telemetryProvider);
+        spyOn(telemetryAPI, 'findRequestProvider').and.returnValue(
+            telemetryProvider
+        );
     });
 
     afterEach(() => {

@@ -2,12 +2,7 @@ define([
     '../res/ruleImageTemplate.html',
     'EventEmitter',
     '../../../utils/template/templateHelpers'
-], function (
-    ruleImageTemplate,
-    EventEmitter,
-    templateHelpers
-) {
-
+], function (ruleImageTemplate, EventEmitter, templateHelpers) {
     /**
      * Manages the Sortable List interface for reordering rules by drag and drop
      * @param {Element} container The DOM element that contains this Summary Widget's view
@@ -19,7 +14,8 @@ define([
         this.ruleOrder = ruleOrder;
         this.rulesById = rulesById;
 
-        this.imageContainer = templateHelpers.convertTemplateToHTML(ruleImageTemplate)[0];
+        this.imageContainer =
+            templateHelpers.convertTemplateToHTML(ruleImageTemplate)[0];
         this.image = this.imageContainer.querySelector('.t-drag-rule-image');
         this.draggingId = '';
         this.draggingRulePrevious = '';
@@ -31,7 +27,10 @@ define([
 
         this.container.addEventListener('mousemove', this.drag);
         document.addEventListener('mouseup', this.drop);
-        this.container.parentNode.insertBefore(this.imageContainer, this.container);
+        this.container.parentNode.insertBefore(
+            this.imageContainer,
+            this.container
+        );
         this.imageContainer.style.display = 'none';
     }
 
@@ -82,19 +81,23 @@ define([
 
         ruleOrder.forEach(function (ruleId, index) {
             const ruleDOM = rulesById[ruleId].getDOM();
-            offset = window.innerWidth - (ruleDOM.offsetLeft + ruleDOM.offsetWidth);
+            offset =
+                window.innerWidth - (ruleDOM.offsetLeft + ruleDOM.offsetWidth);
             y = offset.top;
             height = offset.height;
             if (index === 0) {
-                if (dropY < y + 7 * height / 3) {
+                if (dropY < y + (7 * height) / 3) {
                     target = ruleId;
                 }
-            } else if (index === ruleOrder.length - 1 && ruleId !== draggingId) {
+            } else if (
+                index === ruleOrder.length - 1 &&
+                ruleId !== draggingId
+            ) {
                 if (y + height / 3 < dropY) {
                     target = ruleId;
                 }
             } else {
-                if (y + height / 3 < dropY && dropY < y + 7 * height / 3) {
+                if (y + height / 3 < dropY && dropY < y + (7 * height) / 3) {
                     target = ruleId;
                 }
             }
@@ -115,7 +118,8 @@ define([
         this.imageContainer.show();
         this.imageContainer.offset({
             top: event.pageY - this.image.height() / 2,
-            left: event.pageX - this.image.querySelector('.t-grippy').style.width
+            left:
+                event.pageX - this.image.querySelector('.t-grippy').style.width
         });
     };
 
@@ -130,7 +134,9 @@ define([
             dragTarget = this.getDropLocation(event);
             this.imageContainer.offset({
                 top: event.pageY - this.image.height() / 2,
-                left: event.pageX - this.image.querySelector('.t-grippy').style.width
+                left:
+                    event.pageX -
+                    this.image.querySelector('.t-grippy').style.width
             });
             if (this.rulesById[dragTarget]) {
                 this.rulesById[dragTarget].showDragIndicator();

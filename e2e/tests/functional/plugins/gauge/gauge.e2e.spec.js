@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 /*
-* This test suite is dedicated to testing the Gauge component.
-*/
+ * This test suite is dedicated to testing the Gauge component.
+ */
 
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
@@ -36,7 +36,9 @@ test.describe('Gauge', () => {
 
     test('Can add and remove telemetry sources @unstable', async ({ page }) => {
         // Create the gauge with defaults
-        const gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge' });
+        const gauge = await createDomainObjectWithDefaults(page, {
+            type: 'Gauge'
+        });
         const editButtonLocator = page.locator('button[title="Edit"]');
         const saveButtonLocator = page.locator('button[title="Save"]');
 
@@ -51,7 +53,9 @@ test.describe('Gauge', () => {
         // the SWG appears in the elements pool
         await page.goto(gauge.url);
         await editButtonLocator.click();
-        await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
+        await expect
+            .soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`))
+            .toBeVisible();
         await saveButtonLocator.click();
         await page.locator('li[title="Save and Finish Editing"]').click();
 
@@ -63,29 +67,53 @@ test.describe('Gauge', () => {
         });
 
         // Verify that the 'Replace telemetry source' modal appears and accept it
-        await expect.soft(page.locator('text=This action will replace the current telemetry source. Do you want to continue?')).toBeVisible();
+        await expect
+            .soft(
+                page.locator(
+                    'text=This action will replace the current telemetry source. Do you want to continue?'
+                )
+            )
+            .toBeVisible();
         await page.click('text=Ok');
 
         // Navigate to the gauge and verify that the new SWG
         // appears in the elements pool and the old one is gone
         await page.goto(gauge.url);
         await editButtonLocator.click();
-        await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
-        await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
+        await expect
+            .soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`))
+            .toBeHidden();
+        await expect
+            .soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`))
+            .toBeVisible();
         await saveButtonLocator.click();
 
         // Right click on the new SWG in the elements pool and delete it
-        await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({
-            button: 'right'
-        });
-        await page.locator('li[title="Remove this object from its containing object."]').click();
+        await page
+            .locator(`#inspector-elements-tree >> text=${swg2.name}`)
+            .click({
+                button: 'right'
+            });
+        await page
+            .locator(
+                'li[title="Remove this object from its containing object."]'
+            )
+            .click();
 
         // Verify that the 'Remove object' confirmation modal appears and accept it
-        await expect.soft(page.locator('text=Warning! This action will remove this object. Are you sure you want to continue?')).toBeVisible();
+        await expect
+            .soft(
+                page.locator(
+                    'text=Warning! This action will remove this object. Are you sure you want to continue?'
+                )
+            )
+            .toBeVisible();
         await page.click('text=Ok');
 
         // Verify that the elements pool shows no elements
-        await expect(page.locator('text="No contained elements"')).toBeVisible();
+        await expect(
+            page.locator('text="No contained elements"')
+        ).toBeVisible();
     });
     test('Can create a non-default Gauge', async ({ page }) => {
         test.info().annotations.push({
@@ -98,7 +126,9 @@ test.describe('Gauge', () => {
         // Click the object specified by 'type'
         await page.click(`li[role='menuitem']:text("Gauge")`);
         // FIXME: We need better selectors for these custom form controls
-        const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
+        const displayCurrentValueSwitch = page.locator(
+            '.c-toggle-switch__slider >> nth=0'
+        );
         await displayCurrentValueSwitch.setChecked(false);
         await page.click('button[aria-label="Save"]');
 
@@ -115,7 +145,9 @@ test.describe('Gauge', () => {
         await page.click('button[title="More options"]');
         await page.click('li[role="menuitem"]:has-text("Edit Properties")');
         // FIXME: We need better selectors for these custom form controls
-        const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
+        const displayCurrentValueSwitch = page.locator(
+            '.c-toggle-switch__slider >> nth=0'
+        );
         await displayCurrentValueSwitch.setChecked(false);
         await page.click('button[aria-label="Save"]');
 

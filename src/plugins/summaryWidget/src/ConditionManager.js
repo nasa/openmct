@@ -1,15 +1,9 @@
-define ([
+define([
     './ConditionEvaluator',
     'objectUtils',
     'EventEmitter',
     'lodash'
-], function (
-    ConditionEvaluator,
-    objectUtils,
-    EventEmitter,
-    _
-) {
-
+], function (ConditionEvaluator, objectUtils, EventEmitter, _) {
     /**
      * Provides a centralized content manager for conditions in the summary widget.
      * Loads and caches composition and telemetry subscriptions, and maintains a
@@ -25,7 +19,13 @@ define ([
         this.composition = this.openmct.composition.get(this.domainObject);
         this.compositionObjs = {};
         this.eventEmitter = new EventEmitter();
-        this.supportedCallbacks = ['add', 'remove', 'load', 'metadata', 'receiveTelemetry'];
+        this.supportedCallbacks = [
+            'add',
+            'remove',
+            'load',
+            'metadata',
+            'receiveTelemetry'
+        ];
 
         this.keywordLabels = {
             any: 'any Telemetry',
@@ -46,7 +46,10 @@ define ([
         this.subscriptionCache = {};
         this.loadComplete = false;
         this.metadataLoadComplete = false;
-        this.evaluator = new ConditionEvaluator(this.subscriptionCache, this.compositionObjs);
+        this.evaluator = new ConditionEvaluator(
+            this.subscriptionCache,
+            this.compositionObjs
+        );
 
         this.composition.on('add', this.onCompositionAdd, this);
         this.composition.on('remove', this.onCompositionRemove, this);
@@ -67,7 +70,11 @@ define ([
         if (this.supportedCallbacks.includes(event)) {
             this.eventEmitter.on(event, callback, context || this);
         } else {
-            throw event + " is not a supported callback. Supported callbacks are " + this.supportedCallbacks;
+            throw (
+                event +
+                ' is not a supported callback. Supported callbacks are ' +
+                this.supportedCallbacks
+            );
         }
     };
 
@@ -88,7 +95,9 @@ define ([
         ruleOrder.forEach(function (ruleId) {
             rule = rules[ruleId];
             conditions = rule.getProperty('conditions');
-            if (self.evaluator.execute(conditions, rule.getProperty('trigger'))) {
+            if (
+                self.evaluator.execute(conditions, rule.getProperty('trigger'))
+            ) {
                 activeId = ruleId;
             }
         });
@@ -126,13 +135,25 @@ define ([
         const objectId = objectUtils.makeKeyString(object.identifier);
 
         this.telemetryTypesById[objectId] = {};
-        Object.values(this.telemetryMetadataById[objectId]).forEach(function (valueMetadata) {
+        Object.values(this.telemetryMetadataById[objectId]).forEach(function (
+            valueMetadata
+        ) {
             let type;
             if (valueMetadata.enumerations !== undefined) {
                 type = 'enum';
-            } else if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'range')) {
+            } else if (
+                Object.prototype.hasOwnProperty.call(
+                    valueMetadata.hints,
+                    'range'
+                )
+            ) {
                 type = 'number';
-            } else if (Object.prototype.hasOwnProperty.call(valueMetadata.hints, 'domain')) {
+            } else if (
+                Object.prototype.hasOwnProperty.call(
+                    valueMetadata.hints,
+                    'domain'
+                )
+            ) {
                 type = 'number';
             } else if (valueMetadata.key === 'name') {
                 type = 'string';
@@ -142,7 +163,8 @@ define ([
 
             this.telemetryTypesById[objectId][valueMetadata.key] = type;
             this.addGlobalPropertyType(valueMetadata.key, type);
-        }, this);
+        },
+        this);
     };
 
     /**
@@ -152,7 +174,10 @@ define ([
      *                   and property types parsed
      */
     ConditionManager.prototype.parseAllPropertyTypes = function () {
-        Object.values(this.compositionObjs).forEach(this.parsePropertyTypes, this);
+        Object.values(this.compositionObjs).forEach(
+            this.parsePropertyTypes,
+            this
+        );
         this.metadataLoadComplete = true;
         this.eventEmitter.emit('metadata');
     };
@@ -164,17 +189,30 @@ define ([
      * @param {datum} datum The new data from the telemetry source
      * @private
      */
-    ConditionManager.prototype.handleSubscriptionCallback = function (objId, telemetryDatum) {
-        this.subscriptionCache[objId] = this.createNormalizedDatum(objId, telemetryDatum);
+    ConditionManager.prototype.handleSubscriptionCallback = function (
+        objId,
+        telemetryDatum
+    ) {
+        this.subscriptionCache[objId] = this.createNormalizedDatum(
+            objId,
+            telemetryDatum
+        );
         this.eventEmitter.emit('receiveTelemetry');
     };
 
-    ConditionManager.prototype.createNormalizedDatum = function (objId, telemetryDatum) {
-        return Object.values(this.telemetryMetadataById[objId]).reduce((normalizedDatum, metadatum) => {
-            normalizedDatum[metadatum.key] = telemetryDatum[metadatum.source];
+    ConditionManager.prototype.createNormalizedDatum = function (
+        objId,
+        telemetryDatum
+    ) {
+        return Object.values(this.telemetryMetadataById[objId]).reduce(
+            (normalizedDatum, metadatum) => {
+                normalizedDatum[metadatum.key] =
+                    telemetryDatum[metadatum.source];
 
-            return normalizedDatum;
-        }, {});
+                return normalizedDatum;
+            },
+            {}
+        );
     };
 
     /**
@@ -195,7 +233,9 @@ define ([
             self.telemetryMetadataById[objId] = {};
 
             // FIXME: this should just update based on listener.
-            compositionKeys = self.domainObject.composition.map(objectUtils.makeKeyString);
+            compositionKeys = self.domainObject.composition.map(
+                objectUtils.makeKeyString
+            );
             if (!compositionKeys.includes(objId)) {
                 self.domainObject.composition.push(obj.identifier);
             }
@@ -207,16 +247,24 @@ define ([
             });
 
             self.subscriptionCache[objId] = {};
-            self.subscriptions[objId] = telemetryAPI.subscribe(obj, function (datum) {
-                self.handleSubscriptionCallback(objId, datum);
-            }, {});
-            telemetryAPI.request(obj, {
-                strategy: 'latest',
-                size: 1
-            })
+            self.subscriptions[objId] = telemetryAPI.subscribe(
+                obj,
+                function (datum) {
+                    self.handleSubscriptionCallback(objId, datum);
+                },
+                {}
+            );
+            telemetryAPI
+                .request(obj, {
+                    strategy: 'latest',
+                    size: 1
+                })
                 .then(function (results) {
                     if (results && results.length) {
-                        self.handleSubscriptionCallback(objId, results[results.length - 1]);
+                        self.handleSubscriptionCallback(
+                            objId,
+                            results[results.length - 1]
+                        );
                     }
                 });
 
@@ -247,8 +295,10 @@ define ([
         const objectId = objectUtils.makeKeyString(identifier);
         // FIXME: this should just update by listener.
         _.remove(this.domainObject.composition, function (id) {
-            return id.key === identifier.key
-                && id.namespace === identifier.namespace;
+            return (
+                id.key === identifier.key &&
+                id.namespace === identifier.namespace
+            );
         });
         delete this.compositionObjs[objectId];
         delete this.subscriptionCache[objectId];
@@ -317,7 +367,10 @@ define ([
      * @param {string} property The telemetry field key to retrieve the type of
      * @return {string} The type name
      */
-    ConditionManager.prototype.getTelemetryPropertyType = function (id, property) {
+    ConditionManager.prototype.getTelemetryPropertyType = function (
+        id,
+        property
+    ) {
         if (this.telemetryTypesById[id]) {
             return this.telemetryTypesById[id][property];
         }
@@ -330,8 +383,14 @@ define ([
      * @param {string} property The telemetry field key to retrieve the type of
      * @return {string} The telemetry field name
      */
-    ConditionManager.prototype.getTelemetryPropertyName = function (id, property) {
-        if (this.telemetryMetadataById[id] && this.telemetryMetadataById[id][property]) {
+    ConditionManager.prototype.getTelemetryPropertyName = function (
+        id,
+        property
+    ) {
+        if (
+            this.telemetryMetadataById[id] &&
+            this.telemetryMetadataById[id][property]
+        ) {
             return this.telemetryMetadataById[id][property].name;
         }
     };
@@ -374,7 +433,9 @@ define ([
      * listeners registered with the Open MCT APIs
      */
     ConditionManager.prototype.destroy = function () {
-        Object.values(this.subscriptions).forEach(function (unsubscribeFunction) {
+        Object.values(this.subscriptions).forEach(function (
+            unsubscribeFunction
+        ) {
             unsubscribeFunction();
         });
         this.composition.off('add', this.onCompositionAdd, this);

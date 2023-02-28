@@ -21,12 +21,12 @@
  *****************************************************************************/
 
 /*
-* This test suite is dedicated to testing the rendering and interaction of plots.
-*
-*/
+ * This test suite is dedicated to testing the rendering and interaction of plots.
+ *
+ */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults} = require('../../../../appActions');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 test.describe('Plot Integrity Testing @unstable', () => {
     let sineWaveGeneratorObject;
@@ -34,17 +34,21 @@ test.describe('Plot Integrity Testing @unstable', () => {
     test.beforeEach(async ({ page }) => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
-        sineWaveGeneratorObject = await createDomainObjectWithDefaults(page, { type: 'Sine Wave Generator' });
+        sineWaveGeneratorObject = await createDomainObjectWithDefaults(page, {
+            type: 'Sine Wave Generator'
+        });
     });
 
-    test('Plots do not re-request data when a plot is clicked', async ({ page }) => {
+    test('Plots do not re-request data when a plot is clicked', async ({
+        page
+    }) => {
         //Navigate to Sine Wave Generator
         await page.goto(sineWaveGeneratorObject.url);
         //Click on the plot canvas
         await page.locator('canvas').nth(1).click();
         //No request was made to get historical data
         const createMineFolderRequests = [];
-        page.on('request', req => {
+        page.on('request', (req) => {
             // eslint-disable-next-line playwright/no-conditional-in-test
             createMineFolderRequests.push(req);
         });
@@ -74,7 +78,9 @@ async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
     await page.locator('[title="More options"]').click();
     await page.locator('[title="Edit properties of this object."]').click();
     // Modify the infinity option to true
-    const infinityInput = page.locator('[aria-label="Include Infinity Values"]');
+    const infinityInput = page.locator(
+        '[aria-label="Include Infinity Values"]'
+    );
     await infinityInput.click();
 
     // Click OK button and wait for Navigate event
@@ -90,9 +96,11 @@ async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
     await page.goto('./#/browse/mine');
     await page.goto(sineWaveGeneratorObject.url);
 
-    await page.locator('c-progress-bar c-telemetry-table__progress-bar').waitFor({
-        state: 'hidden'
-    });
+    await page
+        .locator('c-progress-bar c-telemetry-table__progress-bar')
+        .waitFor({
+            state: 'hidden'
+        });
 
     // FIXME: The progress bar disappears on series data load, not on plot render,
     // so wait for a half a second before evaluating the canvas.
@@ -104,7 +112,9 @@ async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
  * @param {import('@playwright/test').Page} page
  */
 async function getCanvasPixelsWithData(page) {
-    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getCanvasValue', resolve));
+    const getTelemValuePromise = new Promise((resolve) =>
+        page.exposeFunction('getCanvasValue', resolve)
+    );
 
     await page.evaluate(() => {
         // The document canvas is where the plot points and lines are drawn.
@@ -119,17 +129,18 @@ async function getCanvasPixelsWithData(page) {
         let plotPixels = [];
         // Each pixel consists of four values within the ImageData.data array. The for loop iterates by multiples of four.
         // The values associated with each pixel are R (red), G (green), B (blue), and A (alpha), in that order.
-        for (let i = 0; i < imageDataValues.length;) {
+        for (let i = 0; i < imageDataValues.length; ) {
             if (imageDataValues[i] > 0) {
                 plotPixels.push({
                     startIndex: i,
                     endIndex: i + 3,
-                    value: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
+                    value: `rgb(${imageDataValues[i]}, ${
+                        imageDataValues[i + 1]
+                    }, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
                 });
             }
 
             i = i + 4;
-
         }
 
         window.getCanvasValue(plotPixels.length);

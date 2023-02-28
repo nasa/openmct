@@ -30,7 +30,12 @@ define([], function () {
      * @param openmct a reference to the openmct application
      * @param {Function} callback a callback to invoke with "last updated" timestamps
      */
-    function AutoflowTabularRowController(domainObject, data, openmct, callback) {
+    function AutoflowTabularRowController(
+        domainObject,
+        data,
+        openmct,
+        callback
+    ) {
         this.domainObject = domainObject;
         this.data = data;
         this.openmct = openmct;
@@ -39,12 +44,15 @@ define([], function () {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.ranges = this.metadata.valuesForHints(['range']);
         this.domains = this.metadata.valuesForHints(['domain']);
-        this.rangeFormatter =
-            this.openmct.telemetry.getValueFormatter(this.ranges[0]);
-        this.domainFormatter =
-            this.openmct.telemetry.getValueFormatter(this.domains[0]);
-        this.evaluator =
-            this.openmct.telemetry.limitEvaluator(this.domainObject);
+        this.rangeFormatter = this.openmct.telemetry.getValueFormatter(
+            this.ranges[0]
+        );
+        this.domainFormatter = this.openmct.telemetry.getValueFormatter(
+            this.domains[0]
+        );
+        this.evaluator = this.openmct.telemetry.limitEvaluator(
+            this.domainObject
+        );
 
         this.initialized = false;
     }
@@ -57,7 +65,7 @@ define([], function () {
         const violations = this.evaluator.evaluate(datum, this.ranges[0]);
 
         this.initialized = true;
-        this.data.classes = violations ? violations.cssClass : "";
+        this.data.classes = violations ? violations.cssClass : '';
         this.data.value = this.rangeFormatter.format(datum);
         this.callback(this.domainFormatter.format(datum));
     };
@@ -71,14 +79,13 @@ define([], function () {
             this.updateRowData.bind(this)
         );
 
-        this.openmct.telemetry.request(
-            this.domainObject,
-            { size: 1 }
-        ).then(function (history) {
-            if (!this.initialized && history.length > 0) {
-                this.updateRowData(history[history.length - 1]);
-            }
-        }.bind(this));
+        this.openmct.telemetry.request(this.domainObject, { size: 1 }).then(
+            function (history) {
+                if (!this.initialized && history.length > 0) {
+                    this.updateRowData(history[history.length - 1]);
+                }
+            }.bind(this)
+        );
     };
 
     /**

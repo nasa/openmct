@@ -20,20 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
-
+define([], function () {
     /**
      * Utility for checking if a thing is an Open MCT Identifier.
      * @private
      */
     function isIdentifier(thing) {
-        return typeof thing === 'object'
-            && Object.prototype.hasOwnProperty.call(thing, 'key')
-            && Object.prototype.hasOwnProperty.call(thing, 'namespace');
+        return (
+            typeof thing === 'object' &&
+            Object.prototype.hasOwnProperty.call(thing, 'key') &&
+            Object.prototype.hasOwnProperty.call(thing, 'namespace')
+        );
     }
 
     /**
@@ -61,9 +58,9 @@ define([
         let namespace = '';
         let key = keyString;
         for (let i = 0; i < key.length; i++) {
-            if (key[i] === "\\" && key[i + 1] === ":") {
+            if (key[i] === '\\' && key[i + 1] === ':') {
                 i++; // skip escape character.
-            } else if (key[i] === ":") {
+            } else if (key[i] === ':') {
                 key = key.slice(i + 1);
                 break;
             }
@@ -92,7 +89,7 @@ define([
      */
     function makeKeyString(identifier) {
         if (!identifier) {
-            throw new Error("Cannot make key string from null identifier");
+            throw new Error('Cannot make key string from null identifier');
         }
 
         if (isKeyString(identifier)) {
@@ -103,10 +100,9 @@ define([
             return identifier.key;
         }
 
-        return [
-            identifier.namespace.replace(/:/g, '\\:'),
-            identifier.key
-        ].join(':');
+        return [identifier.namespace.replace(/:/g, '\\:'), identifier.key].join(
+            ':'
+        );
     }
 
     /**
@@ -170,7 +166,10 @@ define([
     }
 
     function refresh(oldObject, newObject) {
-        let deleted = _.difference(Object.keys(oldObject), Object.keys(newObject));
+        let deleted = _.difference(
+            Object.keys(oldObject),
+            Object.keys(newObject)
+        );
         deleted.forEach((propertyName) => delete oldObject[propertyName]);
         Object.assign(oldObject, newObject);
     }

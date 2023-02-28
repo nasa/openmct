@@ -7,7 +7,7 @@ let appHolder;
 let resolveFunction;
 
 xdescribe('Application router utility functions', () => {
-    beforeEach(done => {
+    beforeEach((done) => {
         appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
@@ -21,7 +21,9 @@ xdescribe('Application router utility functions', () => {
 
         openmct.on('start', () => {
             resolveFunction = () => {
-                const success = window.location.hash !== null && window.location.hash !== '';
+                const success =
+                    window.location.hash !== null &&
+                    window.location.hash !== '';
                 if (success) {
                     done();
                 }

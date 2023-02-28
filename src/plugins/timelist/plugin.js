@@ -22,15 +22,16 @@
 
 import TimelistViewProvider from './TimelistViewProvider';
 import { TIMELIST_TYPE } from './constants';
-import TimeListInspectorViewProvider from "./inspector/TimeListInspectorViewProvider";
-import TimelistCompositionPolicy from "@/plugins/timelist/TimelistCompositionPolicy";
+import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider';
+import TimelistCompositionPolicy from '@/plugins/timelist/TimelistCompositionPolicy';
 
 export default function () {
     return function install(openmct) {
         openmct.types.addType(TIMELIST_TYPE, {
             name: 'Time List',
             key: TIMELIST_TYPE,
-            description: 'A configurable, time-ordered list view of activities for a compatible mission plan file.',
+            description:
+                'A configurable, time-ordered list view of activities for a compatible mission plan file.',
             creatable: true,
             cssClass: 'icon-timelist',
             initialize: function (domainObject) {
@@ -51,8 +52,11 @@ export default function () {
             }
         });
         openmct.objectViews.addProvider(new TimelistViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new TimeListInspectorViewProvider(openmct));
-        openmct.composition.addPolicy(new TimelistCompositionPolicy(openmct).allow);
-
+        openmct.inspectorViews.addProvider(
+            new TimeListInspectorViewProvider(openmct)
+        );
+        openmct.composition.addPolicy(
+            new TimelistCompositionPolicy(openmct).allow
+        );
     };
 }

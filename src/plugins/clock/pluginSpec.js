@@ -25,7 +25,7 @@ import clockPlugin from './plugin';
 
 import Vue from 'vue';
 
-describe("Clock plugin:", () => {
+describe('Clock plugin:', () => {
     let openmct;
     let clockDefinition;
     let element;
@@ -65,7 +65,7 @@ describe("Clock plugin:", () => {
         });
     }
 
-    describe("Clock view:", () => {
+    describe('Clock view:', () => {
         let clockViewProvider;
         let clockView;
         let clockViewObject;
@@ -76,7 +76,7 @@ describe("Clock plugin:", () => {
 
             clockViewObject = {
                 ...clockDomainObject,
-                id: "test-object",
+                id: 'test-object',
                 name: 'Clock',
                 configuration: {
                     baseFormat: 'YYYY/MM/DD hh:mm:ss',
@@ -85,14 +85,24 @@ describe("Clock plugin:", () => {
                 }
             };
 
-            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(clockViewObject));
-            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
+            spyOn(openmct.objects, 'get').and.returnValue(
+                Promise.resolve(clockViewObject)
+            );
+            spyOn(openmct.objects, 'save').and.returnValue(
+                Promise.resolve(true)
+            );
             spyOn(openmct.objects, 'supportsMutation').and.returnValue(true);
 
-            const applicableViews = openmct.objectViews.get(clockViewObject, [clockViewObject]);
-            clockViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'clock.view');
+            const applicableViews = openmct.objectViews.get(clockViewObject, [
+                clockViewObject
+            ]);
+            clockViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'clock.view'
+            );
 
-            mutableClockObject = await openmct.objects.getMutable(clockViewObject.identifier);
+            mutableClockObject = await openmct.objects.getMutable(
+                clockViewObject.identifier
+            );
 
             clockView = clockViewProvider.view(mutableClockObject);
             clockView.show(child);
@@ -110,24 +120,24 @@ describe("Clock plugin:", () => {
             return resetApplicationState(openmct);
         });
 
-        it("has name as Clock", () => {
+        it('has name as Clock', () => {
             expect(clockDefinition.name).toEqual('Clock');
         });
 
-        it("is creatable", () => {
+        it('is creatable', () => {
             expect(clockDefinition.creatable).toEqual(true);
         });
 
-        it("provides clock view", () => {
+        it('provides clock view', () => {
             expect(clockViewProvider).toBeDefined();
         });
 
-        it("renders clock element", () => {
+        it('renders clock element', () => {
             const clockElement = element.querySelectorAll('.c-clock');
             expect(clockElement.length).toBe(1);
         });
 
-        it("renders major elements", () => {
+        it('renders major elements', () => {
             const clockElement = element.querySelector('.c-clock');
             const timezone = clockElement.querySelector('.c-clock__timezone');
             const time = clockElement.querySelector('.c-clock__value');
@@ -137,51 +147,79 @@ describe("Clock plugin:", () => {
             expect(hasMajorElements).toBe(true);
         });
 
-        it("renders time in UTC", () => {
+        it('renders time in UTC', () => {
             const clockElement = element.querySelector('.c-clock');
-            const timezone = clockElement.querySelector('.c-clock__timezone').textContent.trim();
+            const timezone = clockElement
+                .querySelector('.c-clock__timezone')
+                .textContent.trim();
 
             expect(timezone).toBe('UTC');
         });
 
-        it("updates the 24 hour option in the configuration", (done) => {
+        it('updates the 24 hour option in the configuration', (done) => {
             expect(clockDomainObject.configuration.use24).toBe('clock12');
             const new24Option = 'clock24';
 
-            openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
-                expect(changedDomainObject.use24).toBe(new24Option);
-                done();
-            });
+            openmct.objects.observe(
+                clockViewObject,
+                'configuration',
+                (changedDomainObject) => {
+                    expect(changedDomainObject.use24).toBe(new24Option);
+                    done();
+                }
+            );
 
-            openmct.objects.mutate(clockViewObject, 'configuration.use24', new24Option);
+            openmct.objects.mutate(
+                clockViewObject,
+                'configuration.use24',
+                new24Option
+            );
         });
 
-        it("updates the timezone option in the configuration", (done) => {
+        it('updates the timezone option in the configuration', (done) => {
             expect(clockDomainObject.configuration.timezone).toBe('UTC');
             const newZone = 'CST6CDT';
 
-            openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
-                expect(changedDomainObject.timezone).toBe(newZone);
-                done();
-            });
+            openmct.objects.observe(
+                clockViewObject,
+                'configuration',
+                (changedDomainObject) => {
+                    expect(changedDomainObject.timezone).toBe(newZone);
+                    done();
+                }
+            );
 
-            openmct.objects.mutate(clockViewObject, 'configuration.timezone', newZone);
+            openmct.objects.mutate(
+                clockViewObject,
+                'configuration.timezone',
+                newZone
+            );
         });
 
-        it("updates the time format option in the configuration", (done) => {
-            expect(clockDomainObject.configuration.baseFormat).toBe('YYYY/MM/DD hh:mm:ss');
+        it('updates the time format option in the configuration', (done) => {
+            expect(clockDomainObject.configuration.baseFormat).toBe(
+                'YYYY/MM/DD hh:mm:ss'
+            );
             const newFormat = 'hh:mm:ss';
 
-            openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
-                expect(changedDomainObject.baseFormat).toBe(newFormat);
-                done();
-            });
+            openmct.objects.observe(
+                clockViewObject,
+                'configuration',
+                (changedDomainObject) => {
+                    expect(changedDomainObject.baseFormat).toBe(newFormat);
+                    done();
+                }
+            );
 
-            openmct.objects.mutate(clockViewObject, 'configuration.baseFormat', newFormat);
+            openmct.objects.mutate(
+                clockViewObject,
+                'configuration.baseFormat',
+                newFormat
+            );
         });
     });
 
-    describe("Clock Indicator view:", () => {
+    describe('Clock Indicator view:', () => {
         let clockIndicator;
 
         afterEach(() => {
@@ -200,28 +238,33 @@ describe("Clock plugin:", () => {
         it("doesn't exist", async () => {
             await setupClock(false);
 
-            clockIndicator = openmct.indicators.indicatorObjects
-                .find(indicator => indicator.key === 'clock-indicator');
+            clockIndicator = openmct.indicators.indicatorObjects.find(
+                (indicator) => indicator.key === 'clock-indicator'
+            );
 
-            const clockIndicatorMissing = clockIndicator === null || clockIndicator === undefined;
+            const clockIndicatorMissing =
+                clockIndicator === null || clockIndicator === undefined;
             expect(clockIndicatorMissing).toBe(true);
         });
 
-        it("exists", async () => {
+        it('exists', async () => {
             await setupClock(true);
 
-            clockIndicator = openmct.indicators.indicatorObjects
-                .find(indicator => indicator.key === 'clock-indicator').element;
+            clockIndicator = openmct.indicators.indicatorObjects.find(
+                (indicator) => indicator.key === 'clock-indicator'
+            ).element;
 
-            const hasClockIndicator = clockIndicator !== null && clockIndicator !== undefined;
+            const hasClockIndicator =
+                clockIndicator !== null && clockIndicator !== undefined;
             expect(hasClockIndicator).toBe(true);
         });
 
-        it("contains text", async () => {
+        it('contains text', async () => {
             await setupClock(true);
 
-            clockIndicator = openmct.indicators.indicatorObjects
-                .find(indicator => indicator.key === 'clock-indicator').element;
+            clockIndicator = openmct.indicators.indicatorObjects.find(
+                (indicator) => indicator.key === 'clock-indicator'
+            ).element;
 
             const clockIndicatorText = clockIndicator.textContent.trim();
             const textIncludesUTC = clockIndicatorText.includes('UTC');

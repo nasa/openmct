@@ -26,24 +26,28 @@ const { createDomainObjectWithDefaults } = require('../../../appActions.js');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Tree Pane', () => {
-    test('Tree pane in various states @unstable', async ({ page, theme, openmctConfig }) => {
+    test('Tree pane in various states @unstable', async ({
+        page,
+        theme,
+        openmctConfig
+    }) => {
         const { myItemsFolderName } = openmctConfig;
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
         const foo = await createDomainObjectWithDefaults(page, {
             type: 'Folder',
-            name: "Foo Folder"
+            name: 'Foo Folder'
         });
 
         const bar = await createDomainObjectWithDefaults(page, {
             type: 'Folder',
-            name: "Bar Folder",
+            name: 'Bar Folder',
             parent: foo.uuid
         });
 
         const baz = await createDomainObjectWithDefaults(page, {
             type: 'Folder',
-            name: "Baz Folder",
+            name: 'Baz Folder',
             parent: bar.uuid
         });
 
@@ -59,33 +63,63 @@ test.describe('Visual - Tree Pane', () => {
 
         const treePane = "[role=tree][aria-label='Main Tree']";
 
-        await percySnapshot(page, `Tree Pane w/ collapsed tree (theme: ${theme})`, {
-            scope: treePane
-        });
+        await percySnapshot(
+            page,
+            `Tree Pane w/ collapsed tree (theme: ${theme})`,
+            {
+                scope: treePane
+            }
+        );
 
         await expandTreePaneItemByName(page, myItemsFolderName);
 
         await page.goto(foo.url);
-        await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-        await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+        await page.dragAndDrop(
+            'role=treeitem[name=/A Clock/]',
+            '.c-object-view'
+        );
+        await page.dragAndDrop(
+            'role=treeitem[name=/Z Clock/]',
+            '.c-object-view'
+        );
         await page.goto(bar.url);
-        await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-        await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+        await page.dragAndDrop(
+            'role=treeitem[name=/A Clock/]',
+            '.c-object-view'
+        );
+        await page.dragAndDrop(
+            'role=treeitem[name=/Z Clock/]',
+            '.c-object-view'
+        );
         await page.goto(baz.url);
-        await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-        await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+        await page.dragAndDrop(
+            'role=treeitem[name=/A Clock/]',
+            '.c-object-view'
+        );
+        await page.dragAndDrop(
+            'role=treeitem[name=/Z Clock/]',
+            '.c-object-view'
+        );
 
-        await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
-            scope: treePane
-        });
+        await percySnapshot(
+            page,
+            `Tree Pane w/ single level expanded (theme: ${theme})`,
+            {
+                scope: treePane
+            }
+        );
 
         await expandTreePaneItemByName(page, foo.name);
         await expandTreePaneItemByName(page, bar.name);
         await expandTreePaneItemByName(page, baz.name);
 
-        await percySnapshot(page, `Tree Pane w/ multiple levels expanded (theme: ${theme})`, {
-            scope: treePane
-        });
+        await percySnapshot(
+            page,
+            `Tree Pane w/ multiple levels expanded (theme: ${theme})`,
+            {
+                scope: treePane
+            }
+        );
     });
 });
 
@@ -95,7 +129,9 @@ test.describe('Visual - Tree Pane', () => {
  */
 async function expandTreePaneItemByName(page, name) {
     const treePane = page.getByTestId('tree-pane');
-    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
+    const treeItem = treePane.locator(
+        `role=treeitem[expanded=false][name=/${name}/]`
+    );
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
 }

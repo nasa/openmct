@@ -107,7 +107,8 @@ class Menu extends EventEmitter {
             this.options.placement = MENU_PLACEMENT.BOTTOM_RIGHT;
         }
 
-        const menuPosition = this._getMenuPositionBasedOnPlacement(menuDimensions);
+        const menuPosition =
+            this._getMenuPositionBasedOnPlacement(menuDimensions);
 
         return this._preventMenuOverflow(menuPosition, menuDimensions);
     }
@@ -121,32 +122,36 @@ class Menu extends EventEmitter {
 
         // Adjust popup menu based on placement
         switch (this.options.placement) {
-        case MENU_PLACEMENT.TOP:
-            eventPosX = this.options.x - Math.floor(menuDimensions.width / 2);
-            eventPosY = this.options.y - menuDimensions.height;
-            break;
-        case MENU_PLACEMENT.BOTTOM:
-            eventPosX = this.options.x - Math.floor(menuDimensions.width / 2);
-            break;
-        case MENU_PLACEMENT.LEFT:
-            eventPosX = this.options.x - menuDimensions.width;
-            eventPosY = this.options.y - Math.floor(menuDimensions.height / 2);
-            break;
-        case MENU_PLACEMENT.RIGHT:
-            eventPosY = this.options.y - Math.floor(menuDimensions.height / 2);
-            break;
-        case MENU_PLACEMENT.TOP_LEFT:
-            eventPosX = this.options.x - menuDimensions.width;
-            eventPosY = this.options.y - menuDimensions.height;
-            break;
-        case MENU_PLACEMENT.TOP_RIGHT:
-            eventPosY = this.options.y - menuDimensions.height;
-            break;
-        case MENU_PLACEMENT.BOTTOM_LEFT:
-            eventPosX = this.options.x - menuDimensions.width;
-            break;
-        case MENU_PLACEMENT.BOTTOM_RIGHT:
-            break;
+            case MENU_PLACEMENT.TOP:
+                eventPosX =
+                    this.options.x - Math.floor(menuDimensions.width / 2);
+                eventPosY = this.options.y - menuDimensions.height;
+                break;
+            case MENU_PLACEMENT.BOTTOM:
+                eventPosX =
+                    this.options.x - Math.floor(menuDimensions.width / 2);
+                break;
+            case MENU_PLACEMENT.LEFT:
+                eventPosX = this.options.x - menuDimensions.width;
+                eventPosY =
+                    this.options.y - Math.floor(menuDimensions.height / 2);
+                break;
+            case MENU_PLACEMENT.RIGHT:
+                eventPosY =
+                    this.options.y - Math.floor(menuDimensions.height / 2);
+                break;
+            case MENU_PLACEMENT.TOP_LEFT:
+                eventPosX = this.options.x - menuDimensions.width;
+                eventPosY = this.options.y - menuDimensions.height;
+                break;
+            case MENU_PLACEMENT.TOP_RIGHT:
+                eventPosY = this.options.y - menuDimensions.height;
+                break;
+            case MENU_PLACEMENT.BOTTOM_LEFT:
+                eventPosX = this.options.x - menuDimensions.width;
+                break;
+            case MENU_PLACEMENT.BOTTOM_RIGHT:
+                break;
         }
 
         return {
@@ -160,8 +165,10 @@ class Menu extends EventEmitter {
      */
     _preventMenuOverflow(menuPosition, menuDimensions) {
         let { x: eventPosX, y: eventPosY } = menuPosition;
-        let overflowX = (eventPosX + menuDimensions.width) - document.body.clientWidth;
-        let overflowY = (eventPosY + menuDimensions.height) - document.body.clientHeight;
+        let overflowX =
+            eventPosX + menuDimensions.width - document.body.clientWidth;
+        let overflowY =
+            eventPosY + menuDimensions.height - document.body.clientHeight;
 
         if (overflowX > 0) {
             eventPosX = eventPosX - overflowX;

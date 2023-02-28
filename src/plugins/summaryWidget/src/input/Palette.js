@@ -3,12 +3,7 @@ define([
     '../../res/input/paletteTemplate.html',
     '../../../../utils/template/templateHelpers',
     'EventEmitter'
-], function (
-    eventHelpers,
-    paletteTemplate,
-    templateHelpers,
-    EventEmitter
-) {
+], function (eventHelpers, paletteTemplate, templateHelpers, EventEmitter) {
     /**
      * Instantiates a new Open MCT Color Palette input
      * @constructor
@@ -28,10 +23,13 @@ define([
         this.items = items;
         this.container = container;
 
-        this.domElement = templateHelpers.convertTemplateToHTML(paletteTemplate)[0];
+        this.domElement =
+            templateHelpers.convertTemplateToHTML(paletteTemplate)[0];
 
         this.itemElements = {
-            nullOption: this.domElement.querySelector('.c-palette__item-none .c-palette__item')
+            nullOption: this.domElement.querySelector(
+                '.c-palette__item-none .c-palette__item'
+            )
         };
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['change'];
@@ -53,17 +51,23 @@ define([
             const temp = document.createElement('div');
             temp.innerHTML = itemElement;
             self.itemElements[item] = temp.firstChild;
-            self.domElement.querySelector('.c-palette__items').appendChild(temp.firstChild);
+            self.domElement
+                .querySelector('.c-palette__items')
+                .appendChild(temp.firstChild);
         });
 
         self.domElement.querySelector('.c-menu').style.display = 'none';
 
         this.listenTo(window.document, 'click', this.hideMenu);
-        this.listenTo(self.domElement.querySelector('.js-button'), 'click', function (event) {
-            event.stopPropagation();
-            self.container.querySelector('.c-menu').style.display = 'none';
-            self.domElement.querySelector('.c-menu').style.display = '';
-        });
+        this.listenTo(
+            self.domElement.querySelector('.js-button'),
+            'click',
+            function (event) {
+                event.stopPropagation();
+                self.container.querySelector('.c-menu').style.display = 'none';
+                self.domElement.querySelector('.c-menu').style.display = '';
+            }
+        );
 
         /**
          * Event handler for selection of an individual palette item. Sets the
@@ -78,7 +82,7 @@ define([
             self.domElement.querySelector('.c-menu').style.display = 'none';
         }
 
-        self.domElement.querySelectorAll('.c-palette__item').forEach(item => {
+        self.domElement.querySelectorAll('.c-palette__item').forEach((item) => {
             this.listenTo(item, 'click', handleItemClick);
         });
     }
@@ -148,16 +152,22 @@ define([
      * Update the view assoicated with the currently selected item
      */
     Palette.prototype.updateSelected = function (item) {
-        this.domElement.querySelectorAll('.c-palette__item').forEach(paletteItem => {
-            if (paletteItem.classList.contains('is-selected')) {
-                paletteItem.classList.remove('is-selected');
-            }
-        });
+        this.domElement
+            .querySelectorAll('.c-palette__item')
+            .forEach((paletteItem) => {
+                if (paletteItem.classList.contains('is-selected')) {
+                    paletteItem.classList.remove('is-selected');
+                }
+            });
         this.itemElements[item].classList.add('is-selected');
         if (item === 'nullOption') {
-            this.domElement.querySelector('.t-swatch').classList.add('no-selection');
+            this.domElement
+                .querySelector('.t-swatch')
+                .classList.add('no-selection');
         } else {
-            this.domElement.querySelector('.t-swatch').classList.remove('no-selection');
+            this.domElement
+                .querySelector('.t-swatch')
+                .classList.remove('no-selection');
         }
     };
 
@@ -178,9 +188,13 @@ define([
         const elem = this.domElement.querySelector('.c-palette__item-none');
 
         if (elem.style.display === 'none') {
-            this.domElement.querySelector('.c-palette__item-none').style.display = 'flex';
+            this.domElement.querySelector(
+                '.c-palette__item-none'
+            ).style.display = 'flex';
         } else {
-            this.domElement.querySelector('.c-palette__item-none').style.display = 'none';
+            this.domElement.querySelector(
+                '.c-palette__item-none'
+            ).style.display = 'none';
         }
     };
 

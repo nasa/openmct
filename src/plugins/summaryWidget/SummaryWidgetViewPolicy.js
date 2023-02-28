@@ -20,18 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
-
+define([], function () {
     /**
      * Policy determining which views can apply to summary widget.  Disables
      * any view other than normal summary widget view.
      */
-    function SummaryWidgetViewPolicy() {
-    }
+    function SummaryWidgetViewPolicy() {}
 
     SummaryWidgetViewPolicy.prototype.allow = function (view, domainObject) {
         if (domainObject.getModel().type === 'summary-widget') {
@@ -39,7 +33,6 @@ define([
         }
 
         return true;
-
     };
 
     return SummaryWidgetViewPolicy;

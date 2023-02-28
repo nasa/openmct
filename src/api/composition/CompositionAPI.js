@@ -75,7 +75,7 @@ export default class CompositionAPI {
      * @returns {CompositionCollection}
      */
     get(domainObject) {
-        const provider = this.registry.find(p => {
+        const provider = this.registry.find((p) => {
             return p.appliesTo(domainObject);
         });
 
@@ -83,7 +83,11 @@ export default class CompositionAPI {
             return;
         }
 
-        return new CompositionCollection(domainObject, provider, this.publicAPI);
+        return new CompositionCollection(
+            domainObject,
+            provider,
+            this.publicAPI
+        );
     }
     /**
      * A composition policy is a function which either allows or disallows
@@ -141,4 +145,3 @@ export default class CompositionAPI {
         return this.get(domainObject) !== undefined;
     }
 }
-

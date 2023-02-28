@@ -36,7 +36,10 @@ export default function StaticRootPlugin(options) {
                 return response.json();
             })
             .then(function (importData) {
-                cachedProvider = new StaticModelProvider(importData, rootIdentifier);
+                cachedProvider = new StaticModelProvider(
+                    importData,
+                    rootIdentifier
+                );
 
                 return cachedProvider;
             });

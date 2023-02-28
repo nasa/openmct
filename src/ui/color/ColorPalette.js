@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 /**
-     * A color palette stores a set of colors and allows for different
-     * methods of color allocation.
-     *
-     * @constructor
-     */
+ * A color palette stores a set of colors and allows for different
+ * methods of color allocation.
+ *
+ * @constructor
+ */
 import { isDefaultColor, COLOR_PALETTE } from './ColorHelper';
 import Color from './Color';
 
@@ -36,9 +36,9 @@ import Color from './Color';
  * @constructor
  */
 function ColorPalette() {
-    const allColors = this.allColors = COLOR_PALETTE.map(function (color) {
+    const allColors = (this.allColors = COLOR_PALETTE.map(function (color) {
         return new Color(color);
-    });
+    }));
     this.colorGroups = [[], [], []];
     for (let i = 0; i < allColors.length; i++) {
         this.colorGroups[i % 3].push(allColors[i]);

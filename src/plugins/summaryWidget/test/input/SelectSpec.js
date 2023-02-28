@@ -6,7 +6,11 @@ define(['../../src/input/Select'], function (Select) {
         let callbackSpy2;
         beforeEach(function () {
             select = new Select();
-            testOptions = [['item1', 'Item 1'], ['item2', 'Item 2'], ['item3', 'Item 3']];
+            testOptions = [
+                ['item1', 'Item 1'],
+                ['item2', 'Item 2'],
+                ['item3', 'Item 3']
+            ];
             select.setOptions(testOptions);
             callbackSpy1 = jasmine.createSpy('callbackSpy1');
             callbackSpy2 = jasmine.createSpy('callbackSpy2');
@@ -24,7 +28,10 @@ define(['../../src/input/Select'], function (Select) {
         });
 
         it('allows populating with a new set of options', function () {
-            select.setOptions([['newItem1', 'Item 1'], ['newItem2', 'Item 2']]);
+            select.setOptions([
+                ['newItem1', 'Item 1'],
+                ['newItem2', 'Item 2']
+            ]);
             select.setSelected('newItem1');
             expect(select.getSelected()).toEqual('newItem1');
         });

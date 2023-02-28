@@ -43,7 +43,7 @@ async function enterTextEntry(page, text) {
 async function dragAndDropEmbed(page, notebookObject) {
     // Create example telemetry object
     const swg = await createDomainObjectWithDefaults(page, {
-        type: "Sine Wave Generator"
+        type: 'Sine Wave Generator'
     });
     // Navigate to notebook
     await page.goto(notebookObject.url);

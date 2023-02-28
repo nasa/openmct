@@ -64,7 +64,10 @@ const genUuid = require('uuid').v4;
  * @param {CreateObjectOptions} options
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+async function createDomainObjectWithDefaults(
+    page,
+    { type, name, parent = 'mine' }
+) {
     if (!name) {
         name = `${type}:${genUuid()}`;
     }
@@ -83,8 +86,10 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     await page.click(`li[role='menuitem']:text("${type}")`);
 
     // Modify the name input field of the domain object to accept 'name'
-    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-    await nameInput.fill("");
+    const nameInput = page.locator(
+        'form[name="mctForm"] .first input[type="text"]'
+    );
+    await nameInput.fill('');
     await nameInput.fill(name);
 
     if (page.testNotes) {
@@ -147,7 +152,9 @@ async function expandTreePaneItemByName(page, name) {
     const treePane = page.getByRole('tree', {
         name: 'Main Tree'
     });
-    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
+    const treeItem = treePane.locator(
+        `role=treeitem[expanded=false][name=/${name}/]`
+    );
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
 }
@@ -173,8 +180,10 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 
     // Modify the name input field of the domain object to accept 'name'
     if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
+        const nameInput = page.locator(
+            'form[name="mctForm"] .first input[type="text"]'
+        );
+        await nameInput.fill('');
         await nameInput.fill(name);
     }
 
@@ -206,12 +215,12 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 }
 
 /**
-* Open the given `domainObject`'s context menu from the object tree.
-* Expands the path to the object and scrolls to it if necessary.
-*
-* @param {import('@playwright/test').Page} page
-* @param {string} url the url to the object
-*/
+ * Open the given `domainObject`'s context menu from the object tree.
+ * Expands the path to the object and scrolls to it if necessary.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url the url to the object
+ */
 async function openObjectTreeContextMenu(page, url) {
     await page.goto(url);
     await page.click('button[title="Show selected item in tree"]');
@@ -225,15 +234,17 @@ async function openObjectTreeContextMenu(page, url) {
  * @param {import('@playwright/test').Page} page
  * @param {"Main Tree" | "Create Modal Tree"} [treeName="Main Tree"]
  */
-async function expandEntireTree(page, treeName = "Main Tree") {
+async function expandEntireTree(page, treeName = 'Main Tree') {
     const treeLocator = page.getByRole('tree', {
         name: treeName
     });
-    const collapsedTreeItems = treeLocator.getByRole('treeitem', {
-        expanded: false
-    }).locator('span.c-disclosure-triangle.is-enabled');
+    const collapsedTreeItems = treeLocator
+        .getByRole('treeitem', {
+            expanded: false
+        })
+        .locator('span.c-disclosure-triangle.is-enabled');
 
-    while (await collapsedTreeItems.count() > 0) {
+    while ((await collapsedTreeItems.count()) > 0) {
         await collapsedTreeItems.nth(0).click();
 
         // FIXME: Replace hard wait with something event-driven.
@@ -251,7 +262,8 @@ async function expandEntireTree(page, treeName = "Main Tree") {
  * @returns {Promise<string>} the uuid of the focused object
  */
 async function getFocusedObjectUuid(page) {
-    const UUIDv4Regexp = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi;
+    const UUIDv4Regexp =
+        /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi;
     const focusedObjectUuid = await page.evaluate((regexp) => {
         return window.location.href.split('?')[0].match(regexp).at(-1);
     }, UUIDv4Regexp);
@@ -272,9 +284,14 @@ async function getFocusedObjectUuid(page) {
 async function getHashUrlToDomainObject(page, uuid) {
     const hashUrl = await page.evaluate(async (objectUuid) => {
         const path = await window.openmct.objects.getOriginalPath(objectUuid);
-        let url = './#/browse/' + [...path].reverse()
-            .map((object) => window.openmct.objects.makeKeyString(object.identifier))
-            .join('/');
+        let url =
+            './#/browse/' +
+            [...path]
+                .reverse()
+                .map((object) =>
+                    window.openmct.objects.makeKeyString(object.identifier)
+                )
+                .join('/');
 
         // Drop the vestigial '/ROOT' if it exists
         if (url.includes('/ROOT')) {
@@ -344,7 +361,11 @@ async function setRealTimeMode(page) {
  * @param {OffsetValues} offset
  * @param {import('@playwright/test').Locator} offsetButton
  */
-async function setTimeConductorOffset(page, {hours, mins, secs}, offsetButton) {
+async function setTimeConductorOffset(
+    page,
+    { hours, mins, secs },
+    offsetButton
+) {
     await offsetButton.click();
 
     if (hours) {
@@ -369,7 +390,9 @@ async function setTimeConductorOffset(page, {hours, mins, secs}, offsetButton) {
  * @param {OffsetValues} offset
  */
 async function setStartOffset(page, offset) {
-    const startOffsetButton = page.locator('data-testid=conductor-start-offset-button');
+    const startOffsetButton = page.locator(
+        'data-testid=conductor-start-offset-button'
+    );
     await setTimeConductorOffset(page, offset, startOffsetButton);
 }
 
@@ -379,7 +402,9 @@ async function setStartOffset(page, offset) {
  * @param {OffsetValues} offset
  */
 async function setEndOffset(page, offset) {
-    const endOffsetButton = page.locator('data-testid=conductor-end-offset-button');
+    const endOffsetButton = page.locator(
+        'data-testid=conductor-end-offset-button'
+    );
     await setTimeConductorOffset(page, offset, endOffsetButton);
 }
 

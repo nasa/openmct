@@ -27,7 +27,10 @@ necessarily be used for reference when writing new tests in this area.
 
 const { test, expect } = require('../../../../pluginFixtures');
 test.describe('Log plot tests', () => {
-    test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page, openmctConfig }) => {
+    test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({
+        page,
+        openmctConfig
+    }) => {
         const { myItemsFolderName } = openmctConfig;
 
         //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
@@ -48,22 +51,25 @@ test.describe('Log plot tests', () => {
 
     // Leaving test as 'TODO' for now.
     // NOTE: Not eligible for community contributions.
-    test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
+    test.fixme(
+        'Verify that log mode option is reflected in import/export JSON',
+        async ({ page, openmctConfig }) => {
+            const { myItemsFolderName } = openmctConfig;
 
-        await makeOverlayPlot(page, myItemsFolderName);
-        await enableEditMode(page);
-        await enableLogMode(page);
-        await saveOverlayPlot(page);
+            await makeOverlayPlot(page, myItemsFolderName);
+            await enableEditMode(page);
+            await enableLogMode(page);
+            await saveOverlayPlot(page);
 
-        // TODO ...export, delete the overlay, then import it...
+            // TODO ...export, delete the overlay, then import it...
 
-        //await testLogTicks(page);
+            //await testLogTicks(page);
 
-        // TODO, the plot is slightly at different position that in the other test, so this fails.
-        // ...We can fix it by copying all steps from the first test...
-        // await testLogPlotPixels(page);
-    });
+            // TODO, the plot is slightly at different position that in the other test, so this fails.
+            // ...We can fix it by copying all steps from the first test...
+            // await testLogPlotPixels(page);
+        }
+    );
 });
 
 /**
@@ -90,14 +96,16 @@ async function makeOverlayPlot(page, myItemsFolderName) {
     await page.locator('button.c-create-button').click();
     await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
     await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle'}),
+        page.waitForNavigation({ waitUntil: 'networkidle' }),
         page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 
     // save the overlay plot
 
@@ -106,34 +114,65 @@ async function makeOverlayPlot(page, myItemsFolderName) {
     // create a sinewave generator
 
     await page.locator('button.c-create-button').click();
-    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
+    await page
+        .locator('li[role="menuitem"]:has-text("Sine Wave Generator")')
+        .click();
 
     // set amplitude to 6, offset 4, period 2
 
-    await page.locator('div:nth-child(5) .c-form-row__controls .form-control .field input').click();
-    await page.locator('div:nth-child(5) .c-form-row__controls .form-control .field input').fill('6');
+    await page
+        .locator(
+            'div:nth-child(5) .c-form-row__controls .form-control .field input'
+        )
+        .click();
+    await page
+        .locator(
+            'div:nth-child(5) .c-form-row__controls .form-control .field input'
+        )
+        .fill('6');
 
-    await page.locator('div:nth-child(6) .c-form-row__controls .form-control .field input').click();
-    await page.locator('div:nth-child(6) .c-form-row__controls .form-control .field input').fill('4');
+    await page
+        .locator(
+            'div:nth-child(6) .c-form-row__controls .form-control .field input'
+        )
+        .click();
+    await page
+        .locator(
+            'div:nth-child(6) .c-form-row__controls .form-control .field input'
+        )
+        .fill('4');
 
-    await page.locator('div:nth-child(7) .c-form-row__controls .form-control .field input').click();
-    await page.locator('div:nth-child(7) .c-form-row__controls .form-control .field input').fill('2');
+    await page
+        .locator(
+            'div:nth-child(7) .c-form-row__controls .form-control .field input'
+        )
+        .click();
+    await page
+        .locator(
+            'div:nth-child(7) .c-form-row__controls .form-control .field input'
+        )
+        .fill('2');
 
     // Click OK to make generator
 
     await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle'}),
+        page.waitForNavigation({ waitUntil: 'networkidle' }),
         page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 
     // click on overlay plot
 
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
+    await page
+        .locator(`text=Open MCT ${myItemsFolderName} >> span`)
+        .nth(3)
+        .click();
     await Promise.all([
         page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()
@@ -177,8 +216,17 @@ async function testLogTicks(page) {
  */
 async function enableEditMode(page) {
     // turn on edit mode
-    await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
-    await expect(await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1)).toBeVisible();
+    await page
+        .locator('text=Unnamed Overlay Plot Snapshot >> button')
+        .nth(3)
+        .click();
+    await expect(
+        await page
+            .locator(
+                'text=Snapshot Save and Finish Editing Save and Continue Editing >> button'
+            )
+            .nth(1)
+    ).toBeVisible();
 }
 
 /**
@@ -186,7 +234,11 @@ async function enableEditMode(page) {
  */
 async function enableLogMode(page) {
     // turn on log mode
-    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').check();
+    await page
+        .getByRole('listitem')
+        .filter({ hasText: 'Log mode' })
+        .getByRole('checkbox')
+        .check();
     // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
 }
 
@@ -195,7 +247,11 @@ async function enableLogMode(page) {
  */
 async function disableLogMode(page) {
     // turn off log mode
-    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').uncheck();
+    await page
+        .getByRole('listitem')
+        .filter({ hasText: 'Log mode' })
+        .getByRole('checkbox')
+        .uncheck();
 }
 
 /**
@@ -203,7 +259,12 @@ async function disableLogMode(page) {
  */
 async function saveOverlayPlot(page) {
     // save overlay plot
-    await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+    await page
+        .locator(
+            'text=Snapshot Save and Finish Editing Save and Continue Editing >> button'
+        )
+        .nth(1)
+        .click();
 
     await Promise.all([
         page.locator('text=Save and Finish Editing').click(),
@@ -212,7 +273,9 @@ async function saveOverlayPlot(page) {
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
+    await page.waitForSelector('.c-message-banner__message', {
+        state: 'detached'
+    });
 }
 
 /**
@@ -270,7 +333,12 @@ async function testLogPlotPixels(page) {
 
             // #43b0ffff <-- openmct cyanish-blue with 100% opacity
             // if (data[0] !== 0x43 || data[1] !== 0xb0 || data[2] !== 0xff || data[3] !== 0xff) {
-            if (data[0] === 0 && data[1] === 0 && data[2] === 0 && data[3] === 0) {
+            if (
+                data[0] === 0 &&
+                data[1] === 0 &&
+                data[2] === 0 &&
+                data[3] === 0
+            ) {
                 // If any pixel is empty, it means we didn't hit a plot point.
                 return false;
             }

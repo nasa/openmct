@@ -21,12 +21,9 @@
  *****************************************************************************/
 import FolderPlugin from './plugin.js';
 import Vue from 'vue';
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("The folder plugin", () => {
+describe('The folder plugin', () => {
     let openmct;
     let folderPlugin;
 
@@ -43,23 +40,23 @@ describe("The folder plugin", () => {
         return resetApplicationState(openmct);
     });
 
-    describe("the folder object type", () => {
+    describe('the folder object type', () => {
         let folderType;
 
         beforeEach(() => {
             folderType = openmct.types.get('folder');
         });
 
-        it("is installed by the plugin", () => {
+        it('is installed by the plugin', () => {
             expect(folderType).toBeDefined();
         });
 
-        it("is user creatable", () => {
+        it('is user creatable', () => {
             expect(folderType.definition.creatable).toBe(true);
         });
     });
 
-    describe("the folder grid view", () => {
+    describe('the folder grid view', () => {
         let gridViewProvider;
         let listViewProvider;
         let folderObject;
@@ -68,8 +65,8 @@ describe("The folder plugin", () => {
         let childDiv;
 
         beforeEach(() => {
-            parentDiv = document.createElement("div");
-            childDiv = document.createElement("div");
+            parentDiv = document.createElement('div');
+            childDiv = document.createElement('div');
             parentDiv.appendChild(childDiv);
 
             folderObject = {
@@ -77,34 +74,41 @@ describe("The folder plugin", () => {
                     namespace: 'test-namespace',
                     key: 'folder-object'
                 },
-                name: "A folder!",
-                type: "folder",
+                name: 'A folder!',
+                type: 'folder',
                 composition: [
                     {
                         namespace: 'test-namespace',
                         key: 'child-object-1'
-                    }, {
+                    },
+                    {
                         namespace: 'test-namespace',
                         key: 'child-object-2'
-                    }, {
+                    },
+                    {
                         namespace: 'test-namespace',
                         key: 'child-object-3'
-                    }, {
+                    },
+                    {
                         namespace: 'test-namespace',
                         key: 'child-object-4'
                     }
                 ]
             };
 
-            gridViewProvider = openmct.objectViews.get(folderObject, [folderObject]).find((view) => view.key === 'grid');
-            listViewProvider = openmct.objectViews.get(folderObject, [folderObject]).find((view) => view.key === 'list-view');
+            gridViewProvider = openmct.objectViews
+                .get(folderObject, [folderObject])
+                .find((view) => view.key === 'grid');
+            listViewProvider = openmct.objectViews
+                .get(folderObject, [folderObject])
+                .find((view) => view.key === 'list-view');
 
-            const fakeCompositionCollection = jasmine.createSpyObj('compositionCollection', [
-                'on',
-                'load'
-            ]);
+            const fakeCompositionCollection = jasmine.createSpyObj(
+                'compositionCollection',
+                ['on', 'load']
+            );
             fakeCompositionCollection.on.and.callFake((eventName, callback) => {
-                if (eventName === "add") {
+                if (eventName === 'add') {
                     addCallback = callback;
                 }
             });
@@ -112,42 +116,49 @@ describe("The folder plugin", () => {
                 folderObject.composition.forEach((identifier) => {
                     addCallback({
                         identifier,
-                        type: "folder"
+                        type: 'folder'
                     });
                 });
             });
-            spyOn(openmct.composition, "get").and.returnValue(fakeCompositionCollection);
+            spyOn(openmct.composition, 'get').and.returnValue(
+                fakeCompositionCollection
+            );
         });
 
-        describe("the grid view", () => {
-            it("is installed by the plugin and is applicable to the folder type", () => {
+        describe('the grid view', () => {
+            it('is installed by the plugin and is applicable to the folder type', () => {
                 expect(gridViewProvider).toBeDefined();
             });
             it("renders each item contained in the folder's composition", async () => {
-                let folderView = gridViewProvider.view(folderObject, [folderObject]);
+                let folderView = gridViewProvider.view(folderObject, [
+                    folderObject
+                ]);
                 folderView.show(childDiv, true);
 
                 await Vue.nextTick();
 
-                let children = parentDiv.getElementsByClassName("js-folder-child");
+                let children =
+                    parentDiv.getElementsByClassName('js-folder-child');
                 expect(children.length).toBe(folderObject.composition.length);
             });
         });
 
-        describe("the list view", () => {
-            it("installs a list view for the folder type", () => {
+        describe('the list view', () => {
+            it('installs a list view for the folder type', () => {
                 expect(listViewProvider).toBeDefined();
             });
             it("renders each item contained in the folder's composition", async () => {
-                let folderView = listViewProvider.view(folderObject, [folderObject]);
+                let folderView = listViewProvider.view(folderObject, [
+                    folderObject
+                ]);
                 folderView.show(childDiv, true);
 
                 await Vue.nextTick();
 
-                let children = parentDiv.getElementsByClassName("js-folder-child");
+                let children =
+                    parentDiv.getElementsByClassName('js-folder-child');
                 expect(children.length).toBe(folderObject.composition.length);
             });
         });
     });
-
 });

@@ -21,13 +21,11 @@
  *****************************************************************************/
 
 export default function timelineInterceptor(openmct) {
-
     openmct.objects.addGetInterceptor({
         appliesTo: (identifier, domainObject) => {
             return domainObject && domainObject.type === 'time-strip';
         },
         invoke: (identifier, object) => {
-
             if (object && object.configuration === undefined) {
                 object.configuration = {
                     useIndependentTime: true

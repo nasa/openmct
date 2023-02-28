@@ -49,7 +49,6 @@
         };
 
         port.start();
-
     };
 
     self.onerror = function (error) {
@@ -58,14 +57,16 @@
     };
 
     function indexAnnotation(objectToIndex, model) {
-        Object.keys(model.targets).forEach(targetID => {
+        Object.keys(model.targets).forEach((targetID) => {
             if (!indexedAnnotationsByDomainObject[targetID]) {
                 indexedAnnotationsByDomainObject[targetID] = [];
             }
 
             objectToIndex.targets = model.targets;
             objectToIndex.tags = model.tags;
-            const existsInIndex = indexedAnnotationsByDomainObject[targetID].some(indexedObject => {
+            const existsInIndex = indexedAnnotationsByDomainObject[
+                targetID
+            ].some((indexedObject) => {
                 return indexedObject.keyString === objectToIndex.keyString;
             });
 
@@ -77,30 +78,37 @@
 
     function indexTags(keyString, objectToIndex, model) {
         // add new tags
-        model.tags.forEach(tagID => {
+        model.tags.forEach((tagID) => {
             if (!indexedAnnotationsByTag[tagID]) {
                 indexedAnnotationsByTag[tagID] = [];
             }
 
-            const existsInIndex = indexedAnnotationsByTag[tagID].some(indexedObject => {
-                return indexedObject.keyString === objectToIndex.keyString;
-            });
+            const existsInIndex = indexedAnnotationsByTag[tagID].some(
+                (indexedObject) => {
+                    return indexedObject.keyString === objectToIndex.keyString;
+                }
+            );
 
             if (!existsInIndex) {
                 indexedAnnotationsByTag[tagID].push(objectToIndex);
             }
-
         });
         // remove old tags
-        const tagsToRemoveFromIndex = Object.keys(indexedAnnotationsByTag).filter(indexedTag => {
-            return !(model.tags.includes(indexedTag));
+        const tagsToRemoveFromIndex = Object.keys(
+            indexedAnnotationsByTag
+        ).filter((indexedTag) => {
+            return !model.tags.includes(indexedTag);
         });
-        tagsToRemoveFromIndex.forEach(tagToRemoveFromIndex => {
-            indexedAnnotationsByTag[tagToRemoveFromIndex] = indexedAnnotationsByTag[tagToRemoveFromIndex].filter(indexedAnnotation => {
-                const shouldKeep = indexedAnnotation.keyString !== keyString;
+        tagsToRemoveFromIndex.forEach((tagToRemoveFromIndex) => {
+            indexedAnnotationsByTag[tagToRemoveFromIndex] =
+                indexedAnnotationsByTag[tagToRemoveFromIndex].filter(
+                    (indexedAnnotation) => {
+                        const shouldKeep =
+                            indexedAnnotation.keyString !== keyString;
 
-                return shouldKeep;
-            });
+                        return shouldKeep;
+                    }
+                );
         });
     }
 
@@ -110,7 +118,7 @@
             name: model.name,
             keyString
         };
-        if (model && (model.type === 'annotation')) {
+        if (model && model.type === 'annotation') {
             if (model.targets) {
                 indexAnnotation(objectToIndex, model);
             }
@@ -142,13 +150,13 @@
             queryId: data.queryId
         };
 
-        results = Object.values(indexedDomainObjects).filter((indexedItem) => {
-            return indexedItem.name.toLowerCase().includes(input);
-        }) || [];
+        results =
+            Object.values(indexedDomainObjects).filter((indexedItem) => {
+                return indexedItem.name.toLowerCase().includes(input);
+            }) || [];
 
         message.total = results.length;
-        message.results = results
-            .slice(0, data.maxResults);
+        message.results = results.slice(0, data.maxResults);
 
         return message;
     }
@@ -165,8 +173,7 @@
         results = indexedAnnotationsByDomainObject[data.input] || [];
 
         message.total = results.length;
-        message.results = results
-            .slice(0, data.maxResults);
+        message.results = results.slice(0, data.maxResults);
 
         return message;
     }
@@ -181,13 +188,19 @@
         };
 
         if (data.input) {
-            data.input.forEach(matchingTag => {
-                const matchingAnnotations = indexedAnnotationsByTag[matchingTag];
+            data.input.forEach((matchingTag) => {
+                const matchingAnnotations =
+                    indexedAnnotationsByTag[matchingTag];
                 if (matchingAnnotations) {
-                    matchingAnnotations.forEach(matchingAnnotation => {
-                        const existsInResults = results.some(indexedObject => {
-                            return matchingAnnotation.keyString === indexedObject.keyString;
-                        });
+                    matchingAnnotations.forEach((matchingAnnotation) => {
+                        const existsInResults = results.some(
+                            (indexedObject) => {
+                                return (
+                                    matchingAnnotation.keyString ===
+                                    indexedObject.keyString
+                                );
+                            }
+                        );
                         if (!existsInResults) {
                             results.push(matchingAnnotation);
                         }
@@ -197,9 +210,8 @@
         }
 
         message.total = results.length;
-        message.results = results
-            .slice(0, data.maxResults);
+        message.results = results.slice(0, data.maxResults);
 
         return message;
     }
-}());
+})();

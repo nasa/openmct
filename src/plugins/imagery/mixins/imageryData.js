@@ -36,25 +36,38 @@ export default {
         this.openmct.objectViews.on('clearData', this.dataCleared);
 
         // Get metadata and formatters
-        this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.keyString = this.openmct.objects.makeKeyString(
+            this.domainObject.identifier
+        );
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
 
-        this.imageMetadataValue = { ...this.metadata.valuesForHints([IMAGE_HINT_KEY])[0] };
+        this.imageMetadataValue = {
+            ...this.metadata.valuesForHints([IMAGE_HINT_KEY])[0]
+        };
         this.imageFormatter = this.getFormatter(this.imageMetadataValue.key);
 
-        this.imageThumbnailMetadataValue = { ...this.metadata.valuesForHints([IMAGE_THUMBNAIL_HINT_KEY])[0] };
+        this.imageThumbnailMetadataValue = {
+            ...this.metadata.valuesForHints([IMAGE_THUMBNAIL_HINT_KEY])[0]
+        };
         this.imageThumbnailFormatter = this.imageThumbnailMetadataValue.key
             ? this.getFormatter(this.imageThumbnailMetadataValue.key)
             : null;
 
-        this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-        this.imageDownloadNameMetadataValue = { ...this.metadata.valuesForHints([IMAGE_DOWNLOAD_NAME_HINT_KEY])[0]};
+        this.durationFormatter = this.getFormatter(
+            this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
+        );
+        this.imageDownloadNameMetadataValue = {
+            ...this.metadata.valuesForHints([IMAGE_DOWNLOAD_NAME_HINT_KEY])[0]
+        };
 
         // initialize
         this.timeKey = this.timeSystem.key;
         this.timeFormatter = this.getFormatter(this.timeKey);
 
-        this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {});
+        this.telemetryCollection = this.openmct.telemetry.requestCollection(
+            this.domainObject,
+            {}
+        );
         this.telemetryCollection.on('add', this.dataAdded);
         this.telemetryCollection.on('remove', this.dataRemoved);
         this.telemetryCollection.on('clear', this.dataCleared);
@@ -77,11 +90,13 @@ export default {
     },
     methods: {
         dataAdded(addedItems, addedItemIndices) {
-            const normalizedDataToAdd = addedItems.map(datum => this.normalizeDatum(datum));
+            const normalizedDataToAdd = addedItems.map((datum) =>
+                this.normalizeDatum(datum)
+            );
             let newImageHistory = this.imageHistory.slice();
-            normalizedDataToAdd.forEach(((datum, index) => {
+            normalizedDataToAdd.forEach((datum, index) => {
                 newImageHistory.splice(addedItemIndices[index] ?? -1, 0, datum);
-            }));
+            });
             //Assign just once so imageHistory watchers don't get called too often
             this.imageHistory = newImageHistory;
         },
@@ -89,12 +104,14 @@ export default {
             this.imageHistory = [];
         },
         dataRemoved(dataToRemove) {
-            this.imageHistory = this.imageHistory.filter(existingDatum => {
-                const shouldKeep = dataToRemove.some(datumToRemove => {
-                    const existingDatumTimestamp = this.parseTime(existingDatum);
-                    const datumToRemoveTimestamp = this.parseTime(datumToRemove);
+            this.imageHistory = this.imageHistory.filter((existingDatum) => {
+                const shouldKeep = dataToRemove.some((datumToRemove) => {
+                    const existingDatumTimestamp =
+                        this.parseTime(existingDatum);
+                    const datumToRemoveTimestamp =
+                        this.parseTime(datumToRemove);
 
-                    return (existingDatumTimestamp !== datumToRemoveTimestamp);
+                    return existingDatumTimestamp !== datumToRemoveTimestamp;
                 });
 
                 return shouldKeep;
@@ -102,7 +119,9 @@ export default {
         },
         setDataTimeContext() {
             this.stopFollowingDataTimeContext();
-            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.timeContext = this.openmct.time.getContextForView(
+                this.objectPath
+            );
             this.timeContext.on('bounds', this.boundsChange);
             this.boundsChange(this.timeContext.bounds());
             this.timeContext.on('timeSystem', this.timeSystemChange);
@@ -135,7 +154,7 @@ export default {
             const dateTimeStr = this.timeFormatter.format(datum);
 
             // Replace ISO "T" with a space to allow wrapping
-            return dateTimeStr.replace("T", " ");
+            return dateTimeStr.replace('T', ' ');
         },
         getImageDownloadName(datum) {
             let imageDownloadName = '';
@@ -164,7 +183,9 @@ export default {
             this.timeSystem = this.timeContext.timeSystem();
             this.timeKey = this.timeSystem.key;
             this.timeFormatter = this.getFormatter(this.timeKey);
-            this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+            this.durationFormatter = this.getFormatter(
+                this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
+            );
         },
         normalizeDatum(datum) {
             const formattedTime = this.formatTime(datum);
@@ -184,7 +205,8 @@ export default {
         },
         getFormatter(key) {
             const metadataValue = this.metadata.value(key) || { format: key };
-            const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+            const valueFormatter =
+                this.openmct.telemetry.getValueFormatter(metadataValue);
 
             return valueFormatter;
         }

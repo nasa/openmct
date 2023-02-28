@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { toggleClass } from "@/utils/template/templateHelpers";
+import { toggleClass } from '@/utils/template/templateHelpers';
 
 const CLASS_AS_NON_EMPTY_STRING = 'class-to-toggle';
 const CLASS_AS_EMPTY_STRING = '';
@@ -35,18 +35,26 @@ describe('toggleClass', () => {
         const NOT_A_DOM_NODE = 'not-a-dom-node';
         describe('errors', () => {
             it('throws when "className" is an empty string', () => {
-                expect(() => toggleClass(A_DOM_NODE, CLASS_AS_EMPTY_STRING)).toThrow();
+                expect(() =>
+                    toggleClass(A_DOM_NODE, CLASS_AS_EMPTY_STRING)
+                ).toThrow();
             });
             it('throws when "element" is not a DOM node', () => {
-                expect(() => toggleClass(NOT_A_DOM_NODE, CLASS_DEFAULT)).toThrow();
+                expect(() =>
+                    toggleClass(NOT_A_DOM_NODE, CLASS_DEFAULT)
+                ).toThrow();
             });
         });
         describe('success', () => {
             it('does not throw when "className" is not an empty string', () => {
-                expect(() => toggleClass(A_DOM_NODE, CLASS_AS_NON_EMPTY_STRING)).not.toThrow();
+                expect(() =>
+                    toggleClass(A_DOM_NODE, CLASS_AS_NON_EMPTY_STRING)
+                ).not.toThrow();
             });
             it('does not throw when "element" is a DOM node', () => {
-                expect(() => toggleClass(A_DOM_NODE, CLASS_DEFAULT)).not.toThrow();
+                expect(() =>
+                    toggleClass(A_DOM_NODE, CLASS_DEFAULT)
+                ).not.toThrow();
             });
         });
     });
@@ -56,9 +64,12 @@ describe('toggleClass', () => {
             const ELEMENT_WITHOUT_CLASS = document.createElement('div');
             toggleClass(ELEMENT_WITHOUT_CLASS, CLASS_TO_TOGGLE);
             // expected
-            const ELEMENT_WITHOUT_CLASS_EXPECTED = document.createElement('div');
+            const ELEMENT_WITHOUT_CLASS_EXPECTED =
+                document.createElement('div');
             ELEMENT_WITHOUT_CLASS_EXPECTED.classList.add(CLASS_TO_TOGGLE);
-            expect(ELEMENT_WITHOUT_CLASS).toEqual(ELEMENT_WITHOUT_CLASS_EXPECTED);
+            expect(ELEMENT_WITHOUT_CLASS).toEqual(
+                ELEMENT_WITHOUT_CLASS_EXPECTED
+            );
         });
         it('adds specified class to an element that already has another class', () => {
             // test case
@@ -66,41 +77,73 @@ describe('toggleClass', () => {
             ELEMENT_WITH_SINGLE_CLASS.classList.add(CLASS_SECONDARY);
             toggleClass(ELEMENT_WITH_SINGLE_CLASS, CLASS_TO_TOGGLE);
             // expected
-            const ELEMENT_WITH_SINGLE_CLASS_EXPECTED = document.createElement('div');
-            ELEMENT_WITH_SINGLE_CLASS_EXPECTED.classList.add(CLASS_SECONDARY, CLASS_TO_TOGGLE);
-            expect(ELEMENT_WITH_SINGLE_CLASS).toEqual(ELEMENT_WITH_SINGLE_CLASS_EXPECTED);
+            const ELEMENT_WITH_SINGLE_CLASS_EXPECTED =
+                document.createElement('div');
+            ELEMENT_WITH_SINGLE_CLASS_EXPECTED.classList.add(
+                CLASS_SECONDARY,
+                CLASS_TO_TOGGLE
+            );
+            expect(ELEMENT_WITH_SINGLE_CLASS).toEqual(
+                ELEMENT_WITH_SINGLE_CLASS_EXPECTED
+            );
         });
         it('adds specified class to an element that already has more than one other classes', () => {
             // test case
             const ELEMENT_WITH_MULTIPLE_CLASSES = document.createElement('div');
-            ELEMENT_WITH_MULTIPLE_CLASSES.classList.add(CLASS_TO_TOGGLE, CLASS_SECONDARY);
+            ELEMENT_WITH_MULTIPLE_CLASSES.classList.add(
+                CLASS_TO_TOGGLE,
+                CLASS_SECONDARY
+            );
             toggleClass(ELEMENT_WITH_MULTIPLE_CLASSES, CLASS_TO_TOGGLE);
             // expected
-            const ELEMENT_WITH_MULTIPLE_CLASSES_EXPECTED = document.createElement('div');
-            ELEMENT_WITH_MULTIPLE_CLASSES_EXPECTED.classList.add(CLASS_SECONDARY);
-            expect(ELEMENT_WITH_MULTIPLE_CLASSES).toEqual(ELEMENT_WITH_MULTIPLE_CLASSES_EXPECTED);
+            const ELEMENT_WITH_MULTIPLE_CLASSES_EXPECTED =
+                document.createElement('div');
+            ELEMENT_WITH_MULTIPLE_CLASSES_EXPECTED.classList.add(
+                CLASS_SECONDARY
+            );
+            expect(ELEMENT_WITH_MULTIPLE_CLASSES).toEqual(
+                ELEMENT_WITH_MULTIPLE_CLASSES_EXPECTED
+            );
         });
     });
     describe('removing a class', () => {
         it('removes specified class from an element that only has the specified class', () => {
             // test case
-            const ELEMENT_WITH_ONLY_SPECIFIED_CLASS = document.createElement('div');
+            const ELEMENT_WITH_ONLY_SPECIFIED_CLASS =
+                document.createElement('div');
             ELEMENT_WITH_ONLY_SPECIFIED_CLASS.classList.add(CLASS_TO_TOGGLE);
             toggleClass(ELEMENT_WITH_ONLY_SPECIFIED_CLASS, CLASS_TO_TOGGLE);
             // expected
-            const ELEMENT_WITH_ONLY_SPECIFIED_CLASS_EXPECTED = document.createElement('div');
+            const ELEMENT_WITH_ONLY_SPECIFIED_CLASS_EXPECTED =
+                document.createElement('div');
             ELEMENT_WITH_ONLY_SPECIFIED_CLASS_EXPECTED.className = '';
-            expect(ELEMENT_WITH_ONLY_SPECIFIED_CLASS).toEqual(ELEMENT_WITH_ONLY_SPECIFIED_CLASS_EXPECTED);
+            expect(ELEMENT_WITH_ONLY_SPECIFIED_CLASS).toEqual(
+                ELEMENT_WITH_ONLY_SPECIFIED_CLASS_EXPECTED
+            );
         });
         it('removes specified class from an element that has specified class, and others', () => {
             // test case
-            const ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS = document.createElement('div');
-            ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS.classList.add(CLASS_TO_TOGGLE, CLASS_SECONDARY, CLASS_TERTIARY);
-            toggleClass(ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS, CLASS_TO_TOGGLE);
+            const ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS =
+                document.createElement('div');
+            ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS.classList.add(
+                CLASS_TO_TOGGLE,
+                CLASS_SECONDARY,
+                CLASS_TERTIARY
+            );
+            toggleClass(
+                ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS,
+                CLASS_TO_TOGGLE
+            );
             // expected
-            const ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS_EXPECTED = document.createElement('div');
-            ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS_EXPECTED.classList.add(CLASS_SECONDARY, CLASS_TERTIARY);
-            expect(ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS).toEqual(ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS_EXPECTED);
+            const ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS_EXPECTED =
+                document.createElement('div');
+            ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS_EXPECTED.classList.add(
+                CLASS_SECONDARY,
+                CLASS_TERTIARY
+            );
+            expect(ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS).toEqual(
+                ELEMENT_WITH_SPECIFIED_CLASS_AND_OTHERS_EXPECTED
+            );
         });
     });
 });

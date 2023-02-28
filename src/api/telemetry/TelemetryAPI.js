@@ -29,7 +29,6 @@ import DefaultMetadataProvider from './DefaultMetadataProvider';
 import objectUtils from 'objectUtils';
 
 export default class TelemetryAPI {
-
     constructor(openmct) {
         this.openmct = openmct;
 
@@ -45,11 +44,14 @@ export default class TelemetryAPI {
         this.subscriptionProviders = [];
         this.valueFormatterCache = new WeakMap();
 
-        this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
+        this.requestInterceptorRegistry =
+            new TelemetryRequestInterceptorRegistry();
     }
 
     abortAllRequests() {
-        this.requestAbortControllers.forEach((controller) => controller.abort());
+        this.requestAbortControllers.forEach((controller) =>
+            controller.abort()
+        );
         this.requestAbortControllers.clear();
     }
 
@@ -87,8 +89,10 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     canProvideTelemetry(domainObject) {
-        return Boolean(this.#findSubscriptionProvider(domainObject))
-                || Boolean(this.findRequestProvider(domainObject));
+        return (
+            Boolean(this.#findSubscriptionProvider(domainObject)) ||
+            Boolean(this.findRequestProvider(domainObject))
+        );
     }
 
     /**
@@ -204,14 +208,20 @@ export default class TelemetryAPI {
      * @private
      */
     #getInterceptorsForRequest(identifier, request) {
-        return this.requestInterceptorRegistry.getInterceptors(identifier, request);
+        return this.requestInterceptorRegistry.getInterceptors(
+            identifier,
+            request
+        );
     }
 
     /**
      * Invoke interceptors if applicable for a given domain object.
      */
     async applyRequestInterceptors(domainObject, request) {
-        const interceptors = this.#getInterceptorsForRequest(domainObject.identifier, request);
+        const interceptors = this.#getInterceptorsForRequest(
+            domainObject.identifier,
+            request
+        );
 
         if (interceptors.length === 0) {
             return request;
@@ -241,11 +251,7 @@ export default class TelemetryAPI {
      * @returns {TelemetryCollection} a TelemetryCollection instance
      */
     requestCollection(domainObject, options = {}) {
-        return new TelemetryCollection(
-            this.openmct,
-            domainObject,
-            options
-        );
+        return new TelemetryCollection(this.openmct, domainObject, options);
     }
 
     /**
@@ -286,14 +292,19 @@ export default class TelemetryAPI {
             return this.#handleMissingRequestProvider(domainObject);
         }
 
-        arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
+        arguments[1] = await this.applyRequestInterceptors(
+            domainObject,
+            arguments[1]
+        );
         try {
             const telemetry = await provider.request(...arguments);
 
             return telemetry;
         } catch (error) {
             if (error.name !== 'AbortError') {
-                this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+                this.openmct.notifications.error(
+                    'Error requesting telemetry data, see console for details'
+                );
                 console.error(error);
             }
 
@@ -332,12 +343,15 @@ export default class TelemetryAPI {
                 callbacks: [callback]
             };
             if (provider) {
-                subscriber.unsubscribe = provider
-                    .subscribe(domainObject, function (value) {
+                subscriber.unsubscribe = provider.subscribe(
+                    domainObject,
+                    function (value) {
                         subscriber.callbacks.forEach(function (cb) {
                             cb(value);
                         });
-                    }, options);
+                    },
+                    options
+                );
             } else {
                 subscriber.unsubscribe = function () {};
             }
@@ -388,12 +402,14 @@ export default class TelemetryAPI {
                 callbacks: [callback]
             };
             if (provider) {
-                stalenessSubscriber.unsubscribe = provider
-                    .subscribeToStaleness(domainObject, (stalenessResponse) => {
+                stalenessSubscriber.unsubscribe = provider.subscribeToStaleness(
+                    domainObject,
+                    (stalenessResponse) => {
                         stalenessSubscriber.callbacks.forEach((cb) => {
                             cb(stalenessResponse);
                         });
-                    });
+                    }
+                );
             } else {
                 stalenessSubscriber.unsubscribe = () => {};
             }
@@ -402,9 +418,10 @@ export default class TelemetryAPI {
         }
 
         return function unsubscribe() {
-            stalenessSubscriber.callbacks = stalenessSubscriber.callbacks.filter((cb) => {
-                return cb !== callback;
-            });
+            stalenessSubscriber.callbacks =
+                stalenessSubscriber.callbacks.filter((cb) => {
+                    return cb !== callback;
+                });
             if (stalenessSubscriber.callbacks.length === 0) {
                 stalenessSubscriber.unsubscribe();
                 delete this.stalenessSubscriberCache[keyString];
@@ -514,11 +531,15 @@ export default class TelemetryAPI {
         }
 
         if (!this.formatMapCache.has(metadata)) {
-            const formatMap = metadata.values().reduce(function (map, valueMetadata) {
-                map[valueMetadata.key] = this.getValueFormatter(valueMetadata);
+            const formatMap = metadata.values().reduce(
+                function (map, valueMetadata) {
+                    map[valueMetadata.key] =
+                        this.getValueFormatter(valueMetadata);
 
-                return map;
-            }.bind(this), {});
+                    return map;
+                }.bind(this),
+                {}
+            );
             this.formatMapCache.set(metadata, formatMap);
         }
 
@@ -531,22 +552,34 @@ export default class TelemetryAPI {
      * @returns Promise
      */
     #handleMissingRequestProvider(domainObject) {
-        this.noRequestProviderForAllObjects = this.requestProviders.every(requestProvider => {
-            const supportsRequest = requestProvider.supportsRequest.apply(requestProvider, arguments);
-            const hasRequestProvider = Object.prototype.hasOwnProperty.call(requestProvider, 'request') && typeof requestProvider.request === 'function';
+        this.noRequestProviderForAllObjects = this.requestProviders.every(
+            (requestProvider) => {
+                const supportsRequest = requestProvider.supportsRequest.apply(
+                    requestProvider,
+                    arguments
+                );
+                const hasRequestProvider =
+                    Object.prototype.hasOwnProperty.call(
+                        requestProvider,
+                        'request'
+                    ) && typeof requestProvider.request === 'function';
 
-            return supportsRequest && hasRequestProvider;
-        });
+                return supportsRequest && hasRequestProvider;
+            }
+        );
 
         let message = '';
         let detailMessage = '';
         if (this.noRequestProviderForAllObjects) {
             message = 'Missing request providers, see console for details';
-            detailMessage = 'Missing request provider for all request providers';
+            detailMessage =
+                'Missing request provider for all request providers';
         } else {
             message = 'Missing request provider, see console for details';
             const { name, identifier } = domainObject;
-            detailMessage = `Missing request provider for domainObject, name: ${name}, identifier: ${JSON.stringify(identifier)}`;
+            detailMessage = `Missing request provider for domainObject, name: ${name}, identifier: ${JSON.stringify(
+                identifier
+            )}`;
         }
 
         this.openmct.notifications.error(message);

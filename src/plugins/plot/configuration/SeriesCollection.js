@@ -21,10 +21,10 @@
  *****************************************************************************/
 import _ from 'lodash';
 
-import PlotSeries from "./PlotSeries";
-import Collection from "./Collection";
-import Color from "@/ui/color/Color";
-import ColorPalette from "@/ui/color/ColorPalette";
+import PlotSeries from './PlotSeries';
+import Collection from './Collection';
+import Color from '@/ui/color/Color';
+import ColorPalette from '@/ui/color/ColorPalette';
 
 /**
  * @extends {Collection<SeriesCollectionModelType, SeriesCollectionOptions>}
@@ -42,7 +42,12 @@ export default class SeriesCollection extends Collection {
         this.palette = options.palette || new ColorPalette();
         this.listenTo(this, 'add', this.onSeriesAdd, this);
         this.listenTo(this, 'remove', this.onSeriesRemove, this);
-        this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
+        this.listenTo(
+            this.plot,
+            'change:domainObject',
+            this.trackPersistedConfig,
+            this
+        );
 
         const domainObject = this.plot.get('domainObject');
         if (domainObject.telemetry) {
@@ -77,7 +82,9 @@ export default class SeriesCollection extends Collection {
         composition.load();
     }
     addTelemetryObject(domainObject, index) {
-        let seriesConfig = this.plot.getPersistedSeriesConfig(domainObject.identifier);
+        let seriesConfig = this.plot.getPersistedSeriesConfig(
+            domainObject.identifier
+        );
         const filters = this.plot.getPersistedFilters(domainObject.identifier);
         const plotObject = this.plot.get('domainObject');
 
@@ -92,8 +99,9 @@ export default class SeriesCollection extends Collection {
                     'configuration.series[' + this.size() + ']',
                     seriesConfig
                 );
-                seriesConfig = this.plot
-                    .getPersistedSeriesConfig(domainObject.identifier);
+                seriesConfig = this.plot.getPersistedSeriesConfig(
+                    domainObject.identifier
+                );
             }
         }
 
@@ -101,28 +109,32 @@ export default class SeriesCollection extends Collection {
         seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
 
         if (!seriesConfig) {
-            throw "not possible";
+            throw 'not possible';
         }
 
-        this.add(new PlotSeries({
-            model: seriesConfig,
-            domainObject: domainObject,
-            openmct: this.openmct,
-            collection: this,
-            persistedConfig: this.plot
-                .getPersistedSeriesConfig(domainObject.identifier),
-            filters: filters
-        }));
+        this.add(
+            new PlotSeries({
+                model: seriesConfig,
+                domainObject: domainObject,
+                openmct: this.openmct,
+                collection: this,
+                persistedConfig: this.plot.getPersistedSeriesConfig(
+                    domainObject.identifier
+                ),
+                filters: filters
+            })
+        );
     }
     removeTelemetryObject(identifier) {
         const plotObject = this.plot.get('domainObject');
         if (plotObject.type === 'telemetry.plot.overlay') {
+            const persistedIndex = plotObject.configuration.series.findIndex(
+                (s) => {
+                    return _.isEqual(identifier, s.identifier);
+                }
+            );
 
-            const persistedIndex = plotObject.configuration.series.findIndex(s => {
-                return _.isEqual(identifier, s.identifier);
-            });
-
-            const configIndex = this.models.findIndex(m => {
+            const configIndex = this.models.findIndex((m) => {
                 return _.isEqual(m.domainObject.identifier, identifier);
             });
 
@@ -137,12 +149,19 @@ export default class SeriesCollection extends Collection {
                 // Because this is triggered by a composition change, we have
                 // to defer mutation of our plot object, otherwise we might
                 // mutate an outdated version of the plotObject.
-                setTimeout(function () {
-                    const newPlotObject = this.plot.get('domainObject');
-                    const cSeries = newPlotObject.configuration.series.slice();
-                    cSeries.splice(persistedIndex, 1);
-                    this.openmct.objects.mutate(newPlotObject, 'configuration.series', cSeries);
-                }.bind(this));
+                setTimeout(
+                    function () {
+                        const newPlotObject = this.plot.get('domainObject');
+                        const cSeries =
+                            newPlotObject.configuration.series.slice();
+                        cSeries.splice(persistedIndex, 1);
+                        this.openmct.objects.mutate(
+                            newPlotObject,
+                            'configuration.series',
+                            cSeries
+                        );
+                    }.bind(this)
+                );
             }
         }
     }
@@ -179,8 +198,10 @@ export default class SeriesCollection extends Collection {
         return this.filter(function (series) {
             const seriesIdentifier = series.get('identifier');
 
-            return seriesIdentifier.namespace === identifier.namespace
-                    && seriesIdentifier.key === identifier.key;
+            return (
+                seriesIdentifier.namespace === identifier.namespace &&
+                seriesIdentifier.key === identifier.key
+            );
         })[0];
     }
 }

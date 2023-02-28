@@ -27,17 +27,18 @@ export default function plugin() {
         openmct.objectViews.addProvider(new WebPageViewProvider(openmct));
 
         openmct.types.addType('webPage', {
-            name: "Web Page",
-            description: "Embed a web page or web-based image in a resizeable window component. Note that the URL being embedded must allow iframing.",
+            name: 'Web Page',
+            description:
+                'Embed a web page or web-based image in a resizeable window component. Note that the URL being embedded must allow iframing.',
             creatable: true,
             cssClass: 'icon-page',
             form: [
                 {
-                    "key": "url",
-                    "name": "URL",
-                    "control": "textfield",
-                    "required": true,
-                    "cssClass": "l-input-lg"
+                    key: 'url',
+                    name: 'URL',
+                    control: 'textfield',
+                    required: true,
+                    cssClass: 'l-input-lg'
                 }
             ]
         });

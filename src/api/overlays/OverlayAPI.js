@@ -9,7 +9,7 @@ import ProgressDialog from './ProgressDialog';
  *
  * @memberof api/overlays
  * @constructor
-*/
+ */
 
 class OverlayAPI {
     constructor() {
@@ -22,7 +22,6 @@ class OverlayAPI {
                 this.dismissLastOverlay();
             }
         });
-
     }
 
     /**
@@ -30,7 +29,8 @@ class OverlayAPI {
      */
     showOverlay(overlay) {
         if (this.activeOverlays.length) {
-            const previousOverlay = this.activeOverlays[this.activeOverlays.length - 1];
+            const previousOverlay =
+                this.activeOverlays[this.activeOverlays.length - 1];
             if (previousOverlay.autoHide) {
                 previousOverlay.container.classList.add('invisible');
             }
@@ -42,7 +42,9 @@ class OverlayAPI {
             this.activeOverlays.splice(this.activeOverlays.indexOf(overlay), 1);
 
             if (this.activeOverlays.length) {
-                this.activeOverlays[this.activeOverlays.length - 1].container.classList.remove('invisible');
+                this.activeOverlays[
+                    this.activeOverlays.length - 1
+                ].container.classList.remove('invisible');
             }
         });
 
@@ -62,13 +64,13 @@ class OverlayAPI {
     /**
      * A description of option properties that can be passed into the overlay
      * @typedef options
-        * @property {object} element DOMElement that is to be inserted/shown on the overlay
-        * @property {string} size preferred size of the overlay (large, small, fit)
-        * @property {array} buttons optional button objects with label and callback properties
-        * @property {function} onDestroy callback to be called when overlay is destroyed
-        * @property {boolean} dismissable allow user to dismiss overlay by using esc, and clicking away
-        * from overlay. Unless set to false, all overlays will be dismissable by default.
-    */
+     * @property {object} element DOMElement that is to be inserted/shown on the overlay
+     * @property {string} size preferred size of the overlay (large, small, fit)
+     * @property {array} buttons optional button objects with label and callback properties
+     * @property {function} onDestroy callback to be called when overlay is destroyed
+     * @property {boolean} dismissable allow user to dismiss overlay by using esc, and clicking away
+     * from overlay. Unless set to false, all overlays will be dismissable by default.
+     */
     overlay(options) {
         let overlay = new Overlay(options);
 
@@ -90,13 +92,13 @@ class OverlayAPI {
      * here is shared with the Notifications framework.
      * @see NotificationService
      *
-    * @typedef options
-        * @property {string} title the title to use for the dialog
-        * @property {string} iconClass class to apply to icon that is shown on dialog
-        * @property {string} message text that indicates a current message,
-        * @property {buttons[]} buttons a list of buttons with title and callback properties that will
-        * be added to the dialog.
-    */
+     * @typedef options
+     * @property {string} title the title to use for the dialog
+     * @property {string} iconClass class to apply to icon that is shown on dialog
+     * @property {string} message text that indicates a current message,
+     * @property {buttons[]} buttons a list of buttons with title and callback properties that will
+     * be added to the dialog.
+     */
     dialog(options) {
         let dialog = new Dialog(options);
 
@@ -118,12 +120,12 @@ class OverlayAPI {
      * here is shared with the Notifications framework.
      * @see NotificationService
      *
-    * @typedef options
-        * @property {number} progressPerc the initial progress value (0-100) or {string} 'unknown' for anonymous progress
-        * @property {string} progressText the initial text to be shown under the progress bar
-        * @property {buttons[]} buttons a list of buttons with title and callback properties that will
-        * be added to the dialog.
-    */
+     * @typedef options
+     * @property {number} progressPerc the initial progress value (0-100) or {string} 'unknown' for anonymous progress
+     * @property {string} progressText the initial text to be shown under the progress bar
+     * @property {buttons[]} buttons a list of buttons with title and callback properties that will
+     * be added to the dialog.
+     */
     progressDialog(options) {
         let progressDialog = new ProgressDialog(options);
 
@@ -131,7 +133,6 @@ class OverlayAPI {
 
         return progressDialog;
     }
-
 }
 
 export default OverlayAPI;

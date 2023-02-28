@@ -39,8 +39,10 @@ export default function TimelineCompositionPolicy(openmct) {
     }
 
     function hasDomainAndRange(metadata) {
-        return (metadata.valuesForHints(['range']).length > 0
-            && metadata.valuesForHints(['domain']).length > 0);
+        return (
+            metadata.valuesForHints(['range']).length > 0 &&
+            metadata.valuesForHints(['domain']).length > 0
+        );
     }
 
     function hasImageTelemetry(domainObject, metadata) {
@@ -56,8 +58,12 @@ export default function TimelineCompositionPolicy(openmct) {
             if (parent.type === 'time-strip') {
                 const metadata = openmct.telemetry.getMetadata(child);
 
-                if (!DISALLOWED_TYPES.includes(child.type)
-                    && (hasNumericTelemetry(child, metadata) || hasImageTelemetry(child, metadata) || ALLOWED_TYPES.includes(child.type))) {
+                if (
+                    !DISALLOWED_TYPES.includes(child.type) &&
+                    (hasNumericTelemetry(child, metadata) ||
+                        hasImageTelemetry(child, metadata) ||
+                        ALLOWED_TYPES.includes(child.type))
+                ) {
                     return true;
                 }
 

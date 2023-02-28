@@ -55,46 +55,67 @@ test.describe('Performance tests', () => {
         // Click text=OK
         await page.locator('button:has-text("OK")').click();
 
-        await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
+        await expect(
+            page.locator(
+                'a:has-text("Performance Display Layout Display Layout")'
+            )
+        ).toBeVisible();
 
         //Create a Chrome Performance Timeline trace to store as a test artifact
-        console.log("\n==== Devtools: startTracing ====\n");
+        console.log('\n==== Devtools: startTracing ====\n');
         await browser.startTracing(page, {
             path: `${testInfo.outputPath()}-trace.json`,
             screenshots: true
         });
     });
-    test.afterEach(async ({ page, browser}) => {
-        console.log("\n==== Devtools: stopTracing ====\n");
+    test.afterEach(async ({ page, browser }) => {
+        console.log('\n==== Devtools: stopTracing ====\n');
         await browser.stopTracing();
 
         /* Measurement Section
         / The following section includes a block of performance measurements.
         */
         //Get time difference between viewlarge actionability and evaluate time
-        await page.evaluate(() => (window.performance.measure("machine-time-difference", "viewlarge.start", "viewLarge.start.test")));
+        await page.evaluate(() =>
+            window.performance.measure(
+                'machine-time-difference',
+                'viewlarge.start',
+                'viewLarge.start.test'
+            )
+        );
 
         //Get StartTime
-        const startTime = await page.evaluate(() => window.performance.timing.navigationStart);
+        const startTime = await page.evaluate(
+            () => window.performance.timing.navigationStart
+        );
         console.log('window.performance.timing.navigationStart', startTime);
 
         //Get All Performance Marks
-        const getAllMarksJson = await page.evaluate(() => JSON.stringify(window.performance.getEntriesByType("mark")));
+        const getAllMarksJson = await page.evaluate(() =>
+            JSON.stringify(window.performance.getEntriesByType('mark'))
+        );
         const getAllMarks = JSON.parse(getAllMarksJson);
         console.log('window.performance.getEntriesByType("mark")', getAllMarks);
 
         //Get All Performance Measures
-        const getAllMeasuresJson = await page.evaluate(() => JSON.stringify(window.performance.getEntriesByType("measure")));
+        const getAllMeasuresJson = await page.evaluate(() =>
+            JSON.stringify(window.performance.getEntriesByType('measure'))
+        );
         const getAllMeasures = JSON.parse(getAllMeasuresJson);
-        console.log('window.performance.getEntriesByType("measure")', getAllMeasures);
-
+        console.log(
+            'window.performance.getEntriesByType("measure")',
+            getAllMeasures
+        );
     });
     /* The following test will navigate to a previously created Performance Display Layout and measure the
     /  following metrics:
     /  - ElementResourceTiming
     /  - Interaction Timing
     */
-    test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
+    test('Embedded View Large for Imagery is performant in Fixed Time', async ({
+        page,
+        browser
+    }) => {
         const client = await page.context().newCDPSession(page);
         // Tell the DevTools session to record performance metrics
         // https://chromedevtools.github.io/devtools-protocol/tot/Performance/#method-getMetrics
@@ -103,49 +124,78 @@ test.describe('Performance tests', () => {
         await page.goto('./');
 
         // Search Available after Launch
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        await page.evaluate(() => window.performance.mark("search-available"));
+        await page
+            .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+            .click();
+        await page.evaluate(() => window.performance.mark('search-available'));
         // Fill Search input
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Performance Display Layout');
-        await page.evaluate(() => window.performance.mark("search-entered"));
+        await page
+            .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+            .fill('Performance Display Layout');
+        await page.evaluate(() => window.performance.mark('search-entered'));
         //Search Result Appears and is clicked
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('a:has-text("Performance Display Layout")').first().click(),
-            page.evaluate(() => window.performance.mark("click-search-result"))
+            page
+                .locator('a:has-text("Performance Display Layout")')
+                .first()
+                .click(),
+            page.evaluate(() => window.performance.mark('click-search-result'))
         ]);
 
         //Time to Example Imagery Frame loads within Display Layout
-        await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
+        await page.waitForSelector('.c-imagery__main-image__bg', {
+            state: 'visible'
+        });
         //Time to Example Imagery object loads
-        await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
+        await page.waitForSelector('.c-imagery__main-image__background-image', {
+            state: 'visible'
+        });
 
         //Get background-image url from background-image css prop
-        const backgroundImage = await page.locator('.c-imagery__main-image__background-image');
+        const backgroundImage = await page.locator(
+            '.c-imagery__main-image__background-image'
+        );
         let backgroundImageUrl = await backgroundImage.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-image').match(/url\(([^)]+)\)/)[1];
+            return window
+                .getComputedStyle(el)
+                .getPropertyValue('background-image')
+                .match(/url\(([^)]+)\)/)[1];
         });
         backgroundImageUrl = backgroundImageUrl.slice(1, -1); //forgive me, padre
         console.log('backgroundImageurl ' + backgroundImageUrl);
 
         //Get ResourceTiming of background-image jpg
-        const resourceTimingJson = await page.evaluate((bgImageUrl) =>
-            JSON.stringify(window.performance.getEntriesByName(bgImageUrl).pop()),
-        backgroundImageUrl
+        const resourceTimingJson = await page.evaluate(
+            (bgImageUrl) =>
+                JSON.stringify(
+                    window.performance.getEntriesByName(bgImageUrl).pop()
+                ),
+            backgroundImageUrl
         );
         console.log('resourceTimingJson ' + resourceTimingJson);
 
         //Open Large view
         await page.locator('button:has-text("Large View")').click(); //This action includes the performance.mark named 'viewLarge.start'
-        await page.evaluate(() => window.performance.mark("viewLarge.start.test")); //This is a mark only to compare evaluate timing
+        await page.evaluate(() =>
+            window.performance.mark('viewLarge.start.test')
+        ); //This is a mark only to compare evaluate timing
 
         //Time to Imagery Rendered in Large Frame
-        await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
-        await page.evaluate(() => window.performance.mark("background-image-frame"));
+        await page.waitForSelector('.c-imagery__main-image__bg', {
+            state: 'visible'
+        });
+        await page.evaluate(() =>
+            window.performance.mark('background-image-frame')
+        );
 
         //Time to Example Imagery object loads
-        await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
-        await page.evaluate(() => window.performance.mark("background-image-visible"));
+        await page.waitForSelector('.c-imagery__main-image__background-image', {
+            state: 'visible'
+        });
+        await page.evaluate(() =>
+            window.performance.mark('background-image-visible')
+        );
 
         // Get Current number of images in thumbstrip
         await page.waitForSelector('.c-imagery__thumb');
@@ -165,13 +215,14 @@ test.describe('Performance tests', () => {
 
         // Click Close Icon
         await page.locator('[aria-label="Close"]').click();
-        await page.evaluate(() => window.performance.mark("view-large-close-button"));
+        await page.evaluate(() =>
+            window.performance.mark('view-large-close-button')
+        );
 
         //await client.send('HeapProfiler.enable');
         await client.send('HeapProfiler.collectGarbage');
 
         let performanceMetrics = await client.send('Performance.getMetrics');
         console.log(performanceMetrics.metrics);
-
     });
 });

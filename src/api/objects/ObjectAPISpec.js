@@ -1,20 +1,18 @@
 import ObjectAPI from './ObjectAPI.js';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
-describe("The Object API", () => {
+describe('The Object API', () => {
     let objectAPI;
     let typeRegistry;
     let openmct = {};
     let mockDomainObject;
-    const TEST_NAMESPACE = "test-namespace";
-    const TEST_KEY = "test-key";
+    const TEST_NAMESPACE = 'test-namespace';
+    const TEST_KEY = 'test-key';
     const USERNAME = 'Joan Q Public';
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     beforeEach((done) => {
-        typeRegistry = jasmine.createSpyObj('typeRegistry', [
-            'get'
-        ]);
+        typeRegistry = jasmine.createSpyObj('typeRegistry', ['get']);
         const userProvider = {
             isLoggedIn() {
                 return true;
@@ -39,8 +37,8 @@ describe("The Object API", () => {
                 namespace: TEST_NAMESPACE,
                 key: TEST_KEY
             },
-            name: "test object",
-            type: "test-type"
+            name: 'test object',
+            type: 'test-type'
         };
         openmct.on('start', () => {
             done();
@@ -52,8 +50,8 @@ describe("The Object API", () => {
         await resetApplicationState(openmct);
     });
 
-    describe("The save function", () => {
-        it("Rejects if no provider available", async () => {
+    describe('The save function', () => {
+        it('Rejects if no provider available', async () => {
             let rejected = false;
             objectAPI.providers = {};
             objectAPI.fallbackProvider = null;
@@ -66,12 +64,12 @@ describe("The Object API", () => {
 
             expect(rejected).toBe(true);
         });
-        describe("when a provider is available", () => {
+        describe('when a provider is available', () => {
             let mockProvider;
             beforeEach(() => {
-                mockProvider = jasmine.createSpyObj("mock provider", [
-                    "create",
-                    "update"
+                mockProvider = jasmine.createSpyObj('mock provider', [
+                    'create',
+                    'update'
                 ]);
                 mockProvider.create.and.returnValue(Promise.resolve(true));
                 mockProvider.update.and.returnValue(Promise.resolve(true));
@@ -94,7 +92,7 @@ describe("The Object API", () => {
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).toHaveBeenCalled();
             });
-            describe("the persisted timestamp for existing objects", () => {
+            describe('the persisted timestamp for existing objects', () => {
                 let persistedTimestamp;
                 beforeEach(() => {
                     persistedTimestamp = Date.now() - FIFTEEN_MINUTES;
@@ -102,24 +100,30 @@ describe("The Object API", () => {
                     mockDomainObject.modified = Date.now();
                 });
 
-                it("is updated", async () => {
+                it('is updated', async () => {
                     await objectAPI.save(mockDomainObject);
                     expect(mockDomainObject.persisted).toBeDefined();
-                    expect(mockDomainObject.persisted > persistedTimestamp).toBe(true);
+                    expect(
+                        mockDomainObject.persisted > persistedTimestamp
+                    ).toBe(true);
                 });
-                it("is >= modified timestamp", async () => {
+                it('is >= modified timestamp', async () => {
                     await objectAPI.save(mockDomainObject);
-                    expect(mockDomainObject.persisted >= mockDomainObject.modified).toBe(true);
+                    expect(
+                        mockDomainObject.persisted >= mockDomainObject.modified
+                    ).toBe(true);
                 });
             });
-            describe("the persisted timestamp for new objects", () => {
-                it("is updated", async () => {
+            describe('the persisted timestamp for new objects', () => {
+                it('is updated', async () => {
                     await objectAPI.save(mockDomainObject);
                     expect(mockDomainObject.persisted).toBeDefined();
                 });
-                it("is >= modified timestamp", async () => {
+                it('is >= modified timestamp', async () => {
                     await objectAPI.save(mockDomainObject);
-                    expect(mockDomainObject.persisted >= mockDomainObject.modified).toBe(true);
+                    expect(
+                        mockDomainObject.persisted >= mockDomainObject.modified
+                    ).toBe(true);
                 });
             });
 
@@ -135,93 +139,125 @@ describe("The Object API", () => {
                 expect(mockDomainObject.modifiedBy).toBe(USERNAME);
             });
 
-            it("Does not persist if the object is unchanged", () => {
-                mockDomainObject.persisted =
-                    mockDomainObject.modified = Date.now();
+            it('Does not persist if the object is unchanged', () => {
+                mockDomainObject.persisted = mockDomainObject.modified =
+                    Date.now();
 
                 objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).not.toHaveBeenCalled();
             });
 
-            describe("Shows a notification on persistence conflict", () => {
+            describe('Shows a notification on persistence conflict', () => {
                 beforeEach(() => {
                     openmct.notifications.error = jasmine.createSpy('error');
                 });
 
-                it("on create", () => {
-                    mockProvider.create.and.returnValue(Promise.reject(new openmct.objects.errors.Conflict("Test Conflict error")));
+                it('on create', () => {
+                    mockProvider.create.and.returnValue(
+                        Promise.reject(
+                            new openmct.objects.errors.Conflict(
+                                'Test Conflict error'
+                            )
+                        )
+                    );
 
                     return objectAPI.save(mockDomainObject).catch(() => {
-                        expect(openmct.notifications.error).toHaveBeenCalledWith(`Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`);
+                        expect(
+                            openmct.notifications.error
+                        ).toHaveBeenCalledWith(
+                            `Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`
+                        );
                     });
-
                 });
 
-                it("on update", () => {
-                    mockProvider.update.and.returnValue(Promise.reject(new openmct.objects.errors.Conflict("Test Conflict error")));
+                it('on update', () => {
+                    mockProvider.update.and.returnValue(
+                        Promise.reject(
+                            new openmct.objects.errors.Conflict(
+                                'Test Conflict error'
+                            )
+                        )
+                    );
                     mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
                     mockDomainObject.modified = Date.now();
 
                     return objectAPI.save(mockDomainObject).catch(() => {
-                        expect(openmct.notifications.error).toHaveBeenCalledWith(`Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`);
+                        expect(
+                            openmct.notifications.error
+                        ).toHaveBeenCalledWith(
+                            `Conflict detected while saving ${TEST_NAMESPACE}:${TEST_KEY}`
+                        );
                     });
                 });
             });
         });
     });
 
-    describe("The get function", () => {
-        describe("when a provider is available", () => {
+    describe('The get function', () => {
+        describe('when a provider is available', () => {
             let mockProvider;
             let mockInterceptor;
             let anotherMockInterceptor;
             let notApplicableMockInterceptor;
             beforeEach(() => {
-                mockProvider = jasmine.createSpyObj("mock provider", [
-                    "get"
-                ]);
-                mockProvider.get.and.returnValue(Promise.resolve(mockDomainObject));
+                mockProvider = jasmine.createSpyObj('mock provider', ['get']);
+                mockProvider.get.and.returnValue(
+                    Promise.resolve(mockDomainObject)
+                );
 
-                mockInterceptor = jasmine.createSpyObj("mock interceptor", [
-                    "appliesTo",
-                    "invoke"
+                mockInterceptor = jasmine.createSpyObj('mock interceptor', [
+                    'appliesTo',
+                    'invoke'
                 ]);
                 mockInterceptor.appliesTo.and.returnValue(true);
                 mockInterceptor.invoke.and.callFake((identifier, object) => {
-                    return Object.assign({
-                        changed: true
-                    }, object);
+                    return Object.assign(
+                        {
+                            changed: true
+                        },
+                        object
+                    );
                 });
 
-                anotherMockInterceptor = jasmine.createSpyObj("another mock interceptor", [
-                    "appliesTo",
-                    "invoke"
-                ]);
+                anotherMockInterceptor = jasmine.createSpyObj(
+                    'another mock interceptor',
+                    ['appliesTo', 'invoke']
+                );
                 anotherMockInterceptor.appliesTo.and.returnValue(true);
-                anotherMockInterceptor.invoke.and.callFake((identifier, object) => {
-                    return Object.assign({
-                        alsoChanged: true
-                    }, object);
-                });
+                anotherMockInterceptor.invoke.and.callFake(
+                    (identifier, object) => {
+                        return Object.assign(
+                            {
+                                alsoChanged: true
+                            },
+                            object
+                        );
+                    }
+                );
 
-                notApplicableMockInterceptor = jasmine.createSpyObj("not applicable mock interceptor", [
-                    "appliesTo",
-                    "invoke"
-                ]);
+                notApplicableMockInterceptor = jasmine.createSpyObj(
+                    'not applicable mock interceptor',
+                    ['appliesTo', 'invoke']
+                );
                 notApplicableMockInterceptor.appliesTo.and.returnValue(false);
-                notApplicableMockInterceptor.invoke.and.callFake((identifier, object) => {
-                    return Object.assign({
-                        shouldNotBeChanged: true
-                    }, object);
-                });
+                notApplicableMockInterceptor.invoke.and.callFake(
+                    (identifier, object) => {
+                        return Object.assign(
+                            {
+                                shouldNotBeChanged: true
+                            },
+                            object
+                        );
+                    }
+                );
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
                 objectAPI.addGetInterceptor(mockInterceptor);
                 objectAPI.addGetInterceptor(anotherMockInterceptor);
                 objectAPI.addGetInterceptor(notApplicableMockInterceptor);
             });
 
-            it("Caches multiple requests for the same object", () => {
+            it('Caches multiple requests for the same object', () => {
                 const promises = [];
                 expect(mockProvider.get.calls.count()).toBe(0);
                 promises.push(objectAPI.get(mockDomainObject.identifier));
@@ -232,27 +268,31 @@ describe("The Object API", () => {
                 return Promise.all(promises);
             });
 
-            it("applies any applicable interceptors", () => {
+            it('applies any applicable interceptors', () => {
                 expect(mockDomainObject.changed).toBeUndefined();
 
-                return objectAPI.get(mockDomainObject.identifier).then((object) => {
-                    expect(object.changed).toBeTrue();
-                    expect(object.alsoChanged).toBeTrue();
-                    expect(object.shouldNotBeChanged).toBeUndefined();
-                });
+                return objectAPI
+                    .get(mockDomainObject.identifier)
+                    .then((object) => {
+                        expect(object.changed).toBeTrue();
+                        expect(object.alsoChanged).toBeTrue();
+                        expect(object.shouldNotBeChanged).toBeUndefined();
+                    });
             });
 
-            it("displays a notification in the event of an error", () => {
+            it('displays a notification in the event of an error', () => {
                 mockProvider.get.and.returnValue(Promise.reject());
 
                 return objectAPI.get(mockDomainObject.identifier).catch(() => {
-                    expect(openmct.notifications.error).toHaveBeenCalledWith(`Failed to retrieve object ${TEST_NAMESPACE}:${TEST_KEY}`);
+                    expect(openmct.notifications.error).toHaveBeenCalledWith(
+                        `Failed to retrieve object ${TEST_NAMESPACE}:${TEST_KEY}`
+                    );
                 });
             });
         });
     });
 
-    describe("the mutation API", () => {
+    describe('the mutation API', () => {
         let testObject;
         let updatedTestObject;
         let mutable;
@@ -277,18 +317,21 @@ describe("The Object API", () => {
                     }
                 }
             };
-            updatedTestObject = Object.assign({
-                otherAttribute: 'changed-attribute-value'
-            }, testObject);
+            updatedTestObject = Object.assign(
+                {
+                    otherAttribute: 'changed-attribute-value'
+                },
+                testObject
+            );
             updatedTestObject.modified = 1;
             updatedTestObject.persisted = 1;
 
-            mockProvider = jasmine.createSpyObj("mock provider", [
-                "get",
-                "create",
-                "update",
-                "observe",
-                "observeObjectChanges"
+            mockProvider = jasmine.createSpyObj('mock provider', [
+                'get',
+                'create',
+                'update',
+                'observe',
+                'observeObjectChanges'
             ]);
             mockProvider.get.and.returnValue(Promise.resolve(testObject));
             mockProvider.create.and.returnValue(Promise.resolve(true));
@@ -311,8 +354,9 @@ describe("The Object API", () => {
 
             objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
 
-            return objectAPI.getMutable(testObject.identifier)
-                .then(object => {
+            return objectAPI
+                .getMutable(testObject.identifier)
+                .then((object) => {
                     mutable = object;
 
                     return mutable;
@@ -343,24 +387,32 @@ describe("The Object API", () => {
             expect(objectAPI.get).not.toHaveBeenCalled();
 
             return objectAPI.refresh(testObject).then(() => {
-                expect(objectAPI.get).toHaveBeenCalledWith(testObject.identifier);
+                expect(objectAPI.get).toHaveBeenCalledWith(
+                    testObject.identifier
+                );
 
-                expect(testObject.otherAttribute).toEqual(OTHER_ATTRIBUTE_VALUE);
+                expect(testObject.otherAttribute).toEqual(
+                    OTHER_ATTRIBUTE_VALUE
+                );
                 expect(testObject.newAttribute).toEqual(NEW_ATTRIBUTE_VALUE);
                 expect(testObject.objectAttribute).not.toBeDefined();
             });
         });
 
-        describe ('uses a MutableDomainObject', () => {
+        describe('uses a MutableDomainObject', () => {
             it('and retains properties of original object ', function () {
                 expect(hasOwnProperty(mutable, 'identifier')).toBe(true);
                 expect(hasOwnProperty(mutable, 'otherAttribute')).toBe(true);
                 expect(mutable.identifier).toEqual(testObject.identifier);
-                expect(mutable.otherAttribute).toEqual(testObject.otherAttribute);
+                expect(mutable.otherAttribute).toEqual(
+                    testObject.otherAttribute
+                );
             });
 
             it('that is identical to original object when serialized', function () {
-                expect(JSON.stringify(mutable)).toEqual(JSON.stringify(testObject));
+                expect(JSON.stringify(mutable)).toEqual(
+                    JSON.stringify(testObject)
+                );
             });
 
             it('that observes for object changes', function () {
@@ -378,7 +430,8 @@ describe("The Object API", () => {
             beforeEach(function () {
                 // Duplicate object to guarantee we are not sharing object instance, which would invalidate test
                 testObjectDuplicate = JSON.parse(JSON.stringify(testObject));
-                mutableSecondInstance = objectAPI.toMutable(testObjectDuplicate);
+                mutableSecondInstance =
+                    objectAPI.toMutable(testObjectDuplicate);
             });
 
             afterEach(() => {
@@ -386,8 +439,14 @@ describe("The Object API", () => {
             });
 
             it('to stay synchronized when mutated', function () {
-                objectAPI.mutate(mutable, 'otherAttribute', 'new-attribute-value');
-                expect(mutableSecondInstance.otherAttribute).toBe('new-attribute-value');
+                objectAPI.mutate(
+                    mutable,
+                    'otherAttribute',
+                    'new-attribute-value'
+                );
+                expect(mutableSecondInstance.otherAttribute).toBe(
+                    'new-attribute-value'
+                );
             });
 
             it('to indicate when a property changes', function () {
@@ -396,62 +455,108 @@ describe("The Object API", () => {
 
                 return new Promise(function (resolve) {
                     mutationCallback.and.callFake(resolve);
-                    unlisten = objectAPI.observe(mutableSecondInstance, 'otherAttribute', mutationCallback);
-                    objectAPI.mutate(mutable, 'otherAttribute', 'some-new-value');
+                    unlisten = objectAPI.observe(
+                        mutableSecondInstance,
+                        'otherAttribute',
+                        mutationCallback
+                    );
+                    objectAPI.mutate(
+                        mutable,
+                        'otherAttribute',
+                        'some-new-value'
+                    );
                 }).then(function () {
-                    expect(mutationCallback).toHaveBeenCalledWith('some-new-value', 'other-attribute-value');
+                    expect(mutationCallback).toHaveBeenCalledWith(
+                        'some-new-value',
+                        'other-attribute-value'
+                    );
                     unlisten();
                 });
             });
 
             it('to indicate when a child property has changed', function () {
-                let embeddedKeyCallback = jasmine.createSpy('embeddedKeyCallback');
-                let embeddedObjectCallback = jasmine.createSpy('embeddedObjectCallback');
-                let objectAttributeCallback = jasmine.createSpy('objectAttribute');
+                let embeddedKeyCallback = jasmine.createSpy(
+                    'embeddedKeyCallback'
+                );
+                let embeddedObjectCallback = jasmine.createSpy(
+                    'embeddedObjectCallback'
+                );
+                let objectAttributeCallback =
+                    jasmine.createSpy('objectAttribute');
                 let listeners = [];
 
                 return new Promise(function (resolve) {
                     objectAttributeCallback.and.callFake(resolve);
 
-                    listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject.embeddedKey', embeddedKeyCallback));
-                    listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute.embeddedObject', embeddedObjectCallback));
-                    listeners.push(objectAPI.observe(mutableSecondInstance, 'objectAttribute', objectAttributeCallback));
+                    listeners.push(
+                        objectAPI.observe(
+                            mutableSecondInstance,
+                            'objectAttribute.embeddedObject.embeddedKey',
+                            embeddedKeyCallback
+                        )
+                    );
+                    listeners.push(
+                        objectAPI.observe(
+                            mutableSecondInstance,
+                            'objectAttribute.embeddedObject',
+                            embeddedObjectCallback
+                        )
+                    );
+                    listeners.push(
+                        objectAPI.observe(
+                            mutableSecondInstance,
+                            'objectAttribute',
+                            objectAttributeCallback
+                        )
+                    );
 
-                    objectAPI.mutate(mutable, 'objectAttribute.embeddedObject.embeddedKey', 'updated-embedded-value');
+                    objectAPI.mutate(
+                        mutable,
+                        'objectAttribute.embeddedObject.embeddedKey',
+                        'updated-embedded-value'
+                    );
                 }).then(function () {
-                    expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value', 'embedded-value');
-                    expect(embeddedObjectCallback).toHaveBeenCalledWith({
-                        embeddedKey: 'updated-embedded-value'
-                    }, {
-                        embeddedKey: 'embedded-value'
-                    });
-                    expect(objectAttributeCallback).toHaveBeenCalledWith({
-                        embeddedObject: {
+                    expect(embeddedKeyCallback).toHaveBeenCalledWith(
+                        'updated-embedded-value',
+                        'embedded-value'
+                    );
+                    expect(embeddedObjectCallback).toHaveBeenCalledWith(
+                        {
                             embeddedKey: 'updated-embedded-value'
-                        }
-                    }, {
-                        embeddedObject: {
+                        },
+                        {
                             embeddedKey: 'embedded-value'
                         }
-                    });
+                    );
+                    expect(objectAttributeCallback).toHaveBeenCalledWith(
+                        {
+                            embeddedObject: {
+                                embeddedKey: 'updated-embedded-value'
+                            }
+                        },
+                        {
+                            embeddedObject: {
+                                embeddedKey: 'embedded-value'
+                            }
+                        }
+                    );
 
-                    listeners.forEach(listener => listener());
+                    listeners.forEach((listener) => listener());
                 });
             });
         });
     });
 
-    describe("getOriginalPath", () => {
+    describe('getOriginalPath', () => {
         let mockGrandParentObject;
         let mockParentObject;
         let mockChildObject;
 
         beforeEach(() => {
-            const mockObjectProvider = jasmine.createSpyObj("mock object provider", [
-                "create",
-                "update",
-                "get"
-            ]);
+            const mockObjectProvider = jasmine.createSpyObj(
+                'mock object provider',
+                ['create', 'update', 'get']
+            );
 
             mockGrandParentObject = {
                 type: 'folder',
@@ -503,12 +608,14 @@ describe("The Object API", () => {
         });
 
         it('can construct paths even with cycles', async () => {
-            const objectPath = await objectAPI.getOriginalPath(mockChildObject.identifier);
+            const objectPath = await objectAPI.getOriginalPath(
+                mockChildObject.identifier
+            );
             expect(objectPath.length).toEqual(3);
         });
     });
 
-    describe("transactions", () => {
+    describe('transactions', () => {
         beforeEach(() => {
             spyOn(openmct.editor, 'isEditing').and.returnValue(true);
         });
@@ -539,11 +646,15 @@ describe("The Object API", () => {
             objectAPI.startTransaction();
             objectAPI.mutate(mockDomainObject, 'name', 'dirty object');
 
-            const dirtyObject = objectAPI.transaction.getDirtyObject(mockDomainObject.identifier);
+            const dirtyObject = objectAPI.transaction.getDirtyObject(
+                mockDomainObject.identifier
+            );
 
-            objectAPI.get(mockDomainObject.identifier)
-                .then(object => {
-                    const areEqual = JSON.stringify(object) === JSON.stringify(dirtyObject);
+            objectAPI
+                .get(mockDomainObject.identifier)
+                .then((object) => {
+                    const areEqual =
+                        JSON.stringify(object) === JSON.stringify(dirtyObject);
                     expect(areEqual).toBe(true);
                 })
                 .finally(done);

@@ -65,7 +65,8 @@ export default class TelemetryTableView {
                     }
                 };
             },
-            template: '<table-component ref="tableComponent" :is-editing="isEditing" :marking="marking"></table-component>'
+            template:
+                '<table-component ref="tableComponent" :is-editing="isEditing" :marking="marking"></table-component>'
         });
     }
 }

@@ -44,7 +44,8 @@ class AlphanumericFormatView {
                 objectPath: this.objectPath,
                 currentView: this
             },
-            template: '<alphanumeric-format ref="alphanumericFormat"></alphanumeric-format>'
+            template:
+                '<alphanumeric-format ref="alphanumericFormat"></alphanumeric-format>'
         });
     }
 
@@ -68,13 +69,15 @@ export default function AlphanumericFormatViewProvider(openmct, options) {
         let parentObject = selectionPath[1].context.item;
         let selectedLayoutItem = selectionPath[0].context.layoutItem;
 
-        return parentObject
-            && parentObject.type === 'layout'
-            && selectedObject
-            && selectedLayoutItem
-            && selectedLayoutItem.type === 'telemetry-view'
-            && openmct.telemetry.isTelemetryObject(selectedObject)
-            && !options.showAsView.includes(selectedObject.type);
+        return (
+            parentObject &&
+            parentObject.type === 'layout' &&
+            selectedObject &&
+            selectedLayoutItem &&
+            selectedLayoutItem.type === 'telemetry-view' &&
+            openmct.telemetry.isTelemetryObject(selectedObject) &&
+            !options.showAsView.includes(selectedObject.type)
+        );
     }
 
     return {
@@ -88,7 +91,11 @@ export default function AlphanumericFormatViewProvider(openmct, options) {
             return selection.every(isTelemetryObject);
         },
         view: function (domainObject, objectPath) {
-            return new AlphanumericFormatView(openmct, domainObject, objectPath);
+            return new AlphanumericFormatView(
+                openmct,
+                domainObject,
+                objectPath
+            );
         },
         priority: function () {
             return 1;

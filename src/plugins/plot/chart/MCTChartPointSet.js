@@ -29,4 +29,3 @@ export default class MCTChartPointSet extends MCTChartSeriesElement {
         this.buffer[start + 1] = point.y;
     }
 }
-

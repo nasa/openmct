@@ -20,14 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './SummaryWidgetEvaluator',
-    'objectUtils'
-], function (
+define(['./SummaryWidgetEvaluator', 'objectUtils'], function (
     SummaryWidgetEvaluator,
     objectUtils
 ) {
-
     function EvaluatorPool(openmct) {
         this.openmct = openmct;
         this.byObjectId = {};
@@ -41,7 +37,10 @@ define([
             poolEntry = {
                 leases: 0,
                 objectId: objectId,
-                evaluator: new SummaryWidgetEvaluator(domainObject, this.openmct)
+                evaluator: new SummaryWidgetEvaluator(
+                    domainObject,
+                    this.openmct
+                )
             };
             this.byEvaluator.set(poolEntry.evaluator, poolEntry);
             this.byObjectId[objectId] = poolEntry;

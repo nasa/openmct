@@ -1,11 +1,4 @@
-define([
-    './Select',
-    'objectUtils'
-], function (
-    Select,
-    objectUtils
-) {
-
+define(['./Select', 'objectUtils'], function (Select, objectUtils) {
     /**
      * Create a {Select} element whose composition is dynamically updated with
      * the current composition of the Summary Widget
@@ -43,7 +36,10 @@ define([
          * @private
          */
         function onCompositionAdd(obj) {
-            self.select.addOption(objectUtils.makeKeyString(obj.identifier), obj.name);
+            self.select.addOption(
+                objectUtils.makeKeyString(obj.identifier),
+                obj.name
+            );
         }
 
         /**

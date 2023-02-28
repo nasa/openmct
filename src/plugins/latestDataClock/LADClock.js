@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) {
+define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (
+    LocalClock
+) {
     /**
      * A {@link Clock} that mocks a "latest available data" type tick source.
      * This is for testing purposes only, and behaves identically to a local clock.
@@ -34,7 +36,7 @@ define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) 
         this.mode = 'lad';
         this.cssClass = 'icon-suitcase';
         this.name = 'Latest available data';
-        this.description = "Updates when when new data is available";
+        this.description = 'Updates when when new data is available';
     }
 
     LADClock.prototype = Object.create(LocalClock.prototype);

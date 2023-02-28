@@ -35,8 +35,15 @@ export default function FaultManagementPlugin() {
             cssClass: 'icon-bell'
         });
 
-        openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new FaultManagementInspectorViewProvider(openmct));
-        openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
+        openmct.objectViews.addProvider(
+            new FaultManagementViewProvider(openmct)
+        );
+        openmct.inspectorViews.addProvider(
+            new FaultManagementInspectorViewProvider(openmct)
+        );
+        openmct.objects.addProvider(
+            FAULT_MANAGEMENT_NAMESPACE,
+            new FaultManagementObjectProvider(openmct)
+        );
     };
 }

@@ -13,17 +13,17 @@ import ToggleSwitchField from './components/controls/ToggleSwitchField.vue';
 import Vue from 'vue';
 
 export const DEFAULT_CONTROLS_MAP = {
-    'autocomplete': AutoCompleteField,
-    'checkbox': CheckBoxField,
-    'composite': ClockDisplayFormatField,
-    'datetime': Datetime,
+    autocomplete: AutoCompleteField,
+    checkbox: CheckBoxField,
+    composite: ClockDisplayFormatField,
+    datetime: Datetime,
     'file-input': FileInput,
-    'locator': Locator,
-    'numberfield': NumberField,
-    'select': SelectField,
-    'textarea': TextAreaField,
-    'textfield': TextField,
-    'toggleSwitch': ToggleSwitchField
+    locator: Locator,
+    numberfield: NumberField,
+    select: SelectField,
+    textarea: TextAreaField,
+    textfield: TextField,
+    toggleSwitch: ToggleSwitchField
 };
 
 export default class FormControl {
@@ -37,7 +37,9 @@ export default class FormControl {
     addControl(controlName, controlViewProvider) {
         const control = this.controls[controlName];
         if (control) {
-            console.warn(`Error: provided form control '${controlName}', already exists`);
+            console.warn(
+                `Error: provided form control '${controlName}', already exists`
+            );
 
             return;
         }
@@ -48,7 +50,9 @@ export default class FormControl {
     getControl(controlName) {
         const control = this.controls[controlName];
         if (!control) {
-            console.error(`Error: form control '${controlName}', does not exist`);
+            console.error(
+                `Error: form control '${controlName}', does not exist`
+            );
         }
 
         return control;
@@ -58,7 +62,7 @@ export default class FormControl {
      * @private
      */
     _addDefaultFormControls() {
-        Object.keys(DEFAULT_CONTROLS_MAP).forEach(control => {
+        Object.keys(DEFAULT_CONTROLS_MAP).forEach((control) => {
             const controlViewProvider = this._getControlViewProvider(control);
             this.addControl(control, controlViewProvider);
         });

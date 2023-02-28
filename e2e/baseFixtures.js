@@ -56,12 +56,13 @@ function _consoleMessageToString(msg) {
  * @return {Promise<Animation[]>}
  */
 function waitForAnimations(locator) {
-    return locator
-        .evaluate((element) =>
-            Promise.all(
-                element
-                    .getAnimations({ subtree: true })
-                    .map((animation) => animation.finished)));
+    return locator.evaluate((element) =>
+        Promise.all(
+            element
+                .getAnimations({ subtree: true })
+                .map((animation) => animation.finished)
+        )
+    );
 }
 
 /**
@@ -90,21 +91,28 @@ exports.test = base.test.extend({
      * @see {@link https://github.com/sinonjs/fake-timers/#var-clock--faketimersinstallconfig SinonJS FakeTimers Config}
      */
     clockOptions: [undefined, { option: true }],
-    overrideClock: [async ({ context, clockOptions }, use) => {
-        if (clockOptions !== undefined) {
-            await context.addInitScript({
-                path: path.join(__dirname, '../', './node_modules/sinon/pkg/sinon.js')
-            });
-            await context.addInitScript((options) => {
-                window.__clock = sinon.useFakeTimers(options);
-            }, clockOptions);
-        }
+    overrideClock: [
+        async ({ context, clockOptions }, use) => {
+            if (clockOptions !== undefined) {
+                await context.addInitScript({
+                    path: path.join(
+                        __dirname,
+                        '../',
+                        './node_modules/sinon/pkg/sinon.js'
+                    )
+                });
+                await context.addInitScript((options) => {
+                    window.__clock = sinon.useFakeTimers(options);
+                }, clockOptions);
+            }
 
-        await use(context);
-    }, {
-        auto: true,
-        scope: 'test'
-    }],
+            await use(context);
+        },
+        {
+            auto: true,
+            scope: 'test'
+        }
+    ],
     /**
      * Extends the base context class to add codecoverage shim.
      * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Project}
@@ -112,19 +120,34 @@ exports.test = base.test.extend({
     context: async ({ context }, use) => {
         await context.addInitScript(() =>
             window.addEventListener('beforeunload', () =>
-                (window).collectIstanbulCoverage(JSON.stringify((window).__coverage__))
+                window.collectIstanbulCoverage(
+                    JSON.stringify(window.__coverage__)
+                )
             )
         );
         await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
-        await context.exposeFunction('collectIstanbulCoverage', (coverageJSON) => {
-            if (coverageJSON) {
-                fs.writeFileSync(path.join(istanbulCLIOutput, `playwright_coverage_${uuid()}.json`), coverageJSON);
+        await context.exposeFunction(
+            'collectIstanbulCoverage',
+            (coverageJSON) => {
+                if (coverageJSON) {
+                    fs.writeFileSync(
+                        path.join(
+                            istanbulCLIOutput,
+                            `playwright_coverage_${uuid()}.json`
+                        ),
+                        coverageJSON
+                    );
+                }
             }
-        });
+        );
 
         await use(context);
         for (const page of context.pages()) {
-            await page.evaluate(() => (window).collectIstanbulCoverage(JSON.stringify((window).__coverage__)));
+            await page.evaluate(() =>
+                window.collectIstanbulCoverage(
+                    JSON.stringify(window.__coverage__)
+                )
+            );
         }
     },
     /**
@@ -147,8 +170,15 @@ exports.test = base.test.extend({
 
         // Assert against console errors during teardown
         if (failOnConsoleError) {
-            messages.forEach(
-                msg => expect.soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`).not.toEqual('error')
+            messages.forEach((msg) =>
+                expect
+                    .soft(
+                        msg.type(),
+                        `Console error detected: ${_consoleMessageToString(
+                            msg
+                        )}`
+                    )
+                    .not.toEqual('error')
             );
         }
     },

@@ -20,11 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/testing';
+import {
+    createOpenMct,
+    createMouseEvent,
+    resetApplicationState
+} from 'utils/testing';
 import { NotebookPlugin } from './plugin';
 import Vue from 'vue';
 
-describe("Notebook plugin:", () => {
+describe('Notebook plugin:', () => {
     let openmct;
     let notebookDefinition;
     let element;
@@ -76,15 +80,15 @@ describe("Notebook plugin:", () => {
         return resetApplicationState(openmct);
     });
 
-    it("has type as Notebook", () => {
+    it('has type as Notebook', () => {
         expect(notebookDefinition.name).toEqual('Notebook');
     });
 
-    it("is creatable", () => {
+    it('is creatable', () => {
         expect(notebookDefinition.creatable).toEqual(true);
     });
 
-    describe("Notebook view:", () => {
+    describe('Notebook view:', () => {
         let notebookViewProvider;
         let notebookView;
         let notebookViewObject;
@@ -93,84 +97,105 @@ describe("Notebook plugin:", () => {
         beforeEach(async () => {
             notebookViewObject = {
                 ...notebookDomainObject,
-                id: "test-object",
+                id: 'test-object',
                 name: 'Notebook',
                 configuration: {
                     defaultSort: 'oldest',
                     entries: {
-                        "test-section-1": {
-                            "test-page-1": [{
-                                "id": "entry-0",
-                                "createdOn": 0,
-                                "text": "First Test Entry",
-                                "embeds": []
-                            }, {
-                                "id": "entry-1",
-                                "createdOn": 0,
-                                "text": "Second Test Entry",
-                                "embeds": []
-                            }]
+                        'test-section-1': {
+                            'test-page-1': [
+                                {
+                                    id: 'entry-0',
+                                    createdOn: 0,
+                                    text: 'First Test Entry',
+                                    embeds: []
+                                },
+                                {
+                                    id: 'entry-1',
+                                    createdOn: 0,
+                                    text: 'Second Test Entry',
+                                    embeds: []
+                                }
+                            ]
                         }
                     },
                     pageTitle: 'Page',
-                    sections: [{
-                        "id": "test-section-1",
-                        "isDefault": false,
-                        "isSelected": false,
-                        "name": "Test Section",
-                        "pages": [{
-                            "id": "test-page-1",
-                            "isDefault": false,
-                            "isSelected": false,
-                            "name": "Test Page 1",
-                            "pageTitle": "Page"
-                        }, {
-                            "id": "test-page-2",
-                            "isDefault": false,
-                            "isSelected": false,
-                            "name": "Test Page 2",
-                            "pageTitle": "Page"
-                        }]
-                    }, {
-                        "id": "test-section-2",
-                        "isDefault": false,
-                        "isSelected": false,
-                        "name": "Test Section 2",
-                        "pages": [{
-                            "id": "test-page-3",
-                            "isDefault": false,
-                            "isSelected": false,
-                            "name": "Test Page 3",
-                            "pageTitle": "Page"
-                        }]
-                    }],
+                    sections: [
+                        {
+                            id: 'test-section-1',
+                            isDefault: false,
+                            isSelected: false,
+                            name: 'Test Section',
+                            pages: [
+                                {
+                                    id: 'test-page-1',
+                                    isDefault: false,
+                                    isSelected: false,
+                                    name: 'Test Page 1',
+                                    pageTitle: 'Page'
+                                },
+                                {
+                                    id: 'test-page-2',
+                                    isDefault: false,
+                                    isSelected: false,
+                                    name: 'Test Page 2',
+                                    pageTitle: 'Page'
+                                }
+                            ]
+                        },
+                        {
+                            id: 'test-section-2',
+                            isDefault: false,
+                            isSelected: false,
+                            name: 'Test Section 2',
+                            pages: [
+                                {
+                                    id: 'test-page-3',
+                                    isDefault: false,
+                                    isSelected: false,
+                                    name: 'Test Page 3',
+                                    pageTitle: 'Page'
+                                }
+                            ]
+                        }
+                    ],
                     sectionTitle: 'Section',
                     type: 'General'
                 }
             };
-            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
-                'get',
-                'create',
-                'update',
-                'observe'
-            ]);
+            const testObjectProvider = jasmine.createSpyObj(
+                'testObjectProvider',
+                ['get', 'create', 'update', 'observe']
+            );
 
             openmct.editor = {};
             openmct.editor.isEditing = () => false;
 
-            const applicableViews = openmct.objectViews.get(notebookViewObject, [notebookViewObject]);
-            notebookViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'notebook-vue');
+            const applicableViews = openmct.objectViews.get(
+                notebookViewObject,
+                [notebookViewObject]
+            );
+            notebookViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'notebook-vue'
+            );
 
-            testObjectProvider.get.and.returnValue(Promise.resolve(notebookViewObject));
-            testObjectProvider.create.and.returnValue(Promise.resolve(notebookViewObject));
+            testObjectProvider.get.and.returnValue(
+                Promise.resolve(notebookViewObject)
+            );
+            testObjectProvider.create.and.returnValue(
+                Promise.resolve(notebookViewObject)
+            );
             openmct.objects.addProvider('test-namespace', testObjectProvider);
             testObjectProvider.observe.and.returnValue(() => {});
             testObjectProvider.create.and.returnValue(Promise.resolve(true));
             testObjectProvider.update.and.returnValue(Promise.resolve(true));
 
-            const mutableObject = await openmct.objects.getMutable(notebookViewObject.identifier);
+            const mutableObject = await openmct.objects.getMutable(
+                notebookViewObject.identifier
+            );
             mutableNotebookObject = mutableObject;
-            objectProviderObserver = testObjectProvider.observe.calls.mostRecent().args[1];
+            objectProviderObserver =
+                testObjectProvider.observe.calls.mostRecent().args[1];
 
             notebookView = notebookViewProvider.view(mutableNotebookObject);
             notebookView.show(child);
@@ -183,58 +208,69 @@ describe("Notebook plugin:", () => {
             openmct.objects.destroyMutable(mutableNotebookObject);
         });
 
-        it("provides notebook view", () => {
+        it('provides notebook view', () => {
             expect(notebookViewProvider).toBeDefined();
         });
 
-        it("renders notebook element", () => {
+        it('renders notebook element', () => {
             const notebookElement = element.querySelectorAll('.c-notebook');
             expect(notebookElement.length).toBe(1);
         });
 
-        it("renders major elements", () => {
+        it('renders major elements', () => {
             const notebookElement = element.querySelector('.c-notebook');
             const searchElement = notebookElement.querySelector('.c-search');
             const sidebarElement = notebookElement.querySelector('.c-sidebar');
-            const pageViewElement = notebookElement.querySelector('.c-notebook__page-view');
-            const hasMajorElements = Boolean(searchElement && sidebarElement && pageViewElement);
+            const pageViewElement = notebookElement.querySelector(
+                '.c-notebook__page-view'
+            );
+            const hasMajorElements = Boolean(
+                searchElement && sidebarElement && pageViewElement
+            );
 
             expect(hasMajorElements).toBe(true);
         });
 
-        it("renders a row for each entry", () => {
-            const notebookEntryElements = element.querySelectorAll('.c-notebook__entry');
+        it('renders a row for each entry', () => {
+            const notebookEntryElements =
+                element.querySelectorAll('.c-notebook__entry');
             const firstEntryText = getEntryText(0);
             expect(notebookEntryElements.length).toBe(2);
             expect(firstEntryText.innerText).toBe('First Test Entry');
         });
 
-        describe("synchronization", () => {
-
+        describe('synchronization', () => {
             let objectCloneToSyncFrom;
 
             beforeEach(() => {
                 objectCloneToSyncFrom = structuredClone(notebookViewObject);
-                objectCloneToSyncFrom.persisted = notebookViewObject.modified + 1;
+                objectCloneToSyncFrom.persisted =
+                    notebookViewObject.modified + 1;
             });
 
-            it("updates an entry when another user modifies it", () => {
-                expect(getEntryText(0).innerText).toBe("First Test Entry");
-                objectCloneToSyncFrom.configuration.entries["test-section-1"]["test-page-1"][0].text = "Modified entry text";
+            it('updates an entry when another user modifies it', () => {
+                expect(getEntryText(0).innerText).toBe('First Test Entry');
+                objectCloneToSyncFrom.configuration.entries['test-section-1'][
+                    'test-page-1'
+                ][0].text = 'Modified entry text';
                 objectProviderObserver(objectCloneToSyncFrom);
 
                 return Vue.nextTick().then(() => {
-                    expect(getEntryText(0).innerText).toBe("Modified entry text");
+                    expect(getEntryText(0).innerText).toBe(
+                        'Modified entry text'
+                    );
                 });
             });
 
-            it("shows new entry when another user adds one", () => {
+            it('shows new entry when another user adds one', () => {
                 expect(allNotebookEntryElements().length).toBe(2);
-                objectCloneToSyncFrom.configuration.entries["test-section-1"]["test-page-1"].push({
-                    "id": "entry-3",
-                    "createdOn": 0,
-                    "text": "Third Test Entry",
-                    "embeds": []
+                objectCloneToSyncFrom.configuration.entries['test-section-1'][
+                    'test-page-1'
+                ].push({
+                    id: 'entry-3',
+                    createdOn: 0,
+                    text: 'Third Test Entry',
+                    embeds: []
                 });
                 objectProviderObserver(objectCloneToSyncFrom);
 
@@ -242,10 +278,15 @@ describe("Notebook plugin:", () => {
                     expect(allNotebookEntryElements().length).toBe(3);
                 });
             });
-            it("removes an entry when another user removes one", () => {
+            it('removes an entry when another user removes one', () => {
                 expect(allNotebookEntryElements().length).toBe(2);
-                let entries = objectCloneToSyncFrom.configuration.entries["test-section-1"]["test-page-1"];
-                objectCloneToSyncFrom.configuration.entries["test-section-1"]["test-page-1"] = entries.splice(0, 1);
+                let entries =
+                    objectCloneToSyncFrom.configuration.entries[
+                        'test-section-1'
+                    ]['test-page-1'];
+                objectCloneToSyncFrom.configuration.entries['test-section-1'][
+                    'test-page-1'
+                ] = entries.splice(0, 1);
                 objectProviderObserver(objectCloneToSyncFrom);
 
                 return Vue.nextTick().then(() => {
@@ -253,28 +294,32 @@ describe("Notebook plugin:", () => {
                 });
             });
 
-            it("updates the notebook when a user adds a page", () => {
+            it('updates the notebook when a user adds a page', () => {
                 const newPage = {
-                    "id": "test-page-4",
-                    "isDefault": false,
-                    "isSelected": false,
-                    "name": "Test Page 4",
-                    "pageTitle": "Page"
+                    id: 'test-page-4',
+                    isDefault: false,
+                    isSelected: false,
+                    name: 'Test Page 4',
+                    pageTitle: 'Page'
                 };
 
                 expect(allNotebookPageElements().length).toBe(2);
-                objectCloneToSyncFrom.configuration.sections[0].pages.push(newPage);
+                objectCloneToSyncFrom.configuration.sections[0].pages.push(
+                    newPage
+                );
                 objectProviderObserver(objectCloneToSyncFrom);
 
                 return Vue.nextTick().then(() => {
                     expect(allNotebookPageElements().length).toBe(3);
                 });
-
             });
 
-            it("updates the notebook when a user removes a page", () => {
+            it('updates the notebook when a user removes a page', () => {
                 expect(allNotebookPageElements().length).toBe(2);
-                objectCloneToSyncFrom.configuration.sections[0].pages.splice(0, 1);
+                objectCloneToSyncFrom.configuration.sections[0].pages.splice(
+                    0,
+                    1
+                );
                 objectProviderObserver(objectCloneToSyncFrom);
 
                 return Vue.nextTick().then(() => {
@@ -282,19 +327,21 @@ describe("Notebook plugin:", () => {
                 });
             });
 
-            it("updates the notebook when a user adds a section", () => {
+            it('updates the notebook when a user adds a section', () => {
                 const newSection = {
-                    "id": "test-section-3",
-                    "isDefault": false,
-                    "isSelected": false,
-                    "name": "Test Section 3",
-                    "pages": [{
-                        "id": "test-page-4",
-                        "isDefault": false,
-                        "isSelected": false,
-                        "name": "Test Page 4",
-                        "pageTitle": "Page"
-                    }]
+                    id: 'test-section-3',
+                    isDefault: false,
+                    isSelected: false,
+                    name: 'Test Section 3',
+                    pages: [
+                        {
+                            id: 'test-page-4',
+                            isDefault: false,
+                            isSelected: false,
+                            name: 'Test Page 4',
+                            pageTitle: 'Page'
+                        }
+                    ]
                 };
 
                 expect(allNotebookSectionElements().length).toBe(2);
@@ -306,7 +353,7 @@ describe("Notebook plugin:", () => {
                 });
             });
 
-            it("updates the notebook when a user removes a section", () => {
+            it('updates the notebook when a user removes a section', () => {
                 expect(allNotebookSectionElements().length).toBe(2);
                 objectCloneToSyncFrom.configuration.sections.splice(0, 1);
                 objectProviderObserver(objectCloneToSyncFrom);
@@ -318,7 +365,7 @@ describe("Notebook plugin:", () => {
         });
     });
 
-    describe("Notebook Snapshots view:", () => {
+    describe('Notebook Snapshots view:', () => {
         let snapshotIndicator;
         let drawerElement;
 
@@ -331,8 +378,9 @@ describe("Notebook plugin:", () => {
         }
 
         beforeEach(() => {
-            snapshotIndicator = openmct.indicators.indicatorObjects
-                .find(indicator => indicator.key === 'notebook-snapshot-indicator').element;
+            snapshotIndicator = openmct.indicators.indicatorObjects.find(
+                (indicator) => indicator.key === 'notebook-snapshot-indicator'
+            ).element;
 
             element.append(snapshotIndicator);
 
@@ -355,12 +403,13 @@ describe("Notebook plugin:", () => {
             }
         });
 
-        it("has Snapshots indicator", () => {
-            const hasSnapshotIndicator = snapshotIndicator !== null && snapshotIndicator !== undefined;
+        it('has Snapshots indicator', () => {
+            const hasSnapshotIndicator =
+                snapshotIndicator !== null && snapshotIndicator !== undefined;
             expect(hasSnapshotIndicator).toBe(true);
         });
 
-        it("snapshots container has class isExpanded", () => {
+        it('snapshots container has class isExpanded', () => {
             let classes = drawerElement.classList;
             const isExpandedBefore = classes.contains('is-expanded');
 
@@ -372,7 +421,7 @@ describe("Notebook plugin:", () => {
             expect(isExpandedAfterFirstClick).toBeTrue();
         });
 
-        it("snapshots container does not have class isExpanded", () => {
+        it('snapshots container does not have class isExpanded', () => {
             let classes = drawerElement.classList;
             const isExpandedBefore = classes.contains('is-expanded');
 
@@ -389,10 +438,12 @@ describe("Notebook plugin:", () => {
             expect(isExpandedAfterSecondClick).toBeFalse();
         });
 
-        it("show notebook snapshots container text", () => {
+        it('show notebook snapshots container text', () => {
             clickSnapshotIndicator();
 
-            const notebookSnapshots = drawerElement.querySelector('.l-browse-bar__object-name');
+            const notebookSnapshots = drawerElement.querySelector(
+                '.l-browse-bar__object-name'
+            );
             const snapshotsText = notebookSnapshots.textContent.trim();
 
             expect(snapshotsText).toBe('Notebook Snapshots');
@@ -400,7 +451,9 @@ describe("Notebook plugin:", () => {
     });
 
     function getEntryText(entryNumber) {
-        return element.querySelectorAll('.c-notebook__entry .c-ne__text')[entryNumber];
+        return element.querySelectorAll('.c-notebook__entry .c-ne__text')[
+            entryNumber
+        ];
     }
 
     function allNotebookEntryElements() {

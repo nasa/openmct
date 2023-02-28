@@ -15,7 +15,7 @@ export default function (folderName, couchPlugin, searchFilter) {
                     return Promise.resolve({
                         identifier,
                         type: 'folder',
-                        name: folderName || "CouchDB Documents",
+                        name: folderName || 'CouchDB Documents',
                         location: 'ROOT'
                     });
                 }
@@ -24,15 +24,18 @@ export default function (folderName, couchPlugin, searchFilter) {
 
         openmct.composition.addProvider({
             appliesTo(domainObject) {
-                return domainObject.identifier.namespace === 'couch-search'
-                    && domainObject.identifier.key === 'couch-search';
+                return (
+                    domainObject.identifier.namespace === 'couch-search' &&
+                    domainObject.identifier.key === 'couch-search'
+                );
             },
             load() {
-                return couchProvider.getObjectsByFilter(searchFilter).then(objects => {
-                    return objects.map(object => object.identifier);
-                });
+                return couchProvider
+                    .getObjectsByFilter(searchFilter)
+                    .then((objects) => {
+                        return objects.map((object) => object.identifier);
+                    });
             }
         });
     };
-
 }

@@ -20,17 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
-import PlotVuePlugin from "./plugin";
-import Vue from "vue";
-import configStore from "./configuration/ConfigStore";
-import EventEmitter from "EventEmitter";
-import PlotOptions from "./inspector/PlotOptions.vue";
-import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
+import {
+    createMouseEvent,
+    createOpenMct,
+    resetApplicationState,
+    spyOnBuiltins
+} from 'utils/testing';
+import PlotVuePlugin from './plugin';
+import Vue from 'vue';
+import configStore from './configuration/ConfigStore';
+import EventEmitter from 'EventEmitter';
+import PlotOptions from './inspector/PlotOptions.vue';
+import PlotConfigurationModel from './configuration/PlotConfigurationModel';
 
 const TEST_KEY_ID = 'some-other-key';
 
-describe("the plugin", function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -60,17 +65,17 @@ describe("the plugin", function () {
         ];
         const testTelemetry = [
             {
-                'utc': 1,
+                utc: 1,
                 'some-key': 'some-value 1',
                 'some-other-key': 'some-other-value 1'
             },
             {
-                'utc': 2,
+                utc: 2,
                 'some-key': 'some-value 2',
                 'some-other-key': 'some-other-value 2'
             },
             {
-                'utc': 3,
+                utc: 3,
                 'some-key': 'some-value 3',
                 'some-other-key': 'some-other-value 3'
             }
@@ -96,32 +101,31 @@ describe("the plugin", function () {
             return telemetryPromise;
         });
 
-        telemetrylimitProvider = jasmine.createSpyObj('telemetrylimitProvider', [
-            'supportsLimits',
-            'getLimits',
-            'getLimitEvaluator'
-        ]);
+        telemetrylimitProvider = jasmine.createSpyObj(
+            'telemetrylimitProvider',
+            ['supportsLimits', 'getLimits', 'getLimitEvaluator']
+        );
         telemetrylimitProvider.supportsLimits.and.returnValue(true);
         telemetrylimitProvider.getLimits.and.returnValue({
             limits: function () {
                 return Promise.resolve({
                     WARNING: {
                         low: {
-                            cssClass: "is-limit--lwr is-limit--yellow",
+                            cssClass: 'is-limit--lwr is-limit--yellow',
                             'some-key': -0.5
                         },
                         high: {
-                            cssClass: "is-limit--upr is-limit--yellow",
+                            cssClass: 'is-limit--upr is-limit--yellow',
                             'some-key': 0.5
                         }
                     },
                     DISTRESS: {
                         low: {
-                            cssClass: "is-limit--lwr is-limit--red",
+                            cssClass: 'is-limit--lwr is-limit--red',
                             'some-key': -0.9
                         },
                         high: {
-                            cssClass: "is-limit--upr is-limit--red",
+                            cssClass: 'is-limit--upr is-limit--red',
                             'some-key': 0.9
                         }
                     }
@@ -137,25 +141,25 @@ describe("the plugin", function () {
 
         openmct.install(new PlotVuePlugin());
 
-        element = document.createElement("div");
-        element.style.width = "640px";
-        element.style.height = "480px";
-        child = document.createElement("div");
-        child.style.width = "640px";
-        child.style.height = "480px";
+        element = document.createElement('div');
+        element.style.width = '640px';
+        element.style.height = '480px';
+        child = document.createElement('div');
+        child.style.width = '640px';
+        child.style.height = '480px';
         element.appendChild(child);
         document.body.appendChild(element);
 
-        openmct.types.addType("test-object", {
+        openmct.types.addType('test-object', {
             creatable: true
         });
 
-        spyOnBuiltins(["requestAnimationFrame"]);
+        spyOnBuiltins(['requestAnimationFrame']);
         window.requestAnimationFrame.and.callFake((callBack) => {
             callBack();
         });
 
-        openmct.on("start", done);
+        openmct.on('start', done);
         openmct.startHeadless();
     });
 
@@ -169,88 +173,108 @@ describe("the plugin", function () {
         resetApplicationState(openmct).then(done).catch(done);
     });
 
-    describe("the plot views", () => {
-
-        it("provides a plot view for objects with telemetry", () => {
+    describe('the plot views', () => {
+        it('provides a plot view for objects with telemetry', () => {
             const testTelemetryObject = {
-                id: "test-object",
-                type: "test-object",
+                id: 'test-object',
+                type: 'test-object',
                 telemetry: {
-                    values: [{
-                        key: "some-key",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'some-key',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'other-key',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: 'yet-another-key',
+                            format: 'string',
+                            hints: {
+                                range: 2
+                            }
                         }
-                    },
-                    {
-                        key: "other-key",
-                        hints: {
-                            range: 1
-                        }
-                    },
-                    {
-                        key: "yet-another-key",
-                        format: "string",
-                        hints: {
-                            range: 2
-                        }
-                    }]
+                    ]
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            const plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
+            const applicableViews = openmct.objectViews.get(
+                testTelemetryObject,
+                mockObjectPath
+            );
+            const plotView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plot-single'
+            );
 
             expect(plotView).toBeDefined();
         });
 
-        it("does not provide a plot view if the telemetry is entirely non numeric", () => {
+        it('does not provide a plot view if the telemetry is entirely non numeric', () => {
             const testTelemetryObject = {
-                id: "test-object",
-                type: "test-object",
+                id: 'test-object',
+                type: 'test-object',
                 telemetry: {
-                    values: [{
-                        key: "some-key",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'some-key',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'other-key',
+                            format: 'string',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: 'yet-another-key',
+                            format: 'string',
+                            hints: {
+                                range: 1
+                            }
                         }
-                    },
-                    {
-                        key: "other-key",
-                        format: "string",
-                        hints: {
-                            range: 1
-                        }
-                    },
-                    {
-                        key: "yet-another-key",
-                        format: "string",
-                        hints: {
-                            range: 1
-                        }
-                    }]
+                    ]
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            const plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
+            const applicableViews = openmct.objectViews.get(
+                testTelemetryObject,
+                mockObjectPath
+            );
+            const plotView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plot-single'
+            );
 
             expect(plotView).toBeUndefined();
         });
 
-        it("provides an overlay plot view for objects with telemetry", () => {
+        it('provides an overlay plot view for objects with telemetry', () => {
             const testTelemetryObject = {
-                id: "test-object",
-                type: "telemetry.plot.overlay",
+                id: 'test-object',
+                type: 'telemetry.plot.overlay',
                 telemetry: {
-                    values: [{
-                        key: "some-key"
-                    }]
+                    values: [
+                        {
+                            key: 'some-key'
+                        }
+                    ]
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-overlay");
+            const applicableViews = openmct.objectViews.get(
+                testTelemetryObject,
+                mockObjectPath
+            );
+            let plotView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plot-overlay'
+            );
             expect(plotView).toBeDefined();
         });
 
@@ -260,12 +284,14 @@ describe("the plugin", function () {
                     {
                         context: {
                             item: {
-                                id: "test-object",
-                                type: "telemetry.plot.overlay",
+                                id: 'test-object',
+                                type: 'telemetry.plot.overlay',
                                 telemetry: {
-                                    values: [{
-                                        key: "some-key"
-                                    }]
+                                    values: [
+                                        {
+                                            key: 'some-key'
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -283,70 +309,85 @@ describe("the plugin", function () {
             expect(plotInspectorView.length).toEqual(1);
         });
 
-        it("provides a stacked plot view for objects with telemetry", () => {
+        it('provides a stacked plot view for objects with telemetry', () => {
             const testTelemetryObject = {
-                id: "test-object",
-                type: "telemetry.plot.stacked",
+                id: 'test-object',
+                type: 'telemetry.plot.stacked',
                 telemetry: {
-                    values: [{
-                        key: "some-key"
-                    }]
+                    values: [
+                        {
+                            key: 'some-key'
+                        }
+                    ]
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-stacked");
+            const applicableViews = openmct.objectViews.get(
+                testTelemetryObject,
+                mockObjectPath
+            );
+            let plotView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plot-stacked'
+            );
             expect(plotView).toBeDefined();
         });
-
     });
 
-    describe("The single plot view", () => {
+    describe('The single plot view', () => {
         let testTelemetryObject;
         let applicableViews;
         let plotViewProvider;
         let plotView;
 
         beforeEach(() => {
-            openmct.time.timeSystem("utc", {
+            openmct.time.timeSystem('utc', {
                 start: 0,
                 end: 4
             });
             testTelemetryObject = {
                 identifier: {
-                    namespace: "",
-                    key: "test-object"
+                    namespace: '',
+                    key: 'test-object'
                 },
-                type: "test-object",
-                name: "Test Object",
+                type: 'test-object',
+                name: 'Test Object',
                 telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'utc',
+                            format: 'utc',
+                            name: 'Time',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'some-key',
+                            name: 'Some attribute',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: 'some-other-key',
+                            name: 'Another attribute',
+                            hints: {
+                                range: 2
+                            }
                         }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
+                    ]
                 }
             };
 
             openmct.router.path = [testTelemetryObject];
 
-            applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
+            applicableViews = openmct.objectViews.get(
+                testTelemetryObject,
+                mockObjectPath
+            );
+            plotViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plot-single'
+            );
             plotView = plotViewProvider.view(testTelemetryObject, []);
             plotView.show(child, true);
 
@@ -357,28 +398,36 @@ describe("the plugin", function () {
             openmct.router.path = null;
         });
 
-        it("Makes only one request for telemetry on load", () => {
+        it('Makes only one request for telemetry on load', () => {
             expect(openmct.telemetry.request).toHaveBeenCalledTimes(1);
         });
 
-        it("Renders a collapsed legend for every telemetry", () => {
-            let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
+        it('Renders a collapsed legend for every telemetry', () => {
+            let legend = element.querySelectorAll(
+                '.plot-wrapper-collapsed-legend .plot-series-name'
+            );
             expect(legend.length).toBe(1);
-            expect(legend[0].innerHTML).toEqual("Test Object");
+            expect(legend[0].innerHTML).toEqual('Test Object');
         });
 
-        it("Renders an expanded legend for every telemetry", () => {
-            let legendControl = element.querySelector(".c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle");
-            const clickEvent = createMouseEvent("click");
+        it('Renders an expanded legend for every telemetry', () => {
+            let legendControl = element.querySelector(
+                '.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle'
+            );
+            const clickEvent = createMouseEvent('click');
 
             legendControl.dispatchEvent(clickEvent);
 
-            let legend = element.querySelectorAll(".plot-wrapper-expanded-legend .plot-legend-item td");
+            let legend = element.querySelectorAll(
+                '.plot-wrapper-expanded-legend .plot-legend-item td'
+            );
             expect(legend.length).toBe(6);
         });
 
-        it("Renders X-axis ticks for the telemetry object", (done) => {
-            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+        it('Renders X-axis ticks for the telemetry object', (done) => {
+            const configId = openmct.objects.makeKeyString(
+                testTelemetryObject.identifier
+            );
             const config = configStore.get(configId);
             config.xAxis.set('displayRange', {
                 min: 0,
@@ -386,30 +435,38 @@ describe("the plugin", function () {
             });
 
             Vue.nextTick(() => {
-                let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
+                let xAxisElement = element.querySelectorAll(
+                    '.gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper'
+                );
                 expect(xAxisElement.length).toBe(1);
 
-                let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
+                let ticks = xAxisElement[0].querySelectorAll('.gl-plot-tick');
                 expect(ticks.length).toBe(9);
 
                 done();
             });
         });
 
-        it("Renders Y-axis options for the telemetry object", () => {
-            let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select");
+        it('Renders Y-axis options for the telemetry object', () => {
+            let yAxisElement = element.querySelectorAll(
+                '.gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select'
+            );
             expect(yAxisElement.length).toBe(1);
             //Object{name: "Some attribute", key: "some-key"}, Object{name: "Another attribute", key: "some-other-key"}
-            let options = yAxisElement[0].querySelectorAll("option");
+            let options = yAxisElement[0].querySelectorAll('option');
             expect(options.length).toBe(2);
-            expect(options[0].value).toBe("Some attribute");
-            expect(options[1].value).toBe("Another attribute");
+            expect(options[0].value).toBe('Some attribute');
+            expect(options[1].value).toBe('Another attribute');
         });
 
-        it("Updates the Y-axis label when changed", () => {
-            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+        it('Updates the Y-axis label when changed', () => {
+            const configId = openmct.objects.makeKeyString(
+                testTelemetryObject.identifier
+            );
             const config = configStore.get(configId);
-            const yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y")[0].__vue__;
+            const yAxisElement = element.querySelectorAll(
+                '.gl-plot-axis-area.gl-plot-y'
+            )[0].__vue__;
             config.yAxis.seriesCollection.models.forEach((plotSeries) => {
                 expect(plotSeries.model.yKey).toBe('some-key');
             });
@@ -421,8 +478,10 @@ describe("the plugin", function () {
         });
 
         it('hides the pause and play controls', () => {
-            let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
-            let playEl = element.querySelectorAll(".c-button-set .icon-arrow-right");
+            let pauseEl = element.querySelectorAll('.c-button-set .icon-pause');
+            let playEl = element.querySelectorAll(
+                '.c-button-set .icon-arrow-right'
+            );
             expect(pauseEl.length).toBe(0);
             expect(playEl.length).toBe(0);
         });
@@ -439,24 +498,28 @@ describe("the plugin", function () {
 
             it('shows the pause controls', (done) => {
                 Vue.nextTick(() => {
-                    let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
+                    let pauseEl = element.querySelectorAll(
+                        '.c-button-set .icon-pause'
+                    );
                     expect(pauseEl.length).toBe(1);
                     done();
                 });
-
             });
 
             it('shows the play control if plot is paused', (done) => {
-                let pauseEl = element.querySelector(".c-button-set .icon-pause");
-                const clickEvent = createMouseEvent("click");
+                let pauseEl = element.querySelector(
+                    '.c-button-set .icon-pause'
+                );
+                const clickEvent = createMouseEvent('click');
 
                 pauseEl.dispatchEvent(clickEvent);
                 Vue.nextTick(() => {
-                    let playEl = element.querySelectorAll(".c-button-set .is-paused");
+                    let playEl = element.querySelectorAll(
+                        '.c-button-set .is-paused'
+                    );
                     expect(playEl.length).toBe(1);
                     done();
                 });
-
             });
         });
 
@@ -470,15 +533,16 @@ describe("the plugin", function () {
                 return Vue.nextTick();
             });
 
-            it("clicking the plot view without movement resumes the plot while active", async () => {
-
-                const pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
+            it('clicking the plot view without movement resumes the plot while active', async () => {
+                const pauseEl = element.querySelectorAll(
+                    '.c-button-set .icon-pause'
+                );
                 // if the pause button is present, the chart is running
                 expect(pauseEl.length).toBe(1);
 
                 // simulate an errant mouse click
                 // the second item is the canvas we need to use
-                const canvas = element.querySelectorAll("canvas")[1];
+                const canvas = element.querySelectorAll('canvas')[1];
                 const mouseDownEvent = new MouseEvent('mousedown');
                 const mouseUpEvent = new MouseEvent('mouseup');
                 canvas.dispatchEvent(mouseDownEvent);
@@ -486,25 +550,29 @@ describe("the plugin", function () {
                 window.dispatchEvent(mouseUpEvent);
                 await Vue.nextTick();
 
-                const pauseElAfterClick = element.querySelectorAll(".c-button-set .icon-pause");
+                const pauseElAfterClick = element.querySelectorAll(
+                    '.c-button-set .icon-pause'
+                );
                 console.log('pauseElAfterClick', pauseElAfterClick);
                 expect(pauseElAfterClick.length).toBe(1);
-
             });
 
-            it("clicking the plot view without movement leaves the plot paused", async () => {
-
-                const pauseEl = element.querySelector(".c-button-set .icon-pause");
+            it('clicking the plot view without movement leaves the plot paused', async () => {
+                const pauseEl = element.querySelector(
+                    '.c-button-set .icon-pause'
+                );
                 // pause the plot
                 pauseEl.dispatchEvent(createMouseEvent('click'));
                 await Vue.nextTick();
 
-                const playEl = element.querySelectorAll('.c-button-set .is-paused');
+                const playEl = element.querySelectorAll(
+                    '.c-button-set .is-paused'
+                );
                 expect(playEl.length).toBe(1);
 
                 // simulate an errant mouse click
                 // the second item is the canvas we need to use
-                const canvas = element.querySelectorAll("canvas")[1];
+                const canvas = element.querySelectorAll('canvas')[1];
                 const mouseDownEvent = new MouseEvent('mousedown');
                 const mouseUpEvent = new MouseEvent('mouseup');
                 canvas.dispatchEvent(mouseDownEvent);
@@ -512,17 +580,18 @@ describe("the plugin", function () {
                 window.dispatchEvent(mouseUpEvent);
                 await Vue.nextTick();
 
-                const playElAfterChartClick = element.querySelectorAll(".c-button-set .is-paused");
+                const playElAfterChartClick = element.querySelectorAll(
+                    '.c-button-set .is-paused'
+                );
                 expect(playElAfterChartClick.length).toBe(1);
-
             });
 
-            it("clicking the plot does not request historical data", async () => {
+            it('clicking the plot does not request historical data', async () => {
                 expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
 
                 // simulate an errant mouse click
                 // the second item is the canvas we need to use
-                const canvas = element.querySelectorAll("canvas")[1];
+                const canvas = element.querySelectorAll('canvas')[1];
                 const mouseDownEvent = new MouseEvent('mousedown');
                 const mouseUpEvent = new MouseEvent('mouseup');
                 canvas.dispatchEvent(mouseDownEvent);
@@ -531,18 +600,20 @@ describe("the plugin", function () {
                 await Vue.nextTick();
 
                 expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
-
             });
 
             describe('limits', () => {
-
                 it('lines are not displayed by default', () => {
-                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                    let limitEl = element.querySelectorAll(
+                        '.js-limit-area .js-limit-line'
+                    );
                     expect(limitEl.length).toBe(0);
                 });
 
                 it('lines are displayed when configuration is set to true', (done) => {
-                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+                    const configId = openmct.objects.makeKeyString(
+                        testTelemetryObject.identifier
+                    );
                     const config = configStore.get(configId);
                     config.yAxis.set('displayRange', {
                         min: 0,
@@ -551,7 +622,9 @@ describe("the plugin", function () {
                     config.series.models[0].set('limitLines', true);
 
                     Vue.nextTick(() => {
-                        let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                        let limitEl = element.querySelectorAll(
+                            '.js-limit-area .js-limit-line'
+                        );
                         expect(limitEl.length).toBe(4);
                         done();
                     });
@@ -560,22 +633,24 @@ describe("the plugin", function () {
         });
 
         describe('controls in time strip view', () => {
-
             it('zoom controls are hidden', () => {
-                let pauseEl = element.querySelectorAll(".c-button-set .js-zoom");
+                let pauseEl = element.querySelectorAll(
+                    '.c-button-set .js-zoom'
+                );
                 expect(pauseEl.length).toBe(0);
             });
 
             it('pan controls are hidden', () => {
-                let pauseEl = element.querySelectorAll(".c-button-set .js-pan");
+                let pauseEl = element.querySelectorAll('.c-button-set .js-pan');
                 expect(pauseEl.length).toBe(0);
             });
 
             it('pause/play controls are hidden', () => {
-                let pauseEl = element.querySelectorAll(".c-button-set .js-pause");
+                let pauseEl = element.querySelectorAll(
+                    '.c-button-set .js-pause'
+                );
                 expect(pauseEl.length).toBe(0);
             });
-
         });
     });
 
@@ -591,39 +666,48 @@ describe("the plugin", function () {
         beforeEach(() => {
             testTelemetryObject = {
                 identifier: {
-                    namespace: "",
-                    key: "test-object"
+                    namespace: '',
+                    key: 'test-object'
                 },
-                type: "test-object",
-                name: "Test Object",
+                type: 'test-object',
+                name: 'Test Object',
                 telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'utc',
+                            format: 'utc',
+                            name: 'Time',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'some-key',
+                            name: 'Some attribute',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: 'some-other-key',
+                            name: 'Another attribute',
+                            hints: {
+                                range: 2
+                            }
                         }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
+                    ]
                 }
             };
 
             openmct.router.path = [testTelemetryObject];
 
-            applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
+            applicableViews = openmct.objectViews.get(
+                testTelemetryObject,
+                mockObjectPath
+            );
+            plotViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plot-single'
+            );
             plotView = plotViewProvider.view(testTelemetryObject, []);
 
             plotView.show(child, true);
@@ -637,11 +721,19 @@ describe("the plugin", function () {
             }, 600);
 
             plotContainerResizeObserver = new ResizeObserver(handlePlotResize);
-            plotContainerResizeObserver.observe(plotView.getComponent().$children[0].$children[1].$parent.$refs.plotWrapper);
+            plotContainerResizeObserver.observe(
+                plotView.getComponent().$children[0].$children[1].$parent.$refs
+                    .plotWrapper
+            );
 
             return Vue.nextTick(() => {
-                plotView.getComponent().$children[0].$children[1].stopFollowingTimeContext();
-                spyOn(plotView.getComponent().$children[0].$children[1], 'loadSeriesData').and.callThrough();
+                plotView
+                    .getComponent()
+                    .$children[0].$children[1].stopFollowingTimeContext();
+                spyOn(
+                    plotView.getComponent().$children[0].$children[1],
+                    'loadSeriesData'
+                ).and.callThrough();
             });
         });
 
@@ -650,18 +742,24 @@ describe("the plugin", function () {
             openmct.router.path = null;
         });
 
-        it("requests historical data when over the threshold", (done) => {
+        it('requests historical data when over the threshold', (done) => {
             element.style.width = '680px';
             resizePromise.then(() => {
-                expect(plotView.getComponent().$children[0].$children[1].loadSeriesData).toHaveBeenCalledTimes(1);
+                expect(
+                    plotView.getComponent().$children[0].$children[1]
+                        .loadSeriesData
+                ).toHaveBeenCalledTimes(1);
                 done();
             });
         });
 
-        it("does not request historical data when under the threshold", (done) => {
+        it('does not request historical data when under the threshold', (done) => {
             element.style.width = '644px';
             resizePromise.then(() => {
-                expect(plotView.getComponent().$children[0].$children[1].loadSeriesData).not.toHaveBeenCalled();
+                expect(
+                    plotView.getComponent().$children[0].$children[1]
+                        .loadSeriesData
+                ).not.toHaveBeenCalled();
                 done();
             });
         });
@@ -677,32 +775,36 @@ describe("the plugin", function () {
         beforeEach((done) => {
             testTelemetryObject = {
                 identifier: {
-                    namespace: "",
-                    key: "test-object"
+                    namespace: '',
+                    key: 'test-object'
                 },
-                type: "test-object",
-                name: "Test Object",
+                type: 'test-object',
+                name: 'Test Object',
                 telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'utc',
+                            format: 'utc',
+                            name: 'Time',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'some-key',
+                            name: 'Some attribute',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: 'some-other-key',
+                            name: 'Another attribute',
+                            hints: {
+                                range: 2
+                            }
                         }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
+                    ]
                 }
             };
 
@@ -711,17 +813,17 @@ describe("the plugin", function () {
                     {
                         context: {
                             item: {
-                                id: "test-object",
+                                id: 'test-object',
                                 identifier: {
-                                    key: "test-object",
+                                    key: 'test-object',
                                     namespace: ''
                                 },
-                                type: "telemetry.plot.overlay",
+                                type: 'telemetry.plot.overlay',
                                 configuration: {
                                     series: [
                                         {
                                             identifier: {
-                                                key: "test-object",
+                                                key: 'test-object',
                                                 namespace: ''
                                             }
                                         }
@@ -755,7 +857,9 @@ describe("the plugin", function () {
 
             spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
-            const configId = openmct.objects.makeKeyString(selection[0][0].context.item.identifier);
+            const configId = openmct.objects.makeKeyString(
+                selection[0][0].context.item.identifier
+            );
             config = new PlotConfigurationModel({
                 id: configId,
                 domainObject: selection[0][0].context.item,
@@ -773,7 +877,10 @@ describe("the plugin", function () {
                 provide: {
                     openmct: openmct,
                     domainObject: selection[0][0].context.item,
-                    path: [selection[0][0].context.item, selection[0][1].context.item]
+                    path: [
+                        selection[0][0].context.item,
+                        selection[0][1].context.item
+                    ]
                 },
                 template: '<plot-options/>'
             });
@@ -792,8 +899,12 @@ describe("the plugin", function () {
             let browseOptionsEl;
             let editOptionsEl;
             beforeEach(() => {
-                browseOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-browse');
-                editOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-edit');
+                browseOptionsEl = viewComponentObject.$el.querySelector(
+                    '.js-plot-options-browse'
+                );
+                editOptionsEl = viewComponentObject.$el.querySelector(
+                    '.js-plot-options-edit'
+                );
             });
 
             it('does not show the edit options', () => {
@@ -801,21 +912,29 @@ describe("the plugin", function () {
             });
 
             it('shows the name', () => {
-                const seriesEl = browseOptionsEl.querySelector('.c-object-label__name');
+                const seriesEl = browseOptionsEl.querySelector(
+                    '.c-object-label__name'
+                );
                 expect(seriesEl.innerHTML).toEqual(testTelemetryObject.name);
             });
 
             it('shows in collapsed mode', () => {
-                const seriesEl = browseOptionsEl.querySelectorAll('.c-disclosure-triangle--expanded');
+                const seriesEl = browseOptionsEl.querySelectorAll(
+                    '.c-disclosure-triangle--expanded'
+                );
                 expect(seriesEl.length).toEqual(0);
             });
 
             it('shows in expanded mode', () => {
-                let expandControl = browseOptionsEl.querySelector(".c-disclosure-triangle");
-                const clickEvent = createMouseEvent("click");
+                let expandControl = browseOptionsEl.querySelector(
+                    '.c-disclosure-triangle'
+                );
+                const clickEvent = createMouseEvent('click');
                 expandControl.dispatchEvent(clickEvent);
 
-                const plotOptionsProperties = browseOptionsEl.querySelectorAll('.js-plot-options-browse-properties .grid-row');
+                const plotOptionsProperties = browseOptionsEl.querySelectorAll(
+                    '.js-plot-options-browse-properties .grid-row'
+                );
                 expect(plotOptionsProperties.length).toEqual(6);
             });
         });
@@ -827,8 +946,12 @@ describe("the plugin", function () {
             beforeEach((done) => {
                 viewComponentObject.setEditState(true);
                 Vue.nextTick(() => {
-                    editOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-edit');
-                    browseOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-browse');
+                    editOptionsEl = viewComponentObject.$el.querySelector(
+                        '.js-plot-options-edit'
+                    );
+                    browseOptionsEl = viewComponentObject.$el.querySelector(
+                        '.js-plot-options-browse'
+                    );
                     done();
                 });
             });
@@ -838,56 +961,81 @@ describe("the plugin", function () {
             });
 
             it('shows the name', () => {
-                const seriesEl = editOptionsEl.querySelector('.c-object-label__name');
+                const seriesEl = editOptionsEl.querySelector(
+                    '.c-object-label__name'
+                );
                 expect(seriesEl.innerHTML).toEqual(testTelemetryObject.name);
             });
 
             it('shows in collapsed mode', () => {
-                const seriesEl = editOptionsEl.querySelectorAll('.c-disclosure-triangle--expanded');
+                const seriesEl = editOptionsEl.querySelectorAll(
+                    '.c-disclosure-triangle--expanded'
+                );
                 expect(seriesEl.length).toEqual(0);
             });
 
             it('shows in collapsed mode', () => {
-                const seriesEl = editOptionsEl.querySelectorAll('.c-disclosure-triangle--expanded');
+                const seriesEl = editOptionsEl.querySelectorAll(
+                    '.c-disclosure-triangle--expanded'
+                );
                 expect(seriesEl.length).toEqual(0);
             });
 
             it('renders expanded', () => {
-                const expandControl = editOptionsEl.querySelector(".c-disclosure-triangle");
-                const clickEvent = createMouseEvent("click");
+                const expandControl = editOptionsEl.querySelector(
+                    '.c-disclosure-triangle'
+                );
+                const clickEvent = createMouseEvent('click');
                 expandControl.dispatchEvent(clickEvent);
 
-                const plotOptionsProperties = editOptionsEl.querySelectorAll(".js-plot-options-edit-properties .grid-row");
+                const plotOptionsProperties = editOptionsEl.querySelectorAll(
+                    '.js-plot-options-edit-properties .grid-row'
+                );
                 expect(plotOptionsProperties.length).toEqual(8);
             });
 
             it('shows yKeyOptions', () => {
-                const expandControl = editOptionsEl.querySelector(".c-disclosure-triangle");
-                const clickEvent = createMouseEvent("click");
+                const expandControl = editOptionsEl.querySelector(
+                    '.c-disclosure-triangle'
+                );
+                const clickEvent = createMouseEvent('click');
                 expandControl.dispatchEvent(clickEvent);
 
-                const plotOptionsProperties = editOptionsEl.querySelectorAll(".js-plot-options-edit-properties .grid-row");
+                const plotOptionsProperties = editOptionsEl.querySelectorAll(
+                    '.js-plot-options-edit-properties .grid-row'
+                );
 
-                const yKeySelection = plotOptionsProperties[0].querySelector('select');
-                const options = Array.from(yKeySelection.options).map((option) => {
-                    return option.value;
-                });
-                expect(options).toEqual([testTelemetryObject.telemetry.values[1].key, testTelemetryObject.telemetry.values[2].key]);
+                const yKeySelection =
+                    plotOptionsProperties[0].querySelector('select');
+                const options = Array.from(yKeySelection.options).map(
+                    (option) => {
+                        return option.value;
+                    }
+                );
+                expect(options).toEqual([
+                    testTelemetryObject.telemetry.values[1].key,
+                    testTelemetryObject.telemetry.values[2].key
+                ]);
             });
 
             it('shows yAxis options', () => {
-                const expandControl = editOptionsEl.querySelector(".c-disclosure-triangle");
-                const clickEvent = createMouseEvent("click");
+                const expandControl = editOptionsEl.querySelector(
+                    '.c-disclosure-triangle'
+                );
+                const clickEvent = createMouseEvent('click');
                 expandControl.dispatchEvent(clickEvent);
 
-                const yAxisProperties = editOptionsEl.querySelectorAll("div.grid-properties:first-of-type .l-inspector-part");
+                const yAxisProperties = editOptionsEl.querySelectorAll(
+                    'div.grid-properties:first-of-type .l-inspector-part'
+                );
 
                 // TODO better test
                 expect(yAxisProperties.length).toEqual(2);
             });
 
             it('renders color palette options', () => {
-                const colorSwatch = editOptionsEl.querySelector(".c-click-swatch");
+                const colorSwatch =
+                    editOptionsEl.querySelector('.c-click-swatch');
                 expect(colorSwatch).toBeDefined();
             });
         });

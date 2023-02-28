@@ -61,8 +61,11 @@ export default class UTCTimeFormat {
         if (value !== undefined) {
             const utc = moment.utc(value);
 
-            if (formatString !== undefined && !this.isValidFormatString(formatString)) {
-                throw "Invalid format requested from UTC Time Formatter ";
+            if (
+                formatString !== undefined &&
+                !this.isValidFormatString(formatString)
+            ) {
+                throw 'Invalid format requested from UTC Time Formatter ';
             }
 
             let format = formatString || this.DATE_FORMATS.PRECISION_DEFAULT;
@@ -82,7 +85,8 @@ export default class UTCTimeFormat {
     }
 
     validate(text) {
-        return moment.utc(text, Object.values(this.DATE_FORMATS), true).isValid();
+        return moment
+            .utc(text, Object.values(this.DATE_FORMATS), true)
+            .isValid();
     }
-
 }

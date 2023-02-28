@@ -21,10 +21,9 @@ define([
     _,
     urlSanitizeLib
 ) {
-
     //default css configuration for new rules
     const DEFAULT_PROPS = {
-        'color': '#cccccc',
+        color: '#cccccc',
         'background-color': '#666666',
         'border-color': 'rgba(0,0,0,0)'
     };
@@ -44,19 +43,29 @@ define([
         this.openmct = openmct;
 
         this.domainObject.configuration = this.domainObject.configuration || {};
-        this.domainObject.configuration.ruleConfigById = this.domainObject.configuration.ruleConfigById || {};
-        this.domainObject.configuration.ruleOrder = this.domainObject.configuration.ruleOrder || ['default'];
-        this.domainObject.configuration.testDataConfig = this.domainObject.configuration.testDataConfig || [{
-            object: '',
-            key: '',
-            value: ''
-        }];
+        this.domainObject.configuration.ruleConfigById =
+            this.domainObject.configuration.ruleConfigById || {};
+        this.domainObject.configuration.ruleOrder = this.domainObject
+            .configuration.ruleOrder || ['default'];
+        this.domainObject.configuration.testDataConfig = this.domainObject
+            .configuration.testDataConfig || [
+            {
+                object: '',
+                key: '',
+                value: ''
+            }
+        ];
 
         this.activeId = 'default';
         this.rulesById = {};
-        this.domElement = templateHelpers.convertTemplateToHTML(widgetTemplate)[0];
-        this.toggleRulesControl = this.domElement.querySelector('.t-view-control-rules');
-        this.toggleTestDataControl = this.domElement.querySelector('.t-view-control-test-data');
+        this.domElement =
+            templateHelpers.convertTemplateToHTML(widgetTemplate)[0];
+        this.toggleRulesControl = this.domElement.querySelector(
+            '.t-view-control-rules'
+        );
+        this.toggleTestDataControl = this.domElement.querySelector(
+            '.t-view-control-test-data'
+        );
 
         this.widgetButton = this.domElement.querySelector(':scope > #widget');
 
@@ -64,15 +73,26 @@ define([
         this.container = '';
         this.editListenerUnsubscribe = () => {};
 
-        this.outerWrapper = this.domElement.querySelector('.widget-edit-holder');
+        this.outerWrapper = this.domElement.querySelector(
+            '.widget-edit-holder'
+        );
         this.ruleArea = this.domElement.querySelector('#ruleArea');
-        this.configAreaRules = this.domElement.querySelector('.widget-rules-wrapper');
+        this.configAreaRules = this.domElement.querySelector(
+            '.widget-rules-wrapper'
+        );
 
         this.testDataArea = this.domElement.querySelector('.widget-test-data');
         this.addRuleButton = this.domElement.querySelector('#addRule');
 
-        this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
-        this.testDataManager = new TestDataManager(this.domainObject, this.conditionManager, this.openmct);
+        this.conditionManager = new ConditionManager(
+            this.domainObject,
+            this.openmct
+        );
+        this.testDataManager = new TestDataManager(
+            this.domainObject,
+            this.conditionManager,
+            this.openmct
+        );
 
         this.watchForChanges = this.watchForChanges.bind(this);
         this.show = this.show.bind(this);
@@ -89,16 +109,28 @@ define([
          * @private
          */
         function toggleTestData() {
-            if (self.outerWrapper.classList.contains('expanded-widget-test-data')) {
+            if (
+                self.outerWrapper.classList.contains(
+                    'expanded-widget-test-data'
+                )
+            ) {
                 self.outerWrapper.classList.remove('expanded-widget-test-data');
             } else {
                 self.outerWrapper.classList.add('expanded-widget-test-data');
             }
 
-            if (self.toggleTestDataControl.classList.contains('c-disclosure-triangle--expanded')) {
-                self.toggleTestDataControl.classList.remove('c-disclosure-triangle--expanded');
+            if (
+                self.toggleTestDataControl.classList.contains(
+                    'c-disclosure-triangle--expanded'
+                )
+            ) {
+                self.toggleTestDataControl.classList.remove(
+                    'c-disclosure-triangle--expanded'
+                );
             } else {
-                self.toggleTestDataControl.classList.add('c-disclosure-triangle--expanded');
+                self.toggleTestDataControl.classList.add(
+                    'c-disclosure-triangle--expanded'
+                );
             }
         }
 
@@ -109,12 +141,17 @@ define([
          * @private
          */
         function toggleRules() {
-            templateHelpers.toggleClass(self.outerWrapper, 'expanded-widget-rules');
-            templateHelpers.toggleClass(self.toggleRulesControl, 'c-disclosure-triangle--expanded');
+            templateHelpers.toggleClass(
+                self.outerWrapper,
+                'expanded-widget-rules'
+            );
+            templateHelpers.toggleClass(
+                self.toggleRulesControl,
+                'c-disclosure-triangle--expanded'
+            );
         }
 
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
-
     }
 
     /**
@@ -143,12 +180,21 @@ define([
      * @param {domainObject} Object instance of this object
      */
     SummaryWidget.prototype.watchForChanges = function (openmct, domainObject) {
-        this.watchForChangesUnsubscribe = openmct.objects.observe(domainObject, '*', function (newDomainObject) {
-            if (newDomainObject.url !== this.domainObject.url
-                    || newDomainObject.openNewTab !== this.domainObject.openNewTab) {
-                this.addHyperlink(newDomainObject.url, newDomainObject.openNewTab);
-            }
-        }.bind(this));
+        this.watchForChangesUnsubscribe = openmct.objects.observe(
+            domainObject,
+            '*',
+            function (newDomainObject) {
+                if (
+                    newDomainObject.url !== this.domainObject.url ||
+                    newDomainObject.openNewTab !== this.domainObject.openNewTab
+                ) {
+                    this.addHyperlink(
+                        newDomainObject.url,
+                        newDomainObject.openNewTab
+                    );
+                }
+            }.bind(this)
+        );
     };
 
     /**
@@ -161,8 +207,14 @@ define([
         const self = this;
         this.container = container;
         this.container.append(this.domElement);
-        this.domElement.querySelector('.widget-test-data').append(this.testDataManager.getDOM());
-        this.widgetDnD = new WidgetDnD(this.domElement, this.domainObject.configuration.ruleOrder, this.rulesById);
+        this.domElement
+            .querySelector('.widget-test-data')
+            .append(this.testDataManager.getDOM());
+        this.widgetDnD = new WidgetDnD(
+            this.domElement,
+            this.domainObject.configuration.ruleOrder,
+            this.rulesById
+        );
         this.initRule('default', 'Default');
         this.domainObject.configuration.ruleOrder.forEach(function (ruleId) {
             if (ruleId !== 'default') {
@@ -216,9 +268,13 @@ define([
 
         rules.forEach(function (ruleKey, index, array) {
             if (array.length > 2 && index > 0) {
-                rulesById[ruleKey].domElement.querySelector('.t-grippy').style.display = '';
+                rulesById[ruleKey].domElement.querySelector(
+                    '.t-grippy'
+                ).style.display = '';
             } else {
-                rulesById[ruleKey].domElement.querySelector('.t-grippy').style.display = 'none';
+                rulesById[ruleKey].domElement.querySelector(
+                    '.t-grippy'
+                ).style.display = 'none';
             }
         });
     };
@@ -229,10 +285,16 @@ define([
     SummaryWidget.prototype.updateWidget = function () {
         const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
         const activeRule = this.rulesById[this.activeId];
-        this.applyStyle(this.domElement.querySelector('#widget'), activeRule.getProperty('style'));
-        this.domElement.querySelector('#widget').title = activeRule.getProperty('message');
-        this.domElement.querySelector('#widgetLabel').innerHTML = activeRule.getProperty('label');
-        this.domElement.querySelector('#widgetIcon').classList = WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon');
+        this.applyStyle(
+            this.domElement.querySelector('#widget'),
+            activeRule.getProperty('style')
+        );
+        this.domElement.querySelector('#widget').title =
+            activeRule.getProperty('message');
+        this.domElement.querySelector('#widgetLabel').innerHTML =
+            activeRule.getProperty('label');
+        this.domElement.querySelector('#widgetIcon').classList =
+            WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon');
     };
 
     /**
@@ -315,23 +377,33 @@ define([
                 id: ruleId,
                 icon: ' ',
                 style: styleObj,
-                description: ruleId === 'default' ? 'Default appearance for the widget' : 'A new rule',
-                conditions: [{
-                    object: '',
-                    key: '',
-                    operation: '',
-                    values: []
-                }],
+                description:
+                    ruleId === 'default'
+                        ? 'Default appearance for the widget'
+                        : 'A new rule',
+                conditions: [
+                    {
+                        object: '',
+                        key: '',
+                        operation: '',
+                        values: []
+                    }
+                ],
                 jsCondition: '',
                 trigger: 'any',
                 expanded: 'true'
             };
-
         }
 
         ruleConfig = this.domainObject.configuration.ruleConfigById[ruleId];
-        this.rulesById[ruleId] = new Rule(ruleConfig, this.domainObject, this.openmct,
-            this.conditionManager, this.widgetDnD, this.container);
+        this.rulesById[ruleId] = new Rule(
+            ruleConfig,
+            this.domainObject,
+            this.openmct,
+            this.conditionManager,
+            this.widgetDnD,
+            this.container
+        );
         this.rulesById[ruleId].on('remove', this.refreshRules, this);
         this.rulesById[ruleId].on('duplicate', this.duplicateRule, this);
         this.rulesById[ruleId].on('change', this.updateWidget, this);
@@ -375,7 +447,11 @@ define([
      * Mutate this domain object's configuration with the current local configuration
      */
     SummaryWidget.prototype.updateDomainObject = function () {
-        this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
+        this.openmct.objects.mutate(
+            this.domainObject,
+            'configuration',
+            this.domainObject.configuration
+        );
     };
 
     return SummaryWidget;

@@ -133,10 +133,14 @@ describe('The Forms API', () => {
         });
 
         it('when container element is provided', (done) => {
-            openmct.forms.showCustomForm(formStructure, { element }).catch(() => {
-                done();
-            });
-            const titleElement = element.querySelector('.c-overlay__dialog-title');
+            openmct.forms
+                .showCustomForm(formStructure, { element })
+                .catch(() => {
+                    done();
+                });
+            const titleElement = element.querySelector(
+                '.c-overlay__dialog-title'
+            );
             expect(titleElement.textContent).toBe(formStructure.title);
 
             element.querySelector('.js-cancel-button').click();
@@ -147,7 +151,9 @@ describe('The Forms API', () => {
                 done();
             });
 
-            const titleElement = document.querySelector('.c-overlay__dialog-title');
+            const titleElement = document.querySelector(
+                '.c-overlay__dialog-title'
+            );
             const title = titleElement.textContent;
 
             expect(title).toBe(formStructure.title);

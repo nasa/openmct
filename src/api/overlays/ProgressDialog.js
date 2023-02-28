@@ -5,7 +5,16 @@ import Vue from 'vue';
 let component;
 
 class ProgressDialog extends Overlay {
-    constructor({progressPerc, progressText, iconClass, message, title, hint, timestamp, ...options}) {
+    constructor({
+        progressPerc,
+        progressText,
+        iconClass,
+        message,
+        title,
+        hint,
+        timestamp,
+        ...options
+    }) {
         component = new Vue({
             components: {
                 ProgressDialogComponent: ProgressDialogComponent
@@ -25,7 +34,8 @@ class ProgressDialog extends Overlay {
                     }
                 };
             },
-            template: '<progress-dialog-component :model="model"></progress-dialog-component>'
+            template:
+                '<progress-dialog-component :model="model"></progress-dialog-component>'
         }).$mount();
 
         super({

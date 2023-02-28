@@ -27,7 +27,7 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-describe("The Link Action plugin", () => {
+describe('The Link Action plugin', () => {
     let openmct;
     let linkAction;
     let childObject;
@@ -48,11 +48,11 @@ describe("The Link Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Child Folder",
+                    name: 'Child Folder',
                     location: ORIGINAL_PARENT_ID,
                     identifier: {
-                        namespace: "",
-                        key: "child-folder-object"
+                        namespace: '',
+                        key: 'child-folder-object'
                     }
                 }
             }
@@ -62,10 +62,10 @@ describe("The Link Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Parent Folder",
+                    name: 'Parent Folder',
                     identifier: {
-                        namespace: "",
-                        key: "original-parent-object"
+                        namespace: '',
+                        key: 'original-parent-object'
                     },
                     composition: [childObject.identifier]
                 }
@@ -76,7 +76,7 @@ describe("The Link Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Another Parent Folder"
+                    name: 'Another Parent Folder'
                 }
             }
         }).folder;
@@ -93,19 +93,21 @@ describe("The Link Action plugin", () => {
         resetApplicationState(openmct);
     });
 
-    it("should be defined", () => {
+    it('should be defined', () => {
         expect(LinkActionPlugin).toBeDefined();
     });
 
-    it("should make the link action available for an appropriate domainObject", () => {
-        const actionCollection = openmct.actions.getActionsCollection([childObject]);
+    it('should make the link action available for an appropriate domainObject', () => {
+        const actionCollection = openmct.actions.getActionsCollection([
+            childObject
+        ]);
         const visibleActions = actionCollection.getVisibleActions();
-        linkAction = visibleActions.find(a => a.key === LINK_ACITON_KEY);
+        linkAction = visibleActions.find((a) => a.key === LINK_ACITON_KEY);
 
         expect(linkAction.name).toEqual(LINK_ACITON_NAME);
     });
 
-    describe("when linking an object in a new parent", () => {
+    describe('when linking an object in a new parent', () => {
         beforeEach(() => {
             linkAction = new LinkAction(openmct);
             linkAction.linkInNewParent(childObject, anotherParentObject);

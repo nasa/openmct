@@ -19,12 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("The URLTimeSettingsSynchronizer", () => {
+describe('The URLTimeSettingsSynchronizer', () => {
     let appHolder;
     let openmct;
     let resolveFunction;
@@ -38,7 +35,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
 
         openmct.on('start', done);
 
-        appHolder = document.createElement("div");
+        appHolder = document.createElement('div');
         openmct.start(appHolder);
     });
 
@@ -53,7 +50,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         return resetApplicationState(openmct);
     });
 
-    it("initial clock is set to fixed is reflected in URL", (done) => {
+    it('initial clock is set to fixed is reflected in URL', (done) => {
         resolveFunction = () => {
             oldHash = window.location.hash;
             expect(window.location.hash).toContain('tc.mode=fixed');
@@ -68,7 +65,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    it("when the clock is set via the time API, it is reflected in the URL", (done) => {
+    it('when the clock is set via the time API, it is reflected in the URL', (done) => {
         resolveFunction = () => {
             openmct.time.clock('local', {
                 start: -2000,
@@ -89,7 +86,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    it("when the clock mode is set to local, it is reflected in the URL", (done) => {
+    it('when the clock mode is set to local, it is reflected in the URL', (done) => {
         resolveFunction = () => {
             let hash = window.location.hash;
             hash = hash.replace('tc.mode=fixed', 'tc.mode=local');
@@ -105,7 +102,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct.router.on('change:hash', resolveFunction);
     });
 
-    it("when the clock mode is set to local, it is reflected in the URL", (done) => {
+    it('when the clock mode is set to local, it is reflected in the URL', (done) => {
         resolveFunction = () => {
             let hash = window.location.hash;
 
@@ -122,7 +119,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
     });
 
     // disabling due to test flakiness
-    xit("reset hash", (done) => {
+    xit('reset hash', (done) => {
         window.location.hash = oldHash;
         resolveFunction = () => {
             expect(window.location.hash).toBe(oldHash);

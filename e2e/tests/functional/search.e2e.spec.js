@@ -33,74 +33,144 @@ test.describe('Grand Search', () => {
 
     test.beforeEach(async ({ page }) => {
         // Go to baseURL
-        await page.goto("./", { waitUntil: "networkidle" });
+        await page.goto('./', { waitUntil: 'networkidle' });
     });
 
-    test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
+    test('Can search for objects, and subsequent search dropdown behaves properly', async ({
+        page,
+        openmctConfig
+    }) => {
         const { myItemsFolderName } = openmctConfig;
 
         const createdObjects = await createObjectsForSearch(page);
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        await page
+            .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+            .click();
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cl');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(`Clock A ${myItemsFolderName} Red Folder Blue Folder`);
-        await expect(page.locator('[aria-label="Search Result"] >> nth=1')).toContainText(`Clock B ${myItemsFolderName} Red Folder Blue Folder`);
-        await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
-        await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
+        await page
+            .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+            .fill('Cl');
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toContainText(`Clock A ${myItemsFolderName} Red Folder Blue Folder`);
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=1')
+        ).toContainText(`Clock B ${myItemsFolderName} Red Folder Blue Folder`);
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=2')
+        ).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=3')
+        ).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
         // Click the Elements pool to dismiss the search menu
         await page.locator('.l-pane__label:has-text("Elements")').click();
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toBeHidden();
 
-        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
-        await page.locator('[aria-label="Clock A clock result"] >> text=Clock A').click();
+        await page
+            .locator(
+                '[aria-label="OpenMCT Search"] [aria-label="Search Input"]'
+            )
+            .click();
+        await page
+            .locator('[aria-label="Clock A clock result"] >> text=Clock A')
+            .click();
         await expect(page.locator('.js-preview-window')).toBeVisible();
 
         // Click [aria-label="Close"]
         await page.locator('[aria-label="Close"]').click();
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeVisible();
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(`Clock A ${myItemsFolderName} Red Folder Blue Folder`);
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toBeVisible();
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toContainText(`Clock A ${myItemsFolderName} Red Folder Blue Folder`);
 
         // Click [aria-label="OpenMCT Search"] a >> nth=0
         await page.locator('[aria-label="OpenMCT Search"] a').first().click();
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toBeHidden();
 
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('foo');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
+        await page
+            .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+            .fill('foo');
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toBeHidden();
 
         // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
-        await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
+        await page
+            .locator(
+                'text=Snapshot Save and Finish Editing Save and Continue Editing >> button'
+            )
+            .nth(1)
+            .click();
         // Click text=Save and Finish Editing
         await page.locator('text=Save and Finish Editing').click();
         // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
-        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
+        await page
+            .locator(
+                '[aria-label="OpenMCT Search"] [aria-label="Search Input"]'
+            )
+            .click();
         // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]
-        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Cl');
+        await page
+            .locator(
+                '[aria-label="OpenMCT Search"] [aria-label="Search Input"]'
+            )
+            .fill('Cl');
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('[aria-label="Clock A clock result"] >> text=Clock A').click()
+            page
+                .locator('[aria-label="Clock A clock result"] >> text=Clock A')
+                .click()
         ]);
         await expect(page.locator('.is-object-type-clock')).toBeVisible();
 
-        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Disp');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(createdObjects.displayLayout.name);
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toContainText('Folder');
+        await page
+            .locator(
+                '[aria-label="OpenMCT Search"] [aria-label="Search Input"]'
+            )
+            .fill('Disp');
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toContainText(createdObjects.displayLayout.name);
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).not.toContainText('Folder');
 
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Clock C');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
+        await page
+            .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+            .fill('Clock C');
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
 
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cloc');
-        await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(`Clock A ${myItemsFolderName} Red Folder Blue Folder`);
-        await expect(page.locator('[aria-label="Search Result"] >> nth=1')).toContainText(`Clock B ${myItemsFolderName} Red Folder Blue Folder`);
-        await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
-        await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
+        await page
+            .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+            .fill('Cloc');
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=0')
+        ).toContainText(`Clock A ${myItemsFolderName} Red Folder Blue Folder`);
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=1')
+        ).toContainText(`Clock B ${myItemsFolderName} Red Folder Blue Folder`);
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=2')
+        ).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
+        await expect(
+            page.locator('[aria-label="Search Result"] >> nth=3')
+        ).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
     });
 
     test('Validate empty search result', async ({ page }) => {
         // Invalid search for objects
-        await page.type("input[type=search]", 'not found');
+        await page.type('input[type=search]', 'not found');
 
         // Wait for search to complete
         await waitForSearchCompletion(page);
@@ -115,7 +185,9 @@ test.describe('Grand Search', () => {
         await expect(page.locator('text=No results found')).toBeVisible();
     });
 
-    test('Validate single object in search result @couchdb', async ({ page }) => {
+    test('Validate single object in search result @couchdb', async ({
+        page
+    }) => {
         // Create a folder object
         const folderName = uuid();
         await createDomainObjectWithDefaults(page, {
@@ -124,7 +196,7 @@ test.describe('Grand Search', () => {
         });
 
         // Full search for object
-        await page.type("input[type=search]", folderName);
+        await page.type('input[type=search]', folderName);
 
         // Wait for search to complete
         await waitForSearchCompletion(page);
@@ -154,7 +226,7 @@ test.describe('Grand Search', () => {
         });
 
         // Full search for object
-        await page.type("input[type=search]", 'Clock', { delay: 100 });
+        await page.type('input[type=search]', 'Clock', { delay: 100 });
 
         // Wait for search to finish
         await waitForSearchCompletion(page);
@@ -163,20 +235,24 @@ test.describe('Grand Search', () => {
         // 1.  batched request for latest telemetry using the bulk API
         expect(networkRequests.length).toBe(1);
 
-        const searchResultDropDown = await page.locator(searchResultDropDownSelector);
+        const searchResultDropDown = await page.locator(
+            searchResultDropDownSelector
+        );
 
         await expect(searchResultDropDown).toContainText('Clock A');
     });
 
-    test("Validate multiple objects in search results return partial matches", async ({ page }) => {
+    test('Validate multiple objects in search results return partial matches', async ({
+        page
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/4667'
         });
 
         // Create folder objects
-        const folderName1 = "e928a26e-e924-4ea0";
-        const folderName2 = "e928a26e-e924-4001";
+        const folderName1 = 'e928a26e-e924-4ea0';
+        const folderName2 = 'e928a26e-e924-4001';
 
         await createDomainObjectWithDefaults(page, {
             type: 'Folder',
@@ -189,12 +265,14 @@ test.describe('Grand Search', () => {
         });
 
         // Partial search for objects
-        await page.type("input[type=search]", 'e928a26e');
+        await page.type('input[type=search]', 'e928a26e');
 
         // Wait for search to finish
         await waitForSearchCompletion(page);
 
-        const searchResultDropDown = await page.locator(searchResultDropDownSelector);
+        const searchResultDropDown = await page.locator(
+            searchResultDropDownSelector
+        );
 
         // Verify that the search result/s correctly match the search query
         await expect(searchResultDropDown).toContainText(folderName1);
@@ -213,9 +291,9 @@ async function waitForSearchCompletion(page) {
 }
 
 /**
-  * Creates some domain objects for searching
-  * @param {import('@playwright/test').Page} page
-  */
+ * Creates some domain objects for searching
+ * @param {import('@playwright/test').Page} page
+ */
 async function createObjectsForSearch(page) {
     const redFolder = await createDomainObjectWithDefaults(page, {
         type: 'Folder',

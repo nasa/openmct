@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'eventemitter3';
-import eventHelpers from "../lib/eventHelpers";
+import eventHelpers from '../lib/eventHelpers';
 import _ from 'lodash';
 
 /**
@@ -80,9 +80,7 @@ export default class Model extends EventEmitter {
      * @abstract
      * @param {ModelOptions<T, O>} options
      */
-    initialize(options) {
-
-    }
+    initialize(options) {}
 
     /**
      * Destroy the model, removing all listeners and subscriptions.

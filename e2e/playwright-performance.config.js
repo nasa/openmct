@@ -17,7 +17,7 @@ const config = {
         reuseExistingServer: !CI
     },
     use: {
-        browserName: "chromium",
+        browserName: 'chromium',
         baseURL: 'http://localhost:8080/',
         headless: CI, //Only if running locally
         ignoreHTTPSErrors: true,

@@ -13,19 +13,19 @@ const CUSTOM_FORMATS = [
 ];
 
 const valueMetadata = {
-    key: "sin",
-    name: "Sine",
-    unit: "Hz",
-    formatString: "%0.2f",
+    key: 'sin',
+    name: 'Sine',
+    unit: 'Hz',
+    formatString: '%0.2f',
     hints: {
         range: 1,
         priority: 3
     },
-    source: "sin"
+    source: 'sin'
 };
 
 const datum = {
-    name: "1 Sine Wave Generator",
+    name: '1 Sine Wave Generator',
     utc: 1603930354000,
     yesterday: 1603843954000,
     sin: 0.587785209686822,
@@ -50,7 +50,10 @@ describe('CustomStringFormatter', function () {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        customStringFormatter = new CustomStringFormatter(openmct, valueMetadata);
+        customStringFormatter = new CustomStringFormatter(
+            openmct,
+            valueMetadata
+        );
     });
 
     afterEach(() => {

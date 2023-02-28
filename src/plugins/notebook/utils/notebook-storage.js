@@ -20,14 +20,21 @@ function defaultNotebookObjectChanged(newDomainObject) {
 }
 
 function observeDefaultNotebookObject(openmct, notebookStorage, domainObject) {
-    if (currentNotebookObjectIdentifier
-            && objectUtils.makeKeyString(currentNotebookObjectIdentifier) === objectUtils.makeKeyString(notebookStorage.identifier)) {
+    if (
+        currentNotebookObjectIdentifier &&
+        objectUtils.makeKeyString(currentNotebookObjectIdentifier) ===
+            objectUtils.makeKeyString(notebookStorage.identifier)
+    ) {
         return;
     }
 
     removeListener();
 
-    unlisten = openmct.objects.observe(domainObject, '*', defaultNotebookObjectChanged);
+    unlisten = openmct.objects.observe(
+        domainObject,
+        '*',
+        defaultNotebookObjectChanged
+    );
 }
 
 function removeListener() {
@@ -38,7 +45,10 @@ function removeListener() {
 }
 
 function saveDefaultNotebook(notebookStorage) {
-    window.localStorage.setItem(NOTEBOOK_LOCAL_STORAGE, JSON.stringify(notebookStorage));
+    window.localStorage.setItem(
+        NOTEBOOK_LOCAL_STORAGE,
+        JSON.stringify(notebookStorage)
+    );
 }
 
 export function clearDefaultNotebook() {
@@ -56,8 +66,9 @@ export function getDefaultNotebook() {
 
 export function getNotebookSectionAndPage(domainObject, sectionId, pageId) {
     const configuration = domainObject.configuration;
-    const section = configuration && configuration.sections.find(s => s.id === sectionId);
-    const page = section && section.pages.find(p => p.id === pageId);
+    const section =
+        configuration && configuration.sections.find((s) => s.id === sectionId);
+    const page = section && section.pages.find((p) => p.id === pageId);
 
     return {
         section,
@@ -70,7 +81,8 @@ export async function getDefaultNotebookLink(openmct, domainObject = null) {
         return null;
     }
 
-    const path = await openmct.objects.getOriginalPath(domainObject.identifier)
+    const path = await openmct.objects
+        .getOriginalPath(domainObject.identifier)
         .then(openmct.objects.getRelativePath);
     const { defaultPageId, defaultSectionId } = getDefaultNotebook();
 

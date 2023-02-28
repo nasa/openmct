@@ -19,10 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { debounce } from 'lodash';
 
 import Vue from 'vue';
@@ -82,7 +79,8 @@ describe('Gauge plugin', () => {
     });
 
     it('Gauge form controller', () => {
-        const gaugeController = openmct.forms.getFormControl('gauge-controller');
+        const gaugeController =
+            openmct.forms.getFormControl('gauge-controller');
         expect(gaugeController).toBeDefined();
     });
 
@@ -124,21 +122,27 @@ describe('Gauge plugin', () => {
                 name: 'gauge'
             };
 
-            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
-                'get',
-                'create',
-                'update',
-                'observe'
-            ]);
+            const testObjectProvider = jasmine.createSpyObj(
+                'testObjectProvider',
+                ['get', 'create', 'update', 'observe']
+            );
 
             openmct.editor = {};
             openmct.editor.isEditing = () => false;
 
-            const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
+            const applicableViews = openmct.objectViews.get(gaugeViewObject, [
+                gaugeViewObject
+            ]);
+            gaugeViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'gauge'
+            );
 
-            testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
-            testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
+            testObjectProvider.get.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
+            testObjectProvider.create.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
             openmct.objects.addProvider('test-namespace', testObjectProvider);
             testObjectProvider.observe.and.returnValue(() => {});
             testObjectProvider.create.and.returnValue(Promise.resolve(true));
@@ -166,20 +170,26 @@ describe('Gauge plugin', () => {
                     }
                 }
             });
-            spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
-            spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
+            spyOn(openmct.telemetry, 'getLimits').and.returnValue({
+                limits: () => Promise.resolve()
+            });
+            spyOn(openmct.telemetry, 'request').and.returnValue(
+                Promise.resolve([randomValue])
+            );
             spyOn(openmct.time, 'bounds').and.returnValue({
                 start: 1000,
                 end: 5000
             });
 
-            return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
-                mutablegaugeObject = mutableObject;
-                gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-                gaugeView.show(child);
+            return openmct.objects
+                .getMutable(gaugeViewObject.identifier)
+                .then((mutableObject) => {
+                    mutablegaugeObject = mutableObject;
+                    gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+                    gaugeView.show(child);
 
-                return Vue.nextTick();
-            });
+                    return Vue.nextTick();
+                });
         });
 
         afterEach(() => {
@@ -193,28 +203,48 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
+            const gaugeElement =
+                gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
-            const rangeElement = gaugeHolder.querySelector('.js-gauge-dial-range');
-            const valueElement = gaugeHolder.querySelector('.js-dial-current-value');
+            const wrapperElement =
+                gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector(
+                '.js-gauge-dial-range'
+            );
+            const valueElement = gaugeHolder.querySelector(
+                '.js-dial-current-value'
+            );
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
+            const hasMajorElements = Boolean(
+                wrapperElement && rangeElement && valueElement
+            );
 
             expect(hasMajorElements).toBe(true);
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${minValue} ${maxValue}`);
+            expect(
+                gaugeHolder.querySelector('.js-gauge-dial-range').textContent
+            ).toEqual(`${minValue} ${maxValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.js-dial-current-value');
-                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                const textElement = gaugeHolder.querySelector(
+                    '.js-dial-current-value'
+                );
+                expect(
+                    Number(textElement.textContent).toFixed(
+                        gaugeViewObject.configuration.gaugeController.precision
+                    )
+                ).toBe(
+                    randomValue.toFixed(
+                        gaugeViewObject.configuration.gaugeController.precision
+                    )
+                );
                 done();
             }
 
@@ -260,21 +290,27 @@ describe('Gauge plugin', () => {
                 name: 'gauge'
             };
 
-            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
-                'get',
-                'create',
-                'update',
-                'observe'
-            ]);
+            const testObjectProvider = jasmine.createSpyObj(
+                'testObjectProvider',
+                ['get', 'create', 'update', 'observe']
+            );
 
             openmct.editor = {};
             openmct.editor.isEditing = () => false;
 
-            const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
+            const applicableViews = openmct.objectViews.get(gaugeViewObject, [
+                gaugeViewObject
+            ]);
+            gaugeViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'gauge'
+            );
 
-            testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
-            testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
+            testObjectProvider.get.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
+            testObjectProvider.create.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
             openmct.objects.addProvider('test-namespace', testObjectProvider);
             testObjectProvider.observe.and.returnValue(() => {});
             testObjectProvider.create.and.returnValue(Promise.resolve(true));
@@ -302,20 +338,26 @@ describe('Gauge plugin', () => {
                     }
                 }
             });
-            spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
-            spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
+            spyOn(openmct.telemetry, 'getLimits').and.returnValue({
+                limits: () => Promise.resolve()
+            });
+            spyOn(openmct.telemetry, 'request').and.returnValue(
+                Promise.resolve([randomValue])
+            );
             spyOn(openmct.time, 'bounds').and.returnValue({
                 start: 1000,
                 end: 5000
             });
 
-            return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
-                mutablegaugeObject = mutableObject;
-                gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-                gaugeView.show(child);
+            return openmct.objects
+                .getMutable(gaugeViewObject.identifier)
+                .then((mutableObject) => {
+                    mutablegaugeObject = mutableObject;
+                    gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+                    gaugeView.show(child);
 
-                return Vue.nextTick();
-            });
+                    return Vue.nextTick();
+                });
         });
 
         afterEach(() => {
@@ -329,28 +371,48 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
+            const gaugeElement =
+                gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
-            const rangeElement = gaugeHolder.querySelector('.js-gauge-dial-range');
-            const valueElement = gaugeHolder.querySelector('.js-dial-current-value');
+            const wrapperElement =
+                gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector(
+                '.js-gauge-dial-range'
+            );
+            const valueElement = gaugeHolder.querySelector(
+                '.js-dial-current-value'
+            );
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
+            const hasMajorElements = Boolean(
+                wrapperElement && rangeElement && valueElement
+            );
 
             expect(hasMajorElements).toBe(true);
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${minValue} ${maxValue}`);
+            expect(
+                gaugeHolder.querySelector('.js-gauge-dial-range').textContent
+            ).toEqual(`${minValue} ${maxValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.js-dial-current-value');
-                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                const textElement = gaugeHolder.querySelector(
+                    '.js-dial-current-value'
+                );
+                expect(
+                    Number(textElement.textContent).toFixed(
+                        gaugeViewObject.configuration.gaugeController.precision
+                    )
+                ).toBe(
+                    randomValue.toFixed(
+                        gaugeViewObject.configuration.gaugeController.precision
+                    )
+                );
                 done();
             }
 
@@ -396,21 +458,27 @@ describe('Gauge plugin', () => {
                 name: 'gauge'
             };
 
-            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
-                'get',
-                'create',
-                'update',
-                'observe'
-            ]);
+            const testObjectProvider = jasmine.createSpyObj(
+                'testObjectProvider',
+                ['get', 'create', 'update', 'observe']
+            );
 
             openmct.editor = {};
             openmct.editor.isEditing = () => false;
 
-            const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
+            const applicableViews = openmct.objectViews.get(gaugeViewObject, [
+                gaugeViewObject
+            ]);
+            gaugeViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'gauge'
+            );
 
-            testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
-            testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
+            testObjectProvider.get.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
+            testObjectProvider.create.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
             openmct.objects.addProvider('test-namespace', testObjectProvider);
             testObjectProvider.observe.and.returnValue(() => {});
             testObjectProvider.create.and.returnValue(Promise.resolve(true));
@@ -438,20 +506,26 @@ describe('Gauge plugin', () => {
                     }
                 }
             });
-            spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
-            spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
+            spyOn(openmct.telemetry, 'getLimits').and.returnValue({
+                limits: () => Promise.resolve()
+            });
+            spyOn(openmct.telemetry, 'request').and.returnValue(
+                Promise.resolve([randomValue])
+            );
             spyOn(openmct.time, 'bounds').and.returnValue({
                 start: 1000,
                 end: 5000
             });
 
-            return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
-                mutablegaugeObject = mutableObject;
-                gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-                gaugeView.show(child);
+            return openmct.objects
+                .getMutable(gaugeViewObject.identifier)
+                .then((mutableObject) => {
+                    mutablegaugeObject = mutableObject;
+                    gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+                    gaugeView.show(child);
 
-                return Vue.nextTick();
-            });
+                    return Vue.nextTick();
+                });
         });
 
         afterEach(() => {
@@ -465,28 +539,48 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
+            const gaugeElement =
+                gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
-            const rangeElement = gaugeHolder.querySelector('.js-gauge-meter-range');
-            const valueElement = gaugeHolder.querySelector('.js-gauge-current-value');
+            const wrapperElement =
+                gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector(
+                '.js-gauge-meter-range'
+            );
+            const valueElement = gaugeHolder.querySelector(
+                '.js-gauge-current-value'
+            );
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
+            const hasMajorElements = Boolean(
+                wrapperElement && rangeElement && valueElement
+            );
 
             expect(hasMajorElements).toBe(true);
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-meter-range').textContent).toEqual(`${maxValue} ${minValue}`);
+            expect(
+                gaugeHolder.querySelector('.js-gauge-meter-range').textContent
+            ).toEqual(`${maxValue} ${minValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.js-gauge-current-value');
-                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                const textElement = gaugeHolder.querySelector(
+                    '.js-gauge-current-value'
+                );
+                expect(
+                    Number(textElement.textContent).toFixed(
+                        gaugeViewObject.configuration.gaugeController.precision
+                    )
+                ).toBe(
+                    randomValue.toFixed(
+                        gaugeViewObject.configuration.gaugeController.precision
+                    )
+                );
                 done();
             }
 
@@ -522,34 +616,42 @@ describe('Gauge plugin', () => {
                 name: 'gauge'
             };
 
-            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
-                'get',
-                'create',
-                'update',
-                'observe'
-            ]);
+            const testObjectProvider = jasmine.createSpyObj(
+                'testObjectProvider',
+                ['get', 'create', 'update', 'observe']
+            );
 
             openmct.editor = {};
             openmct.editor.isEditing = () => false;
 
-            const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
+            const applicableViews = openmct.objectViews.get(gaugeViewObject, [
+                gaugeViewObject
+            ]);
+            gaugeViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'gauge'
+            );
 
-            testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
-            testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
+            testObjectProvider.get.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
+            testObjectProvider.create.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
             openmct.objects.addProvider('test-namespace', testObjectProvider);
             testObjectProvider.observe.and.returnValue(() => {});
             testObjectProvider.create.and.returnValue(Promise.resolve(true));
             testObjectProvider.update.and.returnValue(Promise.resolve(true));
 
-            return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
-                mutablegaugeObject = mutableObject;
+            return openmct.objects
+                .getMutable(gaugeViewObject.identifier)
+                .then((mutableObject) => {
+                    mutablegaugeObject = mutableObject;
 
-                gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-                gaugeView.show(child);
+                    gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+                    gaugeView.show(child);
 
-                return Vue.nextTick();
-            });
+                    return Vue.nextTick();
+                });
         });
 
         afterEach(() => {
@@ -563,16 +665,24 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
+            const gaugeElement =
+                gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
-            const rangeElement = gaugeHolder.querySelector('.js-gauge-meter-range');
-            const valueElement = gaugeHolder.querySelector('.js-gauge-current-value');
+            const wrapperElement =
+                gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector(
+                '.js-gauge-meter-range'
+            );
+            const valueElement = gaugeHolder.querySelector(
+                '.js-gauge-current-value'
+            );
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
+            const hasMajorElements = Boolean(
+                wrapperElement && rangeElement && valueElement
+            );
 
             expect(hasMajorElements).toBe(true);
         });
@@ -605,34 +715,42 @@ describe('Gauge plugin', () => {
                 name: 'gauge'
             };
 
-            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
-                'get',
-                'create',
-                'update',
-                'observe'
-            ]);
+            const testObjectProvider = jasmine.createSpyObj(
+                'testObjectProvider',
+                ['get', 'create', 'update', 'observe']
+            );
 
             openmct.editor = {};
             openmct.editor.isEditing = () => false;
 
-            const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
+            const applicableViews = openmct.objectViews.get(gaugeViewObject, [
+                gaugeViewObject
+            ]);
+            gaugeViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'gauge'
+            );
 
-            testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
-            testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
+            testObjectProvider.get.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
+            testObjectProvider.create.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
             openmct.objects.addProvider('test-namespace', testObjectProvider);
             testObjectProvider.observe.and.returnValue(() => {});
             testObjectProvider.create.and.returnValue(Promise.resolve(true));
             testObjectProvider.update.and.returnValue(Promise.resolve(true));
 
-            return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
-                mutablegaugeObject = mutableObject;
+            return openmct.objects
+                .getMutable(gaugeViewObject.identifier)
+                .then((mutableObject) => {
+                    mutablegaugeObject = mutableObject;
 
-                gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-                gaugeView.show(child);
+                    gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+                    gaugeView.show(child);
 
-                return Vue.nextTick();
-            });
+                    return Vue.nextTick();
+                });
         });
 
         afterEach(() => {
@@ -646,16 +764,20 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
+            const gaugeElement =
+                gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
+            const wrapperElement =
+                gaugeHolder.querySelector('.js-gauge-wrapper');
             const rangeElement = gaugeHolder.querySelector('.c-gauge__range');
             const curveElement = gaugeHolder.querySelector('.c-meter');
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && curveElement);
+            const hasMajorElements = Boolean(
+                wrapperElement && rangeElement && curveElement
+            );
 
             expect(hasMajorElements).toBe(true);
         });
@@ -697,21 +819,27 @@ describe('Gauge plugin', () => {
                 name: 'gauge'
             };
 
-            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
-                'get',
-                'create',
-                'update',
-                'observe'
-            ]);
+            const testObjectProvider = jasmine.createSpyObj(
+                'testObjectProvider',
+                ['get', 'create', 'update', 'observe']
+            );
 
             openmct.editor = {};
             openmct.editor.isEditing = () => false;
 
-            const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
+            const applicableViews = openmct.objectViews.get(gaugeViewObject, [
+                gaugeViewObject
+            ]);
+            gaugeViewProvider = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'gauge'
+            );
 
-            testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
-            testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
+            testObjectProvider.get.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
+            testObjectProvider.create.and.returnValue(
+                Promise.resolve(gaugeViewObject)
+            );
             openmct.objects.addProvider('test-namespace', testObjectProvider);
             testObjectProvider.observe.and.returnValue(() => {});
             testObjectProvider.create.and.returnValue(Promise.resolve(true));
@@ -739,29 +867,32 @@ describe('Gauge plugin', () => {
                     }
                 }
             });
-            spyOn(openmct.telemetry, 'getLimits').and.returnValue(
-                {
-                    limits: () => Promise.resolve({
+            spyOn(openmct.telemetry, 'getLimits').and.returnValue({
+                limits: () =>
+                    Promise.resolve({
                         CRITICAL: {
                             high: 0.99,
                             low: -0.99
                         }
                     })
-                }
+            });
+            spyOn(openmct.telemetry, 'request').and.returnValue(
+                Promise.resolve([randomValue])
             );
-            spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
             spyOn(openmct.time, 'bounds').and.returnValue({
                 start: 1000,
                 end: 5000
             });
 
-            return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
-                mutablegaugeObject = mutableObject;
-                gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-                gaugeView.show(child);
+            return openmct.objects
+                .getMutable(gaugeViewObject.identifier)
+                .then((mutableObject) => {
+                    mutablegaugeObject = mutableObject;
+                    gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+                    gaugeView.show(child);
 
-                return Vue.nextTick();
-            });
+                    return Vue.nextTick();
+                });
         });
 
         afterEach(() => {
@@ -775,28 +906,50 @@ describe('Gauge plugin', () => {
         });
 
         it('renders gauge element', () => {
-            const gaugeElement = gaugeHolder.querySelectorAll('.js-gauge-wrapper');
+            const gaugeElement =
+                gaugeHolder.querySelectorAll('.js-gauge-wrapper');
             expect(gaugeElement.length).toBe(1);
         });
 
         it('renders major elements', () => {
-            const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
-            const rangeElement = gaugeHolder.querySelector('.js-gauge-dial-range');
-            const valueElement = gaugeHolder.querySelector('.js-dial-current-value');
+            const wrapperElement =
+                gaugeHolder.querySelector('.js-gauge-wrapper');
+            const rangeElement = gaugeHolder.querySelector(
+                '.js-gauge-dial-range'
+            );
+            const valueElement = gaugeHolder.querySelector(
+                '.js-dial-current-value'
+            );
 
-            const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
+            const hasMajorElements = Boolean(
+                wrapperElement && rangeElement && valueElement
+            );
 
             expect(hasMajorElements).toBe(true);
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`);
+            expect(
+                gaugeHolder.querySelector('.js-gauge-dial-range').textContent
+            ).toEqual(
+                `${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`
+            );
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.js-dial-current-value');
-                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                const textElement = gaugeHolder.querySelector(
+                    '.js-dial-current-value'
+                );
+                expect(
+                    Number(textElement.textContent).toFixed(
+                        gaugeViewObject.configuration.gaugeController.precision
+                    )
+                ).toBe(
+                    randomValue.toFixed(
+                        gaugeViewObject.configuration.gaugeController.precision
+                    )
+                );
                 done();
             }
 

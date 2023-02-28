@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "./LocalTimeSystem",
-    "./LocalTimeFormat"
-], function (
+define(['./LocalTimeSystem', './LocalTimeFormat'], function (
     LocalTimeSystem,
     LocalTimeFormat
 ) {

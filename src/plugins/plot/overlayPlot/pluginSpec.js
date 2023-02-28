@@ -20,15 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
-import PlotVuePlugin from "../plugin";
-import Vue from "vue";
-import Plot from "../Plot.vue";
-import configStore from "../configuration/ConfigStore";
-import EventEmitter from "EventEmitter";
-import PlotOptions from "../inspector/PlotOptions.vue";
+import {
+    createMouseEvent,
+    createOpenMct,
+    resetApplicationState,
+    spyOnBuiltins
+} from 'utils/testing';
+import PlotVuePlugin from '../plugin';
+import Vue from 'vue';
+import Plot from '../Plot.vue';
+import configStore from '../configuration/ConfigStore';
+import EventEmitter from 'EventEmitter';
+import PlotOptions from '../inspector/PlotOptions.vue';
 
-describe("the plugin", function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -37,11 +42,11 @@ describe("the plugin", function () {
     let mockObjectPath;
     let overlayPlotObject = {
         identifier: {
-            namespace: "",
-            key: "test-plot"
+            namespace: '',
+            key: 'test-plot'
         },
-        type: "telemetry.plot.overlay",
-        name: "Test Overlay Plot",
+        type: 'telemetry.plot.overlay',
+        name: 'Test Overlay Plot',
         composition: [],
         configuration: {
             series: []
@@ -69,21 +74,21 @@ describe("the plugin", function () {
         ];
         const testTelemetry = [
             {
-                'utc': 1,
+                utc: 1,
                 'some-key': 'some-value 1',
                 'some-other-key': 'some-other-value 1',
                 'some-key2': 'some-value2 1',
                 'some-other-key2': 'some-other-value2 1'
             },
             {
-                'utc': 2,
+                utc: 2,
                 'some-key': 'some-value 2',
                 'some-other-key': 'some-other-value 2',
                 'some-key2': 'some-value2 2',
                 'some-other-key2': 'some-other-value2 2'
             },
             {
-                'utc': 3,
+                utc: 3,
                 'some-key': 'some-value 3',
                 'some-other-key': 'some-other-value 3',
                 'some-key2': 'some-value2 2',
@@ -113,12 +118,12 @@ describe("the plugin", function () {
 
         openmct.install(new PlotVuePlugin());
 
-        element = document.createElement("div");
-        element.style.width = "640px";
-        element.style.height = "480px";
-        child = document.createElement("div");
-        child.style.width = "640px";
-        child.style.height = "480px";
+        element = document.createElement('div');
+        element.style.width = '640px';
+        element.style.height = '480px';
+        child = document.createElement('div');
+        child.style.width = '640px';
+        child.style.height = '480px';
         element.appendChild(child);
         document.body.appendChild(element);
 
@@ -128,17 +133,17 @@ describe("the plugin", function () {
             disconnect() {}
         });
 
-        openmct.types.addType("test-object", {
+        openmct.types.addType('test-object', {
             creatable: true
         });
 
-        spyOnBuiltins(["requestAnimationFrame"]);
+        spyOnBuiltins(['requestAnimationFrame']);
         window.requestAnimationFrame.and.callFake((callBack) => {
             callBack();
         });
 
         openmct.router.path = [overlayPlotObject];
-        openmct.on("start", done);
+        openmct.on('start', done);
         openmct.startHeadless();
     });
 
@@ -155,26 +160,32 @@ describe("the plugin", function () {
         openmct.router.path = null;
     });
 
-    describe("the plot views", () => {
-        it("provides an overlay plot view for objects with telemetry", () => {
+    describe('the plot views', () => {
+        it('provides an overlay plot view for objects with telemetry', () => {
             const testTelemetryObject = {
-                id: "test-object",
-                type: "telemetry.plot.overlay",
+                id: 'test-object',
+                type: 'telemetry.plot.overlay',
                 telemetry: {
-                    values: [{
-                        key: "some-key"
-                    }]
+                    values: [
+                        {
+                            key: 'some-key'
+                        }
+                    ]
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-overlay");
+            const applicableViews = openmct.objectViews.get(
+                testTelemetryObject,
+                mockObjectPath
+            );
+            let plotView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'plot-overlay'
+            );
             expect(plotView).toBeDefined();
         });
-
     });
 
-    describe("The overlay plot view with multiple axes", () => {
+    describe('The overlay plot view with multiple axes', () => {
         let testTelemetryObject;
         let testTelemetryObject2;
         let config;
@@ -189,63 +200,71 @@ describe("the plugin", function () {
         beforeEach(() => {
             testTelemetryObject = {
                 identifier: {
-                    namespace: "",
-                    key: "test-object"
+                    namespace: '',
+                    key: 'test-object'
                 },
-                type: "test-object",
-                name: "Test Object",
+                type: 'test-object',
+                name: 'Test Object',
                 telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'utc',
+                            format: 'utc',
+                            name: 'Time',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'some-key',
+                            name: 'Some attribute',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: 'some-other-key',
+                            name: 'Another attribute',
+                            hints: {
+                                range: 2
+                            }
                         }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
+                    ]
                 }
             };
 
             testTelemetryObject2 = {
                 identifier: {
-                    namespace: "",
-                    key: "test-object2"
+                    namespace: '',
+                    key: 'test-object2'
                 },
-                type: "test-object",
-                name: "Test Object2",
+                type: 'test-object',
+                name: 'Test Object2',
                 telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'utc',
+                            format: 'utc',
+                            name: 'Time',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'some-key2',
+                            name: 'Some attribute2',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: 'some-other-key2',
+                            name: 'Another attribute2',
+                            hints: {
+                                range: 2
+                            }
                         }
-                    }, {
-                        key: "some-key2",
-                        name: "Some attribute2",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key2",
-                        name: "Another attribute2",
-                        hints: {
-                            range: 2
-                        }
-                    }]
+                    ]
                 }
             };
             overlayPlotObject.composition = [
@@ -286,7 +305,7 @@ describe("the plugin", function () {
 
             spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
-            let viewContainer = document.createElement("div");
+            let viewContainer = document.createElement('div');
             child.append(viewContainer);
             component = new Vue({
                 el: viewContainer,
@@ -302,21 +321,23 @@ describe("the plugin", function () {
                 template: '<plot ref="plotComponent"></plot>'
             });
 
-            return telemetryPromise
-                .then(Vue.nextTick())
-                .then(() => {
-                    const configId = openmct.objects.makeKeyString(overlayPlotObject.identifier);
-                    config = configStore.get(configId);
-                });
+            return telemetryPromise.then(Vue.nextTick()).then(() => {
+                const configId = openmct.objects.makeKeyString(
+                    overlayPlotObject.identifier
+                );
+                config = configStore.get(configId);
+            });
         });
 
-        it("Renders multiple Y-axis for the telemetry objects", (done) => {
+        it('Renders multiple Y-axis for the telemetry objects', (done) => {
             config.yAxis.set('displayRange', {
                 min: 10,
                 max: 20
             });
             Vue.nextTick(() => {
-                let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper");
+                let yAxisElement = element.querySelectorAll(
+                    '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
+                );
                 expect(yAxisElement.length).toBe(2);
                 done();
             });
@@ -335,7 +356,8 @@ describe("the plugin", function () {
                                     id: overlayPlotObject.identifier.key,
                                     identifier: overlayPlotObject.identifier,
                                     type: overlayPlotObject.type,
-                                    configuration: overlayPlotObject.configuration,
+                                    configuration:
+                                        overlayPlotObject.configuration,
                                     composition: overlayPlotObject.composition
                                 }
                             }
@@ -374,13 +396,17 @@ describe("the plugin", function () {
                 beforeEach((done) => {
                     viewComponentObject.setEditState(true);
                     Vue.nextTick(() => {
-                        editOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-edit');
+                        editOptionsEl = viewComponentObject.$el.querySelector(
+                            '.js-plot-options-edit'
+                        );
                         done();
                     });
                 });
 
                 it('shows multiple yAxis options', () => {
-                    const yAxisProperties = editOptionsEl.querySelectorAll(".js-yaxis-grid-properties .l-inspector-part h2");
+                    const yAxisProperties = editOptionsEl.querySelectorAll(
+                        '.js-yaxis-grid-properties .l-inspector-part h2'
+                    );
                     expect(yAxisProperties.length).toEqual(2);
                 });
 
@@ -390,20 +416,20 @@ describe("the plugin", function () {
                         min: 10,
                         max: 20
                     });
-                    const yAxisProperties = editOptionsEl.querySelectorAll(".js-log-mode-input");
-                    const clickEvent = createMouseEvent("click");
+                    const yAxisProperties =
+                        editOptionsEl.querySelectorAll('.js-log-mode-input');
+                    const clickEvent = createMouseEvent('click');
                     yAxisProperties[1].dispatchEvent(clickEvent);
 
-                    expect(config.additionalYAxes[1].get('logMode')).toEqual(true);
-
+                    expect(config.additionalYAxes[1].get('logMode')).toEqual(
+                        true
+                    );
                 });
             });
-
         });
-
     });
 
-    describe("The overlay plot view with single axes", () => {
+    describe('The overlay plot view with single axes', () => {
         let testTelemetryObject;
         let config;
         let component;
@@ -417,32 +443,36 @@ describe("the plugin", function () {
         beforeEach(() => {
             testTelemetryObject = {
                 identifier: {
-                    namespace: "",
-                    key: "test-object"
+                    namespace: '',
+                    key: 'test-object'
                 },
-                type: "test-object",
-                name: "Test Object",
+                type: 'test-object',
+                name: 'Test Object',
                 telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'utc',
+                            format: 'utc',
+                            name: 'Time',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'some-key',
+                            name: 'Some attribute',
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: 'some-other-key',
+                            name: 'Another attribute',
+                            hints: {
+                                range: 2
+                            }
                         }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
+                    ]
                 }
             };
 
@@ -465,7 +495,7 @@ describe("the plugin", function () {
 
             spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
-            let viewContainer = document.createElement("div");
+            let viewContainer = document.createElement('div');
             child.append(viewContainer);
             component = new Vue({
                 el: viewContainer,
@@ -481,21 +511,23 @@ describe("the plugin", function () {
                 template: '<plot ref="plotComponent"></plot>'
             });
 
-            return telemetryPromise
-                .then(Vue.nextTick())
-                .then(() => {
-                    const configId = openmct.objects.makeKeyString(overlayPlotObject.identifier);
-                    config = configStore.get(configId);
-                });
+            return telemetryPromise.then(Vue.nextTick()).then(() => {
+                const configId = openmct.objects.makeKeyString(
+                    overlayPlotObject.identifier
+                );
+                config = configStore.get(configId);
+            });
         });
 
-        it("Renders single Y-axis for the telemetry object", (done) => {
+        it('Renders single Y-axis for the telemetry object', (done) => {
             config.yAxis.set('displayRange', {
                 min: 10,
                 max: 20
             });
             Vue.nextTick(() => {
-                let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper");
+                let yAxisElement = element.querySelectorAll(
+                    '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
+                );
                 expect(yAxisElement.length).toBe(1);
                 done();
             });

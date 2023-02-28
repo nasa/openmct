@@ -32,7 +32,9 @@ export default class ImageryView {
                 openmct: this.openmct,
                 domainObject: this.domainObject,
                 objectPath: alternateObjectPath || this.objectPath,
-                imageFreshnessOptions: this.options?.imageFreshness || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
+                imageFreshnessOptions:
+                    this.options?.imageFreshness ||
+                    DEFAULT_IMAGE_FRESHNESS_OPTIONS,
                 currentView: this
             },
             data() {
@@ -40,8 +42,8 @@ export default class ImageryView {
                     focusedImageTimestamp
                 };
             },
-            template: '<imagery-view :focused-image-timestamp="focusedImageTimestamp" ref="ImageryContainer"></imagery-view>'
-
+            template:
+                '<imagery-view :focused-image-timestamp="focusedImageTimestamp" ref="ImageryContainer"></imagery-view>'
         });
     }
 

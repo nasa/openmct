@@ -26,9 +26,13 @@ import Vue from 'vue';
 
 export default function BarGraphViewProvider(openmct) {
     function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+        let isChildOfTimeStrip = objectPath.find(
+            (object) => object.type === 'time-strip'
+        );
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+        return (
+            isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath)
+        );
     }
 
     return {
@@ -66,7 +70,8 @@ export default function BarGraphViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
+                        template:
+                            '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
                     });
                 },
                 destroy: function () {

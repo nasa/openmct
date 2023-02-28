@@ -20,14 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash',
-    'printj'
-], function (
-    _,
-    printj
-) {
-
+define(['lodash', 'printj'], function (_, printj) {
     // TODO: needs reference to formatService;
     function TelemetryValueFormatter(valueMetadata, formatMap) {
         const numberFormatter = {
@@ -61,25 +54,38 @@ define([
 
         if (valueMetadataFormat === 'enum') {
             this.formatter = {};
-            this.enumerations = valueMetadata.enumerations.reduce(function (vm, e) {
-                vm.byValue[e.value] = e.string;
-                vm.byString[e.string] = e.value;
+            this.enumerations = valueMetadata.enumerations.reduce(
+                function (vm, e) {
+                    vm.byValue[e.value] = e.string;
+                    vm.byString[e.string] = e.value;
 
-                return vm;
-            }, {
-                byValue: {},
-                byString: {}
-            });
+                    return vm;
+                },
+                {
+                    byValue: {},
+                    byString: {}
+                }
+            );
             this.formatter.format = function (value) {
-                if (Object.prototype.hasOwnProperty.call(this.enumerations.byValue, value)) {
+                if (
+                    Object.prototype.hasOwnProperty.call(
+                        this.enumerations.byValue,
+                        value
+                    )
+                ) {
                     return this.enumerations.byValue[value];
                 }
 
                 return value;
             }.bind(this);
             this.formatter.parse = function (string) {
-                if (typeof string === "string") {
-                    if (Object.prototype.hasOwnProperty.call(this.enumerations.byString, string)) {
+                if (typeof string === 'string') {
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            this.enumerations.byString,
+                            string
+                        )
+                    ) {
                         return this.enumerations.byString[string];
                     }
                 }
@@ -93,7 +99,10 @@ define([
             const baseFormat = this.formatter.format;
             const formatString = getNonArrayValue(valueMetadata.formatString);
             this.formatter.format = function (value) {
-                return printj.sprintf(formatString, baseFormat.call(this, value));
+                return printj.sprintf(
+                    formatString,
+                    baseFormat.call(this, value)
+                );
             };
         }
 

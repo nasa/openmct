@@ -14,7 +14,8 @@ export function mockLocalStorage() {
         }
 
         function setItem(key, value) {
-            store[key] = typeof value === 'string' ? value : JSON.stringify(value);
+            store[key] =
+                typeof value === 'string' ? value : JSON.stringify(value);
         }
 
         function removeItem(key) {

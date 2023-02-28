@@ -1,4 +1,3 @@
-
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -32,7 +31,8 @@ export default function ClockPlugin(options) {
         const CLOCK_INDICATOR_FORMAT = 'YYYY/MM/DD HH:mm:ss';
         openmct.types.addType('clock', {
             name: 'Clock',
-            description: 'A digital clock that uses system time and supports a variety of display formats and timezones.',
+            description:
+                'A digital clock that uses system time and supports a variety of display formats and timezones.',
             creatable: true,
             cssClass: 'icon-clock',
             initialize: function (domainObject) {
@@ -42,10 +42,10 @@ export default function ClockPlugin(options) {
                     timezone: 'UTC'
                 };
             },
-            "form": [
+            form: [
                 {
-                    "key": "displayFormat",
-                    "name": "Display Format",
+                    key: 'displayFormat',
+                    name: 'Display Format',
                     control: 'select',
                     options: [
                         {
@@ -62,13 +62,10 @@ export default function ClockPlugin(options) {
                         }
                     ],
                     cssClass: 'l-inline',
-                    property: [
-                        'configuration',
-                        'baseFormat'
-                    ]
+                    property: ['configuration', 'baseFormat']
                 },
                 {
-                    ariaLabel: "12 or 24 hour clock",
+                    ariaLabel: '12 or 24 hour clock',
                     control: 'select',
                     options: [
                         {
@@ -81,28 +78,22 @@ export default function ClockPlugin(options) {
                         }
                     ],
                     cssClass: 'l-inline',
-                    property: [
-                        'configuration',
-                        'use24'
-                    ]
+                    property: ['configuration', 'use24']
                 },
                 {
-                    "key": "timezone",
-                    "name": "Timezone",
-                    "control": "autocomplete",
-                    "cssClass": "c-clock__timezone-selection c-menu--no-icon",
-                    "options": momentTimezone.tz.names(),
-                    property: [
-                        'configuration',
-                        'timezone'
-                    ]
+                    key: 'timezone',
+                    name: 'Timezone',
+                    control: 'autocomplete',
+                    cssClass: 'c-clock__timezone-selection c-menu--no-icon',
+                    options: momentTimezone.tz.names(),
+                    property: ['configuration', 'timezone']
                 }
             ]
         });
         openmct.objectViews.addProvider(new ClockViewProvider(openmct));
 
         if (options && options.enableClockIndicator === true) {
-            const clockIndicator = new Vue ({
+            const clockIndicator = new Vue({
                 components: {
                     ClockIndicator
                 },
@@ -114,7 +105,8 @@ export default function ClockPlugin(options) {
                         indicatorFormat: CLOCK_INDICATOR_FORMAT
                     };
                 },
-                template: '<ClockIndicator :indicator-format="indicatorFormat" />'
+                template:
+                    '<ClockIndicator :indicator-format="indicatorFormat" />'
             });
             const indicator = {
                 element: clockIndicator.$mount().$el,
@@ -134,8 +126,7 @@ export default function ClockPlugin(options) {
                     return domainObject;
                 }
 
-                if (domainObject.clockFormat
-                    && domainObject.timezone) {
+                if (domainObject.clockFormat && domainObject.timezone) {
                     const baseFormat = domainObject.clockFormat[0];
                     const use24 = domainObject.clockFormat[1];
                     const timezone = domainObject.timezone;
@@ -146,12 +137,15 @@ export default function ClockPlugin(options) {
                         timezone
                     };
 
-                    openmct.objects.mutate(domainObject, 'configuration', domainObject.configuration);
+                    openmct.objects.mutate(
+                        domainObject,
+                        'configuration',
+                        domainObject.configuration
+                    );
                 }
 
                 return domainObject;
             }
         });
-
     };
 }

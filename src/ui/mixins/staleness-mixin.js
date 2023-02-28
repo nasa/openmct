@@ -34,16 +34,28 @@ export default {
     methods: {
         subscribeToStaleness(domainObject, callback) {
             if (!this.stalenessUtils) {
-                this.stalenessUtils = new StalenessUtils(this.openmct, domainObject);
+                this.stalenessUtils = new StalenessUtils(
+                    this.openmct,
+                    domainObject
+                );
             }
 
             this.requestStaleness(domainObject);
-            this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
-                this.handleStalenessResponse(stalenessResponse, callback);
-            });
+            this.unsubscribeFromStaleness =
+                this.openmct.telemetry.subscribeToStaleness(
+                    domainObject,
+                    (stalenessResponse) => {
+                        this.handleStalenessResponse(
+                            stalenessResponse,
+                            callback
+                        );
+                    }
+                );
         },
         async requestStaleness(domainObject) {
-            const stalenessResponse = await this.openmct.telemetry.isStale(domainObject);
+            const stalenessResponse = await this.openmct.telemetry.isStale(
+                domainObject
+            );
             if (stalenessResponse !== undefined) {
                 this.handleStalenessResponse(stalenessResponse);
             }

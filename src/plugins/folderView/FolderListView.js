@@ -25,12 +25,7 @@ define([
     './constants.js',
     'vue',
     'moment'
-], function (
-    ListViewComponent,
-    constants,
-    Vue,
-    Moment
-) {
+], function (ListViewComponent, constants, Vue, Moment) {
     function FolderListView(openmct) {
         const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
 
@@ -56,7 +51,8 @@ define([
                                 domainObject,
                                 Moment
                             },
-                            template: '<list-view-component></list-view-component>'
+                            template:
+                                '<list-view-component></list-view-component>'
                         });
                     },
                     destroy: function (element) {

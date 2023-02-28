@@ -21,7 +21,12 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
+const {
+    createDomainObjectWithDefaults,
+    setStartOffset,
+    setFixedTimeMode,
+    setRealTimeMode
+} = require('../../../../appActions');
 
 test.describe('Testing LAD table @unstable', () => {
     let sineWaveObject;
@@ -32,53 +37,75 @@ test.describe('Testing LAD table @unstable', () => {
         // Create Sine Wave Generator
         sineWaveObject = await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
-            name: "Test Sine Wave Generator"
+            name: 'Test Sine Wave Generator'
         });
     });
-    test('telemetry value exactly matches latest telemetry value received in real time', async ({ page }) => {
+    test('telemetry value exactly matches latest telemetry value received in real time', async ({
+        page
+    }) => {
         // Create LAD table
         await createDomainObjectWithDefaults(page, {
             type: 'LAD Table',
-            name: "Test LAD Table"
+            name: 'Test LAD Table'
         });
         // Edit LAD table
         await page.locator('[title="Edit"]').click();
 
         // Expand the 'My Items' folder in the left tree
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+        await page
+            .locator('.c-tree__item__view-control.c-disclosure-triangle')
+            .click();
         // Add the Sine Wave Generator to the LAD table and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
+        await page.dragAndDrop(
+            'text=Test Sine Wave Generator',
+            '.c-lad-table-wrapper'
+        );
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
         // Subscribe to the Sine Wave Generator data
         // On getting data, check if the value found in the LAD table is the most recent value
         // from the Sine Wave Generator
-        const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+        const getTelemValuePromise = await subscribeToTelemetry(
+            page,
+            sineWaveObject.uuid
+        );
         const subscribeTelemValue = await getTelemValuePromise;
-        const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
+        const ladTableValuePromise = await page.waitForSelector(
+            `text="${subscribeTelemValue}"`
+        );
         const ladTableValue = await ladTableValuePromise.textContent();
 
         expect(ladTableValue).toBe(subscribeTelemValue);
     });
-    test('telemetry value exactly matches latest telemetry value received in fixed time', async ({ page }) => {
+    test('telemetry value exactly matches latest telemetry value received in fixed time', async ({
+        page
+    }) => {
         // Create LAD table
         await createDomainObjectWithDefaults(page, {
             type: 'LAD Table',
-            name: "Test LAD Table"
+            name: 'Test LAD Table'
         });
         // Edit LAD table
         await page.locator('[title="Edit"]').click();
 
         // Expand the 'My Items' folder in the left tree
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+        await page
+            .locator('.c-tree__item__view-control.c-disclosure-triangle')
+            .click();
         // Add the Sine Wave Generator to the LAD table and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
+        await page.dragAndDrop(
+            'text=Test Sine Wave Generator',
+            '.c-lad-table-wrapper'
+        );
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
         // Subscribe to the Sine Wave Generator data
-        const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+        const getTelemValuePromise = await subscribeToTelemetry(
+            page,
+            sineWaveObject.uuid
+        );
         // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
         await setStartOffset(page, { mins: '1' });
         await setFixedTimeMode(page);
@@ -86,7 +113,9 @@ test.describe('Testing LAD table @unstable', () => {
         // On getting data, check if the value found in the LAD table is the most recent value
         // from the Sine Wave Generator
         const subscribeTelemValue = await getTelemValuePromise;
-        const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
+        const ladTableValuePromise = await page.waitForSelector(
+            `text="${subscribeTelemValue}"`
+        );
         const ladTableValue = await ladTableValuePromise.textContent();
 
         expect(ladTableValue).toBe(subscribeTelemValue);
@@ -103,10 +132,14 @@ test.describe('Testing LAD table @unstable', () => {
  * @returns {Promise<string>} the formatted sin telemetry value
  */
 async function subscribeToTelemetry(page, objectIdentifier) {
-    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
+    const getTelemValuePromise = new Promise((resolve) =>
+        page.exposeFunction('getTelemValue', resolve)
+    );
 
     await page.evaluate(async (telemetryIdentifier) => {
-        const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
+        const telemetryObject = await window.openmct.objects.get(
+            telemetryIdentifier
+        );
         const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
         const formats = await window.openmct.telemetry.getFormatMap(metadata);
         window.openmct.telemetry.subscribe(telemetryObject, (obj) => {

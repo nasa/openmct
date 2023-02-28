@@ -22,15 +22,12 @@
 
 import ImportFromJSONAction from './ImportFromJSONAction';
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 let openmct;
 let importFromJSONAction;
 
-describe("The import JSON action", function () {
+describe('The import JSON action', function () {
     beforeEach((done) => {
         openmct = createOpenMct();
 
@@ -63,9 +60,7 @@ describe("The import JSON action", function () {
             }
         };
 
-        const objectPath = [
-            domainObject
-        ];
+        const objectPath = [domainObject];
 
         spyOn(openmct.composition, 'get').and.returnValue(true);
 
@@ -93,9 +88,7 @@ describe("The import JSON action", function () {
             persisted: 1637021471172
         };
 
-        const objectPath = [
-            domainObject
-        ];
+        const objectPath = [domainObject];
 
         spyOn(openmct.types, 'get').and.returnValue({});
         spyOn(openmct.composition, 'get').and.returnValue(false);
@@ -118,12 +111,12 @@ describe("The import JSON action", function () {
             }
         };
 
-        const objectPath = [
-            domainObject
-        ];
+        const objectPath = [domainObject];
 
         spyOn(openmct.forms, 'showForm').and.returnValue(Promise.resolve({}));
-        spyOn(importFromJSONAction, 'onSave').and.returnValue(Promise.resolve({}));
+        spyOn(importFromJSONAction, 'onSave').and.returnValue(
+            Promise.resolve({})
+        );
         importFromJSONAction.invoke(objectPath);
 
         expect(openmct.forms.showForm).toHaveBeenCalled();

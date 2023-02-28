@@ -55,9 +55,19 @@ class StaticModelProvider {
                 });
                 objectLeaf[newIdentifier] = { ...objectLeaf[nodeKey] };
                 delete objectLeaf[nodeKey];
-                objectLeaf[newIdentifier] = this.parseTreeLeaf(newIdentifier, objectLeaf[newIdentifier], idMap, namespace);
+                objectLeaf[newIdentifier] = this.parseTreeLeaf(
+                    newIdentifier,
+                    objectLeaf[newIdentifier],
+                    idMap,
+                    namespace
+                );
             } else {
-                objectLeaf[nodeKey] = this.parseTreeLeaf(nodeKey, objectLeaf[nodeKey], idMap, namespace);
+                objectLeaf[nodeKey] = this.parseTreeLeaf(
+                    nodeKey,
+                    objectLeaf[nodeKey],
+                    idMap,
+                    namespace
+                );
             }
         });
 
@@ -65,8 +75,9 @@ class StaticModelProvider {
     }
 
     parseArrayLeaf(arrayLeaf, idMap, namespace) {
-        return arrayLeaf.map((leafValue, index) => this.parseTreeLeaf(
-            null, leafValue, idMap, namespace));
+        return arrayLeaf.map((leafValue, index) =>
+            this.parseTreeLeaf(null, leafValue, idMap, namespace)
+        );
     }
 
     parseBranchedLeaf(branchedLeafValue, idMap, namespace) {
@@ -138,12 +149,11 @@ class StaticModelProvider {
      * format objects.
      */
     convertToNewObjects(oldObjectMap) {
-        return Object.keys(oldObjectMap)
-            .reduce(function (newObjectMap, key) {
-                newObjectMap[key] = objectUtils.toNewFormat(oldObjectMap[key], key);
+        return Object.keys(oldObjectMap).reduce(function (newObjectMap, key) {
+            newObjectMap[key] = objectUtils.toNewFormat(oldObjectMap[key], key);
 
-                return newObjectMap;
-            }, {});
+            return newObjectMap;
+        }, {});
     }
 
     /* Set the root location correctly for a top-level object */
@@ -158,9 +168,15 @@ class StaticModelProvider {
      * an object provider to fetch those objects.
      */
     rewriteModel(importData, rootIdentifier) {
-        const oldFormatObjectMap = this.rewriteObjectIdentifiers(importData, rootIdentifier);
+        const oldFormatObjectMap = this.rewriteObjectIdentifiers(
+            importData,
+            rootIdentifier
+        );
         const newFormatObjectMap = this.convertToNewObjects(oldFormatObjectMap);
-        this.objectMap = this.setRootLocation(newFormatObjectMap, rootIdentifier);
+        this.objectMap = this.setRootLocation(
+            newFormatObjectMap,
+            rootIdentifier
+        );
     }
 }
 

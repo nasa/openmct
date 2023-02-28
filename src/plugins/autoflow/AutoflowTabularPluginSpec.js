@@ -30,13 +30,13 @@ import {
 import Vue from 'vue';
 
 // TODO lots of its without expects
-xdescribe("AutoflowTabularPlugin", () => {
+xdescribe('AutoflowTabularPlugin', () => {
     let testType;
     let testObject;
     let mockmct;
 
     beforeEach(() => {
-        testType = "some-type";
+        testType = 'some-type';
         testObject = { type: testType };
         mockmct = createOpenMct();
         spyOn(mockmct.composition, 'get');
@@ -55,11 +55,11 @@ xdescribe("AutoflowTabularPlugin", () => {
         return resetApplicationState(mockmct);
     });
 
-    it("installs a view provider", () => {
+    it('installs a view provider', () => {
         expect(mockmct.objectViews.addProvider).toHaveBeenCalled();
     });
 
-    describe("installs a view provider which", () => {
+    describe('installs a view provider which', () => {
         let provider;
 
         beforeEach(() => {
@@ -67,15 +67,15 @@ xdescribe("AutoflowTabularPlugin", () => {
                 mockmct.objectViews.addProvider.calls.mostRecent().args[0];
         });
 
-        it("applies its view to the type from options", () => {
+        it('applies its view to the type from options', () => {
             expect(provider.canView(testObject, [])).toBe(true);
         });
 
-        it("does not apply to other types", () => {
+        it('does not apply to other types', () => {
             expect(provider.canView({ type: 'foo' }, [])).toBe(false);
         });
 
-        describe("provides a view which", () => {
+        describe('provides a view which', () => {
             let testKeys;
             let testChildren;
             let testContainer;
@@ -115,10 +115,10 @@ xdescribe("AutoflowTabularPlugin", () => {
                 testChildren = testKeys.map((key) => {
                     return {
                         identifier: {
-                            namespace: "test",
+                            namespace: 'test',
                             key: key
                         },
-                        name: "Object " + key
+                        name: 'Object ' + key
                     };
                 });
                 testContainer = document.createElement('div');
@@ -134,10 +134,14 @@ xdescribe("AutoflowTabularPlugin", () => {
                     return histories;
                 }, {});
 
-                mockComposition =
-                    jasmine.createSpyObj('composition', ['load', 'on', 'off']);
-                mockMetadata =
-                    jasmine.createSpyObj('metadata', ['valuesForHints']);
+                mockComposition = jasmine.createSpyObj('composition', [
+                    'load',
+                    'on',
+                    'off'
+                ]);
+                mockMetadata = jasmine.createSpyObj('metadata', [
+                    'valuesForHints'
+                ]);
 
                 mockEvaluator = jasmine.createSpyObj('evaluator', ['evaluate']);
                 mockUnsubscribes = testKeys.reduce((map, key) => {
@@ -148,20 +152,27 @@ xdescribe("AutoflowTabularPlugin", () => {
 
                 mockmct.composition.get.and.returnValue(mockComposition);
                 mockComposition.load.and.callFake(() => {
-                    testChildren.forEach(emitEvent.bind(null, mockComposition, 'add'));
+                    testChildren.forEach(
+                        emitEvent.bind(null, mockComposition, 'add')
+                    );
 
                     return Promise.resolve(testChildren);
                 });
 
                 mockmct.telemetry.getMetadata.and.returnValue(mockMetadata);
-                mockmct.telemetry.getValueFormatter.and.callFake((metadatum) => {
-                    const mockFormatter = jasmine.createSpyObj('formatter', ['format']);
-                    mockFormatter.format.and.callFake((datum) => {
-                        return datum[metadatum.hint];
-                    });
+                mockmct.telemetry.getValueFormatter.and.callFake(
+                    (metadatum) => {
+                        const mockFormatter = jasmine.createSpyObj(
+                            'formatter',
+                            ['format']
+                        );
+                        mockFormatter.format.and.callFake((datum) => {
+                            return datum[metadatum.hint];
+                        });
 
-                    return mockFormatter;
-                });
+                        return mockFormatter;
+                    }
+                );
                 mockmct.telemetry.limitEvaluator.and.returnValue(mockEvaluator);
                 mockmct.telemetry.subscribe.and.callFake((obj, callback) => {
                     const key = obj.identifier.key;
@@ -188,18 +199,21 @@ xdescribe("AutoflowTabularPlugin", () => {
                 domObserver.destroy();
             });
 
-            it("populates its container", () => {
+            it('populates its container', () => {
                 expect(testContainer.children.length > 0).toBe(true);
             });
 
-            describe("when rows have been populated", () => {
+            describe('when rows have been populated', () => {
                 function rowsMatch() {
-                    const rows = testContainer.querySelectorAll(".l-autoflow-row").length;
+                    const rows =
+                        testContainer.querySelectorAll(
+                            '.l-autoflow-row'
+                        ).length;
 
                     return rows === testChildren.length;
                 }
 
-                it("shows one row per child object", () => {
+                it('shows one row per child object', () => {
                     return domObserver.when(rowsMatch);
                 });
 
@@ -217,7 +231,7 @@ xdescribe("AutoflowTabularPlugin", () => {
                 //     return domObserver.when(rowsMatch);
                 // });
 
-                it("removes rows on composition change", () => {
+                it('removes rows on composition change', () => {
                     const child = testChildren.pop();
                     emitEvent(mockComposition, 'remove', child.identifier);
 
@@ -225,7 +239,7 @@ xdescribe("AutoflowTabularPlugin", () => {
                 });
             });
 
-            it("removes subscriptions when destroyed", () => {
+            it('removes subscriptions when destroyed', () => {
                 testKeys.forEach((key) => {
                     expect(mockUnsubscribes[key]).not.toHaveBeenCalled();
                 });
@@ -235,50 +249,64 @@ xdescribe("AutoflowTabularPlugin", () => {
                 });
             });
 
-            it("provides a button to change column width", () => {
-                const initialWidth = AutoflowTabularConstants.INITIAL_COLUMN_WIDTH;
+            it('provides a button to change column width', () => {
+                const initialWidth =
+                    AutoflowTabularConstants.INITIAL_COLUMN_WIDTH;
                 const nextWidth =
                     initialWidth + AutoflowTabularConstants.COLUMN_WIDTH_STEP;
 
-                expect(testContainer.querySelector('.l-autoflow-col').css('width'))
-                    .toEqual(initialWidth + 'px');
+                expect(
+                    testContainer.querySelector('.l-autoflow-col').css('width')
+                ).toEqual(initialWidth + 'px');
 
                 testContainer.querySelector('.change-column-width').click();
 
                 function widthHasChanged() {
-                    const width = testContainer.querySelector('.l-autoflow-col').css('width');
+                    const width = testContainer
+                        .querySelector('.l-autoflow-col')
+                        .css('width');
 
                     return width !== initialWidth + 'px';
                 }
 
-                return domObserver.when(widthHasChanged)
-                    .then(() => {
-                        expect(testContainer.querySelector('.l-autoflow-col').css('width'))
-                            .toEqual(nextWidth + 'px');
-                    });
+                return domObserver.when(widthHasChanged).then(() => {
+                    expect(
+                        testContainer
+                            .querySelector('.l-autoflow-col')
+                            .css('width')
+                    ).toEqual(nextWidth + 'px');
+                });
             });
 
-            it("subscribes to all child objects", () => {
+            it('subscribes to all child objects', () => {
                 testKeys.forEach((key) => {
                     expect(callbacks[key]).toEqual(jasmine.any(Function));
                 });
             });
 
-            it("displays historical telemetry", () => {
+            it('displays historical telemetry', () => {
                 function rowTextDefined() {
-                    return testContainer.querySelector(".l-autoflow-item").filter(".r").text() !== "";
+                    return (
+                        testContainer
+                            .querySelector('.l-autoflow-item')
+                            .filter('.r')
+                            .text() !== ''
+                    );
                 }
 
                 return domObserver.when(rowTextDefined).then(() => {
                     testKeys.forEach((key, index) => {
                         const datum = testHistories[key];
-                        const $cell = testContainer.querySelector(".l-autoflow-row").eq(index).find(".r");
+                        const $cell = testContainer
+                            .querySelector('.l-autoflow-row')
+                            .eq(index)
+                            .find('.r');
                         expect($cell.text()).toEqual(String(datum.range));
                     });
                 });
             });
 
-            it("displays incoming telemetry", () => {
+            it('displays incoming telemetry', () => {
                 const testData = testKeys.map((key, index) => {
                     return {
                         key: key,
@@ -293,14 +321,17 @@ xdescribe("AutoflowTabularPlugin", () => {
 
                 return waitsForChange().then(() => {
                     testData.forEach((datum, index) => {
-                        const $cell = testContainer.querySelector(".l-autoflow-row").eq(index).find(".r");
+                        const $cell = testContainer
+                            .querySelector('.l-autoflow-row')
+                            .eq(index)
+                            .find('.r');
                         expect($cell.text()).toEqual(String(datum.range));
                     });
                 });
             });
 
-            it("updates classes for limit violations", () => {
-                const testClass = "some-limit-violation";
+            it('updates classes for limit violations', () => {
+                const testClass = 'some-limit-violation';
                 mockEvaluator.evaluate.and.returnValue({ cssClass: testClass });
                 testKeys.forEach((key) => {
                     callbacks[key]({
@@ -311,13 +342,16 @@ xdescribe("AutoflowTabularPlugin", () => {
 
                 return waitsForChange().then(() => {
                     testKeys.forEach((datum, index) => {
-                        const $cell = testContainer.querySelector(".l-autoflow-row").eq(index).find(".r");
+                        const $cell = testContainer
+                            .querySelector('.l-autoflow-row')
+                            .eq(index)
+                            .find('.r');
                         expect($cell.hasClass(testClass)).toBe(true);
                     });
                 });
             });
 
-            it("automatically flows to new columns", () => {
+            it('automatically flows to new columns', () => {
                 const rowHeight = AutoflowTabularConstants.ROW_HEIGHT;
                 const sliderHeight = AutoflowTabularConstants.SLIDER_HEIGHT;
                 const count = testKeys.length;
@@ -325,12 +359,20 @@ xdescribe("AutoflowTabularPlugin", () => {
                 let promiseChain = Promise.resolve();
 
                 function columnsHaveAutoflowed() {
-                    const itemsHeight = $container.querySelector('.l-autoflow-items').height();
+                    const itemsHeight = $container
+                        .querySelector('.l-autoflow-items')
+                        .height();
                     const availableHeight = itemsHeight - sliderHeight;
-                    const availableRows = Math.max(Math.floor(availableHeight / rowHeight), 1);
+                    const availableRows = Math.max(
+                        Math.floor(availableHeight / rowHeight),
+                        1
+                    );
                     const columns = Math.ceil(count / availableRows);
 
-                    return $container.querySelector('.l-autoflow-col').length === columns;
+                    return (
+                        $container.querySelector('.l-autoflow-col').length ===
+                        columns
+                    );
                 }
 
                 $container.find('.abs').css({
@@ -350,9 +392,15 @@ xdescribe("AutoflowTabularPlugin", () => {
                     return domObserver.when(columnsHaveAutoflowed);
                 }
 
-                for (let height = 0; height < rowHeight * count * 2; height += rowHeight / 2) {
+                for (
+                    let height = 0;
+                    height < rowHeight * count * 2;
+                    height += rowHeight / 2
+                ) {
                     // eslint-disable-next-line no-invalid-this
-                    promiseChain = promiseChain.then(setHeight.bind(this, height));
+                    promiseChain = promiseChain.then(
+                        setHeight.bind(this, height)
+                    );
                 }
 
                 return promiseChain.then(() => {
@@ -360,7 +408,7 @@ xdescribe("AutoflowTabularPlugin", () => {
                 });
             });
 
-            it("loads composition exactly once", () => {
+            it('loads composition exactly once', () => {
                 const testObj = testChildren.pop();
                 emitEvent(mockComposition, 'remove', testObj.identifier);
                 testChildren.push(testObj);

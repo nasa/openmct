@@ -23,25 +23,25 @@
 class EventMetadataProvider {
     constructor() {
         this.METADATA_BY_TYPE = {
-            'eventGenerator': {
+            eventGenerator: {
                 values: [
                     {
-                        key: "name",
-                        name: "Name",
-                        format: "string"
+                        key: 'name',
+                        name: 'Name',
+                        format: 'string'
                     },
                     {
-                        key: "utc",
-                        name: "Time",
-                        format: "utc",
+                        key: 'utc',
+                        name: 'Time',
+                        format: 'utc',
                         hints: {
                             domain: 1
                         }
                     },
                     {
-                        key: "message",
-                        name: "Message",
-                        format: "string"
+                        key: 'message',
+                        name: 'Message',
+                        format: 'string'
                     }
                 ]
             }
@@ -49,7 +49,10 @@ class EventMetadataProvider {
     }
 
     supportsMetadata(domainObject) {
-        return Object.prototype.hasOwnProperty.call(this.METADATA_BY_TYPE, domainObject.type);
+        return Object.prototype.hasOwnProperty.call(
+            this.METADATA_BY_TYPE,
+            domainObject.type
+        );
     }
 
     getMetadata(domainObject) {

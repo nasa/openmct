@@ -39,16 +39,25 @@ test.describe('Visual - Controlled Clock @localStorage', () => {
         }
     });
 
-    test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
+    test('Overlay Plot Loading Indicator @localStorage', async ({
+        page,
+        theme
+    }) => {
         // Go to baseURL
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+        await page.goto('./#/browse/mine?hideTree=true', {
+            waitUntil: 'networkidle'
+        });
 
-        await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
+        await page
+            .locator('a:has-text("Unnamed Overlay Plot Overlay Plot")')
+            .click();
         //Ensure that we're on the Unnamed Overlay Plot object
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Overlay Plot');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            'Unnamed Overlay Plot'
+        );
 
         //Wait for canvas to be rendered and stop animating
-        await page.locator('canvas >> nth=1').hover({trial: true});
+        await page.locator('canvas >> nth=1').hover({ trial: true });
 
         //Take snapshot of Sine Wave Generator within Overlay Plot
         await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);

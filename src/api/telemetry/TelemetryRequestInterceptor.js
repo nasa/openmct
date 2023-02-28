@@ -58,11 +58,11 @@ export default class TelemetryRequestInterceptorRegistry {
      * @memberof module:openmct.TelemetryRequestInterceptorRegistry#
      */
     getInterceptors(identifier, request) {
-        return this.interceptors.filter(interceptor => {
-            return typeof interceptor.appliesTo === 'function'
-                && interceptor.appliesTo(identifier, request);
+        return this.interceptors.filter((interceptor) => {
+            return (
+                typeof interceptor.appliesTo === 'function' &&
+                interceptor.appliesTo(identifier, request)
+            );
         });
     }
-
 }
-

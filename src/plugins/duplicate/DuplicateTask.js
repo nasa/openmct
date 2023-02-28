@@ -110,19 +110,27 @@ export default class DuplicateTask {
             title: 'Duplicating'
         });
 
-        let clonesDone = Promise.all(this.clones.map((clone) => {
-            let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
-            let message = `Duplicating ${initialCount - this.persisted} objects.`;
+        let clonesDone = Promise.all(
+            this.clones.map((clone) => {
+                let percentPersisted = Math.ceil(
+                    100 * (++this.persisted / initialCount)
+                );
+                let message = `Duplicating ${
+                    initialCount - this.persisted
+                } objects.`;
 
-            dialog.updateProgress(percentPersisted, message);
+                dialog.updateProgress(percentPersisted, message);
 
-            return this.openmct.objects.save(clone);
-        }));
+                return this.openmct.objects.save(clone);
+            })
+        );
 
         await clonesDone;
 
         dialog.dismiss();
-        this.openmct.notifications.info(`Duplicated ${this.persisted} objects.`);
+        this.openmct.notifications.info(
+            `Duplicated ${this.persisted} objects.`
+        );
 
         return;
     }
@@ -153,7 +161,8 @@ export default class DuplicateTask {
         // Check if the creatable (or other passed in filter).
         if (this.filter(originalObject)) {
             let clone = this.cloneObjectModel(originalObject);
-            let composeesCollection = this.openmct.composition.get(originalObject);
+            let composeesCollection =
+                this.openmct.composition.get(originalObject);
             let composees;
 
             if (composeesCollection) {
@@ -175,21 +184,28 @@ export default class DuplicateTask {
      */
     async duplicateComposees(clonedParent, composees = []) {
         let idMappings = [];
-        let allComposeesDuplicated = composees.reduce(async (previousPromise, nextComposee) => {
-            await previousPromise;
+        let allComposeesDuplicated = composees.reduce(
+            async (previousPromise, nextComposee) => {
+                await previousPromise;
 
-            let clonedComposee = await this.duplicateObject(nextComposee);
+                let clonedComposee = await this.duplicateObject(nextComposee);
 
-            if (clonedComposee) {
-                idMappings.push({
-                    newId: clonedComposee.identifier,
-                    oldId: nextComposee.identifier
-                });
-                this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
-            }
+                if (clonedComposee) {
+                    idMappings.push({
+                        newId: clonedComposee.identifier,
+                        oldId: nextComposee.identifier
+                    });
+                    this.composeChild(
+                        clonedComposee,
+                        clonedParent,
+                        clonedComposee !== nextComposee
+                    );
+                }
 
-            return;
-        }, Promise.resolve());
+                return;
+            },
+            Promise.resolve()
+        );
 
         await allComposeesDuplicated;
 
@@ -211,14 +227,19 @@ export default class DuplicateTask {
             let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
 
             // regex replace keystrings
-            clonedParent = JSON.stringify(clonedParent).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
+            clonedParent = JSON.stringify(clonedParent).replace(
+                new RegExp(oldIdKeyString, 'g'),
+                newIdKeyString
+            );
 
             // parse reviver to replace identifiers
             clonedParent = JSON.parse(clonedParent, (key, value) => {
-                if (Object.prototype.hasOwnProperty.call(value, 'key')
-                    && Object.prototype.hasOwnProperty.call(value, 'namespace')
-                    && value.key === oldId.key
-                    && value.namespace === oldId.namespace) {
+                if (
+                    Object.prototype.hasOwnProperty.call(value, 'key') &&
+                    Object.prototype.hasOwnProperty.call(value, 'namespace') &&
+                    value.key === oldId.key &&
+                    value.namespace === oldId.namespace
+                ) {
                     return newId;
                 } else {
                     return value;
@@ -240,7 +261,9 @@ export default class DuplicateTask {
     }
 
     getTypeDefinition(domainObject, definition) {
-        let typeDefinitions = this.openmct.types.get(domainObject.type).definition;
+        let typeDefinitions = this.openmct.types.get(
+            domainObject.type
+        ).definition;
 
         return typeDefinitions[definition] || false;
     }

@@ -6,8 +6,10 @@ class DomainObjectViewProvider {
     }
 
     canView(domainObject) {
-        return domainObject.type === 'imageFileInput'
-            || domainObject.type === 'jsonFileInput';
+        return (
+            domainObject.type === 'imageFileInput' ||
+            domainObject.type === 'jsonFileInput'
+        );
     }
 
     view(domainObject, objectPath) {
@@ -36,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     openmct.types.addType('jsonFileInput', {
         key: 'jsonFileInput',
-        name: "JSON File Input Object",
+        name: 'JSON File Input Object',
         creatable: true,
         form: [
             {
@@ -46,16 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 required: true,
                 text: 'Select File...',
                 type: 'application/json',
-                property: [
-                    "selectFile"
-                ]
+                property: ['selectFile']
             }
         ]
     });
 
     openmct.types.addType('imageFileInput', {
         key: 'imageFileInput',
-        name: "Image File Input Object",
+        name: 'Image File Input Object',
         creatable: true,
         form: [
             {
@@ -65,9 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 required: true,
                 text: 'Select File...',
                 type: 'image/*',
-                property: [
-                    "selectFile"
-                ]
+                property: ['selectFile']
             }
         ]
     });

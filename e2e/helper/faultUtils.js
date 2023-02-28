@@ -27,7 +27,9 @@ const path = require('path');
  */
 async function navigateToFaultManagementWithExample(page) {
     // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, './', 'addInitExampleFaultProvider.js') });
+    await page.addInitScript({
+        path: path.join(__dirname, './', 'addInitExampleFaultProvider.js')
+    });
 
     await navigateToFaultItemInTree(page);
 }
@@ -37,7 +39,9 @@ async function navigateToFaultManagementWithExample(page) {
  */
 async function navigateToFaultManagementWithStaticExample(page) {
     // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, './', 'addInitExampleFaultProviderStatic.js') });
+    await page.addInitScript({
+        path: path.join(__dirname, './', 'addInitExampleFaultProviderStatic.js')
+    });
 
     await navigateToFaultItemInTree(page);
 }
@@ -47,7 +51,9 @@ async function navigateToFaultManagementWithStaticExample(page) {
  */
 async function navigateToFaultManagementWithoutExample(page) {
     // eslint-disable-next-line no-undef
-    await page.addInitScript({ path: path.join(__dirname, './', 'addInitFaultManagementPlugin.js') });
+    await page.addInitScript({
+        path: path.join(__dirname, './', 'addInitFaultManagementPlugin.js')
+    });
 
     await navigateToFaultItemInTree(page);
 }
@@ -70,7 +76,6 @@ async function acknowledgeFault(page, rowNumber) {
     await page.locator('.c-menu >> text="Acknowledge"').click();
     // Click [aria-label="Save"]
     await page.locator('[aria-label="Save"]').click();
-
 }
 
 /**
@@ -113,21 +118,28 @@ async function shelveFault(page, rowNumber) {
  * @param {import('@playwright/test').Page} page
  */
 async function changeViewTo(page, view) {
-    await page.locator('.c-fault-mgmt__search-row select').first().selectOption(view);
+    await page
+        .locator('.c-fault-mgmt__search-row select')
+        .first()
+        .selectOption(view);
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function sortFaultsBy(page, sort) {
-    await page.locator('.c-fault-mgmt__list-header-sortButton select').selectOption(sort);
+    await page
+        .locator('.c-fault-mgmt__list-header-sortButton select')
+        .selectOption(sort);
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function enterSearchTerm(page, term) {
-    await page.locator('.c-fault-mgmt-search [aria-label="Search Input"]').fill(term);
+    await page
+        .locator('.c-fault-mgmt-search [aria-label="Search Input"]')
+        .fill(term);
 }
 
 /**
@@ -142,7 +154,9 @@ async function clearSearch(page) {
  */
 async function selectFaultItem(page, rowNumber) {
     // eslint-disable-next-line playwright/no-force-option
-    await page.check(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`, { force: true }); // this will not work without force true, saw this may be a pw bug
+    await page.check(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`, {
+        force: true
+    }); // this will not work without force true, saw this may be a pw bug
 }
 
 /**
@@ -181,7 +195,9 @@ async function getLowestSeverity(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function getFaultResultCount(page) {
-    const count = await page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').count();
+    const count = await page
+        .locator('.c-faults-list-view-item-body > .c-fault-mgmt__list')
+        .count();
 
     return count;
 }
@@ -190,7 +206,11 @@ async function getFaultResultCount(page) {
  * @param {import('@playwright/test').Page} page
  */
 function getFault(page, rowNumber) {
-    const fault = page.locator(`.c-faults-list-view-item-body > .c-fault-mgmt__list >> nth=${rowNumber - 1}`);
+    const fault = page.locator(
+        `.c-faults-list-view-item-body > .c-fault-mgmt__list >> nth=${
+            rowNumber - 1
+        }`
+    );
 
     return fault;
 }
@@ -199,7 +219,9 @@ function getFault(page, rowNumber) {
  * @param {import('@playwright/test').Page} page
  */
 function getFaultByName(page, name) {
-    const fault = page.locator(`.c-fault-mgmt__list-faultname:has-text("${name}")`);
+    const fault = page.locator(
+        `.c-fault-mgmt__list-faultname:has-text("${name}")`
+    );
 
     return fault;
 }
@@ -208,7 +230,9 @@ function getFaultByName(page, name) {
  * @param {import('@playwright/test').Page} page
  */
 async function getFaultName(page, rowNumber) {
-    const faultName = await page.locator(`.c-fault-mgmt__list-faultname >> nth=${rowNumber - 1}`).textContent();
+    const faultName = await page
+        .locator(`.c-fault-mgmt__list-faultname >> nth=${rowNumber - 1}`)
+        .textContent();
 
     return faultName;
 }
@@ -217,7 +241,13 @@ async function getFaultName(page, rowNumber) {
  * @param {import('@playwright/test').Page} page
  */
 async function getFaultSeverity(page, rowNumber) {
-    const faultSeverity = await page.locator(`.c-faults-list-view-item-body .c-fault-mgmt__list-severity >> nth=${rowNumber - 1}`).getAttribute('title');
+    const faultSeverity = await page
+        .locator(
+            `.c-faults-list-view-item-body .c-fault-mgmt__list-severity >> nth=${
+                rowNumber - 1
+            }`
+        )
+        .getAttribute('title');
 
     return faultSeverity;
 }
@@ -226,7 +256,9 @@ async function getFaultSeverity(page, rowNumber) {
  * @param {import('@playwright/test').Page} page
  */
 async function getFaultNamespace(page, rowNumber) {
-    const faultNamespace = await page.locator(`.c-fault-mgmt__list-path >> nth=${rowNumber - 1}`).textContent();
+    const faultNamespace = await page
+        .locator(`.c-fault-mgmt__list-path >> nth=${rowNumber - 1}`)
+        .textContent();
 
     return faultNamespace;
 }
@@ -235,7 +267,13 @@ async function getFaultNamespace(page, rowNumber) {
  * @param {import('@playwright/test').Page} page
  */
 async function getFaultTriggerTime(page, rowNumber) {
-    const faultTriggerTime = await page.locator(`.c-fault-mgmt__list-trigTime >> nth=${rowNumber - 1} >> .c-fault-mgmt-item__value`).textContent();
+    const faultTriggerTime = await page
+        .locator(
+            `.c-fault-mgmt__list-trigTime >> nth=${
+                rowNumber - 1
+            } >> .c-fault-mgmt-item__value`
+        )
+        .textContent();
 
     return faultTriggerTime.toString().trim();
 }
@@ -245,8 +283,13 @@ async function getFaultTriggerTime(page, rowNumber) {
  */
 async function openFaultRowMenu(page, rowNumber) {
     // select
-    await page.locator(`.c-fault-mgmt-item > .c-fault-mgmt__list-action-button >> nth=${rowNumber - 1}`).click();
-
+    await page
+        .locator(
+            `.c-fault-mgmt-item > .c-fault-mgmt__list-action-button >> nth=${
+                rowNumber - 1
+            }`
+        )
+        .click();
 }
 
 // eslint-disable-next-line no-undef

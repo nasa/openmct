@@ -102,7 +102,8 @@ describe('EditPropertiesAction plugin', () => {
             composition: []
         };
 
-        editPropertiesAction.invoke([domainObject])
+        editPropertiesAction
+            .invoke([domainObject])
             .then(() => {
                 done();
             })
@@ -153,7 +154,11 @@ describe('EditPropertiesAction plugin', () => {
         }
 
         const deBouncedCallback = debounce(callback, 300);
-        unObserve = openmct.objects.observe(domainObject, '*', deBouncedCallback);
+        unObserve = openmct.objects.observe(
+            domainObject,
+            '*',
+            deBouncedCallback
+        );
 
         editPropertiesAction.invoke([domainObject]);
 
@@ -195,7 +200,8 @@ describe('EditPropertiesAction plugin', () => {
             composition: []
         };
 
-        editPropertiesAction.invoke([domainObject])
+        editPropertiesAction
+            .invoke([domainObject])
             .then(() => {
                 expect(domainObject.name).toEqual(name);
                 done();

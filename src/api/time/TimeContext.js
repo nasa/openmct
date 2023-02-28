@@ -64,31 +64,39 @@ class TimeContext extends EventEmitter {
         if (arguments.length >= 1) {
             if (arguments.length === 1 && !this.activeClock) {
                 throw new Error(
-                    "Must specify bounds when changing time system without "
-                    + "an active clock."
+                    'Must specify bounds when changing time system without ' +
+                        'an active clock.'
                 );
             }
 
             let timeSystem;
 
             if (timeSystemOrKey === undefined) {
-                throw "Please provide a time system";
+                throw 'Please provide a time system';
             }
 
             if (typeof timeSystemOrKey === 'string') {
                 timeSystem = this.timeSystems.get(timeSystemOrKey);
 
                 if (timeSystem === undefined) {
-                    throw "Unknown time system " + timeSystemOrKey + ". Has it been registered with 'addTimeSystem'?";
+                    throw (
+                        'Unknown time system ' +
+                        timeSystemOrKey +
+                        ". Has it been registered with 'addTimeSystem'?"
+                    );
                 }
             } else if (typeof timeSystemOrKey === 'object') {
                 timeSystem = timeSystemOrKey;
 
                 if (!this.timeSystems.has(timeSystem.key)) {
-                    throw "Unknown time system " + timeSystem.key + ". Has it been registered with 'addTimeSystem'?";
+                    throw (
+                        'Unknown time system ' +
+                        timeSystem.key +
+                        ". Has it been registered with 'addTimeSystem'?"
+                    );
                 }
             } else {
-                throw "Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key";
+                throw 'Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key';
             }
 
             this.system = timeSystem;
@@ -106,7 +114,6 @@ class TimeContext extends EventEmitter {
             if (bounds) {
                 this.bounds(bounds);
             }
-
         }
 
         return this.system;
@@ -129,19 +136,20 @@ class TimeContext extends EventEmitter {
      * @method validateBounds
      */
     validateBounds(bounds) {
-        if ((bounds.start === undefined)
-            || (bounds.end === undefined)
-            || isNaN(bounds.start)
-            || isNaN(bounds.end)
+        if (
+            bounds.start === undefined ||
+            bounds.end === undefined ||
+            isNaN(bounds.start) ||
+            isNaN(bounds.end)
         ) {
             return {
                 valid: false,
-                message: "Start and end must be specified as integer values"
+                message: 'Start and end must be specified as integer values'
             };
         } else if (bounds.start > bounds.end) {
             return {
                 valid: false,
-                message: "Specified start date exceeds end bound"
+                message: 'Specified start date exceeds end bound'
             };
         }
 
@@ -195,19 +203,21 @@ class TimeContext extends EventEmitter {
      * @method validateOffsets
      */
     validateOffsets(offsets) {
-        if ((offsets.start === undefined)
-            || (offsets.end === undefined)
-            || isNaN(offsets.start)
-            || isNaN(offsets.end)
+        if (
+            offsets.start === undefined ||
+            offsets.end === undefined ||
+            isNaN(offsets.start) ||
+            isNaN(offsets.end)
         ) {
             return {
                 valid: false,
-                message: "Start and end offsets must be specified as integer values"
+                message:
+                    'Start and end offsets must be specified as integer values'
             };
         } else if (offsets.start >= offsets.end) {
             return {
                 valid: false,
-                message: "Specified start offset must be < end offset"
+                message: 'Specified start offset must be < end offset'
             };
         }
 
@@ -248,7 +258,6 @@ class TimeContext extends EventEmitter {
      */
     clockOffsets(offsets) {
         if (arguments.length > 0) {
-
             const validationResult = this.validateOffsets(offsets);
             if (validationResult.valid !== true) {
                 throw new Error(validationResult.message);
@@ -271,7 +280,7 @@ class TimeContext extends EventEmitter {
              * @property {ClockOffsets} clockOffsets The newly activated clock
              * offsets.
              */
-            this.emit("clockOffsets", offsets);
+            this.emit('clockOffsets', offsets);
         }
 
         return this.offsets;
@@ -307,18 +316,26 @@ class TimeContext extends EventEmitter {
             if (typeof keyOrClock === 'string') {
                 clock = this.clocks.get(keyOrClock);
                 if (clock === undefined) {
-                    throw "Unknown clock '" + keyOrClock + "'. Has it been registered with 'addClock'?";
+                    throw (
+                        "Unknown clock '" +
+                        keyOrClock +
+                        "'. Has it been registered with 'addClock'?"
+                    );
                 }
             } else if (typeof keyOrClock === 'object') {
                 clock = keyOrClock;
                 if (!this.clocks.has(clock.key)) {
-                    throw "Unknown clock '" + keyOrClock.key + "'. Has it been registered with 'addClock'?";
+                    throw (
+                        "Unknown clock '" +
+                        keyOrClock.key +
+                        "'. Has it been registered with 'addClock'?"
+                    );
                 }
             }
 
             const previousClock = this.activeClock;
             if (previousClock !== undefined) {
-                previousClock.off("tick", this.tick);
+                previousClock.off('tick', this.tick);
             }
 
             this.activeClock = clock;
@@ -330,15 +347,14 @@ class TimeContext extends EventEmitter {
              * @property {Clock} clock The newly activated clock, or undefined
              * if the system is no longer following a clock source
              */
-            this.emit("clock", this.activeClock);
+            this.emit('clock', this.activeClock);
 
             if (this.activeClock !== undefined) {
                 this.clockOffsets(offsets);
-                this.activeClock.on("tick", this.tick);
+                this.activeClock.on('tick', this.tick);
             }
-
         } else if (arguments.length === 1) {
-            throw "When setting the clock, clock offsets must also be provided";
+            throw 'When setting the clock, clock offsets must also be provided';
         }
 
         return this.activeClock;
@@ -366,7 +382,7 @@ class TimeContext extends EventEmitter {
     /**
      * Checks if this time context is in real-time mode or not.
      * @returns {boolean} true if this context is in real-time mode, false if not
-    */
+     */
     isRealTime() {
         if (this.clock()) {
             return true;

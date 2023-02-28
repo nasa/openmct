@@ -41,7 +41,9 @@ export default class EditPropertiesAction extends PropertiesAction {
     appliesTo(objectPath) {
         const object = objectPath[0];
         const definition = this._getTypeDefinition(object.type);
-        const persistable = this.openmct.objects.isPersistable(object.identifier);
+        const persistable = this.openmct.objects.isPersistable(
+            object.identifier
+        );
 
         return persistable && definition && definition.creatable;
     }
@@ -61,7 +63,10 @@ export default class EditPropertiesAction extends PropertiesAction {
         try {
             Object.entries(changes).forEach(([key, value]) => {
                 const existingValue = this.domainObject[key];
-                if (!(Array.isArray(existingValue)) && (typeof existingValue === 'object')) {
+                if (
+                    !Array.isArray(existingValue) &&
+                    typeof existingValue === 'object'
+                ) {
                     value = _.merge(existingValue, value);
                 }
 
@@ -89,11 +94,16 @@ export default class EditPropertiesAction extends PropertiesAction {
     _showEditForm(objectPath) {
         this.domainObject = objectPath[0];
 
-        const createWizard = new CreateWizard(this.openmct, this.domainObject, objectPath[1]);
+        const createWizard = new CreateWizard(
+            this.openmct,
+            this.domainObject,
+            objectPath[1]
+        );
         const formStructure = createWizard.getFormStructure(false);
         formStructure.title = 'Edit ' + this.domainObject.name;
 
-        return this.openmct.forms.showForm(formStructure)
+        return this.openmct.forms
+            .showForm(formStructure)
             .then(this._onSave.bind(this))
             .catch(this._onCancel.bind(this));
     }

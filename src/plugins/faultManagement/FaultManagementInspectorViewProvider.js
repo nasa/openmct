@@ -53,7 +53,8 @@ export default function FaultManagementInspectorViewProvider(openmct) {
                         provide: {
                             openmct
                         },
-                        template: '<FaultManagementInspector></FaultManagementInspector>'
+                        template:
+                            '<FaultManagementInspector></FaultManagementInspector>'
                     });
                 },
                 destroy: function () {

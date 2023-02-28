@@ -6,7 +6,7 @@ export default class CopyToClipboardAction {
 
         this.cssClass = 'icon-duplicate';
         this.description = 'Copy value to clipboard';
-        this.group = "action";
+        this.group = 'action';
         this.key = 'copyToClipboard';
         this.name = 'Copy to Clipboard';
         this.priority = 1;
@@ -16,12 +16,17 @@ export default class CopyToClipboardAction {
         const viewContext = view.getViewContext && view.getViewContext();
         const formattedValue = viewContext.row.formattedValueForCopy();
 
-        clipboard.updateClipboard(formattedValue)
+        clipboard
+            .updateClipboard(formattedValue)
             .then(() => {
-                this.openmct.notifications.info(`Success : copied '${formattedValue}' to clipboard `);
+                this.openmct.notifications.info(
+                    `Success : copied '${formattedValue}' to clipboard `
+                );
             })
             .catch(() => {
-                this.openmct.notifications.error(`Failed : to copy '${formattedValue}' to clipboard `);
+                this.openmct.notifications.error(
+                    `Failed : to copy '${formattedValue}' to clipboard `
+                );
             });
     }
 
@@ -32,7 +37,9 @@ export default class CopyToClipboardAction {
             return false;
         }
 
-        return row.formattedValueForCopy
-            && typeof row.formattedValueForCopy === 'function';
+        return (
+            row.formattedValueForCopy &&
+            typeof row.formattedValueForCopy === 'function'
+        );
     }
 }

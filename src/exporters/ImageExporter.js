@@ -31,7 +31,7 @@ function replaceDotsWithUnderscores(filename) {
     return filename.replace(regex, '_');
 }
 
-import {saveAs} from 'saveAs';
+import { saveAs } from 'saveAs';
 import html2canvas from 'html2canvas';
 import { v4 as uuid } from 'uuid';
 
@@ -40,12 +40,12 @@ class ImageExporter {
         this.openmct = openmct;
     }
     /**
-        * Converts an HTML element into a PNG or JPG Blob.
-        * @private
-        * @param {node} element that will be converted to an image
-        * @param {object} options Image options.
-        * @returns {promise}
-        */
+     * Converts an HTML element into a PNG or JPG Blob.
+     * @private
+     * @param {node} element that will be converted to an image
+     * @param {object} options Image options.
+     * @returns {promise}
+     */
     renderElement(element, { imageType, className, thumbnailSize }) {
         const self = this;
         const overlays = this.openmct.overlays;
@@ -90,39 +90,49 @@ class ImageExporter {
                 element.id = oldId;
             },
             removeContainer: true // Set to false to debug what html2canvas renders
-        }).then(canvas => {
-            dialog.dismiss();
+        })
+            .then((canvas) => {
+                dialog.dismiss();
 
-            return new Promise(function (resolve, reject) {
-                if (thumbnailSize) {
-                    const thumbnail = self.getThumbnail(canvas, mimeType, thumbnailSize);
+                return new Promise(function (resolve, reject) {
+                    if (thumbnailSize) {
+                        const thumbnail = self.getThumbnail(
+                            canvas,
+                            mimeType,
+                            thumbnailSize
+                        );
 
-                    return canvas.toBlob(blob => resolve({
-                        blob,
-                        thumbnail
-                    }), mimeType);
-                }
-
-                return canvas.toBlob(blob => resolve({ blob }), mimeType);
-            });
-        }).catch(error => {
-            dialog.dismiss();
-
-            console.error('error capturing image', error);
-            const errorDialog = overlays.dialog({
-                iconClass: 'error',
-                message: 'Image was not captured successfully!',
-                buttons: [
-                    {
-                        label: "OK",
-                        emphasis: true,
-                        callback: function () {
-                            errorDialog.dismiss();
-                        }
+                        return canvas.toBlob(
+                            (blob) =>
+                                resolve({
+                                    blob,
+                                    thumbnail
+                                }),
+                            mimeType
+                        );
                     }
-                ]
+
+                    return canvas.toBlob((blob) => resolve({ blob }), mimeType);
+                });
+            })
+            .catch((error) => {
+                dialog.dismiss();
+
+                console.error('error capturing image', error);
+                const errorDialog = overlays.dialog({
+                    iconClass: 'error',
+                    message: 'Image was not captured successfully!',
+                    buttons: [
+                        {
+                            label: 'OK',
+                            emphasis: true,
+                            callback: function () {
+                                errorDialog.dismiss();
+                            }
+                        }
+                    ]
+                });
             });
-        });
     }
 
     getThumbnail(canvas, mimeType, size) {
@@ -130,8 +140,18 @@ class ImageExporter {
         thumbnailCanvas.setAttribute('width', size.width);
         thumbnailCanvas.setAttribute('height', size.height);
         const ctx = thumbnailCanvas.getContext('2d');
-        ctx.globalCompositeOperation = "copy";
-        ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, size.width, size.height);
+        ctx.globalCompositeOperation = 'copy';
+        ctx.drawImage(
+            canvas,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+            0,
+            0,
+            size.width,
+            size.height
+        );
 
         return thumbnailCanvas.toDataURL(mimeType);
     }
@@ -186,4 +206,3 @@ class ImageExporter {
 }
 
 export default ImageExporter;
-

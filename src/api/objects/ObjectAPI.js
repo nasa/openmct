@@ -66,12 +66,12 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  */
 
 /**
-  * @readonly
-  * @enum {string} SEARCH_TYPES
-  * @property {string} OBJECTS Search for objects
-  * @property {string} ANNOTATIONS Search for annotations
-  * @property {string} TAGS Search for tags
-  */
+ * @readonly
+ * @enum {string} SEARCH_TYPES
+ * @property {string} OBJECTS Search for objects
+ * @property {string} ANNOTATIONS Search for annotations
+ * @property {string} TAGS Search for tags
+ */
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -96,7 +96,12 @@ export default class ObjectAPI {
         this.cache = {};
         this.interceptorRegistry = new InterceptorRegistry();
 
-        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
+        this.SYNCHRONIZED_OBJECT_TYPES = [
+            'notebook',
+            'restricted-notebook',
+            'plan',
+            'annotation'
+        ];
 
         this.errors = {
             Conflict: ConflictError
@@ -218,31 +223,41 @@ export default class ObjectAPI {
         const provider = this.getProvider(identifier);
 
         if (!provider) {
-            throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
+            throw new Error(
+                `No Provider Matched for keyString "${this.makeKeyString(
+                    identifier
+                )}}"`
+            );
         }
 
         if (!provider.get) {
             throw new Error('Provider does not support get!');
         }
 
-        let objectPromise = provider.get(identifier, abortSignal).then(domainObject => {
-            delete this.cache[keystring];
-            domainObject = this.applyGetInterceptors(identifier, domainObject);
+        let objectPromise = provider
+            .get(identifier, abortSignal)
+            .then((domainObject) => {
+                delete this.cache[keystring];
+                domainObject = this.applyGetInterceptors(
+                    identifier,
+                    domainObject
+                );
 
-            if (this.supportsMutation(identifier)) {
-                const mutableDomainObject = this.toMutable(domainObject);
-                mutableDomainObject.$refresh(domainObject);
-                this.destroyMutable(mutableDomainObject);
-            }
+                if (this.supportsMutation(identifier)) {
+                    const mutableDomainObject = this.toMutable(domainObject);
+                    mutableDomainObject.$refresh(domainObject);
+                    this.destroyMutable(mutableDomainObject);
+                }
 
-            return domainObject;
-        }).catch((error) => {
-            console.warn(`Failed to retrieve ${keystring}:`, error);
-            delete this.cache[keystring];
-            const result = this.applyGetInterceptors(identifier);
+                return domainObject;
+            })
+            .catch((error) => {
+                console.warn(`Failed to retrieve ${keystring}:`, error);
+                delete this.cache[keystring];
+                const result = this.applyGetInterceptors(identifier);
 
-            return result;
-        });
+                return result;
+            });
 
         this.cache[keystring] = objectPromise;
 
@@ -267,24 +282,35 @@ export default class ObjectAPI {
      *          each resolving to domain objects matching provided search query and options.
      */
     search(query, abortSignal, searchType = this.SEARCH_TYPES.OBJECTS) {
-        if (!Object.keys(this.SEARCH_TYPES).includes(searchType.toUpperCase())) {
+        if (
+            !Object.keys(this.SEARCH_TYPES).includes(searchType.toUpperCase())
+        ) {
             throw new Error(`Unknown search type: ${searchType}`);
         }
 
         const searchPromises = Object.values(this.providers)
-            .filter(provider => {
-                return ((provider.supportsSearchType !== undefined) && provider.supportsSearchType(searchType));
+            .filter((provider) => {
+                return (
+                    provider.supportsSearchType !== undefined &&
+                    provider.supportsSearchType(searchType)
+                );
             })
-            .map(provider => provider.search(query, abortSignal, searchType));
+            .map((provider) => provider.search(query, abortSignal, searchType));
         if (!this.inMemorySearchProvider.supportsSearchType(searchType)) {
-            throw new Error(`${searchType} not implemented in inMemorySearchProvider`);
+            throw new Error(
+                `${searchType} not implemented in inMemorySearchProvider`
+            );
         }
 
-        searchPromises.push(this.inMemorySearchProvider.search(query, searchType)
-            .then(results => results.hits
-                .map(hit => {
-                    return hit;
-                })));
+        searchPromises.push(
+            this.inMemorySearchProvider
+                .search(query, searchType)
+                .then((results) =>
+                    results.hits.map((hit) => {
+                        return hit;
+                    })
+                )
+        );
 
         return searchPromises;
     }
@@ -302,7 +328,11 @@ export default class ObjectAPI {
      */
     getMutable(identifier) {
         if (!this.supportsMutation(identifier)) {
-            throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
+            throw new Error(
+                `Object "${this.makeKeyString(
+                    identifier
+                )}" does not support mutation.`
+            );
         }
 
         return this.get(identifier).then((object) => {
@@ -320,7 +350,7 @@ export default class ObjectAPI {
         if (domainObject.isMutable) {
             return domainObject.$destroy();
         } else {
-            throw new Error("Attempted to destroy non-mutable domain object");
+            throw new Error('Attempted to destroy non-mutable domain object');
         }
     }
 
@@ -332,9 +362,11 @@ export default class ObjectAPI {
         let identifier = utils.parseKeyString(idOrKeyString);
         let provider = this.getProvider(identifier);
 
-        return provider !== undefined
-            && provider.create !== undefined
-            && provider.update !== undefined;
+        return (
+            provider !== undefined &&
+            provider.create !== undefined &&
+            provider.update !== undefined
+        );
     }
 
     isMissing(domainObject) {
@@ -394,27 +426,47 @@ export default class ObjectAPI {
             }
 
             if (savedObjectPromise) {
-                savedObjectPromise.then(response => {
-                    savedResolve(response);
-                }).catch((error) => {
-                    if (!isNewObject) {
-                        this.#mutate(domainObject, 'persisted', lastPersistedTime);
-                    }
+                savedObjectPromise
+                    .then((response) => {
+                        savedResolve(response);
+                    })
+                    .catch((error) => {
+                        if (!isNewObject) {
+                            this.#mutate(
+                                domainObject,
+                                'persisted',
+                                lastPersistedTime
+                            );
+                        }
 
-                    savedReject(error);
-                });
+                        savedReject(error);
+                    });
             } else {
-                result = Promise.reject(`[ObjectAPI][save] Object provider returned ${savedObjectPromise} when ${isNewObject ? 'creating new' : 'updating'} object.`);
+                result = Promise.reject(
+                    `[ObjectAPI][save] Object provider returned ${savedObjectPromise} when ${
+                        isNewObject ? 'creating new' : 'updating'
+                    } object.`
+                );
             }
         }
 
         return result.catch(async (error) => {
             if (error instanceof this.errors.Conflict) {
                 // Synchronized objects will resolve their own conflicts
-                if (this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
-                    this.openmct.notifications.info(`Conflict detected while saving "${this.makeKeyString(domainObject.name)}", attempting to resolve`);
+                if (
+                    this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)
+                ) {
+                    this.openmct.notifications.info(
+                        `Conflict detected while saving "${this.makeKeyString(
+                            domainObject.name
+                        )}", attempting to resolve`
+                    );
                 } else {
-                    this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+                    this.openmct.notifications.error(
+                        `Conflict detected while saving ${this.makeKeyString(
+                            domainObject.identifier
+                        )}`
+                    );
 
                     if (this.isTransactionActive()) {
                         this.endTransaction();
@@ -446,7 +498,9 @@ export default class ObjectAPI {
      */
     startTransaction() {
         if (this.isTransactionActive()) {
-            throw new Error("Unable to start new Transaction: Previous Transaction is active");
+            throw new Error(
+                'Unable to start new Transaction: Previous Transaction is active'
+            );
         }
 
         this.transaction = new Transaction(this);
@@ -502,8 +556,11 @@ export default class ObjectAPI {
      * @private
      */
     applyGetInterceptors(identifier, domainObject) {
-        const interceptors = this.#listGetInterceptors(identifier, domainObject);
-        interceptors.forEach(interceptor => {
+        const interceptors = this.#listGetInterceptors(
+            identifier,
+            domainObject
+        );
+        interceptors.forEach((interceptor) => {
             domainObject = interceptor.invoke(identifier, domainObject);
         });
 
@@ -518,7 +575,7 @@ export default class ObjectAPI {
      */
     getRelativePath(objectPath) {
         return objectPath
-            .map(p => this.makeKeyString(p.identifier))
+            .map((p) => this.makeKeyString(p.identifier))
             .reverse()
             .join('/');
     }
@@ -587,22 +644,31 @@ export default class ObjectAPI {
         if (domainObject.isMutable) {
             mutableObject = domainObject;
         } else {
-            mutableObject = MutableDomainObject.createMutable(domainObject, this.eventEmitter);
+            mutableObject = MutableDomainObject.createMutable(
+                domainObject,
+                this.eventEmitter
+            );
 
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
             let provider = this.getProvider(identifier);
 
-            if (provider !== undefined
-                && provider.observe !== undefined
-                && this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+            if (
+                provider !== undefined &&
+                provider.observe !== undefined &&
+                this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)
+            ) {
                 let unobserve = provider.observe(identifier, (updatedModel) => {
                     // modified can sometimes be undefined, so make it 0 in this case
-                    const mutableObjectModification = mutableObject.modified ?? Number.MIN_SAFE_INTEGER;
+                    const mutableObjectModification =
+                        mutableObject.modified ?? Number.MIN_SAFE_INTEGER;
                     if (updatedModel.persisted > mutableObjectModification) {
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                         //in rapid succession and intermediate persistence states are returned by the observe function.
-                        updatedModel = this.applyGetInterceptors(identifier, updatedModel);
+                        updatedModel = this.applyGetInterceptors(
+                            identifier,
+                            updatedModel
+                        );
                         mutableObject.$refresh(updatedModel);
                     }
                 });
@@ -683,12 +749,13 @@ export default class ObjectAPI {
     areIdsEqual(...identifiers) {
         const firstIdentifier = utils.parseKeyString(identifiers[0]);
 
-        return identifiers.map(utils.parseKeyString)
-            .every(identifier => {
-                return identifier === firstIdentifier
-                    || (identifier.namespace === firstIdentifier.namespace
-                        && identifier.key === firstIdentifier.key);
-            });
+        return identifiers.map(utils.parseKeyString).every((identifier) => {
+            return (
+                identifier === firstIdentifier ||
+                (identifier.namespace === firstIdentifier.namespace &&
+                    identifier.key === firstIdentifier.key)
+            );
+        });
     }
 
     /**
@@ -698,7 +765,7 @@ export default class ObjectAPI {
      */
     isReachable(originalPath) {
         if (originalPath && originalPath.length) {
-            return (originalPath[originalPath.length - 1].type === 'root');
+            return originalPath[originalPath.length - 1].type === 'root';
         }
 
         return false;
@@ -709,7 +776,7 @@ export default class ObjectAPI {
             return false;
         }
 
-        return path.some(pathElement => {
+        return path.some((pathElement) => {
             const identifierToCheck = utils.parseKeyString(keyStringToCheck);
 
             return this.areIdsEqual(identifierToCheck, pathElement.identifier);
@@ -726,7 +793,7 @@ export default class ObjectAPI {
         const domainObject = await this.get(identifier);
         path.push(domainObject);
         const { location } = domainObject;
-        if (location && (!this.#pathContainsDomainObject(location, path))) {
+        if (location && !this.#pathContainsDomainObject(location, path)) {
             // if we have a location, and we don't already have this in our constructed path,
             // then keep walking up the path
             return this.getOriginalPath(utils.parseKeyString(location), path);
@@ -764,21 +831,26 @@ export default class ObjectAPI {
             keyStrings.unshift('ROOT');
         }
 
-        const objectPath = (await Promise.all(
-            keyStrings.map(
-                keyString => this.supportsMutation(keyString)
-                    ? this.getMutable(utils.parseKeyString(keyString))
-                    : this.get(utils.parseKeyString(keyString))
+        const objectPath = (
+            await Promise.all(
+                keyStrings.map((keyString) =>
+                    this.supportsMutation(keyString)
+                        ? this.getMutable(utils.parseKeyString(keyString))
+                        : this.get(utils.parseKeyString(keyString))
+                )
             )
-        )).reverse();
+        ).reverse();
 
         return objectPath;
     }
 
     isObjectPathToALink(domainObject, objectPath) {
-        return objectPath !== undefined
-            && objectPath.length > 1
-            && domainObject.location !== this.makeKeyString(objectPath[1].identifier);
+        return (
+            objectPath !== undefined &&
+            objectPath.length > 1 &&
+            domainObject.location !==
+                this.makeKeyString(objectPath[1].identifier)
+        );
     }
 
     isTransactionActive() {
@@ -788,8 +860,9 @@ export default class ObjectAPI {
     #hasAlreadyBeenPersisted(domainObject) {
         // modified can sometimes be undefined, so make it 0 in this case
         const modified = domainObject.modified ?? Number.MIN_SAFE_INTEGER;
-        const result = domainObject.persisted !== undefined
-            && domainObject.persisted >= modified;
+        const result =
+            domainObject.persisted !== undefined &&
+            domainObject.persisted >= modified;
 
         return result;
     }

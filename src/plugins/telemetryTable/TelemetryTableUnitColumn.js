@@ -19,11 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    './TelemetryTableColumn.js'
-], function (
-    TelemetryTableColumn
-) {
+define(['./TelemetryTableColumn.js'], function (TelemetryTableColumn) {
     class TelemetryTableUnitColumn extends TelemetryTableColumn {
         constructor(openmct, metadatum) {
             super(openmct, metadatum);

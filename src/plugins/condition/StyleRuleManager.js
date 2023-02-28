@@ -23,7 +23,12 @@
 import EventEmitter from 'EventEmitter';
 
 export default class StyleRuleManager extends EventEmitter {
-    constructor(styleConfiguration, openmct, callback, suppressSubscriptionOnEdit) {
+    constructor(
+        styleConfiguration,
+        openmct,
+        callback,
+        suppressSubscriptionOnEdit
+    ) {
         super();
         this.openmct = openmct;
         this.callback = callback;
@@ -37,7 +42,7 @@ export default class StyleRuleManager extends EventEmitter {
         if (styleConfiguration) {
             this.initialize(styleConfiguration);
             if (styleConfiguration.conditionSetIdentifier) {
-                this.openmct.time.on("bounds", this.refreshData);
+                this.openmct.time.on('bounds', this.refreshData);
                 this.subscribeToConditionSet();
             } else {
                 this.applyStaticStyle();
@@ -75,17 +80,38 @@ export default class StyleRuleManager extends EventEmitter {
             delete this.stopProvidingTelemetry;
         }
 
-        this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
-            this.openmct.telemetry.request(conditionSetDomainObject)
-                .then(output => {
-                    if (output && output.length && (this.conditionSetIdentifier && this.openmct.objects.areIdsEqual(conditionSetDomainObject.identifier, this.conditionSetIdentifier))) {
-                        this.handleConditionSetResultUpdated(output[0]);
-                    }
-                });
-            if (this.conditionSetIdentifier && this.openmct.objects.areIdsEqual(conditionSetDomainObject.identifier, this.conditionSetIdentifier)) {
-                this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
-            }
-        });
+        this.openmct.objects
+            .get(this.conditionSetIdentifier)
+            .then((conditionSetDomainObject) => {
+                this.openmct.telemetry
+                    .request(conditionSetDomainObject)
+                    .then((output) => {
+                        if (
+                            output &&
+                            output.length &&
+                            this.conditionSetIdentifier &&
+                            this.openmct.objects.areIdsEqual(
+                                conditionSetDomainObject.identifier,
+                                this.conditionSetIdentifier
+                            )
+                        ) {
+                            this.handleConditionSetResultUpdated(output[0]);
+                        }
+                    });
+                if (
+                    this.conditionSetIdentifier &&
+                    this.openmct.objects.areIdsEqual(
+                        conditionSetDomainObject.identifier,
+                        this.conditionSetIdentifier
+                    )
+                ) {
+                    this.stopProvidingTelemetry =
+                        this.openmct.telemetry.subscribe(
+                            conditionSetDomainObject,
+                            this.handleConditionSetResultUpdated.bind(this)
+                        );
+                }
+            });
     }
 
     refreshData(bounds, isTick) {
@@ -96,14 +122,17 @@ export default class StyleRuleManager extends EventEmitter {
                 size: 1,
                 strategy: 'latest'
             };
-            this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
-                this.openmct.telemetry.request(conditionSetDomainObject, options)
-                    .then(output => {
-                        if (output && output.length) {
-                            this.handleConditionSetResultUpdated(output[0]);
-                        }
-                    });
-            });
+            this.openmct.objects
+                .get(this.conditionSetIdentifier)
+                .then((conditionSetDomainObject) => {
+                    this.openmct.telemetry
+                        .request(conditionSetDomainObject, options)
+                        .then((output) => {
+                            if (output && output.length) {
+                                this.handleConditionSetResultUpdated(output[0]);
+                            }
+                        });
+                });
         }
     }
 
@@ -113,8 +142,12 @@ export default class StyleRuleManager extends EventEmitter {
             this.applyStaticStyle();
             this.destroy(true);
         } else {
-            let isNewConditionSet = !this.conditionSetIdentifier
-                                    || !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
+            let isNewConditionSet =
+                !this.conditionSetIdentifier ||
+                !this.openmct.objects.areIdsEqual(
+                    this.conditionSetIdentifier,
+                    styleConfiguration.conditionSetIdentifier
+                );
             this.initialize(styleConfiguration);
             if (this.isEditing) {
                 this.applySelectedConditionStyle();
@@ -131,7 +164,8 @@ export default class StyleRuleManager extends EventEmitter {
         let conditionStyleMap = {};
         conditionStyles.forEach((conditionStyle) => {
             if (conditionStyle.conditionId) {
-                conditionStyleMap[conditionStyle.conditionId] = conditionStyle.style;
+                conditionStyleMap[conditionStyle.conditionId] =
+                    conditionStyle.style;
             } else {
                 conditionStyleMap.static = conditionStyle.style;
             }
@@ -173,7 +207,7 @@ export default class StyleRuleManager extends EventEmitter {
             this.currentStyle = this.staticStyle.style;
         } else {
             if (this.currentStyle) {
-                Object.keys(this.currentStyle).forEach(key => {
+                Object.keys(this.currentStyle).forEach((key) => {
                     this.currentStyle[key] = '__no_value';
                 });
             }
@@ -184,17 +218,15 @@ export default class StyleRuleManager extends EventEmitter {
 
     destroy(skipEventListeners) {
         if (this.stopProvidingTelemetry) {
-
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
         }
 
         if (!skipEventListeners) {
-            this.openmct.time.off("bounds", this.refreshData);
+            this.openmct.time.off('bounds', this.refreshData);
             this.openmct.editor.off('isEditing', this.toggleSubscription);
         }
 
         this.conditionSetIdentifier = undefined;
     }
-
 }

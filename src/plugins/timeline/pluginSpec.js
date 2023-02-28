@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "@/utils/testing";
-import TimelinePlugin from "./plugin";
+import { createOpenMct, resetApplicationState } from '@/utils/testing';
+import TimelinePlugin from './plugin';
 import Vue from 'vue';
-import EventEmitter from "EventEmitter";
+import EventEmitter from 'EventEmitter';
 
 describe('the plugin', function () {
     let objectDef;
@@ -39,32 +39,32 @@ describe('the plugin', function () {
             namespace: ''
         },
         type: 'plan',
-        id: "test-plan-object",
+        id: 'test-plan-object',
         selectFile: {
             body: JSON.stringify({
-                "TEST-GROUP": [
+                'TEST-GROUP': [
                     {
-                        "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                        "start": 1597170002854,
-                        "end": 1597171032854,
-                        "type": "TEST-GROUP",
-                        "color": "fuchsia",
-                        "textColor": "black"
+                        name: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
+                        start: 1597170002854,
+                        end: 1597171032854,
+                        type: 'TEST-GROUP',
+                        color: 'fuchsia',
+                        textColor: 'black'
                     },
                     {
-                        "name": "Sed ut perspiciatis",
-                        "start": 1597171132854,
-                        "end": 1597171232854,
-                        "type": "TEST-GROUP",
-                        "color": "fuchsia",
-                        "textColor": "black"
+                        name: 'Sed ut perspiciatis',
+                        start: 1597171132854,
+                        end: 1597171232854,
+                        type: 'TEST-GROUP',
+                        color: 'fuchsia',
+                        textColor: 'black'
                     }
                 ]
             })
         }
     };
     let timelineObject = {
-        "composition": [],
+        composition: [],
         configuration: {
             useIndependentTime: false,
             timeOptions: {
@@ -77,18 +77,18 @@ describe('the plugin', function () {
                 },
                 clockOffsets: {
                     start: -(30 * 60 * 1000),
-                    end: (30 * 60 * 1000)
+                    end: 30 * 60 * 1000
                 }
             }
         },
-        "name": "Some timestrip",
-        "type": "time-strip",
-        "location": "mine",
-        "modified": 1631005183584,
-        "persisted": 1631005183502,
-        "identifier": {
-            "namespace": "",
-            "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+        name: 'Some timestrip',
+        type: 'time-strip',
+        location: 'mine',
+        modified: 1631005183584,
+        persisted: 1631005183502,
+        identifier: {
+            namespace: '',
+            key: 'b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9'
         }
     };
 
@@ -170,8 +170,13 @@ describe('the plugin', function () {
                 ...timelineObject
             };
 
-            const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
-            timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
+            const applicableViews = openmct.objectViews.get(
+                testViewObject,
+                mockObjectPath
+            );
+            timelineView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'time-strip.view'
+            );
             let view = timelineView.view(testViewObject, mockObjectPath);
             view.show(child, true);
 
@@ -188,7 +193,9 @@ describe('the plugin', function () {
         });
 
         it('does not show the independent time conductor based on configuration', () => {
-            const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor__controls');
+            const independentTimeConductorEl = element.querySelector(
+                '.c-timeline-holder > .c-conductor__controls'
+            );
             expect(independentTimeConductorEl).toBeNull();
         });
     });
@@ -217,13 +224,22 @@ describe('the plugin', function () {
                 return [planObject];
             };
 
-            spyOn(openmct.composition, 'get').withArgs(timelineDomainObject).and.returnValue(mockCompositionForTimelist);
+            spyOn(openmct.composition, 'get')
+                .withArgs(timelineDomainObject)
+                .and.returnValue(mockCompositionForTimelist);
 
             openmct.router.path = [timelineDomainObject];
 
-            const applicableViews = openmct.objectViews.get(timelineDomainObject, [timelineDomainObject]);
-            timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
-            let view = timelineView.view(timelineDomainObject, [timelineDomainObject]);
+            const applicableViews = openmct.objectViews.get(
+                timelineDomainObject,
+                [timelineDomainObject]
+            );
+            timelineView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'time-strip.view'
+            );
+            let view = timelineView.view(timelineDomainObject, [
+                timelineDomainObject
+            ]);
             view.show(child, true);
 
             return Vue.nextTick();
@@ -247,9 +263,14 @@ describe('the plugin', function () {
             }
         };
 
-        beforeEach(done => {
-            const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
-            timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
+        beforeEach((done) => {
+            const applicableViews = openmct.objectViews.get(
+                testViewObject,
+                mockObjectPath
+            );
+            timelineView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'time-strip.view'
+            );
             let view = timelineView.view(testViewObject, mockObjectPath);
             view.show(child, true);
 
@@ -257,13 +278,19 @@ describe('the plugin', function () {
         });
 
         it('displays an independent time conductor with saved options - local clock', () => {
-
             return Vue.nextTick(() => {
-                const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor__controls');
+                const independentTimeConductorEl = element.querySelector(
+                    '.c-timeline-holder > .c-conductor__controls'
+                );
                 expect(independentTimeConductorEl).toBeDefined();
 
-                const independentTimeContext = openmct.time.getIndependentContext(testViewObject.identifier.key);
-                expect(independentTimeContext.clockOffsets()).toEqual(testViewObject.configuration.timeOptions.clockOffsets);
+                const independentTimeContext =
+                    openmct.time.getIndependentContext(
+                        testViewObject.identifier.key
+                    );
+                expect(independentTimeContext.clockOffsets()).toEqual(
+                    testViewObject.configuration.timeOptions.clockOffsets
+                );
             });
         });
     });
@@ -272,9 +299,9 @@ describe('the plugin', function () {
         let timelineView;
         let testViewObject2 = {
             ...timelineObject,
-            id: "test-object2",
+            id: 'test-object2',
             identifier: {
-                key: "test-object2",
+                key: 'test-object2',
                 namespace: ''
             },
             configuration: {
@@ -284,8 +311,13 @@ describe('the plugin', function () {
         };
 
         beforeEach((done) => {
-            const applicableViews = openmct.objectViews.get(testViewObject2, mockObjectPath);
-            timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
+            const applicableViews = openmct.objectViews.get(
+                testViewObject2,
+                mockObjectPath
+            );
+            timelineView = applicableViews.find(
+                (viewProvider) => viewProvider.key === 'time-strip.view'
+            );
             let view = timelineView.view(testViewObject2, mockObjectPath);
             view.show(child, true);
 
@@ -294,16 +326,23 @@ describe('the plugin', function () {
 
         it('displays an independent time conductor with saved options - fixed timespan', () => {
             return Vue.nextTick(() => {
-                const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor__controls');
+                const independentTimeConductorEl = element.querySelector(
+                    '.c-timeline-holder > .c-conductor__controls'
+                );
                 expect(independentTimeConductorEl).toBeDefined();
 
-                const independentTimeContext = openmct.time.getIndependentContext(testViewObject2.identifier.key);
-                expect(independentTimeContext.bounds()).toEqual(testViewObject2.configuration.timeOptions.fixedOffsets);
+                const independentTimeContext =
+                    openmct.time.getIndependentContext(
+                        testViewObject2.identifier.key
+                    );
+                expect(independentTimeContext.bounds()).toEqual(
+                    testViewObject2.configuration.timeOptions.fixedOffsets
+                );
             });
         });
     });
 
-    describe("The timestrip composition policy", () => {
+    describe('The timestrip composition policy', () => {
         let testObject;
         beforeEach(() => {
             testObject = {
@@ -312,28 +351,31 @@ describe('the plugin', function () {
             };
         });
 
-        it("allows composition for plots", () => {
+        it('allows composition for plots', () => {
             const testTelemetryObject = {
                 identifier: {
-                    namespace: "",
-                    key: "test-object"
+                    namespace: '',
+                    key: 'test-object'
                 },
-                type: "test-object",
-                name: "Test Object",
+                type: 'test-object',
+                name: 'Test Object',
                 telemetry: {
-                    values: [{
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            domain: 1
+                    values: [
+                        {
+                            key: 'some-key',
+                            name: 'Some attribute',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: 'some-other-key',
+                            name: 'Another attribute',
+                            hints: {
+                                range: 1
+                            }
                         }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }]
+                    ]
                 }
             };
             const composition = openmct.composition.get(testObject);
@@ -343,7 +385,7 @@ describe('the plugin', function () {
             expect(testObject.composition.length).toBe(1);
         });
 
-        it("allows composition for plans", () => {
+        it('allows composition for plans', () => {
             const composition = openmct.composition.get(testObject);
             expect(() => {
                 composition.add(planObject);
@@ -351,14 +393,14 @@ describe('the plugin', function () {
             expect(testObject.composition.length).toBe(1);
         });
 
-        it("disallows composition for non time-based plots", () => {
+        it('disallows composition for non time-based plots', () => {
             const barGraphObject = {
                 identifier: {
-                    namespace: "",
-                    key: "test-object"
+                    namespace: '',
+                    key: 'test-object'
                 },
-                type: "telemetry.plot.bar-graph",
-                name: "Test Object"
+                type: 'telemetry.plot.bar-graph',
+                name: 'Test Object'
             };
             const composition = openmct.composition.get(testObject);
             expect(() => {

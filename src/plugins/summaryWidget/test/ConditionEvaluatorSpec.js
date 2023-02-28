@@ -52,73 +52,92 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                 b: {},
                 c: {}
             };
-            mockConditions = [{
-                object: 'a',
-                key: 'alpha',
-                operation: 'greaterThan',
-                values: [2]
-            }, {
-                object: 'b',
-                key: 'gamma',
-                operation: 'lessThan',
-                values: [5]
-            }];
-            mockConditionsEmpty = [{
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            }];
-            mockConditionsUndefined = [{
-                object: 'No Such Object',
-                key: '',
-                operation: '',
-                values: []
-            }, {
-                object: 'a',
-                key: 'No Such Key',
-                operation: '',
-                values: []
-            }, {
-                object: 'a',
-                key: 'alpha',
-                operation: 'No Such Operation',
-                values: []
-            }, {
-                object: 'all',
-                key: 'Nonexistent Field',
-                operation: 'Random Operation',
-                values: []
-            }, {
-                object: 'any',
-                key: 'Nonexistent Field',
-                operation: 'Whatever Operation',
-                values: []
-            }];
-            mockConditionsAnyTrue = [{
-                object: 'any',
-                key: 'alpha',
-                operation: 'greaterThan',
-                values: [5]
-            }];
-            mockConditionsAnyFalse = [{
-                object: 'any',
-                key: 'alpha',
-                operation: 'greaterThan',
-                values: [1000]
-            }];
-            mockConditionsAllFalse = [{
-                object: 'all',
-                key: 'alpha',
-                operation: 'greaterThan',
-                values: [5]
-            }];
-            mockConditionsAllTrue = [{
-                object: 'all',
-                key: 'alpha',
-                operation: 'greaterThan',
-                values: [0]
-            }];
+            mockConditions = [
+                {
+                    object: 'a',
+                    key: 'alpha',
+                    operation: 'greaterThan',
+                    values: [2]
+                },
+                {
+                    object: 'b',
+                    key: 'gamma',
+                    operation: 'lessThan',
+                    values: [5]
+                }
+            ];
+            mockConditionsEmpty = [
+                {
+                    object: '',
+                    key: '',
+                    operation: '',
+                    values: []
+                }
+            ];
+            mockConditionsUndefined = [
+                {
+                    object: 'No Such Object',
+                    key: '',
+                    operation: '',
+                    values: []
+                },
+                {
+                    object: 'a',
+                    key: 'No Such Key',
+                    operation: '',
+                    values: []
+                },
+                {
+                    object: 'a',
+                    key: 'alpha',
+                    operation: 'No Such Operation',
+                    values: []
+                },
+                {
+                    object: 'all',
+                    key: 'Nonexistent Field',
+                    operation: 'Random Operation',
+                    values: []
+                },
+                {
+                    object: 'any',
+                    key: 'Nonexistent Field',
+                    operation: 'Whatever Operation',
+                    values: []
+                }
+            ];
+            mockConditionsAnyTrue = [
+                {
+                    object: 'any',
+                    key: 'alpha',
+                    operation: 'greaterThan',
+                    values: [5]
+                }
+            ];
+            mockConditionsAnyFalse = [
+                {
+                    object: 'any',
+                    key: 'alpha',
+                    operation: 'greaterThan',
+                    values: [1000]
+                }
+            ];
+            mockConditionsAllFalse = [
+                {
+                    object: 'all',
+                    key: 'alpha',
+                    operation: 'greaterThan',
+                    values: [5]
+                }
+            ];
+            mockConditionsAllTrue = [
+                {
+                    object: 'all',
+                    key: 'alpha',
+                    operation: 'greaterThan',
+                    values: [0]
+                }
+            ];
             mockOperations = {
                 greaterThan: {
                     operation: function (input) {
@@ -141,7 +160,9 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                 },
                 textContains: {
                     operation: function (input) {
-                        return input[0] && input[1] && input[0].includes(input[1]);
+                        return (
+                            input[0] && input[1] && input[0].includes(input[1])
+                        );
                     },
                     text: 'text contains',
                     appliesTo: ['string'],
@@ -173,8 +194,12 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
         });
 
         it('evaluates a condition when it has no configuration', function () {
-            expect(evaluator.execute(mockConditionsEmpty, 'any')).toEqual(false);
-            expect(evaluator.execute(mockConditionsEmpty, 'all')).toEqual(false);
+            expect(evaluator.execute(mockConditionsEmpty, 'any')).toEqual(
+                false
+            );
+            expect(evaluator.execute(mockConditionsEmpty, 'all')).toEqual(
+                false
+            );
         });
 
         it('correctly evaluates a set of conditions', function () {
@@ -183,19 +208,31 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
         });
 
         it('correctly evaluates conditions involving "any telemetry"', function () {
-            expect(evaluator.execute(mockConditionsAnyTrue, 'any')).toEqual(true);
-            expect(evaluator.execute(mockConditionsAnyFalse, 'any')).toEqual(false);
+            expect(evaluator.execute(mockConditionsAnyTrue, 'any')).toEqual(
+                true
+            );
+            expect(evaluator.execute(mockConditionsAnyFalse, 'any')).toEqual(
+                false
+            );
         });
 
         it('correctly evaluates conditions involving "all telemetry"', function () {
-            expect(evaluator.execute(mockConditionsAllTrue, 'any')).toEqual(true);
-            expect(evaluator.execute(mockConditionsAllFalse, 'any')).toEqual(false);
+            expect(evaluator.execute(mockConditionsAllTrue, 'any')).toEqual(
+                true
+            );
+            expect(evaluator.execute(mockConditionsAllFalse, 'any')).toEqual(
+                false
+            );
         });
 
         it('handles malformed conditions gracefully', function () {
             //if no conditions are fully defined, should return false for any mode
-            expect(evaluator.execute(mockConditionsUndefined, 'any')).toEqual(false);
-            expect(evaluator.execute(mockConditionsUndefined, 'all')).toEqual(false);
+            expect(evaluator.execute(mockConditionsUndefined, 'any')).toEqual(
+                false
+            );
+            expect(evaluator.execute(mockConditionsUndefined, 'all')).toEqual(
+                false
+            );
             //these conditions are true: evaluator should ignore undefined conditions,
             //and evaluate the rule as true
             mockConditionsUndefined.push({
@@ -204,29 +241,43 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
                 operation: 'textContains',
                 values: ['Testing']
             });
-            expect(evaluator.execute(mockConditionsUndefined, 'any')).toEqual(true);
+            expect(evaluator.execute(mockConditionsUndefined, 'any')).toEqual(
+                true
+            );
             mockConditionsUndefined.push({
                 object: 'c',
                 key: 'iAm',
                 operation: 'textContains',
                 values: ['Walrus']
             });
-            expect(evaluator.execute(mockConditionsUndefined, 'all')).toEqual(true);
-        });
-
-        it('gets the keys for possible operations', function () {
-            expect(evaluator.getOperationKeys()).toEqual(
-                ['greaterThan', 'lessThan', 'textContains', 'textIsExactly', 'isHalfHorse']
+            expect(evaluator.execute(mockConditionsUndefined, 'all')).toEqual(
+                true
             );
         });
 
+        it('gets the keys for possible operations', function () {
+            expect(evaluator.getOperationKeys()).toEqual([
+                'greaterThan',
+                'lessThan',
+                'textContains',
+                'textIsExactly',
+                'isHalfHorse'
+            ]);
+        });
+
         it('gets output text for a given operation', function () {
-            expect(evaluator.getOperationText('isHalfHorse')).toEqual('is Half Horse');
+            expect(evaluator.getOperationText('isHalfHorse')).toEqual(
+                'is Half Horse'
+            );
         });
 
         it('correctly returns whether an operation applies to a given type', function () {
-            expect(evaluator.operationAppliesTo('isHalfHorse', 'mythicalCreature')).toEqual(true);
-            expect(evaluator.operationAppliesTo('isHalfHorse', 'spaceJunk')).toEqual(false);
+            expect(
+                evaluator.operationAppliesTo('isHalfHorse', 'mythicalCreature')
+            ).toEqual(true);
+            expect(
+                evaluator.operationAppliesTo('isHalfHorse', 'spaceJunk')
+            ).toEqual(false);
         });
 
         it('returns the HTML input type associated with a given data type', function () {
@@ -239,8 +290,12 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
         });
 
         it('gets a human-readable description of a condition', function () {
-            expect(evaluator.getOperationDescription('isHalfHorse')).toEqual('is half horse');
-            expect(evaluator.getOperationDescription('greaterThan', [1])).toEqual(' > 1');
+            expect(evaluator.getOperationDescription('isHalfHorse')).toEqual(
+                'is half horse'
+            );
+            expect(
+                evaluator.getOperationDescription('greaterThan', [1])
+            ).toEqual(' > 1');
         });
 
         it('allows setting a substitute cache for testing purposes, and toggling its use', function () {
@@ -306,7 +361,8 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
             expect(testOperation(['Testing', 'tin'])).toEqual(true);
             expect(testOperation(['Testing', 'bind'])).toEqual(false);
             //text does not contain
-            testOperation = testEvaluator.operations.textDoesNotContain.operation;
+            testOperation =
+                testEvaluator.operations.textDoesNotContain.operation;
             expect(testOperation(['Testing', 'tin'])).toEqual(false);
             expect(testOperation(['Testing', 'bind'])).toEqual(true);
             //text starts with
@@ -333,7 +389,9 @@ define(['../src/ConditionEvaluator'], function (ConditionEvaluator) {
 
         it('can produce a description for all supported operations', function () {
             testEvaluator.getOperationKeys().forEach(function (key) {
-                expect(testEvaluator.getOperationDescription(key, [])).toBeDefined();
+                expect(
+                    testEvaluator.getOperationDescription(key, [])
+                ).toBeDefined();
             });
         });
     });

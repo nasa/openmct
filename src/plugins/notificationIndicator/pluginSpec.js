@@ -22,10 +22,7 @@
 
 import NotificationIndicatorPlugin from './plugin.js';
 import Vue from 'vue';
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 describe('the plugin', () => {
     let notificationIndicatorPlugin;
@@ -43,7 +40,7 @@ describe('the plugin', () => {
         parentElement = document.createElement('div');
 
         openmct.on('start', () => {
-            mockMessages.forEach(message => {
+            mockMessages.forEach((message) => {
                 openmct.notifications.error(message);
             });
             done();
@@ -64,9 +61,13 @@ describe('the plugin', () => {
         });
 
         it('notifies the user of the number of notifications', () => {
-            let notificationCountElement = document.querySelector('.c-indicator__count');
+            let notificationCountElement = document.querySelector(
+                '.c-indicator__count'
+            );
 
-            expect(notificationCountElement.innerText).toEqual(mockMessages.length.toString());
+            expect(notificationCountElement.innerText).toEqual(
+                mockMessages.length.toString()
+            );
         });
     });
 });

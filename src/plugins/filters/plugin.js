@@ -20,14 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './FiltersInspectorViewProvider'
-], function (
+define(['./FiltersInspectorViewProvider'], function (
     FiltersInspectorViewProvider
 ) {
     return function plugin(supportedObjectTypesArray) {
         return function install(openmct) {
-            openmct.inspectorViews.addProvider(new FiltersInspectorViewProvider(openmct, supportedObjectTypesArray));
+            openmct.inspectorViews.addProvider(
+                new FiltersInspectorViewProvider(
+                    openmct,
+                    supportedObjectTypesArray
+                )
+            );
         };
     };
 });

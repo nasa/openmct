@@ -46,23 +46,28 @@ define(['../src/Condition'], function (Condition) {
             mockEvaluator.getInputCount = jasmine.createSpy('inputCount');
             mockEvaluator.getInputType = jasmine.createSpy('inputType');
 
-            mockConditionManager = jasmine.createSpyObj('mockConditionManager', [
-                'on',
-                'getComposition',
-                'loadCompleted',
-                'getEvaluator',
-                'getTelemetryMetadata',
-                'metadataLoadCompleted',
-                'getObjectName',
-                'getTelemetryPropertyName'
-            ]);
+            mockConditionManager = jasmine.createSpyObj(
+                'mockConditionManager',
+                [
+                    'on',
+                    'getComposition',
+                    'loadCompleted',
+                    'getEvaluator',
+                    'getTelemetryMetadata',
+                    'metadataLoadCompleted',
+                    'getObjectName',
+                    'getTelemetryPropertyName'
+                ]
+            );
             mockConditionManager.loadCompleted.and.returnValue(false);
             mockConditionManager.metadataLoadCompleted.and.returnValue(false);
             mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
             mockConditionManager.getComposition.and.returnValue({});
             mockConditionManager.getTelemetryMetadata.and.returnValue({});
             mockConditionManager.getObjectName.and.returnValue('Object Name');
-            mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
+            mockConditionManager.getTelemetryPropertyName.and.returnValue(
+                'Property Name'
+            );
 
             duplicateSpy = jasmine.createSpy('duplicate');
             removeSpy = jasmine.createSpy('remove');
@@ -78,7 +83,9 @@ define(['../src/Condition'], function (Condition) {
 
         it('exposes a DOM element to represent itself in the view', function () {
             mockContainer.append(testCondition.getDOM());
-            expect(mockContainer.querySelectorAll('.t-condition').length).toEqual(1);
+            expect(
+                mockContainer.querySelectorAll('.t-condition').length
+            ).toEqual(1);
         });
 
         it('responds to a change in its object select', function () {
@@ -119,7 +126,9 @@ define(['../src/Condition'], function (Condition) {
             testCondition.generateValueInputs('');
 
             inputs = mockContainer.querySelectorAll('input');
-            const numberInputs = Array.from(inputs).filter(input => input.type === 'number');
+            const numberInputs = Array.from(inputs).filter(
+                (input) => input.type === 'number'
+            );
 
             expect(numberInputs.length).toEqual(3);
             expect(numberInputs[0].valueAsNumber).toEqual(1);
@@ -132,7 +141,9 @@ define(['../src/Condition'], function (Condition) {
             testCondition.generateValueInputs('');
 
             inputs = mockContainer.querySelectorAll('input');
-            const textInputs = Array.from(inputs).filter(input => input.type === 'text');
+            const textInputs = Array.from(inputs).filter(
+                (input) => input.type === 'text'
+            );
 
             expect(textInputs.length).toEqual(2);
             expect(textInputs[0].value).toEqual('Text I Am');

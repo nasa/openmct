@@ -36,9 +36,11 @@ export default class ViewHistoricalDataAction extends PreviewAction {
     appliesTo(objectPath, view = {}) {
         let viewContext = view.getViewContext && view.getViewContext();
 
-        return objectPath.length
-            && viewContext
-            && viewContext.row
-            && viewContext.row.viewHistoricalData;
+        return (
+            objectPath.length &&
+            viewContext &&
+            viewContext.row &&
+            viewContext.row.viewHistoricalData
+        );
     }
 }

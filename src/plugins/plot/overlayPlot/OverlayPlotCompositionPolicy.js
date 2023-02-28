@@ -11,15 +11,18 @@ export default function OverlayPlotCompositionPolicy(openmct) {
     }
 
     function hasDomainAndRange(metadata) {
-        return (metadata.valuesForHints(['range']).length > 0
-            && metadata.valuesForHints(['domain']).length > 0);
+        return (
+            metadata.valuesForHints(['range']).length > 0 &&
+            metadata.valuesForHints(['domain']).length > 0
+        );
     }
 
     return {
         allow: function (parent, child) {
-
-            if (parent.type === 'telemetry.plot.overlay'
-                && (hasNumericTelemetry(child) === false)) {
+            if (
+                parent.type === 'telemetry.plot.overlay' &&
+                hasNumericTelemetry(child) === false
+            ) {
                 return false;
             }
 

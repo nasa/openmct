@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
 import Layout from './Layout.vue';
 
@@ -37,8 +34,7 @@ describe('Open MCT Layout:', () => {
         openmct.on('start', done);
 
         // to silence error from BrowseBar.vue
-        spyOn(openmct.objectViews, 'get')
-            .and.callFake(() => []);
+        spyOn(openmct.objectViews, 'get').and.callFake(() => []);
 
         openmct.startHeadless();
     });
@@ -53,13 +49,9 @@ describe('Open MCT Layout:', () => {
             await Vue.nextTick();
 
             Object.entries(components).forEach(([name, component]) => {
-                expect(
-                    component.pane
-                ).toBeTruthy();
+                expect(component.pane).toBeTruthy();
 
-                expect(
-                    isCollapsed(component.pane)
-                ).toBeFalse();
+                expect(isCollapsed(component.pane)).toBeFalse();
             });
         });
 
@@ -70,9 +62,7 @@ describe('Open MCT Layout:', () => {
             await Vue.nextTick();
 
             Object.entries(components).forEach(([name, component]) => {
-                expect(
-                    isCollapsed(component.pane)
-                ).toBeTrue();
+                expect(isCollapsed(component.pane)).toBeTrue();
             });
         });
 
@@ -82,13 +72,11 @@ describe('Open MCT Layout:', () => {
             await Vue.nextTick();
 
             Object.entries(components).forEach(([name, component]) => {
-                expect(
-                    openmct.router.getSearchParam(component.param)
-                ).toEqual('true');
+                expect(openmct.router.getSearchParam(component.param)).toEqual(
+                    'true'
+                );
 
-                expect(
-                    isCollapsed(component.pane)
-                ).toBeTrue();
+                expect(isCollapsed(component.pane)).toBeTrue();
             });
         });
 
@@ -104,9 +92,7 @@ describe('Open MCT Layout:', () => {
                     openmct.router.getSearchParam(component.param)
                 ).not.toEqual('true');
 
-                expect(
-                    isCollapsed(component.pane)
-                ).toBeFalse();
+                expect(isCollapsed(component.pane)).toBeFalse();
             });
         });
     });
@@ -135,14 +121,22 @@ describe('Open MCT Layout:', () => {
             tree: {
                 param: 'hideTree',
                 pane: element.querySelector('.l-shell__pane-tree'),
-                collapseButton: element.querySelector('.l-shell__pane-tree .l-pane__collapse-button'),
-                expandButton: element.querySelector('.l-shell__pane-tree .l-pane__expand-button')
+                collapseButton: element.querySelector(
+                    '.l-shell__pane-tree .l-pane__collapse-button'
+                ),
+                expandButton: element.querySelector(
+                    '.l-shell__pane-tree .l-pane__expand-button'
+                )
             },
             inspector: {
                 param: 'hideInspector',
                 pane: element.querySelector('.l-shell__pane-inspector'),
-                collapseButton: element.querySelector('.l-shell__pane-inspector .l-pane__collapse-button'),
-                expandButton: element.querySelector('.l-shell__pane-inspector .l-pane__expand-button')
+                collapseButton: element.querySelector(
+                    '.l-shell__pane-inspector .l-pane__collapse-button'
+                ),
+                expandButton: element.querySelector(
+                    '.l-shell__pane-inspector .l-pane__expand-button'
+                )
             }
         };
     }

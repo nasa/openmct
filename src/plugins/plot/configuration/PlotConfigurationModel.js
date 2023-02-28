@@ -21,11 +21,11 @@
  *****************************************************************************/
 import _ from 'lodash';
 
-import Model from "./Model";
-import SeriesCollection from "./SeriesCollection";
-import XAxisModel from "./XAxisModel";
-import YAxisModel from "./YAxisModel";
-import LegendModel from "./LegendModel";
+import Model from './Model';
+import SeriesCollection from './SeriesCollection';
+import XAxisModel from './XAxisModel';
+import YAxisModel from './YAxisModel';
+import LegendModel from './LegendModel';
 
 const MAX_Y_AXES = 3;
 const MAIN_Y_AXES_ID = 1;
@@ -68,24 +68,38 @@ export default class PlotConfigurationModel extends Model {
         //Add any axes in addition to the main yAxis above - we must always have at least 1 y-axis
         //Addition axes ids will be the MAIN_Y_AXES_ID + x where x is between 1 and MAX_ADDITIONAL_AXES
         this.additionalYAxes = [];
-        const hasAdditionalAxesConfiguration = Array.isArray(options.model.additionalYAxes);
+        const hasAdditionalAxesConfiguration = Array.isArray(
+            options.model.additionalYAxes
+        );
 
-        for (let yAxisCount = 0; yAxisCount < MAX_ADDITIONAL_AXES; yAxisCount++) {
+        for (
+            let yAxisCount = 0;
+            yAxisCount < MAX_ADDITIONAL_AXES;
+            yAxisCount++
+        ) {
             const yAxisId = MAIN_Y_AXES_ID + yAxisCount + 1;
-            const yAxis = hasAdditionalAxesConfiguration && options.model.additionalYAxes.find(additionalYAxis => additionalYAxis?.id === yAxisId);
+            const yAxis =
+                hasAdditionalAxesConfiguration &&
+                options.model.additionalYAxes.find(
+                    (additionalYAxis) => additionalYAxis?.id === yAxisId
+                );
             if (yAxis) {
-                this.additionalYAxes.push(new YAxisModel({
-                    model: yAxis,
-                    plot: this,
-                    openmct: options.openmct,
-                    id: yAxis.id
-                }));
+                this.additionalYAxes.push(
+                    new YAxisModel({
+                        model: yAxis,
+                        plot: this,
+                        openmct: options.openmct,
+                        id: yAxis.id
+                    })
+                );
             } else {
-                this.additionalYAxes.push(new YAxisModel({
-                    plot: this,
-                    openmct: options.openmct,
-                    id: yAxisId
-                }));
+                this.additionalYAxes.push(
+                    new YAxisModel({
+                        plot: this,
+                        openmct: options.openmct,
+                        id: yAxisId
+                    })
+                );
             }
         }
         // end add additional axes
@@ -111,7 +125,7 @@ export default class PlotConfigurationModel extends Model {
         }
 
         this.yAxis.listenToSeriesCollection(this.series);
-        this.additionalYAxes.forEach(yAxis => {
+        this.additionalYAxes.forEach((yAxis) => {
             yAxis.listenToSeriesCollection(this.series);
         });
         this.legend.listenToSeriesCollection(this.series);
@@ -129,9 +143,13 @@ export default class PlotConfigurationModel extends Model {
             return;
         }
 
-        return domainObject.configuration.series.filter(function (seriesConfig) {
-            return seriesConfig.identifier.key === identifier.key
-                    && seriesConfig.identifier.namespace === identifier.namespace;
+        return domainObject.configuration.series.filter(function (
+            seriesConfig
+        ) {
+            return (
+                seriesConfig.identifier.key === identifier.key &&
+                seriesConfig.identifier.namespace === identifier.namespace
+            );
         })[0];
     }
     /**
@@ -141,7 +159,10 @@ export default class PlotConfigurationModel extends Model {
         const domainObject = this.get('domainObject');
         const keystring = this.openmct.objects.makeKeyString(identifier);
 
-        if (!domainObject.configuration || !domainObject.configuration.filters) {
+        if (
+            !domainObject.configuration ||
+            !domainObject.configuration.filters
+        ) {
             return;
         }
 
@@ -178,8 +199,12 @@ export default class PlotConfigurationModel extends Model {
             domainObject: options.domainObject,
             xAxis: {},
             yAxis: _.cloneDeep(options.domainObject.configuration?.yAxis ?? {}),
-            additionalYAxes: _.cloneDeep(options.domainObject.configuration?.additionalYAxes ?? []),
-            legend: _.cloneDeep(options.domainObject.configuration?.legend ?? {})
+            additionalYAxes: _.cloneDeep(
+                options.domainObject.configuration?.additionalYAxes ?? []
+            ),
+            legend: _.cloneDeep(
+                options.domainObject.configuration?.legend ?? {}
+            )
         };
     }
 }

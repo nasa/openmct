@@ -47,16 +47,29 @@ test.describe('Visual - addInit', () => {
         }
     });
 
-    test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
+    test('Restricted Notebook is visually correct @addInit @unstable', async ({
+        page,
+        theme
+    }) => {
         // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
+        await page.addInitScript({
+            path: path.join(
+                __dirname,
+                '../../helper',
+                './addInitRestrictedNotebook.js'
+            )
+        });
         //Go to baseURL
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+        await page.goto('./#/browse/mine?hideTree=true', {
+            waitUntil: 'networkidle'
+        });
 
         await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 
         // Take a snapshot of the newly created CUSTOM_NAME notebook
-        await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
-
+        await percySnapshot(
+            page,
+            `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`
+        );
     });
 });

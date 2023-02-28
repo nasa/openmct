@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
-import ExampleTagsPlugin from "../../../example/exampleTags/plugin";
+import ExampleTagsPlugin from '../../../example/exampleTags/plugin';
 
-describe("The Annotation API", () => {
+describe('The Annotation API', () => {
     let openmct;
     let mockObjectProvider;
     let mockImmutableObjectProvider;
@@ -69,10 +69,10 @@ describe("The Annotation API", () => {
             }
         };
 
-        mockObjectProvider = jasmine.createSpyObj("mock provider", [
-            "create",
-            "update",
-            "get"
+        mockObjectProvider = jasmine.createSpyObj('mock provider', [
+            'create',
+            'update',
+            'get'
         ]);
         // eslint-disable-next-line require-await
         mockObjectProvider.get = async (identifier) => {
@@ -90,9 +90,10 @@ describe("The Annotation API", () => {
         mockObjectProvider.create.and.returnValue(Promise.resolve(true));
         mockObjectProvider.update.and.returnValue(Promise.resolve(true));
 
-        mockImmutableObjectProvider = jasmine.createSpyObj("mock immutable provider", [
-            "get"
-        ]);
+        mockImmutableObjectProvider = jasmine.createSpyObj(
+            'mock immutable provider',
+            ['get']
+        );
         // eslint-disable-next-line require-await
         mockImmutableObjectProvider.get = async (identifier) => {
             if (identifier.key === mockDomainObject.identifier.key) {
@@ -106,7 +107,10 @@ describe("The Annotation API", () => {
             }
         };
 
-        openmct.objects.addProvider('immutableProvider', mockImmutableObjectProvider);
+        openmct.objects.addProvider(
+            'immutableProvider',
+            mockImmutableObjectProvider
+        );
         openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
         openmct.on('start', done);
         openmct.startHeadless();
@@ -114,77 +118,94 @@ describe("The Annotation API", () => {
     afterEach(async () => {
         await resetApplicationState(openmct);
     });
-    it("is defined", () => {
+    it('is defined', () => {
         expect(openmct.annotation).toBeDefined();
     });
 
-    describe("Creation", () => {
-        it("can create annotations", async () => {
+    describe('Creation', () => {
+        it('can create annotations', async () => {
             const annotationCreationArguments = {
                 name: 'Test Annotation',
                 domainObject: mockDomainObject,
                 annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                 tags: ['sometag'],
-                contentText: "fooContext",
+                contentText: 'fooContext',
                 targetDomainObjects: [mockDomainObject],
-                targets: {'fooTarget': {}}
+                targets: { fooTarget: {} }
             };
-            const annotationObject = await openmct.annotation.create(annotationCreationArguments);
+            const annotationObject = await openmct.annotation.create(
+                annotationCreationArguments
+            );
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
         });
-        it("can create annotations if domain object is immutable", async () => {
+        it('can create annotations if domain object is immutable', async () => {
             mockDomainObject.identifier.namespace = 'immutableProvider';
             const annotationCreationArguments = {
                 name: 'Test Annotation',
                 domainObject: mockDomainObject,
                 annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                 tags: ['sometag'],
-                contentText: "fooContext",
+                contentText: 'fooContext',
                 targetDomainObjects: [mockDomainObject],
-                targets: {'fooTarget': {}}
+                targets: { fooTarget: {} }
             };
             openmct.annotation.setNamespaceToSaveAnnotations('fooNameSpace');
-            const annotationObject = await openmct.annotation.create(annotationCreationArguments);
+            const annotationObject = await openmct.annotation.create(
+                annotationCreationArguments
+            );
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
         });
-        it("fails if annotation is an unknown type", async () => {
+        it('fails if annotation is an unknown type', async () => {
             try {
-                await openmct.annotation.create('Garbage Annotation', mockDomainObject, 'garbageAnnotation', ['sometag'], "fooContext", {'fooTarget': {}});
+                await openmct.annotation.create(
+                    'Garbage Annotation',
+                    mockDomainObject,
+                    'garbageAnnotation',
+                    ['sometag'],
+                    'fooContext',
+                    { fooTarget: {} }
+                );
             } catch (error) {
                 expect(error).toBeDefined();
             }
         });
-        it("fails if annotation if given an immutable namespace to save to", async () => {
+        it('fails if annotation if given an immutable namespace to save to', async () => {
             try {
                 const annotationCreationArguments = {
                     name: 'Test Annotation',
                     domainObject: mockDomainObject,
-                    annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                    annotationType:
+                        openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                     tags: ['sometag'],
-                    contentText: "fooContext",
+                    contentText: 'fooContext',
                     targetDomainObjects: [mockDomainObject],
-                    targets: {'fooTarget': {}}
+                    targets: { fooTarget: {} }
                 };
-                openmct.annotation.setNamespaceToSaveAnnotations('nameespaceThatDoesNotExist');
+                openmct.annotation.setNamespaceToSaveAnnotations(
+                    'nameespaceThatDoesNotExist'
+                );
                 await openmct.annotation.create(annotationCreationArguments);
             } catch (error) {
                 expect(error).toBeDefined();
             }
         });
-        it("fails if annotation if given an undefined namespace to save to", async () => {
+        it('fails if annotation if given an undefined namespace to save to', async () => {
             try {
                 const annotationCreationArguments = {
                     name: 'Test Annotation',
                     domainObject: mockDomainObject,
-                    annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                    annotationType:
+                        openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                     tags: ['sometag'],
-                    contentText: "fooContext",
+                    contentText: 'fooContext',
                     targetDomainObjects: [mockDomainObject],
-                    targets: {'fooTarget': {}}
+                    targets: { fooTarget: {} }
                 };
-                openmct.annotation.setNamespaceToSaveAnnotations('immutableProvider');
+                openmct.annotation.setNamespaceToSaveAnnotations(
+                    'immutableProvider'
+                );
                 await openmct.annotation.create(annotationCreationArguments);
             } catch (error) {
                 expect(error).toBeDefined();
@@ -192,7 +213,7 @@ describe("The Annotation API", () => {
         });
     });
 
-    describe("Tagging", () => {
+    describe('Tagging', () => {
         let tagCreationArguments;
         beforeEach(() => {
             tagCreationArguments = {
@@ -201,38 +222,50 @@ describe("The Annotation API", () => {
                 annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                 tags: ['aWonderfulTag'],
                 contentText: 'fooContext',
-                targets: {'fooNameSpace:some-object': {entryId: 'fooBarEntry'}},
+                targets: {
+                    'fooNameSpace:some-object': { entryId: 'fooBarEntry' }
+                },
                 targetDomainObjects: [mockDomainObject]
             };
         });
-        it("can create a tag", async () => {
-            const annotationObject = await openmct.annotation.create(tagCreationArguments);
+        it('can create a tag', async () => {
+            const annotationObject = await openmct.annotation.create(
+                tagCreationArguments
+            );
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
             expect(annotationObject.tags).toContain('aWonderfulTag');
         });
-        it("can delete a tag", async () => {
-            const annotationObject = await openmct.annotation.create(tagCreationArguments);
+        it('can delete a tag', async () => {
+            const annotationObject = await openmct.annotation.create(
+                tagCreationArguments
+            );
             expect(annotationObject).toBeDefined();
             openmct.annotation.deleteAnnotations([annotationObject]);
             expect(annotationObject._deleted).toBeTrue();
         });
-        it("can remove all tags", async () => {
-            const annotationObject = await openmct.annotation.create(tagCreationArguments);
+        it('can remove all tags', async () => {
+            const annotationObject = await openmct.annotation.create(
+                tagCreationArguments
+            );
             expect(annotationObject).toBeDefined();
             expect(() => {
                 openmct.annotation.deleteAnnotations([annotationObject]);
             }).not.toThrow();
             expect(annotationObject._deleted).toBeTrue();
         });
-        it("can add/delete/add a tag", async () => {
-            let annotationObject = await openmct.annotation.create(tagCreationArguments);
+        it('can add/delete/add a tag', async () => {
+            let annotationObject = await openmct.annotation.create(
+                tagCreationArguments
+            );
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
             expect(annotationObject.tags).toContain('aWonderfulTag');
             openmct.annotation.deleteAnnotations([annotationObject]);
             expect(annotationObject._deleted).toBeTrue();
-            annotationObject = await openmct.annotation.create(tagCreationArguments);
+            annotationObject = await openmct.annotation.create(
+                tagCreationArguments
+            );
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
             expect(annotationObject.tags).toContain('aWonderfulTag');
@@ -240,25 +273,33 @@ describe("The Annotation API", () => {
         });
     });
 
-    describe("Search", () => {
+    describe('Search', () => {
         let sharedWorkerToRestore;
         beforeEach(async () => {
             // use local worker
-            sharedWorkerToRestore = openmct.objects.inMemorySearchProvider.worker;
+            sharedWorkerToRestore =
+                openmct.objects.inMemorySearchProvider.worker;
             openmct.objects.inMemorySearchProvider.worker = null;
-            await openmct.objects.inMemorySearchProvider.index(mockFolderObject);
-            await openmct.objects.inMemorySearchProvider.index(mockDomainObject);
-            await openmct.objects.inMemorySearchProvider.index(mockAnnotationObject);
+            await openmct.objects.inMemorySearchProvider.index(
+                mockFolderObject
+            );
+            await openmct.objects.inMemorySearchProvider.index(
+                mockDomainObject
+            );
+            await openmct.objects.inMemorySearchProvider.index(
+                mockAnnotationObject
+            );
         });
         afterEach(() => {
-            openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
+            openmct.objects.inMemorySearchProvider.worker =
+                sharedWorkerToRestore;
         });
-        it("can search for tags", async () => {
+        it('can search for tags', async () => {
             const results = await openmct.annotation.searchForTags('S');
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
         });
-        it("returns no tags for empty search", async () => {
+        it('returns no tags for empty search', async () => {
             const results = await openmct.annotation.searchForTags('q');
             expect(results).toBeDefined();
             expect(results.length).toEqual(0);

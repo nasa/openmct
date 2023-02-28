@@ -27,25 +27,30 @@ export default function () {
         let migrations = Migrations(openmct);
 
         function needsMigration(domainObject) {
-            return migrations.some(m => m.check(domainObject));
+            return migrations.some((m) => m.check(domainObject));
         }
 
         function migrateObject(domainObject) {
-            return migrations.filter(m => m.check(domainObject))[0]
+            return migrations
+                .filter((m) => m.check(domainObject))[0]
                 .migrate(domainObject);
         }
 
         let wrappedFunction = openmct.objects.get;
         openmct.objects.get = function migrate() {
-            return wrappedFunction.apply(openmct.objects, [...arguments])
+            return wrappedFunction
+                .apply(openmct.objects, [...arguments])
                 .then(function (object) {
                     if (needsMigration(object)) {
-                        migrateObject(object)
-                            .then(newObject => {
-                                openmct.objects.mutate(newObject, 'persisted', Date.now());
+                        migrateObject(object).then((newObject) => {
+                            openmct.objects.mutate(
+                                newObject,
+                                'persisted',
+                                Date.now()
+                            );
 
-                                return newObject;
-                            });
+                            return newObject;
+                        });
                     }
 
                     return object;

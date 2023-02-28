@@ -20,12 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
+import { createOpenMct, resetApplicationState } from '../../src/utils/testing';
 
-describe("The Example Fault Source Plugin", () => {
+describe('The Example Fault Source Plugin', () => {
     let openmct;
 
     beforeEach(() => {

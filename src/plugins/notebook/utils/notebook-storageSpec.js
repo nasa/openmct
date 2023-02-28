@@ -47,9 +47,7 @@ const domainObject = {
         key: 'test-notebook'
     },
     configuration: {
-        sections: [
-            notebookSection
-        ]
+        sections: [notebookSection]
     }
 };
 
@@ -70,10 +68,10 @@ describe('Notebook Storage:', () => {
         openmct = createOpenMct();
 
         window.localStorage.setItem('notebook-storage', null);
-        openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
-            'create',
-            'update'
-        ]));
+        openmct.objects.addProvider(
+            '',
+            jasmine.createSpyObj('mockNotebookProvider', ['create', 'update'])
+        );
     });
 
     afterEach(() => {
@@ -93,10 +91,16 @@ describe('Notebook Storage:', () => {
     });
 
     it('has correct notebookstorage on setDefaultNotebook', () => {
-        NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
+        NotebookStorage.setDefaultNotebook(
+            openmct,
+            notebookStorage,
+            domainObject
+        );
         const defaultNotebook = NotebookStorage.getDefaultNotebook();
 
-        expect(JSON.stringify(defaultNotebook)).toBe(JSON.stringify(notebookStorage));
+        expect(JSON.stringify(defaultNotebook)).toBe(
+            JSON.stringify(notebookStorage)
+        );
     });
 
     it('has correct section on setDefaultNotebookSectionId', () => {
@@ -109,7 +113,11 @@ describe('Notebook Storage:', () => {
             sectionTitle: 'Section'
         };
 
-        NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
+        NotebookStorage.setDefaultNotebook(
+            openmct,
+            notebookStorage,
+            domainObject
+        );
         NotebookStorage.setDefaultNotebookSectionId(section.id);
 
         const defaultNotebook = NotebookStorage.getDefaultNotebook();
@@ -126,7 +134,11 @@ describe('Notebook Storage:', () => {
             pageTitle: 'Page'
         };
 
-        NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
+        NotebookStorage.setDefaultNotebook(
+            openmct,
+            notebookStorage,
+            domainObject
+        );
         NotebookStorage.setDefaultNotebookPageId(page.id);
 
         const defaultNotebook = NotebookStorage.getDefaultNotebook();
@@ -142,7 +154,11 @@ describe('Notebook Storage:', () => {
             const sectionId = 'temp-section';
             const pageId = 'temp-page';
 
-            const sectionAndpage = NotebookStorage.getNotebookSectionAndPage(domainObject, sectionId, pageId);
+            const sectionAndpage = NotebookStorage.getNotebookSectionAndPage(
+                domainObject,
+                sectionId,
+                pageId
+            );
             section = sectionAndpage.section;
             page = sectionAndpage.page;
         });

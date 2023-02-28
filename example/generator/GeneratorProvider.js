@@ -20,12 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './WorkerInterface'
-], function (
-    WorkerInterface
-) {
-
+define(['./WorkerInterface'], function (WorkerInterface) {
     var REQUEST_DEFAULTS = {
         amplitude: 1,
         period: 10,
@@ -50,7 +45,10 @@ define([
         GeneratorProvider.prototype.supportsSubscribe =
             GeneratorProvider.prototype.canProvideTelemetry;
 
-    GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
+    GeneratorProvider.prototype.makeWorkerRequest = function (
+        domainObject,
+        request
+    ) {
         var props = [
             'amplitude',
             'period',
@@ -67,11 +65,20 @@ define([
         var workerRequest = {};
 
         props.forEach(function (prop) {
-            if (domainObject.telemetry && Object.prototype.hasOwnProperty.call(domainObject.telemetry, prop)) {
+            if (
+                domainObject.telemetry &&
+                Object.prototype.hasOwnProperty.call(
+                    domainObject.telemetry,
+                    prop
+                )
+            ) {
                 workerRequest[prop] = domainObject.telemetry[prop];
             }
 
-            if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
+            if (
+                request &&
+                Object.prototype.hasOwnProperty.call(request, prop)
+            ) {
                 workerRequest[prop] = request[prop];
             }
 
@@ -82,7 +89,9 @@ define([
             workerRequest[prop] = Number(workerRequest[prop]);
         });
 
-        workerRequest.id = this.openmct.objects.makeKeyString(domainObject.identifier);
+        workerRequest.id = this.openmct.objects.makeKeyString(
+            domainObject.identifier
+        );
         workerRequest.name = domainObject.name;
 
         return workerRequest;

@@ -11,7 +11,16 @@ const DEFAULT_CONFIG = {
     defaultFontSize: 16,
     defaultLineWidth: 2,
     defaultTool: 'ellipse',
-    hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
+    hiddenTools: [
+        'save',
+        'open',
+        'close',
+        'eraser',
+        'pixelize',
+        'rotate',
+        'settings',
+        'resize'
+    ],
     translation: {
         name: 'en',
         strings: {
@@ -61,7 +70,9 @@ export default class PainterroInstance {
             reader.readAsDataURL(url);
             reader.onloadend = async () => {
                 const fullSizeImageURL = reader.result;
-                const thumbnailURL = await getThumbnailURLFromimageUrl(fullSizeImageURL);
+                const thumbnailURL = await getThumbnailURLFromimageUrl(
+                    fullSizeImageURL
+                );
                 const snapshotObject = {
                     fullSizeImage: {
                         src: fullSizeImageURL,

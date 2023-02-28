@@ -20,21 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
-
+define([], function () {
     function SummaryWidgetMetadataProvider(openmct) {
         this.openmct = openmct;
     }
 
-    SummaryWidgetMetadataProvider.prototype.supportsMetadata = function (domainObject) {
+    SummaryWidgetMetadataProvider.prototype.supportsMetadata = function (
+        domainObject
+    ) {
         return domainObject.type === 'summary-widget';
     };
 
-    SummaryWidgetMetadataProvider.prototype.getDomains = function (domainObject) {
+    SummaryWidgetMetadataProvider.prototype.getDomains = function (
+        domainObject
+    ) {
         return this.openmct.time.getAllTimeSystems().map(function (ts, i) {
             return {
                 key: ts.key,
@@ -47,15 +46,20 @@ define([
         });
     };
 
-    SummaryWidgetMetadataProvider.prototype.getMetadata = function (domainObject) {
+    SummaryWidgetMetadataProvider.prototype.getMetadata = function (
+        domainObject
+    ) {
         const ruleOrder = domainObject.configuration.ruleOrder || [];
         const enumerations = ruleOrder
             .filter(function (ruleId) {
-                return Boolean(domainObject.configuration.ruleConfigById[ruleId]);
+                return Boolean(
+                    domainObject.configuration.ruleConfigById[ruleId]
+                );
             })
             .map(function (ruleId, ruleIndex) {
                 return {
-                    string: domainObject.configuration.ruleConfigById[ruleId].label,
+                    string: domainObject.configuration.ruleConfigById[ruleId]
+                        .label,
                     value: ruleIndex
                 };
             });
@@ -115,5 +119,4 @@ define([
     };
 
     return SummaryWidgetMetadataProvider;
-
 });

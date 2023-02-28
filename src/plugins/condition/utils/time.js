@@ -23,7 +23,7 @@
 function updateLatestTimeStamp(timestamp, timeSystems) {
     let latest = {};
 
-    timeSystems.forEach(timeSystem => {
+    timeSystems.forEach((timeSystem) => {
         latest[timeSystem.key] = timestamp[timeSystem.key];
     });
 

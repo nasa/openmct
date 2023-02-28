@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 /*
-* This test suite template is to be used when verifying Test Data files found in /e2e/test-data/
-*/
+ * This test suite template is to be used when verifying Test Data files found in /e2e/test-data/
+ */
 
 const { test } = require('../../baseFixtures');
 
@@ -33,4 +33,3 @@ test.describe('recycled_local_storage @localStorage', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
     });
 });
-

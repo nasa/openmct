@@ -16,8 +16,7 @@ export function getLimitDegree(type, quadrant) {
 
     return type === 'low'
         ? getLowLimitDegree(quadrant)
-        : getHighLimitDegree(quadrant)
-    ;
+        : getHighLimitDegree(quadrant);
 }
 
 function getLowLimitDegree(quadrant) {

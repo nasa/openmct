@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanActivitiesView from "./PlanActivitiesView.vue";
+import PlanActivitiesView from './PlanActivitiesView.vue';
 import Vue from 'vue';
 
 export default function PlanInspectorViewProvider(openmct) {
@@ -34,8 +34,7 @@ export default function PlanInspectorViewProvider(openmct) {
 
             let context = selection[0][0].context;
 
-            return context
-                && context.type === 'activity';
+            return context && context.type === 'activity';
         },
         view: function (selection) {
             let component;
@@ -51,7 +50,8 @@ export default function PlanInspectorViewProvider(openmct) {
                             openmct,
                             selection: selection
                         },
-                        template: '<plan-activities-view></plan-activities-view>'
+                        template:
+                            '<plan-activities-view></plan-activities-view>'
                     });
                 },
                 destroy: function () {

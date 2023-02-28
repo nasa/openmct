@@ -20,12 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
-
+define([], function () {
     var PURPLE = {
             sin: 2.2,
             cos: 2.2
@@ -48,40 +43,40 @@ define([
         },
         LIMITS = {
             rh: {
-                cssClass: "is-limit--upr is-limit--red",
+                cssClass: 'is-limit--upr is-limit--red',
                 low: RED,
                 high: Number.POSITIVE_INFINITY,
-                name: "Red High"
+                name: 'Red High'
             },
             rl: {
-                cssClass: "is-limit--lwr is-limit--red",
+                cssClass: 'is-limit--lwr is-limit--red',
                 high: -RED,
                 low: Number.NEGATIVE_INFINITY,
-                name: "Red Low"
+                name: 'Red Low'
             },
             yh: {
-                cssClass: "is-limit--upr is-limit--yellow",
+                cssClass: 'is-limit--upr is-limit--yellow',
                 low: YELLOW,
                 high: RED,
-                name: "Yellow High"
+                name: 'Yellow High'
             },
             yl: {
-                cssClass: "is-limit--lwr is-limit--yellow",
+                cssClass: 'is-limit--lwr is-limit--yellow',
                 low: -RED,
                 high: -YELLOW,
-                name: "Yellow Low"
+                name: 'Yellow Low'
             }
         };
 
-    function SinewaveLimitProvider() {
-
-    }
+    function SinewaveLimitProvider() {}
 
     SinewaveLimitProvider.prototype.supportsLimits = function (domainObject) {
         return domainObject.type === 'generator';
     };
 
-    SinewaveLimitProvider.prototype.getLimitEvaluator = function (domainObject) {
+    SinewaveLimitProvider.prototype.getLimitEvaluator = function (
+        domainObject
+    ) {
         return {
             evaluate: function (datum, valueMetadata) {
                 var range = valueMetadata && valueMetadata.key;
@@ -106,62 +101,61 @@ define([
     };
 
     SinewaveLimitProvider.prototype.getLimits = function (domainObject) {
-
         return {
             limits: function () {
                 return Promise.resolve({
                     WATCH: {
                         low: {
-                            color: "cyan",
+                            color: 'cyan',
                             sin: -CYAN.sin,
                             cos: -CYAN.cos
                         },
                         high: {
-                            color: "cyan",
+                            color: 'cyan',
                             ...CYAN
                         }
                     },
                     WARNING: {
                         low: {
-                            color: "yellow",
+                            color: 'yellow',
                             sin: -YELLOW.sin,
                             cos: -YELLOW.cos
                         },
                         high: {
-                            color: "yellow",
+                            color: 'yellow',
                             ...YELLOW
                         }
                     },
                     DISTRESS: {
                         low: {
-                            color: "orange",
+                            color: 'orange',
                             sin: -ORANGE.sin,
                             cos: -ORANGE.cos
                         },
                         high: {
-                            color: "orange",
+                            color: 'orange',
                             ...ORANGE
                         }
                     },
                     CRITICAL: {
                         low: {
-                            color: "red",
+                            color: 'red',
                             sin: -RED.sin,
                             cos: -RED.cos
                         },
                         high: {
-                            color: "red",
+                            color: 'red',
                             ...RED
                         }
                     },
                     SEVERE: {
                         low: {
-                            color: "purple",
+                            color: 'purple',
                             sin: -PURPLE.sin,
                             cos: -PURPLE.cos
                         },
                         high: {
-                            color: "purple",
+                            color: 'purple',
                             ...PURPLE
                         }
                     }

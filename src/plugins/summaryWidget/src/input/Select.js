@@ -3,13 +3,7 @@ define([
     '../../res/input/selectTemplate.html',
     '../../../../utils/template/templateHelpers',
     'EventEmitter'
-], function (
-    eventHelpers,
-    selectTemplate,
-    templateHelpers,
-    EventEmitter
-) {
-
+], function (eventHelpers, selectTemplate, templateHelpers, EventEmitter) {
     /**
      * Wraps an HTML select element, and provides methods for dynamically altering
      * its composition from the data model
@@ -20,7 +14,8 @@ define([
 
         const self = this;
 
-        this.domElement = templateHelpers.convertTemplateToHTML(selectTemplate)[0];
+        this.domElement =
+            templateHelpers.convertTemplateToHTML(selectTemplate)[0];
 
         this.options = [];
         this.eventEmitter = new EventEmitter();
@@ -41,7 +36,12 @@ define([
             self.eventEmitter.emit('change', value[0]);
         }
 
-        this.listenTo(this.domElement.querySelector('select'), 'change', onChange, this);
+        this.listenTo(
+            this.domElement.querySelector('select'),
+            'change',
+            onChange,
+            this
+        );
     }
 
     /**
@@ -119,7 +119,7 @@ define([
         let selectedIndex = 0;
         let selectedOption;
 
-        this.options.forEach (function (option, index) {
+        this.options.forEach(function (option, index) {
             if (option[0] === value) {
                 selectedIndex = index;
             }
@@ -148,7 +148,9 @@ define([
     Select.prototype.show = function () {
         this.domElement.classList.remove('hidden');
         if (this.domElement.querySelector('.equal-to')) {
-            this.domElement.querySelector('.equal-to').classList.remove('hidden');
+            this.domElement
+                .querySelector('.equal-to')
+                .classList.remove('hidden');
         }
     };
 

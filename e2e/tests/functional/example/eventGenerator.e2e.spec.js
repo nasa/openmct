@@ -28,7 +28,9 @@ const { test, expect } = require('../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../appActions');
 
 test.describe('Example Event Generator CRUD Operations', () => {
-    test('Can create a Test Event Generator and it results in the table View', async ({ page }) => {
+    test('Can create a Test Event Generator and it results in the table View', async ({
+        page
+    }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
@@ -42,18 +44,19 @@ test.describe('Example Event Generator CRUD Operations', () => {
 
         //Assertions against newly created object which define standard behavior
         await expect(page.waitForURL(/.*&view=table/)).toBeTruthy();
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+            newObjectName
+        );
     });
 });
 
 test.describe('Example Event Generator Telemetry Event Verficiation', () => {
-
     test.fixme('telemetry is coming in for test event', async ({ page }) => {
-    // Go to object created in step one
-    // Verify the telemetry table is filled with > 1 row
+        // Go to object created in step one
+        // Verify the telemetry table is filled with > 1 row
     });
     test.fixme('telemetry is sorted by time ascending', async ({ page }) => {
-    // Go to object created in step one
-    // Verify the telemetry table has a class with "is-sorting asc"
+        // Go to object created in step one
+        // Verify the telemetry table has a class with "is-sorting asc"
     });
 });

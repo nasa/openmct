@@ -22,28 +22,27 @@
 
 import EventEmitter from 'EventEmitter';
 import { v4 as uuid } from 'uuid';
-import TelemetryCriterion from "./criterion/TelemetryCriterion";
+import TelemetryCriterion from './criterion/TelemetryCriterion';
 import { evaluateResults } from './utils/evaluator';
 import { getLatestTimestamp } from './utils/time';
-import AllTelemetryCriterion from "./criterion/AllTelemetryCriterion";
-import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from "./utils/constants";
+import AllTelemetryCriterion from './criterion/AllTelemetryCriterion';
+import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from './utils/constants';
 
 /*
-* conditionConfiguration = {
-*   id: uuid,
-*   trigger: 'any'/'all'/'not','xor',
-*   criteria: [
-*       {
-*           telemetry: '',
-*           operation: '',
-*           input: [],
-*           metadata: ''
-*       }
-*   ]
-* }
-*/
+ * conditionConfiguration = {
+ *   id: uuid,
+ *   trigger: 'any'/'all'/'not','xor',
+ *   criteria: [
+ *       {
+ *           telemetry: '',
+ *           operation: '',
+ *           input: [],
+ *           metadata: ''
+ *       }
+ *   ]
+ * }
+ */
 export default class Condition extends EventEmitter {
-
     /**
      * Manages criteria and emits the result of - true or false - based on criteria evaluated.
      * @constructor
@@ -77,10 +76,12 @@ export default class Condition extends EventEmitter {
 
         // if all the criteria in this condition have no telemetry, we want to force the condition result to evaluate
         if (this.hasNoTelemetry() || this.isTelemetryUsed(datum.id)) {
-
-            this.criteria.forEach(criterion => {
+            this.criteria.forEach((criterion) => {
                 if (this.isAnyOrAllTelemetry(criterion)) {
-                    criterion.updateResult(datum, this.conditionManager.telemetryObjects);
+                    criterion.updateResult(
+                        datum,
+                        this.conditionManager.telemetryObjects
+                    );
                 } else {
                     if (criterion.usesTelemetry(datum.id)) {
                         criterion.updateResult(datum);
@@ -88,23 +89,35 @@ export default class Condition extends EventEmitter {
                 }
             });
 
-            this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
+            this.result = evaluateResults(
+                this.criteria.map((criterion) => criterion.result),
+                this.trigger
+            );
         }
     }
 
     isAnyOrAllTelemetry(criterion) {
-        return (criterion.telemetry && (criterion.telemetry === 'all' || criterion.telemetry === 'any'));
+        return (
+            criterion.telemetry &&
+            (criterion.telemetry === 'all' || criterion.telemetry === 'any')
+        );
     }
 
     hasNoTelemetry() {
         return this.criteria.every((criterion) => {
-            return !this.isAnyOrAllTelemetry(criterion) && criterion.telemetry === '';
+            return (
+                !this.isAnyOrAllTelemetry(criterion) &&
+                criterion.telemetry === ''
+            );
         });
     }
 
     isTelemetryUsed(id) {
-        return this.criteria.some(criterion => {
-            return this.isAnyOrAllTelemetry(criterion) || criterion.usesTelemetry(id);
+        return this.criteria.some((criterion) => {
+            return (
+                this.isAnyOrAllTelemetry(criterion) ||
+                criterion.usesTelemetry(id)
+            );
         });
     }
 
@@ -125,7 +138,10 @@ export default class Condition extends EventEmitter {
             telemetry: criterionConfiguration.telemetry || '',
             telemetryObjects: this.conditionManager.telemetryObjects,
             operation: criterionConfiguration.operation || '',
-            input: criterionConfiguration.input === undefined ? [] : criterionConfiguration.input,
+            input:
+                criterionConfiguration.input === undefined
+                    ? []
+                    : criterionConfiguration.input,
             metadata: criterionConfiguration.metadata || ''
         };
     }
@@ -143,7 +159,9 @@ export default class Condition extends EventEmitter {
 
     updateTelemetryObjects() {
         this.criteria.forEach((criterion) => {
-            criterion.updateTelemetryObjects(this.conditionManager.telemetryObjects);
+            criterion.updateTelemetryObjects(
+                this.conditionManager.telemetryObjects
+            );
         });
     }
 
@@ -152,16 +170,34 @@ export default class Condition extends EventEmitter {
      */
     addCriterion(criterionConfiguration) {
         let criterion;
-        let criterionConfigurationWithId = this.generateCriterion(criterionConfiguration || null);
-        if (criterionConfiguration.telemetry && (criterionConfiguration.telemetry === 'any' || criterionConfiguration.telemetry === 'all')) {
-            criterion = new AllTelemetryCriterion(criterionConfigurationWithId, this.openmct);
+        let criterionConfigurationWithId = this.generateCriterion(
+            criterionConfiguration || null
+        );
+        if (
+            criterionConfiguration.telemetry &&
+            (criterionConfiguration.telemetry === 'any' ||
+                criterionConfiguration.telemetry === 'all')
+        ) {
+            criterion = new AllTelemetryCriterion(
+                criterionConfigurationWithId,
+                this.openmct
+            );
         } else {
-            criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
+            criterion = new TelemetryCriterion(
+                criterionConfigurationWithId,
+                this.openmct
+            );
         }
 
-        criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-        criterion.on('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-        criterion.on('telemetryStaleness', () => this.handleTelemetryStaleness());
+        criterion.on('criterionUpdated', (obj) =>
+            this.handleCriterionUpdated(obj)
+        );
+        criterion.on('telemetryIsOld', (obj) =>
+            this.handleOldTelemetryCriterion(obj)
+        );
+        criterion.on('telemetryStaleness', () =>
+            this.handleTelemetryStaleness()
+        );
         if (!this.criteria) {
             this.criteria = [];
         }
@@ -189,17 +225,34 @@ export default class Condition extends EventEmitter {
     updateCriterion(id, criterionConfiguration) {
         let found = this.findCriterion(id);
         if (found) {
-            const newCriterionConfiguration = this.generateCriterion(criterionConfiguration);
-            let newCriterion = new TelemetryCriterion(newCriterionConfiguration, this.openmct);
-            newCriterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-            newCriterion.on('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-            newCriterion.on('telemetryStaleness', () => this.handleTelemetryStaleness());
+            const newCriterionConfiguration = this.generateCriterion(
+                criterionConfiguration
+            );
+            let newCriterion = new TelemetryCriterion(
+                newCriterionConfiguration,
+                this.openmct
+            );
+            newCriterion.on('criterionUpdated', (obj) =>
+                this.handleCriterionUpdated(obj)
+            );
+            newCriterion.on('telemetryIsOld', (obj) =>
+                this.handleOldTelemetryCriterion(obj)
+            );
+            newCriterion.on('telemetryStaleness', () =>
+                this.handleTelemetryStaleness()
+            );
 
             let criterion = found.item;
             criterion.unsubscribe();
-            criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-            criterion.off('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-            newCriterion.off('telemetryStaleness', () => this.handleTelemetryStaleness());
+            criterion.off('criterionUpdated', (obj) =>
+                this.handleCriterionUpdated(obj)
+            );
+            criterion.off('telemetryIsOld', (obj) =>
+                this.handleOldTelemetryCriterion(obj)
+            );
+            newCriterion.off('telemetryStaleness', () =>
+                this.handleTelemetryStaleness()
+            );
             this.criteria.splice(found.index, 1, newCriterion);
         }
     }
@@ -208,9 +261,15 @@ export default class Condition extends EventEmitter {
         let found = this.findCriterion(id);
         if (found) {
             let criterion = found.item;
-            criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-            criterion.off('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-            criterion.off('telemetryStaleness', () => this.handleTelemetryStaleness());
+            criterion.off('criterionUpdated', (obj) =>
+                this.handleCriterionUpdated(obj)
+            );
+            criterion.off('telemetryIsOld', (obj) =>
+                this.handleOldTelemetryCriterion(obj)
+            );
+            criterion.off('telemetryStaleness', () =>
+                this.handleTelemetryStaleness()
+            );
             criterion.destroy();
             this.criteria.splice(found.index, 1);
 
@@ -228,7 +287,10 @@ export default class Condition extends EventEmitter {
     }
 
     handleOldTelemetryCriterion(updatedCriterion) {
-        this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
+        this.result = evaluateResults(
+            this.criteria.map((criterion) => criterion.result),
+            this.trigger
+        );
         let latestTimestamp = {};
         latestTimestamp = getLatestTimestamp(
             latestTimestamp,
@@ -240,7 +302,10 @@ export default class Condition extends EventEmitter {
     }
 
     handleTelemetryStaleness() {
-        this.result = evaluateResults(this.criteria.map(criterion => criterion.result), this.trigger);
+        this.result = evaluateResults(
+            this.criteria.map((criterion) => criterion.result),
+            this.trigger
+        );
         this.conditionManager.updateCurrentCondition();
     }
 
@@ -252,7 +317,11 @@ export default class Condition extends EventEmitter {
                 description = `Match if ${triggerDescription.prefix}`;
             }
 
-            description = `${description} ${criterion.getDescription()} ${(index < this.criteria.length - 1) ? triggerDescription.conjunction : ''}`;
+            description = `${description} ${criterion.getDescription()} ${
+                index < this.criteria.length - 1
+                    ? triggerDescription.conjunction
+                    : ''
+            }`;
         });
         this.summary = description;
     }
@@ -274,34 +343,42 @@ export default class Condition extends EventEmitter {
     requestLADConditionResult(options) {
         let latestTimestamp;
         let criteriaResults = {};
-        const criteriaRequests = this.criteria
-            .map(criterion => criterion.requestLAD(this.conditionManager.telemetryObjects, options));
+        const criteriaRequests = this.criteria.map((criterion) =>
+            criterion.requestLAD(
+                this.conditionManager.telemetryObjects,
+                options
+            )
+        );
 
-        return Promise.all(criteriaRequests)
-            .then(results => {
-                results.forEach(resultObj => {
-                    const { id, data, data: { result } } = resultObj;
-                    if (this.findCriterion(id)) {
-                        criteriaResults[id] = Boolean(result);
-                    }
+        return Promise.all(criteriaRequests).then((results) => {
+            results.forEach((resultObj) => {
+                const {
+                    id,
+                    data,
+                    data: { result }
+                } = resultObj;
+                if (this.findCriterion(id)) {
+                    criteriaResults[id] = Boolean(result);
+                }
 
-                    latestTimestamp = getLatestTimestamp(
-                        latestTimestamp,
-                        data,
-                        this.timeSystems,
-                        this.openmct.time.timeSystem()
-                    );
-                });
-
-                return {
-                    id: this.id,
-                    data: Object.assign(
-                        {},
-                        latestTimestamp,
-                        { result: evaluateResults(Object.values(criteriaResults), this.trigger) }
-                    )
-                };
+                latestTimestamp = getLatestTimestamp(
+                    latestTimestamp,
+                    data,
+                    this.timeSystems,
+                    this.openmct.time.timeSystem()
+                );
             });
+
+            return {
+                id: this.id,
+                data: Object.assign({}, latestTimestamp, {
+                    result: evaluateResults(
+                        Object.values(criteriaResults),
+                        this.trigger
+                    )
+                })
+            };
+        });
     }
 
     getCriteria() {

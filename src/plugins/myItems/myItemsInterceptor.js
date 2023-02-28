@@ -20,16 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
+import { MY_ITEMS_KEY } from './createMyItemsIdentifier';
 
 function myItemsInterceptor(openmct, identifierObject, name) {
-
     const myItemsModel = {
         identifier: identifierObject,
         name,
-        type: "folder",
+        type: 'folder',
         composition: [],
-        location: "ROOT"
+        location: 'ROOT'
     };
 
     return {

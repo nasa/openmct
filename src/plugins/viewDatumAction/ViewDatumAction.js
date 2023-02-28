@@ -36,7 +36,7 @@ export default class ViewDatumAction {
         let viewContext = view.getViewContext && view.getViewContext();
         const row = viewContext.row;
         let attributes = row.getDatum && row.getDatum();
-        let component = new Vue ({
+        let component = new Vue({
             components: {
                 MetadataListView
             },

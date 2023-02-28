@@ -25,8 +25,8 @@ export default class LinkAction {
         this.name = 'Create Link';
         this.key = 'link';
         this.description = 'Create Link to object in another location.';
-        this.cssClass = "icon-link";
-        this.group = "action";
+        this.cssClass = 'icon-link';
+        this.group = 'action';
         this.priority = 7;
 
         this.openmct = openmct;
@@ -44,8 +44,12 @@ export default class LinkAction {
     }
 
     inNavigationPath() {
-        return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
+        return this.openmct.router.path.some((objectInPath) =>
+            this.openmct.objects.areIdsEqual(
+                objectInPath.identifier,
+                this.object.identifier
+            )
+        );
     }
 
     onSave(changes) {
@@ -77,8 +81,8 @@ export default class LinkAction {
                 {
                     rows: [
                         {
-                            name: "location",
-                            control: "locator",
+                            name: 'location',
+                            control: 'locator',
                             parent: parentDomainObject,
                             required: true,
                             validate: this.validate(parentDomainObject),
@@ -88,13 +92,11 @@ export default class LinkAction {
                 }
             ]
         };
-        this.openmct.forms.showForm(formStructure)
-            .then(this.onSave.bind(this));
+        this.openmct.forms.showForm(formStructure).then(this.onSave.bind(this));
     }
 
     validate(currentParent) {
         return (data) => {
-
             // default current parent to ROOT, if it's null, then it's a root level item
             if (!currentParent) {
                 currentParent = {
@@ -107,30 +109,53 @@ export default class LinkAction {
 
             const parentCandidatePath = data.value;
             const parentCandidate = parentCandidatePath[0];
-            const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+            const objectKeystring = this.openmct.objects.makeKeyString(
+                this.object.identifier
+            );
 
-            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+            if (
+                !this.openmct.objects.isPersistable(parentCandidate.identifier)
+            ) {
                 return false;
             }
 
             // check if moving to same place
-            if (this.openmct.objects.areIdsEqual(parentCandidate.identifier, currentParent.identifier)) {
+            if (
+                this.openmct.objects.areIdsEqual(
+                    parentCandidate.identifier,
+                    currentParent.identifier
+                )
+            ) {
                 return false;
             }
 
             // check if moving to a child
-            if (parentCandidatePath.some(candidatePath => {
-                return this.openmct.objects.areIdsEqual(candidatePath.identifier, this.object.identifier);
-            })) {
+            if (
+                parentCandidatePath.some((candidatePath) => {
+                    return this.openmct.objects.areIdsEqual(
+                        candidatePath.identifier,
+                        this.object.identifier
+                    );
+                })
+            ) {
                 return false;
             }
 
             const parentCandidateComposition = parentCandidate.composition;
-            if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
+            if (
+                parentCandidateComposition &&
+                parentCandidateComposition.indexOf(objectKeystring) !== -1
+            ) {
                 return false;
             }
 
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
+            return (
+                parentCandidate &&
+                this.openmct.composition.checkPolicy(
+                    parentCandidate,
+                    this.object
+                )
+            );
         };
     }
     startTransaction() {

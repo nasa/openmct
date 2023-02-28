@@ -23,7 +23,6 @@
 import ConditionManager from './ConditionManager';
 
 describe('ConditionManager', () => {
-
     let conditionMgr;
     let mockListener;
     let openmct = {};
@@ -55,11 +54,11 @@ describe('ConditionManager', () => {
     };
     let conditionSetDomainObject = {
         identifier: {
-            namespace: "",
-            key: "600a7372-8d48-4dc4-98b6-548611b1ff7e"
+            namespace: '',
+            key: '600a7372-8d48-4dc4-98b6-548611b1ff7e'
         },
-        type: "conditionSet",
-        location: "mine",
+        type: 'conditionSet',
+        location: 'mine',
         configuration: {
             conditionCollection: [
                 mockCondition1,
@@ -88,7 +87,7 @@ describe('ConditionManager', () => {
         });
         mockInjector.get.and.callFake(function (service) {
             return {
-                'instantiate': mockInstantiate
+                instantiate: mockInstantiate
             }[service];
         });
 
@@ -96,7 +95,6 @@ describe('ConditionManager', () => {
     }
 
     beforeEach(function () {
-
         mockAngularComponents();
         mockListener = jasmine.createSpy('mockListener');
         loader = {};
@@ -119,22 +117,32 @@ describe('ConditionManager', () => {
         });
         mockComposition.on('add', mockListener);
         mockComposition.on('remove', mockListener);
-        openmct.composition = jasmine.createSpyObj('compositionAPI', [
-            'get'
-        ]);
+        openmct.composition = jasmine.createSpyObj('compositionAPI', ['get']);
         openmct.composition.get.and.returnValue(mockComposition);
 
-        openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString', 'observe', 'mutate']);
-        openmct.objects.get.and.returnValues(new Promise(function (resolve, reject) {
-            resolve(conditionSetDomainObject);
-        }), new Promise(function (resolve, reject) {
-            resolve(mockCondition1);
-        }), new Promise(function (resolve, reject) {
-            resolve(mockCondition2);
-        }), new Promise(function (resolve, reject) {
-            resolve(mockDefaultCondition);
-        }));
-        openmct.objects.makeKeyString.and.returnValue(conditionSetDomainObject.identifier.key);
+        openmct.objects = jasmine.createSpyObj('objects', [
+            'get',
+            'makeKeyString',
+            'observe',
+            'mutate'
+        ]);
+        openmct.objects.get.and.returnValues(
+            new Promise(function (resolve, reject) {
+                resolve(conditionSetDomainObject);
+            }),
+            new Promise(function (resolve, reject) {
+                resolve(mockCondition1);
+            }),
+            new Promise(function (resolve, reject) {
+                resolve(mockCondition2);
+            }),
+            new Promise(function (resolve, reject) {
+                resolve(mockDefaultCondition);
+            })
+        );
+        openmct.objects.makeKeyString.and.returnValue(
+            conditionSetDomainObject.identifier.key
+        );
         openmct.objects.observe.and.returnValue(function () {});
         openmct.objects.mutate.and.returnValue(function () {});
 
@@ -151,65 +159,87 @@ describe('ConditionManager', () => {
     });
 
     it('creates a conditionCollection with a default condition', function () {
-        expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection.length).toEqual(3);
+        expect(
+            conditionMgr.conditionSetDomainObject.configuration
+                .conditionCollection.length
+        ).toEqual(3);
         let defaultConditionId = conditionMgr.conditions[2].id;
         expect(defaultConditionId).toEqual(mockDefaultCondition.id);
     });
 
     it('reorders a conditionCollection', function () {
-        let reorderPlan = [{
-            oldIndex: 1,
-            newIndex: 0
-        },
-        {
-            oldIndex: 0,
-            newIndex: 1
-        },
-        {
-            oldIndex: 2,
-            newIndex: 2
-        }];
+        let reorderPlan = [
+            {
+                oldIndex: 1,
+                newIndex: 0
+            },
+            {
+                oldIndex: 0,
+                newIndex: 1
+            },
+            {
+                oldIndex: 2,
+                newIndex: 2
+            }
+        ];
         conditionMgr.reorderConditions(reorderPlan);
-        expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection.length).toEqual(3);
-        expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection[0].id).toEqual(mockCondition2.id);
-        expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection[1].id).toEqual(mockCondition1.id);
+        expect(
+            conditionMgr.conditionSetDomainObject.configuration
+                .conditionCollection.length
+        ).toEqual(3);
+        expect(
+            conditionMgr.conditionSetDomainObject.configuration
+                .conditionCollection[0].id
+        ).toEqual(mockCondition2.id);
+        expect(
+            conditionMgr.conditionSetDomainObject.configuration
+                .conditionCollection[1].id
+        ).toEqual(mockCondition1.id);
     });
 
     it('updates the right condition after reorder', function () {
-        let reorderPlan = [{
-            oldIndex: 1,
-            newIndex: 0
-        },
-        {
-            oldIndex: 0,
-            newIndex: 1
-        },
-        {
-            oldIndex: 2,
-            newIndex: 2
-        }];
+        let reorderPlan = [
+            {
+                oldIndex: 1,
+                newIndex: 0
+            },
+            {
+                oldIndex: 0,
+                newIndex: 1
+            },
+            {
+                oldIndex: 2,
+                newIndex: 2
+            }
+        ];
         conditionMgr.reorderConditions(reorderPlan);
         conditionMgr.updateCondition(updatedMockCondition1);
-        expect(conditionMgr.conditions[1].trigger).toEqual(updatedMockCondition1.configuration.trigger);
+        expect(conditionMgr.conditions[1].trigger).toEqual(
+            updatedMockCondition1.configuration.trigger
+        );
     });
 
     it('removes the right condition after reorder', function () {
-        let reorderPlan = [{
-            oldIndex: 1,
-            newIndex: 0
-        },
-        {
-            oldIndex: 0,
-            newIndex: 1
-        },
-        {
-            oldIndex: 2,
-            newIndex: 2
-        }];
+        let reorderPlan = [
+            {
+                oldIndex: 1,
+                newIndex: 0
+            },
+            {
+                oldIndex: 0,
+                newIndex: 1
+            },
+            {
+                oldIndex: 2,
+                newIndex: 2
+            }
+        ];
         conditionMgr.reorderConditions(reorderPlan);
         conditionMgr.removeCondition(mockCondition1.id);
         expect(conditionMgr.conditions.length).toEqual(2);
-        expect(conditionMgr.conditionSetDomainObject.configuration.conditionCollection[0].id).toEqual(mockCondition2.id);
+        expect(
+            conditionMgr.conditionSetDomainObject.configuration
+                .conditionCollection[0].id
+        ).toEqual(mockCondition2.id);
     });
-
 });

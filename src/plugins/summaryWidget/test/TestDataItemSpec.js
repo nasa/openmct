@@ -22,24 +22,29 @@ define(['../src/TestDataItem'], function (TestDataItem) {
             mockEvaluator = {};
             mockEvaluator.getInputTypeById = jasmine.createSpy('inputType');
 
-            mockConditionManager = jasmine.createSpyObj('mockConditionManager', [
-                'on',
-                'getComposition',
-                'loadCompleted',
-                'getEvaluator',
-                'getTelemetryMetadata',
-                'metadataLoadCompleted',
-                'getObjectName',
-                'getTelemetryPropertyName',
-                'getTelemetryPropertyType'
-            ]);
+            mockConditionManager = jasmine.createSpyObj(
+                'mockConditionManager',
+                [
+                    'on',
+                    'getComposition',
+                    'loadCompleted',
+                    'getEvaluator',
+                    'getTelemetryMetadata',
+                    'metadataLoadCompleted',
+                    'getObjectName',
+                    'getTelemetryPropertyName',
+                    'getTelemetryPropertyType'
+                ]
+            );
             mockConditionManager.loadCompleted.and.returnValue(false);
             mockConditionManager.metadataLoadCompleted.and.returnValue(false);
             mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
             mockConditionManager.getComposition.and.returnValue({});
             mockConditionManager.getTelemetryMetadata.and.returnValue({});
             mockConditionManager.getObjectName.and.returnValue('Object Name');
-            mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
+            mockConditionManager.getTelemetryPropertyName.and.returnValue(
+                'Property Name'
+            );
             mockConditionManager.getTelemetryPropertyType.and.returnValue('');
 
             duplicateSpy = jasmine.createSpy('duplicate');
@@ -47,7 +52,11 @@ define(['../src/TestDataItem'], function (TestDataItem) {
             changeSpy = jasmine.createSpy('change');
             generateValueSpy = jasmine.createSpy('generateValueInput');
 
-            testDataItem = new TestDataItem(mockConfig, 54, mockConditionManager);
+            testDataItem = new TestDataItem(
+                mockConfig,
+                54,
+                mockConditionManager
+            );
 
             testDataItem.on('duplicate', duplicateSpy);
             testDataItem.on('remove', removeSpy);
@@ -56,7 +65,9 @@ define(['../src/TestDataItem'], function (TestDataItem) {
 
         it('exposes a DOM element to represent itself in the view', function () {
             mockContainer.append(testDataItem.getDOM());
-            expect(mockContainer.querySelectorAll('.t-test-data-item').length).toEqual(1);
+            expect(
+                mockContainer.querySelectorAll('.t-test-data-item').length
+            ).toEqual(1);
         });
 
         it('responds to a change in its object select', function () {
@@ -87,7 +98,9 @@ define(['../src/TestDataItem'], function (TestDataItem) {
             testDataItem.generateValueInput('');
 
             inputs = mockContainer.querySelectorAll('input');
-            const numberInputs = Array.from(inputs).filter(input => input.type === 'number');
+            const numberInputs = Array.from(inputs).filter(
+                (input) => input.type === 'number'
+            );
 
             expect(numberInputs.length).toEqual(1);
             expect(inputs[0].valueAsNumber).toEqual(1);
@@ -97,7 +110,9 @@ define(['../src/TestDataItem'], function (TestDataItem) {
             testDataItem.generateValueInput('');
 
             inputs = mockContainer.querySelectorAll('input');
-            const textInputs = Array.from(inputs).filter(input => input.type === 'text');
+            const textInputs = Array.from(inputs).filter(
+                (input) => input.type === 'text'
+            );
 
             expect(textInputs.length).toEqual(1);
             expect(inputs[0].value).toEqual('Text I Am');
@@ -113,7 +128,9 @@ define(['../src/TestDataItem'], function (TestDataItem) {
             testDataItem.generateValueInput('');
 
             inputs = mockContainer.querySelectorAll('input');
-            const numberInputs = Array.from(inputs).filter(input => input.type === 'number');
+            const numberInputs = Array.from(inputs).filter(
+                (input) => input.type === 'number'
+            );
 
             expect(numberInputs.length).toEqual(1);
             expect(inputs[0].valueAsNumber).toEqual(0);
@@ -124,7 +141,9 @@ define(['../src/TestDataItem'], function (TestDataItem) {
             testDataItem.generateValueInput('');
 
             inputs = mockContainer.querySelectorAll('input');
-            const textInputs = Array.from(inputs).filter(input => input.type === 'text');
+            const textInputs = Array.from(inputs).filter(
+                (input) => input.type === 'text'
+            );
 
             expect(textInputs.length).toEqual(1);
             expect(inputs[0].value).toEqual('');

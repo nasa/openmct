@@ -51,17 +51,29 @@ export default class YAxisModel extends Model {
      */
     initialize(options) {
         this.plot = options.plot;
-        this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
+        this.listenTo(
+            this,
+            'change:stats',
+            this.calculateAutoscaleExtents,
+            this
+        );
         this.listenTo(this, 'change:autoscale', this.toggleAutoscale, this);
-        this.listenTo(this, 'change:autoscalePadding', this.updatePadding, this);
+        this.listenTo(
+            this,
+            'change:autoscalePadding',
+            this.updatePadding,
+            this
+        );
         this.listenTo(this, 'change:logMode', this.onLogModeChange, this);
         this.listenTo(this, 'change:frozen', this.toggleFreeze, this);
         this.listenTo(this, 'change:range', this.updateDisplayRange, this);
         const range = this.get('range');
         this.updateDisplayRange(range);
         //This is an edge case and should not happen
-        const invalidRange = !range || (range?.min === undefined || range?.max === undefined);
-        const invalidAutoScaleOff = (options.model.autoscale === false) && invalidRange;
+        const invalidRange =
+            !range || range?.min === undefined || range?.max === undefined;
+        const invalidAutoScaleOff =
+            options.model.autoscale === false && invalidRange;
         if (invalidAutoScaleOff) {
             this.set('autoscale', true);
         }
@@ -71,14 +83,24 @@ export default class YAxisModel extends Model {
      */
     listenToSeriesCollection(seriesCollection) {
         this.seriesCollection = seriesCollection;
-        this.listenTo(this.seriesCollection, 'add', series => {
-            this.trackSeries(series);
-            this.updateFromSeries(this.seriesCollection);
-        }, this);
-        this.listenTo(this.seriesCollection, 'remove', series => {
-            this.untrackSeries(series);
-            this.updateFromSeries(this.seriesCollection);
-        }, this);
+        this.listenTo(
+            this.seriesCollection,
+            'add',
+            (series) => {
+                this.trackSeries(series);
+                this.updateFromSeries(this.seriesCollection);
+            },
+            this
+        );
+        this.listenTo(
+            this.seriesCollection,
+            'remove',
+            (series) => {
+                this.untrackSeries(series);
+                this.updateFromSeries(this.seriesCollection);
+            },
+            this
+        );
         this.seriesCollection.forEach(this.trackSeries, this);
         this.updateFromSeries(this.seriesCollection);
     }
@@ -88,7 +110,8 @@ export default class YAxisModel extends Model {
         }
     }
     applyPadding(range) {
-        let padding = Math.abs(range.max - range.min) * this.get('autoscalePadding');
+        let padding =
+            Math.abs(range.max - range.min) * this.get('autoscalePadding');
         if (padding === 0) {
             padding = 1;
         }
@@ -144,14 +167,14 @@ export default class YAxisModel extends Model {
     resetStats() {
         //TODO: do we need the series id here?
         this.unset('stats');
-        this.getSeriesForYAxis(this.seriesCollection).forEach(series => {
+        this.getSeriesForYAxis(this.seriesCollection).forEach((series) => {
             if (series.has('stats')) {
                 this.updateStats(series.get('stats'));
             }
         });
     }
     getSeriesForYAxis(seriesCollection) {
-        return seriesCollection.filter(series => {
+        return seriesCollection.filter((series) => {
             const seriesYAxisId = series.get('yAxisId') || 1;
 
             return seriesYAxisId === this.id;
@@ -165,7 +188,9 @@ export default class YAxisModel extends Model {
             yAxis = plotModel.configuration?.yAxis;
         } else {
             if (plotModel.configuration?.additionalYAxes) {
-                yAxis = plotModel.configuration.additionalYAxes.find(additionalYAxis => additionalYAxis.id === id);
+                yAxis = plotModel.configuration.additionalYAxes.find(
+                    (additionalYAxis) => additionalYAxis.id === id
+                );
             }
         }
 
@@ -175,7 +200,7 @@ export default class YAxisModel extends Model {
      * @param {import('./PlotSeries').default} series
      */
     trackSeries(series) {
-        this.listenTo(series, 'change:stats', seriesStats => {
+        this.listenTo(series, 'change:stats', (seriesStats) => {
             if (series.get('yAxisId') !== this.id) {
                 return;
             }
@@ -293,7 +318,10 @@ export default class YAxisModel extends Model {
      * @param {String} property
      */
     getMetadataValueByProperty(series, property) {
-        return series.map(s => (s.metadata ? s.metadata.value(s.get('yKey'))[property] : ''))
+        return series
+            .map((s) =>
+                s.metadata ? s.metadata.value(s.get('yKey'))[property] : ''
+            )
             .reduce((a, b) => {
                 if (a === undefined) {
                     return b;
@@ -340,7 +368,10 @@ export default class YAxisModel extends Model {
         this.set('values', yMetadata.values);
 
         if (!label) {
-            const labelName = this.getMetadataValueByProperty(seriesForThisYAxis, 'name');
+            const labelName = this.getMetadataValueByProperty(
+                seriesForThisYAxis,
+                'name'
+            );
             if (labelName) {
                 this.set('label', labelName);
 
@@ -348,7 +379,10 @@ export default class YAxisModel extends Model {
             }
 
             //if the name is not available, set the units as the label
-            const labelUnits = this.getMetadataValueByProperty(seriesForThisYAxis, 'units');
+            const labelUnits = this.getMetadataValueByProperty(
+                seriesForThisYAxis,
+                'units'
+            );
             if (labelUnits) {
                 this.set('label', labelUnits);
 

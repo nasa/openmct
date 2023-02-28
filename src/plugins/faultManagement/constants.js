@@ -21,17 +21,17 @@
  *****************************************************************************/
 
 const FAULT_SEVERITY = {
-    'CRITICAL': {
+    CRITICAL: {
         name: 'CRITICAL',
         value: 'critical',
         priority: 0
     },
-    'WARNING': {
+    WARNING: {
         name: 'WARNING',
         value: 'warning',
         priority: 1
     },
-    'WATCH': {
+    WATCH: {
         name: 'WATCH',
         value: 'watch',
         priority: 2
@@ -99,11 +99,13 @@ export const SORT_ITEMS = {
             return 0;
         }
     },
-    'severity': {
+    severity: {
         name: 'Severity',
         value: 'severity',
         sortFunction: (a, b) => {
-            const diff = FAULT_SEVERITY[a.severity].priority - FAULT_SEVERITY[b.severity].priority;
+            const diff =
+                FAULT_SEVERITY[a.severity].priority -
+                FAULT_SEVERITY[b.severity].priority;
             if (diff !== 0) {
                 return diff;
             }

@@ -10,7 +10,6 @@ async function getUsername(openmct) {
     }
 
     return username;
-
 }
 
 export const DEFAULT_CLASS = 'notebook-default';
@@ -49,7 +48,7 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
         return historicLink;
     }
 
-    openmct.time.getAllClocks().forEach(clock => {
+    openmct.time.getAllClocks().forEach((clock) => {
         if (historicLink.includes(`tc.mode=${clock.key}`)) {
             historicLink.replace(`tc.mode=${clock.key}`, 'tc.mode=fixed');
 
@@ -57,14 +56,18 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
         }
     });
 
-    const params = historicLink.split('&').map(param => {
-        if (param.includes(TIME_BOUNDS.START_BOUND)
-                || param.includes(TIME_BOUNDS.START_DELTA)) {
+    const params = historicLink.split('&').map((param) => {
+        if (
+            param.includes(TIME_BOUNDS.START_BOUND) ||
+            param.includes(TIME_BOUNDS.START_DELTA)
+        ) {
             param = `${TIME_BOUNDS.START_BOUND}=${bounds.start}`;
         }
 
-        if (param.includes(TIME_BOUNDS.END_BOUND)
-                || param.includes(TIME_BOUNDS.END_DELTA)) {
+        if (
+            param.includes(TIME_BOUNDS.END_BOUND) ||
+            param.includes(TIME_BOUNDS.END_DELTA)
+        ) {
             param = `${TIME_BOUNDS.END_BOUND}=${bounds.end}`;
         }
 
@@ -75,25 +78,21 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
 }
 
 export async function createNewEmbed(snapshotMeta, snapshot = '') {
-    const {
-        bounds,
-        link,
-        objectPath,
-        openmct
-    } = snapshotMeta;
+    const { bounds, link, objectPath, openmct } = snapshotMeta;
     const domainObject = objectPath[0];
     const domainObjectType = openmct.types.get(domainObject.type);
 
-    const cssClass = domainObjectType && domainObjectType.definition
-        ? domainObjectType.definition.cssClass
-        : 'icon-object-unknown';
+    const cssClass =
+        domainObjectType && domainObjectType.definition
+            ? domainObjectType.definition.cssClass
+            : 'icon-object-unknown';
     const date = Date.now();
     const historicLink = link
         ? getHistoricLinkInFixedMode(openmct, bounds, link)
         : objectLink.computed.objectLink.call({
-            objectPath,
-            openmct
-        });
+              objectPath,
+              openmct
+          });
     const name = domainObject.name;
     const type = domainObject.identifier.key;
     const createdBy = await getUsername(openmct);
@@ -112,7 +111,13 @@ export async function createNewEmbed(snapshotMeta, snapshot = '') {
     };
 }
 
-export async function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null, entryText = '') {
+export async function addNotebookEntry(
+    openmct,
+    domainObject,
+    notebookStorage,
+    embed = null,
+    entryText = ''
+) {
     if (!openmct || !domainObject || !notebookStorage) {
         return;
     }
@@ -120,9 +125,7 @@ export async function addNotebookEntry(openmct, domainObject, notebookStorage, e
     const date = Date.now();
     const configuration = domainObject.configuration;
     const entries = configuration.entries || {};
-    const embeds = embed
-        ? [embed]
-        : [];
+    const embeds = embed ? [embed] : [];
 
     const id = `entry-${uuid()}`;
     const createdBy = await getUsername(openmct);
@@ -142,8 +145,17 @@ export async function addNotebookEntry(openmct, domainObject, notebookStorage, e
     return id;
 }
 
-export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
-    if (!domainObject || !selectedSection || !selectedPage || !domainObject.configuration) {
+export function getNotebookEntries(
+    domainObject,
+    selectedSection,
+    selectedPage
+) {
+    if (
+        !domainObject ||
+        !selectedSection ||
+        !selectedPage ||
+        !domainObject.configuration
+    ) {
         return;
     }
 
@@ -165,12 +177,21 @@ export function getNotebookEntries(domainObject, selectedSection, selectedPage) 
     return specificEntries;
 }
 
-export function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {
+export function getEntryPosById(
+    entryId,
+    domainObject,
+    selectedSection,
+    selectedPage
+) {
     if (!domainObject || !selectedSection || !selectedPage) {
         return;
     }
 
-    const entries = getNotebookEntries(domainObject, selectedSection, selectedPage);
+    const entries = getNotebookEntries(
+        domainObject,
+        selectedSection,
+        selectedPage
+    );
     let foundId = -1;
     entries.forEach((element, index) => {
         if (element.id === entryId) {
@@ -183,7 +204,12 @@ export function getEntryPosById(entryId, domainObject, selectedSection, selected
     return foundId;
 }
 
-export function deleteNotebookEntries(openmct, domainObject, selectedSection, selectedPage) {
+export function deleteNotebookEntries(
+    openmct,
+    domainObject,
+    selectedSection,
+    selectedPage
+) {
     if (!domainObject || !selectedSection) {
         return;
     }

@@ -24,41 +24,49 @@ import EventEmitter from 'EventEmitter';
 import { v4 as uuid } from 'uuid';
 import createExampleUser from './exampleUserCreator';
 
-const STATUSES = [{
-    key: "NO_STATUS",
-    label: "Not set",
-    iconClass: "icon-question-mark",
-    iconClassPoll: "icon-status-poll-question-mark"
-}, {
-    key: "GO",
-    label: "Go",
-    iconClass: "icon-check",
-    iconClassPoll: "icon-status-poll-question-mark",
-    statusClass: "s-status-ok",
-    statusBgColor: "#33cc33",
-    statusFgColor: "#000"
-}, {
-    key: "MAYBE",
-    label: "Maybe",
-    iconClass: "icon-alert-triangle",
-    iconClassPoll: "icon-status-poll-question-mark",
-    statusClass: "s-status-warning",
-    statusBgColor: "#ffb66c",
-    statusFgColor: "#000"
-}, {
-    key: "NO_GO",
-    label: "No go",
-    iconClass: "icon-circle-slash",
-    iconClassPoll: "icon-status-poll-question-mark",
-    statusClass: "s-status-error",
-    statusBgColor: "#9900cc",
-    statusFgColor: "#fff"
-}];
+const STATUSES = [
+    {
+        key: 'NO_STATUS',
+        label: 'Not set',
+        iconClass: 'icon-question-mark',
+        iconClassPoll: 'icon-status-poll-question-mark'
+    },
+    {
+        key: 'GO',
+        label: 'Go',
+        iconClass: 'icon-check',
+        iconClassPoll: 'icon-status-poll-question-mark',
+        statusClass: 's-status-ok',
+        statusBgColor: '#33cc33',
+        statusFgColor: '#000'
+    },
+    {
+        key: 'MAYBE',
+        label: 'Maybe',
+        iconClass: 'icon-alert-triangle',
+        iconClassPoll: 'icon-status-poll-question-mark',
+        statusClass: 's-status-warning',
+        statusBgColor: '#ffb66c',
+        statusFgColor: '#000'
+    },
+    {
+        key: 'NO_GO',
+        label: 'No go',
+        iconClass: 'icon-circle-slash',
+        iconClassPoll: 'icon-status-poll-question-mark',
+        statusClass: 's-status-error',
+        statusBgColor: '#9900cc',
+        statusFgColor: '#fff'
+    }
+];
 /**
  * @implements {StatusUserProvider}
  */
 export default class ExampleUserProvider extends EventEmitter {
-    constructor(openmct, {defaultStatusRole} = {defaultStatusRole: undefined}) {
+    constructor(
+        openmct,
+        { defaultStatusRole } = { defaultStatusRole: undefined }
+    ) {
         super();
 
         this.openmct = openmct;
@@ -155,7 +163,7 @@ export default class ExampleUserProvider extends EventEmitter {
             question: pollQuestion,
             timestamp: Date.now()
         };
-        this.emit("pollQuestionChange", this.pollQuestion);
+        this.emit('pollQuestionChange', this.pollQuestion);
 
         return true;
     }
@@ -170,24 +178,26 @@ export default class ExampleUserProvider extends EventEmitter {
         // for testing purposes, this will skip the form, this wouldn't be used in
         // a normal authentication process
         if (this.autoLoginUser) {
-            this.user = new this.ExampleUser(id, this.autoLoginUser, ['example-role']);
+            this.user = new this.ExampleUser(id, this.autoLoginUser, [
+                'example-role'
+            ]);
             this.loggedIn = true;
 
             return Promise.resolve();
         }
 
         const formStructure = {
-            title: "Login",
+            title: 'Login',
             sections: [
                 {
                     rows: [
                         {
-                            key: "username",
-                            control: "textfield",
-                            name: "Username",
-                            pattern: "\\S+",
+                            key: 'username',
+                            control: 'textfield',
+                            name: 'Username',
+                            pattern: '\\S+',
                             required: true,
-                            cssClass: "l-input-lg",
+                            cssClass: 'l-input-lg',
                             value: ''
                         }
                     ]
@@ -202,10 +212,13 @@ export default class ExampleUserProvider extends EventEmitter {
 
         return this.openmct.forms.showForm(formStructure).then(
             (info) => {
-                this.user = new this.ExampleUser(id, info.username, ['example-role']);
+                this.user = new this.ExampleUser(id, info.username, [
+                    'example-role'
+                ]);
                 this.loggedIn = true;
             },
-            () => { // user canceled, setting a default username
+            () => {
+                // user canceled, setting a default username
                 this.user = new this.ExampleUser(id, 'Pat', ['example-role']);
                 this.loggedIn = true;
             }

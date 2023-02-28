@@ -38,8 +38,7 @@ export default function TelemetryTableViewProvider(openmct) {
         name: 'Telemetry Table',
         cssClass: 'icon-tabular-scrolling',
         canView(domainObject) {
-            return domainObject.type === 'table'
-                || hasTelemetry(domainObject);
+            return domainObject.type === 'table' || hasTelemetry(domainObject);
         },
         canEdit(domainObject) {
             return domainObject.type === 'table';

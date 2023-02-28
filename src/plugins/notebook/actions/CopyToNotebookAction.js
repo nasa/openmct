@@ -1,4 +1,7 @@
-import { getDefaultNotebook, getNotebookSectionAndPage } from '../utils/notebook-storage';
+import {
+    getDefaultNotebook,
+    getNotebookSectionAndPage
+} from '../utils/notebook-storage';
 import { addNotebookEntry } from '../utils/notebook-entries';
 
 export default class CopyToNotebookAction {
@@ -7,7 +10,7 @@ export default class CopyToNotebookAction {
 
         this.cssClass = 'icon-duplicate';
         this.description = 'Copy value to notebook as an entry';
-        this.group = "action";
+        this.group = 'action';
         this.key = 'copyToNotebook';
         this.name = 'Copy to Notebook';
         this.priority = 1;
@@ -15,11 +18,22 @@ export default class CopyToNotebookAction {
 
     copyToNotebook(entryText) {
         const notebookStorage = getDefaultNotebook();
-        this.openmct.objects.get(notebookStorage.identifier)
-            .then(domainObject => {
-                addNotebookEntry(this.openmct, domainObject, notebookStorage, null, entryText);
+        this.openmct.objects
+            .get(notebookStorage.identifier)
+            .then((domainObject) => {
+                addNotebookEntry(
+                    this.openmct,
+                    domainObject,
+                    notebookStorage,
+                    null,
+                    entryText
+                );
 
-                const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.defaultSectionId, notebookStorage.defaultPageId);
+                const { section, page } = getNotebookSectionAndPage(
+                    domainObject,
+                    notebookStorage.defaultSectionId,
+                    notebookStorage.defaultPageId
+                );
                 if (!section || !page) {
                     return;
                 }
@@ -31,7 +45,8 @@ export default class CopyToNotebookAction {
     }
 
     invoke(objectPath, view) {
-        const formattedValueForCopy = view.getViewContext().row.formattedValueForCopy;
+        const formattedValueForCopy =
+            view.getViewContext().row.formattedValueForCopy;
 
         this.copyToNotebook(formattedValueForCopy());
     }
@@ -43,7 +58,9 @@ export default class CopyToNotebookAction {
             return;
         }
 
-        return row.formattedValueForCopy
-            && typeof row.formattedValueForCopy === 'function';
+        return (
+            row.formattedValueForCopy &&
+            typeof row.formattedValueForCopy === 'function'
+        );
     }
 }

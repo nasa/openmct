@@ -21,7 +21,7 @@
  *****************************************************************************/
 define(function () {
     class TelemetryTableColumn {
-        constructor(openmct, metadatum, options = {selectable: false}) {
+        constructor(openmct, metadatum, options = { selectable: false }) {
             this.metadatum = metadatum;
             this.formatter = openmct.telemetry.getValueFormatter(metadatum);
             this.titleValue = this.metadatum.name;
@@ -41,7 +41,10 @@ define(function () {
         }
 
         hasValueForDatum(telemetryDatum) {
-            return Object.prototype.hasOwnProperty.call(telemetryDatum, this.metadatum.source);
+            return Object.prototype.hasOwnProperty.call(
+                telemetryDatum,
+                this.metadatum.source
+            );
         }
 
         getRawValue(telemetryDatum) {
@@ -50,7 +53,10 @@ define(function () {
 
         getFormattedValue(telemetryDatum) {
             let formattedValue = this.formatter.format(telemetryDatum);
-            if (formattedValue !== undefined && typeof formattedValue !== 'string') {
+            if (
+                formattedValue !== undefined &&
+                typeof formattedValue !== 'string'
+            ) {
                 return formattedValue.toString();
             } else {
                 return formattedValue;

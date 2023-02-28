@@ -71,7 +71,7 @@ function installBaseNotebookFunctionality(openmct) {
         name: 'Notebook Snapshot Image Storage',
         description: 'Notebook Snapshot Image Storage object',
         creatable: false,
-        initialize: domainObject => {
+        initialize: (domainObject) => {
             domainObject.configuration = {
                 fullSizeImageURL: undefined,
                 thumbnailImageURL: undefined
@@ -81,7 +81,7 @@ function installBaseNotebookFunctionality(openmct) {
     openmct.types.addType('notebookSnapshotImage', notebookSnapshotImageType);
     openmct.actions.register(new CopyToNotebookAction(openmct));
 
-    const notebookSnapshotIndicator = new Vue ({
+    const notebookSnapshotIndicator = new Vue({
         components: {
             NotebookSnapshotIndicator
         },
@@ -107,7 +107,8 @@ function installBaseNotebookFunctionality(openmct) {
 function NotebookPlugin(name = 'Notebook', entryUrlWhitelist = []) {
     return function install(openmct) {
         const icon = 'icon-notebook';
-        const description = 'Create and save timestamped notes with embedded object snapshots.';
+        const description =
+            'Create and save timestamped notes with embedded object snapshots.';
         const snapshotContainer = getSnapshotContainer(openmct);
 
         addLegacyNotebookGetInterceptor(openmct);
@@ -115,30 +116,47 @@ function NotebookPlugin(name = 'Notebook', entryUrlWhitelist = []) {
         const notebookType = new NotebookType(name, description, icon);
         openmct.types.addType(NOTEBOOK_TYPE, notebookType);
 
-        const notebookView = new NotebookViewProvider(openmct, name, NOTEBOOK_VIEW_TYPE, NOTEBOOK_TYPE, icon, snapshotContainer, entryUrlWhitelist);
+        const notebookView = new NotebookViewProvider(
+            openmct,
+            name,
+            NOTEBOOK_VIEW_TYPE,
+            NOTEBOOK_TYPE,
+            icon,
+            snapshotContainer,
+            entryUrlWhitelist
+        );
         openmct.objectViews.addProvider(notebookView, entryUrlWhitelist);
 
         installBaseNotebookFunctionality(openmct);
     };
 }
 
-function RestrictedNotebookPlugin(name = 'Notebook Shift Log', entryUrlWhitelist = []) {
+function RestrictedNotebookPlugin(
+    name = 'Notebook Shift Log',
+    entryUrlWhitelist = []
+) {
     return function install(openmct) {
         const icon = 'icon-notebook-shift-log';
-        const description = 'Create and save timestamped notes with embedded object snapshots with the ability to commit and lock pages.';
+        const description =
+            'Create and save timestamped notes with embedded object snapshots with the ability to commit and lock pages.';
         const snapshotContainer = getSnapshotContainer(openmct);
 
         const notebookType = new NotebookType(name, description, icon);
         openmct.types.addType(RESTRICTED_NOTEBOOK_TYPE, notebookType);
 
-        const notebookView = new NotebookViewProvider(openmct, name, RESTRICTED_NOTEBOOK_VIEW_TYPE, RESTRICTED_NOTEBOOK_TYPE, icon, snapshotContainer, entryUrlWhitelist);
+        const notebookView = new NotebookViewProvider(
+            openmct,
+            name,
+            RESTRICTED_NOTEBOOK_VIEW_TYPE,
+            RESTRICTED_NOTEBOOK_TYPE,
+            icon,
+            snapshotContainer,
+            entryUrlWhitelist
+        );
         openmct.objectViews.addProvider(notebookView, entryUrlWhitelist);
 
         installBaseNotebookFunctionality(openmct);
     };
 }
 
-export {
-    NotebookPlugin,
-    RestrictedNotebookPlugin
-};
+export { NotebookPlugin, RestrictedNotebookPlugin };

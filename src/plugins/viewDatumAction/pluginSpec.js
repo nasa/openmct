@@ -19,12 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("the plugin", () => {
+describe('the plugin', () => {
     let openmct;
     let viewDatumAction;
     let mockObjectPath;
@@ -39,14 +36,16 @@ describe("the plugin", () => {
 
         viewDatumAction = openmct.actions._allActions.viewDatumAction;
 
-        mockObjectPath = [{
-            name: 'mock object',
-            type: 'telemetry-table',
-            identifier: {
-                key: 'mock-object',
-                namespace: ''
+        mockObjectPath = [
+            {
+                name: 'mock object',
+                type: 'telemetry-table',
+                identifier: {
+                    key: 'mock-object',
+                    namespace: ''
+                }
             }
-        }];
+        ];
 
         mockDatum = {
             time: 123456789,
@@ -77,7 +76,6 @@ describe("the plugin", () => {
     });
 
     describe('when invoked', () => {
-
         beforeEach(() => {
             openmct.overlays.overlay = function (options) {};
 

@@ -102,10 +102,10 @@ describe('Notebook Entries:', () => {
         openmct.types.addType('notebook', {
             creatable: true
         });
-        openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
-            'create',
-            'update'
-        ]));
+        openmct.objects.addProvider(
+            '',
+            jasmine.createSpyObj('mockNotebookProvider', ['create', 'update'])
+        );
         openmct.editor = {
             isEditing: () => false
         };
@@ -116,26 +116,44 @@ describe('Notebook Entries:', () => {
     });
 
     afterEach(() => {
-        notebookDomainObject.configuration.entries[selectedSection.id][selectedPage.id] = [];
+        notebookDomainObject.configuration.entries[selectedSection.id][
+            selectedPage.id
+        ] = [];
 
         return resetApplicationState(openmct);
     });
 
     it('getNotebookEntries has no entries', () => {
-        const entries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
+        const entries = NotebookEntries.getNotebookEntries(
+            notebookDomainObject,
+            selectedSection,
+            selectedPage
+        );
 
         expect(entries.length).toEqual(0);
     });
 
     it('addNotebookEntry adds entry', async () => {
-        const unlisten = openmct.objects.observe(notebookDomainObject, '*', (object) => {
-            const entries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
+        const unlisten = openmct.objects.observe(
+            notebookDomainObject,
+            '*',
+            (object) => {
+                const entries = NotebookEntries.getNotebookEntries(
+                    notebookDomainObject,
+                    selectedSection,
+                    selectedPage
+                );
 
-            expect(entries.length).toEqual(1);
-            unlisten();
-        });
+                expect(entries.length).toEqual(1);
+                unlisten();
+            }
+        );
 
-        await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+        await NotebookEntries.addNotebookEntry(
+            openmct,
+            notebookDomainObject,
+            notebookStorage
+        );
     });
 
     it('addNotebookEntry adds active user to entry', async () => {
@@ -149,39 +167,93 @@ describe('Notebook Entries:', () => {
             });
         };
 
-        const unlisten = openmct.objects.observe(notebookDomainObject, '*', (object) => {
-            const entries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
+        const unlisten = openmct.objects.observe(
+            notebookDomainObject,
+            '*',
+            (object) => {
+                const entries = NotebookEntries.getNotebookEntries(
+                    notebookDomainObject,
+                    selectedSection,
+                    selectedPage
+                );
 
-            expect(entries[0].createdBy).toEqual(USER);
-            unlisten();
-        });
+                expect(entries[0].createdBy).toEqual(USER);
+                unlisten();
+            }
+        );
 
-        await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+        await NotebookEntries.addNotebookEntry(
+            openmct,
+            notebookDomainObject,
+            notebookStorage
+        );
     });
 
     it('getEntryPosById returns valid position', async () => {
-        const entryId1 = await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
-        const position1 = NotebookEntries.getEntryPosById(entryId1, notebookDomainObject, selectedSection, selectedPage);
+        const entryId1 = await NotebookEntries.addNotebookEntry(
+            openmct,
+            notebookDomainObject,
+            notebookStorage
+        );
+        const position1 = NotebookEntries.getEntryPosById(
+            entryId1,
+            notebookDomainObject,
+            selectedSection,
+            selectedPage
+        );
 
-        const entryId2 = await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
-        const position2 = NotebookEntries.getEntryPosById(entryId2, notebookDomainObject, selectedSection, selectedPage);
+        const entryId2 = await NotebookEntries.addNotebookEntry(
+            openmct,
+            notebookDomainObject,
+            notebookStorage
+        );
+        const position2 = NotebookEntries.getEntryPosById(
+            entryId2,
+            notebookDomainObject,
+            selectedSection,
+            selectedPage
+        );
 
-        const entryId3 = await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
-        const position3 = NotebookEntries.getEntryPosById(entryId3, notebookDomainObject, selectedSection, selectedPage);
+        const entryId3 = await NotebookEntries.addNotebookEntry(
+            openmct,
+            notebookDomainObject,
+            notebookStorage
+        );
+        const position3 = NotebookEntries.getEntryPosById(
+            entryId3,
+            notebookDomainObject,
+            selectedSection,
+            selectedPage
+        );
 
-        const success = position1 === 0
-                && position2 === 1
-                && position3 === 2;
+        const success = position1 === 0 && position2 === 1 && position3 === 2;
 
         expect(success).toBe(true);
     });
 
     it('deleteNotebookEntries deletes correct page entries', async () => {
-        await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
-        await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
+        await NotebookEntries.addNotebookEntry(
+            openmct,
+            notebookDomainObject,
+            notebookStorage
+        );
+        await NotebookEntries.addNotebookEntry(
+            openmct,
+            notebookDomainObject,
+            notebookStorage
+        );
 
-        NotebookEntries.deleteNotebookEntries(openmct, notebookDomainObject, selectedSection, selectedPage);
-        const afterEntries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
+        NotebookEntries.deleteNotebookEntries(
+            openmct,
+            notebookDomainObject,
+            selectedSection,
+            selectedPage
+        );
+        const afterEntries = NotebookEntries.getNotebookEntries(
+            notebookDomainObject,
+            selectedSection,
+            selectedPage
+        );
 
         expect(afterEntries).toEqual(undefined);
     });

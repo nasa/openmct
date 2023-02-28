@@ -26,8 +26,8 @@ class RootObjectProvider {
             this.rootRegistry = rootRegistry;
             this.rootObject = {
                 identifier: {
-                    key: "ROOT",
-                    namespace: ""
+                    key: 'ROOT',
+                    namespace: ''
                 },
                 name: 'Open MCT',
                 type: 'root',

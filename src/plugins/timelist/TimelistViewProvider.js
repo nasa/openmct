@@ -25,7 +25,6 @@ import { TIMELIST_TYPE } from './constants';
 import Vue from 'vue';
 
 export default function TimelistViewProvider(openmct) {
-
     return {
         key: 'timelist.view',
         name: 'Time List',
@@ -43,7 +42,6 @@ export default function TimelistViewProvider(openmct) {
 
             return {
                 show: function (element) {
-
                     component = new Vue({
                         el: element,
                         components: {

@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 define([], function () {
-
     /**
      * A InspectorViewRegistry maintains the definitions for views
      * that may occur in the inspector.
@@ -41,9 +40,11 @@ define([], function () {
      * @private for platform-internal use
      */
     InspectorViewRegistry.prototype.get = function (selection) {
-        return this.getAllProviders().filter(function (provider) {
-            return provider.canView(selection);
-        }).map(provider => provider.view(selection));
+        return this.getAllProviders()
+            .filter(function (provider) {
+                return provider.canView(selection);
+            })
+            .map((provider) => provider.view(selection));
     };
 
     /**
@@ -68,7 +69,10 @@ define([], function () {
         }
 
         if (this.providers[key] !== undefined) {
-            console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
+            console.warn(
+                "Provider already defined for key '%s'. Provider keys must be unique.",
+                key
+            );
         }
 
         this.providers[key] = provider;

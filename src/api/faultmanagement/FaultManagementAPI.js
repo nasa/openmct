@@ -30,7 +30,10 @@ export default class FaultManagementAPI {
     }
 
     supportsActions() {
-        return this.provider?.acknowledgeFault !== undefined && this.provider?.shelveFault !== undefined;
+        return (
+            this.provider?.acknowledgeFault !== undefined &&
+            this.provider?.shelveFault !== undefined
+        );
     }
 
     request(domainObject) {

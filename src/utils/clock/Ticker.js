@@ -45,9 +45,13 @@ class Ticker {
         }
 
         // Try to update at exactly the next second
-        this.timeoutHandle = setTimeout(() => {
-            this.tick();
-        }, 1000 - millis, true);
+        this.timeoutHandle = setTimeout(
+            () => {
+                this.tick();
+            },
+            1000 - millis,
+            true
+        );
     }
 
     /**

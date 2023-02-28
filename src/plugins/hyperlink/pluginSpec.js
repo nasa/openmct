@@ -20,12 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
-import HyperlinkPlugin from "./plugin";
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import HyperlinkPlugin from './plugin';
 
 function getView(openmct, domainObj, objectPath) {
     const applicableViews = openmct.objectViews.get(domainObj, objectPath);
-    const hyperLinkView = applicableViews.find((viewProvider) => viewProvider.key === 'hyperlink.view');
+    const hyperLinkView = applicableViews.find(
+        (viewProvider) => viewProvider.key === 'hyperlink.view'
+    );
 
     return hyperLinkView.view(domainObj);
 }
@@ -34,7 +36,7 @@ function destroyView(view) {
     return view.destroy();
 }
 
-describe("The controller for hyperlinks", function () {
+describe('The controller for hyperlinks', function () {
     let mockDomainObject;
     let mockObjectPath;
     let openmct;
@@ -55,19 +57,19 @@ describe("The controller for hyperlinks", function () {
         ];
 
         mockDomainObject = {
-            displayFormat: "",
-            linkTarget: "",
-            name: "Unnamed HyperLink",
-            type: "hyperlink",
-            location: "f69c21ac-24ef-450c-8e2f-3d527087d285",
+            displayFormat: '',
+            linkTarget: '',
+            name: 'Unnamed HyperLink',
+            type: 'hyperlink',
+            location: 'f69c21ac-24ef-450c-8e2f-3d527087d285',
             modified: 1627483839783,
-            url: "123",
-            displayText: "123",
+            url: '123',
+            displayText: '123',
             persisted: 1627483839783,
-            id: "3d9c243d-dffb-446b-8474-d9931a99d679",
+            id: '3d9c243d-dffb-446b-8474-d9931a99d679',
             identifier: {
-                namespace: "",
-                key: "3d9c243d-dffb-446b-8474-d9931a99d679"
+                namespace: '',
+                key: '3d9c243d-dffb-446b-8474-d9931a99d679'
             }
         };
 
@@ -84,7 +86,6 @@ describe("The controller for hyperlinks", function () {
 
         openmct.on('start', done);
         openmct.startHeadless();
-
     });
 
     afterEach(() => {
@@ -92,18 +93,18 @@ describe("The controller for hyperlinks", function () {
 
         return resetApplicationState(openmct);
     });
-    it("knows when it should open a new tab", () => {
-        mockDomainObject.displayFormat = "link";
-        mockDomainObject.linkTarget = "_blank";
+    it('knows when it should open a new tab', () => {
+        mockDomainObject.displayFormat = 'link';
+        mockDomainObject.linkTarget = '_blank';
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);
 
         expect(element.querySelector('.c-hyperlink').target).toBe('_blank');
     });
-    it("knows when it should open in the same tab", function () {
-        mockDomainObject.displayFormat = "button";
-        mockDomainObject.linkTarget = "_self";
+    it('knows when it should open in the same tab', function () {
+        mockDomainObject.displayFormat = 'button';
+        mockDomainObject.linkTarget = '_self';
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);
@@ -111,20 +112,22 @@ describe("The controller for hyperlinks", function () {
         expect(element.querySelector('.c-hyperlink').target).toBe('_self');
     });
 
-    it("knows when it is a button", function () {
-        mockDomainObject.displayFormat = "button";
+    it('knows when it is a button', function () {
+        mockDomainObject.displayFormat = 'button';
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);
 
         expect(element.querySelector('.c-hyperlink--button')).toBeDefined();
     });
-    it("knows when it is a link", function () {
-        mockDomainObject.displayFormat = "link";
+    it('knows when it is a link', function () {
+        mockDomainObject.displayFormat = 'link';
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);
 
-        expect(element.querySelector('.c-hyperlink')).not.toHaveClass('c-hyperlink--button');
+        expect(element.querySelector('.c-hyperlink')).not.toHaveClass(
+            'c-hyperlink--button'
+        );
     });
 });

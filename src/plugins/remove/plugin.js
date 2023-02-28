@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RemoveAction from "./RemoveAction";
+import RemoveAction from './RemoveAction';
 
 export default function () {
     return function (openmct) {

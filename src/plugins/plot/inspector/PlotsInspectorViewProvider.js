@@ -1,5 +1,4 @@
-
-import PlotOptions from "./PlotOptions.vue";
+import PlotOptions from './PlotOptions.vue';
 import Vue from 'vue';
 
 export default function PlotsInspectorViewProvider(openmct) {
@@ -12,10 +11,13 @@ export default function PlotsInspectorViewProvider(openmct) {
             }
 
             let object = selection[0][0].context.item;
-            let parent = selection[0].length > 1 && selection[0][1].context.item;
+            let parent =
+                selection[0].length > 1 && selection[0][1].context.item;
 
-            const isOverlayPlotObject = object && object.type === 'telemetry.plot.overlay';
-            const isParentStackedPlotObject = parent && parent.type === 'telemetry.plot.stacked';
+            const isOverlayPlotObject =
+                object && object.type === 'telemetry.plot.overlay';
+            const isParentStackedPlotObject =
+                parent && parent.type === 'telemetry.plot.stacked';
 
             return isOverlayPlotObject || isParentStackedPlotObject;
         },

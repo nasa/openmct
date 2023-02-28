@@ -1,7 +1,4 @@
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 describe('Export as JSON plugin', () => {
     const ACTION_KEY = 'export.JSON';
@@ -99,10 +96,12 @@ describe('Export as JSON plugin', () => {
 
     it('ExportAsJSONAction exports object from tree', (done) => {
         const parent = {
-            composition: [{
-                key: 'child',
-                namespace: ''
-            }],
+            composition: [
+                {
+                    key: 'child',
+                    namespace: ''
+                }
+            ],
             identifier: {
                 key: 'parent',
                 namespace: ''
@@ -127,7 +126,7 @@ describe('Export as JSON plugin', () => {
             persisted: 1503598132428
         };
 
-        spyOn(openmct.composition, 'get').and.callFake(object => {
+        spyOn(openmct.composition, 'get').and.callFake((object) => {
             return {
                 load: () => {
                     if (object.name === 'Parent') {
@@ -139,12 +138,26 @@ describe('Export as JSON plugin', () => {
             };
         });
 
-        spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
+        spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
             expect(Object.keys(completedTree).length).toBe(2);
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'parent')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'child')).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'openmct')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'rootId')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'parent'
+                )
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'child'
+                )
+            ).toBeTruthy();
 
             done();
         });
@@ -154,10 +167,12 @@ describe('Export as JSON plugin', () => {
 
     it('ExportAsJSONAction skips non-creatable objects from tree', (done) => {
         const parent = {
-            composition: [{
-                key: 'child',
-                namespace: ''
-            }],
+            composition: [
+                {
+                    key: 'child',
+                    namespace: ''
+                }
+            ],
             identifier: {
                 key: 'parent',
                 namespace: ''
@@ -182,7 +197,7 @@ describe('Export as JSON plugin', () => {
             persisted: 1503598132428
         };
 
-        spyOn(openmct.composition, 'get').and.callFake(object => {
+        spyOn(openmct.composition, 'get').and.callFake((object) => {
             return {
                 load: () => {
                     if (object.identifier.key === 'parent') {
@@ -194,12 +209,26 @@ describe('Export as JSON plugin', () => {
             };
         });
 
-        spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
+        spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
             expect(Object.keys(completedTree).length).toBe(2);
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'parent')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'child')).not.toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'openmct')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'rootId')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'parent'
+                )
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'child'
+                )
+            ).not.toBeTruthy();
 
             done();
         });
@@ -209,10 +238,12 @@ describe('Export as JSON plugin', () => {
 
     it('can export self-containing objects', (done) => {
         const parent = {
-            composition: [{
-                key: 'infinteChild',
-                namespace: ''
-            }],
+            composition: [
+                {
+                    key: 'infinteChild',
+                    namespace: ''
+                }
+            ],
             identifier: {
                 key: 'infiniteParent',
                 namespace: ''
@@ -225,10 +256,12 @@ describe('Export as JSON plugin', () => {
         };
 
         const child = {
-            composition: [{
-                key: 'infiniteParent',
-                namespace: ''
-            }],
+            composition: [
+                {
+                    key: 'infiniteParent',
+                    namespace: ''
+                }
+            ],
             identifier: {
                 key: 'infinteChild',
                 namespace: ''
@@ -240,7 +273,7 @@ describe('Export as JSON plugin', () => {
             persisted: 1503598132428
         };
 
-        spyOn(openmct.composition, 'get').and.callFake(object => {
+        spyOn(openmct.composition, 'get').and.callFake((object) => {
             return {
                 load: () => {
                     if (object.name === 'parent') {
@@ -252,12 +285,26 @@ describe('Export as JSON plugin', () => {
             };
         });
 
-        spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
+        spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
             expect(Object.keys(completedTree).length).toBe(2);
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'infiniteParent')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'infinteChild')).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'openmct')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'rootId')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'infiniteParent'
+                )
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'infinteChild'
+                )
+            ).toBeTruthy();
 
             done();
         });
@@ -267,10 +314,12 @@ describe('Export as JSON plugin', () => {
 
     it('exports links to external objects as new objects', function (done) {
         const parent = {
-            composition: [{
-                key: 'child',
-                namespace: ''
-            }],
+            composition: [
+                {
+                    key: 'child',
+                    namespace: ''
+                }
+            ],
             identifier: {
                 key: 'parent',
                 namespace: ''
@@ -295,7 +344,7 @@ describe('Export as JSON plugin', () => {
             persisted: 1503598132428
         };
 
-        spyOn(openmct.composition, 'get').and.callFake(object => {
+        spyOn(openmct.composition, 'get').and.callFake((object) => {
             return {
                 load: () => {
                     if (object.name === 'Parent') {
@@ -307,14 +356,28 @@ describe('Export as JSON plugin', () => {
             };
         });
 
-        spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
+        spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
             expect(Object.keys(completedTree).length).toBe(2);
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'parent')).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'openmct')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'rootId')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'parent'
+                )
+            ).toBeTruthy();
 
             // parent and child objects as part of openmct but child with new id/key
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'child')).not.toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'child'
+                )
+            ).not.toBeTruthy();
             expect(Object.keys(completedTree.openmct).length).toBe(2);
 
             done();
@@ -358,16 +421,25 @@ describe('Export as JSON plugin', () => {
             persisted: 1503598132428
         };
 
-        spyOn(openmct.objects, 'get').and.callFake(object => {
+        spyOn(openmct.objects, 'get').and.callFake((object) => {
             return Promise.resolve(child);
         });
 
-        spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
+        spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
             expect(Object.keys(completedTree).length).toBe(2);
             const conditionSetId = Object.keys(completedTree.openmct)[1];
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
-            expect(Object.prototype.hasOwnProperty.call(completedTree.openmct, 'parent')).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'openmct')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(completedTree, 'rootId')
+            ).toBeTruthy();
+            expect(
+                Object.prototype.hasOwnProperty.call(
+                    completedTree.openmct,
+                    'parent'
+                )
+            ).toBeTruthy();
             expect(completedTree.openmct[conditionSetId].name).toBe('Child');
 
             done();

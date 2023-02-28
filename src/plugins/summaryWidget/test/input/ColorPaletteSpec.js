@@ -8,7 +8,11 @@ define(['../../src/input/ColorPalette'], function (ColorPalette) {
         });
 
         it('allows defining a custom color set', function () {
-            colorPalette = new ColorPalette('someClass', 'someContainer', ['color1', 'color2', 'color3']);
+            colorPalette = new ColorPalette('someClass', 'someContainer', [
+                'color1',
+                'color2',
+                'color3'
+            ]);
             expect(colorPalette.getCurrent()).toEqual('color1');
             colorPalette.on('change', changeCallback);
             colorPalette.set('color2');

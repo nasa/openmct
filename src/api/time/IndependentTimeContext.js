@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimeContext, { TIME_CONTEXT_EVENTS } from "./TimeContext";
+import TimeContext, { TIME_CONTEXT_EVENTS } from './TimeContext';
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.
@@ -38,12 +38,16 @@ class IndependentTimeContext extends TimeContext {
         this.objectPath = objectPath;
         this.refreshContext = this.refreshContext.bind(this);
         this.resetContext = this.resetContext.bind(this);
-        this.removeIndependentContext = this.removeIndependentContext.bind(this);
+        this.removeIndependentContext =
+            this.removeIndependentContext.bind(this);
 
         this.refreshContext();
 
         this.globalTimeContext.on('refreshContext', this.refreshContext);
-        this.globalTimeContext.on('removeOwnContext', this.removeIndependentContext);
+        this.globalTimeContext.on(
+            'removeOwnContext',
+            this.removeIndependentContext
+        );
     }
 
     bounds(newBounds) {
@@ -109,18 +113,26 @@ class IndependentTimeContext extends TimeContext {
             if (typeof keyOrClock === 'string') {
                 clock = this.globalTimeContext.clocks.get(keyOrClock);
                 if (clock === undefined) {
-                    throw "Unknown clock '" + keyOrClock + "'. Has it been registered with 'addClock'?";
+                    throw (
+                        "Unknown clock '" +
+                        keyOrClock +
+                        "'. Has it been registered with 'addClock'?"
+                    );
                 }
             } else if (typeof keyOrClock === 'object') {
                 clock = keyOrClock;
                 if (!this.globalTimeContext.clocks.has(clock.key)) {
-                    throw "Unknown clock '" + keyOrClock.key + "'. Has it been registered with 'addClock'?";
+                    throw (
+                        "Unknown clock '" +
+                        keyOrClock.key +
+                        "'. Has it been registered with 'addClock'?"
+                    );
                 }
             }
 
             const previousClock = this.activeClock;
             if (previousClock !== undefined) {
-                previousClock.off("tick", this.tick);
+                previousClock.off('tick', this.tick);
             }
 
             this.activeClock = clock;
@@ -132,15 +144,14 @@ class IndependentTimeContext extends TimeContext {
              * @property {Clock} clock The newly activated clock, or undefined
              * if the system is no longer following a clock source
              */
-            this.emit("clock", this.activeClock);
+            this.emit('clock', this.activeClock);
 
             if (this.activeClock !== undefined) {
                 this.clockOffsets(offsets);
-                this.activeClock.on("tick", this.tick);
+                this.activeClock.on('tick', this.tick);
             }
-
         } else if (arguments.length === 1) {
-            throw "When setting the clock, clock offsets must also be provided";
+            throw 'When setting the clock, clock offsets must also be provided';
         }
 
         return this.activeClock;
@@ -157,13 +168,15 @@ class IndependentTimeContext extends TimeContext {
                 const thisTimeContext = this;
                 this.upstreamTimeContext.on(eventName, passthrough);
                 this.unlisteners.push(() => {
-                    thisTimeContext.upstreamTimeContext.off(eventName, passthrough);
+                    thisTimeContext.upstreamTimeContext.off(
+                        eventName,
+                        passthrough
+                    );
                 });
                 function passthrough() {
                     thisTimeContext.emit(eventName, ...arguments);
                 }
             });
-
         }
     }
 
@@ -171,7 +184,7 @@ class IndependentTimeContext extends TimeContext {
      * Stops following any upstream time context
      */
     stopFollowingTimeContext() {
-        this.unlisteners.forEach(unlisten => unlisten());
+        this.unlisteners.forEach((unlisten) => unlisten());
         this.unlisteners = [];
     }
 
@@ -186,7 +199,9 @@ class IndependentTimeContext extends TimeContext {
      * Refresh the time context, following any upstream time contexts as necessary
      */
     refreshContext(viewKey) {
-        const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
+        const key = this.openmct.objects.makeKeyString(
+            this.objectPath[0].identifier
+        );
         if (viewKey && key === viewKey) {
             return;
         }
@@ -216,7 +231,8 @@ class IndependentTimeContext extends TimeContext {
         this.objectPath.some((item, index) => {
             const key = this.openmct.objects.makeKeyString(item.identifier);
             // we're only interested in parents, not self, so index > 0
-            const itemContext = this.globalTimeContext.independentContexts.get(key);
+            const itemContext =
+                this.globalTimeContext.independentContexts.get(key);
             if (index > 0 && itemContext && itemContext.hasOwnContext()) {
                 //upstream time context
                 timeContext = itemContext;
@@ -235,7 +251,9 @@ class IndependentTimeContext extends TimeContext {
      * This needs to be separate from refreshContext
      */
     removeIndependentContext(viewKey) {
-        const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
+        const key = this.openmct.objects.makeKeyString(
+            this.objectPath[0].identifier
+        );
         if (viewKey && key === viewKey) {
             //this is necessary as the upstream context gets reassigned after this
             this.stopFollowingTimeContext();
@@ -243,9 +261,12 @@ class IndependentTimeContext extends TimeContext {
             let timeContext = this.globalTimeContext;
 
             this.objectPath.some((item, index) => {
-                const objectKey = this.openmct.objects.makeKeyString(item.identifier);
+                const objectKey = this.openmct.objects.makeKeyString(
+                    item.identifier
+                );
                 // we're only interested in any parents, not self, so index > 0
-                const itemContext = this.globalTimeContext.independentContexts.get(objectKey);
+                const itemContext =
+                    this.globalTimeContext.independentContexts.get(objectKey);
                 if (index > 0 && itemContext && itemContext.hasOwnContext()) {
                     //upstream time context
                     timeContext = itemContext;

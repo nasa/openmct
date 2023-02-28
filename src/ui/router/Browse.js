@@ -1,9 +1,4 @@
-define([
-
-], function (
-
-) {
-
+define([], function () {
     return function install(openmct) {
         let navigateCall = 0;
         let browseObject;
@@ -28,9 +23,9 @@ define([
             }
 
             if (changed.view && browseObject) {
-                let provider = openmct
-                    .objectViews
-                    .getByProviderKey(changed.view);
+                let provider = openmct.objectViews.getByProviderKey(
+                    changed.view
+                );
                 viewObject(browseObject, provider);
             }
         }
@@ -38,14 +33,22 @@ define([
         function viewObject(object, viewProvider) {
             currentObjectPath = openmct.router.path;
 
-            openmct.layout.$refs.browseObject.show(object, viewProvider.key, true, currentObjectPath);
+            openmct.layout.$refs.browseObject.show(
+                object,
+                viewProvider.key,
+                true,
+                currentObjectPath
+            );
             openmct.layout.$refs.browseBar.domainObject = object;
 
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }
 
         function updateDocumentTitleOnNameMutation(domainObject) {
-            if (typeof domainObject.name === 'string' && domainObject.name !== document.title) {
+            if (
+                typeof domainObject.name === 'string' &&
+                domainObject.name !== document.title
+            ) {
                 document.title = domainObject.name;
             }
         }
@@ -64,7 +67,7 @@ define([
                 path = path.split('/');
             }
 
-            return pathToObjects(path).then(objects => {
+            return pathToObjects(path).then((objects) => {
                 isRoutingInProgress = false;
 
                 if (currentNavigation !== navigateCall) {
@@ -84,20 +87,29 @@ define([
                     return;
                 }
 
-                let currentProvider = openmct
-                    .objectViews
-                    .getByProviderKey(currentViewKey);
+                let currentProvider =
+                    openmct.objectViews.getByProviderKey(currentViewKey);
                 document.title = browseObject.name; //change document title to current object in main view
                 // assign listener to global for later clearing
-                unobserve = openmct.objects.observe(browseObject, '*', updateDocumentTitleOnNameMutation);
+                unobserve = openmct.objects.observe(
+                    browseObject,
+                    '*',
+                    updateDocumentTitleOnNameMutation
+                );
 
-                if (currentProvider && currentProvider.canView(browseObject, openmct.router.path)) {
+                if (
+                    currentProvider &&
+                    currentProvider.canView(browseObject, openmct.router.path)
+                ) {
                     viewObject(browseObject, currentProvider);
 
                     return;
                 }
 
-                let defaultProvider = openmct.objectViews.get(browseObject, openmct.router.path)[0];
+                let defaultProvider = openmct.objectViews.get(
+                    browseObject,
+                    openmct.router.path
+                )[0];
                 if (defaultProvider) {
                     openmct.router.updateParams({
                         view: defaultProvider.key
@@ -112,35 +124,43 @@ define([
         }
 
         function pathToObjects(path) {
-            return Promise.all(path.map((keyString) => {
-                let identifier = openmct.objects.parseKeyString(keyString);
-                if (openmct.objects.supportsMutation(identifier)) {
-                    return openmct.objects.getMutable(identifier);
-                } else {
-                    return openmct.objects.get(identifier);
-                }
-            }));
+            return Promise.all(
+                path.map((keyString) => {
+                    let identifier = openmct.objects.parseKeyString(keyString);
+                    if (openmct.objects.supportsMutation(identifier)) {
+                        return openmct.objects.getMutable(identifier);
+                    } else {
+                        return openmct.objects.get(identifier);
+                    }
+                })
+            );
         }
 
         function navigateToFirstChildOfRoot() {
-            openmct.objects.get('ROOT')
-                .then(rootObject => {
+            openmct.objects
+                .get('ROOT')
+                .then((rootObject) => {
                     const composition = openmct.composition.get(rootObject);
                     if (!composition) {
                         return;
                     }
 
-                    composition.load()
-                        .then(children => {
+                    composition
+                        .load()
+                        .then((children) => {
                             let lastChild = children[children.length - 1];
                             if (lastChild) {
-                                let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
-                                openmct.router.setPath(`#/browse/${lastChildId}`);
+                                let lastChildId = openmct.objects.makeKeyString(
+                                    lastChild.identifier
+                                );
+                                openmct.router.setPath(
+                                    `#/browse/${lastChildId}`
+                                );
                             }
                         })
-                        .catch(e => console.error(e));
+                        .catch((e) => console.error(e));
                 })
-                .catch(e => console.error(e));
+                .catch((e) => console.error(e));
         }
 
         function clearMutationListeners() {

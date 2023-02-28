@@ -24,7 +24,9 @@ const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Telemetry Table', () => {
-    test('unpauses and filters data when paused by button and user changes bounds', async ({ page }) => {
+    test('unpauses and filters data when paused by button and user changes bounds', async ({
+        page
+    }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5113'
@@ -32,7 +34,9 @@ test.describe('Telemetry Table', () => {
 
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
+        const table = await createDomainObjectWithDefaults(page, {
+            type: 'Telemetry Table'
+        });
         await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
             parent: table.uuid
@@ -49,7 +53,9 @@ test.describe('Telemetry Table', () => {
         await expect(tableWrapper).toHaveClass(/is-paused/);
 
         // Subtract 5 minutes from the current end bound datetime and set it
-        const endTimeInput = page.locator('input[type="text"].c-input--datetime').nth(1);
+        const endTimeInput = page
+            .locator('input[type="text"].c-input--datetime')
+            .nth(1);
         await endTimeInput.click();
 
         let endDate = await endTimeInput.inputValue();
@@ -65,7 +71,12 @@ test.describe('Telemetry Table', () => {
         await expect(tableWrapper).not.toHaveClass(/is-paused/);
 
         // Get the most recent telemetry date
-        const latestTelemetryDate = await page.locator('table.c-telemetry-table__body > tbody > tr').last().locator('td').nth(1).getAttribute('title');
+        const latestTelemetryDate = await page
+            .locator('table.c-telemetry-table__body > tbody > tr')
+            .last()
+            .locator('td')
+            .nth(1)
+            .getAttribute('title');
 
         // Verify that it is <= our new end bound
         const latestMilliseconds = Date.parse(latestTelemetryDate);

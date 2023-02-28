@@ -28,34 +28,68 @@ test.describe('The Fault Management Plugin using example faults', () => {
         await utils.navigateToFaultManagementWithExample(page);
     });
 
-    test('Shows a criticality icon for every fault @unstable', async ({ page }) => {
+    test('Shows a criticality icon for every fault @unstable', async ({
+        page
+    }) => {
         const faultCount = await page.locator('c-fault-mgmt__list').count();
-        const criticalityIconCount = await page.locator('c-fault-mgmt__list-severity').count();
+        const criticalityIconCount = await page
+            .locator('c-fault-mgmt__list-severity')
+            .count();
 
         expect.soft(faultCount).toEqual(criticalityIconCount);
     });
 
-    test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector @unstable', async ({ page }) => {
+    test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector @unstable', async ({
+        page
+    }) => {
         await utils.selectFaultItem(page, 1);
 
-        const selectedFaultName = await page.locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname').textContent();
-        const inspectorFaultNameCount = await page.locator(`.c-inspector__properties >> :text("${selectedFaultName}")`).count();
+        const selectedFaultName = await page
+            .locator(
+                '.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname'
+            )
+            .textContent();
+        const inspectorFaultNameCount = await page
+            .locator(
+                `.c-inspector__properties >> :text("${selectedFaultName}")`
+            )
+            .count();
 
-        await expect.soft(page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').first()).toHaveClass(/is-selected/);
+        await expect
+            .soft(
+                page
+                    .locator(
+                        '.c-faults-list-view-item-body > .c-fault-mgmt__list'
+                    )
+                    .first()
+            )
+            .toHaveClass(/is-selected/);
         expect.soft(inspectorFaultNameCount).toEqual(1);
     });
 
-    test('When selecting multiple faults, no specific fault information is shown in the inspector @unstable', async ({ page }) => {
+    test('When selecting multiple faults, no specific fault information is shown in the inspector @unstable', async ({
+        page
+    }) => {
         await utils.selectFaultItem(page, 1);
         await utils.selectFaultItem(page, 2);
 
-        const selectedRows = page.locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname');
+        const selectedRows = page.locator(
+            '.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname'
+        );
         expect.soft(await selectedRows.count()).toEqual(2);
 
         const firstSelectedFaultName = await selectedRows.nth(0).textContent();
         const secondSelectedFaultName = await selectedRows.nth(1).textContent();
-        const firstNameInInspectorCount = await page.locator(`.c-inspector__properties >> :text("${firstSelectedFaultName}")`).count();
-        const secondNameInInspectorCount = await page.locator(`.c-inspector__properties >> :text("${secondSelectedFaultName}")`).count();
+        const firstNameInInspectorCount = await page
+            .locator(
+                `.c-inspector__properties >> :text("${firstSelectedFaultName}")`
+            )
+            .count();
+        const secondNameInInspectorCount = await page
+            .locator(
+                `.c-inspector__properties >> :text("${secondSelectedFaultName}")`
+            )
+            .count();
 
         expect.soft(firstNameInInspectorCount).toEqual(0);
         expect.soft(secondNameInInspectorCount).toEqual(0);
@@ -98,8 +132,14 @@ test.describe('The Fault Management Plugin using example faults', () => {
         const shelvedFaultNameOne = await utils.getFaultName(page, 1);
         const shelvedFaultNameFour = await utils.getFaultName(page, 4);
 
-        const beforeShelvedFaultOne = utils.getFaultByName(page, shelvedFaultNameOne);
-        const beforeShelvedFaultFour = utils.getFaultByName(page, shelvedFaultNameFour);
+        const beforeShelvedFaultOne = utils.getFaultByName(
+            page,
+            shelvedFaultNameOne
+        );
+        const beforeShelvedFaultFour = utils.getFaultByName(
+            page,
+            shelvedFaultNameFour
+        );
 
         expect.soft(await beforeShelvedFaultOne.count()).toBe(1);
         expect.soft(await beforeShelvedFaultFour.count()).toBe(1);
@@ -107,21 +147,35 @@ test.describe('The Fault Management Plugin using example faults', () => {
         await utils.shelveMultipleFaults(page, 1, 4);
 
         // check it is removed from standard view
-        const afterShelvedFaultOne = utils.getFaultByName(page, shelvedFaultNameOne);
-        const afterShelvedFaultFour = utils.getFaultByName(page, shelvedFaultNameFour);
+        const afterShelvedFaultOne = utils.getFaultByName(
+            page,
+            shelvedFaultNameOne
+        );
+        const afterShelvedFaultFour = utils.getFaultByName(
+            page,
+            shelvedFaultNameFour
+        );
         expect.soft(await afterShelvedFaultOne.count()).toBe(0);
         expect.soft(await afterShelvedFaultFour.count()).toBe(0);
 
         await utils.changeViewTo(page, 'shelved');
 
-        const shelvedViewFaultOne = utils.getFaultByName(page, shelvedFaultNameOne);
-        const shelvedViewFaultFour = utils.getFaultByName(page, shelvedFaultNameFour);
+        const shelvedViewFaultOne = utils.getFaultByName(
+            page,
+            shelvedFaultNameOne
+        );
+        const shelvedViewFaultFour = utils.getFaultByName(
+            page,
+            shelvedFaultNameFour
+        );
 
         expect.soft(await shelvedViewFaultOne.count()).toBe(1);
         expect.soft(await shelvedViewFaultFour.count()).toBe(1);
     });
 
-    test('Allows you to acknowledge multiple faults @unstable', async ({ page }) => {
+    test('Allows you to acknowledge multiple faults @unstable', async ({
+        page
+    }) => {
         const acknowledgedFaultNameTwo = await utils.getFaultName(page, 2);
         const acknowledgedFaultNameFive = await utils.getFaultName(page, 5);
 
@@ -136,8 +190,14 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
         await utils.changeViewTo(page, 'acknowledged');
 
-        const acknowledgedViewFaultTwo = utils.getFaultByName(page, acknowledgedFaultNameTwo);
-        const acknowledgedViewFaultFive = utils.getFaultByName(page, acknowledgedFaultNameFive);
+        const acknowledgedViewFaultTwo = utils.getFaultByName(
+            page,
+            acknowledgedFaultNameTwo
+        );
+        const acknowledgedViewFaultFive = utils.getFaultByName(
+            page,
+            acknowledgedFaultNameFive
+        );
 
         expect.soft(await acknowledgedViewFaultTwo.count()).toBe(1);
         expect.soft(await acknowledgedViewFaultFive.count()).toBe(1);
@@ -157,7 +217,9 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
         faultResultCount = await utils.getFaultResultCount(page);
         expect.soft(faultResultCount).toEqual(1);
-        expect.soft(await utils.getFaultNamespace(page, 1)).toEqual(faultThreeNamespace);
+        expect
+            .soft(await utils.getFaultNamespace(page, 1))
+            .toEqual(faultThreeNamespace);
 
         // all faults
         await utils.clearSearch(page);
@@ -181,7 +243,9 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
         faultResultCount = await utils.getFaultResultCount(page);
         expect.soft(faultResultCount).toEqual(1);
-        expect.soft(await utils.getFaultTriggerTime(page, 1)).toEqual(faultFiveTriggerTime);
+        expect
+            .soft(await utils.getFaultTriggerTime(page, 1))
+            .toEqual(faultFiveTriggerTime);
     });
 
     test('Allows you to sort faults @unstable', async ({ page }) => {
@@ -205,7 +269,6 @@ test.describe('The Fault Management Plugin using example faults', () => {
         expect.soft(sortedHighestSeverity).toEqual(highestSeverity);
         expect.soft(sortedLowestSeverity).toEqual(lowestSeverity);
     });
-
 });
 
 test.describe('The Fault Management Plugin without using example faults', () => {
@@ -213,13 +276,17 @@ test.describe('The Fault Management Plugin without using example faults', () => 
         await utils.navigateToFaultManagementWithoutExample(page);
     });
 
-    test('Shows no faults when no faults are provided @unstable', async ({ page }) => {
+    test('Shows no faults when no faults are provided @unstable', async ({
+        page
+    }) => {
         const faultCount = await page.locator('c-fault-mgmt__list').count();
 
         expect.soft(faultCount).toEqual(0);
 
         await utils.changeViewTo(page, 'acknowledged');
-        const acknowledgedCount = await page.locator('c-fault-mgmt__list').count();
+        const acknowledgedCount = await page
+            .locator('c-fault-mgmt__list')
+            .count();
         expect.soft(acknowledgedCount).toEqual(0);
 
         await utils.changeViewTo(page, 'shelved');

@@ -21,12 +21,12 @@
  *****************************************************************************/
 /**
  * The query service handles calls for browser and userAgent
-* info using a comparison between the userAgent and key
-* device names
-* @constructor
-* @param window the broser object model
-* @memberof /utils/agent
-*/
+ * info using a comparison between the userAgent and key
+ * device names
+ * @constructor
+ * @param window the broser object model
+ * @memberof /utils/agent
+ */
 export default class Agent {
     constructor(window) {
         const userAgent = window.navigator.userAgent;
@@ -35,7 +35,7 @@ export default class Agent {
         this.userAgent = userAgent;
         this.mobileName = matches[0];
         this.window = window;
-        this.touchEnabled = (window.ontouchstart !== undefined);
+        this.touchEnabled = window.ontouchstart !== undefined;
     }
     /**
      * Check if the user is on a mobile device.
@@ -81,7 +81,12 @@ export default class Agent {
      * @returns {boolean} true on a tablet
      */
     isTablet() {
-        return (this.isMobile() && !this.isPhone() && this.mobileName !== 'Android') || (this.isMobile() && this.isAndroidTablet());
+        return (
+            (this.isMobile() &&
+                !this.isPhone() &&
+                this.mobileName !== 'Android') ||
+            (this.isMobile() && this.isAndroidTablet())
+        );
     }
     /**
      * Check if the user's device is in a portrait-style
@@ -90,8 +95,13 @@ export default class Agent {
      */
     isPortrait() {
         const { screen } = this.window;
-        const hasScreenOrientation = screen && Object.prototype.hasOwnProperty.call(screen, 'orientation');
-        const hasWindowOrientation = Object.prototype.hasOwnProperty.call(this.window, 'orientation');
+        const hasScreenOrientation =
+            screen &&
+            Object.prototype.hasOwnProperty.call(screen, 'orientation');
+        const hasWindowOrientation = Object.prototype.hasOwnProperty.call(
+            this.window,
+            'orientation'
+        );
 
         if (hasScreenOrientation) {
             return screen.orientation.type.includes('portrait');

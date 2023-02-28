@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import ImageryTimeView from './components/ImageryTimeView.vue';
-import Vue from "vue";
+import Vue from 'vue';
 
 export default function ImageryTimestripViewProvider(openmct) {
     const type = 'example.imagery.time-strip.view';
@@ -39,9 +39,15 @@ export default function ImageryTimestripViewProvider(openmct) {
         name: 'Imagery Timestrip View',
         cssClass: 'icon-image',
         canView: function (domainObject, objectPath) {
-            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+            let isChildOfTimeStrip = objectPath.find(
+                (object) => object.type === 'time-strip'
+            );
 
-            return hasImageTelemetry(domainObject) && isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+            return (
+                hasImageTelemetry(domainObject) &&
+                isChildOfTimeStrip &&
+                !openmct.router.isNavigatedObject(objectPath)
+            );
         },
         view: function (domainObject, objectPath) {
             let component;
@@ -59,7 +65,6 @@ export default function ImageryTimestripViewProvider(openmct) {
                             objectPath: objectPath
                         },
                         template: '<imagery-time-view></imagery-time-view>'
-
                     });
                 },
 

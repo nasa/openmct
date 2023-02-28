@@ -20,16 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
 import GrandSearch from './GrandSearch.vue';
 import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
 import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
 
-xdescribe("GrandSearch", () => {
+xdescribe('GrandSearch', () => {
     let openmct;
     let grandSearchComponent;
     let viewContainer;
@@ -143,11 +140,13 @@ xdescribe("GrandSearch", () => {
             }
         };
 
-        openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(false);
-        mockObjectProvider = jasmine.createSpyObj("mock object provider", [
-            "create",
-            "update",
-            "get"
+        openmct.router.isNavigatedObject = jasmine
+            .createSpy()
+            .and.returnValue(false);
+        mockObjectProvider = jasmine.createSpyObj('mock object provider', [
+            'create',
+            'update',
+            'get'
         ]);
         // eslint-disable-next-line require-await
         mockObjectProvider.get = async (identifier) => {
@@ -159,7 +158,9 @@ xdescribe("GrandSearch", () => {
                 return mockDisplayLayout;
             } else if (identifier.key === mockFolderObject.identifier.key) {
                 return mockFolderObject;
-            } else if (identifier.key === mockAnotherFolderObject.identifier.key) {
+            } else if (
+                identifier.key === mockAnotherFolderObject.identifier.key
+            ) {
                 return mockAnotherFolderObject;
             } else if (identifier.key === mockTopObject.identifier.key) {
                 return mockTopObject;
@@ -175,23 +176,32 @@ xdescribe("GrandSearch", () => {
 
         openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
 
-        const mockViewProvider = jasmine.createSpyObj("mock view provider", [
-            "key",
-            "view",
-            "canView"
+        const mockViewProvider = jasmine.createSpyObj('mock view provider', [
+            'key',
+            'view',
+            'canView'
         ]);
 
         openmct.objectViews.addProvider(mockViewProvider);
 
         openmct.on('start', async () => {
             // use local worker
-            sharedWorkerToRestore = openmct.objects.inMemorySearchProvider.worker;
+            sharedWorkerToRestore =
+                openmct.objects.inMemorySearchProvider.worker;
             openmct.objects.inMemorySearchProvider.worker = null;
             await openmct.objects.inMemorySearchProvider.index(mockTopObject);
-            await openmct.objects.inMemorySearchProvider.index(mockDomainObject);
-            await openmct.objects.inMemorySearchProvider.index(mockDisplayLayout);
-            await openmct.objects.inMemorySearchProvider.index(mockFolderObject);
-            await openmct.objects.inMemorySearchProvider.index(mockAnnotationObject);
+            await openmct.objects.inMemorySearchProvider.index(
+                mockDomainObject
+            );
+            await openmct.objects.inMemorySearchProvider.index(
+                mockDisplayLayout
+            );
+            await openmct.objects.inMemorySearchProvider.index(
+                mockFolderObject
+            );
+            await openmct.objects.inMemorySearchProvider.index(
+                mockAnnotationObject
+            );
             parent = document.createElement('div');
             document.body.appendChild(parent);
             viewContainer = document.createElement('div');
@@ -221,27 +231,31 @@ xdescribe("GrandSearch", () => {
         return resetApplicationState(openmct);
     });
 
-    it("should render an object search result", async () => {
+    it('should render an object search result', async () => {
         await grandSearchComponent.$children[0].searchEverything('foo');
         await Vue.nextTick();
-        const searchResults = document.querySelectorAll('[aria-label="fooRabbitNotebook notebook result"]');
+        const searchResults = document.querySelectorAll(
+            '[aria-label="fooRabbitNotebook notebook result"]'
+        );
         expect(searchResults.length).toBe(1);
         expect(searchResults[0].innerText).toContain('Rabbit');
     });
 
-    it("should render an object search result if new object added", async () => {
+    it('should render an object search result if new object added', async () => {
         const composition = openmct.composition.get(mockFolderObject);
         composition.add(mockNewObject);
         // after adding, need to wait a beat for the folder to be indexed
         await Vue.nextTick();
         await grandSearchComponent.$children[0].searchEverything('apple');
         await Vue.nextTick();
-        const searchResults = document.querySelectorAll('[aria-label="New Apple Test Folder folder result"]');
+        const searchResults = document.querySelectorAll(
+            '[aria-label="New Apple Test Folder folder result"]'
+        );
         expect(searchResults.length).toBe(1);
         expect(searchResults[0].innerText).toContain('Apple');
     });
 
-    it("should not use InMemorySearch provider if object provider provides search", async () => {
+    it('should not use InMemorySearch provider if object provider provides search', async () => {
         // eslint-disable-next-line require-await
         mockObjectProvider.search = async (query, abortSignal, searchType) => {
             if (searchType === openmct.objects.SEARCH_TYPES.OBJECTS) {
@@ -259,30 +273,38 @@ xdescribe("GrandSearch", () => {
         composition.add(mockNewObject);
         await grandSearchComponent.$children[0].searchEverything('apple');
         await Vue.nextTick();
-        const searchResults = document.querySelectorAll('[aria-label="New Apple Test Folder folder result"]');
+        const searchResults = document.querySelectorAll(
+            '[aria-label="New Apple Test Folder folder result"]'
+        );
         // This will be of length 2 (doubles) if we're incorrectly searching with InMemorySearchProvider as well
         expect(searchResults.length).toBe(1);
         expect(searchResults[0].innerText).toContain('Apple');
     });
 
-    it("should render an annotation search result", async () => {
+    it('should render an annotation search result', async () => {
         await grandSearchComponent.$children[0].searchEverything('S');
         await Vue.nextTick();
-        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        const annotationResults = document.querySelectorAll(
+            '[aria-label="Search Result"]'
+        );
         expect(annotationResults.length).toBe(2);
         expect(annotationResults[1].innerText).toContain('Driving');
     });
 
-    it("should render no annotation search results if no match", async () => {
+    it('should render no annotation search results if no match', async () => {
         await grandSearchComponent.$children[0].searchEverything('Qbert');
         await Vue.nextTick();
-        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        const annotationResults = document.querySelectorAll(
+            '[aria-label="Search Result"]'
+        );
         expect(annotationResults.length).toBe(0);
     });
 
-    it("should preview object search results in edit mode if object clicked", async () => {
+    it('should preview object search results in edit mode if object clicked', async () => {
         await grandSearchComponent.$children[0].searchEverything('Folder');
-        grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
+        grandSearchComponent._provided.openmct.router.path = [
+            mockDisplayLayout
+        ];
         await Vue.nextTick();
         const searchResults = document.querySelectorAll('[name="Test Folder"]');
         expect(searchResults.length).toBe(1);
@@ -292,11 +314,15 @@ xdescribe("GrandSearch", () => {
         expect(previewWindow.innerText).toContain('Snapshot');
     });
 
-    it("should preview annotation search results in edit mode if annotation clicked", async () => {
+    it('should preview annotation search results in edit mode if annotation clicked', async () => {
         await grandSearchComponent.$children[0].searchEverything('Dri');
-        grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
+        grandSearchComponent._provided.openmct.router.path = [
+            mockDisplayLayout
+        ];
         await Vue.nextTick();
-        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        const annotationResults = document.querySelectorAll(
+            '[aria-label="Search Result"]'
+        );
         expect(annotationResults.length).toBe(1);
         expect(annotationResults[0].innerText).toContain('Driving');
         annotationResults[0].click();

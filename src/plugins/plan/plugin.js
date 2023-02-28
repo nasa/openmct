@@ -21,14 +21,15 @@
  *****************************************************************************/
 
 import PlanViewProvider from './PlanViewProvider';
-import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
+import PlanInspectorViewProvider from './inspector/PlanInspectorViewProvider';
 
 export default function (configuration) {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',
             key: 'plan',
-            description: 'A configurable timeline-like view for a compatible mission plan file.',
+            description:
+                'A configurable timeline-like view for a compatible mission plan file.',
             creatable: true,
             cssClass: 'icon-plan',
             form: [
@@ -39,16 +40,14 @@ export default function (configuration) {
                     required: true,
                     text: 'Select File...',
                     type: 'application/json',
-                    property: [
-                        "selectFile"
-                    ]
+                    property: ['selectFile']
                 }
             ],
-            initialize: function (domainObject) {
-            }
+            initialize: function (domainObject) {}
         });
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
+        openmct.inspectorViews.addProvider(
+            new PlanInspectorViewProvider(openmct)
+        );
     };
 }
-

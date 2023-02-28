@@ -36,18 +36,15 @@ export default class NotebookType {
                 options: [
                     {
                         name: 'Newest First',
-                        value: "newest"
+                        value: 'newest'
                     },
                     {
                         name: 'Oldest First',
-                        value: "oldest"
+                        value: 'oldest'
                     }
                 ],
                 cssClass: 'l-inline',
-                property: [
-                    "configuration",
-                    "defaultSort"
-                ]
+                property: ['configuration', 'defaultSort']
             },
             {
                 key: 'sectionTitle',
@@ -55,10 +52,7 @@ export default class NotebookType {
                 control: 'textfield',
                 cssClass: 'l-inline',
                 required: true,
-                property: [
-                    "configuration",
-                    "sectionTitle"
-                ]
+                property: ['configuration', 'sectionTitle']
             },
             {
                 key: 'pageTitle',
@@ -66,10 +60,7 @@ export default class NotebookType {
                 control: 'textfield',
                 cssClass: 'l-inline',
                 required: true,
-                property: [
-                    "configuration",
-                    "pageTitle"
-                ]
+                property: ['configuration', 'pageTitle']
             }
         ];
     }

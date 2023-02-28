@@ -20,12 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
-import WebPagePlugin from "./plugin";
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import WebPagePlugin from './plugin';
 
 function getView(openmct, domainObj, objectPath) {
     const applicableViews = openmct.objectViews.get(domainObj, objectPath);
-    const webpageView = applicableViews.find((viewProvider) => viewProvider.key === 'webPage');
+    const webpageView = applicableViews.find(
+        (viewProvider) => viewProvider.key === 'webPage'
+    );
 
     return webpageView.view(domainObj);
 }
@@ -34,7 +36,7 @@ function destroyView(view) {
     return view.destroy();
 }
 
-describe("The web page plugin", function () {
+describe('The web page plugin', function () {
     let mockDomainObject;
     let mockDomainObjectPath;
     let openmct;
@@ -55,18 +57,18 @@ describe("The web page plugin", function () {
         ];
 
         mockDomainObject = {
-            displayFormat: "",
-            name: "Unnamed WebPage",
-            type: "webPage",
-            location: "f69c21ac-24ef-450c-8e2f-3d527087d285",
+            displayFormat: '',
+            name: 'Unnamed WebPage',
+            type: 'webPage',
+            location: 'f69c21ac-24ef-450c-8e2f-3d527087d285',
             modified: 1627483839783,
-            url: "123",
-            displayText: "123",
+            url: '123',
+            displayText: '123',
             persisted: 1627483839783,
-            id: "3d9c243d-dffb-446b-8474-d9931a99d679",
+            id: '3d9c243d-dffb-446b-8474-d9931a99d679',
             identifier: {
-                namespace: "",
-                key: "3d9c243d-dffb-446b-8474-d9931a99d679"
+                namespace: '',
+                key: '3d9c243d-dffb-446b-8474-d9931a99d679'
             }
         };
 
@@ -83,7 +85,6 @@ describe("The web page plugin", function () {
 
         openmct.on('start', done);
         openmct.startHeadless();
-
     });
 
     afterEach(() => {
@@ -102,5 +103,4 @@ describe("The web page plugin", function () {
             expect(view).toBeDefined();
         });
     });
-
 });
