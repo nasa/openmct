@@ -1,26 +1,31 @@
-/***************************************************************************** *
-Open MCT, Copyright (c) 2014-2022, United States Government * as represented by
-the Administrator of the National Aeronautics and Space * Administration. All
-rights reserved. * * Open MCT is licensed under the Apache License, Version 2.0
-(the * "License"); you may not use this file except in compliance with the
-License. * You may obtain a copy of the License at *
-http://www.apache.org/licenses/LICENSE-2.0. * * Unless required by applicable
-law or agreed to in writing, software * distributed under the License is
-distributed on an "AS IS" BASIS, WITHOUT * WARRANTIES OR CONDITIONS OF ANY KIND,
-either express or implied. See the * License for the specific language governing
-permissions and limitations * under the License. * * Open MCT includes source
-code licensed under additional open source * licenses. See the Open Source
-Licenses file (LICENSES.md) included with * this source code distribution or the
-Licensing information page available * at runtime from the About dialog for
-additional information.
-*****************************************************************************/
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2022, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 
 <template>
-<div class="c-tag-applier has-tag-applier">
+<div class="c-tag-applier">
     <TagSelection
         v-for="(addedTag, index) in addedTags"
         :key="index"
-        :class="{ 'w-tag-wrapper--tag-selector': addedTag.newTag }"
+        :class="{ 'w-tag-wrapper--tag-selector' : addedTag.newTag }"
         :selected-tag="addedTag.newTag ? null : addedTag"
         :new-tag="addedTag.newTag"
         :added-tags="addedTags"
@@ -40,13 +45,13 @@ additional information.
 </template>
 
 <script>
-import TagSelection from "./TagSelection.vue";
+import TagSelection from './TagSelection.vue';
 
 export default {
     components: {
         TagSelection
     },
-    inject: ["openmct"],
+    inject: ['openmct'],
     props: {
         annotations: {
             type: Array,
@@ -91,11 +96,7 @@ export default {
         maxTagsAdded() {
             const availableTags = this.openmct.annotation.getAvailableTags();
 
-            return !(
-                availableTags
-        && availableTags.length
-        && this.addedTags.length < availableTags.length
-            );
+            return !(availableTags && availableTags.length && (this.addedTags.length < availableTags.length));
         }
     },
     watch: {
@@ -116,14 +117,9 @@ export default {
             }
         },
         annotationDeletionListener(changedAnnotation) {
-            const matchingAnnotation = this.annotations.find(
-                (possibleMatchingAnnotation) => {
-                    return this.openmct.objects.areIdsEqual(
-                        possibleMatchingAnnotation.identifier,
-                        changedAnnotation.identifier
-                    );
-                }
-            );
+            const matchingAnnotation = this.annotations.find((possibleMatchingAnnotation) => {
+                return this.openmct.objects.areIdsEqual(possibleMatchingAnnotation.identifier, changedAnnotation.identifier);
+            });
             if (matchingAnnotation) {
                 matchingAnnotation._deleted = changedAnnotation._deleted;
                 this.userAddingTag = false;
@@ -132,17 +128,15 @@ export default {
         },
         tagsChanged() {
             // gather tags from annotations
-            const tagsFromAnnotations = this.annotations
-                .flatMap((annotation) => {
-                    if (annotation._deleted) {
-                        return [];
-                    } else {
-                        return annotation.tags;
-                    }
-                })
-                .filter((tag, index, array) => {
-                    return array.indexOf(tag) === index;
-                });
+            const tagsFromAnnotations = this.annotations.flatMap((annotation) => {
+                if (annotation._deleted) {
+                    return [];
+                } else {
+                    return annotation.tags;
+                }
+            }).filter((tag, index, array) => {
+                return array.indexOf(tag) === index;
+            });
 
             if (tagsFromAnnotations.length !== this.addedTags.length) {
                 this.addedTags = this.addedTags.slice(0, tagsFromAnnotations.length);
@@ -164,10 +158,9 @@ export default {
             const annotationsToDelete = this.annotations.filter((annotation) => {
                 return annotation.tags.includes(tagToRemove) && !annotation._deleted;
             });
-            this.userAddingTag = false;
             if (annotationsToDelete) {
                 await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
-                this.$emit("tags-updated", annotationsToDelete);
+                this.$emit('tags-updated', annotationsToDelete);
                 if (this.onTagChange) {
                     this.userAddingTag = false;
                     this.onTagChange(this.annotations);
@@ -198,16 +191,14 @@ export default {
                     annotationType: this.annotationType,
                     tags: [newTag]
                 };
-                existingAnnotation = await this.openmct.annotation.create(
-                    annotationCreationArguments
-                );
+                existingAnnotation = await this.openmct.annotation.create(annotationCreationArguments);
             } else if (existingAnnotation._deleted) {
                 this.openmct.annotation.unDeleteAnnotation(existingAnnotation);
             }
 
             this.userAddingTag = false;
 
-            this.$emit("tags-updated", existingAnnotation);
+            this.$emit('tags-updated', existingAnnotation);
             if (this.onTagChange) {
                 this.onTagChange([existingAnnotation]);
             }
