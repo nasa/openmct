@@ -44,6 +44,7 @@
                 v-show="!readOnly"
                 class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle"
                 :style="{ textShadow: selectedBackgroundColor + ' 0 0 4px' }"
+                :aria-label="`Remove tag ${selectedTagLabel}`"
                 @click="removeTag"
             ></button>
             <div
