@@ -194,10 +194,30 @@ export default {
         },
         /**
          * Clears the Recent Objects list in localStorage and in the component.
+         * Before clearing, prompts the user to confirm the action with a dialog.
          */
         clearRecentObjects() {
-            localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
-            this.recents = [];
+            let dialog = this.openmct.overlays.dialog({
+                title: 'Clear Recently Viewed Objects',
+                iconClass: 'alert',
+                message: 'This action will clear the Recently View items list. Are you sure you want to continue?',
+                buttons: [
+                    {
+                        label: 'OK',
+                        callback: () => {
+                            dialog.dismiss();
+                            localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
+                            this.recents = [];
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
         }
     }
 };
