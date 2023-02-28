@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="c-tag-applier has-tag-applier">
+<div class="c-tag-applier">
     <TagSelection
         v-for="(addedTag, index) in addedTags"
         :key="index"
