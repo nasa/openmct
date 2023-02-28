@@ -27,39 +27,22 @@ Tests to verify plot tagging functionality.
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-test.describe.only('Plot Tagging', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
-    });
-
-    test('Plot legend color is in sync with plot series color', async ({ page }) => {
-        const overlayPlot = await createDomainObjectWithDefaults(page, {
-            type: "Overlay Plot"
-        });
-
-        await createDomainObjectWithDefaults(page, {
-            type: "Sine Wave Generator",
-            parent: overlayPlot.uuid
-        });
-
-        await page.goto(overlayPlot.url);
-
-        const canvas = page.locator('canvas').nth(1);
-
+test.describe('Plot Tagging', () => {
+    async function createTags({page, canvas, xEnd, yEnd}) {
         await canvas.hover({trial: true});
 
-        //Alt+Shift Drag Start
+        //Alt+Shift Drag Start to select some points to tag
         await page.keyboard.down('Alt');
         await page.keyboard.down('Shift');
 
         await canvas.dragTo(canvas, {
             sourcePosition: {
-                x: 200,
-                y: 200
+                x: 1,
+                y: 1
             },
             targetPosition: {
-                x: 400,
-                y: 400
+                x: xEnd,
+                y: yEnd
             }
         });
 
@@ -70,6 +53,7 @@ test.describe.only('Plot Tagging', () => {
         //Wait for canvas to stablize.
         await canvas.hover({trial: true});
 
+        // add some tags
         await page.getByText('Annotations').click();
         await page.getByRole('button', { name: /Add Tag/ }).click();
         await page.getByPlaceholder('Type to select tag').click();
@@ -78,12 +62,32 @@ test.describe.only('Plot Tagging', () => {
         await page.getByRole('button', { name: /Add Tag/ }).click();
         await page.getByPlaceholder('Type to select tag').click();
         await page.getByText('Science').click();
+    }
 
+    async function testTelemetryItem(page, canvas, telemetryItem) {
+        // Check that telemetry item also received the tag
+        await page.goto(telemetryItem.url);
+
+        await expect(page.getByText('No tags to display for this item')).toBeVisible();
+
+        // click on the tagged plot point
+        await canvas.click({
+            position: {
+                x: 325,
+                y: 377
+            }
+        });
+
+        await expect(page.getByText('Science')).toBeVisible();
+        await expect(page.getByText('Driving')).toBeHidden();
+    }
+
+    async function basicTagsTests(page, canvas) {
         // Search for Science
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
-        await expect(page.locator('[aria-label="Search Result"]')).toContainText("Science");
-        await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Drilling");
+        await expect(page.locator('[aria-label="Search Result"]').nth(0)).toContainText("Science");
+        await expect(page.locator('[aria-label="Search Result"]').nth(0)).not.toContainText("Drilling");
 
         // Delete Driving
         await page.hover('[aria-label="Tag"]:has-text("Driving")');
@@ -95,7 +99,7 @@ test.describe.only('Plot Tagging', () => {
         // Search for Driving
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('driv');
-        await expect(page.locator('text=No results found')).toBeVisible();
+        await expect(page.getByText('No results found')).toBeVisible();
 
         //Reload Page
         await Promise.all([
@@ -103,6 +107,99 @@ test.describe.only('Plot Tagging', () => {
             page.waitForLoadState('networkidle')
         ]);
 
-        await page.pause();
+        await page.getByText('Annotations').click();
+        await expect(page.getByText('No tags to display for this item')).toBeVisible();
+
+        // click on the tagged plot point
+        await canvas.click({
+            position: {
+                x: 100,
+                y: 100
+            }
+        });
+
+        await expect(page.getByText('Science')).toBeVisible();
+        await expect(page.getByText('Driving')).toBeHidden();
+    }
+
+    test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
+
+    test('Tags work with Overlay Plots', async ({ page }) => {
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
+            type: "Overlay Plot"
+        });
+
+        const alphaSineWave = await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: "Alpha Sine Wave",
+            parent: overlayPlot.uuid
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: "Beta Sine Wave",
+            parent: overlayPlot.uuid
+        });
+
+        await page.goto(overlayPlot.url);
+
+        const canvas = page.locator('canvas').nth(1);
+
+        await createTags({
+            page,
+            canvas,
+            xEnd: 700,
+            yEnd: 480
+        });
+        await basicTagsTests(page, canvas);
+        await testTelemetryItem(page, canvas, alphaSineWave);
+    });
+
+    test('Tags work with Plot View of telemetry items', async ({ page }) => {
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator"
+        });
+
+        const canvas = page.locator('canvas').nth(1);
+        await createTags({
+            page,
+            canvas,
+            xEnd: 700,
+            yEnd: 480
+        });
+        await basicTagsTests(page, canvas);
+    });
+
+    test('Tags work with Stacked Plots', async ({ page }) => {
+        const stackedPlot = await createDomainObjectWithDefaults(page, {
+            type: "Stacked Plot"
+        });
+
+        const alphaSineWave = await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: "Alpha Sine Wave",
+            parent: stackedPlot.uuid
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            name: "Beta Sine Wave",
+            parent: stackedPlot.uuid
+        });
+
+        await page.goto(stackedPlot.url);
+
+        const canvas = page.locator('canvas').nth(1);
+
+        await createTags({
+            page,
+            canvas,
+            xEnd: 700,
+            yEnd: 215
+        });
+        await basicTagsTests(page, canvas);
+        await testTelemetryItem(page, canvas, alphaSineWave);
     });
 });
