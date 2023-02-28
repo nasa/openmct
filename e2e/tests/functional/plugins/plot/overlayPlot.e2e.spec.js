@@ -79,8 +79,7 @@ test.describe('Overlay Plot', () => {
 
         // Assert that no limit lines are shown by default
         await page.waitForSelector('.js-limit-area', { state: 'attached' });
-        const limitLineCount = await page.locator('.c-plot-limit-line').count();
-        expect(limitLineCount).toBe(0);
+        expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
 
         // Enter edit mode
         await page.click('button[title="Edit"]');
@@ -275,7 +274,8 @@ async function getCanvasPixelsWithData(page) {
 async function assertLimitLinesExistAndAreVisible(page) {
     await page.waitForSelector('.js-limit-area', { state: 'attached' });
     const limitLineCount = await page.locator('.c-plot-limit-line').count();
-    expect(limitLineCount).toBe(10);
+    // There should be 10 limit lines created by default
+    expect(await page.locator('.c-plot-limit-line').count()).toBe(10);
     for (let i = 0; i < limitLineCount; i++) {
         await expect(page.locator('.c-plot-limit-line').nth(i)).toBeVisible();
     }
