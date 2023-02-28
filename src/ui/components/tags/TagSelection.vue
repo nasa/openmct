@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="w-tag-wrapper">
+<div class="w-tag-wrapper has-tag-applier">
     <template v-if="newTag">
         <AutoCompleteField
             v-if="newTag"
@@ -40,15 +40,17 @@
             :class="{'c-tag-edit': !readOnly}"
             :style="{ background: selectedBackgroundColor, color: selectedForegroundColor }"
         >
+            <button
+                v-show="!readOnly"
+                class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle"
+                :style="{ textShadow: selectedBackgroundColor + ' 0 0 4px' }"
+                :aria-label="`Remove tag ${selectedTagLabel}`"
+                @click="removeTag"
+            ></button>
             <div
                 class="c-tag__label"
                 aria-label="Tag"
             >{{ selectedTagLabel }} </div>
-            <button
-                v-show="!readOnly"
-                class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle"
-                @click="removeTag"
-            ></button>
         </div>
     </template>
 </div>

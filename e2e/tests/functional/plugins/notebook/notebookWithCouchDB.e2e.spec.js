@@ -131,13 +131,13 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // This happens for 3 tags so 12 requests
         addingNotebookElementsRequests = [];
         await page.hover('[aria-label="Tag"]:has-text("Driving")');
-        await page.locator('[aria-label="Tag"]:has-text("Driving") ~ .c-completed-tag-deletion').click();
+        await page.locator('[aria-label="Remove tag Driving"]').click();
         await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")', {state: 'hidden'});
         await page.hover('[aria-label="Tag"]:has-text("Drilling")');
-        await page.locator('[aria-label="Tag"]:has-text("Drilling") ~ .c-completed-tag-deletion').click();
+        await page.locator('[aria-label="Remove tag Drilling"]').click();
         await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")', {state: 'hidden'});
         page.hover('[aria-label="Tag"]:has-text("Science")');
-        await page.locator('[aria-label="Tag"]:has-text("Science") ~ .c-completed-tag-deletion').click();
+        await page.locator('[aria-label="Remove tag Science"]').click();
         await page.waitForSelector('[aria-label="Tag"]:has-text("Science")', {state: 'hidden'});
         page.waitForLoadState('networkidle');
         expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(12);
