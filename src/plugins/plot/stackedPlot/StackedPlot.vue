@@ -241,7 +241,7 @@ export default {
             let oldComposition = this.compositionObjects.slice();
 
             reorderPlan.forEach((reorder) => {
-                this.compositionObjects[reorder.newIndex] = oldComposition[reorder.oldIndex];
+                this.$set(this.compositionObjects, reorder.newIndex, oldComposition[reorder.oldIndex]);
             });
         },
 
