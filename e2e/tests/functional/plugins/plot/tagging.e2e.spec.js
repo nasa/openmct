@@ -25,7 +25,7 @@ Tests to verify plot tagging functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setRealTimeMode, setFixedTimeMode } = require('../../../../appActions');
 
 test.describe('Plot Tagging', () => {
     async function createTags({page, canvas, xEnd, yEnd}) {
@@ -147,12 +147,19 @@ test.describe('Plot Tagging', () => {
 
         const canvas = page.locator('canvas').nth(1);
 
+        // Switch to real-time mode
+        // Adding tags should pause the plot
+        await setRealTimeMode(page);
+
         await createTags({
             page,
             canvas,
             xEnd: 700,
             yEnd: 480
         });
+
+        await setFixedTimeMode(page);
+
         await basicTagsTests(page, canvas);
         await testTelemetryItem(page, canvas, alphaSineWave);
     });
