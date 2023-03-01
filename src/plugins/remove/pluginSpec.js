@@ -52,6 +52,10 @@ describe("The Remove Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
+                    identifier: {
+                        namespace: "",
+                        key: "parent-folder-object"
+                    },
                     name: "Parent Folder",
                     composition: [childObject.identifier]
                 }
@@ -116,10 +120,18 @@ describe("The Remove Action plugin", () => {
             expect(applies).toBe(true);
         });
 
-        it("should be false when the child is locked", () => {
+        it("should be false when the child is locked and not an alias", () => {
             childObject.locked = true;
+            childObject.location = 'parent-folder-object';
             let applies = removeAction.appliesTo([childObject, parentObject]);
             expect(applies).toBe(false);
+        });
+
+        it("should be true when the child is locked and IS an alias", () => {
+            childObject.locked = true;
+            childObject.location = 'other-folder-object';
+            let applies = removeAction.appliesTo([childObject, parentObject]);
+            expect(applies).toBe(true);
         });
     });
 });
