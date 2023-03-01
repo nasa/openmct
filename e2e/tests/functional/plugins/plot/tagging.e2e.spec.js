@@ -148,7 +148,7 @@ test.describe('Plot Tagging', () => {
 
         await page.goto(overlayPlot.url);
 
-        const canvas = page.locator('canvas').nth(1);
+        let canvas = page.locator('canvas').nth(1);
 
         // Switch to real-time mode
         // Adding tags should pause the plot
@@ -162,6 +162,9 @@ test.describe('Plot Tagging', () => {
         });
 
         await setFixedTimeMode(page);
+
+        // changing to fixed time mode rebuilds canvas?
+        canvas = page.locator('canvas').nth(1);
 
         await basicTagsTests(page, canvas);
         await testTelemetryItem(page, canvas, alphaSineWave);
