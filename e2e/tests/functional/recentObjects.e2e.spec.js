@@ -246,6 +246,9 @@ test.describe('Recent Objects', () => {
         // Click the aria-label="Clear Recently Viewed" button
         await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
 
+        // Click on the "OK" button in the confirmation dialog
+        await page.getByRole('button', { name: 'OK' }).click();
+
         // Assert that the list is empty
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
     });
