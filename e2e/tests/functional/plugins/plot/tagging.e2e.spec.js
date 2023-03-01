@@ -70,6 +70,9 @@ test.describe('Plot Tagging', () => {
 
         await expect(page.getByText('No tags to display for this item')).toBeVisible();
 
+        //Wait for canvas to stablize.
+        await canvas.hover({trial: true});
+
         // click on the tagged plot point
         await canvas.click({
             position: {
