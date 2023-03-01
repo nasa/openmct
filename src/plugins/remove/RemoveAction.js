@@ -130,9 +130,6 @@ export default class RemoveAction {
             }
         }
 
-        console.log('can remove?', parentType?.definition.creatable
-        && Array.isArray(parent?.composition));
-
         return parentType?.definition.creatable
             && Array.isArray(parent?.composition);
     }
