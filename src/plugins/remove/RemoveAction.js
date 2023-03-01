@@ -100,7 +100,7 @@ export default class RemoveAction {
         const composition = this.openmct.composition.get(parent);
         composition.remove(child);
 
-        if (!this.isAlias(child, parent)) {
+        if (!this.openmct.objects.isAlias(child, parent)) {
             this.openmct.objects.mutate(child, 'location', null);
         }
 
@@ -111,18 +111,6 @@ export default class RemoveAction {
         await this.saveTransaction();
     }
 
-    isAlias(child, parent) {
-        if (parent === undefined) {
-            // then it's a root item, not an alias
-            return false;
-        }
-
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-        const childLocation = child.location;
-
-        return childLocation !== parentKeyString;
-    }
-
     appliesTo(objectPath) {
         const parent = objectPath[1];
         const parentType = parent && this.openmct.types.get(parent.type);
@@ -130,9 +118,9 @@ export default class RemoveAction {
         const locked = child.locked ? child.locked : parent && parent.locked;
         const isEditing = this.openmct.editor.isEditing();
         const isPersistable = this.openmct.objects.isPersistable(child.identifier);
-        const isAlias = this.isAlias(child, parent);
+        const isAlias = this.openmct.objects.isAlias(child, parent);
 
-        if (locked || (!isPersistable && !isAlias)) {
+        if (!isAlias && (locked || !isPersistable)) {
             return false;
         }
 
@@ -142,9 +130,11 @@ export default class RemoveAction {
             }
         }
 
-        return parentType
-            && parentType.definition.creatable
-            && Array.isArray(parent.composition);
+        console.log('can remove?', parentType?.definition.creatable
+        && Array.isArray(parent?.composition));
+
+        return parentType?.definition.creatable
+            && Array.isArray(parent?.composition);
     }
 
     startTransaction() {

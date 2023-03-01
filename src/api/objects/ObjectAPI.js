@@ -781,6 +781,28 @@ export default class ObjectAPI {
             && domainObject.location !== this.makeKeyString(objectPath[1].identifier);
     }
 
+    /**
+     * Check if a child domainObject is an alias (link)
+     * by comparing the it's location to the parents identifier.
+     * If the location does not match the parent's identifier, then
+     * the domainObject is an alias.
+     *
+     * @param {DomainObject} childDomainObject
+     * @param {DomainObject} parentDomainObject
+     * @returns {boolean} true if alias, false if not
+     */
+    isAlias(childDomainObject, parentDomainObject) {
+        if (parentDomainObject === undefined) {
+            // then it's a root item, not an alias
+            return false;
+        }
+
+        const parentKeyString = this.makeKeyString(parentDomainObject.identifier);
+        const childLocation = childDomainObject.location;
+
+        return childLocation !== parentKeyString;
+    }
+
     isTransactionActive() {
         return this.transaction !== undefined && this.transaction !== null;
     }
