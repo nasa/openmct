@@ -109,6 +109,8 @@ test.describe('Plot Tagging', () => {
             page.reload(),
             page.waitForLoadState('networkidle')
         ]);
+        // wait for plot progress bar to disappear
+        await page.locator('.l-view-section.c-progress-bar').waitFor({ state: 'detached' });
 
         await page.getByText('Annotations').click();
         await expect(page.getByText('No tags to display for this item')).toBeVisible();
@@ -130,6 +132,9 @@ test.describe('Plot Tagging', () => {
     });
 
     test('Tags work with Overlay Plots', async ({ page }) => {
+        //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
+        test.slow();
+
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
