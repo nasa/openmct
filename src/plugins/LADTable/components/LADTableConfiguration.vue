@@ -56,6 +56,7 @@ export default {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
         } else {
+            this.compositions = [];
             this.composition.on('add', this.addLadTable);
             this.composition.on('remove', this.removeLadTable);
         }
@@ -72,6 +73,10 @@ export default {
         } else {
             this.composition.off('add', this.addLadTable);
             this.composition.off('remove', this.removeLadTable);
+            this.compositions.forEach(c => {
+                c.composition.off('add', c.addCallback);
+                c.composition.off('remove', c.removeCallback);
+            });
         }
     },
     methods: {
@@ -125,6 +130,35 @@ export default {
 
             this.shouldShowUnitsCheckbox();
         },
+        addTelemetryObject(ladTable) {
+            return (domainObject) => {
+                let telemetryObject = {};
+                telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+                telemetryObject.domainObject = domainObject;
+
+                const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                telemetryObjects.push(telemetryObject);
+
+                this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+
+                this.shouldShowUnitsCheckbox();
+            };
+        },
+        removeTelemetryObject(ladTable) {
+            return (identifier) => {
+                const keystring = this.openmct.objects.makeKeyString(identifier);
+                const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                let index = telemetryObjects.findIndex(telemetryObject => keystring === telemetryObject.key);
+
+                telemetryObjects.splice(index, 1);
+                this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+
+                this.shouldShowUnitsCheckbox();
+            };
+        },
+        combineKeys(ladKey, telemetryObjectKey) {
+            return `${ladKey}-${telemetryObjectKey}`;
+        },
         toggleColumn(key) {
             const isHidden = this.configuration.hiddenColumns[key] === true;
 
@@ -150,7 +184,9 @@ export default {
 
                     for (const ladTable of ladTables) {
                         for (const telemetryObject of ladTable) {
-                            showUnitsCheckbox = this.metadataHasUnits(telemetryObject.domainObject);
+                            if (this.metadataHasUnits(telemetryObject.domainObject)) {
+                                showUnitsCheckbox = true;
+                            }
                         }
                     }
                 }
@@ -170,7 +206,7 @@ export default {
             const metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
 
             return metadataWithUnits.length > 0;
-        },
+        }
     }
 };
 </script>
