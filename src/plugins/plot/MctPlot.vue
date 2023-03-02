@@ -327,7 +327,7 @@ export default {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         annotationViewingAndEditingAllowed() {
-        // only allow annotations viewing/editing if plot is paused or in fixed time mode
+            // only allow annotations viewing/editing if plot is paused or in fixed time mode
             return this.isFrozen || !this.isRealTime;
         },
         plotFirstLeftTickWidth() {
@@ -1110,7 +1110,9 @@ export default {
 
             if (event.altKey && !event.shiftKey) {
                 return this.startPan(event);
-            } else if (this.annotationViewingAndEditingAllowed && event.altKey && event.shiftKey) {
+            } else if (event.altKey && event.shiftKey) {
+                this.freeze();
+
                 return this.startMarquee(event, true);
             } else {
                 return this.startMarquee(event, false);
