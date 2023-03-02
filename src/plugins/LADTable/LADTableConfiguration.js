@@ -20,51 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LadTable from './components/LADTable.vue';
-import LADTableConfiguration from './LADTableConfiguration';
-import Vue from 'vue';
+import EventEmitter from 'EventEmitter';
 
-export default class LADTableView {
-    constructor(openmct, domainObject, objectPath) {
-        this.openmct = openmct;
+export default class LADTableConfiguration extends EventEmitter {
+    constructor(domainObject, openmct) {
+        super();
+
         this.domainObject = domainObject;
-        this.objectPath = objectPath;
-        this.component = undefined;
+        this.openmct = openmct;
+
+        this.objectMutated = this.objectMutated.bind(this);
+        this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
     }
 
-    show(element) {
-        let ladTableConfiguration = new LADTableConfiguration(this.domainObject, this.openmct);
+    getConfiguration() {
+        const configuration = this.domainObject.configuration || {};
+        configuration.hiddenColumns = configuration.hiddenColumns || {};
 
-        this.component = new Vue({
-            el: element,
-            components: {
-                LadTable
-            },
-            provide: {
-                openmct: this.openmct,
-                currentView: this,
-                ladTableConfiguration
-            },
-            data: () => {
-                return {
-                    domainObject: this.domainObject,
-                    objectPath: this.objectPath
-                };
-            },
-            template: '<lad-table ref="ladTable" :domain-object="domainObject" :object-path="objectPath"></lad-table>'
-        });
+        return configuration;
     }
 
-    getViewContext() {
-        if (!this.component) {
-            return {};
+    updateConfiguration(configuration) {
+        this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
+    }
+
+    objectMutated(configuration) {
+        if (configuration !== undefined) {
+            this.emit('change', configuration);
         }
-
-        return this.component.$refs.ladTable.getViewContext();
     }
 
-    destroy(element) {
-        this.component.$destroy();
-        this.component = undefined;
+    destroy() {
+        this.unlistenFromMutation();
     }
 }

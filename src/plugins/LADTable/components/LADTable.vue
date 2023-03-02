@@ -29,7 +29,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Timestamp</th>
+                <th v-if="showTimestamp">Timestamp</th>
                 <th>Value</th>
                 <th v-if="hasUnits">Unit</th>
             </tr>
@@ -42,6 +42,7 @@
                 :path-to-table="objectPath"
                 :has-units="hasUnits"
                 :is-stale="staleObjects.includes(ladRow.key)"
+                :configuration="configuration"
                 @rowContextClick="updateViewContext"
             />
         </tbody>
@@ -58,7 +59,7 @@ export default {
     components: {
         LadRow
     },
-    inject: ['openmct', 'currentView'],
+    inject: ['openmct', 'currentView', 'ladTableConfiguration'],
     props: {
         domainObject: {
             type: Object,
@@ -73,7 +74,8 @@ export default {
         return {
             items: [],
             viewContext: {},
-            staleObjects: []
+            staleObjects: [],
+            configuration: this.ladTableConfiguration.getConfiguration()
         };
     },
     computed: {
@@ -86,7 +88,10 @@ export default {
 
             });
 
-            return itemsWithUnits.length !== 0;
+            return itemsWithUnits.length !== 0 && !this.configuration?.hiddenColumns?.units;
+        },
+        showTimestamp() {
+            return !this.configuration?.hiddenColumns?.timestamp;
         },
         staleClass() {
             if (this.staleObjects.length !== 0) {
@@ -97,6 +102,7 @@ export default {
         }
     },
     mounted() {
+        this.ladTableConfiguration.on('change', this.handleConfigurationChange);
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
         this.composition.on('remove', this.removeItem);
@@ -105,6 +111,8 @@ export default {
         this.stalenessSubscription = {};
     },
     destroyed() {
+        this.ladTableConfiguration.off('change', this.handleConfigurationChange);
+
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
@@ -155,6 +163,9 @@ export default {
             const metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
 
             return metadataWithUnits.length > 0;
+        },
+        handleConfigurationChange(configuration) {
+            this.configuration = configuration;
         },
         handleStaleness(id, stalenessResponse, skipCheck = false) {
             if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
