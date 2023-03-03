@@ -38,7 +38,7 @@ test.describe('Log plot tests', () => {
         await makeOverlayPlot(page, myItemsFolderName);
         await testRegularTicks(page);
         await enableEditMode(page);
-        await selectInspectorTab('Config');
+        await selectInspectorTab(page, 'Config');
         await enableLogMode(page);
         await testLogTicks(page);
         await disableLogMode(page);

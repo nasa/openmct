@@ -89,7 +89,7 @@ test.describe('Overlay Plot', () => {
         await page.goto(overlayPlot.url);
         await page.click('button[title="Edit"]');
 
-        await selectInspectorTab('Elements');
+        await selectInspectorTab(page, 'Elements');
 
         // Drag swg a, c, e into Y Axis 2
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
@@ -97,7 +97,7 @@ test.describe('Overlay Plot', () => {
         await page.locator(`#inspector-elements-tree >> text=${swgE.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
 
         // Assert that Y Axis 1 and Y Axis 2 property groups are visible only
-        await selectInspectorTab('Properties');
+        await selectInspectorTab(page, 'Properties');
 
         const yAxis1PropertyGroup = page.locator('[aria-label="Y Axis Properties"]');
         const yAxis2PropertyGroup = page.locator('[aria-label="Y Axis 2 Properties"]');
@@ -111,20 +111,20 @@ test.describe('Overlay Plot', () => {
         const yAxis2Group = page.getByLabel("Y Axis 2");
         const yAxis3Group = page.getByLabel("Y Axis 3");
 
-        await selectInspectorTab('Elements');
+        await selectInspectorTab(page, 'Elements');
 
         // Drag swg b into Y Axis 3
         await page.locator(`#inspector-elements-tree >> text=${swgB.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 3"]'));
 
         // Assert that all Y Axis property groups are visible
-        await selectInspectorTab('Properties');
+        await selectInspectorTab(page, 'Properties');
 
         await expect(yAxis1PropertyGroup).toBeVisible();
         await expect(yAxis2PropertyGroup).toBeVisible();
         await expect(yAxis3PropertyGroup).toBeVisible();
 
         // Verify that the elements are in the correct buckets and in the correct order
-        await selectInspectorTab('Elements');
+        await selectInspectorTab(page, 'Elements');
 
         expect(yAxis1Group.getByRole('listitem', { name: swgD.name })).toBeTruthy();
         expect(yAxis1Group.getByRole('listitem').nth(0).getByText(swgD.name)).toBeTruthy();
@@ -151,7 +151,7 @@ test.describe('Overlay Plot', () => {
         await page.goto(overlayPlot.url);
         await page.click('button[title="Edit"]');
 
-        await selectInspectorTab('Elements');
+        await selectInspectorTab(page, 'Elements');
 
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
 

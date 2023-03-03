@@ -50,7 +50,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
         await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
         // Click the Elements pool to dismiss the search menu
-        await selectInspectorTab('Elements');
+        await selectInspectorTab(page, 'Elements');
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();

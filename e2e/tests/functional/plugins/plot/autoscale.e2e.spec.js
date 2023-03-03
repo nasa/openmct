@@ -51,7 +51,7 @@ test.describe('Autoscale', () => {
         // enter edit mode
         await page.click('button[title="Edit"]');
 
-        await selectInspectorTab('Config');
+        await selectInspectorTab(page, 'Config');
         await turnOffAutoscale(page);
 
         await setUserDefinedMinAndMax(page, '-2', '2');
