@@ -35,11 +35,11 @@ export default function PlanViewProvider(openmct) {
         name: 'Plan',
         cssClass: 'icon-plan',
         canView(domainObject) {
-            return domainObject.type === 'plan';
+            return domainObject.type === 'plan' || domainObject.type === 'plan-view';
         },
 
         canEdit(domainObject) {
-            return false;
+            return domainObject.type === 'plan-view';
         },
 
         view: function (domainObject, objectPath) {

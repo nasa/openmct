@@ -28,6 +28,16 @@ export default function (configuration) {
         openmct.types.addType('plan', {
             name: 'Plan',
             key: 'plan',
+            description: 'A non-configurable timeline-like view for a compatible mission plan file.',
+            creatable: false,
+            cssClass: 'icon-plan',
+            form: [],
+            initialize: function (domainObject) {
+            }
+        });
+        openmct.types.addType('plan-view', {
+            name: 'Plan View (Name Change TBD)',
+            key: 'plan-view',
             description: 'A configurable timeline-like view for a compatible mission plan file.',
             creatable: true,
             cssClass: 'icon-plan',
@@ -36,15 +46,28 @@ export default function (configuration) {
                     name: 'Upload Plan (JSON File)',
                     key: 'selectFile',
                     control: 'file-input',
-                    required: true,
+                    required: false,
                     text: 'Select File...',
                     type: 'application/json',
                     property: [
                         "selectFile"
                     ]
+                },
+                {
+                    name: 'Clip Activity Names',
+                    key: 'clipActivityNames',
+                    control: 'toggleSwitch',
+                    cssClass: 'l-input',
+                    property: [
+                        "configuration",
+                        "clipActivityNames"
+                    ]
                 }
             ],
-            initialize: function (domainObject) {
+            initialize(domainObject) {
+                domainObject.configuration = {
+                    clipActivityNames: true
+                };
             }
         });
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
