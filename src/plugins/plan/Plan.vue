@@ -120,6 +120,9 @@ export default {
         }
     },
     methods: {
+        activityNameFitsRect(activityName, rectWidth) {
+            return (this.getTextWidth(activityName) + TEXT_LEFT_PADDING) < rectWidth;
+        },
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.path);
@@ -246,10 +249,15 @@ export default {
         isActivityInBounds(activity) {
             return (activity.start < this.viewBounds.end) && (activity.end > this.viewBounds.start);
         },
-        getTextWidth(name) {
-            let metrics = this.canvasContext.measureText(name);
+        /**
+         * Get the width of the given text in pixels.
+         * @param {string} text
+         * @returns {number} width of the text in pixels (as a double)
+         */
+        getTextWidth(text) {
+            const textMetrics = this.canvasContext.measureText(text);
 
-            return parseInt(metrics.width, 10);
+            return textMetrics.width;
         },
         sortFn(a, b) {
             const numA = parseInt(a, 10);
@@ -304,61 +312,62 @@ export default {
 
                 let activities = this.planData[key];
                 activities.forEach((activity) => {
-                    if (this.isActivityInBounds(activity)) {
-                        const currentStart = Math.max(this.viewBounds.start, activity.start);
-                        const currentEnd = Math.min(this.viewBounds.end, activity.end);
-                        const rectX = this.xScale(currentStart);
-                        const rectY = this.xScale(currentEnd);
-                        const rectWidth = rectY - rectX;
-
-                        const activityNameWidth = this.getTextWidth(activity.name) + TEXT_LEFT_PADDING;
-                        //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
-                        const activityNameFitsRect = (rectWidth >= activityNameWidth);
-                        const textStart = (activityNameFitsRect ? rectX : rectY) + TEXT_LEFT_PADDING;
-                        const color = activity.color || DEFAULT_COLOR;
-                        let textColor = '';
-                        if (activity.textColor) {
-                            textColor = activity.textColor;
-                        } else if (activityNameFitsRect) {
-                            textColor = this.getContrastingColor(color);
-                        }
-
-                        let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
-                        const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
-
-                        if (activityNameFitsRect) {
-                            currentRow = this.getRowForActivity(rectX, rectWidth, activitiesByRow);
-                        } else {
-                            currentRow = this.getRowForActivity(rectX, textWidth, activitiesByRow);
-                        }
-
-                        let textY = parseInt(currentRow, 10) + (activityNameFitsRect ? INNER_TEXT_PADDING : OUTER_TEXT_PADDING);
-
-                        if (!activitiesByRow[currentRow]) {
-                            activitiesByRow[currentRow] = [];
-                        }
-
-                        activitiesByRow[currentRow].push({
-                            activity: {
-                                color: color,
-                                textColor: textColor,
-                                name: activity.name,
-                                exceeds: {
-                                    start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
-                                    end: this.xScale(this.viewBounds.end) < this.xScale(activity.end)
-                                },
-                                start: activity.start,
-                                end: activity.end
-                            },
-                            textLines: textLines,
-                            textStart: textStart,
-                            textClass: activityNameFitsRect ? "" : "activity-label--outside-rect",
-                            textY: textY,
-                            start: rectX,
-                            end: activityNameFitsRect ? rectY : textStart + textWidth,
-                            rectWidth: rectWidth
-                        });
+                    if (!this.isActivityInBounds(activity)) {
+                        return;
                     }
+
+                    const currentStart = Math.max(this.viewBounds.start, activity.start);
+                    const currentEnd = Math.min(this.viewBounds.end, activity.end);
+                    const rectX1 = this.xScale(currentStart);
+                    const rectX2 = this.xScale(currentEnd);
+                    const rectWidth = rectX2 - rectX1;
+
+                    //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
+                    const showTextInsideRect = this.clipActivityNames || this.activityNameFitsRect(activity.name, rectWidth);
+                    const textStart = (showTextInsideRect ? rectX1 : rectX2) + TEXT_LEFT_PADDING;
+                    const color = activity.color || DEFAULT_COLOR;
+                    let textColor = '';
+                    if (activity.textColor) {
+                        textColor = activity.textColor;
+                    } else if (showTextInsideRect) {
+                        textColor = this.getContrastingColor(color);
+                    }
+
+                    const textLines = this.getActivityDisplayText(this.canvasContext, activity.name, showTextInsideRect);
+                    const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
+
+                    if (showTextInsideRect) {
+                        currentRow = this.getRowForActivity(rectX1, rectWidth, activitiesByRow);
+                    } else {
+                        currentRow = this.getRowForActivity(rectX1, textWidth, activitiesByRow);
+                    }
+
+                    let textY = parseInt(currentRow, 10) + (showTextInsideRect ? INNER_TEXT_PADDING : OUTER_TEXT_PADDING);
+
+                    if (!activitiesByRow[currentRow]) {
+                        activitiesByRow[currentRow] = [];
+                    }
+
+                    activitiesByRow[currentRow].push({
+                        activity: {
+                            color: color,
+                            textColor: textColor,
+                            name: activity.name,
+                            exceeds: {
+                                start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
+                                end: this.xScale(this.viewBounds.end) < this.xScale(activity.end)
+                            },
+                            start: activity.start,
+                            end: activity.end
+                        },
+                        textLines: textLines,
+                        textStart: textStart,
+                        textClass: showTextInsideRect ? "" : "activity-label--outside-rect",
+                        textY: textY,
+                        start: rectX1,
+                        end: showTextInsideRect ? rectX2 : textStart + textWidth,
+                        rectWidth: rectWidth
+                    });
                 });
                 this.groupActivities[key] = {
                     heading: key,
@@ -366,28 +375,32 @@ export default {
                 };
             });
         },
-        getActivityDisplayText(context, text, activityNameFitsRect) {
-        //TODO: If the activity start is less than viewBounds.start then the text should be cropped on the left/should be off-screen)
-            let words = text.split(' ');
+        /**
+         * Format the activity name to fit within the activity rect with a max of 2 lines
+         * @param {CanvasRenderingContext2D} canvasContext
+         * @param {string} activityName
+         * @param {boolean} activityNameFitsRect
+         */
+        getActivityDisplayText(canvasContext, activityName, activityNameFitsRect) {
+            // TODO: If the activity start is less than viewBounds.start then the text should be cropped on the left/should be off-screen)
+            let words = activityName.split(' ');
             let line = '';
-            let activityText = [];
-            let rows = 1;
+            let activityLines = [];
 
-            for (let n = 0; (n < words.length) && (rows <= 2); n++) {
-                let testLine = line + words[n] + ' ';
-                let metrics = context.measureText(testLine);
-                let testWidth = metrics.width;
-                if (!activityNameFitsRect && (testWidth > MAX_TEXT_WIDTH && n > 0)) {
-                    activityText.push(line);
+            for (let n = 0; (n < words.length) && (activityLines.length <= 2); n++) {
+                let tempLine = line + words[n] + ' ';
+                let textMetrics = canvasContext.measureText(tempLine);
+                const textWidth = textMetrics.width;
+                if (!activityNameFitsRect && (textWidth > MAX_TEXT_WIDTH && n > 0)) {
+                    activityLines.push(line);
                     line = words[n] + ' ';
-                    testLine = line + words[n] + ' ';
-                    rows = rows + 1;
+                    tempLine = line + words[n] + ' ';
                 }
 
-                line = testLine;
+                line = tempLine;
             }
 
-            return activityText.length ? activityText : [line];
+            return activityLines.length ? activityLines : [line];
         },
         getGroupContainer(activityRows, heading) {
             let svgHeight = 30;
