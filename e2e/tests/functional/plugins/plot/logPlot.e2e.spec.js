@@ -201,6 +201,7 @@ async function selectPlotConfigurationTab(page) {
  */
 async function enableLogMode(page) {
     // turn on log mode
+    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).not.toBeChecked();
     await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').check();
     // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
 }
@@ -210,6 +211,7 @@ async function enableLogMode(page) {
  */
 async function disableLogMode(page) {
     // turn off log mode
+    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).toBeChecked();
     await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').uncheck();
 }
 
