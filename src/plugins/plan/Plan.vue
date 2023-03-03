@@ -88,8 +88,9 @@ export default {
     },
     data() {
         return {
-            viewBounds: undefined,
-            timeSystem: undefined,
+            viewBounds: null,
+            timeSystem: null,
+            clipActivityNames: this.domainObject?.configuration?.clipActivityNames ?? false,
             height: 0
         };
     },
@@ -193,14 +194,14 @@ export default {
                 this.viewBounds = Object.create(bounds);
             }
 
-            if (this.timeSystem === undefined) {
+            if (this.timeSystem === null) {
                 this.timeSystem = this.openmct.time.timeSystem();
             }
 
             this.setScaleAndPlotActivities();
         },
         setScaleAndPlotActivities(timeSystem) {
-            if (timeSystem !== undefined) {
+            if (timeSystem) {
                 this.timeSystem = timeSystem;
             }
 
@@ -224,7 +225,7 @@ export default {
                 return;
             }
 
-            if (timeSystem === undefined) {
+            if (!timeSystem) {
                 timeSystem = this.openmct.time.timeSystem();
             }
 
