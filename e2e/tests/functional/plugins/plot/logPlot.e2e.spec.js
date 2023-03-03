@@ -36,6 +36,7 @@ test.describe('Log plot tests', () => {
         await makeOverlayPlot(page, myItemsFolderName);
         await testRegularTicks(page);
         await enableEditMode(page);
+        await selectPlotConfigurationTab(page);
         await enableLogMode(page);
         await testLogTicks(page);
         await disableLogMode(page);
@@ -179,6 +180,22 @@ async function enableEditMode(page) {
     // turn on edit mode
     await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
     await expect(await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1)).toBeVisible();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function selectPlotConfigurationTab(page) {
+    const inspectorTabs = await page.getByRole('tablist');
+    const plotConfigurationTab = await inspectorTabs.getByTitle('Config');
+    const plotConfigurationTabClass = await plotConfigurationTab.getAttribute('class');
+    const isSelectedPlotConfigurationTab = plotConfigurationTabClass.includes('is-current');
+
+    if (!isSelectedPlotConfigurationTab) {
+        await plotConfigurationTab.click();
+    } else {
+        await page.waitForTimeout(500);
+    }
 }
 
 /**

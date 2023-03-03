@@ -50,6 +50,7 @@ test.describe('Autoscale', () => {
         // enter edit mode
         await page.click('button[title="Edit"]');
 
+        await selectPlotConfigurationTab(page);
         await turnOffAutoscale(page);
 
         await setUserDefinedMinAndMax(page, '-2', '2');
@@ -163,6 +164,22 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
         page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()
     ]);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function selectPlotConfigurationTab(page) {
+    const inspectorTabs = await page.getByRole('tablist');
+    const plotConfigurationTab = await inspectorTabs.getByTitle('Config');
+    const plotConfigurationTabClass = await plotConfigurationTab.getAttribute('class');
+    const isSelectedPlotConfigurationTab = plotConfigurationTabClass.includes('is-current');
+
+    if (!isSelectedPlotConfigurationTab) {
+        await plotConfigurationTab.click();
+    } else {
+        await page.waitForTimeout(500);
+    }
 }
 
 /**
