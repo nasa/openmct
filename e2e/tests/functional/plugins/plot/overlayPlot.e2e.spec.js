@@ -26,7 +26,7 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
 
 test.describe('Overlay Plot', () => {
     test.beforeEach(async ({ page }) => {
@@ -61,10 +61,6 @@ test.describe('Overlay Plot', () => {
     });
 
     test('The elements pool supports dragging series into multiple y-axis buckets', async ({ page }) => {
-        const inspectorTabs = page.getByRole('tablist');
-        const inspectorElementsTab = inspectorTabs.getByTitle('Elements');
-        const inspectorPropertiesTab = inspectorTabs.getByTitle('Properties');
-
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
@@ -93,7 +89,7 @@ test.describe('Overlay Plot', () => {
         await page.goto(overlayPlot.url);
         await page.click('button[title="Edit"]');
 
-        await inspectorElementsTab.click();
+        await selectInspectorTab('Elements');
 
         // Drag swg a, c, e into Y Axis 2
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
@@ -101,7 +97,7 @@ test.describe('Overlay Plot', () => {
         await page.locator(`#inspector-elements-tree >> text=${swgE.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
 
         // Assert that Y Axis 1 and Y Axis 2 property groups are visible only
-        await inspectorPropertiesTab.click();
+        await selectInspectorTab('Properties');
 
         const yAxis1PropertyGroup = page.locator('[aria-label="Y Axis Properties"]');
         const yAxis2PropertyGroup = page.locator('[aria-label="Y Axis 2 Properties"]');
@@ -115,20 +111,20 @@ test.describe('Overlay Plot', () => {
         const yAxis2Group = page.getByLabel("Y Axis 2");
         const yAxis3Group = page.getByLabel("Y Axis 3");
 
-        await inspectorElementsTab.click();
+        await selectInspectorTab('Elements');
 
         // Drag swg b into Y Axis 3
         await page.locator(`#inspector-elements-tree >> text=${swgB.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 3"]'));
 
         // Assert that all Y Axis property groups are visible
-        await inspectorPropertiesTab.click();
+        await selectInspectorTab('Properties');
 
         await expect(yAxis1PropertyGroup).toBeVisible();
         await expect(yAxis2PropertyGroup).toBeVisible();
         await expect(yAxis3PropertyGroup).toBeVisible();
 
         // Verify that the elements are in the correct buckets and in the correct order
-        await inspectorElementsTab.click();
+        await selectInspectorTab('Elements');
 
         expect(yAxis1Group.getByRole('listitem', { name: swgD.name })).toBeTruthy();
         expect(yAxis1Group.getByRole('listitem').nth(0).getByText(swgD.name)).toBeTruthy();
@@ -143,9 +139,6 @@ test.describe('Overlay Plot', () => {
     });
 
     test('Clicking on an item in the elements pool brings up the plot preview with data points', async ({ page }) => {
-        const inspectorTabs = page.getByRole('tablist');
-        const inspectorElementsTab = inspectorTabs.getByTitle('Elements');
-
         const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: "Overlay Plot"
         });
@@ -158,7 +151,7 @@ test.describe('Overlay Plot', () => {
         await page.goto(overlayPlot.url);
         await page.click('button[title="Edit"]');
 
-        await inspectorElementsTab.click();
+        await selectInspectorTab('Elements');
 
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
 

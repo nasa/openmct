@@ -24,6 +24,7 @@
 Testsuite for plot autoscale.
 */
 
+const { selectInspectorTab } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 test.use({
     viewport: {
@@ -50,7 +51,7 @@ test.describe('Autoscale', () => {
         // enter edit mode
         await page.click('button[title="Edit"]');
 
-        await selectPlotConfigurationTab(page);
+        await selectInspectorTab('Config');
         await turnOffAutoscale(page);
 
         await setUserDefinedMinAndMax(page, '-2', '2');
@@ -164,20 +165,6 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
         page.waitForNavigation(),
         page.locator('text=Unnamed Overlay Plot').first().click()
     ]);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function selectPlotConfigurationTab(page) {
-    const inspectorTabs = page.getByRole('tablist');
-    const plotConfigurationTab = inspectorTabs.getByTitle('Config');
-    const plotConfigurationTabClass = await plotConfigurationTab.getAttribute('class');
-    const isSelectedPlotConfigurationTab = plotConfigurationTabClass.includes('is-current');
-
-    if (!isSelectedPlotConfigurationTab) {
-        await plotConfigurationTab.click();
-    }
 }
 
 /**

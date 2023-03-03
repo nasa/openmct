@@ -26,6 +26,8 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
+const { selectInspectorTab } = require('../../../../appActions');
+
 test.describe('Log plot tests', () => {
     test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
@@ -36,7 +38,7 @@ test.describe('Log plot tests', () => {
         await makeOverlayPlot(page, myItemsFolderName);
         await testRegularTicks(page);
         await enableEditMode(page);
-        await selectPlotConfigurationTab(page);
+        await selectInspectorTab('Config');
         await enableLogMode(page);
         await testLogTicks(page);
         await disableLogMode(page);
@@ -180,20 +182,6 @@ async function enableEditMode(page) {
     // turn on edit mode
     await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
     await expect(await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1)).toBeVisible();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function selectPlotConfigurationTab(page) {
-    const inspectorTabs = page.getByRole('tablist');
-    const plotConfigurationTab = inspectorTabs.getByTitle('Config');
-    const plotConfigurationTabClass = await plotConfigurationTab.getAttribute('class');
-    const isSelectedPlotConfigurationTab = plotConfigurationTabClass.includes('is-current');
-
-    if (!isSelectedPlotConfigurationTab) {
-        await plotConfigurationTab.click();
-    }
 }
 
 /**

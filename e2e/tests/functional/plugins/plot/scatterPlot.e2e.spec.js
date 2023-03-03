@@ -25,7 +25,7 @@
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
 const uuid = require('uuid').v4;
 
 test.describe('Scatter Plot', () => {
@@ -42,8 +42,6 @@ test.describe('Scatter Plot', () => {
     test('Can add and remove telemetry sources', async ({ page }) => {
         const editButton = page.locator('button[title="Edit"]');
         const saveButton = page.locator('button[title="Save"]');
-        const inspectorTabs = page.getByRole('tablist');
-        const inspectorElementsTab = inspectorTabs.getByTitle('Elements');
 
         // Create a sine wave generator within the scatter plot
         const swg1 = await createDomainObjectWithDefaults(page, {
@@ -56,7 +54,7 @@ test.describe('Scatter Plot', () => {
         // the SWG appears in the elements pool
         await page.goto(scatterPlot.url);
         await editButton.click();
-        await inspectorElementsTab.click();
+        await selectInspectorTab('Elements');
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
         await saveButton.click();
         await page.locator('li[title="Save and Finish Editing"]').click();
@@ -78,7 +76,7 @@ test.describe('Scatter Plot', () => {
         await editButton.click();
 
         // Click the "Elements" tab
-        await inspectorElementsTab.click();
+        await selectInspectorTab('Elements');
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
         await saveButton.click();
