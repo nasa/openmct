@@ -170,15 +170,13 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
  * @param {import('@playwright/test').Page} page
  */
 async function selectPlotConfigurationTab(page) {
-    const inspectorTabs = await page.getByRole('tablist');
-    const plotConfigurationTab = await inspectorTabs.getByTitle('Config');
+    const inspectorTabs = page.getByRole('tablist');
+    const plotConfigurationTab = inspectorTabs.getByTitle('Config');
     const plotConfigurationTabClass = await plotConfigurationTab.getAttribute('class');
     const isSelectedPlotConfigurationTab = plotConfigurationTabClass.includes('is-current');
 
     if (!isSelectedPlotConfigurationTab) {
         await plotConfigurationTab.click();
-    } else {
-        await page.waitForTimeout(500);
     }
 }
 
