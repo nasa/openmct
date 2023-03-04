@@ -51,6 +51,7 @@ import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedData } from "./util";
 import Vue from "vue";
+import { v4 } from "uuid";
 
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
@@ -432,7 +433,23 @@ export default {
                         width: svgWidth
                     };
                 },
-                template: `<swim-lane :is-nested="isNested" :status="status"><template slot="label">{{heading}}</template><template slot="object"><svg :height="height" :width="width"></svg></template></swim-lane>`
+                template: `
+<swim-lane 
+    :is-nested="isNested"
+    :status="status"
+>
+    <template slot="label">
+        {{heading}}
+    </template>
+    <template slot="object">
+        <svg 
+            :height="height"
+            :width="width"
+        >
+        </svg>
+    </template>
+</swim-lane>
+`
             });
 
             this.$refs.planHolder.appendChild(component.$mount().$el);
@@ -518,6 +535,24 @@ export default {
             }
 
             width = Math.max(width, 1); // Set width to a minimum of 1
+            let clipUuid;
+            if (this.clipActivityNames) {
+                clipUuid = v4();
+                let clipPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                this.setNSAttributesForElement(clipPathElement, {
+                    id: `clip-${clipUuid}`
+                });
+                svgElement.appendChild(clipPathElement);
+                let clipRectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                this.setNSAttributesForElement(clipRectElement, {
+                    x: item.activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
+                    y: row,
+                    rx: (width < EDGE_ROUNDING * 2) ? 0 : EDGE_ROUNDING,
+                    width: width,
+                    height: String(ROW_HEIGHT)
+                });
+                clipPathElement.appendChild(clipRectElement);
+            }
 
             // rx: don't round corners if the width of the rect is smaller than the rounding radius
             this.setNSAttributesForElement(rectElement, {
@@ -544,6 +579,12 @@ export default {
                     y: item.textY + (index * LINE_HEIGHT),
                     fill: activity.textColor
                 });
+
+                if (this.clipActivityNames) {
+                    this.setNSAttributesForElement(textElement, {
+                        'clip-path': `url(#clip-${clipUuid})`
+                    });
+                }
 
                 const textNode = document.createTextNode(line);
                 textElement.appendChild(textNode);
