@@ -45,6 +45,8 @@ test.describe('Overlay Plot', () => {
 
         await page.goto(overlayPlot.url);
 
+        await selectInspectorTab(page, 'Config');
+
         // navigate to plot series color palette
         await page.click('.l-browse-bar__actions__edit');
         await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
@@ -97,7 +99,7 @@ test.describe('Overlay Plot', () => {
         await page.locator(`#inspector-elements-tree >> text=${swgE.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
 
         // Assert that Y Axis 1 and Y Axis 2 property groups are visible only
-        await selectInspectorTab(page, 'Properties');
+        await selectInspectorTab(page, 'Config');
 
         const yAxis1PropertyGroup = page.locator('[aria-label="Y Axis Properties"]');
         const yAxis2PropertyGroup = page.locator('[aria-label="Y Axis 2 Properties"]');
@@ -117,7 +119,7 @@ test.describe('Overlay Plot', () => {
         await page.locator(`#inspector-elements-tree >> text=${swgB.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 3"]'));
 
         // Assert that all Y Axis property groups are visible
-        await selectInspectorTab(page, 'Properties');
+        await selectInspectorTab(page, 'Config');
 
         await expect(yAxis1PropertyGroup).toBeVisible();
         await expect(yAxis2PropertyGroup).toBeVisible();
