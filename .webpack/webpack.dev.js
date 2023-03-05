@@ -37,6 +37,7 @@ module.exports = merge(common, {
     ],
     devtool: "eval-source-map",
     devServer: {
+        allowedHosts: 'all',
         devMiddleware: {
             writeToDisk: (filePathString) => {
                 const filePath = path.parse(filePathString);
