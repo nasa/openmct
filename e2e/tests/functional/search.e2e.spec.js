@@ -133,6 +133,7 @@ test.describe('Grand Search', () => {
         const searchResults = page.locator(searchResultSelector);
 
         // Verify that one result is found
+        await expect(searchResults).toBeVisible();
         expect(await searchResults.count()).toBe(1);
         await expect(searchResults).toHaveText(folderName);
     });
@@ -194,7 +195,7 @@ test.describe('Grand Search', () => {
         // Wait for search to finish
         await waitForSearchCompletion(page);
 
-        const searchResultDropDown = await page.locator(searchResultDropDownSelector);
+        const searchResultDropDown = page.locator(searchResultDropDownSelector);
 
         // Verify that the search result/s correctly match the search query
         await expect(searchResultDropDown).toContainText(folderName1);
