@@ -150,17 +150,30 @@
   // Apply this class to all components that should trigger tag removal btn on hover
    &:hover {
      .c-tag {
-       padding-right: 17px !important;
+       @include userSelectNone();
        transition: $transOut;
      }
-
+     .c-tag__label {
+        opacity: 0.7;
+    }
      .c-tag__remove-btn {
-       //display: block;
-       //margin-left: $interiorMarginSm;
-       width: 1em;
+       width: 1.3em;
        opacity: 0.8;
+       padding: 2px !important;
        transition: $transOut;
-       //transition-delay: 250ms;
+       right: 5%;
+       text-align: center;
+       z-index: 2;
+
+       &:hover {
+         opacity: 1;
+
+         & ~ * {
+           // This sibling selector further dims the label
+           // to make the remove button stand out
+           opacity: 0.4
+         }
+       }
      }
    }
  }
