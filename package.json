@@ -5,6 +5,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.18.9",
     "@braintree/sanitize-url": "6.0.2",
+    "@deploysentinel/playwright": "0.3.3",
     "@percy/cli": "1.17.0",
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.29.0",
@@ -84,6 +85,7 @@
     "build:watch": "webpack --config ./.webpack/webpack.dev.js --watch",
     "info": "npx envinfo --system --browsers --npmPackages --binaries --languages --markdown",
     "test": "karma start",
+    "test:clean": "rm -rf ./coverage ./html-test-results ./test-results ./nyc_output/",
     "test:debug": "KARMA_DEBUG=true karma start",
     "test:e2e": "npx playwright test",
     "test:e2e:couchdb": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @couchdb",
