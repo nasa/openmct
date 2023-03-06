@@ -25,7 +25,7 @@
     class="c-lad-table-wrapper u-style-receiver js-style-receiver"
     :class="staleClass"
 >
-    <table class="c-table c-lad-table">
+    <table class="c-table c-lad-table c-table--selectable">
         <thead>
             <tr>
                 <th>Name</th>
