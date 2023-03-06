@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -181,10 +181,11 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 });
 
 test.describe('Basic Condition Set Use', () => {
-    test('Can add a condition', async ({ page }) => {
-        //Navigate to baseURL
+    test.beforeEach(async ({ page }) => {
+        // Open a browser, navigate to the main page, and wait until all network events to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
-
+    });
+    test('Can add a condition', async ({ page }) => {
         // Create a new condition set
         await createDomainObjectWithDefaults(page, {
             type: 'Condition Set',
@@ -198,5 +199,51 @@ test.describe('Basic Condition Set Use', () => {
         // Check that the new Unnamed Condition section appears
         const numOfUnnamedConditions = await page.locator('text=Unnamed Condition').count();
         expect(numOfUnnamedConditions).toEqual(1);
+    });
+    test('ConditionSet should display appropriate view options', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5924'
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: 'Sine Wave Generator',
+            name: "Alpha Sine Wave Generator"
+        });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Sine Wave Generator',
+            name: "Beta Sine Wave Generator"
+        });
+        const conditionSet1 = await createDomainObjectWithDefaults(page, {
+            type: 'Condition Set',
+            name: "Test Condition Set"
+        });
+
+        // Change the object to edit mode
+        await page.locator('[title="Edit"]').click();
+
+        // Expand the 'My Items' folder in the left tree
+        await page.goto(conditionSet1.url);
+        page.click('button[title="Show selected item in tree"]');
+        // Add the Alpha & Beta Sine Wave Generator to the Condition Set and save changes
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
+        const alphaGeneratorTreeItem = treePane.getByRole('treeitem', { name: "Alpha Sine Wave Generator"});
+        const betaGeneratorTreeItem = treePane.getByRole('treeitem', { name: "Beta Sine Wave Generator"});
+        const conditionCollection = page.locator('#conditionCollection');
+
+        await alphaGeneratorTreeItem.dragTo(conditionCollection);
+        await betaGeneratorTreeItem.dragTo(conditionCollection);
+
+        const saveButtonLocator = page.locator('button[title="Save"]');
+        await saveButtonLocator.click();
+        await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+        await page.click('button[title="Change the current view"]');
+
+        await expect(page.getByRole('menuitem', { name: /Lad Table/ })).toBeHidden();
+        await expect(page.getByRole('menuitem', { name: /Conditions View/ })).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
     });
 });

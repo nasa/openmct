@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="c-tag-applier has-tag-applier">
+<div class="c-tag-applier">
     <TagSelection
         v-for="(addedTag, index) in addedTags"
         :key="index"
@@ -162,6 +162,7 @@ export default {
                 await this.openmct.annotation.deleteAnnotations(annotationsToDelete);
                 this.$emit('tags-updated', annotationsToDelete);
                 if (this.onTagChange) {
+                    this.userAddingTag = false;
                     this.onTagChange(this.annotations);
                 }
             }
