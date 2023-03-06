@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,38 +21,48 @@
  *****************************************************************************/
 
 <template>
-<div class="c-inspector__properties c-inspect-properties">
-    <div class="c-inspect-properties__header">
-        Details
-    </div>
-    <ul
-        v-if="hasDetails"
-        class="c-inspect-properties__section"
-    >
-        <Component
-            :is="getComponent(detail)"
-            v-for="detail in details"
-            :key="detail.name"
-            :detail="detail"
-        />
+<div>
+    <div class="c-inspector__properties c-inspect-properties">
+        <div class="c-inspect-properties__header">
+            Details
+        </div>
+        <ul
+            v-if="hasDetails"
+            class="c-inspect-properties__section"
+        >
+            <Component
+                :is="getComponent(detail)"
+                v-for="detail in details"
+                :key="detail.name"
+                :detail="detail"
+            />
 
-    </ul>
-    <div
-        v-else
-        class="c-inspect-properties__row--span-all"
-    >
-        {{ noDetailsMessage }}
+        </ul>
+        <div
+            v-else
+            class="c-inspect-properties__row--span-all"
+        >
+            {{ noDetailsMessage }}
+        </div>
     </div>
+
+    <Location
+        v-if="hasLocation"
+        :domain-object="domainObject"
+        :parent-domain-object="parentDomainObject"
+    />
 </div>
 </template>
 
 <script>
 import Moment from 'moment';
 import DetailText from './DetailText.vue';
+import Location from './Location.vue';
 
 export default {
     components: {
-        DetailText
+        DetailText,
+        Location
     },
     inject: ['openmct'],
     data() {
@@ -62,21 +72,16 @@ export default {
     },
     computed: {
         details() {
-            return this.customDetails ? this.customDetails : this.domainObjectDetails;
+            return this.customDetails ?? this.domainObjectDetails;
         },
         customDetails() {
-            if (this.context === undefined) {
-                return;
-            }
-
-            return this.context.details;
+            return this.context?.details;
         },
         domainObject() {
-            if (this.context === undefined) {
-                return;
-            }
-
-            return this.context.item;
+            return this.context?.item;
+        },
+        parentDomainObject() {
+            return this.selection?.[0]?.[1]?.context?.item;
         },
         type() {
             if (this.domainObject === undefined) {
@@ -162,20 +167,11 @@ export default {
             return [...details, ...this.typeProperties];
         },
         context() {
-            if (
-                !this.selection
-                || !this.selection.length
-                || !this.selection[0].length
-            ) {
-                return;
-            }
-
-            return this.selection[0][0].context;
+            return this.selection?.[0]?.[0]?.context;
         },
         hasDetails() {
             return Boolean(
-                this.details
-                && this.details.length
+                this.details?.length
                 && !this.multiSelection
             );
         },
@@ -227,6 +223,13 @@ export default {
                         }, this.domainObject)
                     };
                 });
+        },
+        hasLocation() {
+            const domainObject = this.selection?.[0]?.[0]?.context?.item;
+            const isRootObject = domainObject?.location === 'ROOT';
+            const hasSingleSelection = this.selection?.length === 1;
+
+            return hasSingleSelection && !isRootObject;
         }
     },
     mounted() {

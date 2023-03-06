@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -145,7 +145,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await createNotebookEntryAndTags(page);
         // Delete Driving
         await page.hover('[aria-label="Tag"]:has-text("Driving")');
-        await page.locator('[aria-label="Tag"]:has-text("Driving") ~ .c-completed-tag-deletion').click();
+        await page.locator('[aria-label="Remove tag Driving"]').click();
 
         await expect(page.locator('[aria-label="Tags Inspector"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Tags Inspector"]')).not.toContainText("Driving");

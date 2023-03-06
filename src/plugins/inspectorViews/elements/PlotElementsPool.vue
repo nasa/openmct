@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -77,10 +77,10 @@
 
 <script>
 import _ from 'lodash';
-import Search from '../components/search.vue';
+import Search from '../../../ui/components/search.vue';
 import ElementItem from './ElementItem.vue';
 import ElementItemGroup from './ElementItemGroup.vue';
-import configStore from '../../plugins/plot/configuration/ConfigStore';
+import configStore from '../../plot/configuration/ConfigStore';
 
 const Y_AXIS_1 = 1;
 
