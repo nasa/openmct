@@ -23,7 +23,7 @@
 import {createOpenMct, resetApplicationState} from "utils/testing";
 import PlanPlugin from "../plan/plugin";
 import Vue from 'vue';
-import Properties from "@/ui/inspector/details/Properties.vue";
+import Properties from "../inspectorViews/properties/Properties.vue";
 
 describe('the plugin', function () {
     let planDefinition;
@@ -264,7 +264,7 @@ describe('the plugin', function () {
         it('provides an inspector view with the version information if available', () => {
             componentObject = component.$root.$children[0];
             const propertiesEls = componentObject.$el.querySelectorAll('.c-inspect-properties__row');
-            expect(propertiesEls.length).toEqual(6);
+            expect(propertiesEls.length).toEqual(7);
             const found = Array.from(propertiesEls).some((propertyEl) => {
                 return (propertyEl.children[0].innerHTML.trim() === 'Version'
                     && propertyEl.children[1].innerHTML.trim() === 'v1');

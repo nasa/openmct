@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,52 +20,48 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FaultManagementInspector from './FaultManagementInspector.vue';
-
+import PlotElementsPool from './PlotElementsPool.vue';
 import Vue from 'vue';
 
-import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants';
-
-export default function FaultManagementInspectorViewProvider(openmct) {
+export default function PlotElementsViewProvider(openmct) {
     return {
-        openmct: openmct,
-        key: FAULT_MANAGEMENT_INSPECTOR,
-        name: 'Fault Management Configuration',
-        canView: (selection) => {
-            if (selection.length !== 1 || selection[0].length === 0) {
-                return false;
-            }
-
-            let object = selection[0][0].context.item;
-
-            return object && object.type === FAULT_MANAGEMENT_TYPE;
+        key: 'plotElementsView',
+        name: 'Elements',
+        canView: function (selection) {
+            return selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
         },
-        view: (selection) => {
+        view: function (selection) {
             let component;
 
+            const domainObject = selection?.[0]?.[0]?.context?.item;
+
             return {
-                show: function (element) {
+                show: function (el) {
                     component = new Vue({
-                        el: element,
+                        el,
                         components: {
-                            FaultManagementInspector
+                            PlotElementsPool
                         },
                         provide: {
-                            openmct
+                            openmct,
+                            domainObject
                         },
-                        template: '<FaultManagementInspector></FaultManagementInspector>'
+                        template: `<PlotElementsPool />`
                     });
                 },
+                showTab: function (isEditing) {
+                    const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
+
+                    return hasComposition && isEditing;
+                },
                 destroy: function () {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
+                    component.$destroy();
+                    component = undefined;
                 }
             };
         },
         priority: function () {
-            return openmct.priority.HIGH + 1;
+            return this.openmct.priority.DEFAULT;
         }
     };
 }

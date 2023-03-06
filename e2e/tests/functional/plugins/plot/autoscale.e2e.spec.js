@@ -24,6 +24,7 @@
 Testsuite for plot autoscale.
 */
 
+const { selectInspectorTab } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 test.use({
     viewport: {
@@ -50,6 +51,7 @@ test.describe('Autoscale', () => {
         // enter edit mode
         await page.click('button[title="Edit"]');
 
+        await selectInspectorTab(page, 'Config');
         await turnOffAutoscale(page);
 
         await setUserDefinedMinAndMax(page, '-2', '2');

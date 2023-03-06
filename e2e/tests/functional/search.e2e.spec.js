@@ -24,7 +24,7 @@
  */
 
 const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../appActions');
 const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
@@ -50,7 +50,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
         await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
         // Click the Elements pool to dismiss the search menu
-        await page.locator('.l-pane__label:has-text("Elements")').click();
+        await selectInspectorTab(page, 'Elements');
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
