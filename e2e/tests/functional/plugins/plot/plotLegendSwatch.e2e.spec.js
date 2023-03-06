@@ -25,6 +25,7 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
+const { selectInspectorTab } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Legend color in sync with plot color', () => {
@@ -33,6 +34,8 @@ test.describe('Legend color in sync with plot color', () => {
 
         // navigate to plot series color palette
         await page.click('.l-browse-bar__actions__edit');
+        await selectInspectorTab(page, 'Config');
+
         await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
         await page.locator('.c-click-swatch--menu').click();
         await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
