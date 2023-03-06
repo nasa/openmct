@@ -89,7 +89,7 @@ test.describe('Performance tests', () => {
     /  - ElementResourceTiming
     /  - Interaction Timing
     */
-    test('Notebook Search, Add Entry, Update Entry are performant', async ({ page, browser }) => {
+    test.only('Notebook Search, Add Entry, Update Entry are performant', async ({ page, browser }) => {
         const client = await page.context().newCDPSession(page);
         // Tell the DevTools session to record performance metrics
         // https://chromedevtools.github.io/devtools-protocol/tot/Performance/#method-getMetrics
@@ -138,6 +138,7 @@ test.describe('Performance tests', () => {
         await page.evaluate(() => window.performance.mark("notebook-search-processed"));
 
         //Clear Search
+        await page.locator('.c-search.c-notebook__search .c-search__input').hover();
         await page.locator('.c-search.c-notebook__search .c-search__clear-input').click();
         await page.evaluate(() => window.performance.mark("notebook-search-processed"));
 
