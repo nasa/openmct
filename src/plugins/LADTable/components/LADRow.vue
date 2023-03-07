@@ -38,6 +38,7 @@
     >
         {{ unit }}
     </td>
+    <td> {{ type }}</td>
 </tr>
 </template>
 
@@ -80,6 +81,7 @@ export default {
             datum: undefined,
             timestamp: undefined,
             timestampKey: undefined,
+            composition: undefined,
             unit: ''
         };
     },
@@ -90,6 +92,16 @@ export default {
             }
 
             return this.formats[this.valueKey].format(this.datum);
+        },
+        type() {
+            if (this.composition && this.composititon.length > 0) {
+                return 'Aggregate';
+            }
+
+            const metadata = window.openmct.telemetry.getMetadata(this.domainObject);
+            console.debug(`🥵 metadata: `, metadata);
+
+            return "Telemetry";
         },
         valueClasses() {
             let classes = [];
@@ -132,6 +144,7 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.composition = this.openmct.composition.get(this.domainObject);
 
         this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
