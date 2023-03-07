@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const SPECIAL_MESSAGE_TYPES = ['layout', 'flexible-layout'];
+
 export default class RemoveAction {
     #transaction;
 
@@ -39,28 +41,37 @@ export default class RemoveAction {
     }
 
     async invoke(objectPath) {
-        let object = objectPath[0];
-        let parent = objectPath[1];
+        const child = objectPath[0];
+        const parent = objectPath[1];
 
         try {
-            await this.showConfirmDialog(object);
+            await this.showConfirmDialog(child, parent);
         } catch (error) {
             return; // form canceled, exit invoke
         }
 
-        await this.removeFromComposition(parent, object);
+        await this.removeFromComposition(parent, child);
 
-        if (this.inNavigationPath(object)) {
+        if (this.inNavigationPath(child)) {
             this.navigateTo(objectPath.slice(1));
         }
     }
 
-    showConfirmDialog(object) {
+    showConfirmDialog(child, parent) {
+        let message = 'Warning! This action will remove this object. Are you sure you want to continue?';
+
+        if (SPECIAL_MESSAGE_TYPES.includes(parent.type)) {
+            const type = this.openmct.types.get(parent.type);
+            const typeName = type.definition.name;
+
+            message = `Warning! This action will remove this item from the ${typeName}. Are you sure you want to continue?`;
+        }
+
         return new Promise((resolve, reject) => {
-            let dialog = this.openmct.overlays.dialog({
-                title: `Remove ${object.name}`,
+            const dialog = this.openmct.overlays.dialog({
+                title: `Remove ${child.name}`,
                 iconClass: 'alert',
-                message: 'Warning! This action will remove this object. Are you sure you want to continue?',
+                message,
                 buttons: [
                     {
                         label: 'OK',
