@@ -89,12 +89,18 @@
         .l-pane__header { display: none; }
 
         .l-pane__contents {
+            .l-shell__main-.l-shell__main-view-browse-bar {
+                position: relative;
+            }
             // Using `position: absolute` due to flex having repaint issues with the Time Conductor, #5247
-            > * {
-                // .l-shell__main-view-browse-bar, .l-shell__main-container, .l-shell__time-conductor
+            .l-shell__main-container,
+            .l-shell__time-conductor {
                 position: absolute;
-                left: 0; right: 0;
-                height: auto; width: auto;
+                left: 0;
+                right: 0;
+                height: auto;
+                width: auto;
+            
             }
 
             .l-shell__main-container {
@@ -330,6 +336,7 @@
         height: $p + 24px; // Need to standardize the height
         justify-content: space-between;
         padding: $p;
+        z-index: 2;
     }
 
     &__resizing {
