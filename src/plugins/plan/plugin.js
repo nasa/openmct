@@ -22,6 +22,7 @@
 
 import PlanViewProvider from './PlanViewProvider';
 import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
+import ganttChartCompositionPolicy from './GanttChartCompositionPolicy';
 
 export default function (configuration) {
     return function install(openmct) {
@@ -33,11 +34,15 @@ export default function (configuration) {
             cssClass: 'icon-plan',
             form: [],
             initialize: function (domainObject) {
+                domainObject.configuration = {
+                    clipActivityNames: false
+                };
             }
         });
-        openmct.types.addType('plan-view', {
-            name: 'Plan View (Name Change TBD)',
-            key: 'plan-view',
+        // Name TBD and subject to change
+        openmct.types.addType('gantt-chart', {
+            name: 'Gantt Chart',
+            key: 'gantt-chart',
             description: 'A configurable timeline-like view for a compatible mission plan file.',
             creatable: true,
             cssClass: 'icon-plan',
@@ -68,10 +73,12 @@ export default function (configuration) {
                 domainObject.configuration = {
                     clipActivityNames: true
                 };
+                domainObject.composition = [];
             }
         });
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
         openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
+        openmct.composition.addPolicy(ganttChartCompositionPolicy(openmct));
     };
 }
 
