@@ -72,11 +72,12 @@ export default {
             this.isEditing = isEditing;
         },
         formatTelemetry(event) {
-            let newFormat = event.currentTarget.value;
+            const newFormat = event.currentTarget.value;
             this.openmct.selection.get().forEach(selectionPath => {
                 selectionPath[0].context.updateTelemetryFormat(newFormat);
             });
             this.telemetryFormat = newFormat;
+            console.debug(`👹 Set telemetry format to `, newFormat);
         },
         handleSelection(selection) {
             if (selection.length === 0 || selection[0].length < 2) {
