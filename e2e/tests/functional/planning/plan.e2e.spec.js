@@ -68,7 +68,7 @@ const testPlan = {
 };
 
 test.describe("Plan", () => {
-    test("Create a Plan and display all plan events @unstable", async ({ page }) => {
+    test("Create a Plan and display all plan events", async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         const plan = await createPlanFromJSON(page, {

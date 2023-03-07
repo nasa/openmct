@@ -165,11 +165,11 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     // in the correct location, such as a folder, layout, or plot.
     await page.goto(`${parentUrl}?hideTree=true`);
 
-    //Click the Create button
+    // Click the Create button
     await page.click('button:has-text("Create")');
 
-    // Click 'Plan' menu option
-    await page.click(`li:text("Plan")`);
+    // Click 'Gantt Chart' menu option
+    await page.click(`li:text("Gantt Chart")`);
 
     // Modify the name input field of the domain object to accept 'name'
     if (name) {
