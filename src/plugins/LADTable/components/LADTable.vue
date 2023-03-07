@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@
                 <th>Name</th>
                 <th v-if="showTimestamp">Timestamp</th>
                 <th>Value</th>
-                <th v-if="hasUnits">Unit</th>
+                <th v-if="hasUnits">Units</th>
             </tr>
         </thead>
         <tbody>

@@ -1,3 +1,25 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2023, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div class="c-inspect-properties">
     <template v-if="isEditing">
@@ -37,8 +59,8 @@ export default {
     data() {
         return {
             headers: {
-                timestamp: 'timestamp',
-                units: 'units'
+                timestamp: 'Timestamp',
+                units: 'Units'
             },
             isEditing: this.openmct.editor.isEditing(),
             configuration: this.ladTableConfiguration.getConfiguration(),
@@ -81,7 +103,7 @@ export default {
     },
     methods: {
         addItem(domainObject) {
-            let item = {};
+            const item = {};
             item.domainObject = domainObject;
             item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
@@ -105,9 +127,9 @@ export default {
             this.$set(this.ladTelemetryObjects, ladTable.key, []);
             this.ladTableObjects.push(ladTable);
 
-            let composition = this.openmct.composition.get(ladTable.domainObject);
-            let addCallback = this.addTelemetryObject(ladTable);
-            let removeCallback = this.removeTelemetryObject(ladTable);
+            const composition = this.openmct.composition.get(ladTable.domainObject);
+            const addCallback = this.addTelemetryObject(ladTable);
+            const removeCallback = this.removeTelemetryObject(ladTable);
 
             composition.on('add', addCallback);
             composition.on('remove', removeCallback);
@@ -122,8 +144,8 @@ export default {
             this.shouldShowUnitsCheckbox();
         },
         removeLadTable(identifier) {
-            let index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.key);
-            let ladTable = this.ladTableObjects[index];
+            const index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.key);
+            const ladTable = this.ladTableObjects[index];
 
             this.$delete(this.ladTelemetryObjects, ladTable.key);
             this.ladTableObjects.splice(index, 1);
@@ -132,7 +154,7 @@ export default {
         },
         addTelemetryObject(ladTable) {
             return (domainObject) => {
-                let telemetryObject = {};
+                const telemetryObject = {};
                 telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 telemetryObject.domainObject = domainObject;
 
@@ -148,7 +170,7 @@ export default {
             return (identifier) => {
                 const keystring = this.openmct.objects.makeKeyString(identifier);
                 const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
-                let index = telemetryObjects.findIndex(telemetryObject => keystring === telemetryObject.key);
+                const index = telemetryObjects.findIndex(telemetryObject => keystring === telemetryObject.key);
 
                 telemetryObjects.splice(index, 1);
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
@@ -193,7 +215,7 @@ export default {
             }
 
             if (showUnitsCheckbox && this.headers.units === undefined) {
-                this.$set(this.headers, 'units', 'units');
+                this.$set(this.headers, 'units', 'Units');
             }
 
             if (!showUnitsCheckbox && this.headers?.units) {
