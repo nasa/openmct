@@ -29,7 +29,7 @@
 import {
     FONT_SIZES,
     FONTS
-} from '@/ui/inspector/styles/constants';
+} from './constants';
 
 export default {
     inject: ['openmct'],

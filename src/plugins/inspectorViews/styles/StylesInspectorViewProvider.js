@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,51 +20,70 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelistPropertiesView from "./TimelistPropertiesView.vue";
-import { TIMELIST_TYPE } from '../constants';
+import stylesManager from './StylesManager';
+import StylesInspectorView from './StylesInspectorView.vue';
 import Vue from 'vue';
 
-export default function TimeListInspectorViewProvider(openmct) {
+const NON_STYLABLE_TYPES = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
+
+function isLayoutObject(selection, objectType) {
+    //we allow conditionSets to be styled if they're part of a layout
+    return selection.length > 1
+        && ((objectType === 'conditionSet') || (NON_STYLABLE_TYPES.indexOf(objectType) < 0));
+}
+
+function isCreatableObject(object, type) {
+    return (NON_STYLABLE_TYPES.indexOf(object.type) < 0) && type.definition.creatable;
+}
+
+export default function StylesInspectorViewProvider(openmct) {
     return {
-        key: 'timelist-inspector',
-        name: 'Timelist Inspector View',
+        key: 'stylesInspectorView',
+        name: 'Styles',
+        glyph: 'icon-paint-bucket',
         canView: function (selection) {
-            if (selection.length === 0 || selection[0].length === 0) {
+            const objectSelection = selection?.[0];
+            const layoutItem = objectSelection?.[0]?.context?.layoutItem;
+            const domainObject = objectSelection?.[0]?.context?.item;
+
+            if (layoutItem) {
+                return true;
+            }
+
+            if (!domainObject) {
                 return false;
             }
 
-            let context = selection[0][0].context;
+            const type = openmct.types.get(domainObject.type);
 
-            return context && context.item
-                && context.item.type === TIMELIST_TYPE;
+            return isLayoutObject(objectSelection, domainObject.type) || isCreatableObject(domainObject, type);
         },
         view: function (selection) {
             let component;
 
             return {
-                show: function (element) {
+                show: function (el) {
                     component = new Vue({
-                        el: element,
+                        el,
                         components: {
-                            TimelistPropertiesView: TimelistPropertiesView
+                            StylesInspectorView
                         },
                         provide: {
                             openmct,
-                            domainObject: selection[0][0].context.item
+                            stylesManager,
+                            selection
                         },
-                        template: '<timelist-properties-view></timelist-properties-view>'
+                        template: `<StylesInspectorView />`
                     });
                 },
                 destroy: function () {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
+                    component.$destroy();
+                    component = undefined;
                 }
             };
         },
         priority: function () {
-            return openmct.priority.HIGH + 1;
+            return this.openmct.priority.DEFAULT;
         }
     };
 }

@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import DetailText from '@/ui/inspector/details/DetailText.vue';
+import DetailText from '../inspectorViews/properties/DetailText.vue';
 
 export default {
     name: 'FaultManagementInspector',

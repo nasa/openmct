@@ -27,11 +27,14 @@ import { v4 as uuid } from 'uuid';
 import _ from 'lodash';
 
 export default class CreateAction extends PropertiesAction {
+    #transaction;
+
     constructor(openmct, type, parentDomainObject) {
         super(openmct);
 
         this.type = type;
         this.parentDomainObject = parentDomainObject;
+        this.#transaction = null;
     }
 
     invoke() {
@@ -77,6 +80,7 @@ export default class CreateAction extends PropertiesAction {
             await this.openmct.objects.save(this.domainObject);
             const compositionCollection = await this.openmct.composition.get(parentDomainObject);
             compositionCollection.add(this.domainObject);
+            await this.saveTransaction();
 
             this._navigateAndEdit(this.domainObject, parentDomainObjectPath);
 
@@ -95,8 +99,12 @@ export default class CreateAction extends PropertiesAction {
      * @private
      */
     _onCancel() {
-        //do Nothing
+        this.#transaction.cancel().then(() => {
+            this.openmct.objects.endTransaction();
+            this.#transaction = null;
+        });
     }
+
     /**
      * @private
      */
@@ -153,11 +161,29 @@ export default class CreateAction extends PropertiesAction {
         const formStructure = createWizard.getFormStructure(true);
         formStructure.title = 'Create a New ' + definition.name;
 
+        this.startTransaction();
+
         this.openmct.forms.showForm(formStructure)
             .then(this._onSave.bind(this))
             .catch(this._onCancel.bind(this))
             .finally(() => {
                 this.openmct.objects.destroyMutable(this.domainObject);
             });
+    }
+
+    startTransaction() {
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.#transaction = this.openmct.objects.startTransaction();
+        }
+    }
+
+    async saveTransaction() {
+        if (!this.#transaction) {
+            return;
+        }
+
+        await this.#transaction.commit();
+        this.openmct.objects.endTransaction();
+        this.#transaction = null;
     }
 }

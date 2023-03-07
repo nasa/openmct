@@ -42,7 +42,7 @@
         ></span>
         <object-label
             :domain-object="elementObject"
-            :object-path="[elementObject, parentObject]"
+            :object-path="[elementObject, domainObject]"
             @context-click-active="setContextClickState"
         />
     </div>
@@ -50,13 +50,16 @@
 </template>
 
 <script>
-import ObjectLabel from '../components/ObjectLabel.vue';
+import ObjectLabel from '../../../ui/components/ObjectLabel.vue';
 
 export default {
     components: {
         ObjectLabel
     },
-    inject: ['openmct'],
+    inject: [
+        'openmct',
+        'domainObject'
+    ],
     props: {
         index: {
             type: Number,
@@ -72,19 +75,12 @@ export default {
                 return {};
             }
         },
-        parentObject: {
-            type: Object,
-            required: true,
-            default: () => {
-                return {};
-            }
-        },
         allowDrop: {
             type: Boolean
         }
     },
     data() {
-        const isAlias = this.elementObject.location !== this.openmct.objects.makeKeyString(this.parentObject.identifier);
+        const isAlias = this.elementObject.location !== this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
         return {
             contextClickActive: false,

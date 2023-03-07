@@ -24,7 +24,7 @@
  */
 
 const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../appActions');
 const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
@@ -50,7 +50,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
         await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
         // Click the Elements pool to dismiss the search menu
-        await page.locator('.l-pane__label:has-text("Elements")').click();
+        await selectInspectorTab(page, 'Elements');
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
@@ -133,6 +133,7 @@ test.describe('Grand Search', () => {
         const searchResults = page.locator(searchResultSelector);
 
         // Verify that one result is found
+        await expect(searchResults).toBeVisible();
         expect(await searchResults.count()).toBe(1);
         await expect(searchResults).toHaveText(folderName);
     });
@@ -194,7 +195,7 @@ test.describe('Grand Search', () => {
         // Wait for search to finish
         await waitForSearchCompletion(page);
 
-        const searchResultDropDown = await page.locator(searchResultDropDownSelector);
+        const searchResultDropDown = page.locator(searchResultDropDownSelector);
 
         // Verify that the search result/s correctly match the search query
         await expect(searchResultDropDown).toContainText(folderName1);
