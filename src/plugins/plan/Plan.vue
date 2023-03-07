@@ -105,9 +105,13 @@ export default {
         this.setDimensions();
         this.setTimeContext();
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
-        this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
+        this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration', (newConfiguration) => {
+            this.clipActivityNames = newConfiguration.clipActivityNames;
+            this.setScaleAndPlotActivities();
+        });
+        this.loadComposition();
     },
     beforeDestroy() {
         clearInterval(this.resizeTimer);
@@ -119,6 +123,13 @@ export default {
         if (this.removeStatusListener) {
             this.removeStatusListener();
         }
+
+        if (this.compositionCollection) {
+            this.compositionCollection.off('add', this.handleCompositionAdd);
+            this.compositionCollection.off('remove', this.handleCompositionRemove);
+        }
+
+        this.stopObservingItems();
     },
     methods: {
         activityNameFitsRect(activityName, rectWidth) {
@@ -136,12 +147,30 @@ export default {
             this.timeContext.on("bounds", this.updateViewBounds);
             this.timeContext.on("clock", this.updateBounds);
         },
+        loadComposition() {
+            this.compositionCollection = this.openmct.composition.get(this.domainObject);
+
+            if (this.compositionCollection) {
+                this.compositionCollection.on('add', this.handleCompositionAdd);
+                this.compositionCollection.on('remove', this.handleCompositionRemove);
+                this.compositionCollection.load();
+            }
+
+        },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.setScaleAndPlotActivities);
                 this.timeContext.off("bounds", this.updateViewBounds);
                 this.timeContext.off("clock", this.updateBounds);
             }
+        },
+        handleCompositionAdd(domainObject) {
+            this.getPlanData(domainObject);
+            this.setScaleAndPlotActivities();
+        },
+        handleCompositionRemove() {
+            this.planData = {};
+            this.setScaleAndPlotActivities();
         },
         observeForChanges(mutatedObject) {
             this.getPlanData(mutatedObject);
@@ -463,7 +492,6 @@ export default {
             };
         },
         drawPlan() {
-
             Object.keys(this.groupActivities).forEach((group, index) => {
                 const activitiesByRow = this.groupActivities[group].activitiesByRow;
                 const heading = this.groupActivities[group].heading;
@@ -567,6 +595,7 @@ export default {
 
             rectElement.addEventListener('click', (event) => {
                 this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
+                event.stopPropagation();
             });
 
             svgElement.appendChild(rectElement);
@@ -590,6 +619,7 @@ export default {
                 textElement.appendChild(textNode);
                 textElement.addEventListener('click', (event) => {
                     this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
+                    event.stopPropagation();
                 });
                 svgElement.appendChild(textElement);
             });
@@ -621,6 +651,7 @@ export default {
         setSelectionForActivity(element, activity, multiSelect) {
             this.openmct.selection.select([{
                 element: element,
+                // activity: activity,
                 context: {
                     type: 'activity',
                     activity: activity
@@ -628,11 +659,11 @@ export default {
             }, {
                 element: this.openmct.layout.$refs.browseObject.$el,
                 context: {
+                    // activity: activity,
                     item: this.domainObject,
                     supportsMultiSelect: true
                 }
             }], multiSelect);
-            event.stopPropagation();
         },
 
         setStatus(status) {
