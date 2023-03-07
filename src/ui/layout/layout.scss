@@ -93,8 +93,8 @@
                 position: relative;
             }
             // Using `position: absolute` due to flex having repaint issues with the Time Conductor, #5247
-            .l-shell__main-container,
-            .l-shell__time-conductor {
+            .l-shell__time-conductor,
+            .l-shell__main-container {
                 position: absolute;
                 left: 0;
                 right: 0;
@@ -362,6 +362,7 @@
         box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
         margin-left: $m;
         margin-right: $m;
+        top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
 
         &[s-selected] {
             // Provide a clearer selection context articulation for the main edit area
