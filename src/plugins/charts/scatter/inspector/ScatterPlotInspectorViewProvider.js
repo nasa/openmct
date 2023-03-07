@@ -33,6 +33,9 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
                         template: '<plot-options></plot-options>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -41,8 +44,5 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
                 }
             };
         },
-        priority: function () {
-            return openmct.priority.HIGH + 1;
-        }
     };
 }

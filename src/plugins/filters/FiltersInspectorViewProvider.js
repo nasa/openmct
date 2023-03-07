@@ -61,6 +61,9 @@ define([
 
                         return hasPersistedFilters || hasGlobalFilters;
                     },
+                    priority: function () {
+                        return openmct.priority.DEFAULT;
+                    },
                     destroy: function () {
                         if (component) {
                             component.$destroy();
@@ -68,9 +71,6 @@ define([
                         }
                     }
                 };
-            },
-            priority: function () {
-                return openmct.priority.DEFAULT;
             }
         };
     }
