@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from "utils/testing";
 import ConditionPlugin from "./plugin";
-import stylesManager from '@/ui/inspector/styles/StylesManager';
+import stylesManager from '../inspectorViews/styles/StylesManager';
 import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";

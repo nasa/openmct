@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,7 @@
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
 const uuid = require('uuid').v4;
 
 test.describe('Scatter Plot', () => {
@@ -40,8 +40,8 @@ test.describe('Scatter Plot', () => {
     });
 
     test('Can add and remove telemetry sources', async ({ page }) => {
-        const editButtonLocator = page.locator('button[title="Edit"]');
-        const saveButtonLocator = page.locator('button[title="Save"]');
+        const editButton = page.locator('button[title="Edit"]');
+        const saveButton = page.locator('button[title="Save"]');
 
         // Create a sine wave generator within the scatter plot
         const swg1 = await createDomainObjectWithDefaults(page, {
@@ -53,9 +53,10 @@ test.describe('Scatter Plot', () => {
         // Navigate to the scatter plot and verify that
         // the SWG appears in the elements pool
         await page.goto(scatterPlot.url);
-        await editButtonLocator.click();
+        await editButton.click();
+        await selectInspectorTab(page, 'Elements');
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
-        await saveButtonLocator.click();
+        await saveButton.click();
         await page.locator('li[title="Save and Finish Editing"]').click();
 
         // Create another sine wave generator within the scatter plot
@@ -72,10 +73,13 @@ test.describe('Scatter Plot', () => {
         // Navigate to the scatter plot and verify that the new SWG
         // appears in the elements pool and the old one is gone
         await page.goto(scatterPlot.url);
-        await editButtonLocator.click();
+        await editButton.click();
+
+        // Click the "Elements" tab
+        await selectInspectorTab(page, 'Elements');
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
         await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
-        await saveButtonLocator.click();
+        await saveButton.click();
 
         // Right click on the new SWG in the elements pool and delete it
         await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({

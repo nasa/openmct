@@ -20,24 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-<template>
-<li class="c-inspect-properties__row">
-    <div class="c-inspect-properties__label">
-        {{ detail.name }}
-    </div>
-    <div class="c-inspect-properties__value">
-        {{ detail.value }}
-    </div>
-</li>
-</template>
+import Properties from './Properties.vue';
+import Vue from 'vue';
 
-<script>
-export default {
-    props: {
-        detail: {
-            type: Object,
-            required: true
+export default function PropertiesViewProvider(openmct) {
+    return {
+        key: 'propertiesView',
+        name: 'Properties',
+        glyph: 'icon-info',
+        canView: function (selection) {
+            return selection.length > 0;
+        },
+        view: function (selection) {
+            let component;
+
+            return {
+                show: function (el) {
+                    component = new Vue({
+                        el,
+                        components: {
+                            Properties
+                        },
+                        provide: {
+                            openmct
+                        },
+                        template: `<Properties />`
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        },
+        priority: function () {
+            return this.openmct.priority.DEFAULT;
         }
-    }
-};
-</script>
+    };
+}

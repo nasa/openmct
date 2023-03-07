@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import DetailText from '@/ui/inspector/details/DetailText.vue';
+import DetailText from '../inspectorViews/properties/DetailText.vue';
 
 export default {
     name: 'FaultManagementInspector',
