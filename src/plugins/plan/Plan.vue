@@ -64,13 +64,14 @@ const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 const EDGE_ROUNDING = 5;
 const DEFAULT_COLOR = '#cc9922';
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 export default {
     components: {
         TimelineAxis,
         SwimLane
     },
-    inject: ['openmct', 'domainObject', 'path'],
+    inject: ['openmct', 'domainObject', 'path', 'composition'],
     props: {
         options: {
             type: Object,
@@ -107,10 +108,7 @@ export default {
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
-        this.stopObservingItems = this.openmct.objects.observe(this.domainObject, 'configuration', (newConfiguration) => {
-            this.clipActivityNames = newConfiguration.clipActivityNames;
-            this.setScaleAndPlotActivities();
-        });
+        this.stopObservingConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.handleConfigurationChange);
         this.loadComposition();
     },
     beforeDestroy() {
@@ -124,12 +122,12 @@ export default {
             this.removeStatusListener();
         }
 
-        if (this.compositionCollection) {
-            this.compositionCollection.off('add', this.handleCompositionAdd);
-            this.compositionCollection.off('remove', this.handleCompositionRemove);
+        if (this.composition) {
+            this.composition.off('add', this.handleCompositionAdd);
+            this.composition.off('remove', this.handleCompositionRemove);
         }
 
-        this.stopObservingItems();
+        this.stopObservingConfig();
     },
     methods: {
         activityNameFitsRect(activityName, rectWidth) {
@@ -148,12 +146,10 @@ export default {
             this.timeContext.on("clock", this.updateBounds);
         },
         loadComposition() {
-            this.compositionCollection = this.openmct.composition.get(this.domainObject);
-
-            if (this.compositionCollection) {
-                this.compositionCollection.on('add', this.handleCompositionAdd);
-                this.compositionCollection.on('remove', this.handleCompositionRemove);
-                this.compositionCollection.load();
+            if (this.composition) {
+                this.composition.on('add', this.handleCompositionAdd);
+                this.composition.on('remove', this.handleCompositionRemove);
+                this.composition.load();
             }
 
         },
@@ -164,13 +160,62 @@ export default {
                 this.timeContext.off("clock", this.updateBounds);
             }
         },
-        handleCompositionAdd(domainObject) {
-            this.getPlanData(domainObject);
+        showReplacePlanDialog(domainObject) {
+            return new Promise((resolve) => {
+                let dialog = this.openmct.overlays.dialog({
+                    iconClass: 'alert',
+                    message: 'This action will replace the current Plan. Do you want to continue?',
+                    buttons: [
+                        {
+                            label: 'Ok',
+                            emphasis: true,
+                            callback: () => {
+                                this.removeFromComposition(this.planObject);
+                                this.planObject = domainObject;
+                                this.getPlanData(domainObject);
+                                this.setScaleAndPlotActivities();
+                                resolve();
+                                dialog.dismiss();
+                            }
+                        },
+                        {
+                            label: 'Cancel',
+                            callback: () => {
+                                this.removeFromComposition(domainObject);
+                                resolve();
+                                dialog.dismiss();
+                            }
+                        }
+                    ]
+                });
+            });
+
+        },
+        async handleCompositionAdd(domainObject) {
+            if (this.planObject) {
+                await this.showReplacePlanDialog(domainObject);
+            } else {
+                this.planObject = domainObject;
+                this.getPlanData(domainObject);
+                this.setScaleAndPlotActivities();
+            }
+        },
+        handleConfigurationChange(newConfiguration) {
+            Object.keys(newConfiguration).forEach((key) => {
+                this[key] = newConfiguration[key];
+            });
             this.setScaleAndPlotActivities();
         },
-        handleCompositionRemove() {
-            this.planData = {};
+        handleCompositionRemove(identifier) {
+            if (this.planObject && this.openmct.objects.areIdsEqual(identifier, this.planObject?.identifier)) {
+                this.planObject = null;
+                this.planData = {};
+            }
+
             this.setScaleAndPlotActivities();
+        },
+        removeFromComposition(domainObject) {
+            this.composition.remove(domainObject);
         },
         observeForChanges(mutatedObject) {
             this.getPlanData(mutatedObject);
@@ -513,7 +558,7 @@ export default {
             });
         },
         plotNoItems(svgElement) {
-            let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            const textElement = document.createElementNS(SVG_NAMESPACE, 'text');
             this.setNSAttributesForElement(textElement, {
                 x: "10",
                 y: "20",
@@ -523,6 +568,10 @@ export default {
 
             svgElement.appendChild(textElement);
         },
+        /**
+         * @param {Element} element
+         * @param {Object} attributes
+         */
         setNSAttributesForElement(element, attributes) {
             Object.keys(attributes).forEach((key) => {
                 element.setAttributeNS(null, key, attributes[key]);
@@ -551,14 +600,10 @@ export default {
         },
         plotActivity(item, row, svgElement) {
             const activity = item.activity;
+            const rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             let width = item.rectWidth;
-            let rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 
-            if (item.activity.exceeds.start) {
-                width = width + EDGE_ROUNDING;
-            }
-
-            if (item.activity.exceeds.end) {
+            if (activity.exceeds.start || activity.exceeds.end) {
                 width = width + EDGE_ROUNDING;
             }
 
@@ -566,14 +611,14 @@ export default {
             let clipUuid;
             if (this.clipActivityNames) {
                 clipUuid = v4();
-                let clipPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                const clipPathElement = document.createElementNS(SVG_NAMESPACE, 'clipPath');
                 this.setNSAttributesForElement(clipPathElement, {
                     id: `clip-${clipUuid}`
                 });
                 svgElement.appendChild(clipPathElement);
-                let clipRectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                let clipRectElement = document.createElementNS(SVG_NAMESPACE, 'rect');
                 this.setNSAttributesForElement(clipRectElement, {
-                    x: item.activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
+                    x: activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
                     y: row,
                     rx: (width < EDGE_ROUNDING * 2) ? 0 : EDGE_ROUNDING,
                     width: width,
@@ -585,7 +630,7 @@ export default {
             // rx: don't round corners if the width of the rect is smaller than the rounding radius
             this.setNSAttributesForElement(rectElement, {
                 class: 'activity-bounds',
-                x: item.activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
+                x: activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
                 y: row,
                 rx: (width < EDGE_ROUNDING * 2) ? 0 : EDGE_ROUNDING,
                 width: width,
@@ -601,7 +646,7 @@ export default {
             svgElement.appendChild(rectElement);
 
             item.textLines.forEach((line, index) => {
-                let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                let textElement = document.createElementNS(SVG_NAMESPACE, 'text');
                 this.setNSAttributesForElement(textElement, {
                     class: `activity-label ${item.textClass}`,
                     x: item.textStart,
