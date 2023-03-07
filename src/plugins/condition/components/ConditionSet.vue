@@ -54,6 +54,7 @@
             :is-editing="isEditing"
             :test-data="testData"
             @conditionSetResultUpdated="updateCurrentOutput"
+            @noTelemetryObjects="updateCurrentOutput('---')"
             @telemetryUpdated="updateTelemetry"
             @telemetryStaleness="handleStaleness"
         />
