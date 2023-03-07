@@ -310,10 +310,6 @@
 
     &__input{
         word-break: break-word;
-
-        &[disabled] {
-            opacity: 1 !important;
-        }
     }
     &__time-and-creator-and-delete{
         display: flex;
