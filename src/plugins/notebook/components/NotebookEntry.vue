@@ -80,10 +80,10 @@
                     aria-label="Notebook Entry Input"
                     tabindex="-1"
                     :contenteditable="canEdit"
-                    :disabled="!isSelectedEntry"
                     v-bind.prop="formattedText"
                     @mouseover="checkEditability($event)"
                     @mouseleave="canEdit = true"
+                    @mousedown="preventFocusIfNotSelected($event)"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
                 >
@@ -461,6 +461,13 @@ export default {
             this.entry.modified = Date.now();
 
             this.$emit('updateEntry', this.entry);
+        },
+        preventFocusIfNotSelected($event) {
+            if (!this.isSelectedEntry) {
+                $event.preventDefault();
+                // blur the previous focused entry if clicking on non selected entry input
+                document.activeElement.blur();
+            }
         },
         editingEntry() {
             this.editMode = true;
