@@ -598,6 +598,7 @@ export default {
 
             svgElement.appendChild(foreign);
         },
+        // TODO: Clean up, extract HTML element creation into utility functions
         plotActivity(item, row, svgElement) {
             const activity = item.activity;
             const rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
