@@ -76,7 +76,6 @@ const config = {
         ['junit', { outputFile: '../test-results/results.xml' }],
         ['github'],
         ['@deploysentinel/playwright']
-        //...(process.env.CI ? [['@deploysentinel/playwright']] : [])
     ]
 };
 
