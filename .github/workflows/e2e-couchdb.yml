@@ -26,7 +26,10 @@ jobs:
       - run: npx playwright@1.29.0 install
       - run: npm install
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
-      - run: npm run test:e2e:couchdb
+      - name: Run CouchDB Tests and publish to deploysentinel
+        env: 
+          DEPLOYSENTINEL_API_KEY: ${{ secrets.DEPLOYSENTINEL_API_KEY }} 
+        run: npm run test:e2e:couchdb
       - run: ls -latr
       - name: Archive test results
         uses: actions/upload-artifact@v3
