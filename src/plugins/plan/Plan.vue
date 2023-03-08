@@ -51,7 +51,7 @@ import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedData } from "./util";
 import Vue from "vue";
-import { v4 } from "uuid";
+import { v4 as uuid } from "uuid";
 
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
@@ -62,7 +62,7 @@ const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 25;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
-const EDGE_ROUNDING = 5;
+const MIN_ACTIVITY_WIDTH = 2;
 const DEFAULT_COLOR = '#cc9922';
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
@@ -519,6 +519,7 @@ export default {
         <svg 
             :height="height"
             :width="width"
+            :viewBox="'0 0 ' + width + ' ' + height"
         >
         </svg>
     </template>
@@ -602,16 +603,10 @@ export default {
         plotActivity(item, row, svgElement) {
             const activity = item.activity;
             const rectElement = document.createElementNS(SVG_NAMESPACE, 'rect');
-            let width = item.rectWidth;
+            const width = Math.max(Math.round(item.rectWidth), MIN_ACTIVITY_WIDTH);
+            const clipUuid = uuid();
 
-            if (activity.exceeds.start || activity.exceeds.end) {
-                width = width + EDGE_ROUNDING;
-            }
-
-            width = Math.max(width, 1); // Set width to a minimum of 1
-            let clipUuid;
             if (this.clipActivityNames) {
-                clipUuid = v4();
                 const clipPathElement = document.createElementNS(SVG_NAMESPACE, 'clipPath');
                 this.setNSAttributesForElement(clipPathElement, {
                     id: `clip-${clipUuid}`
@@ -619,21 +614,18 @@ export default {
                 svgElement.appendChild(clipPathElement);
                 let clipRectElement = document.createElementNS(SVG_NAMESPACE, 'rect');
                 this.setNSAttributesForElement(clipRectElement, {
-                    x: activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
+                    x: Math.round(item.start),
                     y: row,
-                    rx: (width < EDGE_ROUNDING * 2) ? 0 : EDGE_ROUNDING,
                     width: width,
                     height: String(ROW_HEIGHT)
                 });
                 clipPathElement.appendChild(clipRectElement);
             }
 
-            // rx: don't round corners if the width of the rect is smaller than the rounding radius
             this.setNSAttributesForElement(rectElement, {
                 class: 'activity-bounds',
-                x: activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
+                x: Math.round(item.start),
                 y: row,
-                rx: (width < EDGE_ROUNDING * 2) ? 0 : EDGE_ROUNDING,
                 width: width,
                 height: String(ROW_HEIGHT),
                 fill: activity.color
