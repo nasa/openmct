@@ -83,7 +83,7 @@ test.describe('Stacked Plot', () => {
         await expect(swgCElementsPoolItem).toHaveCount(1);
     });
 
-    test.only('Can reorder Stacked Plot items', async ({ page }) => {
+    test('Can reorder Stacked Plot items', async ({ page }) => {
         const swgAElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgA.name });
         const swgBElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgB.name });
         const swgCElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgC.name });
