@@ -582,7 +582,7 @@ export default {
         },
         // Experimental for now - unused
         addForeignElement(svgElement, label, x, y) {
-            let foreign = document.createElementNS('http://www.w3.org/2000/svg', "foreignObject");
+            let foreign = document.createElementNS(SVG_NAMESPACE, "foreignObject");
             this.setNSAttributesForElement(foreign, {
                 width: String(MAX_TEXT_WIDTH),
                 height: String(LINE_HEIGHT * 2),
@@ -601,7 +601,7 @@ export default {
         // TODO: Clean up, extract HTML element creation into utility functions
         plotActivity(item, row, svgElement) {
             const activity = item.activity;
-            const rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            const rectElement = document.createElementNS(SVG_NAMESPACE, 'rect');
             let width = item.rectWidth;
 
             if (activity.exceeds.start || activity.exceeds.end) {
