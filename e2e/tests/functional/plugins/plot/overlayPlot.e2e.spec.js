@@ -87,6 +87,7 @@ test.describe('Overlay Plot', () => {
         await page.click('button[title="Edit"]');
 
         // Expand the "Sine Wave Generator" plot series options and enable limit lines
+        await selectInspectorTab(page, 'Config');
         await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
         await page.getByRole('list', { name: 'Plot Series Properties' }).locator('[title="Display limit lines"]~div input').check();
 
@@ -105,13 +106,7 @@ test.describe('Overlay Plot', () => {
         // Enter edit mode
         await page.click('button[title="Edit"]');
 
-        // Expand the elements pool vertically
-        await page.locator('.l-pane.l-pane--vertical-handle-before', {
-            hasText: 'Elements'
-        }).locator('.l-pane__handle').hover();
-        await page.mouse.down();
-        await page.mouse.move(0, 100);
-        await page.mouse.up();
+        await selectInspectorTab(page, 'Elements');
 
         // Drag Sine Wave Generator series from Y Axis 1 into Y Axis 2
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
