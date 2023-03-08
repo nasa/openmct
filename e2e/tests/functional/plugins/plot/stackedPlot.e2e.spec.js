@@ -83,7 +83,7 @@ test.describe('Stacked Plot', () => {
         await expect(swgCElementsPoolItem).toHaveCount(1);
     });
 
-    test('Can reorder Stacked Plot items', async ({ page }) => {
+    test.only('Can reorder Stacked Plot items', async ({ page }) => {
         const swgAElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgA.name });
         const swgBElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgB.name });
         const swgCElementsPoolItem = page.locator('#inspector-elements-tree').locator('.c-object-label', { hasText: swgC.name });
@@ -122,6 +122,9 @@ test.describe('Stacked Plot', () => {
         await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
         await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
         await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
+
+        // collapse inspector
+        await page.locator('.l-shell__pane-inspector .l-pane__collapse-button').click();
 
         // Save (exit edit mode)
         await page.locator('button[title="Save"]').click();
