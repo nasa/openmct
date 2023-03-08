@@ -81,7 +81,7 @@ export default {
             datum: undefined,
             timestamp: undefined,
             timestampKey: undefined,
-            composition: undefined,
+            composition: [],
             unit: ''
         };
     },
@@ -94,12 +94,9 @@ export default {
             return this.formats[this.valueKey].format(this.datum);
         },
         type() {
-            if (this.composition && this.composititon.length > 0) {
+            if (this.composition && this.composition.length > 0) {
                 return 'Aggregate';
             }
-
-            const metadata = window.openmct.telemetry.getMetadata(this.domainObject);
-            console.debug(`🥵 metadata: `, metadata);
 
             return "Telemetry";
         },
@@ -144,7 +141,8 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.composition = this.openmct.composition.get(this.domainObject);
+        const compositionCollection = this.openmct.composition.get(this.domainObject);
+        this.composition = await compositionCollection.load();
 
         this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
