@@ -1,3 +1,4 @@
+    // v-if="isHidden === false"
 <template>
 <div
     class="u-contents"
@@ -63,6 +64,12 @@ export default {
             }
         },
         showUcontents: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
+        isHidden: {
             type: Boolean,
             default() {
                 return false;

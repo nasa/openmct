@@ -42,16 +42,27 @@
         class="c-plan__contents u-contents"
     >
     </div>
+    <ActivityTimeline
+        v-for="(group, index) in activityGroups"
+        :key="index"
+        :activities="group.activities"
+        :clip-activity-names="clipActivityNames"
+        :heading="group.heading"
+        :height="group.height"
+        :width="group.width"
+        :is-nested="options.isChildObject"
+        :status="status"
+    />
+
 </div>
 </template>
 
 <script>
 import * as d3Scale from 'd3-scale';
 import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
+import ActivityTimeline from "./ActivityTimeline.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-import { getValidatedData } from "./util";
-import Vue from "vue";
-import { v4 as uuid } from "uuid";
+import { getValidatedData, getContrastingColor } from "./util";
 
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
@@ -60,16 +71,15 @@ const TEXT_LEFT_PADDING = 5;
 const ROW_PADDING = 12;
 const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 25;
-const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 const MIN_ACTIVITY_WIDTH = 2;
 const DEFAULT_COLOR = '#cc9922';
-const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 export default {
     components: {
         TimelineAxis,
-        SwimLane
+        SwimLane,
+        ActivityTimeline
     },
     inject: ['openmct', 'domainObject', 'path', 'composition'],
     props: {
@@ -90,6 +100,7 @@ export default {
     },
     data() {
         return {
+            activityGroups: [],
             viewBounds: null,
             timeSystem: null,
             clipActivityNames: this.domainObject?.configuration?.clipActivityNames ?? false,
@@ -97,7 +108,7 @@ export default {
         };
     },
     mounted() {
-        this.getPlanData(this.domainObject);
+        this.planData = getValidatedData(this.domainObject);
 
         this.canvas = this.$refs.plan.appendChild(document.createElement('canvas'));
         this.canvas.height = 0;
@@ -172,7 +183,7 @@ export default {
                             callback: () => {
                                 this.removeFromComposition(this.planObject);
                                 this.planObject = domainObject;
-                                this.getPlanData(domainObject);
+                                this.planData = getValidatedData(domainObject);
                                 this.setScaleAndPlotActivities();
                                 resolve();
                                 dialog.dismiss();
@@ -196,7 +207,7 @@ export default {
                 await this.showReplacePlanDialog(domainObject);
             } else {
                 this.planObject = domainObject;
-                this.getPlanData(domainObject);
+                this.planData = getValidatedData(domainObject);
                 this.setScaleAndPlotActivities();
             }
         },
@@ -218,7 +229,7 @@ export default {
             this.composition.remove(domainObject);
         },
         observeForChanges(mutatedObject) {
-            this.getPlanData(mutatedObject);
+            this.planData = getValidatedData(mutatedObject);
             this.setScaleAndPlotActivities();
         },
         resize() {
@@ -259,9 +270,6 @@ export default {
 
             return clientHeight;
         },
-        getPlanData(domainObject) {
-            this.planData = getValidatedData(domainObject);
-        },
         updateBounds(clock) {
             if (clock === undefined) {
                 this.viewBounds = Object.create(this.timeContext.bounds());
@@ -287,7 +295,6 @@ export default {
             this.clearPreviousActivities();
             if (this.xScale) {
                 this.calculatePlanLayout();
-                this.drawPlan();
             }
         },
         clearPreviousActivities() {
@@ -334,7 +341,7 @@ export default {
 
             return textMetrics.width;
         },
-        sortFn(a, b) {
+        sortIntegerAsc(a, b) {
             const numA = parseInt(a, 10);
             const numB = parseInt(b, 10);
             if (numA > numB) {
@@ -349,22 +356,22 @@ export default {
         },
         // Get the row where the next activity will land.
         getRowForActivity(rectX, width, activitiesByRow) {
+            const sortedActivityRows = Object.keys(activitiesByRow).sort(this.sortIntegerAsc);
             let currentRow;
-            let sortedActivityRows = Object.keys(activitiesByRow).sort(this.sortFn);
 
-            function getOverlap(rects) {
-                return rects.every(rect => {
+            function activitiesHaveOverlap(rects) {
+                return rects.some(rect => {
                     const { start, end } = rect;
                     const calculatedEnd = rectX + width;
                     const hasOverlap = (rectX >= start && rectX <= end) || (calculatedEnd >= start && calculatedEnd <= end) || (rectX <= start && calculatedEnd >= end);
 
-                    return !hasOverlap;
+                    return hasOverlap;
                 });
             }
 
             for (let i = 0; i < sortedActivityRows.length; i++) {
                 let row = sortedActivityRows[i];
-                if (getOverlap(activitiesByRow[row])) {
+                if (!activitiesHaveOverlap(activitiesByRow[row])) {
                     currentRow = row;
                     break;
                 }
@@ -375,18 +382,19 @@ export default {
                 currentRow = row + ROW_HEIGHT + ROW_PADDING;
             }
 
-            return (currentRow || 0);
+            return currentRow || 0;
         },
         calculatePlanLayout() {
-            let groups = Object.keys(this.planData);
-            this.groupActivities = {};
+            const groupNames = Object.keys(this.planData);
+            const activityGroups = [];
 
-            groups.forEach((key, index) => {
+            groupNames.forEach((groupName) => {
                 let activitiesByRow = {};
                 let currentRow = 0;
+                let activities = [];
 
-                let activities = this.planData[key];
-                activities.forEach((activity) => {
+                const rawActivities = this.planData[groupName];
+                rawActivities.forEach((activity) => {
                     if (!this.isActivityInBounds(activity)) {
                         return;
                     }
@@ -395,7 +403,7 @@ export default {
                     const currentEnd = Math.min(this.viewBounds.end, activity.end);
                     const rectX1 = this.xScale(currentStart);
                     const rectX2 = this.xScale(currentEnd);
-                    const rectWidth = rectX2 - rectX1;
+                    const rectWidth = Math.max(rectX2 - rectX1, MIN_ACTIVITY_WIDTH);
 
                     //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
                     const showTextInsideRect = this.clipActivityNames || this.activityNameFitsRect(activity.name, rectWidth);
@@ -405,7 +413,7 @@ export default {
                     if (activity.textColor) {
                         textColor = activity.textColor;
                     } else if (showTextInsideRect) {
-                        textColor = this.getContrastingColor(color);
+                        textColor = getContrastingColor(color);
                     }
 
                     const textLines = this.getActivityDisplayText(this.canvasContext, activity.name, showTextInsideRect);
@@ -443,12 +451,40 @@ export default {
                         end: showTextInsideRect ? rectX2 : textStart + textWidth,
                         rectWidth: rectWidth
                     });
+                    activities.push({
+                        color: color,
+                        textColor: textColor,
+                        name: activity.name,
+                        exceeds: {
+                            start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
+                            end: this.xScale(this.viewBounds.end) < this.xScale(activity.end)
+                        },
+                        start: activity.start,
+                        end: activity.end,
+                        row: currentRow,
+                        textLines: textLines,
+                        textStart: textStart,
+                        textClass: showTextInsideRect ? "" : "activity-label--outside-rect",
+                        textY: textY,
+                        rectStart: rectX1,
+                        rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
+                        rectWidth: rectWidth
+                    });
                 });
-                this.groupActivities[key] = {
-                    heading: key,
-                    activitiesByRow
-                };
+
+                const isNested = this.options.isChildObject;
+                const status = isNested ? '' : this.status;
+                const { swimlaneHeight, swimlaneWidth } = this.getGroupDimensions(activitiesByRow);
+                activityGroups.push({
+                    heading: groupName,
+                    activities,
+                    height: swimlaneHeight,
+                    width: swimlaneWidth,
+                    status
+                });
             });
+
+            this.activityGroups = activityGroups;
         },
         /**
          * Format the activity name to fit within the activity rect with a max of 2 lines
@@ -477,219 +513,33 @@ export default {
 
             return activityLines.length ? activityLines : [line];
         },
-        getGroupContainer(activityRows, heading) {
-            let svgHeight = 30;
-            let svgWidth = 200;
+        getGroupDimensions(activityRows) {
+            let swimlaneHeight = 30;
+            let swimlaneWidth = 200;
+
+            if (!activityRows) {
+                return {
+                    swimlaneHeight,
+                    swimlaneWidth
+                };
+            }
 
             const rows = Object.keys(activityRows);
-            const isNested = this.options.isChildObject;
-            const status = isNested ? '' : this.status;
 
             if (rows.length) {
                 const lastActivityRow = rows[rows.length - 1];
-                svgHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
-                svgWidth = this.width;
+                swimlaneHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
+                swimlaneWidth = this.width;
             }
-
-            let component = new Vue({
-                components: {
-                    SwimLane
-                },
-                provide: {
-                    openmct: this.openmct
-                },
-                data() {
-                    return {
-                        heading,
-                        isNested,
-                        status,
-                        height: svgHeight,
-                        width: svgWidth
-                    };
-                },
-                template: `
-<swim-lane 
-    :is-nested="isNested"
-    :status="status"
->
-    <template slot="label">
-        {{heading}}
-    </template>
-    <template slot="object">
-        <svg 
-            :height="height"
-            :width="width"
-            :viewBox="'0 0 ' + width + ' ' + height"
-        >
-        </svg>
-    </template>
-</swim-lane>
-`
-            });
-
-            this.$refs.planHolder.appendChild(component.$mount().$el);
-
-            let groupLabel = component.$el.querySelector('div:nth-child(1)');
-            let groupSVG = component.$el.querySelector('svg');
 
             return {
-                groupLabel,
-                groupSVG
+                swimlaneHeight,
+                swimlaneWidth
             };
-        },
-        drawPlan() {
-            Object.keys(this.groupActivities).forEach((group, index) => {
-                const activitiesByRow = this.groupActivities[group].activitiesByRow;
-                const heading = this.groupActivities[group].heading;
-                const groupElements = this.getGroupContainer(activitiesByRow, heading);
-                let groupSVG = groupElements.groupSVG;
-
-                let activityRows = Object.keys(activitiesByRow);
-                if (activityRows.length <= 0) {
-                    this.plotNoItems(groupSVG);
-                }
-
-                activityRows.forEach((row) => {
-                    const items = activitiesByRow[row];
-                    items.forEach(item => {
-                        this.plotActivity(item, parseInt(row, 10), groupSVG);
-                    });
-                });
-
-            });
-        },
-        plotNoItems(svgElement) {
-            const textElement = document.createElementNS(SVG_NAMESPACE, 'text');
-            this.setNSAttributesForElement(textElement, {
-                x: "10",
-                y: "20",
-                class: "activity-label--outside-rect"
-            });
-            textElement.innerHTML = 'No activities within timeframe';
-
-            svgElement.appendChild(textElement);
-        },
-        /**
-         * @param {Element} element
-         * @param {Object} attributes
-         */
-        setNSAttributesForElement(element, attributes) {
-            Object.keys(attributes).forEach((key) => {
-                element.setAttributeNS(null, key, attributes[key]);
-            });
-        },
-        getNSAttributesForElement(element, attribute) {
-            return element.getAttributeNS(null, attribute);
-        },
-        // Experimental for now - unused
-        addForeignElement(svgElement, label, x, y) {
-            let foreign = document.createElementNS(SVG_NAMESPACE, "foreignObject");
-            this.setNSAttributesForElement(foreign, {
-                width: String(MAX_TEXT_WIDTH),
-                height: String(LINE_HEIGHT * 2),
-                x: x,
-                y: y
-            });
-
-            let textEl = document.createElement('div');
-            let textNode = document.createTextNode(label);
-            textEl.appendChild(textNode);
-
-            foreign.appendChild(textEl);
-
-            svgElement.appendChild(foreign);
-        },
-        // TODO: Clean up, extract HTML element creation into utility functions
-        plotActivity(item, row, svgElement) {
-            const activity = item.activity;
-            const rectElement = document.createElementNS(SVG_NAMESPACE, 'rect');
-            const width = Math.max(Math.round(item.rectWidth), MIN_ACTIVITY_WIDTH);
-            const clipUuid = uuid();
-
-            if (this.clipActivityNames) {
-                const clipPathElement = document.createElementNS(SVG_NAMESPACE, 'clipPath');
-                this.setNSAttributesForElement(clipPathElement, {
-                    id: `clip-${clipUuid}`
-                });
-                svgElement.appendChild(clipPathElement);
-                let clipRectElement = document.createElementNS(SVG_NAMESPACE, 'rect');
-                this.setNSAttributesForElement(clipRectElement, {
-                    x: Math.round(item.start),
-                    y: row,
-                    width: width,
-                    height: String(ROW_HEIGHT)
-                });
-                clipPathElement.appendChild(clipRectElement);
-            }
-
-            this.setNSAttributesForElement(rectElement, {
-                class: 'activity-bounds',
-                x: Math.round(item.start),
-                y: row,
-                width: width,
-                height: String(ROW_HEIGHT),
-                fill: activity.color
-            });
-
-            rectElement.addEventListener('click', (event) => {
-                this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
-                event.stopPropagation();
-            });
-
-            svgElement.appendChild(rectElement);
-
-            item.textLines.forEach((line, index) => {
-                let textElement = document.createElementNS(SVG_NAMESPACE, 'text');
-                this.setNSAttributesForElement(textElement, {
-                    class: `activity-label ${item.textClass}`,
-                    x: item.textStart,
-                    y: item.textY + (index * LINE_HEIGHT),
-                    fill: activity.textColor
-                });
-
-                if (this.clipActivityNames) {
-                    this.setNSAttributesForElement(textElement, {
-                        'clip-path': `url(#clip-${clipUuid})`
-                    });
-                }
-
-                const textNode = document.createTextNode(line);
-                textElement.appendChild(textNode);
-                textElement.addEventListener('click', (event) => {
-                    this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
-                    event.stopPropagation();
-                });
-                svgElement.appendChild(textElement);
-            });
-            // this.addForeignElement(svgElement, activity.name, item.textStart, item.textY - LINE_HEIGHT);
-        },
-        cutHex(h, start, end) {
-            const hStr = (h.charAt(0) === '#') ? h.substring(1, 7) : h;
-
-            return parseInt(hStr.substring(start, end), 16);
-        },
-        getContrastingColor(hexColor) {
-            // https://codepen.io/davidhalford/pen/ywEva/
-            // TODO: move this into a general utility function?
-            const cThreshold = 130;
-
-            if (hexColor.indexOf('#') === -1) {
-                // We weren't given a hex color
-                return "#ff0000";
-            }
-
-            const hR = this.cutHex(hexColor, 0, 2);
-            const hG = this.cutHex(hexColor, 2, 4);
-            const hB = this.cutHex(hexColor, 4, 6);
-
-            const cBrightness = ((hR * 299) + (hG * 587) + (hB * 114)) / 1000;
-
-            return cBrightness > cThreshold ? "#000000" : "#ffffff";
         },
         setSelectionForActivity(element, activity, multiSelect) {
             this.openmct.selection.select([{
                 element: element,
-                // activity: activity,
                 context: {
                     type: 'activity',
                     activity: activity
@@ -697,7 +547,6 @@ export default {
             }, {
                 element: this.openmct.layout.$refs.browseObject.$el,
                 context: {
-                    // activity: activity,
                     item: this.domainObject,
                     supportsMultiSelect: true
                 }
@@ -706,9 +555,6 @@ export default {
 
         setStatus(status) {
             this.status = status;
-            if (this.xScale) {
-                this.drawPlan();
-            }
         }
     }
 };

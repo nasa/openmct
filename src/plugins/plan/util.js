@@ -64,3 +64,27 @@ export function getValidatedData(domainObject) {
         return json;
     }
 }
+
+export function getContrastingColor(hexColor) {
+    function cutHex(h, start, end) {
+        const hStr = (h.charAt(0) === '#') ? h.substring(1, 7) : h;
+
+        return parseInt(hStr.substring(start, end), 16);
+    }
+
+    // https://codepen.io/davidhalford/pen/ywEva/
+    const cThreshold = 130;
+
+    if (hexColor.indexOf('#') === -1) {
+        // We weren't given a hex color
+        return "#ff0000";
+    }
+
+    const hR = cutHex(hexColor, 0, 2);
+    const hG = cutHex(hexColor, 2, 4);
+    const hB = cutHex(hexColor, 4, 6);
+
+    const cBrightness = ((hR * 299) + (hG * 587) + (hB * 114)) / 1000;
+
+    return cBrightness > cThreshold ? "#000000" : "#ffffff";
+}
