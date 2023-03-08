@@ -38,6 +38,41 @@
         flex: 0 0 auto;
         font-size: 0.8em;
         text-transform: uppercase;
+
+        &.c-tabs {
+            flex-wrap: nowrap;
+        }
+
+        .c-tab {
+            background: $colorTabBg;
+            color: $colorTabFg;
+            padding: $interiorMargin;
+
+            &:not(.is-current) {
+                overflow: hidden;
+
+                &:after {
+                    background-image: linear-gradient(90deg, transparent 0%, rgba($colorTabBg, 1) 70%);
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    right: 0;
+                    height: 100%;
+                    width: 15px;
+                    z-index: 1;
+                }
+            }
+
+            &.is-current {
+                background: $colorTabCurrentBg;
+                color: $colorTabCurrentFg;
+                padding-right: $interiorMargin + 3;
+            }
+
+            &__name {
+                overflow: hidden;
+            }
+        }
     }
 
     &__content {
@@ -89,6 +124,11 @@
         @include propertiesHeader();
         font-size: 0.65rem;
         grid-column: 1 / 3;
+        margin: $interiorMargin 0;
+
+        &.--first {
+            margin-top: 0;
+        }
     }
 
     .c-tree .grid-properties {

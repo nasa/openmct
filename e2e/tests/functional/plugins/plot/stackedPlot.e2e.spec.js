@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,7 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
 
 test.describe('Stacked Plot', () => {
     let stackedPlot;
@@ -65,11 +65,7 @@ test.describe('Stacked Plot', () => {
 
         await page.click('button[title="Edit"]');
 
-        // Expand the elements pool vertically
-        await page.locator('.l-pane__handle').nth(2).hover({ trial: true });
-        await page.mouse.down();
-        await page.mouse.move(0, 100);
-        await page.mouse.up();
+        await selectInspectorTab(page, 'Elements');
 
         await swgBElementsPoolItem.click({ button: 'right' });
         await page.getByRole('menuitem').filter({ hasText: /Remove/ }).click();
@@ -92,11 +88,7 @@ test.describe('Stacked Plot', () => {
 
         await page.click('button[title="Edit"]');
 
-        // Expand the elements pool vertically
-        await page.locator('.l-pane__handle').nth(2).hover({ trial: true });
-        await page.mouse.down();
-        await page.mouse.move(0, 100);
-        await page.mouse.up();
+        await selectInspectorTab(page, 'Elements');
 
         const stackedPlotItem1 = page.locator('.c-plot--stacked-container').nth(0);
         const stackedPlotItem2 = page.locator('.c-plot--stacked-container').nth(1);
@@ -139,6 +131,8 @@ test.describe('Stacked Plot', () => {
     test('Selecting a child plot while in browse and edit modes shows its properties in the inspector', async ({ page }) => {
         await page.goto(stackedPlot.url);
 
+        await selectInspectorTab(page, 'Config');
+
         // Click on the 1st plot
         await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"] canvas`).nth(1).click();
 
@@ -165,6 +159,8 @@ test.describe('Stacked Plot', () => {
 
         // Go into edit mode
         await page.click('button[title="Edit"]');
+
+        await selectInspectorTab(page, 'Config');
 
         // Click on canvas for the 1st plot
         await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"]`).click();

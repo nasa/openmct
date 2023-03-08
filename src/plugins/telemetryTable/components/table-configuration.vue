@@ -2,7 +2,7 @@
 <div class="c-inspect-properties">
     <template v-if="isEditing">
         <div class="c-inspect-properties__header">
-            Table Layout
+            Layout
         </div>
         <ul class="c-inspect-properties__section">
             <li class="c-inspect-properties__row">
@@ -39,7 +39,7 @@
             </li>
         </ul>
         <div class="c-inspect-properties__header">
-            Table Column Visibility
+            Columns
         </div>
         <ul class="c-inspect-properties__section">
             <li

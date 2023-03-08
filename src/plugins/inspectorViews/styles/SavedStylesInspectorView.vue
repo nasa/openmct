@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
+import SavedStylesView from './SavedStylesView.vue';
 import Vue from 'vue';
 
 export default {
@@ -56,14 +56,14 @@ export default {
                 this.component = new Vue({
                     el: viewContainer,
                     components: {
-                        StylesView
+                        SavedStylesView
                     },
                     provide: {
                         openmct: this.openmct,
                         selection: selection,
                         stylesManager: this.stylesManager
                     },
-                    template: '<styles-view/>'
+                    template: '<saved-styles-view />'
                 });
             }
         }
