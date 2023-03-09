@@ -393,7 +393,6 @@ export default class NotificationAPI extends EventEmitter {
             return;
         }
 
-        if (notification.model.)
         this.emit('notification', notification);
 
         if (notification.model.autoDismiss || this._selectNextNotification()) {
