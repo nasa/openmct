@@ -38,7 +38,7 @@
     >
         {{ unit }}
     </td>
-    <td> {{ typeLabel }}</td>
+    <td class="js-type-data">{{ typeLabel }}</td>
 </tr>
 </template>
 
