@@ -31,6 +31,7 @@
                 <th>Name</th>
                 <th>Timestamp</th>
                 <th>Value</th>
+                <th>Type</th>
                 <th v-if="hasUnits">Unit</th>
             </tr>
         </thead>

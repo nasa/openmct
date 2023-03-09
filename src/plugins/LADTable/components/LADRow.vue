@@ -22,7 +22,7 @@
 
 <template>
 <tr
-    class="js-lad-table__body__row"
+    class="js-lad-table__body__row c-table__selectable-row"
     @click="clickedRow"
     @contextmenu.prevent="showContextMenu"
 >

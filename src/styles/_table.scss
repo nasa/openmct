@@ -153,17 +153,11 @@ div.c-table {
         transition: $transOut;
     }
 
-    &--selectable {
-        body.desktop & {
-            tbody tr {
-                cursor: pointer;
-
-                &:hover {
-                    background: $colorListItemBgHov;
-                    filter: $filterHov;
-                    transition: $transIn;
-                }
-            }
+    &__selectable-row {cursor: pointer;
+        &:hover {
+            background: $colorListItemBgHov;
+            filter: $filterHov;
+            transition: $transIn;
         }
     }
 
