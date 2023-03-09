@@ -38,7 +38,7 @@
     >
         {{ unit }}
     </td>
-    <td> {{ type }}</td>
+    <td> {{ typeLabel }}</td>
 </tr>
 </template>
 
@@ -87,18 +87,21 @@ export default {
     },
     computed: {
         value() {
-            if (!this.datum) {
+            if (!this.datum || this.isAggregate) {
                 return BLANK_VALUE;
             }
 
             return this.formats[this.valueKey].format(this.datum);
         },
-        type() {
-            if (this.composition && this.composition.length > 0) {
+        typeLabel() {
+            if (this.isAggregate) {
                 return 'Aggregate';
             }
 
             return "Telemetry";
+        },
+        isAggregate() {
+            return this.composition && this.composition.length > 0;
         },
         valueClasses() {
             let classes = [];
@@ -119,7 +122,7 @@ export default {
 
         },
         formattedTimestamp() {
-            if (!this.timestamp) {
+            if (!this.timestamp || this.isAggregate) {
                 return BLANK_VALUE;
             }
 
