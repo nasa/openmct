@@ -79,7 +79,7 @@ export default function AlphanumericFormatViewProvider(openmct, options) {
 
     return {
         key: 'alphanumeric-format',
-        name: 'Alphanumeric Format',
+        name: 'Format',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 1) {
                 return false;

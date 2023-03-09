@@ -58,7 +58,7 @@
 
 <script>
 
-import AutoCompleteField from '../../../api/forms/components/controls/AutoCompleteField.vue';
+import AutoCompleteField from '../../../../api/forms/components/controls/AutoCompleteField.vue';
 
 export default {
     components: {

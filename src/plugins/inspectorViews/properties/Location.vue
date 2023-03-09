@@ -22,7 +22,6 @@
 
 <template>
 <div
-    v-if="originalPath.length"
     class="c-inspect-properties c-inspect-properties--location"
 >
     <div
@@ -32,16 +31,14 @@
         Original Location
     </div>
     <ul
-        v-if="!multiSelect"
         class="c-inspect-properties__section"
     >
         <li
-            v-if="originalPath.length"
             class="c-inspect-properties__row"
         >
             <ul class="c-inspect-properties__value c-location">
                 <li
-                    v-for="pathObject in orderedOriginalPath"
+                    v-for="pathObject in orderedPathBreadCrumb"
                     :key="pathObject.key"
                     class="c-location__item"
                 >
@@ -53,53 +50,58 @@
             </ul>
         </li>
     </ul>
-    <div
-        v-if="multiSelect"
-        class="c-inspect-properties__row--span-all"
-    >
-        No location to display for multiple items
-    </div>
 </div>
 </template>
 
 <script>
-import ObjectLabel from '../components/ObjectLabel.vue';
+import ObjectLabel from '../../../ui/components/ObjectLabel.vue';
 
 export default {
     components: {
         ObjectLabel
     },
-    inject: ['openmct'],
+    inject: [
+        'openmct'
+    ],
+    props: {
+        domainObject: {
+            type: Object,
+            default: undefined
+        },
+        parentDomainObject: {
+            type: Object,
+            default: undefined
+        }
+    },
     data() {
         return {
-            domainObject: {},
-            multiSelect: false,
-            originalPath: [],
-            keyString: ''
+            pathBreadCrumb: []
         };
     },
     computed: {
-        orderedOriginalPath() {
-            return this.originalPath.slice().reverse();
+        orderedPathBreadCrumb() {
+            return this.pathBreadCrumb.slice().reverse();
         }
     },
-    mounted() {
-        this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
-    },
-    beforeDestroy() {
-        this.openmct.selection.off('change', this.updateSelection);
+    async mounted() {
+        await this.createPathBreadCrumb();
     },
     methods: {
-        setOriginalPath(path, skipSlice) {
-            let originalPath = path;
+        async createPathBreadCrumb() {
+            if (!this.domainObject && this.parentDomainObject) {
+                this.setPathBreadCrumb([this.parentDomainObject]);
+            } else {
+                const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+                const originalPath = await this.openmct.objects.getOriginalPath(keyString);
+                const originalPathWithoutSelf = originalPath.slice(1, -1);
 
-            if (!skipSlice) {
-                originalPath = path.slice(1, -1);
+                this.setPathBreadCrumb(originalPathWithoutSelf);
             }
 
-            this.originalPath = originalPath.map((domainObject, index, pathArray) => {
-                let key = this.openmct.objects.makeKeyString(domainObject.identifier);
+        },
+        setPathBreadCrumb(path) {
+            const pathBreadCrumb = path.map((domainObject, index, pathArray) => {
+                const key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
                 return {
                     domainObject,
@@ -107,46 +109,8 @@ export default {
                     objectPath: pathArray.slice(index)
                 };
             });
-        },
-        clearData() {
-            this.domainObject = {};
-            this.originalPath = [];
-            this.keyString = '';
-        },
-        updateSelection(selection) {
-            if (!selection.length || !selection[0].length) {
-                this.clearData();
 
-                return;
-            }
-
-            if (selection.length > 1) {
-                this.multiSelect = true;
-
-                return;
-            } else {
-                this.multiSelect = false;
-            }
-
-            this.domainObject = selection[0][0].context.item;
-            let parentObject = selection[0][1];
-
-            if (!this.domainObject && parentObject && parentObject.context.item) {
-                this.setOriginalPath([parentObject.context.item], true);
-                this.keyString = '';
-
-                return;
-            }
-
-            let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
-            if (keyString && this.keyString !== keyString) {
-                this.keyString = keyString;
-                this.originalPath = [];
-
-                this.openmct.objects.getOriginalPath(this.keyString)
-                    .then(this.setOriginalPath);
-            }
+            this.pathBreadCrumb = pathBreadCrumb;
         }
     }
 };

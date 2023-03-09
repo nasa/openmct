@@ -21,41 +21,65 @@
  *****************************************************************************/
 
 <template>
-<div aria-label="Inspector Views"></div>
+<div
+    class="c-inspector__content"
+    role="tabpanel"
+    aria-label="Inspector Views"
+></div>
 </template>
 
 <script>
 export default {
     inject: ['openmct'],
-    data() {
-        return {
-            selection: []
-        };
+    props: {
+        selectedTab: {
+            type: Object,
+            default: undefined
+        },
+        selection: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        }
     },
-    mounted() {
-        this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
-    },
-    destroyed() {
-        this.openmct.selection.off('change', this.updateSelection);
+    watch: {
+        selection() {
+            this.updateSelectionViews();
+        },
+        selectedTab() {
+            this.clearAndShowViewsForTab();
+        }
     },
     methods: {
-        updateSelection(selection) {
-            this.selection = selection;
-
-            if (this.selectedViews) {
-                this.selectedViews.forEach(selectedView => {
-                    selectedView.destroy();
+        updateSelectionViews(selection) {
+            this.clearViews();
+            this.selectedViews = this.openmct.inspectorViews.get(this.selection);
+            this.showViewsForTab();
+        },
+        clearViews() {
+            if (this.visibleViews) {
+                this.visibleViews.forEach(visibleView => {
+                    visibleView.destroy();
                 });
+
+                this.visibleViews = [];
                 this.$el.innerHTML = '';
             }
+        },
+        showViewsForTab() {
+            this.visibleViews = this.selectedViews
+                .filter(view => view.key === this.selectedTab.key);
 
-            this.selectedViews = this.openmct.inspectorViews.get(selection);
-            this.selectedViews.forEach(selectedView => {
+            this.visibleViews.forEach(visibleView => {
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
-                selectedView.show(viewContainer);
+                visibleView.show(viewContainer);
             });
+        },
+        clearAndShowViewsForTab() {
+            this.clearViews();
+            this.showViewsForTab();
         }
     }
 };

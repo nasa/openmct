@@ -529,7 +529,7 @@ select {
         display: block;
         height: 1px;
         width: 100%;
-        background: $colorBtnReverseBg;
+        background: $colorTabsBaseline;
         position: absolute;
         bottom: 0px;
         z-index: 1;
@@ -548,8 +548,8 @@ select {
             100% 100%,
             0% 100%
         );
-    background: rgba($colorBtnBg, 0.7);
-    color: $colorBtnFg;
+    background: $colorTabBg;
+    color: $colorTabFg;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -569,8 +569,8 @@ select {
     }
 
     &.is-current {
-        background: $colorBtnReverseBg;
-        color: $colorBtnReverseFg;
+        background: $colorTabCurrentBg;
+        color: $colorTabCurrentFg;
         pointer-events: none;
     }
 }

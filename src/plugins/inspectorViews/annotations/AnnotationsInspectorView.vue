@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import TagEditor from '../../components/tags/TagEditor.vue';
+import TagEditor from './tags/TagEditor.vue';
 import _ from 'lodash';
 
 export default {

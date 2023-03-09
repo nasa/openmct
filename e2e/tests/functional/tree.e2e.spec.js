@@ -26,10 +26,35 @@ const {
     openObjectTreeContextMenu
 } = require('../../appActions.js');
 
-test.describe('Tree operations', () => {
+test.describe('Main Tree', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
+
+    test('Creating a child object within a folder and immediately opening it shows the created object in the tree @couchdb', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5975'
+        });
+
+        const folder = await createDomainObjectWithDefaults(page, {
+            type: 'Folder'
+        });
+
+        await page.getByTitle('Show selected item in tree').click();
+
+        const clock = await createDomainObjectWithDefaults(page, {
+            type: 'Clock',
+            parent: folder.uuid
+        });
+
+        await expandTreePaneItemByName(page, folder.name);
+        await assertTreeItemIsVisible(page, clock.name);
+
+    });
+
     test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
-        await page.goto('./', { waitUntil: 'networkidle' });
 
         await createDomainObjectWithDefaults(page, {
             type: 'Folder',
@@ -111,17 +136,30 @@ async function getAndAssertTreeItems(page, expected) {
     expect(allTexts).toEqual(expected);
 }
 
+async function assertTreeItemIsVisible(page, name) {
+    const mainTree = page.getByRole('tree', {
+        name: 'Main Tree'
+    });
+    const treeItem = mainTree.getByRole('treeitem', {
+        name
+    });
+
+    await expect(treeItem).toBeVisible();
+}
+
 /**
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  */
 async function expandTreePaneItemByName(page, name) {
-    const treePane = page.getByRole('tree', {
+    const mainTree = page.getByRole('tree', {
         name: 'Main Tree'
     });
-    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
-    const expandTriangle = treeItem.locator('.c-disclosure-triangle');
-    await expandTriangle.click();
+    const treeItem = mainTree.getByRole('treeitem', {
+        name,
+        expanded: false
+    });
+    await treeItem.locator('.c-disclosure-triangle').click();
 }
 
 /**
