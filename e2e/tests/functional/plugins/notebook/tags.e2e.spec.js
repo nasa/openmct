@@ -26,6 +26,7 @@ This test suite is dedicated to tests which verify form functionality.
 
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const nbUtils = require('../../../../helper/notebookUtils');
 
 /**
   * Creates a notebook object and adds an entry.
@@ -39,12 +40,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
     const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
-        // Create an entry
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = ${iteration}`;
-        await page.locator(entryLocator).click();
-        await page.locator(entryLocator).fill(`Entry ${iteration}`);
-        await page.locator(entryLocator).press('Enter');
+        await nbUtils.enterTextEntry(page, `Entry ${iteration}`);
     }
 
     return notebook;
@@ -84,7 +80,7 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
     return notebook;
 }
 
-test.describe('Tagging in Notebooks @addInit', () => {
+test.describe.only('Tagging in Notebooks @addInit', () => {
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
 
