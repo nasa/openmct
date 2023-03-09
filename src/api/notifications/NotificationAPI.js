@@ -54,6 +54,7 @@ import EventEmitter from 'eventemitter3';
 /**
  * @typedef {object} NotificationOptions
  * @property {number} [autoDismissTimeout] Milliseconds to wait before automatically dismissing the notification
+ * @property {boolean} [minimized] Allows for a notification to be minimized into the indicator by default
  * @property {NotificationLink} [link] A link for the notification
  */
 
@@ -318,6 +319,9 @@ export default class NotificationAPI extends EventEmitter {
 
         notificationModel.severity = notificationModel.severity || "info";
         notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
+        // if (notificationModel.options.minimized) {
+        //     notificationModel.minimized = true;
+        // }
 
         notification = this._createNotification(notificationModel);
 
@@ -389,6 +393,7 @@ export default class NotificationAPI extends EventEmitter {
             return;
         }
 
+        if (notification.model.)
         this.emit('notification', notification);
 
         if (notification.model.autoDismiss || this._selectNextNotification()) {
