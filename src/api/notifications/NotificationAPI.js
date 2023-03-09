@@ -361,6 +361,10 @@ export default class NotificationAPI extends EventEmitter {
             this._dismiss(notification);
         };
 
+        notification.minimize = () => {
+            this._minimize(notification);
+        };
+
         if (Object.prototype.hasOwnProperty.call(notificationModel, 'progressPerc')) {
             notification.progress = (progressPerc, progressText) => {
                 notification.model.progressPerc = progressPerc;
