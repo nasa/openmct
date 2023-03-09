@@ -34,7 +34,7 @@ async function enterTextEntry(page, text) {
     // enter text
     await page.locator('div.c-ne__text').click();
     await page.locator('div.c-ne__text').fill(text);
-    await page.locator('div.c-ne__text').press('Enter');
+    await page.locator('.c-ne__save-button > button').click();
 }
 
 /**
