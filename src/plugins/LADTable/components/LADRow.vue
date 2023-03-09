@@ -140,12 +140,13 @@ export default {
         }
     },
     async mounted() {
-        this.objectPath = await this.openmct.objects.getOriginalPath(this.domainObject);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         const compositionCollection = this.openmct.composition.get(this.domainObject);
-        this.composition = await compositionCollection.load();
+        if (compositionCollection) {
+            this.composition = await compositionCollection.load();
+        }
 
         this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
