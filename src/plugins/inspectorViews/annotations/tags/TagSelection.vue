@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -58,7 +58,7 @@
 
 <script>
 
-import AutoCompleteField from '../../../api/forms/components/controls/AutoCompleteField.vue';
+import AutoCompleteField from '../../../../api/forms/components/controls/AutoCompleteField.vue';
 
 export default {
     components: {

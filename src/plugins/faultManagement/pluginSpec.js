@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -86,8 +86,9 @@ describe("The Fault Management Plugin", () => {
                 }
             ]];
             const applicableInspectorViews = openmct.inspectorViews.get(faultDomainObjectSelection);
+            const faultManagementInspectorView = applicableInspectorViews.filter(view => view.name === 'Fault Management Configuration');
 
-            expect(applicableInspectorViews.length).toEqual(1);
+            expect(faultManagementInspectorView.length).toEqual(1);
         });
 
         it('creates a root object for fault management', async () => {
