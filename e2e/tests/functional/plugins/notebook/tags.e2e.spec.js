@@ -53,7 +53,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
   */
 async function createNotebookEntryAndTags(page, iterations = 1) {
     const notebook = await createNotebookAndEntry(page, iterations);
-    await page.locator('text=Annotations').click();
+    await selectInspectorTab(page, 'Annotations');
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Hover and click "Add Tag" button
@@ -87,7 +87,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
         await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
-        selectInspectorTab(page, 'Annotations');
+        await selectInspectorTab(page, 'Annotations');
 
         await page.locator('button:has-text("Add Tag")').click();
 
@@ -246,7 +246,10 @@ test.describe('Tagging in Notebooks @addInit', () => {
     test('Can cancel adding a tag', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        selectInspectorTab(page, 'Annotations');
+        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
+        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
+
+        await selectInspectorTab(page, 'Annotations');
 
         // Click on the "Add Tag" button
         await page.locator('button:has-text("Add Tag")').click();
