@@ -27,7 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-test.describe('Notebook Tests with CouchDB @couchdb', () => {
+test.describe.only('Notebook Tests with CouchDB @couchdb', () => {
     let testNotebook;
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
@@ -46,23 +46,24 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.locator('.c-notebook__toggle-nav-button').click();
 
         // Collect all request events to count and assert after notebook action
-        let addingNotebookElementsRequests = [];
-        page.on('request', (request) => addingNotebookElementsRequests.push(request));
+        let notebookElementsRequests = [];
+        page.on('request', (request) => notebookElementsRequests.push(request));
 
         let [notebookUrlRequest, allDocsRequest] = await Promise.all([
             // Waits for the next request with the specified url
             page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
             page.waitForRequest('**/openmct/_all_docs?include_docs=true'),
             // Triggers the request
-            page.click('[aria-label="Add Page"]'),
-            // Ensures that there are no other network requests
-            page.waitForLoadState('networkidle')
+            page.click('[aria-label="Add Page"]')
         ]);
+        // Ensures that there are no other network requests
+        await page.waitForLoadState('networkidle');
+
         // Assert that only two requests are made
         // Network Requests are:
         // 1) The actual POST to create the page
         // 2) The shared worker event from 👆 request
-        expect(addingNotebookElementsRequests.length).toBe(2);
+        expect(notebookElementsRequests.length).toBe(2);
 
         // Assert on request object
         expect(notebookUrlRequest.postDataJSON().metadata.name).toBe('TestNotebook');
@@ -73,13 +74,13 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // Network Requests are:
         // 1) The actual POST to create the entry
         // 2) The shared worker event from 👆 POST request
-        addingNotebookElementsRequests = [];
+        notebookElementsRequests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"]').click();
         await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
         await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
         await page.waitForLoadState('networkidle');
-        expect(addingNotebookElementsRequests.length).toBeLessThanOrEqual(2);
+        expect(notebookElementsRequests.length).toBeLessThanOrEqual(2);
 
         // Add some tags
         // Network Requests are for each tag creation are:
@@ -95,32 +96,17 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 10) Entry is timestamped
         // 11) The shared worker event from 👆 POST request
 
-        addingNotebookElementsRequests = [];
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")');
-        page.waitForLoadState('networkidle');
-        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
+        notebookElementsRequests = [];
+        await addTagAndAwaitNetwork(page, 'Driving');
+        expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(11);
 
-        addingNotebookElementsRequests = [];
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")');
-        page.waitForLoadState('networkidle');
-        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
+        notebookElementsRequests = [];
+        await addTagAndAwaitNetwork(page, 'Drilling');
+        expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(11);
 
-        addingNotebookElementsRequests = [];
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Science")');
-        page.waitForLoadState('networkidle');
-        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(11);
+        notebookElementsRequests = [];
+        await addTagAndAwaitNetwork(page, 'Science');
+        expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(11);
 
         // Delete all the tags
         // Network requests are:
@@ -129,18 +115,11 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
         // This happens for 3 tags so 12 requests
-        addingNotebookElementsRequests = [];
-        await page.hover('[aria-label="Tag"]:has-text("Driving")');
-        await page.locator('[aria-label="Remove tag Driving"]').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")', {state: 'hidden'});
-        await page.hover('[aria-label="Tag"]:has-text("Drilling")');
-        await page.locator('[aria-label="Remove tag Drilling"]').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")', {state: 'hidden'});
-        page.hover('[aria-label="Tag"]:has-text("Science")');
-        await page.locator('[aria-label="Remove tag Science"]').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Science")', {state: 'hidden'});
-        page.waitForLoadState('networkidle');
-        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(12);
+        notebookElementsRequests = [];
+        await removeTagAndAwaitNetwork(page, 'Driving');
+        await removeTagAndAwaitNetwork(page, 'Drilling');
+        await removeTagAndAwaitNetwork(page, 'Science');
+        expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(12);
 
         // Add two more pages
         await page.click('[aria-label="Add Page"]');
@@ -163,24 +142,9 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').press('Enter');
 
         // Add three tags
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Science")');
-
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")');
-
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")');
-        page.waitForLoadState('networkidle');
+        await addTagAndAwaitNetwork(page, 'Science');
+        await addTagAndAwaitNetwork(page, 'Drilling');
+        await addTagAndAwaitNetwork(page, 'Driving');
 
         // Add a fourth entry
         // Network requests are:
@@ -188,14 +152,14 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 2) The shared worker event from 👆 POST request
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
-        addingNotebookElementsRequests = [];
+        notebookElementsRequests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').fill(`Fourth Entry`);
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(4);
+        expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
 
         // Add a fifth entry
         // Network requests are:
@@ -203,28 +167,28 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 2) The shared worker event from 👆 POST request
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
-        addingNotebookElementsRequests = [];
+        notebookElementsRequests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').fill(`Fifth Entry`);
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(4);
+        expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
 
         // Add a sixth entry
         // 1) Send POST to add new entry
         // 2) The shared worker event from 👆 POST request
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
-        addingNotebookElementsRequests = [];
+        notebookElementsRequests = [];
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').click();
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').fill(`Sixth Entry`);
         await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').press('Enter');
         page.waitForLoadState('networkidle');
 
-        expect(filterNonFetchRequests(addingNotebookElementsRequests).length).toBeLessThanOrEqual(4);
+        expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
     });
 
     test('Search tests', async ({ page }) => {
@@ -239,29 +203,18 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
 
         // Add three tags
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Science")');
-
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Drilling")');
-
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        await page.locator('[placeholder="Type to select tag"]').click();
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
-        await page.waitForSelector('[aria-label="Tag"]:has-text("Driving")');
+        await addTagAndAwaitNetwork(page, 'Science');
+        await addTagAndAwaitNetwork(page, 'Drilling');
+        await addTagAndAwaitNetwork(page, 'Driving');
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        //Partial match for "Science" should only return Science
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
         await expect(page.locator('[aria-label="Search Result"]').first()).toContainText("Science");
         await expect(page.locator('[aria-label="Search Result"]').first()).not.toContainText("Driving");
+        await expect(page.locator('[aria-label="Search Result"]').first()).not.toContainText("Drilling");
 
+        //Searching for a tag which does not exist should return an empty result
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
         await expect(page.locator('text=No results found')).toBeVisible();
@@ -274,4 +227,44 @@ function filterNonFetchRequests(requests) {
     return requests.filter(request => {
         return (request.resourceType() === 'fetch');
     });
+}
+
+/**
+ * Add a tag to a notebook entry by providing a tagName.
+ * Reduces indeterminism by waiting until all necessary requests are completed.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} tagName
+ */
+async function addTagAndAwaitNetwork(page, tagName) {
+    await page.hover(`button:has-text("Add Tag")`);
+    await page.locator(`button:has-text("Add Tag")`).click();
+    await page.locator('[placeholder="Type to select tag"]').click();
+    await Promise.all([
+        // Waits for the next request with the specified url
+        page.waitForRequest('**/openmct/_all_docs?include_docs=true'),
+        // Triggers the request
+        page.locator(`[aria-label="Autocomplete Options"] >> text=${tagName}`).click(),
+        page.waitForSelector(`[aria-label="Tag"]:has-text('${tagName}')`)
+    ]);
+    await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Remove a tag to a notebook entry by providing a tagName.
+ * Reduces indeterminism by waiting until all necessary requests are completed.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} tagName
+ */
+async function removeTagAndAwaitNetwork(page, tagName) {
+    await page.hover(`[aria-label="Tag"]:has-text("${tagName}")`);
+    await Promise.all([
+        page.locator(`[aria-label="Remove tag ${tagName}"]`).click(),
+        //Ideally we'd be able to navigate the object to detect that it was set to deleted
+        //but I'm afraid to tie our current test to the current implementation.
+        //With this pattern, we're awaiting the response but asserting on the request payload.
+        page.waitForResponse(resp => resp.request().postData().includes(`"_deleted":true`) && resp.status() === 201),
+        // Triggers the request
+        page.waitForSelector(`[aria-label="Tag"]:has-text("${tagName}")`, {state: 'hidden'})
+    ]);
+    await page.waitForLoadState('networkidle');
 }

@@ -171,7 +171,7 @@ test.describe('Persistence operations @couchdb', () => {
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5982'
         });
-
+        // Instantiate a second page/tab
         const page2 = await page.context().newPage();
 
         // Both pages: Go to baseURL
@@ -179,6 +179,10 @@ test.describe('Persistence operations @couchdb', () => {
             page.goto('./', { waitUntil: 'networkidle' }),
             page2.goto('./', { waitUntil: 'networkidle' })
         ]);
+
+        //Slow down the test a bit
+        await expect(page.getByRole('treeitem', { name: '  My Items' })).toBeVisible();
+        await expect(page2.getByRole('treeitem', { name: '  My Items' })).toBeVisible();
 
         // Both pages: Click the Create button
         await Promise.all([
