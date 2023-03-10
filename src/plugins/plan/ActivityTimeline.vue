@@ -26,26 +26,31 @@
                         />
                     </clipPath>
                 </template>
-                <rect
-                    :key="`rect-${index}`"
-                        :x="activity.rectStart"
-                    :y="activity.row"
-                    :width="activity.rectWidth"
-                    :height="25"
-                    :class="activity.class"
-                    :fill="activity.color"
-                />
-                <text
-                    v-for="(textLine, textIndex) in activity.textLines"
-                    :key="`text-${index}-${textIndex}`"
-                    :class="`activity-label ${activity.textClass}`"
-                    :x="activity.textStart"
-                        :y="activity.textY + (textIndex * lineHeight)"
-                    :fill="activity.textColor"
-                    :clip-path="clipActivityNames === true ? `url(#${getClipId(activity, index)})` : ''"
+                <g
+                    :key="`g-${index}`"
+                    @click="setSelectionForActivity(activity, $event)"
                 >
-                    {{ textLine }}
-                </text>
+                    <rect
+                        :key="`rect-${index}`"
+                        :x="activity.rectStart"
+                        :y="activity.row"
+                        :width="activity.rectWidth"
+                        :height="25"
+                        :class="activity.class"
+                        :fill="activity.color"
+                    />
+                    <text
+                        v-for="(textLine, textIndex) in activity.textLines"
+                        :key="`text-${index}-${textIndex}`"
+                        :class="`activity-label ${activity.textClass}`"
+                        :x="activity.textStart"
+                        :y="activity.textY + (textIndex * lineHeight)"
+                        :fill="activity.textColor"
+                        :clip-path="clipActivityNames === true ? `url(#${getClipId(activity, index)})` : ''"
+                    >
+                        {{ textLine }}
+                    </text>
+                </g>
             </template>
             <text
                 v-if="activities.length === 0"
@@ -67,6 +72,7 @@ export default {
     components: {
         SwimLane
     },
+    inject: ['openmct', 'domainObject'],
     props: {
         activities: {
             type: Array,
@@ -109,6 +115,26 @@ export default {
             const activityName = activity.name.toLowerCase().replace(/ /g, '-');
 
             return `clipPath-${activityName}-${index}`;
+        },
+        setSelectionForActivity(activity, event) {
+            const element = event.currentTarget;
+            const multiSelect = event.metaKey;
+
+            event.stopPropagation();
+
+            this.openmct.selection.select([{
+                element: element,
+                context: {
+                    type: 'activity',
+                    activity: activity
+                }
+            }, {
+                element: this.openmct.layout.$refs.browseObject.$el,
+                context: {
+                    item: this.domainObject,
+                    supportsMultiSelect: true
+                }
+            }], multiSelect);
         }
     }
 };
