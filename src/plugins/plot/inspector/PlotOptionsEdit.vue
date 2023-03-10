@@ -29,7 +29,10 @@
         class="c-tree"
         aria-label="Plot Series Properties"
     >
-        <h2 title="Display properties for this object">Plot Series</h2>
+        <h2
+            class="--first"
+            title="Display properties for this object"
+        >Plot Series</h2>
         <li
             v-for="series in plotSeries"
             :key="series.key"
@@ -52,7 +55,10 @@
         v-if="isStackedPlotObject || !isStackedPlotNestedObject"
         class="l-inspector-part"
     >
-        <h2 title="Legend options">Legend</h2>
+        <h2
+            class="--first"
+            title="Legend options"
+        >Legend</h2>
         <legend-form
             class="grid-properties"
             :legend="config.legend"

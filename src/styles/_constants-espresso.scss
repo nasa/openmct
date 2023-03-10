@@ -289,6 +289,13 @@ $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
 $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
+// Tabs
+$colorTabBg: pullForward($colorBodyBg, 5%);
+$colorTabFg: pullForward($colorBodyFg, 0%);
+$colorTabCurrentBg: pullForward($colorTabBg, 10%);
+$colorTabCurrentFg: pullForward($colorTabFg, 20%);
+$colorTabsBaseline: $colorTabCurrentBg;
+
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
 $overlayCr: $interiorMargin;
@@ -341,7 +348,7 @@ $colorItemFg: $colorBtnFg;
 $colorItemFgDetails: pushBack($colorItemFg, 20%);
 $shdwItemText: none;
 
-// Tabular
+// Tabular (NOT TABS!)
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
