@@ -140,6 +140,7 @@ async function createNotification(page, createNotificationOptions) {
 }
 
 /**
+ * Expand an item in the tree by a given object name.
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  */
