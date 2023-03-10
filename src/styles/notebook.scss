@@ -283,11 +283,11 @@
     @include discreteItem();
     display: flex;
     padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
-    
+
     &:hover {
         background: rgba($colorBodyFg, 0.2);
     }
-    
+
     &.is-selected {
         background: rgba($colorKey, 0.3);
     }
@@ -387,6 +387,17 @@
         }
 
         white-space: pre-wrap;
+    }
+
+    &__save-button {
+        display: flex;
+        justify-content: flex-end;
+
+        .c-button {
+            $lrP: 15px;
+            padding-left: $lrP;
+            padding-right: $lrP;
+        }
     }
 
     &__section-and-page {
@@ -491,7 +502,7 @@
     }
     &__actions-menu {
         width: 55vh;
-        max-width: 500px; 
+        max-width: 500px;
         height: 130px;
         z-index: 70;
         [class*="__icon"] {
@@ -500,7 +511,7 @@
             height: 4vh;
         }
         [class*="__item-description"] {
-            min-width: 200px;         
+            min-width: 200px;
         }
     }
 
