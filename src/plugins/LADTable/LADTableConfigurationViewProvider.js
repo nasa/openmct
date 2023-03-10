@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import LADTableConfigurationComponent from './components/LADTableConfiguration.vue';
-import LADTableConfiguration from './LADTableConfiguration';
 import Vue from 'vue';
 
 export default function LADTableConfigurationViewProvider(openmct) {
@@ -38,9 +37,7 @@ export default function LADTableConfigurationViewProvider(openmct) {
             return object?.type === 'LadTable' || object?.type === 'LadTableSet';
         },
         view(selection) {
-            const domainObject = selection[0][0].context.item;
             let component;
-            let ladTableConfiguration = new LADTableConfiguration(domainObject, openmct);
 
             return {
                 show(element) {
@@ -50,8 +47,7 @@ export default function LADTableConfigurationViewProvider(openmct) {
                             LADTableConfiguration: LADTableConfigurationComponent
                         },
                         provide: {
-                            openmct,
-                            ladTableConfiguration
+                            openmct
                         },
                         template: '<LADTableConfiguration />'
                     });
@@ -61,8 +57,6 @@ export default function LADTableConfigurationViewProvider(openmct) {
                         component.$destroy();
                         component = undefined;
                     }
-
-                    ladTableConfiguration = undefined;
                 }
             };
         },

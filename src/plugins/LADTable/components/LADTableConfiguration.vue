@@ -49,21 +49,36 @@
             </li>
         </ul>
     </template>
+    <template v-else>
+        <div class="c-inspect-properties__header">
+            LAD Table Configuration
+        </div>
+        <div class="c-inspect-properties__row--span-all">
+            Only available in edit mode.
+        </div>
+    </template>
 </div>
 </template>
 
 <script>
 
+import LADTableConfiguration from '../LADTableConfiguration';
+
 export default {
-    inject: ['openmct', 'ladTableConfiguration'],
+    inject: ['openmct'],
     data() {
+        const selection = this.openmct.selection.get();
+        const domainObject = selection[0][0].context.item;
+        const ladTableConfiguration = new LADTableConfiguration(domainObject, this.openmct);
+
         return {
             headers: {
                 timestamp: 'Timestamp',
                 units: 'Units'
             },
+            ladTableConfiguration,
             isEditing: this.openmct.editor.isEditing(),
-            configuration: this.ladTableConfiguration.getConfiguration(),
+            configuration: ladTableConfiguration.getConfiguration(),
             items: [],
             ladTableObjects: [],
             ladTelemetryObjects: {}
