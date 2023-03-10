@@ -27,7 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
-test.describe.only('Notebook Tests with CouchDB @couchdb', () => {
+test.describe('Notebook Tests with CouchDB @couchdb', () => {
     let testNotebook;
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
