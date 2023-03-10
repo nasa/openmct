@@ -23,7 +23,7 @@
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
 
-test.describe.only('Testing LAD table configuration', () => {
+test.describe('Testing LAD table configuration', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
