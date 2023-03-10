@@ -19,7 +19,7 @@
                         :key="`clipPath-${index}`"
                     >
                         <rect
-                            :x="Math.round(activity.rectStart)"
+                            :x="activity.rectStart"
                             :y="activity.row"
                             :width="activity.rectWidth"
                             :height="25"
@@ -28,7 +28,7 @@
                 </template>
                 <rect
                     :key="`rect-${index}`"
-                    :x="Math.round(activity.rectStart)"
+                        :x="activity.rectStart"
                     :y="activity.row"
                     :width="activity.rectWidth"
                     :height="25"
@@ -40,7 +40,7 @@
                     :key="`text-${index}-${textIndex}`"
                     :class="`activity-label ${activity.textClass}`"
                     :x="activity.textStart"
-                    :y="activity.textY"
+                        :y="activity.textY + (textIndex * lineHeight)"
                     :fill="activity.textColor"
                     :clip-path="clipActivityNames === true ? `url(#${getClipId(activity, index)})` : ''"
                 >
@@ -97,6 +97,11 @@ export default {
             default() {
                 return '';
             }
+        }
+    },
+    computed: {
+        lineHeight() {
+            return 12;
         }
     },
     methods: {
