@@ -25,7 +25,7 @@ This test suite is dedicated to tests which verify form functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
 const nbUtils = require('../../../../helper/notebookUtils');
 
 /**
@@ -80,11 +80,14 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
     return notebook;
 }
 
-test.describe.only('Tagging in Notebooks @addInit', () => {
+test.describe('Tagging in Notebooks @addInit', () => {
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        await page.locator('text=Annotations').click();
+        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
+        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
+
+        selectInspectorTab(page, 'Annotations');
 
         await page.locator('button:has-text("Add Tag")').click();
 
@@ -243,8 +246,7 @@ test.describe.only('Tagging in Notebooks @addInit', () => {
     test('Can cancel adding a tag', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        // Click on Annotations tab
-        await page.locator('.c-inspector__tab', { hasText: "Annotations" }).click();
+        selectInspectorTab(page, 'Annotations');
 
         // Click on the "Add Tag" button
         await page.locator('button:has-text("Add Tag")').click();
