@@ -109,7 +109,7 @@ export default {
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let rowCount = 0;
-            if (domainObject.type === 'plan') {
+            if (this.isPlanLikeObject(domainObject)) {
                 rowCount = Object.keys(getValidatedData(domainObject)).length;
             }
 
@@ -191,6 +191,9 @@ export default {
                 this.timeContext.off('bounds', this.updateViewBounds);
                 this.timeContext.off('clock', this.updateViewBounds);
             }
+        },
+        isPlanLikeObject(domainObject) {
+            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
         }
     }
 };

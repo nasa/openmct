@@ -1,24 +1,24 @@
-<!--
- Open MCT, Copyright (c) 2014-2023, United States Government
- as represented by the Administrator of the National Aeronautics and Space
- Administration. All rights reserved.
-
- Open MCT is licensed under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- http://www.apache.org/licenses/LICENSE-2.0.
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- License for the specific language governing permissions and limitations
- under the License.
-
- Open MCT includes source code licensed under additional open source
- licenses. See the Open Source Licenses file (LICENSES.md) included with
- this source code distribution or the Licensing information page available
- at runtime from the About dialog for additional information.
--->
+/*****************************************************************************
+* Open MCT, Copyright (c) 2014-2023, United States Government
+* as represented by the Administrator of the National Aeronautics and Space
+* Administration. All rights reserved.
+*
+* Open MCT is licensed under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* http://www.apache.org/licenses/LICENSE-2.0.
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+* License for the specific language governing permissions and limitations
+* under the License.
+*
+* Open MCT includes source code licensed under additional open source
+* licenses. See the Open Source Licenses file (LICENSES.md) included with
+* this source code distribution or the Licensing information page available
+* at runtime from the About dialog for additional information.
+*****************************************************************************/
 
 <template>
 <div
@@ -43,7 +43,7 @@
     >
     </div>
     <ActivityTimeline
-        v-for="(group, index) in activityGroups"
+        v-for="(group, index) in visibleActivityGroups"
         :key="index"
         :activities="group.activities"
         :clip-activity-names="clipActivityNames"
@@ -59,10 +59,10 @@
 
 <script>
 import * as d3Scale from 'd3-scale';
-import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
+import TimelineAxis from "../../../ui/components/TimeSystemAxis.vue";
 import ActivityTimeline from "./ActivityTimeline.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-import { getValidatedData, getContrastingColor } from "./util";
+import { getValidatedData, getContrastingColor } from "../util";
 
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
@@ -81,7 +81,7 @@ export default {
         SwimLane,
         ActivityTimeline
     },
-    inject: ['openmct', 'domainObject', 'path', 'composition'],
+    inject: ['openmct', 'domainObject', 'path', 'composition', 'planViewConfiguration'],
     props: {
         options: {
             type: Object,
@@ -103,23 +103,41 @@ export default {
             activityGroups: [],
             viewBounds: null,
             timeSystem: null,
-            clipActivityNames: this.domainObject?.configuration?.clipActivityNames ?? false,
+            planData: {},
+            configuration: this.planViewConfiguration.getConfiguration(),
             height: 0
         };
     },
+    computed: {
+        visibleActivityGroups() {
+            if (this.domainObject.type === 'plan') {
+                return this.activityGroups;
+            } else {
+                return this.activityGroups.filter(group => this.swimlanes[group.heading] === true);
+            }
+        }
+    },
+    watch: {
+        clipActivityNames() {
+            this.setScaleAndPlotActivities();
+        }
+    },
     mounted() {
-        this.planData = getValidatedData(this.domainObject);
+        this.swimlanes = this.configuration.swimlanes;
+        if (this.domainObject.type === 'plan') {
+            this.planData = getValidatedData(this.domainObject);
+        }
 
-        this.canvas = this.$refs.plan.appendChild(document.createElement('canvas'));
-        this.canvas.height = 0;
-        this.canvasContext = this.canvas.getContext('2d');
-
+        const canvas = document.createElement('canvas');
+        this.canvasContext = canvas.getContext('2d');
         this.setDimensions();
         this.setTimeContext();
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
-        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
-        this.stopObservingConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.handleConfigurationChange);
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+        this.handleConfigurationChange(this.configuration);
+        this.planViewConfiguration.on('change', this.handleConfigurationChange);
+        this.stopObservingSelectFile = this.openmct.objects.observe(this.domainObject, 'selectFile', this.handleSelectFileChange);
         this.loadComposition();
     },
     beforeDestroy() {
@@ -138,7 +156,9 @@ export default {
             this.composition.off('remove', this.handleCompositionRemove);
         }
 
-        this.stopObservingConfig();
+        this.planViewConfiguration.off('change', this.handleConfigurationChange);
+        this.stopObservingSelectFile();
+        this.planViewConfiguration.destroy();
     },
     methods: {
         activityNameFitsRect(activityName, rectWidth) {
@@ -207,6 +227,7 @@ export default {
                 await this.showReplacePlanDialog(domainObject);
             } else {
                 this.planObject = domainObject;
+                this.swimlanes = this.configuration.swimlanes;
                 this.planData = getValidatedData(domainObject);
                 this.setScaleAndPlotActivities();
             }
@@ -221,8 +242,15 @@ export default {
             if (this.planObject && this.openmct.objects.areIdsEqual(identifier, this.planObject?.identifier)) {
                 this.planObject = null;
                 this.planData = {};
+                this.swimlanes = {};
+                this.configuration.swimlanes = this.swimlanes;
+                this.planViewConfiguration.updateConfiguration(this.configuration);
             }
 
+            this.setScaleAndPlotActivities();
+        },
+        handleSelectFileChange() {
+            this.planData = getValidatedData(this.domainObject);
             this.setScaleAndPlotActivities();
         },
         removeFromComposition(domainObject) {
@@ -292,14 +320,9 @@ export default {
             }
 
             this.setScale(this.timeSystem);
-            this.clearPreviousActivities();
             if (this.xScale) {
                 this.calculatePlanLayout();
             }
-        },
-        clearPreviousActivities() {
-            let activities = this.$el.querySelectorAll(".c-plan__contents > div");
-            activities.forEach(activity => activity.remove());
         },
         setDimensions() {
             this.width = this.getClientWidth();
@@ -387,8 +410,14 @@ export default {
         calculatePlanLayout() {
             const groupNames = Object.keys(this.planData);
             const activityGroups = [];
+            let shouldUpdateConfig = false;
 
             groupNames.forEach((groupName) => {
+                if (this.swimlanes[groupName] === undefined) {
+                    this.swimlanes[groupName] = true;
+                    shouldUpdateConfig = true;
+                }
+
                 let activitiesByRow = {};
                 let currentRow = 0;
                 let activities = [];
@@ -485,6 +514,10 @@ export default {
             });
 
             this.activityGroups = activityGroups;
+            if (shouldUpdateConfig) {
+                this.configuration.swimlanes = this.swimlanes;
+                this.planViewConfiguration.updateConfiguration(this.configuration);
+            }
         },
         /**
          * Format the activity name to fit within the activity rect with a max of 2 lines

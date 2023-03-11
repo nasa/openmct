@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 export function getValidatedData(domainObject) {
-    let sourceMap = domainObject.sourceMap;
-    let body = domainObject.selectFile?.body;
+    const sourceMap = domainObject.sourceMap;
+    const body = domainObject.selectFile?.body;
     let json = {};
     if (typeof body === 'string') {
         try {

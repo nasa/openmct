@@ -46,7 +46,7 @@ export default class Editor extends EventEmitter {
     }
 
     /**
-     * @returns true if the application is in edit mode, false otherwise.
+     * @returns {boolean} true if the application is in edit mode, false otherwise.
      */
     isEditing() {
         return this.editing;

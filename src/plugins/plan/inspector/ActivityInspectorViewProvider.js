@@ -20,62 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanViewConfiguration from './PlanViewConfiguration';
-import Plan from './components/Plan.vue';
+import PlanActivitiesView from "./components/PlanActivitiesView.vue";
 import Vue from 'vue';
 
-export default function PlanViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
-
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
-
+export default function ActivityInspectorViewProvider(openmct) {
     return {
-        key: 'plan.view',
-        name: 'Plan',
-        cssClass: 'icon-plan',
-        canView(domainObject) {
-            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
-        },
+        key: 'activity-inspector',
+        name: 'Activity Inspector View',
+        canView: function (selection) {
+            if (selection.length === 0 || selection[0].length === 0) {
+                return false;
+            }
 
-        canEdit(domainObject) {
-            return domainObject.type === 'gantt-chart';
-        },
+            let context = selection[0][0].context;
 
-        view: function (domainObject, objectPath) {
+            return context
+                && context.type === 'activity';
+        },
+        view: function (selection) {
             let component;
 
             return {
                 show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-
                     component = new Vue({
                         el: element,
+                        name: "PlanActivitiesView",
                         components: {
-                            Plan
+                            PlanActivitiesView: PlanActivitiesView
                         },
                         provide: {
                             openmct,
-                            domainObject,
-                            path: objectPath,
-                            composition: openmct.composition.get(domainObject),
-                            planViewConfiguration: new PlanViewConfiguration(domainObject, openmct)
+                            selection: selection
                         },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact,
-                                    isChildObject: isCompact
-                                }
-                            };
-                        },
-                        template: '<plan :options="options"></plan>'
+                        template: '<plan-activities-view></plan-activities-view>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
-                    component.$destroy();
-                    component = undefined;
+                    if (component) {
+                        component.$destroy();
+                        component = undefined;
+                    }
                 }
             };
         }

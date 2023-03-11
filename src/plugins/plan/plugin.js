@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import PlanViewProvider from './PlanViewProvider';
-import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
+import ActivityInspectorViewProvider from "./inspector/ActivityInspectorViewProvider";
+import GanttChartInspectorViewProvider from "./inspector/GanttChartInspectorViewProvider";
 import ganttChartCompositionPolicy from './GanttChartCompositionPolicy';
 
 export default function (configuration) {
@@ -46,29 +47,7 @@ export default function (configuration) {
             description: 'A configurable timeline-like view for a compatible mission plan file.',
             creatable: true,
             cssClass: 'icon-plan',
-            form: [
-                {
-                    name: 'Upload Plan (JSON File)',
-                    key: 'selectFile',
-                    control: 'file-input',
-                    required: false,
-                    text: 'Select File...',
-                    type: 'application/json',
-                    property: [
-                        "selectFile"
-                    ]
-                },
-                {
-                    name: 'Clip Activity Names',
-                    key: 'clipActivityNames',
-                    control: 'toggleSwitch',
-                    cssClass: 'l-input',
-                    property: [
-                        "configuration",
-                        "clipActivityNames"
-                    ]
-                }
-            ],
+            form: [],
             initialize(domainObject) {
                 domainObject.configuration = {
                     clipActivityNames: true
@@ -77,7 +56,8 @@ export default function (configuration) {
             }
         });
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new ActivityInspectorViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new GanttChartInspectorViewProvider(openmct));
         openmct.composition.addPolicy(ganttChartCompositionPolicy(openmct));
     };
 }

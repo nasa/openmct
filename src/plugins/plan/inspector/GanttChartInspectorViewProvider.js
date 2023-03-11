@@ -20,22 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanActivitiesView from "./PlanActivitiesView.vue";
+import PlanViewConfiguration from './components/PlanViewConfiguration.vue';
 import Vue from 'vue';
 
-export default function PlanInspectorViewProvider(openmct) {
+export default function GanttChartInspectorViewProvider(openmct) {
     return {
         key: 'plan-inspector',
-        name: 'Plan Inspector View',
+        name: 'Config',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
             }
 
-            let context = selection[0][0].context;
+            const domainObject = selection[0][0].context.item;
 
-            return context
-                && context.type === 'activity';
+            return domainObject?.type === 'gantt-chart';
         },
         view: function (selection) {
             let component;
@@ -45,13 +44,13 @@ export default function PlanInspectorViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            PlanActivitiesView: PlanActivitiesView
+                            PlanViewConfiguration
                         },
                         provide: {
                             openmct,
                             selection: selection
                         },
-                        template: '<plan-activities-view></plan-activities-view>'
+                        template: '<plan-view-configuration></plan-view-configuration>'
                     });
                 },
                 priority: function () {
