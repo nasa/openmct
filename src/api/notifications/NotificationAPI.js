@@ -331,7 +331,7 @@ export default class NotificationAPI extends EventEmitter {
         /*
         Check if there is already an active (ie. visible) notification
             */
-        if (!this.activeNotification) {
+        if (!this.activeNotification && !notification.options.minimized) {
             this._setActiveNotification(notification);
         } else if (!this.activeTimeout) {
             /*
