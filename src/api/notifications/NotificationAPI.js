@@ -319,9 +319,6 @@ export default class NotificationAPI extends EventEmitter {
 
         notificationModel.severity = notificationModel.severity || "info";
         notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
-        // if (notificationModel.options.minimized) {
-        //     notificationModel.minimized = true;
-        // }
 
         notification = this._createNotification(notificationModel);
 
@@ -363,10 +360,6 @@ export default class NotificationAPI extends EventEmitter {
         notification.model = notificationModel;
         notification.dismiss = () => {
             this._dismiss(notification);
-        };
-
-        notification.minimize = () => {
-            this._minimize(notification);
         };
 
         if (Object.prototype.hasOwnProperty.call(notificationModel, 'progressPerc')) {
