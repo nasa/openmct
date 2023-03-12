@@ -24,7 +24,7 @@
 Testsuite for plot autoscale.
 */
 
-const { selectInspectorTab } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 test.use({
     viewport: {
@@ -34,7 +34,7 @@ test.use({
 });
 
 test.describe('Autoscale', () => {
-    test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
+    test.only('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
         //This is necessary due to the size of the test suite.
@@ -100,6 +100,9 @@ test.describe('Autoscale', () => {
         await canvas.hover({trial: true});
 
         expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
+
+        await createDisplayLayoutWith2OverlayPlots(page);
+
     });
 });
 
@@ -123,48 +126,46 @@ async function setTimeRange(page, start = '2022-03-29 22:00:00.000Z', end = '202
 /**
  * @param {import('@playwright/test').Page} page
  * @param {string} myItemsFolderName
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createSinewaveOverlayPlot(page, myItemsFolderName) {
-    // click create button
-    await page.locator('button:has-text("Create")').click();
 
-    // add overlay plot with defaults
-    await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('button:has-text("OK")').click(),
-        //Wait for Save Banner to appear1
-        page.waitForSelector('.c-message-banner__message')
-    ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    //Create overlayPlot
+    let overlayPlot = await createDomainObjectWithDefaults(page, {
+        type: 'Overlay Plot'
+    });
 
-    // save (exit edit mode)
-    await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-    await page.locator('text=Save and Finish Editing').click();
+    //Create sinewaveObject
+    let sineWaveObject = await createDomainObjectWithDefaults(page, {
+        type: 'Sine Wave Generator'
+    });
 
-    // click create button
-    await page.locator('button:has-text("Create")').click();
+    //Add sinewaveObject into overlayPlot
+    await page.pause();
 
-    // add sine wave generator with defaults
-    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('button:has-text("OK")').click(),
-        //Wait for Save Banner to appear1
-        page.waitForSelector('.c-message-banner__message')
-    ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+    return {
+        overlayPlot: overlayPlot.name
+    };
+}
 
-    // focus the overlay plot
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('text=Unnamed Overlay Plot').first().click()
-    ]);
+/**
+ * 
+ * @param {import('@playwright/test').Page} page
+ * @param {string} myItemsFolderName
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
+ */
+async function createDisplayLayoutWith2OverlayPlots(page, myItemsFolderName) {
+
+    //Create overlayPlot
+    let overlayPlot = await createDomainObjectWithDefaults(page, {
+        type: 'Display Layout'
+    });
+
+    //Add 2 createSinewaveOverlayPlot to this display
+
+    return {
+        overlayPlot: overlayPlot.name
+    };
 }
 
 /**
