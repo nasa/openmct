@@ -41,7 +41,10 @@
     >
         {{ unit }}
     </td>
-    <td class="js-type-data">{{ typeLabel }}</td>
+    <td
+        v-if="showType"
+        class="js-type-data"
+    >{{ typeLabel }}</td>
 </tr>
 </template>
 
@@ -147,6 +150,9 @@ export default {
         },
         showTimestamp() {
             return !this.configuration?.hiddenColumns?.timestamp;
+        },
+        showType() {
+            return !this.configuration?.hiddenColumns?.type;
         }
     },
     async mounted() {

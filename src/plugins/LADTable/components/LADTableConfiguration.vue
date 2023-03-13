@@ -74,7 +74,8 @@ export default {
         return {
             headers: {
                 timestamp: 'Timestamp',
-                units: 'Units'
+                units: 'Units',
+                type: 'Type'
             },
             ladTableConfiguration,
             isEditing: this.openmct.editor.isEditing(),
