@@ -24,7 +24,7 @@ import EventEmitter from 'EventEmitter';
 
 const DEFAULT_CONFIGURATION = {
     clipActivityNames: false,
-    swimlanes: {}
+    swimlaneVisibility: {}
 };
 
 export default class PlanViewConfiguration extends EventEmitter {
@@ -33,7 +33,7 @@ export default class PlanViewConfiguration extends EventEmitter {
 
         this.domainObject = domainObject;
         this.openmct = openmct;
-        this.swimlanes = {};
+        this.swimlaneVisibility = {};
 
         this.objectMutated = this.objectMutated.bind(this);
         this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);

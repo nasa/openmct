@@ -112,7 +112,7 @@ export default {
             if (domainObject.type === 'plan') {
                 rowCount = Object.keys(getValidatedData(domainObject)).length;
             } else if (domainObject.type === 'gantt-chart') {
-                rowCount = Object.keys(domainObject.configuration.swimlanes).length;
+                rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
             }
 
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';

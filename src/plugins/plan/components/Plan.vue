@@ -112,7 +112,7 @@ export default {
             if (this.domainObject.type === 'plan') {
                 return this.activityGroups;
             } else {
-                return this.activityGroups.filter(group => this.swimlanes[group.heading] === true);
+                return this.activityGroups.filter(group => this.swimlaneVisibility[group.heading] === true);
             }
         }
     },
@@ -123,7 +123,7 @@ export default {
     },
     mounted() {
         this.isNested = this.options.isChildObject;
-        this.swimlanes = this.configuration.swimlanes;
+        this.swimlaneVisibility = this.configuration.swimlaneVisibility;
         if (this.domainObject.type === 'plan') {
             this.planData = getValidatedData(this.domainObject);
         }
@@ -227,7 +227,7 @@ export default {
                 await this.showReplacePlanDialog(domainObject);
             } else {
                 this.planObject = domainObject;
-                this.swimlanes = this.configuration.swimlanes;
+                this.swimlaneVisibility = this.configuration.swimlaneVisibility;
                 this.planData = getValidatedData(domainObject);
                 this.setScaleAndPlotActivities();
             }
@@ -242,8 +242,8 @@ export default {
             if (this.planObject && this.openmct.objects.areIdsEqual(identifier, this.planObject?.identifier)) {
                 this.planObject = null;
                 this.planData = {};
-                this.swimlanes = {};
-                this.configuration.swimlanes = this.swimlanes;
+                this.swimlaneVisibility = {};
+                this.configuration.swimlaneVisibility = this.swimlaneVisibility;
                 this.planViewConfiguration.updateConfiguration(this.configuration);
             }
 
@@ -420,8 +420,8 @@ export default {
             let shouldUpdateConfig = false;
 
             groupNames.forEach((groupName) => {
-                if (this.swimlanes[groupName] === undefined) {
-                    this.swimlanes[groupName] = true;
+                if (this.swimlaneVisibility[groupName] === undefined) {
+                    this.swimlaneVisibility[groupName] = true;
                     shouldUpdateConfig = true;
                 }
 
@@ -501,7 +501,7 @@ export default {
 
             this.activityGroups = activityGroups;
             if (shouldUpdateConfig) {
-                this.configuration.swimlanes = this.swimlanes;
+                this.configuration.swimlaneVisibility = this.swimlaneVisibility;
                 this.planViewConfiguration.updateConfiguration(this.configuration);
             }
         },

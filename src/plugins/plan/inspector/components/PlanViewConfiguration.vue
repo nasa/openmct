@@ -27,29 +27,29 @@
     </div>
     <ul class="c-inspect-properties__section">
         <li
-            v-for="(visible, swimlane) in configuration.swimlanes"
-            :key="swimlane"
+            v-for="(visible, swimlaneName) in configuration.swimlaneVisibility"
+            :key="swimlaneName"
             class="c-inspect-properties__row"
         >
             <div
                 class="c-inspect-properties__label"
                 title="Show or hide swimlane"
             >
-                <label :for="swimlane + 'ColumnControl'">{{ swimlane }}</label>
+                <label :for="swimlaneName + 'ColumnControl'">{{ swimlaneName }}</label>
             </div>
             <div class="c-inspect-properties__value">
                 <input
                     v-if="isEditing"
-                    :id="swimlane + 'ColumnControl'"
+                    :id="swimlaneName + 'ColumnControl'"
                     type="checkbox"
-                    :checked="configuration.swimlanes[swimlane] === true"
-                    @change="toggleHideSwimlane(swimlane)"
+                    :checked="visible === true"
+                    @change="toggleHideSwimlane(swimlaneName)"
                 >
                 <div
                     v-else
                     class="value"
                 >
-                    {{ configuration.swimlanes[swimlane] === true ? 'Visible' : 'Hidden' }}
+                    {{ visible === true ? 'Visible' : 'Hidden' }}
                 </div>
             </div>
         </li>
@@ -130,11 +130,11 @@ export default {
             this.isEditing = isEditing;
         },
         /**
-         * @param {string} swimlane
+         * @param {string} swimlaneName
          */
-        toggleHideSwimlane(swimlane) {
-            const visible = this.configuration.swimlanes[swimlane] === true;
-            this.configuration.swimlanes[swimlane] = !visible;
+        toggleHideSwimlane(swimlaneName) {
+            const visible = this.configuration.swimlaneVisibility[swimlaneName] === true;
+            this.configuration.swimlaneVisibility[swimlaneName] = !visible;
             this.planViewConfiguration.updateConfiguration(this.configuration);
         },
         toggleClipActivityNames() {
